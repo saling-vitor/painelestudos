@@ -3,5 +3,5 @@ window.STUDY_APP_CONFIG = Object.assign({
   supabaseUrl: 'https://hapyzjfhbobtaellaejv.supabase.co',
   supabaseAnonKey: 'sb_publishable_C1DYi_orfah9EljItGs1Jw_kmSj93ym',
   bucket: 'study-maps',
-  appVersion: 'V06.0'
+  appVersion: 'V06.1'
 }, JSON.parse(localStorage.getItem('studyapp.config.override') || '{}'));
