@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#030406">
+<title>Carregando mapa…</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#030406;color:#d7d9dd;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.loading{min-height:100vh;display:grid;place-items:center;padding:24px}.card{width:min(460px,92vw);padding:22px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:#080a0d;box-shadow:0 24px 70px rgba(0,0,0,.48)}
+.card b{display:block;color:#ead7af;font-size:14px}.card span{display:block;margin-top:8px;color:#7f858e;font-size:11px;line-height:1.55}.dot{display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:#d8c59e;box-shadow:0 0 14px rgba(216,197,158,.3)}
+</style>
+</head>
+<body>
+<div class="loading"><div class="card"><b><span class="dot"></span>Abrindo mapa</b><span id="status">Preparando o documento e restaurando o progresso…</span></div></div>
+<script src="assets/js/config.js?v=7.1"></script>
+<script src="assets/js/cloud-core.js?v=7.1"></script>
+<script>
+(()=>{'use strict';
+const status=document.getElementById('status');
+const p=new URLSearchParams(location.search);
+const mode=p.get('mode')||'local';
+const path=p.get('path')||'';
+const href=p.get('href')||'';
+const slug=v=>String(v||'').trim().toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const attr=(tag,name)=>{const q=new RegExp('\\b'+name+'\\s*=\\s*(["\\\'])(.*?)\\1','i').exec(tag);if(q)return q[2];const u=new RegExp('\\b'+name+'\\s*=\\s*([^\\s>]+)','i').exec(tag);return u?u[1]:''};
+const meta=(html,name)=>{const tags=String(html).match(/<meta\b[^>]*>/gi)||[];for(const tag of tags){if(String(attr(tag,'name')).toLowerCase()===String(name).toLowerCase())return attr(tag,'content')}return''};
+const stripAppBridge=html=>String(html).replace(/<script\s+src=["'](?:\.\.\/)*assets\/js\/(?:config|cloud-core|map-cloud-bridge)\.js(?:\?[^"']*)?["']><\/script>\s*/gi,'');
+async function load(){
+ try{
+   let html='';
+   status.textContent=mode==='cloud'?'Baixando o mapa privado da nuvem…':'Carregando o mapa do aplicativo…';
+   if(mode==='cloud'){
+     if(!window.StudyCloud?.configured()||!StudyCloud.session())throw new Error('Sessão da nuvem não encontrada neste aparelho.');
+     if(!path)throw new Error('Caminho do mapa não informado.');
+     html=await StudyCloud.download(path);
+   }else{
+     if(!href)throw new Error('Arquivo do mapa não informado.');
+     const r=await fetch(href,{cache:'no-store'});
+     if(!r.ok)throw new Error('Não foi possível carregar o mapa ('+r.status+').');
+     html=await r.text();
+   }
+   const storageId=slug(meta(html,'mindmap-storage-id'));
+   if(storageId&&window.StudyCloud?.configured()&&StudyCloud.session()){
+     status.textContent='Restaurando progresso e notas…';
+     await Promise.all([
+       StudyCloud.restoreStorageKey('mindmap_state::'+storageId).catch(()=>false),
+       StudyCloud.restoreStorageKey('mindmap_notes::'+storageId).catch(()=>false)
+     ]);
+   }
+   status.textContent='Iniciando o mapa…';
+   html=stripAppBridge(html);
+   document.open();
+   document.write(html);
+   document.close();
+ }catch(e){
+   document.body.innerHTML='<div class="loading"><div class="card"><b>Não foi possível abrir o mapa</b><span>'+String(e?.message||e).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</span></div></div>';
+ }
+}
+load();
+})();
+</script>
+</body>
+</html>
