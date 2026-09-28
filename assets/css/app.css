@@ -1552,34 +1552,40 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* ========================================
    V13.1.8 · RECUPERAÇÃO DE SENHA
    ======================================== */
-.field-label-row{
+.auth-password-actions{
   display:flex;
+  justify-content:flex-end;
+  margin-top:7px;
+}
+.auth-recovery-button{
+  display:inline-flex;
   align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-.auth-text-action{
-  appearance:none;
-  -webkit-appearance:none;
-  padding:0;
-  border:0;
-  background:transparent;
-  color:#8f939a;
-  font:700 9px var(--sans);
+  justify-content:center;
+  gap:6px;
+  min-height:32px;
+  padding:0 11px;
+  border:1px solid rgba(216,197,158,.18);
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(216,197,158,.075),rgba(216,197,158,.025));
+  color:#c9b78f;
+  font:750 10px var(--sans);
   cursor:pointer;
-  transition:color .16s ease,opacity .16s ease;
-  white-space:nowrap;
+  transition:background .16s ease,border-color .16s ease,color .16s ease,transform .16s ease;
 }
-.auth-text-action:hover{
-  color:#d8c59e;
+.auth-recovery-button:hover{
+  border-color:rgba(216,197,158,.34);
+  background:linear-gradient(180deg,rgba(216,197,158,.12),rgba(216,197,158,.045));
+  color:#ead8b2;
 }
-.auth-text-action:focus-visible{
+.auth-recovery-button:active{
+  transform:translateY(1px);
+}
+.auth-recovery-button:focus-visible{
   outline:2px solid rgba(216,197,158,.28);
-  outline-offset:4px;
-  border-radius:3px;
+  outline-offset:3px;
 }
-.auth-text-action:disabled{
-  opacity:.45;
+.auth-recovery-button:disabled{
+  opacity:.48;
   cursor:wait;
 }
 .auth-recovery-modal{
@@ -1600,13 +1606,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .auth-recovery-modal #passwordRecoverySave{
   min-width:160px;
 }
+@media(max-width:640px){
+  .auth-password-actions{
+    justify-content:stretch;
+  }
+  .auth-recovery-button{
+    width:100%;
+    min-height:38px;
+    font-size:11px;
+  }
+}
 @media(max-width:520px){
-  .field-label-row{
-    gap:8px;
-  }
-  .auth-text-action{
-    font-size:8.5px;
-  }
   .auth-recovery-modal .admin-actions{
     display:grid;
     grid-template-columns:1fr;
