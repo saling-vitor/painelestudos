@@ -31,6 +31,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Probe Icons8 SF Black Filled SVG download
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p /tmp/icons8-probe
+          urls=(
+            "https://img.icons8.com/sf-black-filled/100/home.svg"
+            "https://img.icons8.com/?size=100&id=qBlNlefkEJPq&format=svg&color=000000"
+            "https://img.icons8.com/sf-black-filled/100/home.png"
+          )
+          n=0
+          for url in "${urls[@]}"; do
+            n=$((n+1))
+            curl -L --fail --silent --show-error -D "/tmp/icons8-probe/headers-${n}.txt" "$url" -o "/tmp/icons8-probe/body-${n}" || true
+            file "/tmp/icons8-probe/body-${n}" || true
+            head -c 200 "/tmp/icons8-probe/body-${n}" || true
+            printf '\n' || true
+          done
+          curl -L --fail --silent --show-error "https://icons8.com/icon/qBlNlefkEJPq/home" -o /tmp/icons8-probe/home-page.html || true
+          grep -Eo 'https?[^"'"'"' ]+(svg|png|format=svg)[^"'"'"' ]*' /tmp/icons8-probe/home-page.html | head -100 > /tmp/icons8-probe/urls.txt || true
+          cat /tmp/icons8-probe/urls.txt || true
+      - name: Upload Icons8 probe
+        uses: actions/upload-artifact@v4
+        with:
+          name: icons8-probe
+          path: /tmp/icons8-probe
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
