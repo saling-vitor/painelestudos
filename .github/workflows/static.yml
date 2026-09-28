@@ -31,6 +31,61 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: QA V12.4 brand deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://saling-vitor.github.io/painelestudos"
+          OUT="/tmp/v124-qa"
+          mkdir -p "$OUT"
+          check() {
+            rel="$1"
+            code="$(curl -L --silent --show-error -o "$OUT/$(echo "$rel" | tr '/?' '__')" -w "%{http_code}" "$BASE/$rel")"
+            printf '%s %s\n' "$code" "$rel" | tee -a "$OUT/http-status.txt"
+            test "$code" = "200"
+          }
+          check ""
+          check "manifest.webmanifest?v=12.4"
+          check "assets/brand/logo/logo-horizontal.png"
+          check "assets/brand/logo/marca-simplificada.png"
+          check "assets/brand/app-icons/apple-touch-icon.png"
+          check "assets/brand/app-icons/icon-192.png"
+          check "assets/brand/app-icons/icon-512.png"
+          check "assets/brand/app-icons/icon-maskable-192.png"
+          check "assets/brand/app-icons/icon-maskable-512.png"
+          check "assets/brand/favicon/favicon.ico"
+          check "assets/brand/favicon/favicon-16x16.png"
+          check "assets/brand/favicon/favicon-32x32.png"
+          check "assets/brand/social/og-image.png"
+          check "assets/brand/splash/splash-iphone-1290x2796.png"
+          check "assets/brand/splash/splash-ipad-2048x2732.png"
+          check "reader.html"
+          check "offline.html"
+          cp index.html "$OUT/repo-index.html"
+          cp manifest.webmanifest "$OUT/repo-manifest.webmanifest"
+          cp sw.js "$OUT/repo-sw.js"
+          grep -q 'assets/brand/logo/logo-horizontal.png' index.html
+          grep -q 'og:image' index.html
+          grep -q 'study-pwa-v12-4-brand-1' sw.js
+          grep -q 'icon-maskable-512.png' manifest.webmanifest
+          file assets/brand/app-icons/*.png assets/brand/social/og-image.png > "$OUT/dimensions.txt"
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -n "$CHROME" ]; then
+            while IFS=' ' read -r name size; do
+              "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size="$size" --virtual-time-budget=5000 --screenshot="$OUT/$name.png" "$BASE/" >"$OUT/$name.stdout.log" 2>"$OUT/$name.stderr.log" || true
+            done <<'EOF'
+          desktop 1920,1080
+          notebook 1366,768
+          ipad-landscape 1366,1024
+          ipad-portrait 1024,1366
+          iphone 430,932
+          EOF
+          fi
+      - name: Upload V12.4 QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: v12-4-brand-qa
+          path: /tmp/v124-qa
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
