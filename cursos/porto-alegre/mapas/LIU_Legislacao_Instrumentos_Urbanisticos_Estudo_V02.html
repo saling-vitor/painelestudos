@@ -1095,11 +1095,13 @@ normalize();applyFilters();window.MindMapApp={normalize,setView,focus:i=>focusBr
       group.addEventListener('click',ev=>{
         const btn=ev.target.closest('.state-btn'); if(!btn) return; ev.preventDefault(); ev.stopPropagation();
         const chosen=btn.dataset.state; const same=topic.dataset.studyState===chosen;
-        topic.dataset.studyState=same?'':chosen;
-        group.querySelectorAll('.state-btn').forEach(b=>{const on=!same && b.dataset.state===chosen;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
-        if(same) delete state.topicStates[topic.id]; else state.topicStates[topic.id]=chosen;
+        const nextState=same?'':chosen;
+        topic.dataset.studyState=nextState;
+        group.querySelectorAll('.state-btn').forEach(b=>{const on=b.dataset.state===nextState;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
+        if(nextState) state.topicStates[topic.id]=nextState; else delete state.topicStates[topic.id];
+        persist({id:topic.id,value:nextState});
         requestAnimationFrame(()=>btn.blur());
-        persist(); updateProgress(); applyHardMode();
+        updateProgress(); applyHardMode();
       });
       topic.addEventListener('toggle',()=>saveLastFrom(topic));
       summary.addEventListener('click',()=>saveLastFrom(topic));
@@ -1124,19 +1126,29 @@ normalize();applyFilters();window.MindMapApp={normalize,setView,focus:i=>focusBr
     card.appendChild(focus);
   });
 
-  function persist(){
-    /* V151: o motor visual é legado, mas o storage é único. Mescla sempre o estado mais recente
-       para não apagar quizMeta/reviewMeta/v135 gravados pelo Teste-se ou pelo checkpoint. */
+  function persist(topicMutation=null){
+    /* V13.1.16: desmarcação é mutação explícita. O snapshot mais recente continua protegendo
+       quizMeta/reviewMeta/v135, mas a chave de topicStates pode ser realmente removida. */
     try{
       const latest=safeJSON(localStorage.getItem(KEY),{});
+      const latestTopicStates={...(latest.topicStates||{})};
+      if(topicMutation){
+        const id=topicMutation.id;
+        const value=topicMutation.value;
+        if(value) latestTopicStates[id]=value;
+        else delete latestTopicStates[id];
+      }else{
+        Object.assign(latestTopicStates,state.topicStates||{});
+      }
       const merged={...latest,...state,
-        topicStates:{...(latest.topicStates||{}),...(state.topicStates||{})},
+        topicStates:latestTopicStates,
         reviewMeta:{...(latest.reviewMeta||{})},
         quizMeta:{...(latest.quizMeta||{})},
         v135:{...(latest.v135||{})}
       };
       Object.keys(state).forEach(k=>{ if(k!=='reviewMeta'&&k!=='quizMeta'&&k!=='v135'&&k!=='topicStates') merged[k]=state[k]; });
       Object.assign(state,merged);
+      state.topicStates={...latestTopicStates};
       localStorage.setItem(KEY,JSON.stringify(merged));
     }catch(_){ localStorage.setItem(KEY,JSON.stringify(state)); }
     updateResumeChip();
