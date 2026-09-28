@@ -1,0 +1,36 @@
+name: V13.0.2 assemble default map cover
+on:
+  push:
+    branches:
+      - fix/v13-0-2-default-map-cover
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/v13-0-2-default-map-cover
+
+      - name: Assemble and verify WebP
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .v1302-upload/part*.bin > assets/capas/default-imported-map.webp
+          echo "b2d550a1a01988898d8746b0d07d78e20761c31605fd374ff113df613f471ea9  assets/capas/default-imported-map.webp" | sha256sum -c -
+
+      - name: Commit final asset and remove temporary files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .v1302-upload
+          rm .github/workflows/v1302-assemble.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "V13.0.2: adicionar capa padrão de mapas importados"
+          git push origin HEAD:fix/v13-0-2-default-map-cover
