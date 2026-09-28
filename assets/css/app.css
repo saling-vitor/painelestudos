@@ -556,8 +556,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .simulation-search input{padding:0 12px 0 39px}
 .simulation-toolbar select{padding:0 11px}
 .simulation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.simulation-card{position:relative;display:flex;flex-direction:column;min-height:250px;padding:17px;border:1px solid color-mix(in srgb,var(--accent) 18%,var(--line));border-radius:16px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 5%,#0b0d10),#080a0d 44%,#060709);box-shadow:0 15px 34px rgba(0,0,0,.32);overflow:hidden}
-.simulation-card:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--accent);opacity:.72}
+.simulation-card{position:relative;display:flex;flex-direction:column;min-height:0;padding:0;border:1px solid color-mix(in srgb,var(--accent) 18%,var(--line));border-radius:16px;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 5%,#0b0d10),#080a0d 44%,#060709);box-shadow:0 15px 34px rgba(0,0,0,.32);overflow:hidden}
+.simulation-card:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--accent);opacity:.72;z-index:2}.simulation-card.has-cover:before{display:none}.simulation-cover{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-bottom:1px solid color-mix(in srgb,var(--brand-coral) 16%,var(--line));background:#07090c;flex:none}.simulation-cover[hidden]{display:none}.simulation-cover img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;filter:none;transition:transform .18s ease}.simulation-card-body{display:flex;flex-direction:column;flex:1;min-height:220px;padding:17px}@media(hover:hover){.simulation-card:hover .simulation-cover img{transform:scale(1.01)}}
 .simulation-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .simulation-code,.simulation-board{font:800 9px var(--mono);letter-spacing:.09em;text-transform:uppercase}
 .simulation-code{color:color-mix(in srgb,var(--accent) 82%,white)}
@@ -593,7 +593,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .simulation-import-fields label>span{color:#747982;font-size:8.5px;font-weight:750}
 .simulation-import-fields input{width:100%;height:36px;padding:0 9px;border:1px solid var(--line);border-radius:8px;background:#0f1217;color:#d5d7dc;font-size:10.5px}
 .simulation-import-error{margin-top:8px;color:#d98c95;font-size:10px}
-.simulation-import-report{margin-top:12px;padding:10px 11px;border:1px solid rgba(98,169,120,.24);border-radius:10px;background:rgba(98,169,120,.045);color:#a9cdb2;font-size:10px}
+.simulation-import-cover-row,.simulation-manage-cover-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,260px);gap:12px;align-items:end}.simulation-cover-picker-preview,.simulation-manage-cover{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--line);border-radius:11px;background:#07090c;display:grid;place-items:center}.simulation-cover-picker-preview img,.simulation-manage-cover img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;filter:none}.simulation-cover-picker-preview span,.simulation-manage-cover span{color:#747982;font:700 9px var(--mono);letter-spacing:.06em}.simulation-manage-cover img[hidden],.simulation-manage-cover span[hidden]{display:none}.simulation-import-report{margin-top:12px;padding:10px 11px;border:1px solid rgba(98,169,120,.24);border-radius:10px;background:rgba(98,169,120,.045);color:#a9cdb2;font-size:10px}
 .simulation-import-report ul{margin:7px 0 0 18px;color:#c28d94}
 .simulation-reader{position:fixed;inset:0;z-index:210;display:none;background:#020304}
 .simulation-reader.open{display:grid;grid-template-rows:54px minmax(0,1fr)}
@@ -614,7 +614,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .simulation-toolbar{grid-template-columns:1fr}
   .simulation-grid,.simulation-recent-list{grid-template-columns:1fr}
   .simulation-recent-item:nth-child(3){display:flex}
-  .simulation-card{min-height:236px}
+  .simulation-card{min-height:0}
+  .simulation-card-body{min-height:0}
+  .simulation-import-cover-row,.simulation-manage-cover-row{grid-template-columns:1fr}
   .simulation-card-footer{align-items:flex-start;flex-direction:column}
   .simulation-card-actions{width:100%}
   .simulation-card-actions button{flex:1}
