@@ -14,8 +14,8 @@
 </head>
 <body>
 <div class="loading"><div class="card"><b><span class="dot"></span>Abrindo mapa</b><span id="status">Preparando o documento e restaurando o progresso…</span></div></div>
-<script src="assets/js/config.js?v=10.0"></script>
-<script src="assets/js/cloud-core.js?v=10.0"></script>
+<script src="assets/js/config.js?v=11.0"></script>
+<script src="assets/js/cloud-core.js?v=11.0"></script>
 <script>
 (()=>{'use strict';
 const status=document.getElementById('status');
@@ -34,7 +34,7 @@ async function load(){
    if(mode==='cloud'){
      if(!window.StudyCloud?.configured()||!StudyCloud.session())throw new Error('Sessão da nuvem não encontrada neste aparelho.');
      if(!path)throw new Error('Caminho do mapa não informado.');
-     html=await StudyCloud.download(path);
+     html=await StudyCloud.downloadCached(path);
    }else{
      if(!href)throw new Error('Arquivo do mapa não informado.');
      const r=await fetch(href,{cache:'no-store'});
