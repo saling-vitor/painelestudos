@@ -1023,3 +1023,93 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   opacity:.75;
 }
 
+/* ========================================
+   V13.1.0 · IDENTIDADE FINAL · MEUS MAPAS
+   ======================================== */
+.brand-logo-full{
+  width:184px;
+  max-width:100%;
+  height:auto;
+  object-fit:contain;
+}
+.brand-logo-compact{
+  display:none;
+  width:46px;
+  height:46px;
+  max-height:46px;
+  object-fit:contain;
+  object-position:center;
+}
+@media(max-width:1180px){
+  .brand-logo-full{display:none}
+  .brand-logo-compact{display:block}
+}
+
+/* Componente reutilizável para estados vazios da identidade final. */
+.empty-state{
+  display:grid;
+  justify-items:center;
+  gap:12px;
+  padding:34px 20px;
+  text-align:center;
+}
+.empty-state-graphic{
+  width:min(150px,42vw);
+  height:auto;
+  opacity:.88;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.empty-state h3{
+  margin:0;
+  color:#d8dade;
+  font-size:15px;
+}
+.empty-state p{
+  max-width:420px;
+  margin:0;
+  color:#777c84;
+  font-size:11px;
+  line-height:1.55;
+}
+
+/* Estados vazios selecionados: marca presente sem competir com o conteúdo. */
+#allMaps>.empty,
+#coursesGrid>.empty,
+#homeCourses>.empty,
+#progressInfo>.empty{
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  padding:30px 20px;
+  text-align:center;
+}
+#allMaps>.empty:before,
+#coursesGrid>.empty:before,
+#homeCourses>.empty:before,
+#progressInfo>.empty:before{
+  content:"";
+  width:min(144px,40vw);
+  height:min(144px,40vw);
+  border:0;
+  border-radius:0;
+  background-color:transparent;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  color:transparent;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+#allMaps>.empty:before{
+  background-image:url('../brand/mascot/mascote-pensando.png?v=13.1.0');
+}
+#coursesGrid>.empty:before,
+#homeCourses>.empty:before{
+  background-image:url('../brand/mascot/mascote-livros-feliz.png?v=13.1.0');
+}
+#progressInfo>.empty:before{
+  background-image:url('../brand/mascot/mascote-ideia.png?v=13.1.0');
+}
