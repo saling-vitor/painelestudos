@@ -40,7 +40,8 @@ jobs:
           mkdir -p "$OUT"
           check() {
             rel="$1"
-            code="$(curl -L --silent --show-error -o "$OUT/$(echo "$rel" | tr '/?' '__')" -w "%{http_code}" "$BASE/$rel")"
+            if [ -z "$rel" ]; then name="root.html"; else name="$(echo "$rel" | tr '/?' '__')"; fi
+            code="$(curl -L --silent --show-error -o "$OUT/$name" -w "%{http_code}" "$BASE/$rel")"
             printf '%s %s\n' "$code" "$rel" | tee -a "$OUT/http-status.txt"
             test "$code" = "200"
           }
