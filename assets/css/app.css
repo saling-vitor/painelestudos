@@ -363,7 +363,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .search>.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#72767e;pointer-events:none}
 .icon-btn,.primary,.secondary,.danger{display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .compact-icon-btn{width:40px;padding:0}
-.close{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.close{width:40px;min-width:40px;height:40px;flex:0 0 40px;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
 .icon-heading,.icon-label,.course-footer .enter,.map-origin,.map-open-label{display:inline-flex;align-items:center;gap:7px}
 .icon-heading{gap:9px}.icon-heading .ui-icon{color:#d8c59e}.icon-label .ui-icon{color:#cdb98f}
 .course-icon{font-size:0}.course-icon .ui-icon{--icon-size:22px}
