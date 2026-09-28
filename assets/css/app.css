@@ -1548,3 +1548,71 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     gap:2px;
   }
 }
+
+
+/* ========================================
+   V13.1.8 · RECUPERAÇÃO DE SENHA
+   ======================================== */
+.field-label-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.auth-text-action{
+  appearance:none;
+  -webkit-appearance:none;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#8f939a;
+  font:700 9px var(--sans);
+  cursor:pointer;
+  transition:color .16s ease,opacity .16s ease;
+  white-space:nowrap;
+}
+.auth-text-action:hover{
+  color:#d8c59e;
+}
+.auth-text-action:focus-visible{
+  outline:2px solid rgba(216,197,158,.28);
+  outline-offset:4px;
+  border-radius:3px;
+}
+.auth-text-action:disabled{
+  opacity:.45;
+  cursor:wait;
+}
+.auth-recovery-modal{
+  width:min(520px,100%);
+}
+.auth-recovery-modal .eyebrow{
+  margin-bottom:9px;
+}
+.auth-recovery-modal .modal-description{
+  margin-top:12px;
+  color:#92979f;
+  font-size:11px;
+  line-height:1.55;
+}
+.auth-recovery-modal #passwordRecoveryNotice[hidden]{
+  display:none!important;
+}
+.auth-recovery-modal #passwordRecoverySave{
+  min-width:160px;
+}
+@media(max-width:520px){
+  .field-label-row{
+    gap:8px;
+  }
+  .auth-text-action{
+    font-size:8.5px;
+  }
+  .auth-recovery-modal .admin-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .auth-recovery-modal .admin-actions button{
+    width:100%;
+  }
+}
