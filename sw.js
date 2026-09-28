@@ -1,20 +1,23 @@
 // V13.1.0 · final brand kit
-const V='study-pwa-v13-1-6-ipad-bottom-nav';
-const CORE=['./','./index.html','./manifest.webmanifest?v=13.1.0','./assets/css/app.css?v=13.1.6','./assets/js/config.js?v=12.7','./assets/js/cloud-core.js?v=12.5','./assets/js/app.js?v=13.1.6','./assets/study-collage.jpg','./data/catalog.json','./data/simulados.json','./reader.html','./offline.html'];
+const V='study-pwa-v13-1-7-safari-brand-refresh';
+const CORE=['./','./index.html','./manifest-v13.1.7.webmanifest','./assets/css/app.css?v=13.1.6','./assets/js/config.js?v=12.7','./assets/js/cloud-core.js?v=12.5','./assets/js/app.js?v=13.1.6','./assets/study-collage.jpg','./data/catalog.json','./data/simulados.json','./reader.html','./offline.html'];
 const UI_ICONS=['./assets/ui-icons/sf-black-filled/admin.png','./assets/ui-icons/sf-black-filled/archive.png','./assets/ui-icons/sf-black-filled/calendar.png','./assets/ui-icons/sf-black-filled/chevron-left.png','./assets/ui-icons/sf-black-filled/chevron-right.png','./assets/ui-icons/sf-black-filled/close.png','./assets/ui-icons/sf-black-filled/cloud.png','./assets/ui-icons/sf-black-filled/courses.png','./assets/ui-icons/sf-black-filled/device.png','./assets/ui-icons/sf-black-filled/document.png','./assets/ui-icons/sf-black-filled/simulations.png','./assets/ui-icons/sf-black-filled/download.png','./assets/ui-icons/sf-black-filled/grid.png','./assets/ui-icons/sf-black-filled/home.png','./assets/ui-icons/sf-black-filled/list.png','./assets/ui-icons/sf-black-filled/maps.png','./assets/ui-icons/sf-black-filled/more.png','./assets/ui-icons/sf-black-filled/plus.png','./assets/ui-icons/sf-black-filled/progress.png','./assets/ui-icons/sf-black-filled/search.png','./assets/ui-icons/sf-black-filled/settings.png','./assets/ui-icons/sf-black-filled/star.png','./assets/ui-icons/sf-black-filled/success.png','./assets/ui-icons/sf-black-filled/sync.png','./assets/ui-icons/sf-black-filled/trash.png','./assets/ui-icons/sf-black-filled/upload.png','./assets/ui-icons/sf-black-filled/user.png','./assets/ui-icons/sf-black-filled/warning.png'];
 const BRAND_ASSETS=[
-  './assets/brand/logo/logo-horizontal.png?v=13.1.0',
-  './assets/brand/logo/marca-simplificada.png?v=13.1.0',
-  './assets/brand/app-icons/apple-touch-icon.png?v=13.1.0',
-  './assets/brand/app-icons/icon-192.png?v=13.1.0',
-  './assets/brand/app-icons/icon-512.png?v=13.1.0',
-  './assets/brand/app-icons/icon-maskable-192.png?v=13.1.0',
-  './assets/brand/app-icons/icon-maskable-512.png?v=13.1.0',
-  './assets/brand/favicon/favicon.ico?v=13.1.0',
-  './assets/brand/favicon/favicon-16x16.png?v=13.1.0',
-  './assets/brand/favicon/favicon-32x32.png?v=13.1.0',
-  './assets/brand/favicon/favicon-48x48.png?v=13.1.0',
-  './assets/brand/favicon/favicon-96x96.png?v=13.1.0',
+  './assets/brand/logo/logo-horizontal-v13-1-7.png',
+  './assets/brand/logo/marca-simplificada-v13-1-7.png',
+  './assets/brand/app-icons/apple-touch-icon-v13-1-7.png',
+  './assets/brand/app-icons/icon-192-v13-1-7.png',
+  './assets/brand/app-icons/icon-512-v13-1-7.png',
+  './assets/brand/app-icons/icon-maskable-192-v13-1-7.png',
+  './assets/brand/app-icons/icon-maskable-512-v13-1-7.png',
+  './assets/brand/favicon/favicon-v13-1-7.ico',
+  './assets/brand/favicon/favicon-16x16-v13-1-7.png',
+  './assets/brand/favicon/favicon-32x32-v13-1-7.png',
+  './assets/brand/favicon/favicon-48x48-v13-1-7.png',
+  './assets/brand/favicon/favicon-96x96-v13-1-7.png',
+  './assets/brand/splash/splash-iphone-1290x2796-v13-1-7.png',
+  './assets/brand/splash/splash-ipad-2048x2732-v13-1-7.png',
+  './assets/brand/social/og-image-v13-1-7.png',
   './assets/brand/mascot/mascote-pensando.png?v=13.1.0',
   './assets/brand/mascot/mascote-livros-feliz.png?v=13.1.0',
   './assets/brand/mascot/mascote-ideia.png?v=13.1.0'

@@ -1,0 +1,37 @@
+{
+  "name": "Meus Mapas",
+  "short_name": "Meus Mapas",
+  "description": "Biblioteca pessoal de estudos e mapas mentais.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#030406",
+  "theme_color": "#030406",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/brand/app-icons/icon-192-v13-1-7.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/brand/app-icons/icon-512-v13-1-7.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/brand/app-icons/icon-maskable-192-v13-1-7.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/brand/app-icons/icon-maskable-512-v13-1-7.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
