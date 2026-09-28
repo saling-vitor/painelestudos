@@ -35,6 +35,34 @@ const slug=v=>String(v||'').trim().toLocaleLowerCase('pt-BR').normalize('NFD').r
 const attr=(tag,name)=>{const q=new RegExp('\\b'+name+'\\s*=\\s*(["\\\'])(.*?)\\1','i').exec(tag);if(q)return q[2];const u=new RegExp('\\b'+name+'\\s*=\\s*([^\\s>]+)','i').exec(tag);return u?u[1]:''};
 const meta=(html,name)=>{const tags=String(html).match(/<meta\b[^>]*>/gi)||[];for(const tag of tags){if(String(attr(tag,'name')).toLowerCase()===String(name).toLowerCase())return attr(tag,'content')}return''};
 const stripAppBridge=html=>String(html).replace(/<script\s+src=["'](?:\.\.\/)*assets\/js\/(?:config|cloud-core|map-cloud-bridge)\.js(?:\?[^"']*)?["']><\/script>\s*/gi,'');
+async function loadBundledHtml(href){
+ const absoluteUrl=new URL(href,location.href).href;
+
+ /*
+  * OFFLINE:
+  * consultar diretamente o Cache Storage.
+  *
+  * Não fazer tentativa de rede antes.
+  */
+ if(navigator.onLine===false&&'caches' in window){
+   try{
+     const hit=await caches.match(absoluteUrl,{ignoreSearch:true});
+     if(hit){
+       status.textContent='Abrindo mapa salvo neste aparelho…';
+       return await hit.text();
+     }
+   }catch(_){}
+
+   throw new Error('Este mapa não está disponível offline neste aparelho.');
+ }
+
+ /*
+  * ONLINE ou fallback.
+  */
+ const r=await fetch(href);
+ if(!r.ok)throw new Error('Não foi possível carregar o mapa ('+r.status+').');
+ return await r.text();
+}
 async function load(){
  try{
    let html='';
@@ -45,9 +73,10 @@ async function load(){
      html=await StudyCloud.downloadCached(path);
    }else{
      if(!href)throw new Error('Arquivo do mapa não informado.');
-     const r=await fetch(href,{cache:'no-store'});
-     if(!r.ok)throw new Error('Não foi possível carregar o mapa ('+r.status+').');
-     html=await r.text();
+     status.textContent=navigator.onLine===false
+       ?'Abrindo mapa salvo neste aparelho…'
+       :'Carregando mapa do aplicativo…';
+     html=await loadBundledHtml(href);
    }
    const storageId=slug(meta(html,'mindmap-storage-id'));
    if(storageId&&window.StudyCloud?.configured()&&StudyCloud.session()){
