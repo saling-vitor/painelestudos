@@ -1666,6 +1666,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   margin-top:var(--ipad-pwa-top-gap);
   top:var(--ipad-pwa-top-gap);
 }
+
+/* ========================================
+   V13.1.17 · IPAD PWA · READER TOP GAP
+   ======================================== */
+.is-standalone.is-ipad .reader.open,
+.is-standalone.is-ipad .simulation-reader.open{
+  box-sizing:border-box;
+  padding-top:var(--ipad-pwa-top-gap);
+  background:#030406;
+}
 .is-standalone .side{
   padding-top:18px;
   padding-left:calc(14px + var(--safe-left));
