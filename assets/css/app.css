@@ -1720,3 +1720,40 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     bottom:calc(18px + var(--safe-bottom));
   }
 }
+
+
+/* ========================================
+   V13.1.15 · OFFLINE FIRST
+   ======================================== */
+.offline-settings #offlinePrepareStatus{
+  margin-top:0;
+}
+.offline-storage-meta{
+  margin-top:8px;
+  color:#858a92;
+  font-size:9.5px;
+  line-height:1.5;
+}
+.offline-storage-note{
+  margin-top:10px;
+  color:#70757d;
+  font-size:9px;
+  line-height:1.55;
+}
+#syncTop.is-offline{
+  border-color:rgba(216,184,88,.20);
+  background:rgba(216,184,88,.045);
+  color:#d5c28b;
+}
+#syncTop.is-offline .ui-icon{
+  opacity:.72;
+}
+@media(max-width:640px){
+  .offline-settings .admin-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .offline-settings .admin-actions button{
+    width:100%;
+  }
+}
