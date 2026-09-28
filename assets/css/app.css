@@ -941,6 +941,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 .sync-panel .row{
   gap:10px;
+  align-items:start;
+}
+.sync-panel .row > .field{
+  align-content:start;
+  min-width:0;
+}
+.sync-panel .row > .field > input{
+  width:100%;
+  height:42px;
+  min-height:42px;
+  max-height:42px;
 }
 .sync-panel .admin-actions{
   align-items:center;
@@ -1046,6 +1057,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   }
   .sync-panel .row{
     grid-template-columns:1fr;
+    align-items:stretch;
   }
   .sync-panel .admin-actions{
     display:grid;
@@ -1555,7 +1567,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .auth-password-actions{
   display:flex;
   justify-content:flex-end;
+  min-height:32px;
   margin-top:7px;
+}
+.auth-password-field > input{
+  height:42px;
+  min-height:42px;
+  max-height:42px;
 }
 .auth-recovery-button{
   display:inline-flex;
