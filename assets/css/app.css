@@ -353,3 +353,28 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 @media(prefers-reduced-motion:reduce){.map-card{transition:none!important}}
 
+
+/* V12.3 · Iconografia Icons8 Apple SF Black Filled */
+.ui-icon{--icon-size:18px;width:var(--icon-size);height:var(--icon-size);display:inline-block;flex:0 0 auto;background-color:currentColor;-webkit-mask-image:var(--ui-icon);mask-image:var(--ui-icon);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain}
+.ui-icon::before,.ui-icon::after{content:none!important}
+.ui-icon-xs{--icon-size:14px}.ui-icon-sm{--icon-size:16px}.ui-icon-md{--icon-size:18px}.ui-icon-lg{--icon-size:20px}
+.icon-home{--ui-icon:url("../ui-icons/sf-black-filled/home.png")}.icon-courses{--ui-icon:url("../ui-icons/sf-black-filled/courses.png")}.icon-maps{--ui-icon:url("../ui-icons/sf-black-filled/maps.png")}.icon-progress{--ui-icon:url("../ui-icons/sf-black-filled/progress.png")}.icon-settings,.icon-manage{--ui-icon:url("../ui-icons/sf-black-filled/settings.png")}.icon-search{--ui-icon:url("../ui-icons/sf-black-filled/search.png")}.icon-download{--ui-icon:url("../ui-icons/sf-black-filled/download.png")}.icon-sync{--ui-icon:url("../ui-icons/sf-black-filled/sync.png")}.icon-plus{--ui-icon:url("../ui-icons/sf-black-filled/plus.png")}.icon-upload{--ui-icon:url("../ui-icons/sf-black-filled/upload.png")}.icon-chevron-right{--ui-icon:url("../ui-icons/sf-black-filled/chevron-right.png")}.icon-chevron-left{--ui-icon:url("../ui-icons/sf-black-filled/chevron-left.png")}.icon-document{--ui-icon:url("../ui-icons/sf-black-filled/document.png")}.icon-star{--ui-icon:url("../ui-icons/sf-black-filled/star.png")}.icon-grid{--ui-icon:url("../ui-icons/sf-black-filled/grid.png")}.icon-list{--ui-icon:url("../ui-icons/sf-black-filled/list.png")}.icon-close{--ui-icon:url("../ui-icons/sf-black-filled/close.png")}.icon-trash{--ui-icon:url("../ui-icons/sf-black-filled/trash.png")}.icon-archive{--ui-icon:url("../ui-icons/sf-black-filled/archive.png")}.icon-admin{--ui-icon:url("../ui-icons/sf-black-filled/admin.png")}.icon-cloud{--ui-icon:url("../ui-icons/sf-black-filled/cloud.png")}.icon-user{--ui-icon:url("../ui-icons/sf-black-filled/user.png")}.icon-warning{--ui-icon:url("../ui-icons/sf-black-filled/warning.png")}.icon-success{--ui-icon:url("../ui-icons/sf-black-filled/success.png")}.icon-calendar{--ui-icon:url("../ui-icons/sf-black-filled/calendar.png")}.icon-more{--ui-icon:url("../ui-icons/sf-black-filled/more.png")}.icon-device{--ui-icon:url("../ui-icons/sf-black-filled/device.png")}
+.nav-btn{gap:12px}.nav-btn>.ui-icon{--icon-size:18px;color:currentColor}
+.search>.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#72767e;pointer-events:none}
+.icon-btn,.primary,.secondary,.danger{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.compact-icon-btn{width:40px;padding:0}
+.close{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.icon-heading,.icon-label,.course-footer .enter,.map-origin,.map-open-label{display:inline-flex;align-items:center;gap:7px}
+.icon-heading{gap:9px}.icon-heading .ui-icon{color:#d8c59e}.icon-label .ui-icon{color:#cdb98f}
+.course-icon{font-size:0}.course-icon .ui-icon{--icon-size:22px}
+.chip .ui-icon{--icon-size:13px}
+.breadcrumb-separator{color:#676c74}
+.map-admin-btn,.fav{display:inline-flex;align-items:center;justify-content:center}
+.map-admin-btn .ui-icon,.fav .ui-icon{pointer-events:none}
+.map-origin,.map-open-label{gap:5px}.map-open-label{color:#ead5ac;font-weight:800}
+.continue-icon .ui-icon{--icon-size:22px}
+.icon-credit{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);color:#646971;font-size:9px;text-align:right}.icon-credit a{color:#91866f;text-decoration:none}.icon-credit a:hover{color:#d8c59e}
+.bottom-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.bottom-nav button>.ui-icon{--icon-size:20px;margin:0}.bottom-nav button .bottom-nav-label{display:block;font-size:9px;line-height:1.1;margin:0}
+.document-upload-head b.icon-label{display:inline-flex;align-items:center;gap:7px}
+@media(max-width:1180px){.nav-btn>.ui-icon{--icon-size:18px}}
+@media(max-width:760px){.bottom-nav button>.ui-icon{--icon-size:20px}.bottom-nav button .bottom-nav-label{font-size:9px;line-height:1.1;margin:0}.icon-credit{text-align:left}}

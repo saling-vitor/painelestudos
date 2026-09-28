@@ -11,7 +11,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -31,53 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Vendor Icons8 SF Black Filled UI icons
-        shell: bash
-        run: |
-          set -euo pipefail
-          target="assets/ui-icons/sf-black-filled"
-          if [ -f "$target/home.png" ]; then
-            echo "UI icons already vendored."
-            exit 0
-          fi
-          mkdir -p "$target"
-          fetch() {
-            name="$1"; slug="$2"
-            curl -L --fail --silent --show-error "https://img.icons8.com/sf-black-filled/100/${slug}.png" -o "$target/${name}.png"
-            file "$target/${name}.png" | grep -q "PNG image data"
-          }
-          fetch home home
-          fetch courses books
-          fetch maps mind-map
-          fetch progress combo-chart
-          fetch settings gears
-          fetch search search-more
-          fetch download download
-          fetch sync cloud-sync
-          fetch plus plus
-          fetch upload upload
-          fetch chevron-right chevron-right
-          fetch chevron-left chevron-left
-          fetch document document
-          fetch star star
-          fetch grid grid
-          fetch list list
-          fetch close multiply
-          fetch trash trash
-          fetch archive box
-          fetch admin toolbox
-          fetch cloud cloud
-          fetch user user
-          fetch warning warning-shield
-          fetch success ok
-          fetch calendar calendar
-          fetch more more
-          fetch device laptop
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$target"
-          git commit -m "V12.3: adicionar ícones SF Black Filled locais"
-          git push origin HEAD:main
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
