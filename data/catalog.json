@@ -36,7 +36,8 @@
       "filename": "DEMHAB_Lei_2902_Politica_Habitacional_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-demhab-fundatec-arquiteto-poa"
+      "storageId": "study-demhab-fundatec-arquiteto-poa",
+      "cover": "assets/capas/demhab.webp"
     },
     {
       "id": "pdgv",
@@ -55,7 +56,8 @@
       "filename": "PDGV_Protecao_Direitos_Grupos_Vulneraveis_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-pdgv-fundatec-arquiteto-poa"
+      "storageId": "study-pdgv-fundatec-arquiteto-poa",
+      "cover": "assets/capas/pdgv.webp"
     },
     {
       "id": "cf88",
@@ -74,7 +76,8 @@
       "filename": "CF88_Constituicao_Federal_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-cf88-fundatec-arquiteto-poa"
+      "storageId": "study-cf88-fundatec-arquiteto-poa",
+      "cover": "assets/capas/cf88.webp"
     },
     {
       "id": "efpa",
@@ -93,7 +96,8 @@
       "filename": "EFPA_Estatuto_Funcionarios_Publicos_Porto_Alegre_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-efpa-fundatec-arquiteto-poa"
+      "storageId": "study-efpa-fundatec-arquiteto-poa",
+      "cover": "assets/capas/efpa.webp"
     },
     {
       "id": "iera",
@@ -112,7 +116,8 @@
       "filename": "IERA_Integridade_Etica_Responsabilidade_Administracao_Publica_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-iera-fundatec-arquiteto-poa"
+      "storageId": "study-iera-fundatec-arquiteto-poa",
+      "cover": "assets/capas/iera.webp"
     },
     {
       "id": "lp",
@@ -131,7 +136,8 @@
       "filename": "Lingua_Portuguesa_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-lp-fundatec-arquiteto-poa"
+      "storageId": "study-lp-fundatec-arquiteto-poa",
+      "cover": "assets/capas/lp.webp"
     },
     {
       "id": "lopa",
@@ -150,7 +156,8 @@
       "filename": "LOPA_Lei_Organica_Porto_Alegre_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-lopa-fundatec-arquiteto-poa"
+      "storageId": "study-lopa-fundatec-arquiteto-poa",
+      "cover": "assets/capas/lopa.webp"
     },
     {
       "id": "epf",
@@ -169,7 +176,8 @@
       "filename": "EPF_Exercicio_Profissional_Projeto_Ferramentas_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-epf-fundatec-arquiteto-poa"
+      "storageId": "study-epf-fundatec-arquiteto-poa",
+      "cover": "assets/capas/epf.webp"
     },
     {
       "id": "dcas",
@@ -188,7 +196,8 @@
       "filename": "DCAS_Desempenho_Conforto_Acessibilidade_Seguranca_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-dcas-fundatec-arquiteto-poa"
+      "storageId": "study-dcas-fundatec-arquiteto-poa",
+      "cover": "assets/capas/dcas.webp"
     },
     {
       "id": "uti",
@@ -207,7 +216,8 @@
       "filename": "UTI_Urbanismo_Topografia_Infraestrutura_Urbana_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-uti-fundatec-arquiteto-poa"
+      "storageId": "study-uti-fundatec-arquiteto-poa",
+      "cover": "assets/capas/uti.webp"
     },
     {
       "id": "tep",
@@ -226,7 +236,8 @@
       "filename": "TEP_Tecnologia_Edificacoes_Sistemas_Prediais_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-tep-fundatec-arquiteto-poa"
+      "storageId": "study-tep-fundatec-arquiteto-poa",
+      "cover": "assets/capas/tep.webp"
     },
     {
       "id": "hps",
@@ -245,7 +256,8 @@
       "filename": "HPS_Habitacao_Politica_Urbana_Social_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-hps-fundatec-arquiteto-poa"
+      "storageId": "study-hps-fundatec-arquiteto-poa",
+      "cover": "assets/capas/hps.webp"
     },
     {
       "id": "liu",
@@ -264,7 +276,8 @@
       "filename": "LIU_Legislacao_Instrumentos_Urbanisticos_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-liu-fundatec-arquiteto-poa"
+      "storageId": "study-liu-fundatec-arquiteto-poa",
+      "cover": "assets/capas/liu.webp"
     },
     {
       "id": "gco",
@@ -283,7 +296,8 @@
       "filename": "GCO_Gestao_Custos_Obras_Publicas_Estudo_V02.html",
       "source": "bundled",
       "courseId": "porto-alegre",
-      "storageId": "study-gco-fundatec-arquiteto-poa"
+      "storageId": "study-gco-fundatec-arquiteto-poa",
+      "cover": "assets/capas/gco.webp"
     }
   ],
   "generated": "2026-09-28"
