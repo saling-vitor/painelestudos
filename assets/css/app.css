@@ -601,16 +601,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:480px){.simulation-import-fields{grid-template-columns:1fr}}
 
 /* ========================================
-   V13.0.6 · TOPBAR · GLASSMORPHISM GRAFITE
+   V13.0.8 · TOPBAR · GLASSMORPHISM NEUTRO
    ======================================== */
 .topbar-wrap{
   position:sticky;
   top:0;
   z-index:70;
   padding:10px 22px 10px;
-  background:linear-gradient(180deg,rgba(3,4,6,.46) 0%,rgba(3,4,6,.18) 72%,rgba(3,4,6,0) 100%);
-  -webkit-backdrop-filter:blur(10px) saturate(115%);
-  backdrop-filter:blur(10px) saturate(115%);
+  background:linear-gradient(180deg,rgba(3,4,6,.52) 0%,rgba(3,4,6,.24) 72%,transparent 100%);
+  -webkit-backdrop-filter:blur(10px) saturate(80%) grayscale(.55);
+  backdrop-filter:blur(10px) saturate(80%) grayscale(.55);
 }
 .topbar{
   position:relative;
@@ -624,9 +624,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   overflow:hidden;
   border:1px solid rgba(255,255,255,.115);
   border-radius:16px;
-  background:linear-gradient(135deg,rgba(30,30,32,.44) 0%,rgba(18,18,20,.36) 44%,rgba(7,8,9,.50) 100%);
-  -webkit-backdrop-filter:blur(26px) saturate(135%);
-  backdrop-filter:blur(26px) saturate(135%);
+  background:linear-gradient(135deg,rgba(29,29,31,.66) 0%,rgba(17,17,19,.58) 44%,rgba(7,8,9,.68) 100%);
+  -webkit-backdrop-filter:blur(26px) saturate(72%) grayscale(.72);
+  backdrop-filter:blur(26px) saturate(72%) grayscale(.72);
   box-shadow:0 20px 55px rgba(0,0,0,.38),0 4px 18px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(255,255,255,.025);
 }
 .topbar::before{
@@ -664,17 +664,19 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   padding:0 42px;
   border:1px solid rgba(255,255,255,.085);
   border-radius:10px;
-  background:linear-gradient(180deg,rgba(36,36,39,.50),rgba(19,20,22,.44));
+  background:linear-gradient(180deg,rgba(36,36,38,.78) 0%,rgba(19,19,21,.72) 100%);
   color:#dedfe2;
   font-size:12.5px;
-  -webkit-backdrop-filter:blur(12px) saturate(110%);
-  backdrop-filter:blur(12px) saturate(110%);
+  -webkit-backdrop-filter:blur(14px) saturate(60%) grayscale(1);
+  backdrop-filter:blur(14px) saturate(60%) grayscale(1);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.045),inset 0 -1px 0 rgba(0,0,0,.16),0 1px 0 rgba(0,0,0,.14);
   transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;
 }
 .search input:focus{
   border-color:rgba(216,197,158,.24);
-  background:linear-gradient(180deg,rgba(42,42,44,.58),rgba(23,23,25,.50));
+  background:linear-gradient(180deg,rgba(43,43,45,.82),rgba(24,24,26,.76));
+  -webkit-backdrop-filter:blur(14px) saturate(55%) grayscale(1);
+  backdrop-filter:blur(14px) saturate(55%) grayscale(1);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 0 0 3px rgba(216,197,158,.04);
   outline:none;
 }
@@ -694,8 +696,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   border:1px solid rgba(255,255,255,.095);
   background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
   color:#c7cbd2;
-  -webkit-backdrop-filter:blur(12px) saturate(120%);
-  backdrop-filter:blur(12px) saturate(120%);
+  -webkit-backdrop-filter:blur(12px) saturate(75%) grayscale(.75);
+  backdrop-filter:blur(12px) saturate(75%) grayscale(.75);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
   transition:transform .16s ease,background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease;
 }
@@ -726,8 +728,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     grid-template-columns:minmax(0,1fr) auto;
     padding:7px;
     border-radius:14px;
-    -webkit-backdrop-filter:blur(22px) saturate(130%);
-    backdrop-filter:blur(22px) saturate(130%);
+    -webkit-backdrop-filter:blur(22px) saturate(72%) grayscale(.72);
+    backdrop-filter:blur(22px) saturate(72%) grayscale(.72);
   }
 }
 @media(max-width:520px){
