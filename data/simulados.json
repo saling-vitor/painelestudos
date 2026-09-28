@@ -1,4 +1,53 @@
 {
-  "simulations": [],
+  "simulations": [
+    {
+      "id": "demhab-arq-sim-01-v08",
+      "courseId": "porto-alegre",
+      "code": "DEMHAB_CP01_ARQ_FUNDATEC_SIM_01_V08",
+      "title": "SIMULADO 01 — V08 — CORPUS FUNDATEC",
+      "subtitle": "CP 01 — ARQUITETO",
+      "version": "SIMULADO 01 — V08 — CORPUS FUNDATEC",
+      "board": "FUNDATEC",
+      "questions": 60,
+      "durationMinutes": 210,
+      "accent": "coral",
+      "href": "simulados/porto-alegre/Simulado_DEMHAB_Arquiteto_Fundatec_01_V08.html",
+      "filename": "Simulado_DEMHAB_Arquiteto_Fundatec_01_V08.html",
+      "source": "bundled",
+      "status": "active"
+    },
+    {
+      "id": "demhab-arq-sim-02-v08",
+      "courseId": "porto-alegre",
+      "code": "DEMHAB_CP01_ARQ_FUNDATEC_SIM_02_V08",
+      "title": "SIMULADO 02 — V08 — CORPUS FUNDATEC",
+      "subtitle": "CP 01 — ARQUITETO",
+      "version": "SIMULADO 02 — V08 — CORPUS FUNDATEC",
+      "board": "FUNDATEC",
+      "questions": 60,
+      "durationMinutes": 210,
+      "accent": "coral",
+      "href": "simulados/porto-alegre/Simulado_DEMHAB_Arquiteto_Fundatec_02_V08.html",
+      "filename": "Simulado_DEMHAB_Arquiteto_Fundatec_02_V08.html",
+      "source": "bundled",
+      "status": "active"
+    },
+    {
+      "id": "demhab-arq-sim-03-v08",
+      "courseId": "porto-alegre",
+      "code": "DEMHAB_CP01_ARQ_FUNDATEC_SIM_03_V08",
+      "title": "SIMULADO 03 — V08 — CORPUS FUNDATEC",
+      "subtitle": "CP 01 — ARQUITETO",
+      "version": "SIMULADO 03 — V08 — CORPUS FUNDATEC",
+      "board": "FUNDATEC",
+      "questions": 60,
+      "durationMinutes": 210,
+      "accent": "coral",
+      "href": "simulados/porto-alegre/Simulado_DEMHAB_Arquiteto_Fundatec_03_V08.html",
+      "filename": "Simulado_DEMHAB_Arquiteto_Fundatec_03_V08.html",
+      "source": "bundled",
+      "status": "active"
+    }
+  ],
   "generated": "2026-09-28"
 }
