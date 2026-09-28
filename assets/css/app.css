@@ -1155,3 +1155,84 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #progressInfo>.empty:before{
   background-image:url('../brand/mascot/mascote-ideia.png?v=13.1.0');
 }
+
+
+/* ========================================
+   V13.1.2 · COR AUTOMÁTICA DAS CAPAS · V2
+   ======================================== */
+.map-card.has-cover{
+  border-color:color-mix(in srgb,var(--cover-accent) 14%,rgba(255,255,255,.095));
+}
+.map-card.has-cover .map-code{
+  position:relative;
+  z-index:6;
+  width:max-content;
+  min-width:44px;
+  height:36px;
+  margin-top:12px;
+  padding:0 10px;
+  border-radius:10px;
+  border-color:color-mix(in srgb,var(--cover-accent) 52%,rgba(255,255,255,.10));
+  background:linear-gradient(180deg,color-mix(in srgb,var(--cover-accent) 16%,#111318),#0a0c0f);
+  color:color-mix(in srgb,var(--cover-accent) 70%,#fff);
+  box-shadow:0 8px 22px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.06);
+  font-size:10.5px;
+  letter-spacing:.02em;
+}
+.map-card.has-cover .meta .chip:first-child{
+  border-color:color-mix(in srgb,var(--cover-accent) 28%,rgba(255,255,255,.08));
+  background:color-mix(in srgb,var(--cover-accent) 7%,rgba(11,13,16,.92));
+  color:color-mix(in srgb,var(--cover-accent) 58%,#d9dbe0);
+}
+.map-card.has-cover .map-progress-mini .progress-line b{
+  color:color-mix(in srgb,var(--cover-accent) 74%,#fff);
+  font-size:12px;
+}
+.map-card.has-cover .map-progress-mini .progress-track>span{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--cover-accent) 68%,#111318),color-mix(in srgb,var(--cover-accent) 88%,#fff));
+  box-shadow:0 0 14px color-mix(in srgb,var(--cover-accent) 20%,transparent);
+}
+.map-card.has-cover .foot span:last-child{
+  color:color-mix(in srgb,var(--cover-accent) 62%,#e2e4e8);
+  font-weight:800;
+}
+.map-card.has-cover::after{
+  content:"";
+  position:absolute;
+  left:14%;
+  right:14%;
+  top:-22px;
+  height:54px;
+  z-index:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center,color-mix(in srgb,var(--cover-accent) 24%,transparent),transparent 70%);
+  filter:blur(15px);
+  opacity:.60;
+}
+
+/* Lista continua sem depender da imagem escondida. */
+.map-list .map-card.has-cover{
+  border-color:rgba(255,255,255,.105);
+}
+.map-list .map-card.has-cover::after{
+  display:none;
+}
+.map-list .map-card.has-cover .map-code{
+  border-color:color-mix(in srgb,var(--accent,#c3aa84) 52%,rgba(255,255,255,.10));
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent,#c3aa84) 16%,#111318),#0a0c0f);
+  color:color-mix(in srgb,var(--accent,#c3aa84) 70%,#fff);
+}
+.map-list .map-card.has-cover .meta .chip:first-child{
+  border-color:color-mix(in srgb,var(--accent,#c3aa84) 26%,rgba(255,255,255,.08));
+  background:color-mix(in srgb,var(--accent,#c3aa84) 6%,rgba(11,13,16,.92));
+  color:color-mix(in srgb,var(--accent,#c3aa84) 54%,#d9dbe0);
+}
+.map-list .map-card.has-cover .foot span:last-child{
+  color:color-mix(in srgb,var(--accent,#c3aa84) 58%,#e2e4e8);
+}
+@media(hover:hover){
+  .map-list .map-card.has-cover:hover{
+    border-color:color-mix(in srgb,var(--accent,#c3aa84) 46%,rgba(255,255,255,.13));
+    box-shadow:0 24px 54px rgba(0,0,0,.52),0 0 0 1px color-mix(in srgb,var(--accent,#c3aa84) 9%,transparent),inset 0 1px rgba(255,255,255,.045);
+  }
+}
