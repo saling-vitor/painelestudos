@@ -31,32 +31,62 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Probe Icons8 SF Black Filled SVG download
+      - name: Fetch Icons8 SF Black Filled UI icons
         shell: bash
         run: |
-          set -euxo pipefail
-          mkdir -p /tmp/icons8-probe
-          urls=(
-            "https://img.icons8.com/sf-black-filled/100/home.svg"
-            "https://img.icons8.com/?size=100&id=qBlNlefkEJPq&format=svg&color=000000"
-            "https://img.icons8.com/sf-black-filled/100/home.png"
-          )
-          n=0
-          for url in "${urls[@]}"; do
-            n=$((n+1))
-            curl -L --fail --silent --show-error -D "/tmp/icons8-probe/headers-${n}.txt" "$url" -o "/tmp/icons8-probe/body-${n}" || true
-            file "/tmp/icons8-probe/body-${n}" || true
-            head -c 200 "/tmp/icons8-probe/body-${n}" || true
-            printf '\n' || true
-          done
-          curl -L --fail --silent --show-error "https://icons8.com/icon/qBlNlefkEJPq/home" -o /tmp/icons8-probe/home-page.html || true
-          grep -Eo 'https?[^"'"'"' ]+(svg|png|format=svg)[^"'"'"' ]*' /tmp/icons8-probe/home-page.html | head -100 > /tmp/icons8-probe/urls.txt || true
-          cat /tmp/icons8-probe/urls.txt || true
-      - name: Upload Icons8 probe
+          set -euo pipefail
+          out="/tmp/icons8-sf-black-filled"
+          mkdir -p "$out"
+          fetch_icon() {
+            key="$1"; shift
+            for slug in "$@"; do
+              url="https://img.icons8.com/sf-black-filled/100/${slug}.png"
+              if curl -L --fail --silent --show-error "$url" -o "$out/${key}.png.tmp"; then
+                if file "$out/${key}.png.tmp" | grep -q "PNG image data"; then
+                  mv "$out/${key}.png.tmp" "$out/${key}.png"
+                  printf '%s\t%s\n' "$key" "$url" >> "$out-sources.tsv"
+                  return 0
+                fi
+              fi
+            done
+            echo "Missing icon: $key" >&2
+            return 1
+          }
+          fetch_icon home home house
+          fetch_icon courses books book-shelf bookshelf
+          fetch_icon maps mind-map flow-chart network
+          fetch_icon progress combo-chart bar-chart statistics
+          fetch_icon settings settings gears
+          fetch_icon search search
+          fetch_icon download download downloads
+          fetch_icon sync synchronize cloud-sync sync
+          fetch_icon plus plus
+          fetch_icon upload upload
+          fetch_icon chevron-right chevron-right right
+          fetch_icon chevron-left chevron-left left
+          fetch_icon document document file
+          fetch_icon manage tune sliders settings
+          fetch_icon star star
+          fetch_icon grid grid
+          fetch_icon list list
+          fetch_icon close multiply close
+          fetch_icon trash trash delete
+          fetch_icon archive archive box
+          fetch_icon admin toolbox wrench
+          fetch_icon cloud cloud
+          fetch_icon user user male-user
+          fetch_icon warning warning warning-shield error
+          fetch_icon success checkmark ok check-mark
+          fetch_icon calendar calendar tear-off-calendar
+          fetch_icon more more menu-2 ellipsis
+          fetch_icon device laptop macbook workstation computer
+          cp "$out-sources.tsv" "$out/_sources.tsv"
+          ls -lah "$out"
+      - name: Upload Icons8 SF Black Filled icons
         uses: actions/upload-artifact@v4
         with:
-          name: icons8-probe
-          path: /tmp/icons8-probe
+          name: icons8-sf-black-filled
+          path: /tmp/icons8-sf-black-filled
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
