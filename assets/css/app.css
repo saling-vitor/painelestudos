@@ -519,7 +519,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
    ======================================== */
 :root{--brand-coral:#FF6B6B}
 .icon-simulations{--ui-icon:url("../ui-icons/sf-black-filled/simulations.png")}
-.nav-btn[data-nav="simulations"]{--nav-accent:var(--brand-coral)}
+.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:var(--brand-coral)}
 .simulations-head{align-items:center}
 .simulations-head .primary{border-color:color-mix(in srgb,var(--brand-coral) 34%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--brand-coral) 16%,transparent),color-mix(in srgb,var(--brand-coral) 6%,transparent));color:color-mix(in srgb,var(--brand-coral) 78%,white)}
 .simulation-toolbar{display:grid;grid-template-columns:minmax(240px,1fr) minmax(180px,.42fr) minmax(160px,.34fr);gap:10px;margin:0 0 14px}
@@ -933,6 +933,47 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   }
   .sync-panel .admin-actions button{
     width:100%;
+  }
+}
+
+/* ========================================
+   V13.0.7 · IPAD · SIMULADOS NA BOTTOM NAV
+   ======================================== */
+.bottom-nav-label{
+  white-space:nowrap;
+}
+/* A regra atual ainda mantém a bottom-nav até 820px.
+   O novo atalho fica restrito ao intervalo solicitado para iPad compacto. */
+.bottom-nav-simulations{
+  display:none;
+}
+@media (min-width:481px) and (max-width:760px){
+  .bottom-nav{
+    grid-template-columns:repeat(6,minmax(0,1fr));
+  }
+  .bottom-nav-simulations{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .bottom-nav button{
+    min-width:0;
+    padding-inline:3px;
+  }
+  .bottom-nav button>.ui-icon{
+    --icon-size:20px;
+  }
+  .bottom-nav .bottom-nav-label{
+    font-size:9px;
+  }
+}
+@media(max-width:480px){
+  .bottom-nav-simulations{
+    display:none !important;
+  }
+  .bottom-nav{
+    grid-template-columns:repeat(5,minmax(0,1fr));
   }
 }
 
