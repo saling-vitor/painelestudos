@@ -1,58 +1,35 @@
-# MEUS MAPAS — Kit de marca final
+# Identidade oficial — Meus Mapas
 
-Este pacote foi gerado a partir da **prancha final aprovada** fornecida em 27/09/2026. A prancha original está em `source/identity-final-board.png` e os elementos auxiliares da própria prancha (rótulos, paleta, divisórias e fundo) **não fazem parte dos logos entregues**.
+O mascote oficial é o fantasma leitor com livro coral. O logotipo usa **MEUS** em creme, **MAPAS** em coral e a assinatura **ESTUDO INTELIGENTE**. O fundo principal da marca é carvão escuro.
 
-## Masters
+## Cores oficiais do kit
 
-- `source/logo-horizontal-master.png` — lockup oficial com mascote, “MEUS MAPAS” e “ESTUDO INTELIGENTE”, fundo transparente.
-- `source/logo-sem-slogan-master.png` — lockup oficial sem slogan, fundo transparente.
-- `source/mascote-master.png` — mascote isolado em alta resolução e com transparência.
-- `source/marca-simplificada-master.png` — versão reduzida isolada, com transparência.
-- `source/app-icon-master.png` — master **1024×1024 px** do ícone aprovado do app.
-
-> A fonte aprovada é raster. Os masters preservam o desenho visível da prancha e foram ampliados uma única vez com Lanczos; não foi redesenhado nem reinterpretado nenhum elemento.
-
-## Qual arquivo usar
-
-| Situação | Arquivo |
+| Cor | Valor |
 |---|---|
-| Cabeçalho / site em fundo escuro | `logo/logo-horizontal.png` |
-| Logo completo | `logo/logo-principal.png` |
-| Cabeçalho compacto | `logo/logo-sem-slogan.png` |
-| Fundo claro | `logo/logo-para-fundo-claro-placa-escura.png` (mantém a paleta oficial sem recolorir a marca) |
-| Mascote isolado | `mascot/mascote.png` |
-| Marca reduzida | `logo/marca-simplificada.png` |
-| Ícone principal PWA | `app-icons/icon-192.png` e `app-icons/icon-512.png` |
-| Android maskable | `app-icons/icon-maskable-192.png` e `icon-maskable-512.png` |
-| iPhone/iPad | `app-icons/apple-touch-icon.png` |
-| Favicon | `favicon/favicon.ico` ou PNGs específicos |
-| Open Graph / link compartilhado | `social/og-image.png` |
-| Perfil / avatar | `social/social-profile.png` |
-| Splash | arquivos em `splash/` |
+| Coral | `#FF6B6B` |
+| Creme / off-white | `#FFF9F1` |
+| Pêssego | `#FFC8A4` |
+| Carvão | `#1F1F1F` |
 
-## Integração PWA
+O `theme_color` da interface permanece `#030406`. As cores próprias das seções da interface não derivam desta paleta.
 
-O `manifest.webmanifest` da raiz preserva as configurações atuais do projeto (nome, descrição, `start_url`, `scope`, `display`, orientação, `background_color` e `theme_color`) e troca apenas as referências de ícones para `assets/brand/app-icons/`.
+## Masters aprovados
 
-Use `html-head-snippet.html` para favicon, Apple Touch Icon, manifest, Open Graph e Twitter Card. O projeto atual ainda referencia `assets/icons/...` em `index.html` e no array `OPTIONAL` do `sw.js`; veja `integration/` para as substituições pontuais sem mexer no restante do PWA.
+- `source/identity-final-board.png` — prancha oficial.
+- `source/logo-horizontal-master.png` — logo com assinatura.
+- `source/logo-sem-slogan-master.png` — logo sem assinatura.
+- `source/mascote-master.png` — fantasma leitor.
+- `source/marca-simplificada-master.png` — fantasma e livro em composição compacta.
+- `source/app-icon-master.png` — ícone quadrado original 1024 × 1024.
+- `source/app-icon-maskable-master.png` — master original com área segura.
 
-## Regeneração
+## Derivados e uso
 
-Na raiz do projeto:
+- `logo/`: logo horizontal para sidebar, versões principal, sem assinatura, compacta e placa escura para fundo claro. Os PNGs de interface são redimensionados diretamente dos masters para reduzir o carregamento.
+- `mascot/`: fantasma com livro nos tamanhos e fundos necessários.
+- `app-icons/`: PWA 192 e 512, variantes maskable com área segura, Apple Touch Icon 180 × 180 e tamanhos auxiliares. Os masters originais também estão preservados nesta pasta.
+- `favicon/`: marca compacta nos PNGs 16, 32, 48, 64, 96 e 128, além do `.ico`.
+- `social/`: Open Graph 1200 × 630 e imagens quadradas 1080 × 1080.
+- `splash/`: iPhone, iPad, desktop e fallback, todos da nova identidade.
 
-```bash
-python tools/generate-brand-assets.py
-```
-
-Requisito: `Pillow`. O script sempre redimensiona a partir dos masters, nunca em cadeia a partir de ícones menores.
-
-## Paleta aprovada
-
-- Preto: `#121314`
-- Creme: `#FFF7E6`
-- Amarelo: `#F4C95D`
-- Bege: `#E9D7B3`
-- Dourado: `#C9A574`
-- Marrom: `#3A342B`
-
-O `theme-color` do PWA permanece `#030406` porque esse é o valor já utilizado no projeto atual e foi preservado por segurança de integração.
+Os derivados vieram do kit oficial aprovado; nenhum elemento foi refeito a partir de screenshot nesta integração. Não redesenhar, inclinar, trocar a tipografia, alterar proporções, recolorir nem separar fantasma e livro em composições arbitrárias. As 14 capas de mapas V12.8 têm identidade editorial própria e permanecem intactas.
