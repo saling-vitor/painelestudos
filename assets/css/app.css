@@ -979,3 +979,47 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   }
 }
 
+/* ========================================
+   V13.0.10 · COR CROMÁTICA DOMINANTE DAS CAPAS
+   ======================================== */
+.map-card.has-cover{
+  --cover-accent:var(--accent,#c3aa84);
+}
+.map-card.has-cover:before{
+  z-index:5;
+  left:0;
+  top:0;
+  bottom:auto;
+  width:100%;
+  height:3px;
+  pointer-events:none;
+  background:linear-gradient(
+    90deg,
+    color-mix(in srgb,var(--cover-accent) 55%,transparent) 0%,
+    var(--cover-accent) 24%,
+    var(--cover-accent) 76%,
+    color-mix(in srgb,var(--cover-accent) 55%,transparent) 100%
+  );
+  opacity:.90;
+  box-shadow:0 0 12px color-mix(in srgb,var(--cover-accent) 22%,transparent);
+}
+@media(hover:hover){
+  .map-card.has-cover:hover{
+    border-color:color-mix(in srgb,var(--cover-accent) 32%,rgba(255,255,255,.13));
+    box-shadow:
+      0 24px 54px rgba(0,0,0,.52),
+      0 0 0 1px color-mix(in srgb,var(--cover-accent) 7%,transparent),
+      inset 0 1px rgba(255,255,255,.045);
+  }
+}
+.map-list .map-card.has-cover:before{
+  left:0;
+  top:0;
+  bottom:0;
+  width:3px;
+  height:auto;
+  background:var(--accent,#c3aa84);
+  box-shadow:none;
+  opacity:.75;
+}
+
