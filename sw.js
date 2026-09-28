@@ -1,5 +1,5 @@
-const V='study-pwa-v12-1';
-const CORE=['./','./index.html','./manifest.webmanifest','./assets/css/app.css?v=12.1','./assets/js/config.js?v=12.1','./assets/js/cloud-core.js?v=12.1','./assets/js/app.js?v=12.1','./assets/study-collage.jpg','./data/catalog.json','./reader.html','./offline.html'];
+const V='study-pwa-v12-2';
+const CORE=['./','./index.html','./manifest.webmanifest','./assets/css/app.css?v=12.2','./assets/js/config.js?v=12.2','./assets/js/cloud-core.js?v=12.2','./assets/js/app.js?v=12.2','./assets/study-collage.jpg','./data/catalog.json','./reader.html','./offline.html'];
 const OPTIONAL=['./assets/icons/icon-192.png','./assets/icons/icon-512.png'];
 const sameOrigin=request=>new URL(request.url).origin===self.location.origin;
 const absolute=path=>new URL(path,self.registration.scope).href;
