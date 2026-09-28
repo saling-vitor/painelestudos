@@ -49,38 +49,39 @@ jobs:
                 fi
               fi
             done
-            echo "Missing icon: $key" >&2
+            echo "$key" | tee -a "$out-missing.txt" >&2
             return 1
           }
-          fetch_icon home home house
-          fetch_icon courses books book-shelf bookshelf
-          fetch_icon maps mind-map flow-chart network
-          fetch_icon progress combo-chart bar-chart statistics
-          fetch_icon settings settings gears
-          fetch_icon search search
-          fetch_icon download download downloads
-          fetch_icon sync synchronize cloud-sync sync
-          fetch_icon plus plus
-          fetch_icon upload upload
-          fetch_icon chevron-right chevron-right right
-          fetch_icon chevron-left chevron-left left
-          fetch_icon document document file
-          fetch_icon manage tune sliders settings
-          fetch_icon star star
-          fetch_icon grid grid
-          fetch_icon list list
-          fetch_icon close multiply close
-          fetch_icon trash trash delete
-          fetch_icon archive archive box
-          fetch_icon admin toolbox wrench
-          fetch_icon cloud cloud
-          fetch_icon user user male-user
-          fetch_icon warning warning warning-shield error
-          fetch_icon success checkmark ok check-mark
-          fetch_icon calendar calendar tear-off-calendar
-          fetch_icon more more menu-2 ellipsis
-          fetch_icon device laptop macbook workstation computer
-          cp "$out-sources.tsv" "$out/_sources.tsv"
+          fetch_icon home home house || true
+          fetch_icon courses books book-shelf bookshelf || true
+          fetch_icon maps mind-map flow-chart network || true
+          fetch_icon progress combo-chart bar-chart statistics || true
+          fetch_icon settings settings gears || true
+          fetch_icon search search magnifier magnifying-glass search-more zoom-in search-property || true
+          fetch_icon download download downloads || true
+          fetch_icon sync synchronize cloud-sync sync refresh available-updates process || true
+          fetch_icon plus plus || true
+          fetch_icon upload upload || true
+          fetch_icon chevron-right chevron-right right || true
+          fetch_icon chevron-left chevron-left left || true
+          fetch_icon document document file || true
+          fetch_icon manage tune sliders settings || true
+          fetch_icon star star || true
+          fetch_icon grid grid four-squares || true
+          fetch_icon list list || true
+          fetch_icon close multiply close close-window cancel || true
+          fetch_icon trash trash delete || true
+          fetch_icon archive archive box || true
+          fetch_icon admin toolbox wrench || true
+          fetch_icon cloud cloud || true
+          fetch_icon user user male-user user-menu-male || true
+          fetch_icon warning warning warning-shield error high-priority || true
+          fetch_icon success checkmark ok check-mark approval || true
+          fetch_icon calendar calendar tear-off-calendar || true
+          fetch_icon more more more-details menu-vertical content || true
+          fetch_icon device laptop macbook workstation computer || true
+          test -f "$out-sources.tsv" && cp "$out-sources.tsv" "$out/_sources.tsv" || true
+          test -f "$out-missing.txt" && cp "$out-missing.txt" "$out/_missing.txt" || true
           ls -lah "$out"
       - name: Upload Icons8 SF Black Filled icons
         uses: actions/upload-artifact@v4
