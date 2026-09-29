@@ -32,7 +32,7 @@
 <body>
 <div class="loading"><img id="loadingCover" class="loading-cover" alt="" hidden><div class="loading-shade"></div><div class="loading-card"><span class="loading-code" id="loadingCode"></span><b id="loadingTitle">Abrindo mapa</b><span id="status">Preparando o documento…</span><div class="loading-line"><span></span></div></div></div>
 <script src="assets/js/config.js?v=12.7"></script>
-<script src="assets/js/cloud-core.js?v=13.1.15"></script><script src="assets/js/map-cloud-bridge.js?v=14.3.0"></script>
+<script src="assets/js/cloud-core.js?v=13.1.15"></script><script src="assets/js/map-cloud-bridge.js?v=14.4.0"></script>
 <script>
 (()=>{'use strict';
 const status=document.getElementById('status');
@@ -110,7 +110,7 @@ async function load(){
    document.write(html);
    document.close();
  }catch(e){
-   document.body.innerHTML='<div class="loading"><div class="loading-shade"></div><div class="loading-card"><b>Não foi possível abrir o mapa</b><span>'+String(e?.message||e).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</span></div></div>';
+   document.body.innerHTML='<div class="loading"><div class="loading-shade"></div><div class="loading-card"><b>Falha ao abrir mapa</b><span>'+String(e?.message||e).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</span><button type="button" onclick="location.reload()" style="margin-top:8px;min-height:36px;padding:0 14px;border:1px solid rgba(255,255,255,.14);border-radius:9px;background:#15181d;color:#e5e6e8;font:700 11px system-ui;cursor:pointer">Tentar novamente</button></div></div>';
  }
 }
 load();
