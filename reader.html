@@ -32,7 +32,7 @@
 <body>
 <div class="loading"><img id="loadingCover" class="loading-cover" alt="" hidden><div class="loading-shade"></div><div class="loading-card"><span class="loading-code" id="loadingCode"></span><b id="loadingTitle">Abrindo mapa</b><span id="status">Preparando o documento…</span><div class="loading-line"><span></span></div></div></div>
 <script src="assets/js/config.js?v=12.7"></script>
-<script src="assets/js/cloud-core.js?v=13.1.15"></script><script src="assets/js/map-cloud-bridge.js?v=14.4.0"></script>
+<script src="assets/js/cloud-core.js?v=13.1.15"></script><script src="assets/js/map-cloud-bridge.js?v=15.0.0"></script>
 <script>
 (()=>{'use strict';
 const status=document.getElementById('status');
@@ -43,6 +43,7 @@ const href=p.get('href')||'';
 const title=p.get('title')||'';
 const code=p.get('code')||'';
 const cover=p.get('cover')||'';
+const topic=p.get('topic')||'';
 const titleEl=document.getElementById('loadingTitle');
 const codeEl=document.getElementById('loadingCode');
 const coverEl=document.getElementById('loadingCover');
@@ -53,6 +54,8 @@ const slug=v=>String(v||'').trim().toLocaleLowerCase('pt-BR').normalize('NFD').r
 const attr=(tag,name)=>{const q=new RegExp('\\b'+name+'\\s*=\\s*(["\\\'])(.*?)\\1','i').exec(tag);if(q)return q[2];const u=new RegExp('\\b'+name+'\\s*=\\s*([^\\s>]+)','i').exec(tag);return u?u[1]:''};
 const meta=(html,name)=>{const tags=String(html).match(/<meta\b[^>]*>/gi)||[];for(const tag of tags){if(String(attr(tag,'name')).toLowerCase()===String(name).toLowerCase())return attr(tag,'content')}return''};
 const stripAppBridge=html=>String(html).replace(/<script\s+src=["'](?:\.\.\/)*assets\/js\/(?:config|cloud-core|map-cloud-bridge)\.js(?:\?[^"']*)?["']><\/script>\s*/gi,'');
+const readerEnhancement=target=>{const safe=JSON.stringify(String(target||''));return `<style id="study-reader-enhancement-style">.study-reader-toolbar{transition:padding .18s ease,opacity .18s ease,transform .18s ease}.study-reader-toolbar.study-reader-toolbar-compact{padding-top:4px!important;padding-bottom:4px!important;gap:4px!important;opacity:.97}.study-reader-toolbar.study-reader-toolbar-compact button,.study-reader-toolbar.study-reader-toolbar-compact a[role="button"],.study-reader-toolbar.study-reader-toolbar-compact [role="button"]{min-height:30px!important;padding-top:4px!important;padding-bottom:4px!important;font-size:10px!important}.study-reader-toolbar.study-reader-toolbar-compact input,.study-reader-toolbar.study-reader-toolbar-compact select{min-height:30px!important;font-size:10px!important}.study-reader-topic-target{outline:2px solid rgba(216,197,158,.55)!important;outline-offset:5px!important;border-radius:8px}</style><script>(()=>{'use strict';document.documentElement.dataset.readerEnhanced='1';const target=${safe};const candidates=()=>{const selectors=['[data-study-toolbar]','.study-toolbar','.toolbar','.study-actions','.study-controls','.top-controls','.controls'];const nodes=[];for(const selector of selectors)document.querySelectorAll(selector).forEach(node=>{if(!nodes.includes(node))nodes.push(node)});return nodes};const findToolbar=()=>candidates().find(node=>/Busca|Expandir|Recolher|Alta incid|Véspera|Fila|Estudo/i.test(node.textContent||'')&&node.querySelector('button,input,select,[role="button"]'))||null;const revealTopic=()=>{if(!target)return;let node=null;try{node=document.querySelector('[data-topic-id="'+CSS.escape(target)+'"]')}catch{}if(!node)return;const details=node.matches('details')?node:node.closest('details');if(details)details.open=true;node.classList.add('study-reader-topic-target');setTimeout(()=>node.scrollIntoView({behavior:'smooth',block:'start'}),120);setTimeout(()=>node.classList.remove('study-reader-topic-target'),2600)};const init=()=>{const toolbar=findToolbar();if(toolbar){toolbar.classList.add('study-reader-toolbar');let lastY=window.scrollY||document.documentElement.scrollTop||0,ticking=false;const update=()=>{const y=window.scrollY||document.documentElement.scrollTop||0;if(y>120&&y>lastY+1)toolbar.classList.add('study-reader-toolbar-compact');else if(y<80||y<lastY-7)toolbar.classList.remove('study-reader-toolbar-compact');lastY=y;ticking=false};addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});toolbar.addEventListener('pointerenter',()=>toolbar.classList.remove('study-reader-toolbar-compact'));toolbar.addEventListener('focusin',()=>toolbar.classList.remove('study-reader-toolbar-compact'))}revealTopic()};if(document.readyState==='loading')addEventListener('DOMContentLoaded',init,{once:true});else setTimeout(init,0)})();<\/script>`};
+const enhanceHtml=html=>{const patch=readerEnhancement(topic);return /<\/body>/i.test(html)?html.replace(/<\/body>/i,patch+'</body>'):html+patch};
 async function loadBundledHtml(href){
  const absoluteUrl=new URL(href,location.href).href;
 
@@ -106,6 +109,7 @@ async function load(){
    }
    status.textContent='Iniciando o mapa…';
    html=stripAppBridge(html);
+   html=enhanceHtml(html);
    document.open();
    document.write(html);
    document.close();
