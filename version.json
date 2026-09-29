@@ -1,12 +1,13 @@
 {
-  "version": "15.0.4",
-  "label": "V15.0.4",
-  "releasedAt": "2026-09-29T19:55:00-03:00",
-  "notes": "Removido o degradê escuro que aparecia como um bloco preto no lado direito da linha de filtros do curso.",
+  "version": "15.0.5",
+  "label": "V15.0.5",
+  "releasedAt": "2026-09-29T20:05:00-03:00",
+  "notes": "Refinamento dos cards de simulados: informações mais coesas, menos divisões visuais e rodapé mais leve.",
   "showWhatsNew": true,
   "highlights": [
-    "Removido o bloco escuro ao lado dos filtros de situação",
-    "A linha de filtros continua rolável quando necessário",
-    "O indicador visual de overflow da tela Progresso foi preservado"
+    "Removida a linha divisória forte do rodapé dos simulados",
+    "Código, status, título e informações ganharam hierarquia e espaçamento mais consistentes",
+    "Questões, duração e concurso agora usam chips informativos mais discretos",
+    "Origem do simulado ganhou indicador visual sutil"
   ]
 }

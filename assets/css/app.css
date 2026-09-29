@@ -2066,3 +2066,27 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* V15.0.4 · remove artefato escuro ao fim dos filtros do curso */
 .course-study-filter-wrap::after{content:none!important;display:none!important;background:none!important}
+
+/* =========================================================
+   V15.0.5 · CARDS DE SIMULADO MAIS HARMÔNICOS
+   ========================================================= */
+.simulation-card-body{min-height:204px;padding:15px 16px 16px}
+.simulation-card-top{gap:12px;min-height:16px}
+.simulation-code,.simulation-board{line-height:1.35}
+.simulation-study-status{margin-top:7px;min-height:22px;padding-inline:7px}
+.simulation-card h3{margin-top:14px;font-size:17px;line-height:1.2}
+.simulation-subtitle{margin-top:5px;color:#8d929a;font-size:10.5px}
+.simulation-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:13px}
+.simulation-meta .simulation-meta-item{display:inline-flex;align-items:center;min-height:24px;padding:4px 7px;border:1px solid rgba(255,255,255,.055);border-radius:5px!important;background:rgba(255,255,255,.018);color:#858b94;font:700 8px var(--mono);letter-spacing:.015em}
+.simulation-meta-course{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.simulation-card-footer{min-height:38px;margin-top:15px;padding-top:0;border-top:0}
+.simulation-source{display:inline-flex;align-items:center;gap:7px;color:#6f757e;font-size:9px;white-space:nowrap}
+.simulation-source::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:#6d8298;box-shadow:0 0 0 3px rgba(109,130,152,.07)}
+.simulation-source-bundled::before{background:#71c589;box-shadow:0 0 0 3px rgba(113,197,137,.07)}
+.simulation-source-cloud::before{background:var(--brand-coral);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand-coral) 10%,transparent)}
+.simulation-card-actions{gap:6px}
+.simulation-card-actions .primary,.simulation-card-actions .secondary{min-height:36px}
+.simulation-card-actions .primary{padding-inline:13px}
+.simulation-result-summary.simulation-analytics-compact{margin-top:13px}
+.simulation-card .simulation-trend{margin-top:8px}
+@media(max-width:520px){.simulation-card-body{padding:14px}.simulation-card-footer{align-items:stretch;flex-direction:column;gap:10px}.simulation-card-actions{justify-content:stretch}.simulation-card-actions .primary,.simulation-card-actions .secondary{flex:1}}
