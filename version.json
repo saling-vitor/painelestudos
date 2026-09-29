@@ -1,13 +1,13 @@
 {
-  "version": "15.0.2",
-  "label": "V15.0.2",
-  "releasedAt": "2026-09-29T19:24:00-03:00",
-  "notes": "Capas personalizadas passam a ser restauradas do cache local antes da primeira renderização, evitando o atraso visível após F5 ou ao entrar no curso.",
+  "version": "15.0.3",
+  "label": "V15.0.3",
+  "releasedAt": "2026-09-29T19:42:00-03:00",
+  "notes": "Categorias de conteúdo ampliadas para atender editais com disciplinas diferentes, mantendo na tela apenas as categorias realmente usadas em cada curso.",
   "showWhatsNew": true,
   "highlights": [
-    "Capas personalizadas aparecem imediatamente após recarregar",
-    "Cache local é consultado antes da rede para capas já salvas",
-    "Hidratação das capas ocorre em paralelo",
-    "Capas dos cards carregam com prioridade imediata"
+    "Novas categorias para lógica, informática e conhecimentos gerais",
+    "Categorias específicas para BIM, obras, instalações, estruturas e sustentabilidade",
+    "Filtros mostram somente categorias que existem no edital atual",
+    "Categorias novas aparecem em ordem consistente e categorias personalizadas continuam aceitas"
   ]
 }

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.0.2'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.0.3'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -15,10 +15,10 @@ test('regras de revisão programada usam os atrasos definidos',async({page})=>{c
 test('restore point é reversível e mantém apenas os cinco mais recentes',async({page})=>{const result=await page.evaluate(async()=>{const key='mindmap_state::e2e-restore',modified='studyapp.modified::'+key;localStorage.setItem(key,'antes');localStorage.setItem(modified,new Date().toISOString());const point=await createRestorePoint('e2e','Teste reversível');localStorage.setItem(key,'depois');localStorage.setItem(modified,new Date(Date.now()+1000).toISOString());await restorePointNow(point.id);for(let i=0;i<6;i++)await createRestorePoint('e2e-limit','Ponto '+i);const points=await listRestorePoints();return{value:localStorage.getItem(key),count:points.length,labels:points.map(p=>p.label)}});expect(result.value).toBe('antes');expect(result.count).toBeLessThanOrEqual(5);expect(result.labels.length).toBeGreaterThan(0)});
 
 test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page})=>{await page.goto('/#simulations');const key=await page.evaluate(()=>{const simulation=combinedSimulations()[0],key=simulation._key||simulationKey(simulation),now=Date.now();state.simAttempts[key]=[{score:80,correct:8,total:10,durationSeconds:900,finishedAt:new Date(now).toISOString(),sections:{Português:{correct:8,total:10}}},{score:70,correct:7,total:10,durationSeconds:840,finishedAt:new Date(now-60000).toISOString()},{score:60,correct:6,total:10,durationSeconds:780,finishedAt:new Date(now-120000).toISOString()}];state.simResults[key]=state.simAttempts[key][0];localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults));renderSimulations();return key});const analytics=await page.evaluate(key=>simulationAnalytics(key),key);expect(analytics.count).toBe(3);expect(analytics.latest.score).toBe(80);expect(analytics.best).toBe(80);expect(analytics.average).toBe(70);const card=page.locator('[data-simulation-history="'+key+'"]').locator('xpath=ancestor::article');await expect(card).toContainText('Última');await expect(card).toContainText('80%');await expect(card).toContainText('Média');await expect(card).toContainText('70%');await card.locator('[data-simulation-history]').click();await expect(page.locator('#simulationHistoryModal')).toHaveClass(/open/);await expect(page.locator('#simulationAnalyticsSummary')).toContainText('Tempo médio');await expect(page.locator('#simulationAnalyticsTrend span')).toHaveCount(3);const heights=await page.locator('#simulationAnalyticsTrend span').evaluateAll(nodes=>nodes.map(node=>node.style.height));expect(heights).toEqual(['60%','70%','80%']);await expect(page.locator('#simulationAnalyticsSections')).toContainText('Português')});
-test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:'15.0.2',label:'V15.0.2',showWhatsNew:true,highlights:['Capas personalizadas aparecem imediatamente após recarregar','Cache local é consultado antes da rede para capas já salvas','Hidratação das capas ocorre em paralelo','Capas dos cards carregam com prioridade imediata']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Capas personalizadas aparecem imediatamente após recarregar');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe('15.0.2')});
+test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:'15.0.3',label:'V15.0.3',showWhatsNew:true,highlights:['Novas categorias para lógica, informática e conhecimentos gerais','Categorias específicas para BIM, obras, instalações, estruturas e sustentabilidade','Filtros mostram somente categorias que existem no edital atual','Categorias novas aparecem em ordem consistente e categorias personalizadas continuam aceitas']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Novas categorias para lógica, informática e conhecimentos gerais');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe('15.0.3')});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.0.2');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.0.3');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -61,11 +61,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.0.2');
+  expect(result.version).toBe('15.0.3');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.0.2');
+  expect(result.scriptURL).toContain('sw.js?v=15.0.3');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -163,4 +163,46 @@ test('capas personalizadas usam cache local antes da rede',async({page})=>{
   expect(result.changed).toBe(true);
   expect(result.blob).toBe(true);
   expect(result.eager).toBe(true);
+});
+
+test('categorias de conteúdo suportam editais variados',async({page})=>{
+  const result=await page.evaluate(()=>{
+    const synthetic=[
+      {category:'Urbanismo e Habitação'},
+      {category:'Informática'},
+      {category:'Raciocínio Lógico e Matemática'},
+      {category:'Categoria Especial do Edital'},
+      {category:'Português'},
+      {category:'Outros'}
+    ];
+    const importSelect=document.querySelector('#importCategory');
+    populateMapCategorySelect(importSelect,'Informática');
+    return{
+      catalog:[...MAP_CATEGORY_CATALOG],
+      ordered:mapCategoriesFor(synthetic),
+      importValues:[...importSelect.options].map(option=>option.value),
+      selected:importSelect.value,
+      custom:mapCategoryOptions('Categoria Nova').includes('Categoria Nova')
+    };
+  });
+  expect(result.catalog).toContain('Raciocínio Lógico e Matemática');
+  expect(result.catalog).toContain('Informática');
+  expect(result.catalog).toContain('Conhecimentos Gerais e Atualidades');
+  expect(result.catalog).toContain('Projeto, Representação e BIM');
+  expect(result.catalog).toContain('Obras, Gestão e Orçamento');
+  expect(result.catalog).toContain('Instalações e Sistemas Prediais');
+  expect(result.catalog).toContain('Estruturas e Materiais');
+  expect(result.catalog).toContain('Meio Ambiente e Sustentabilidade');
+  expect(result.ordered.slice(0,3)).toEqual(['Português','Raciocínio Lógico e Matemática','Informática']);
+  expect(result.ordered.at(-1)).toBe('Outros');
+  expect(result.importValues).toContain('Patrimônio e Restauro');
+  expect(result.selected).toBe('Informática');
+  expect(result.custom).toBe(true);
+});
+
+test('curso atual continua mostrando apenas categorias realmente usadas',async({page})=>{
+  await page.goto('/#course/porto-alegre');
+  const labels=await page.locator('#categoryRow [data-cat]').allTextContents();
+  expect(labels).toEqual(['Todos','Legislação e Administração','Português','Arquitetura e Tecnologia','Urbanismo e Habitação']);
+  expect(labels).not.toContain('Informática');
 });
