@@ -1847,3 +1847,25 @@ button[hidden]{display:none!important}
 .diagnostic-row:last-child{border-bottom:0}.diagnostic-row span{color:#747a83;font-size:9px}.diagnostic-row strong{overflow:hidden;color:#c9ccd1;font:700 9px var(--mono);text-align:right;text-overflow:ellipsis;white-space:nowrap}.diagnostic-loading{padding:12px;color:#747a83;font-size:9px}
 @media(pointer:coarse){button,.icon-btn,.compact-icon-btn,.category-btn,.course-study-filter,.progress-filter{min-height:44px}.compact-icon-btn{min-width:44px}.readerbar button{min-height:44px}}
 @media(max-width:520px){.diagnostic-row{grid-template-columns:1fr}.diagnostic-row strong{text-align:left;white-space:normal;overflow-wrap:anywhere}}
+
+
+/* ========================================
+   V13.4.0 · MODO FOCO + REVISAR AGORA
+   ======================================== */
+.reader{position:fixed}
+.reader.focus-mode{grid-template-rows:0 minmax(0,1fr)}
+.reader.focus-mode .readerbar{min-height:0;height:0;padding-top:0;padding-bottom:0;border:0;opacity:0;pointer-events:none;overflow:hidden;transform:translateY(-100%)}
+.readerbar{transition:opacity .18s ease,transform .18s ease}
+.reader-focus-exit{position:absolute;top:12px;right:12px;z-index:235;min-height:40px;padding:0 12px;border-radius:999px;background:rgba(8,10,13,.86);backdrop-filter:blur(14px)}
+.reader-focus-exit[hidden]{display:none!important}
+.is-standalone.is-ipad .reader-focus-exit{top:calc(var(--ipad-pwa-reader-top-gap) + 10px)}
+.home-review-section[hidden]{display:none}
+.home-review-section .section-head{align-items:center;padding:15px;border:1px solid rgba(216,197,158,.13);border-radius:14px;background:linear-gradient(145deg,rgba(216,197,158,.045),rgba(8,10,13,.82))}
+.home-review-section p{margin-top:4px;color:#9f8f73;font:700 9px var(--mono)}
+.progress-attention-actions{display:flex;align-items:center;gap:8px}
+.progress-attention-actions>span{color:#777d86;font:700 8px var(--mono);text-transform:uppercase}
+.review-next-banner{position:fixed;right:22px;bottom:24px;z-index:245;display:flex;align-items:center;justify-content:space-between;gap:14px;max-width:420px;padding:12px 13px;border:1px solid rgba(216,197,158,.22);border-radius:13px;background:rgba(11,13,16,.96);box-shadow:0 18px 48px rgba(0,0,0,.52);backdrop-filter:blur(16px)}
+.review-next-banner[hidden]{display:none!important}
+.review-next-banner>div{display:grid;gap:2px;min-width:0}.review-next-banner b{font-size:10px;color:#e7d4ad}.review-next-banner span{font-size:9px;color:#858a92}
+@media(max-width:760px){.progress-attention-head{align-items:flex-start;flex-direction:column}.progress-attention-actions{width:100%;justify-content:space-between}.review-next-banner{left:12px;right:12px;bottom:calc(86px + var(--safe-bottom))}.home-review-section .section-head{align-items:stretch;flex-direction:column}.home-review-section .primary{width:100%}}
+@media(prefers-reduced-motion:reduce){.readerbar{transition:none}}
