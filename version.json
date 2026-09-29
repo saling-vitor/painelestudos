@@ -1,6 +1,6 @@
 {
-  "version": "14.0.0",
-  "label": "V14.0.0",
-  "releasedAt": "2026-09-29T01:23:48.525-03:00",
-  "notes": "Modularização da aplicação, consolidação técnica e congelamento visual."
+  "version": "14.0.1",
+  "label": "V14.0.1",
+  "releasedAt": "2026-09-29T01:33:55.493-03:00",
+  "notes": "Correção dos botões Abrir e Revisar na tela de Progresso."
 }

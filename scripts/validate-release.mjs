@@ -30,6 +30,14 @@ check(index.includes(`app.js?v=${expected}`),'index.html app.js query');
 for(const file of moduleFiles)check(index.includes(file+`?v=${expected}`),'index module '+file);
 check(index.includes(`app.css?v=${expected}`),'index.html app.css query');
 check(allJs.includes(`sw.js?v=${expected}`),'registro sw.js query');
+
+const unsafeDollarForEach=/(?<!\$)\$\([^)]*\)\s*\.forEach\s*\(/g;
+const unsafeDollarMatches=[...allJs.matchAll(unsafeDollarForEach)].map(match=>match[0]);
+if(unsafeDollarMatches.length){
+ fail('Use $$() para coleções antes de .forEach(). Encontrado: '+unsafeDollarMatches.join(' | '));
+}else{
+ ok('Coleções .forEach usam $$() ou querySelectorAll()');
+}
 const cacheToken='study-pwa-v'+expected.replaceAll('.','-');
 check(sw.includes(cacheToken),'cache '+cacheToken);
 const coreMatch=sw.match(/const CORE=\[(.*?)\];/s);
