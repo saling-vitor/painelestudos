@@ -9,7 +9,7 @@ const decode=value=>String(value||'')
  .replace(/&#(x?[0-9a-f]+);/gi,(_,code)=>String.fromCodePoint(code[0].toLowerCase()==='x'?parseInt(code.slice(1),16):parseInt(code,10)))
  .replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,'<').replace(/&gt;/gi,'>')
  .replace(/\s+/g,' ').trim();
-const attr=(source,name)=>source.match(new RegExp('\\b'+name+'=["\\']([^"\\']+)["\\']','i'))?.[1]||'';
+const attr=(source,name)=>{const pattern=name==='class'?/\\bclass=["']([^"']*)["']/i:/\\bdata-topic-id=["']([^"']+)["']/i;return source.match(pattern)?.[1]||'';};
 const classHas=(source,name)=>attr(source,'class').split(/\s+/).includes(name);
 
 function topicItems(map){
