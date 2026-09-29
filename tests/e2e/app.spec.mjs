@@ -44,10 +44,12 @@ test('backup preserva dados locais mais novos e permite restauração completa',
 
 test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
   await page.goto('/#settings');
+  await page.waitForFunction(()=>!window.appUpdateState?.checking);
+  await page.evaluate(()=>checkForAppUpdate({silent:true}));
+  await page.waitForFunction(()=>!window.appUpdateState?.checking);
   const result=await page.evaluate(async()=>{
     if(!('serviceWorker' in navigator))return{supported:false};
     const registration=await navigator.serviceWorker.ready;
-    await checkForAppUpdate({silent:true});
     return{
       supported:true,
       version:APP_VERSION,
