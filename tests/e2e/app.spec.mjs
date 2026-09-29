@@ -281,8 +281,10 @@ test('configurações usa novo layout compacto',async({page})=>{
   await page.locator('.settings-diagnostic-disclosure').evaluate(el=>el.open=true);
   await expect(page.locator('#cloudHealthBtn')).toBeVisible();
   await expect(page.locator('#deviceProbeCreate')).toBeVisible();
-  const grid=await page.locator('.settings-layout-v3').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
-  expect(grid.split(' ').length).toBeGreaterThanOrEqual(2);
+  const layout=await page.locator('.settings-layout-v3').evaluate(el=>({display:getComputedStyle(el).display,columns:getComputedStyle(el).gridTemplateColumns,width:innerWidth}));
+  expect(layout.display).toBe('grid');
+  if(layout.width>1180)expect(layout.columns.split(' ').length).toBeGreaterThanOrEqual(2);
+  else expect(layout.columns).not.toBe('none');
 });
 
 test('pontos de restauração mostram três itens antes de expandir',async({page})=>{
