@@ -19,3 +19,50 @@ test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluat
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
 test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('14.4.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+
+test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
+  const result=await page.evaluate(async()=>{
+    const key='mindmap_state::e2e-backup',modified='studyapp.modified::'+key;
+    localStorage.setItem(key,'valor-do-backup');
+    localStorage.setItem(modified,'2026-09-29T12:00:00.000Z');
+    const backup=buildStudyBackup();
+
+    localStorage.setItem(key,'valor-local-mais-novo');
+    localStorage.setItem(modified,'2026-09-29T13:00:00.000Z');
+    await restoreStudyBackup(backup,{silent:true});
+    const afterMerge=localStorage.getItem(key);
+
+    await restoreStudyBackup(backup,{replace:true,silent:true});
+    const afterReplace=localStorage.getItem(key);
+
+    return{afterMerge,afterReplace,valid:validateStudyBackup(backup)};
+  });
+  expect(result.valid).toBe(true);
+  expect(result.afterMerge).toBe('valor-local-mais-novo');
+  expect(result.afterReplace).toBe('valor-do-backup');
+});
+
+test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
+  await page.goto('/#settings');
+  const result=await page.evaluate(async()=>{
+    if(!('serviceWorker' in navigator))return{supported:false};
+    const registration=await navigator.serviceWorker.ready;
+    await checkForAppUpdate({silent:true});
+    return{
+      supported:true,
+      version:APP_VERSION,
+      active:!!registration.active,
+      waiting:!!registration.waiting,
+      updateAvailable:!!appUpdateState.updateAvailable,
+      scriptURL:registration.active?.scriptURL||'',
+      status:document.querySelector('#appUpdateStatus')?.textContent?.trim()||''
+    };
+  });
+  expect(result.supported).toBe(true);
+  expect(result.version).toBe('14.4.0');
+  expect(result.active).toBe(true);
+  expect(result.waiting).toBe(false);
+  expect(result.updateAvailable).toBe(false);
+  expect(result.scriptURL).toContain('sw.js?v=14.4.0');
+  expect(result.status).toContain('Aplicativo atualizado');
+});
