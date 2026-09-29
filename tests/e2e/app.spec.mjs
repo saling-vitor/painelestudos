@@ -278,6 +278,7 @@ test('configurações usa novo layout compacto',async({page})=>{
   await expect(page.locator('.simulations-shortcut')).toHaveCount(0);
   await expect(page.locator('.settings-full-panel')).toBeVisible();
   await expect(page.locator('.settings-diagnostic-disclosure')).toContainText('Diagnóstico e dispositivos');
+  await page.locator('.settings-diagnostic-disclosure').evaluate(el=>el.open=true);
   await expect(page.locator('#cloudHealthBtn')).toBeVisible();
   await expect(page.locator('#deviceProbeCreate')).toBeVisible();
   const grid=await page.locator('.settings-layout-v3').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
