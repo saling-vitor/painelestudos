@@ -19,7 +19,7 @@ const simulations=parseJson('data/simulados.json');
 const searchIndex=parseJson('data/search-index.json');
 if(!version||!catalog||!simulations||!searchIndex)process.exit(1);
 const expected=String(version.version||'');
-const moduleFiles=["assets/js/app/state.js","assets/js/app/core.js","assets/js/app/study-time.js","assets/js/app/router.js","assets/js/app/maps.js","assets/js/app/courses.js","assets/js/app/search.js","assets/js/app/progress.js","assets/js/app/reader.js","assets/js/app/sync.js","assets/js/app/diagnostics.js","assets/js/app/backup.js","assets/js/app/ui.js","assets/js/app/simulations.js","assets/js/app/updates.js"];
+const moduleFiles=["assets/js/app/state.js","assets/js/app/core.js","assets/js/app/study-time.js","assets/js/app/router.js","assets/js/app/maps.js","assets/js/app/review-schedule.js","assets/js/app/courses.js","assets/js/app/search.js","assets/js/app/progress.js","assets/js/app/reader.js","assets/js/app/sync.js","assets/js/app/diagnostics.js","assets/js/app/backup.js","assets/js/app/restore-points.js","assets/js/app/ui.js","assets/js/app/simulations.js","assets/js/app/updates.js"];
 for(const file of moduleFiles)check(exists(file),file+' existe');
 const stateModule=read('assets/js/app/state.js');
 const allJs=[...moduleFiles.map(read),read('assets/js/app.js')].join('\n');
