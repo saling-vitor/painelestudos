@@ -1,0 +1,1 @@
+'use strict';function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2800)}/* IMPORTANTE: usar $$ sempre que houver .forEach(). */const simulationNavMedia=window.matchMedia('(min-width:481px) and (max-width:820px)');

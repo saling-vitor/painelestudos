@@ -34,6 +34,7 @@ jobs:
       - name: Validate JavaScript
         run: |
           node --check assets/js/app.js
+          for file in assets/js/app/*.js; do node --check "$file"; done
           node --check sw.js
       - name: Build search index
         run: node scripts/build-search-index.mjs

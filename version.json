@@ -1,6 +1,6 @@
 {
-  "version": "13.6.0",
-  "label": "V13.6.0",
-  "releasedAt": "2026-09-29T01:15:05.509-03:00",
-  "notes": "Busca global por tópicos com índice estático offline."
+  "version": "14.0.0",
+  "label": "V14.0.0",
+  "releasedAt": "2026-09-29T01:23:48.525-03:00",
+  "notes": "Modularização da aplicação, consolidação técnica e congelamento visual."
 }
