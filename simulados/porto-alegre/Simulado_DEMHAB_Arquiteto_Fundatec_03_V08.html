@@ -2396,6 +2396,30 @@
     try{ localStorage.removeItem(storageKey()); }catch(e){}
   }
 
+
+  function emitMeusMapasResult(){
+    try{
+      const qs=allQuestions();
+      const total=qs.length;
+      const answered=qs.filter(q=>state.answers[q.number]).length;
+      const correct=qs.filter(q=>(state.answers[q.number]||'')===(q.answer||'').toUpperCase()).length;
+      let totalPoints=0,maxPoints=0;
+      (state.data.sections||[]).forEach(sec=>{
+        const weight=Number(sec.weight||1);
+        const arr=sec.questions||[];
+        const hits=arr.filter(q=>(state.answers[q.number]||'')===(q.answer||'').toUpperCase()).length;
+        totalPoints+=hits*weight;
+        maxPoints+=arr.length*weight;
+      });
+      const wrong=Math.max(0,answered-correct);
+      const blank=Math.max(0,total-answered);
+      const score=maxPoints>0?Math.round((totalPoints/maxPoints)*100):(total?Math.round((correct/total)*100):0);
+      if(window.parent&&window.parent!==window){
+        window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{score,correct,wrong,blank,total,finishedAt:new Date().toISOString()}},location.origin);
+      }
+    }catch(_){}
+  }
+
   function bindAnswerEvents(){
     document.querySelectorAll('.question input[type=radio]').forEach(input=>{
       input.addEventListener('change', e=>{
@@ -2431,6 +2455,7 @@
     if(confirm(msg)){
       state.finished=true;
       render();
+      emitMeusMapasResult();
       setTimeout(()=>document.querySelector('.answer-page')?.scrollIntoView({behavior:'smooth',block:'start'}),80);
     }
   });

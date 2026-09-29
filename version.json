@@ -1,6 +1,6 @@
 {
-  "version": "13.2.1",
-  "label": "V13.2.1",
-  "releasedAt": "2026-09-29T00:00:00-03:00",
-  "notes": "Sistema de atualização do aplicativo."
+  "version": "13.3.0",
+  "label": "V13.3.0",
+  "releasedAt": "2026-09-28T23:57:22.876-03:00",
+  "notes": "Refinamentos de interface, Progresso V2, estados dos simulados e melhorias no reader."
 }
