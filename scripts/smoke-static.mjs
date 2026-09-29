@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const moduleFiles=["assets/js/app/state.js","assets/js/app/core.js","assets/js/app/router.js","assets/js/app/maps.js","assets/js/app/courses.js","assets/js/app/search.js","assets/js/app/progress.js","assets/js/app/reader.js","assets/js/app/sync.js","assets/js/app/diagnostics.js","assets/js/app/backup.js","assets/js/app/ui.js","assets/js/app/simulations.js","assets/js/app/updates.js"];
+const moduleFiles=["assets/js/app/state.js","assets/js/app/core.js","assets/js/app/study-time.js","assets/js/app/router.js","assets/js/app/maps.js","assets/js/app/courses.js","assets/js/app/search.js","assets/js/app/progress.js","assets/js/app/reader.js","assets/js/app/sync.js","assets/js/app/diagnostics.js","assets/js/app/backup.js","assets/js/app/ui.js","assets/js/app/simulations.js","assets/js/app/updates.js"];
 const app=[...moduleFiles.map(file=>fs.readFileSync(file,'utf8')),fs.readFileSync('assets/js/app.js','utf8')].join('\n');
 const index=fs.readFileSync('index.html','utf8');
 let failed=false;
