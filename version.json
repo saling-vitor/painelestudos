@@ -1,6 +1,6 @@
 {
-  "version": "14.2.0",
-  "label": "V14.2.0",
-  "releasedAt": "2026-09-29T11:24:00-03:00",
-  "notes": "Busca global instantânea, barra contextual sticky do curso e tempo real de estudo por dispositivo."
+  "version": "14.3.0",
+  "label": "V14.3.0",
+  "releasedAt": "2026-09-29T14:41:00-03:00",
+  "notes": "Revisão programada por data e pontos de restauração automáticos antes de ações destrutivas."
 }

@@ -1919,3 +1919,19 @@ button[hidden]{display:none!important}
 .reader-study-time{flex:0 0 auto;color:#d8c59e;font:750 8px var(--mono);white-space:nowrap}.study-time-inline{color:#9b8868;font:750 8px var(--mono);white-space:nowrap}.study-time-stat b,.study-time-metric b{color:#d8c59e}
 @media(max-width:900px){.course-sticky-bar{grid-template-columns:minmax(0,1fr) auto}.course-sticky-bar label{grid-template-columns:1fr}.course-sticky-bar label>span{display:none}.course-sticky-bar select{width:100%}}
 @media(max-width:640px){.global-search-panel{position:fixed;left:8px;right:8px;top:72px;max-height:60vh}.course-sticky-bar{grid-template-columns:1fr auto auto}.course-sticky-bar strong{grid-column:1/-1}.course-sticky-bar label{min-width:0}.course-sticky-bar label>span{display:none}.reader-study-time{display:none}}
+
+/* ========================================
+   V14.3.0 · REVISÕES PROGRAMADAS + RESTORE POINTS
+   ======================================== */
+.review-date-summary{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 12px}
+.review-date-summary span{display:inline-flex;align-items:center;gap:6px;min-height:29px;padding:0 9px;border:1px solid var(--line);border-radius:999px;background:#0d0f13;color:#858b94;font:750 8px var(--mono);text-transform:uppercase;letter-spacing:.04em}
+.review-date-summary b{color:#dfcaa2;font-size:9px}
+.restore-points-block{display:grid;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line2)}
+.restore-points-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.restore-points-head>div{display:grid;gap:3px}.restore-points-head b{font-size:12px;color:#e6e7e9}.restore-points-head span{font-size:9.5px;color:#7f858e}
+.restore-points-list{display:grid;gap:7px}
+.restore-point-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#0d1015}
+.restore-point-item>div{display:grid;gap:3px;min-width:0}.restore-point-item b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dfe1e5;font-size:10.5px}.restore-point-item span{color:#7f858e;font-size:9px}
+.restore-point-item .secondary{flex:0 0 auto;min-height:34px}
+.restore-points-loading{padding:12px;color:#7f858e;font-size:10px;text-align:center}
+@media(max-width:640px){.restore-point-item{align-items:flex-start;flex-direction:column}.restore-point-item .secondary{width:100%}}
