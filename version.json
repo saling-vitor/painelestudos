@@ -1,13 +1,13 @@
 {
-  "version": "15.0.1",
-  "label": "V15.0.1",
-  "releasedAt": "2026-09-29T19:11:00-03:00",
-  "notes": "Refinamento visual global: botões, filtros, chips e superfícies mais retangulares, com cantos discretos e bordas leves.",
+  "version": "15.0.2",
+  "label": "V15.0.2",
+  "releasedAt": "2026-09-29T19:24:00-03:00",
+  "notes": "Capas personalizadas passam a ser restauradas do cache local antes da primeira renderização, evitando o atraso visível após F5 ou ao entrar no curso.",
   "showWhatsNew": true,
   "highlights": [
-    "Botões com cantos mais discretos",
-    "Filtros e chips sem formato de cápsula",
-    "Cards e painéis com raio mais contido",
-    "Campos de busca e menus com linguagem visual consistente"
+    "Capas personalizadas aparecem imediatamente após recarregar",
+    "Cache local é consultado antes da rede para capas já salvas",
+    "Hidratação das capas ocorre em paralelo",
+    "Capas dos cards carregam com prioridade imediata"
   ]
 }
