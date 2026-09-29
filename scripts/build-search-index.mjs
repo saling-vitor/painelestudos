@@ -13,13 +13,13 @@ const attr=(source,name)=>{const pattern=name==='class'?/\bclass=["']([^"']*)["'
 const classHas=(source,name)=>attr(source,'class').split(/\s+/).includes(name);
 
 function normalizeContent(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR')}
-function matchingDetailsEnd(html,startIndex){const token=/<\\/?details\\b[^>]*>/gi;token.lastIndex=startIndex;let depth=1,match;while((match=token.exec(html))){if(/^<\\//.test(match[0]))depth--;else depth++;if(depth===0)return match.index}return html.length}
-function cleanTopicBody(value){return String(value||'').replace(/<script\\b[\\s\\S]*?<\\/script>/gi,' ').replace(/<style\\b[\\s\\S]*?<\\/style>/gi,' ').replace(/<svg\\b[\\s\\S]*?<\\/svg>/gi,' ')}
+function matchingDetailsEnd(html,startIndex){const token=/<\/?details\b[^>]*>/gi;token.lastIndex=startIndex;let depth=1,match;while((match=token.exec(html))){if(/^<\//.test(match[0]))depth--;else depth++;if(depth===0)return match.index}return html.length}
+function cleanTopicBody(value){return String(value||'').replace(/<script\b[\s\S]*?<\/script>/gi,' ').replace(/<style\b[\s\S]*?<\/style>/gi,' ').replace(/<svg\b[\s\S]*?<\/svg>/gi,' ')}
 function topicSignals(content){const normalized=normalizeContent(content),pairs=[['memo','MEMO'],['nao confunda','Não confunda'],['o que decorar','O que decorar'],['como cai','Como cai'],['decore','Decore'],['alta incidencia','Alta incidência'],['vespera','Véspera']];return pairs.filter(([needle])=>normalized.includes(needle)).map(([,label])=>label)}
 function topicItems(map){
  if(!map?.href||map.source!=='bundled')return[];
  const html=read(map.href),items=[];
- const details=/<details\\b([^>]*)>/gi;
+ const details=/<details\b([^>]*)>/gi;
  let match;
  while((match=details.exec(html))){
    const attrs=match[1];
@@ -29,7 +29,7 @@ function topicItems(map){
    const summaryEnd=html.indexOf('</summary>',details.lastIndex);
    if(summaryEnd<0)continue;
    const summary=html.slice(details.lastIndex,summaryEnd);
-   const name=summary.match(/<span\\b[^>]*class=["'][^"']*topic-name[^"']*["'][^>]*>([\\s\\S]*?)<\\/span>/i);
+   const name=summary.match(/<span\b[^>]*class=["'][^"']*topic-name[^"']*["'][^>]*>([\s\S]*?)<\/span>/i);
    if(!name)continue;
    const title=decode(name[1]);
    if(!title)continue;
