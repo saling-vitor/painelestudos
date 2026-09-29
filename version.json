@@ -1,14 +1,14 @@
 {
-  "version": "15.0.6",
-  "label": "V15.0.6",
-  "releasedAt": "2026-09-29T20:18:00-03:00",
-  "notes": "Tela Meus Cursos refinada com cards mais largos, hierarquia padronizada, progresso completo e informações de prova mais úteis.",
+  "version": "15.0.7",
+  "label": "V15.0.7",
+  "releasedAt": "2026-09-29T20:28:00-03:00",
+  "notes": "Configurações reorganizadas para aproveitar melhor o desktop, reduzir redundâncias e deixar backup, diagnóstico e sincronização mais claros.",
   "showWhatsNew": true,
   "highlights": [
-    "Cards dos concursos aproveitam melhor a largura disponível",
-    "Instituição e cargo foram reorganizados em uma hierarquia consistente",
-    "Progresso agora inclui OK, REV, DIF e PEND",
-    "Data da prova mostra contagem regressiva e data legível",
-    "Edital virou uma ação própria dentro do card"
+    "Configurações agora usa duas colunas de forma consistente",
+    "Atalho redundante de Simulados foi removido da tela",
+    "Atualizações e diagnóstico ficaram mais compactos",
+    "Backup e restauração agora ocupam toda a largura",
+    "Pontos de restauração mostram três itens por padrão com opção de expandir"
   ]
 }

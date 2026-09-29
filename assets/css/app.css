@@ -2101,3 +2101,93 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 #coursesGrid .course-progress-mini{left:18px;right:18px;bottom:62px;gap:8px}.course-progress-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.course-progress-head b{color:#d8c59e;font-size:12px}.course-progress-head b small{color:#777d86;font:700 8px var(--mono)}.course-progress-head>span{color:#777d86;font:700 8px var(--mono);text-transform:uppercase;letter-spacing:.04em}#coursesGrid .course-progress-mini .progress-states{display:flex;gap:5px;flex-wrap:wrap;margin-top:0}
 #coursesGrid .course-footer{left:18px;right:18px;bottom:15px}.course-last-activity-card{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:680px){#coursesGrid.course-grid{grid-template-columns:1fr}#coursesGrid .course-card{min-height:372px}.course-exam-info{flex:1 1 auto}}
+
+/* =========================================================
+   V15.0.7 · CONFIGURAÇÕES REORGANIZADAS
+   ========================================================= */
+.settings-layout-v3{
+  grid-template-columns:minmax(360px,.88fr) minmax(520px,1.12fr);
+  gap:16px;
+}
+.settings-layout-v3 .settings-column{gap:16px}
+.settings-layout-v3 .panel{
+  padding:18px;
+  border-radius:12px!important;
+  background:linear-gradient(145deg,rgba(14,17,21,.78),rgba(7,9,12,.9));
+  box-shadow:0 12px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.018);
+}
+.settings-layout-v3 .panel::before{
+  height:1px;
+  background:rgba(216,197,158,.32);
+  opacity:.42;
+}
+.settings-layout-v3 .sync-panel::before{background:#62a978;opacity:.48}
+.settings-full-panel{grid-column:1/-1}
+.settings-layout-v3 .panel>p{margin-top:7px;color:#7e848d;font-size:10px;line-height:1.5}
+.settings-panel-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.settings-backend-status{display:inline-flex;align-items:center;gap:6px;color:#7fbe99;font:700 8px var(--mono);white-space:nowrap}
+.settings-backend-status .health-dot{width:6px;height:6px}
+.settings-admin-notes{display:grid;gap:7px;margin-top:13px}
+.settings-inline-note,.settings-security-note{padding:9px 10px;border:1px solid rgba(255,255,255,.065);border-radius:7px;background:rgba(255,255,255,.012);color:#7d838c;font-size:9px;line-height:1.45}
+.settings-inline-note.good{border-color:rgba(98,169,120,.18);color:#91bda0}
+.settings-layout-v3 .icon-credit{margin-top:12px;padding-top:10px;border-top:1px solid var(--line2)}
+.app-update-compact{display:grid;gap:9px;margin-top:14px;padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:9px;background:rgba(255,255,255,.015)}
+.app-update-summary{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.app-update-summary>strong{color:#dfcaa2;font:850 13px var(--mono)}
+.app-update-summary .app-update-status{margin:0}
+.app-update-compact-meta{display:flex;justify-content:space-between;gap:12px;padding-top:8px;border-top:1px solid var(--line2);color:#747b84;font-size:8.5px}
+.app-update-compact-meta strong{margin-left:5px;color:#aeb3ba;font:700 8px var(--mono)}
+.app-update-panel .admin-actions{margin-top:12px}
+.app-update-notes{margin-top:9px;padding:0;color:#7b8189;font-size:9px}
+.sync-panel .form{margin-top:13px}
+.sync-panel .account-connected-card{border-radius:9px!important;background:rgba(255,255,255,.015)}
+.settings-diagnostic-disclosure .settings-disclosure-content{padding:0}
+.settings-cloud-diagnostics{display:grid!important;gap:0!important}
+.settings-cloud-diagnostics>section{padding:12px}
+.settings-cloud-diagnostics>section+section{border-top:1px solid var(--line2)}
+.settings-subsection-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.settings-subsection-head>b,.settings-subsection-head>div>b{color:#cfd2d7;font-size:10px}
+.settings-subsection-head small{display:block;margin-top:2px;color:#737981;font-size:8px}
+.settings-subsection-head .secondary{min-height:30px}
+.diagnostic-panel>p{margin-top:6px}
+.settings-layout-v3 .diagnostic-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin-top:12px;
+  border:0;
+  border-radius:0;
+  overflow:visible;
+  background:transparent;
+}
+.settings-layout-v3 .diagnostic-row{
+  grid-template-columns:minmax(0,1fr) auto;
+  min-height:36px;
+  padding:8px 9px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:7px;
+  background:rgba(255,255,255,.012);
+}
+.settings-layout-v3 .diagnostic-row:last-child{border-bottom:1px solid rgba(255,255,255,.06)}
+.settings-layout-v3 .diagnostic-row span{font-size:8.5px}
+.settings-layout-v3 .diagnostic-row strong{font-size:8.5px}
+.settings-backup-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.settings-backup-head>div:first-child{min-width:0}
+.settings-backup-head p{margin-top:7px;color:#7e848d;font-size:10px}
+.settings-backup-head .admin-actions{margin-top:0;flex:0 0 auto}
+.settings-security-note{margin-top:13px}
+.settings-full-panel .restore-points-block{margin-top:14px;padding-top:14px}
+.settings-full-panel .restore-points-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.settings-full-panel .restore-point-item{min-width:0;padding:11px}
+.restore-points-toggle{grid-column:1/-1;justify-self:center;min-height:32px;margin-top:2px}
+@media(max-width:1180px){
+  .settings-layout-v3{grid-template-columns:1fr}
+  .settings-layout-v3 .settings-column-primary,.settings-layout-v3 .settings-column-secondary{order:initial}
+  .settings-full-panel{grid-column:auto}
+  .settings-full-panel .restore-points-list{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .settings-panel-title-row,.settings-backup-head,.app-update-summary,.app-update-compact-meta{align-items:flex-start;flex-direction:column}
+  .settings-backup-head .admin-actions{width:100%}
+  .settings-backup-head .admin-actions button{flex:1}
+  .settings-layout-v3 .diagnostic-grid{grid-template-columns:1fr}
+}
