@@ -110,7 +110,7 @@ async function load(){
    document.write(html);
    document.close();
  }catch(e){
-   document.body.innerHTML='<div class="loading"><div class="loading-shade"></div><div class="loading-card"><b>Não foi possível abrir o mapa</b><span>'+String(e?.message||e).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</span></div></div>';
+   document.body.innerHTML='<div class="loading"><div class="loading-shade"></div><div class="loading-card"><b>Falha ao abrir mapa</b><span>'+String(e?.message||e).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</span><button type="button" onclick="location.reload()" style="margin-top:8px;min-height:36px;padding:0 14px;border:1px solid rgba(255,255,255,.14);border-radius:9px;background:#15181d;color:#e5e6e8;font:700 11px system-ui;cursor:pointer">Tentar novamente</button></div></div>';
  }
 }
 load();
