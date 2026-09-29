@@ -1,13 +1,14 @@
 {
-  "version": "15.0.5",
-  "label": "V15.0.5",
-  "releasedAt": "2026-09-29T20:05:00-03:00",
-  "notes": "Refinamento dos cards de simulados: informações mais coesas, menos divisões visuais e rodapé mais leve.",
+  "version": "15.0.6",
+  "label": "V15.0.6",
+  "releasedAt": "2026-09-29T20:18:00-03:00",
+  "notes": "Tela Meus Cursos refinada com cards mais largos, hierarquia padronizada, progresso completo e informações de prova mais úteis.",
   "showWhatsNew": true,
   "highlights": [
-    "Removida a linha divisória forte do rodapé dos simulados",
-    "Código, status, título e informações ganharam hierarquia e espaçamento mais consistentes",
-    "Questões, duração e concurso agora usam chips informativos mais discretos",
-    "Origem do simulado ganhou indicador visual sutil"
+    "Cards dos concursos aproveitam melhor a largura disponível",
+    "Instituição e cargo foram reorganizados em uma hierarquia consistente",
+    "Progresso agora inclui OK, REV, DIF e PEND",
+    "Data da prova mostra contagem regressiva e data legível",
+    "Edital virou uma ação própria dentro do card"
   ]
 }
