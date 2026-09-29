@@ -1,14 +1,13 @@
 {
-  "version": "15.0.0",
-  "label": "V15.0.0",
-  "releasedAt": "2026-09-29T18:30:00-03:00",
-  "notes": "Plano diário inteligente, progresso acionável, integração entre simulados e mapas e busca ampliada dentro do conteúdo.",
+  "version": "15.0.1",
+  "label": "V15.0.1",
+  "releasedAt": "2026-09-29T19:11:00-03:00",
+  "notes": "Refinamento visual global: botões, filtros, chips e superfícies mais retangulares, com cantos discretos e bordas leves.",
   "showWhatsNew": true,
   "highlights": [
-    "Seu estudo de hoje com sequência sugerida",
-    "Progresso com prioridades e próximas ações",
-    "Recomendações de mapas após simulados",
-    "Busca dentro dos tópicos, MEMOs e blocos de revisão",
-    "Reader com abertura direta no tópico e barra compacta durante a rolagem"
+    "Botões com cantos mais discretos",
+    "Filtros e chips sem formato de cápsula",
+    "Cards e painéis com raio mais contido",
+    "Campos de busca e menus com linguagem visual consistente"
   ]
 }

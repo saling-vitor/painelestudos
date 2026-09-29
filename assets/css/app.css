@@ -1963,3 +1963,103 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(min-width:900px){.view[data-view="home"].home-returning .hero{min-height:300px;padding-top:42px;padding-bottom:36px}.view[data-view="home"].home-returning .hero-copy>p{max-width:720px}.view[data-view="home"].home-returning .hero-actions{margin-top:18px}.view[data-view="home"].home-returning .hero-stats{margin-top:24px}}
 @media(max-width:900px){.progress-insights-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.study-plan-item{grid-template-columns:26px 44px minmax(0,1fr) auto}.study-plan-time{grid-column:3}.study-plan-item>button{grid-column:4;grid-row:1/3}}
 @media(max-width:620px){.progress-insights-grid{grid-template-columns:1fr}.progress-insights-head{align-items:flex-start;flex-direction:column}.study-plan-item{grid-template-columns:26px minmax(0,1fr) auto}.study-plan-code{grid-column:2;grid-row:1;width:max-content;min-width:44px;padding:0 8px}.study-plan-copy{grid-column:2;grid-row:2}.study-plan-time{grid-column:3;grid-row:1}.study-plan-item>button{grid-column:3;grid-row:2}.simulation-study-head{align-items:flex-start;flex-direction:column}}
+
+/* =========================================================
+   V15.0.1 · LINGUAGEM VISUAL RETANGULAR
+   Controles mais retos, borda leve e cantos consistentes.
+   Mantém círculos apenas quando têm função visual real.
+   ========================================================= */
+:root{
+  --ui-radius-xs:5px;
+  --ui-radius-sm:7px;
+  --ui-radius-md:9px;
+  --ui-radius-lg:12px;
+  --ui-border-soft:rgba(255,255,255,.085);
+  --ui-border-medium:rgba(255,255,255,.11);
+  --ui-border-active:rgba(216,197,158,.30);
+}
+
+/* botões */
+.icon-btn,.primary,.secondary,.danger,.close,
+.nav-btn,.bottom-nav button,
+.compact-icon-btn,.course-more-wrap>#courseMoreBtn,
+#layoutGrid,#layoutList{
+  border-radius:var(--ui-radius-sm)!important;
+}
+.primary,.secondary,.danger,.icon-btn{
+  border-width:1px;
+  border-style:solid;
+}
+
+/* campos e buscas */
+.search,.course-search-box,
+.simulation-search input,.simulation-toolbar select,
+.course-toolbar input,.course-toolbar select,
+.field input,.field select,.field textarea{
+  border-radius:var(--ui-radius-md)!important;
+}
+.search,.course-search-box{
+  border-color:var(--ui-border-soft);
+}
+
+/* filtros e chips */
+.pill,.chip,.category-btn,.batch-state,.cover-source-badge,
+.map-update-checks span,.reader-save-status,
+.course-study-filter,.course-study-filter small,
+.map-study-status,.progress-filter,.simulation-study-status,
+.review-date-summary span,.simulation-meta span,.progress-state{
+  border-radius:var(--ui-radius-xs)!important;
+}
+.category-btn,.course-study-filter,.progress-filter{
+  border-color:var(--ui-border-soft);
+  background:rgba(255,255,255,.018);
+}
+.category-btn.active,.course-study-filter.active,.progress-filter.active{
+  border-color:var(--ui-border-active);
+  background:rgba(216,197,158,.075);
+}
+.course-study-filter small{
+  border:1px solid rgba(255,255,255,.055);
+  padding-inline:5px;
+  background:rgba(255,255,255,.04);
+}
+
+/* cards e superfícies */
+.hero{border-radius:16px!important}
+.course-hero{border-radius:14px!important}
+.course-card,.map-card,.simulation-card,.continue-card,
+.panel,.modal-card,.metric,.progress-attention,
+.progress-attention-card,.study-plan-item,.progress-insight-card{
+  border-radius:var(--ui-radius-lg)!important;
+}
+.continue-icon,.course-icon,.import-preview,.cloud-diagnostic,
+.health-row,.notice,.toast{
+  border-radius:var(--ui-radius-md)!important;
+}
+
+/* menus */
+.course-more-menu,.reader-more-menu,.global-search-panel{
+  border-radius:var(--ui-radius-md)!important;
+  border-color:var(--ui-border-medium);
+}
+.course-more-menu button,.reader-more-menu button{
+  border-radius:var(--ui-radius-xs)!important;
+}
+
+/* modo foco */
+.reader-focus-exit{
+  border-radius:var(--ui-radius-sm)!important;
+  border:1px solid var(--ui-border-medium);
+}
+
+/* elementos realmente circulares */
+.dot,.health-dot,.course-offline-dot,.study-plan-order,
+.course-card::before,.topbar::after{
+  border-radius:50%!important;
+}
+
+/* barras/indicadores lineares continuam arredondados */
+.progress-track,.progress-track>span,
+.bottom-nav button.active::before{
+  border-radius:999px!important;
+}
