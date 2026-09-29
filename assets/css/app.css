@@ -1786,3 +1786,28 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .map-list .map-card-status-row .map-study-status{margin:0 0 5px}
 @media(max-width:1180px){.course-status-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.course-toolbar{grid-template-columns:1fr}.course-primary-actions{display:grid;grid-template-columns:1fr 1fr 44px;width:100%}.course-primary-actions>button{width:100%}.course-more-wrap,.course-more-wrap>#courseMoreBtn{width:100%}}
 @media(max-width:640px){.course-status-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.course-status-footer{align-items:flex-start;flex-direction:column}.course-continue{align-items:stretch;flex-direction:column}.course-continue>.primary{width:100%}.course-primary-actions{grid-template-columns:1fr 1fr 42px}.map-card-status-row{align-items:flex-start}}
+
+
+/* ========================================
+   V13.2.1 · ATUALIZAÇÃO CONTROLADA DO PWA
+   ======================================== */
+.app-version-info{margin-top:14px;padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.018)}
+.app-version-info>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.app-version-info span{color:#7f858e;font-size:10px}
+.app-version-info strong{color:#d8c59e;font:800 10px var(--mono)}
+.app-update-status{display:flex;align-items:center;gap:7px;margin-top:10px;color:#8c929a;font-size:10px}
+.app-update-notes{margin-top:10px;color:#8e949d;font-size:10px;line-height:1.55}
+.app-update-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#747a83;flex:0 0 auto}
+.app-update-dot.current{background:#6fc58a;box-shadow:0 0 8px rgba(111,197,138,.28)}
+.app-update-dot.available{background:#d8c59e;box-shadow:0 0 8px rgba(216,197,158,.28)}
+.app-update-dot.working{background:#8fa9c3;animation:app-update-pulse 1.2s ease-in-out infinite}
+@keyframes app-update-pulse{50%{opacity:.35}}
+.app-update-banner{position:fixed;left:calc(var(--sidebar-w) + 22px);right:22px;bottom:20px;z-index:180;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid rgba(216,197,158,.24);border-radius:14px;background:rgba(13,15,18,.94);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 18px 55px rgba(0,0,0,.45)}
+.app-update-banner[hidden]{display:none}
+.app-update-banner-copy{display:flex;align-items:center;gap:10px;min-width:0}
+.app-update-banner-copy>div{display:grid;gap:2px;min-width:0}
+.app-update-banner-copy b{color:#ececef;font-size:11px}
+.app-update-banner-copy span{overflow:hidden;color:#858a92;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+.app-update-banner-actions{display:flex;gap:7px;flex:0 0 auto}
+@media(max-width:1180px){.app-update-banner{left:14px;right:14px;bottom:calc(var(--bottom-nav-h) + var(--safe-bottom) + 12px)}}
+@media(max-width:640px){.app-update-banner{align-items:stretch;flex-direction:column}.app-update-banner-actions{display:grid;grid-template-columns:1fr 1fr}.app-update-banner-actions button{width:100%}}
