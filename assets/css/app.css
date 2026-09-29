@@ -1774,3 +1774,40 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     width:100%;
   }
 }
+
+
+/* ========================================
+   V13.1.22 · ESTADO CONFIÁVEL · ROTAS · SAVE
+   ======================================== */
+.reader-save-status{
+  flex:0 0 auto;
+  padding:5px 7px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:999px;
+  background:rgba(255,255,255,.025);
+  color:#9da2aa;
+  font:750 8px var(--mono);
+  white-space:nowrap;
+}
+.reader-save-status.is-saving{color:#d8c59e;border-color:rgba(216,197,158,.17);background:rgba(216,197,158,.045)}
+.reader-save-status.is-synced{color:#9dc7a8;border-color:rgba(98,169,120,.19);background:rgba(98,169,120,.045)}
+.reader-save-status.is-offline{color:#d5c28b;border-color:rgba(216,184,88,.20);background:rgba(216,184,88,.045)}
+.reader-save-status.is-error{color:#d79a9f;border-color:rgba(168,78,88,.22);background:rgba(168,78,88,.05)}
+.reader-save{white-space:nowrap}
+.reader-save[hidden],.reader-save-status[hidden],#mapUseBundledBtn[hidden]{display:none!important}
+.map-file-panel-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px}
+.map-file-current{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:760px){
+  .readerbar{gap:6px}
+  .readerbar .secondary{padding-inline:9px}
+  .reader-save{font-size:9px}
+}
+@media(max-width:560px){
+  .reader-save-status{display:none}
+  .readerbar .title small{display:none}
+}
+@media(max-width:640px){
+  .map-file-panel-actions{width:100%;display:grid;grid-template-columns:1fr}
+  .map-file-panel-actions .secondary{width:100%}
+  .map-file-current{grid-template-columns:1fr}
+}
