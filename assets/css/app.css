@@ -1869,3 +1869,12 @@ button[hidden]{display:none!important}
 .review-next-banner>div{display:grid;gap:2px;min-width:0}.review-next-banner b{font-size:10px;color:#e7d4ad}.review-next-banner span{font-size:9px;color:#858a92}
 @media(max-width:760px){.progress-attention-head{align-items:flex-start;flex-direction:column}.progress-attention-actions{width:100%;justify-content:space-between}.review-next-banner{left:12px;right:12px;bottom:calc(86px + var(--safe-bottom))}.home-review-section .section-head{align-items:stretch;flex-direction:column}.home-review-section .primary{width:100%}}
 @media(prefers-reduced-motion:reduce){.readerbar{transition:none}}
+
+
+/* ========================================
+   V13.5.0 · HISTÓRICO DE SIMULADOS + BACKUP
+   ======================================== */
+.simulation-result-summary{grid-template-columns:repeat(3,minmax(0,auto));align-items:start;gap:8px 14px}.simulation-result-summary>div{display:grid;gap:2px}.simulation-result-summary>div span{color:#747a83;font:700 8px var(--mono);text-transform:uppercase}.simulation-result-summary>div b{color:#e5d1a8;font-size:18px;line-height:1.05}.simulation-result-summary small{grid-column:1/-1}
+.simulation-history-card{width:min(720px,100%)}.simulation-history-head,.simulation-history-row{display:grid;grid-template-columns:1.5fr .8fr .8fr .8fr;gap:10px;align-items:center}.simulation-history-head{padding:8px 10px;color:#717780;font:700 8px var(--mono);text-transform:uppercase}.simulation-history-list{display:grid;gap:6px;max-height:58vh;overflow:auto}.simulation-history-row{padding:10px;border:1px solid var(--line2);border-radius:9px;background:#080a0d;color:#9ea3ab;font-size:10px}.simulation-history-row b{color:#e5d1a8;font-size:12px}
+.backup-panel>p{margin-top:8px;color:#858a92;font-size:10px;line-height:1.55}.backup-panel #restoreBackupFile[hidden]{display:none!important}
+@media(max-width:640px){.simulation-history-head,.simulation-history-row{grid-template-columns:1.25fr .7fr .8fr}.simulation-history-head span:last-child,.simulation-history-row span:last-child{display:none}.simulation-result-summary{grid-template-columns:repeat(3,1fr)}}

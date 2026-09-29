@@ -1,6 +1,6 @@
 {
-  "version": "13.4.0",
-  "label": "V13.4.0",
-  "releasedAt": "2026-09-29T01:02:25.056-03:00",
-  "notes": "Modo Foco no reader e fila de revisão Revisar agora."
+  "version": "13.5.0",
+  "label": "V13.5.0",
+  "releasedAt": "2026-09-29T01:08:38.703-03:00",
+  "notes": "Histórico completo de simulados e backup/restauração dos dados locais."
 }
