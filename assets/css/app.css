@@ -1840,7 +1840,7 @@ button[hidden]{display:none!important}
    V13.3.2 · QA TOUCH + DIAGNÓSTICO
    ======================================== */
 .course-study-filter-wrap,.progress-filter-shell{position:relative}
-.course-study-filter-wrap::after,.progress-filter-shell::after{content:"";position:absolute;right:0;bottom:0;width:28px;height:36px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(7,9,12,.94));border-radius:0 10px 10px 0}
+.progress-filter-shell::after{content:"";position:absolute;right:0;bottom:0;width:28px;height:36px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(7,9,12,.94));border-radius:0 10px 10px 0}
 .diagnostic-panel>p{margin-top:8px;color:#858a92;font-size:10px;line-height:1.55}
 .diagnostic-grid{display:grid;margin-top:13px;border:1px solid rgba(255,255,255,.07);border-radius:11px;overflow:hidden;background:rgba(255,255,255,.015)}
 .diagnostic-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:12px;align-items:center;min-height:38px;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.055)}
@@ -2063,3 +2063,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .bottom-nav button.active::before{
   border-radius:999px!important;
 }
+
+/* V15.0.4 · remove artefato escuro ao fim dos filtros do curso */
+.course-study-filter-wrap::after{content:none!important;display:none!important;background:none!important}
