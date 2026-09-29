@@ -35,6 +35,8 @@ jobs:
         run: |
           node --check assets/js/app.js
           node --check sw.js
+      - name: Build search index
+        run: node scripts/build-search-index.mjs
       - name: Validate release
         run: node scripts/validate-release.mjs
       - name: Smoke test routes

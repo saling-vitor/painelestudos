@@ -1878,3 +1878,21 @@ button[hidden]{display:none!important}
 .simulation-history-card{width:min(720px,100%)}.simulation-history-head,.simulation-history-row{display:grid;grid-template-columns:1.5fr .8fr .8fr .8fr;gap:10px;align-items:center}.simulation-history-head{padding:8px 10px;color:#717780;font:700 8px var(--mono);text-transform:uppercase}.simulation-history-list{display:grid;gap:6px;max-height:58vh;overflow:auto}.simulation-history-row{padding:10px;border:1px solid var(--line2);border-radius:9px;background:#080a0d;color:#9ea3ab;font-size:10px}.simulation-history-row b{color:#e5d1a8;font-size:12px}
 .backup-panel>p{margin-top:8px;color:#858a92;font-size:10px;line-height:1.55}.backup-panel #restoreBackupFile[hidden]{display:none!important}
 @media(max-width:640px){.simulation-history-head,.simulation-history-row{grid-template-columns:1.25fr .7fr .8fr}.simulation-history-head span:last-child,.simulation-history-row span:last-child{display:none}.simulation-result-summary{grid-template-columns:repeat(3,1fr)}}
+
+
+/* ========================================
+   V13.6.0 · BUSCA GLOBAL POR TÓPICOS
+   ======================================== */
+.global-search-results{display:grid;gap:22px}
+.search-result-group{display:grid;gap:10px;min-width:0}
+.search-result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:7px;border-bottom:1px solid var(--line2)}
+.search-result-head span{color:#d8c59e;font:800 9px var(--mono);letter-spacing:.11em;text-transform:uppercase}.search-result-head small{color:#747a83;font:700 8px var(--mono)}
+.search-course-list,.search-topic-list{display:grid;gap:7px}
+.search-course-result,.search-topic-result{width:100%;border:1px solid var(--line2);border-radius:11px;background:#080a0d;color:#c9ccd1;cursor:pointer;text-align:left}
+.search-course-result{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:10px 12px}
+.search-course-result>div,.search-topic-result>div{min-width:0}.search-course-result b,.search-topic-result b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px}.search-course-result span,.search-topic-result>div span{display:block;margin-top:3px;color:#777d86;font-size:9px}
+.search-course-result:hover,.search-topic-result:hover{border-color:rgba(216,197,158,.22);background:rgba(216,197,158,.035)}
+.search-topic-result{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;min-height:58px;padding:9px 11px}
+.search-topic-action{display:flex;align-items:center;gap:4px;color:#a89a7c;font:700 8px var(--mono);white-space:nowrap}
+.search-map-grid{margin:0}
+@media(max-width:640px){.search-topic-result{grid-template-columns:auto minmax(0,1fr)}.search-topic-action{grid-column:2;justify-self:start}.search-course-result,.search-topic-result{min-height:64px}}

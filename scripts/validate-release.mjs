@@ -16,7 +16,8 @@ for(const file of ['assets/js/app.js','sw.js','index.html','version.json'])check
 const version=parseJson('version.json');
 const catalog=parseJson('data/catalog.json');
 const simulations=parseJson('data/simulados.json');
-if(!version||!catalog||!simulations)process.exit(1);
+const searchIndex=parseJson('data/search-index.json');
+if(!version||!catalog||!simulations||!searchIndex)process.exit(1);
 const expected=String(version.version||'');
 const app=read('assets/js/app.js');
 const index=read('index.html');
@@ -39,6 +40,10 @@ for(const map of catalog.maps||[]){
 for(const sim of simulations.simulations||[]){
  if(sim.href){const file=cleanAsset(sim.href);check(exists(file),'Simulado '+file);if(/\.html$/i.test(file))check(nonEmpty(file),'Simulado não vazio '+file)}
 }
+check(Number(searchIndex.version)===1,'search-index versão 1');
+check(Array.isArray(searchIndex.items),'search-index items');
+const expectedTopics=(catalog.maps||[]).filter(map=>map.source==='bundled').reduce((sum,map)=>sum+Number(map.topics||0),0);
+check((searchIndex.items||[]).length===expectedTopics,'search-index '+expectedTopics+' tópicos');
 for(const file of ['index.html','reader.html','offline.html'])check(nonEmpty(file),'HTML principal não vazio '+file);
 if(failed){console.error('\nVALIDAÇÃO FALHOU.');process.exit(1)}
 console.log('\n✓ Release validada.')
