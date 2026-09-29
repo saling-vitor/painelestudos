@@ -1,6 +1,6 @@
 {
-  "version": "13.3.0",
-  "label": "V13.3.0",
-  "releasedAt": "2026-09-28T23:57:22.876-03:00",
-  "notes": "Refinamentos de interface, Progresso V2, estados dos simulados e melhorias no reader."
+  "version": "13.3.1",
+  "label": "V13.3.1",
+  "releasedAt": "2026-09-29T00:38:39.709-03:00",
+  "notes": "Correção do estado de atualização e ajuste do reader no iPad PWA."
 }
