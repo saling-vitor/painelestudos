@@ -1834,3 +1834,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* V13.3.1 · hidden semântico para ações contextuais */
 button[hidden]{display:none!important}
 #applyAppUpdateBtn[hidden]{display:none!important}
+
+
+/* ========================================
+   V13.3.2 · QA TOUCH + DIAGNÓSTICO
+   ======================================== */
+.course-study-filter-wrap,.progress-filter-shell{position:relative}
+.course-study-filter-wrap::after,.progress-filter-shell::after{content:"";position:absolute;right:0;bottom:0;width:28px;height:36px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(7,9,12,.94));border-radius:0 10px 10px 0}
+.diagnostic-panel>p{margin-top:8px;color:#858a92;font-size:10px;line-height:1.55}
+.diagnostic-grid{display:grid;margin-top:13px;border:1px solid rgba(255,255,255,.07);border-radius:11px;overflow:hidden;background:rgba(255,255,255,.015)}
+.diagnostic-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:12px;align-items:center;min-height:38px;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.055)}
+.diagnostic-row:last-child{border-bottom:0}.diagnostic-row span{color:#747a83;font-size:9px}.diagnostic-row strong{overflow:hidden;color:#c9ccd1;font:700 9px var(--mono);text-align:right;text-overflow:ellipsis;white-space:nowrap}.diagnostic-loading{padding:12px;color:#747a83;font-size:9px}
+@media(pointer:coarse){button,.icon-btn,.compact-icon-btn,.category-btn,.course-study-filter,.progress-filter{min-height:44px}.compact-icon-btn{min-width:44px}.readerbar button{min-height:44px}}
+@media(max-width:520px){.diagnostic-row{grid-template-columns:1fr}.diagnostic-row strong{text-align:left;white-space:normal;overflow-wrap:anywhere}}

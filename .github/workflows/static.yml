@@ -31,6 +31,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Validate JavaScript
+        run: |
+          node --check assets/js/app.js
+          node --check sw.js
+      - name: Validate release
+        run: node scripts/validate-release.mjs
+      - name: Smoke test routes
+        run: node scripts/smoke-static.mjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

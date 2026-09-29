@@ -1,6 +1,6 @@
 {
-  "version": "13.3.1",
-  "label": "V13.3.1",
-  "releasedAt": "2026-09-29T00:38:39.709-03:00",
-  "notes": "Correção do estado de atualização e ajuste do reader no iPad PWA."
+  "version": "13.3.2",
+  "label": "V13.3.2",
+  "releasedAt": "2026-09-29T00:57:35.041-03:00",
+  "notes": "QA automático, refinamentos touch e centro de diagnóstico do aplicativo."
 }
