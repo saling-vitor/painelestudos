@@ -1,6 +1,6 @@
 {
-  "version": "14.1.0",
-  "label": "V14.1.0",
-  "releasedAt": "2026-09-29T10:41:00-03:00",
-  "notes": "E2E com Playwright, progresso preciso e Configurações inteligente conforme login."
+  "version": "14.2.0",
+  "label": "V14.2.0",
+  "releasedAt": "2026-09-29T11:24:00-03:00",
+  "notes": "Busca global instantânea, barra contextual sticky do curso e tempo real de estudo por dispositivo."
 }
