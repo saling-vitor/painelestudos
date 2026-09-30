@@ -76,3 +76,5 @@
   .agenda-weekdays span{font-size:6px}.agenda-day{min-height:42px}.agenda-day-dots{gap:2px}.agenda-dot{width:5px;height:5px}
   .reader-doubt-quick b{display:none}.reader-doubt-quick{width:40px;padding:0;justify-content:center}.reader-doubt-quick span{border:0}
 }
+
+.study-ranking-label{display:block;margin:8px 0 3px;font-size:7px;text-transform:uppercase;letter-spacing:.11em;color:#626872}
