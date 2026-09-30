@@ -630,7 +630,7 @@
     const reader=document.getElementById('reader');if(reader)new MutationObserver(()=>renderReaderRail()).observe(reader,{attributes:true,attributeFilter:['class']});
     const agenda=document.querySelector('[data-view="agenda"]');if(agenda){let pending=0;new MutationObserver(()=>{clearTimeout(pending);pending=setTimeout(enhanceAgenda,20)}).observe(agenda,{childList:true,subtree:true})}
     const timer=document.getElementById('studyTimerFloat');if(timer)new MutationObserver(()=>applyTimerPosition()).observe(timer,{childList:true,subtree:true});
-    if(new Date().getDay()===read().settings.weeklyReviewDay){const key=dateKey(weekStart());if(!read().weeklyReports[key])saveWeeklySnapshot(weeklySnapshot())}
+    setTimeout(()=>{if(new Date().getDay()===read().settings.weeklyReviewDay){const key=dateKey(weekStart());if(!read().weeklyReports[key])saveWeeklySnapshot(weeklySnapshot())}},1200)
   }
 
   const previousRenderHome=window.renderHome;
