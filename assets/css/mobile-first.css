@@ -1,6 +1,13 @@
 /* V15.3.0 · Smartphone mobile-first
    Escopo deliberado: somente <= 480px. iPad e desktop permanecem intactos. */
 
+/* Componentes auxiliares existem no DOM em todas as larguras, mas só aparecem no telefone. */
+.mobile-course-details,
+.mobile-settings-toggle,
+.mobile-subsettings-toggle{display:none}
+.mobile-progress-group{display:contents}
+.mobile-progress-group>summary{display:none}
+
 @media(max-width:480px){
   :root{
     --phone-side:12px;
@@ -422,6 +429,7 @@
     margin-bottom:8px;
   }
   html.is-phone-layout .mobile-progress-group{
+    display:block;
     margin-top:8px;
     border:1px solid rgba(255,255,255,.065);
     border-radius:12px;
@@ -430,6 +438,7 @@
   }
   html.is-phone-layout .mobile-progress-group>summary{
     min-height:58px;
+    display:flex;
     padding:10px 12px;
     list-style:none;
     display:flex;
