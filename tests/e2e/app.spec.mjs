@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.0.13'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.0.14'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -15,10 +15,10 @@ test('regras de revisão programada usam os atrasos definidos',async({page})=>{c
 test('restore point é reversível e mantém apenas os cinco mais recentes',async({page})=>{const result=await page.evaluate(async()=>{const key='mindmap_state::e2e-restore',modified='studyapp.modified::'+key;localStorage.setItem(key,'antes');localStorage.setItem(modified,new Date().toISOString());const point=await createRestorePoint('e2e','Teste reversível');localStorage.setItem(key,'depois');localStorage.setItem(modified,new Date(Date.now()+1000).toISOString());await restorePointNow(point.id);for(let i=0;i<6;i++)await createRestorePoint('e2e-limit','Ponto '+i);const points=await listRestorePoints();return{value:localStorage.getItem(key),count:points.length,labels:points.map(p=>p.label)}});expect(result.value).toBe('antes');expect(result.count).toBeLessThanOrEqual(5);expect(result.labels.length).toBeGreaterThan(0)});
 
 test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page})=>{await page.goto('/#simulations');const key=await page.evaluate(()=>{const simulation=combinedSimulations()[0],key=simulation._key||simulationKey(simulation),now=Date.now();state.simAttempts[key]=[{score:80,correct:8,total:10,durationSeconds:900,finishedAt:new Date(now).toISOString(),sections:{Português:{correct:8,total:10}}},{score:70,correct:7,total:10,durationSeconds:840,finishedAt:new Date(now-60000).toISOString()},{score:60,correct:6,total:10,durationSeconds:780,finishedAt:new Date(now-120000).toISOString()}];state.simResults[key]=state.simAttempts[key][0];localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults));renderSimulations();return key});const analytics=await page.evaluate(key=>simulationAnalytics(key),key);expect(analytics.count).toBe(3);expect(analytics.latest.score).toBe(80);expect(analytics.best).toBe(80);expect(analytics.average).toBe(70);const card=page.locator('[data-simulation-history="'+key+'"]').locator('xpath=ancestor::article');await expect(card).toContainText('Última');await expect(card).toContainText('80%');await expect(card).toContainText('Média');await expect(card).toContainText('70%');await card.locator('[data-simulation-history]').click();await expect(page.locator('#simulationHistoryModal')).toHaveClass(/open/);await expect(page.locator('#simulationAnalyticsSummary')).toContainText('Tempo médio');await expect(page.locator('#simulationAnalyticsTrend span')).toHaveCount(3);const heights=await page.locator('#simulationAnalyticsTrend span').evaluateAll(nodes=>nodes.map(node=>node.style.height));expect(heights).toEqual(['60%','70%','80%']);await expect(page.locator('#simulationAnalyticsSections')).toContainText('Português')});
-test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:'15.0.13',label:'V15.0.13',showWhatsNew:true,highlights:['Hero da Home ocupa menos altura no iPad sem perder o enquadramento editorial full-cover','Os cinco indicadores permanecem alinhados em uma única linha no iPad em paisagem','Busca, sincronização e cabeçalho do leitor ficaram mais compactos e proporcionais','Botões sobre as capas ficaram menores visualmente, preservando uma área confortável de toque','Safe areas, 100dvh, portrait/landscape e estados de toque e foco foram refinados para iPadOS']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Hero da Home ocupa menos altura no iPad sem perder o enquadramento editorial full-cover');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe('15.0.13')});
+test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:'15.0.14',label:'V15.0.14',showWhatsNew:true,highlights:['Topbar do iPad reduzida sem comprometer a área de toque','Busca continua com 40 px e Sincronizar preserva alvo touch de 44 px','Teste de layout do iPad passa a reportar todas as divergências de uma só vez','Enquadramento editorial full-cover do hero permanece preservado','Nenhuma alteração no layout de desktop']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Topbar do iPad reduzida sem comprometer a área de toque');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe('15.0.14')});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.0.13');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.0.14');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -62,11 +62,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.0.13');
+  expect(result.version).toBe('15.0.14');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.0.13');
+  expect(result.scriptURL).toContain('sw.js?v=15.0.14');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -309,7 +309,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.0.13');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.0.14');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -450,7 +450,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.0.13',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.0.14',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -487,15 +487,19 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
       statCount:stats.children.length,
       statColumns:getComputedStyle(stats).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
       topbarHeight:topbar.getBoundingClientRect().height,
+      searchHeight:document.querySelector('.search').getBoundingClientRect().height,
+      syncHeight:document.querySelector('#syncTop').getBoundingClientRect().height,
       backgroundSize:style.backgroundSize
     };
   });
-  expect(home.isIpad).toBe(true);
-  expect(home.heroHeight).toBeLessThanOrEqual(280);
-  expect(home.statCount).toBe(5);
-  expect(home.statColumns).toBe(5);
-  expect(home.topbarHeight).toBeLessThanOrEqual(58);
-  expect(home.backgroundSize).toBe('cover');
+  expect.soft(home.isIpad,'classe is-ipad deve estar ativa').toBe(true);
+  expect.soft(home.heroHeight,'hero deve permanecer compacto no iPad landscape').toBeLessThanOrEqual(280);
+  expect.soft(home.statCount,'home deve renderizar cinco indicadores').toBe(5);
+  expect.soft(home.statColumns,'cinco indicadores devem permanecer em uma linha').toBe(5);
+  expect.soft(home.searchHeight,'busca deve permanecer compacta').toBeLessThanOrEqual(40);
+  expect.soft(home.syncHeight,'Sincronizar deve preservar alvo touch de 44px').toBeGreaterThanOrEqual(44);
+  expect.soft(home.topbarHeight,'topbar deve caber em até 58px sem reduzir o alvo touch').toBeLessThanOrEqual(58);
+  expect.soft(home.backgroundSize,'hero deve preservar enquadramento full-cover').toBe('cover');
 
   await page.locator('#homeCourses [data-course="porto-alegre"]').click();
   const card=page.locator('#courseMaps .map-card.has-cover').first();
@@ -504,8 +508,8 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
     favorite:el.querySelector('.fav')?.getBoundingClientRect().width||0,
     menu:el.querySelector('.map-admin-btn')?.getBoundingClientRect().width||0
   }));
-  expect(controls.favorite).toBeLessThanOrEqual(31);
-  expect(controls.menu).toBeLessThanOrEqual(31);
+  expect.soft(controls.favorite,'favorito visual deve ficar compacto').toBeLessThanOrEqual(31);
+  expect.soft(controls.menu,'menu visual deve ficar compacto').toBeLessThanOrEqual(31);
 
   await card.click();
   await expect(page.locator('#reader')).toHaveClass(/open/);
@@ -514,7 +518,7 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
     titleSize:parseFloat(getComputedStyle(document.querySelector('#readerTitle')).fontSize),
     moreWidth:document.querySelector('#readerMoreBtn').getBoundingClientRect().width
   }));
-  expect(reader.barHeight).toBeLessThanOrEqual(54);
-  expect(reader.titleSize).toBeGreaterThanOrEqual(13);
-  expect(reader.moreWidth).toBeLessThanOrEqual(36);
+  expect.soft(reader.barHeight,'readerbar deve permanecer compacta').toBeLessThanOrEqual(54);
+  expect.soft(reader.titleSize,'título do leitor deve continuar legível').toBeGreaterThanOrEqual(13);
+  expect.soft(reader.moreWidth,'botão Mais deve ser visualmente compacto').toBeLessThanOrEqual(36);
 });

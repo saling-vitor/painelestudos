@@ -2820,3 +2820,14 @@ html.is-ipad [tabindex]:focus-visible{
   outline:2px solid rgba(216,197,158,.54);
   outline-offset:2px;
 }
+
+
+/* =========================================================
+   V15.0.14 · HOTFIX IPAD · TOPBAR COMPACTA + TOUCH 44px
+   O botão Sincronizar herda min-height:44px em telas touch.
+   Com 7px de padding vertical + bordas, a topbar chegava a 60px.
+   Mantemos o alvo touch de 44px e reduzimos apenas o respiro interno.
+   ========================================================= */
+html.is-ipad .topbar{
+  padding:5px 8px;
+}

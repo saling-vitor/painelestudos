@@ -1,14 +1,14 @@
 {
-  "version": "15.0.13",
-  "label": "V15.0.13",
-  "releasedAt": "2026-09-30T11:30:00-03:00",
-  "notes": "Refinamento completo da experiência no iPad: densidade da Home, topbar, leitor, métricas, controles touch, orientação e safe areas foram ajustados sem alterar o layout de desktop.",
-  "showWhatsNew": true,
+  "version": "15.0.14",
+  "label": "V15.0.14",
+  "releasedAt": "2026-09-30T11:49:00-03:00",
+  "notes": "Hotfix de estabilidade do iPad: a topbar foi compactada sem reduzir o alvo de toque de 44 px, e o QA de layout agora verifica todas as métricas da Home e do leitor antes de encerrar.",
+  "showWhatsNew": false,
   "highlights": [
-    "Hero da Home ocupa menos altura no iPad sem perder o enquadramento editorial full-cover",
-    "Os cinco indicadores permanecem alinhados em uma única linha no iPad em paisagem",
-    "Busca, sincronização e cabeçalho do leitor ficaram mais compactos e proporcionais",
-    "Botões sobre as capas ficaram menores visualmente, preservando uma área confortável de toque",
-    "Safe areas, 100dvh, portrait/landscape e estados de toque e foco foram refinados para iPadOS"
+    "Topbar do iPad reduzida sem comprometer a área de toque",
+    "Busca continua com 40 px e Sincronizar preserva alvo touch de 44 px",
+    "Teste de layout do iPad passa a reportar todas as divergências de uma só vez",
+    "Enquadramento editorial full-cover do hero permanece preservado",
+    "Nenhuma alteração no layout de desktop"
   ]
 }
