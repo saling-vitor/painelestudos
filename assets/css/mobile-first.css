@@ -1480,7 +1480,7 @@
     top:48px!important;
     min-width:210px!important;
   }
-  html.is-phone-layout #readerDoubtQuick{
+  html.is-phone-layout .reader.open #readerDoubtQuick{
     display:none!important;
   }
   html.mobile-reader-open.is-phone-layout .study-reader-rail{
