@@ -705,3 +705,59 @@ test('resumo semanal e previsão usam dados do progresso',async({page})=>{
   await page.locator('[data-weekly-review]').click();
   await expect(page.locator('#weeklyReviewModal')).toBeVisible();
 });
+
+
+test('Home usa CTA Começar agora no card de prioridade',async({page})=>{
+  await page.goto('/#home');
+  const cta=page.locator('[data-priority-open]').first();
+  await expect(cta).toBeVisible();
+  await expect(cta).toHaveText('Começar agora');
+  await expect(page.locator('.priority-now-card')).not.toContainText(/^Estudar$/);
+});
+
+test('Agenda prioriza modos e recolhe ações secundárias no menu',async({page})=>{
+  await page.goto('/#agenda');
+  await expect(page.locator('.study-agenda-modes')).toBeVisible();
+  await expect(page.locator('.study-agenda-modes button')).toHaveCount(3);
+  const menu=page.locator('.agenda-more');
+  await expect(menu).toBeVisible();
+  await expect(menu).not.toHaveAttribute('open');
+  await menu.locator('summary').click();
+  await expect(menu).toHaveAttribute('open','');
+  await expect(menu.locator('[data-agenda-replan]')).toBeVisible();
+  await expect(menu.locator('[data-agenda-export]')).toBeVisible();
+});
+
+test('Progresso mostra quatro decisões e mantém prioridades recolhidas',async({page})=>{
+  await page.goto('/#progress');
+  const actions=page.locator('#studyIntelligencePanel .intelligence-primary-actions>article');
+  await expect(actions).toHaveCount(4);
+  const details=page.locator('#studyIntelligencePanel .priority-details');
+  await expect(details).toBeVisible();
+  await expect(details).not.toHaveAttribute('open');
+  await details.locator('summary').click();
+  await expect(details).toHaveAttribute('open','');
+  await expect(details.locator('.priority-engine-grid>article')).toHaveCount(3);
+});
+
+test('iPad retrato paisagem e Split View permanecem sem overflow',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação específica do polimento responsivo no iPad.');
+  const scenarios=[
+    {width:820,height:1180,route:'#home'},
+    {width:1194,height:834,route:'#agenda'},
+    {width:640,height:900,route:'#progress'}
+  ];
+  for(const scenario of scenarios){
+    await page.setViewportSize({width:scenario.width,height:scenario.height});
+    await page.goto('/'+scenario.route);
+    await page.waitForTimeout(100);
+    const layout=await page.evaluate(()=>({
+      width:innerWidth,
+      scrollWidth:document.documentElement.scrollWidth,
+      isIpad:document.documentElement.classList.contains('is-ipad')
+    }));
+    expect.soft(layout.isIpad).toBe(true);
+    expect.soft(layout.scrollWidth,'layout não deve criar overflow horizontal').toBeLessThanOrEqual(layout.width+2);
+    await expect(page.locator('.bottom-nav')).toBeVisible();
+  }
+});
