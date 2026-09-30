@@ -62,7 +62,7 @@
   function startSession(options={}){
     const existing=readActive();
     if(existing)return existing;
-    const map=options.map||currentMapForTimer();
+    const map=options.general?null:(options.map||currentMapForTimer());
     const data=readData();
     const mode=options.mode||'free';
     const plannedMinutes=Math.max(0,Number(options.minutes)||0);
