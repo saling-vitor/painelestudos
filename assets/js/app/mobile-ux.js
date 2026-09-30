@@ -211,13 +211,19 @@
       panel.prepend(button);
     });
     const expanded=qa('.mobile-settings-panel',view).filter(panel=>!panel.classList.contains('mobile-settings-collapsed'));
-    const preferred=q('#studySettingsPanel',view)||expanded[0]||q('.sync-panel',view);
-    if(preferred){
-      qa('.mobile-settings-panel',view).forEach(panel=>{
-        const open=panel===preferred;
+    if(expanded.length>1){
+      const keep=expanded.includes(q('#studySettingsPanel',view))?q('#studySettingsPanel',view):expanded[0];
+      expanded.forEach(panel=>{
+        const open=panel===keep;
         panel.classList.toggle('mobile-settings-collapsed',!open);
         panel.querySelector(':scope > .mobile-settings-toggle')?.setAttribute('aria-expanded',open?'true':'false');
       });
+    }else if(expanded.length===0){
+      const preferred=q('#studySettingsPanel',view)||q('.sync-panel',view)||q('.mobile-settings-panel',view);
+      if(preferred){
+        preferred.classList.remove('mobile-settings-collapsed');
+        preferred.querySelector(':scope > .mobile-settings-toggle')?.setAttribute('aria-expanded','true');
+      }
     }
     const advanced=q('#plannerAdvancedSettings',view);
     if(advanced&&!advanced.querySelector(':scope > .mobile-subsettings-toggle')){
