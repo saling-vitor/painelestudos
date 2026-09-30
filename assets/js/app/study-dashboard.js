@@ -246,3 +246,68 @@
     };
     root.querySelectorAll('[data-dashboard-agenda]').forEach(button=>button.onclick=()=>nav('agenda'));
   }
+
+  function ensureAgendaView(){
+    let view=document.querySelector('[data-view="agenda"]');
+    if(view)return view;
+    view=document.createElement('section');
+    view.className='view study-agenda-view';
+    view.dataset.view='agenda';
+    view.innerHTML='<div class="section-head study-agenda-head"><div><div class="kicker">Planejamento</div><h2>Agenda de estudos</h2><p>Provas, revisões, sessões planejadas e histórico em um só calendário.</p></div><div class="study-agenda-modes"><button type="button" data-agenda-mode="today">Hoje</button><button type="button" data-agenda-mode="week">Semana</button><button type="button" data-agenda-mode="month" class="active">Mês</button></div></div><div class="study-agenda-layout"><section class="panel study-agenda-calendar"><div class="study-agenda-toolbar"><button type="button" class="secondary" data-agenda-prev>‹</button><button type="button" class="secondary" data-agenda-today>Hoje</button><strong id="agendaPeriodLabel"></strong><button type="button" class="secondary" data-agenda-next>›</button></div><div id="agendaCalendarGrid"></div></section><aside class="panel study-agenda-side"><div id="agendaDayDetail"></div><form id="agendaQuickForm" class="study-agenda-form"><div class="panel-kicker">Planejar</div><label>Data<input type="date" name="date" required></label><label>Título<input type="text" name="title" maxlength="100" placeholder="Ex.: Revisar Acessibilidade" required></label><div class="row"><label>Tipo<select name="kind"><option value="study">Estudo</option><option value="simulation">Simulado</option></select></label><label>Minutos<input type="number" name="minutes" min="0" max="480" step="5" value="30"></label></div><button class="primary" type="submit">Adicionar à agenda</button></form></aside></div>';
+    document.querySelector('.content')?.appendChild(view);
+    view.querySelectorAll('[data-agenda-mode]').forEach(button=>button.onclick=()=>{agendaMode=button.dataset.agendaMode;view.querySelectorAll('[data-agenda-mode]').forEach(b=>b.classList.toggle('active',b===button));renderAgenda()});
+    view.querySelector('[data-agenda-prev]').onclick=()=>{if(agendaMode==='month')agendaCursor=new Date(agendaCursor.getFullYear(),agendaCursor.getMonth()-1,1);else agendaCursor=addDays(agendaCursor,agendaMode==='week'?-7:-1);renderAgenda()};
+    view.querySelector('[data-agenda-next]').onclick=()=>{if(agendaMode==='month')agendaCursor=new Date(agendaCursor.getFullYear(),agendaCursor.getMonth()+1,1);else agendaCursor=addDays(agendaCursor,agendaMode==='week'?7:1);renderAgenda()};
+    view.querySelector('[data-agenda-today]').onclick=()=>{agendaCursor=new Date();renderAgenda()};
+    const form=view.querySelector('#agendaQuickForm');
+    form.elements.date.value=dateKey();
+    form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form);addAgendaItem({date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes')});form.elements.title.value='';form.elements.minutes.value='30'};
+    return view;
+  }
+  function agendaDotClass(kind){return 'agenda-dot '+(kind||'study')}
+  function agendaDayCard(day,{outside=false}={}){
+    const entries=entriesForDate(day),today=dateKey(day)===dateKey(),selected=dateKey(day)===dateKey(agendaCursor);
+    const visible=entries.slice(0,4);
+    return '<button type="button" class="agenda-day'+(outside?' outside':'')+(today?' today':'')+(selected?' selected':'')+'" data-agenda-day="'+dateKey(day)+'"><span class="agenda-day-number">'+day.getDate()+'</span><span class="agenda-day-dots">'+visible.map(item=>'<i class="'+agendaDotClass(item.kind)+'" title="'+escape(item.title)+'"></i>').join('')+(entries.length>4?'<small>+'+(entries.length-4)+'</small>':'')+'</span></button>';
+  }
+  function monthCalendarHtml(){
+    const first=new Date(agendaCursor.getFullYear(),agendaCursor.getMonth(),1),offset=(first.getDay()+6)%7,start=addDays(first,-offset),cells=[];
+    for(let i=0;i<42;i++){const day=addDays(start,i);cells.push(agendaDayCard(day,{outside:day.getMonth()!==agendaCursor.getMonth()}))}
+    return '<div class="agenda-weekdays"><span>SEG</span><span>TER</span><span>QUA</span><span>QUI</span><span>SEX</span><span>SÁB</span><span>DOM</span></div><div class="agenda-month-grid">'+cells.join('')+'</div>';
+  }
+  function weekCalendarHtml(){
+    const d=startOfDay(agendaCursor),offset=(d.getDay()+6)%7,start=addDays(d,-offset);
+    const cards=[];
+    for(let i=0;i<7;i++){const day=addDays(start,i),entries=entriesForDate(day);cards.push('<button type="button" class="agenda-week-card'+(dateKey(day)===dateKey()?' today':'')+'" data-agenda-day="'+dateKey(day)+'"><small>'+day.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','')+'</small><b>'+day.getDate()+'</b><span>'+entries.length+' item'+(entries.length===1?'':'s')+'</span><div>'+entries.slice(0,3).map(item=>'<i class="'+agendaDotClass(item.kind)+'"></i>').join('')+'</div></button>')}
+    return '<div class="agenda-week-grid">'+cards.join('')+'</div>';
+  }
+  function todayCalendarHtml(){
+    const entries=entriesForDate(agendaCursor);
+    return '<div class="agenda-today-card"><span>'+agendaCursor.toLocaleDateString('pt-BR',{weekday:'long'})+'</span><b>'+agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})+'</b><strong>'+entries.length+' item'+(entries.length===1?'':'s')+'</strong></div>';
+  }
+  function renderAgendaDayDetail(){
+    const root=document.getElementById('agendaDayDetail');
+    if(!root)return;
+    const entries=entriesForDate(agendaCursor);
+    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'">Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover">×</button>':'')+'</article>').join(''):'<div class="empty compact">Nada planejado para este dia.</div>')+'</div>';
+    root.querySelectorAll('[data-agenda-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.agendaOpen));
+    root.querySelectorAll('[data-agenda-delete]').forEach(button=>button.onclick=()=>deleteAgendaItem(button.dataset.agendaDelete));
+    const form=document.getElementById('agendaQuickForm');if(form)form.elements.date.value=dateKey(agendaCursor);
+  }
+  function renderAgenda(){
+    const view=ensureAgendaView(),grid=view.querySelector('#agendaCalendarGrid'),label=view.querySelector('#agendaPeriodLabel');
+    if(!grid||!label)return;
+    if(agendaMode==='month'){
+      label.textContent=agendaCursor.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+      grid.innerHTML=monthCalendarHtml();
+    }else if(agendaMode==='week'){
+      const d=startOfDay(agendaCursor),start=addDays(d,-((d.getDay()+6)%7)),end=addDays(start,6);
+      label.textContent=start.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' — '+end.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+      grid.innerHTML=weekCalendarHtml();
+    }else{
+      label.textContent=agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+      grid.innerHTML=todayCalendarHtml();
+    }
+    grid.querySelectorAll('[data-agenda-day]').forEach(button=>button.onclick=()=>{agendaCursor=parseDate(button.dataset.agendaDay)||new Date();renderAgenda()});
+    renderAgendaDayDetail();
+  }
