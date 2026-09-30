@@ -75,3 +75,10 @@
 .agenda-dot.topic-review{background:#d6b06e}.agenda-entry.topic-review{border-color:rgba(214,176,110,.13)}
 
 .agenda-entry.is-completed{opacity:.58}.agenda-completed-badge{display:inline-flex;margin-top:3px;padding:2px 5px;border-radius:4px;background:rgba(98,169,120,.08);color:#62a978;font-size:6px;text-transform:uppercase;letter-spacing:.08em}
+
+@media (min-width:600px) and (max-width:980px) and (pointer:coarse){
+ .study-intelligence-row{grid-template-columns:1fr 1fr}.study-intelligence-row .forecast-home-card{grid-column:1/-1}
+ .planner-page-head{gap:12px}.matrix-map-head{padding:13px}.matrix-topic{min-height:50px}
+ .study-agenda-layout{grid-template-columns:1fr}.study-agenda-side{grid-template-columns:1fr 1fr}
+ .planner-modal-card{width:min(760px,96vw)}
+}
