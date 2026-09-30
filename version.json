@@ -1,13 +1,14 @@
 {
-  "version": "15.4.2",
-  "label": "V15.4.2",
-  "releasedAt": "2026-09-30T17:34:00-03:00",
-  "notes": "Hotfix final da Mobile UX 2: estabiliza a caixa visual dos accordions de Progresso no smartphone e mantém visível o cabeçalho de Prioridades, preservando todas as correções feitas a partir do vídeo real do iPhone.",
+  "version": "15.4.3",
+  "label": "V15.4.3",
+  "releasedAt": "2026-09-30T17:42:00-03:00",
+  "notes": "Hotfix da Mobile UX 2: normaliza a ordem dos blocos de Progresso no smartphone para impedir accordions aninhados e torna o teste de novidades independente do texto específico de cada release.",
   "showWhatsNew": true,
   "highlights": [
-    "Prioridades permanece visível e expansível na tela Progresso do smartphone",
-    "Corrige conflito de layout do elemento details usado nos blocos mobile",
-    "Mantém o leitor sem botão de dúvida duplicado e com Salvar agora no menu Mais",
-    "Preserva toda a revisão V15.4 para Home, curso, mapas, Agenda, Progresso, Configurações e navegação"
+    "Resumo, Prioridades, Desempenho e Disciplinas passam a ficar em uma pilha mobile estável e independente",
+    "Prioridades não fica mais escondido dentro de Desempenho quando os painéis são criados em ordens diferentes",
+    "Mantém quatro KPIs principais no topo da tela Progresso no iPhone",
+    "Corrige o teste de novidades para acompanhar automaticamente a versão instalada",
+    "Preserva todas as melhorias de Home, curso, mapas, leitor, Agenda, Configurações e navegação da V15.4"
   ]
 }
