@@ -999,5 +999,5 @@ test('iPhone real UX2 mantém somente quatro KPIs no resumo de Progresso',async(
   await page.waitForTimeout(120);
   const visible=await page.locator('#progressMetrics .metric').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
   expect(visible).toBe(4);
-  await expect(page.locator('[data-mobile-progress-group="priority"]')).toBeVisible();
+  await expect(page.locator('[data-mobile-progress-group="priority"]>summary')).toBeVisible();
 });
