@@ -177,8 +177,18 @@
   }
   function deleteAgendaItem(id){
     const data=readData(),row=data.agenda.find(item=>item.id===id);
-    if(!row)return;
+    if(!row)return false;
     row.deleted=true;row.updatedAt=isoNow();writeData(data);renderAgenda();renderHomeDashboard();
+    if(typeof toast==='function')toast('Evento removido da agenda.');
+    return true;
+  }
+  function requestDeleteAgendaItem(id){
+    const row=readData().agenda.find(item=>item.id===id&&!item.deleted);
+    if(!row)return false;
+    const recurrence=row.recurrence&&row.recurrence!=='none'?' Apenas esta ocorrência será removida.':'',message='“'+(row.title||'Evento')+'” será removido da agenda.'+recurrence,action=()=>deleteAgendaItem(id);
+    if(typeof askConfirm==='function'){askConfirm('Remover da agenda?',message,action,'Remover');return true}
+    if(window.confirm('Remover da agenda?\n\n'+message))action();
+    return true;
   }
 
   function timerMapLabel(active){
@@ -291,9 +301,9 @@
     const root=document.getElementById('agendaDayDetail');
     if(!root)return;
     const entries=entriesForDate(agendaCursor);
-    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover">×</button>':'')+'</article>').join(''):'<div class="empty compact">Nada planejado para este dia.</div>')+'</div>';
+    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover da agenda"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':'')+'</article>').join(''):'<div class="empty compact">Nada planejado para este dia.</div>')+'</div>';
     root.querySelectorAll('[data-agenda-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.agendaOpen,{topicId:button.dataset.agendaTopic||''}));
-    root.querySelectorAll('[data-agenda-delete]').forEach(button=>button.onclick=()=>deleteAgendaItem(button.dataset.agendaDelete));
+    root.querySelectorAll('[data-agenda-delete]').forEach(button=>button.onclick=()=>requestDeleteAgendaItem(button.dataset.agendaDelete));
     const form=document.getElementById('agendaQuickForm');if(form)form.elements.date.value=dateKey(agendaCursor);
   }
   function renderAgenda(){
@@ -520,6 +530,7 @@
     active:readActive,
     elapsed:()=>activeElapsed(readActive()),
     addAgenda:addAgendaItem,
+    removeAgenda:requestDeleteAgendaItem,
     goals:()=>({...readData().goals}),
     openDoubt:openDoubtPanel
   };
