@@ -78,3 +78,6 @@
 }
 
 .study-ranking-label{display:block;margin:8px 0 3px;font-size:7px;text-transform:uppercase;letter-spacing:.11em;color:#626872}
+
+.reader.open ~ .study-timer-float{bottom:70px}
+@media(max-width:820px){.reader.open ~ .study-timer-float{bottom:72px}}

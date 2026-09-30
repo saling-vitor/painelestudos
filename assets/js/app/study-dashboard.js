@@ -407,13 +407,15 @@
     if(!root){
       root=document.createElement('div');
       root.id='studySettingsPanel';
-      root.className='panel study-settings-panel settings-full-panel';
+      root.className='panel study-settings-panel';
       const layout=view.querySelector('.settings-layout')||view;
       layout.insertAdjacentElement('afterend',root);
     }
     const data=readData(),g=data.goals,snap=goalSnapshot();
     root.innerHTML='<div class="panel-kicker">Rotina de estudo</div><div class="study-settings-head"><div><h2>Metas, timer e foco</h2><p>Defina sua carga de estudo e o comportamento das sessões.</p></div><div class="study-settings-summary"><span>Hoje <b>'+escape(fmtMin(snap.today))+'</b></span><span>Semana <b>'+escape(fmtMin(snap.week))+'</b></span></div></div><form id="studyGoalsForm" class="study-goals-form"><label>Meta diária <span><input name="dailyMinutes" type="number" min="1" max="1440" step="5" value="'+g.dailyMinutes+'"> min</span></label><label>Meta semanal <span><input name="weeklyMinutes" type="number" min="1" max="10080" step="15" value="'+g.weeklyMinutes+'"> min</span></label><label>Pomodoro <span><input name="pomodoroWork" type="number" min="5" max="180" step="5" value="'+g.pomodoroWork+'"> min</span></label><label>Pausa <span><input name="pomodoroBreak" type="number" min="1" max="60" step="1" value="'+g.pomodoroBreak+'"> min</span></label><label class="study-settings-toggle"><span><b>Modo foco automático</b><small>Oculta controles secundários ao iniciar uma sessão dentro de um mapa.</small></span><input name="autoFocus" type="checkbox" '+(g.autoFocus?'checked':'')+'></label><div class="study-settings-actions"><button class="primary" type="submit">Salvar metas</button><button class="secondary" type="button" data-settings-pomodoro>Iniciar Pomodoro</button></div></form>';
-    root.querySelector('#studyGoalsForm').onsubmit=e=>{e.preventDefault();saveGoalsFromForm(e.currentTarget)};
+    const form=root.querySelector('#studyGoalsForm');
+    form.onsubmit=e=>{e.preventDefault();saveGoalsFromForm(form)};
+    form.querySelector('button[type="submit"]').onclick=e=>{e.preventDefault();saveGoalsFromForm(form)};
     root.querySelector('[data-settings-pomodoro]').onclick=()=>startPomodoro(g.pomodoroWork);
   }
   function enhanceStudyPlan(){
