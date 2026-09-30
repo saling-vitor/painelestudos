@@ -1108,6 +1108,7 @@ test('smartphone compacta também os cards de simulados',async({page},testInfo)=
 
 test('agenda de revisão invalida é regenerada sem atraso absurdo',async({page})=>{
   await page.goto('/#home');
+  await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
   const result=await page.evaluate(()=>{
     const map=combinedMaps()[0],key=map._key||mapKey(map),schedule=readReviewSchedule();
     schedule[key]={dueAt:'0000-01-01T00:00:00.000Z',reason:'legacy',lastReviewedAt:'',sourceModifiedAt:''};
