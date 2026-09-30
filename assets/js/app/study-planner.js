@@ -12,7 +12,7 @@
     timerPosition:null,
     weeklyReviewDay:0
   };
-  let dragState=null;
+  let dragState=null,agendaPointerDrag=null,agendaHoldTimer=0;
 
   const esc=value=>typeof ESC==='function'?ESC(String(value??'')):String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const nowIso=()=>new Date().toISOString();
@@ -518,6 +518,28 @@
     });
   }
 
+  function beginAgendaPointerDrag(e){
+    if(e.pointerType==='mouse')return;
+    const article=e.target.closest('.agenda-entry[data-agenda-drag-id]');if(!article||e.target.closest('button'))return;
+    clearTimeout(agendaHoldTimer);
+    agendaHoldTimer=setTimeout(()=>{const rect=article.getBoundingClientRect();agendaPointerDrag={id:article.dataset.agendaDragId,pointerId:e.pointerId,article,target:null};article.classList.add('is-dragging-touch');article.setPointerCapture?.(e.pointerId);if(navigator.vibrate)navigator.vibrate(18)},260);
+  }
+  function moveAgendaPointerDrag(e){
+    if(!agendaPointerDrag||agendaPointerDrag.pointerId!==e.pointerId)return;
+    const el=document.elementFromPoint(e.clientX,e.clientY),day=el?.closest?.('.agenda-day[data-agenda-day]');
+    document.querySelectorAll('.agenda-day.drag-over').forEach(node=>{if(node!==day)node.classList.remove('drag-over')});
+    if(day){day.classList.add('drag-over');agendaPointerDrag.target=day.dataset.agendaDay}else agendaPointerDrag.target=null;
+    e.preventDefault();
+  }
+  function endAgendaPointerDrag(e){
+    clearTimeout(agendaHoldTimer);agendaHoldTimer=0;
+    if(!agendaPointerDrag||agendaPointerDrag.pointerId!==e.pointerId)return;
+    document.querySelectorAll('.agenda-day.drag-over').forEach(node=>node.classList.remove('drag-over'));
+    agendaPointerDrag.article?.classList.remove('is-dragging-touch');
+    if(agendaPointerDrag.target)rescheduleAgendaItem(agendaPointerDrag.id,agendaPointerDrag.target);
+    agendaPointerDrag=null;
+  }
+
   function applyTimerPosition(){
     const root=document.getElementById('studyTimerFloat'),pos=read().settings.timerPosition;if(!root)return;
     if(!pos){root.style.left='';root.style.top='';root.style.right='';root.style.bottom='';return}
@@ -598,7 +620,7 @@
 
   function init(){
     ensureMatrixView();ensureErrorsView();ensureReaderRail();
-    document.addEventListener('pointerdown',beginTimerDrag,{passive:false});document.addEventListener('pointermove',moveTimerDrag,{passive:false});document.addEventListener('pointerup',endTimerDrag);document.addEventListener('pointercancel',endTimerDrag);document.addEventListener('keydown',handlePlannerShortcut);
+    document.addEventListener('pointerdown',beginTimerDrag,{passive:false});document.addEventListener('pointermove',moveTimerDrag,{passive:false});document.addEventListener('pointerup',endTimerDrag);document.addEventListener('pointercancel',endTimerDrag);document.addEventListener('pointerdown',beginAgendaPointerDrag,{passive:true});document.addEventListener('pointermove',moveAgendaPointerDrag,{passive:false});document.addEventListener('pointerup',endAgendaPointerDrag);document.addEventListener('pointercancel',endAgendaPointerDrag);document.addEventListener('keydown',handlePlannerShortcut);
     window.addEventListener('resize',()=>setTimeout(applyTimerPosition,40));
     const reader=document.getElementById('reader');if(reader)new MutationObserver(()=>renderReaderRail()).observe(reader,{attributes:true,attributeFilter:['class']});
     const agenda=document.querySelector('[data-view="agenda"]');if(agenda){let pending=0;new MutationObserver(()=>{clearTimeout(pending);pending=setTimeout(enhanceAgenda,20)}).observe(agenda,{childList:true,subtree:true})}
