@@ -1,14 +1,14 @@
 {
-  "version": "15.5.0",
-  "label": "V15.5.0",
-  "releasedAt": "2026-09-30T21:05:05.177Z",
-  "notes": "O tempo de estudo passa a ser iniciado manualmente, e a Agenda ganha remoção explícita de eventos criados pelo usuário.",
+  "version": "15.5.1",
+  "label": "V15.5.1",
+  "releasedAt": "2026-09-30T21:16:40.069Z",
+  "notes": "Corrige a remoção dos registros concluídos que aparecem na Agenda, incluindo testes de Pomodoro e sessões de estudo.",
   "showWhatsNew": true,
   "highlights": [
-    "Abrir um mapa não soma mais tempo de estudo automaticamente",
-    "O leitor mostra “Iniciar estudo” e só contabiliza tempo durante uma sessão ativa",
-    "Sessões mantêm pausar, retomar, finalizar e pausa automática ao sair do app",
-    "Eventos manuais da Agenda agora têm botão Remover com confirmação",
-    "Remover um evento da Agenda não apaga o histórico de sessões já concluídas"
+    "Sessões concluídas exibidas na Agenda agora também mostram o botão Remover",
+    "Pomodoros e sessões de estudo de teste podem ser apagados diretamente no dia selecionado",
+    "A remoção usa confirmação antes de excluir o registro",
+    "Sessões removidas deixam de aparecer no histórico e nas contagens de sessões",
+    "O tempo dessas sessões removidas é descontado das métricas efetivas de hoje, semana e mapa"
   ]
 }
