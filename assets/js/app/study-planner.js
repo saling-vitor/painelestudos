@@ -407,4 +407,214 @@
     settings:()=>({...read().settings}),
     saveSettings:patch=>{const data=read();data.settings={...data.settings,...patch};write(data);renderAll();return data.settings}
   };
+
+  function topicStatus(map,topicId){
+    const stateValue=(readMapState(map).topicStates||{})[topicId]||'';
+    const review=read().topicReviews[topicReviewKey(mapKeyOf(map),topicId)];
+    const due=Date.parse(review?.dueAt||0)||0;
+    if(due&&due<new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()+1).getTime())return{key:'due',label:'Revisar'};
+    if(stateValue==='done')return{key:'done',label:'OK'};
+    if(stateValue==='review')return{key:'review',label:'REV'};
+    if(stateValue==='difficult')return{key:'difficult',label:'DIF'};
+    return{key:'pending',label:'Pendente'};
+  }
+  function mapMatrixTopics(map){
+    const indexed=searchTopicsForMap(map),stateData=readMapState(map),ids=new Set([...indexed.map(item=>String(item.topicId)),...Object.keys(stateData.topicStates||{})]);
+    return[...ids].map(id=>{const hit=indexed.find(item=>String(item.topicId)===String(id));return{id,title:hit?.title||topicTitle(map,id),status:topicStatus(map,id)}}).sort((a,b)=>a.title.localeCompare(b.title,'pt-BR'));
+  }
+  function domainEstimate(map){
+    const p=mapProgress(map),total=Math.max(1,p.total),score=(p.done||0)+(p.review||0)*.62+(p.difficult||0)*.25;
+    return Math.max(0,Math.min(100,Math.round(score/total*100)));
+  }
+  function ensureMatrixView(){
+    let view=document.querySelector('[data-view="matrix"]');if(view)return view;
+    view=document.createElement('section');view.className='view planner-matrix-view';view.dataset.view='matrix';
+    view.innerHTML='<div class="section-head planner-page-head"><div><div class="kicker">Cobertura</div><h2>Matriz do edital</h2><p>Conteúdos dos mapas organizados por situação de estudo e revisão.</p></div><div class="planner-page-actions"><select id="matrixCourseSelect" aria-label="Curso"></select><button type="button" class="secondary" data-matrix-errors>Caderno de erros</button></div></div><div id="matrixSummary"></div><div class="matrix-filters" id="matrixFilters"><button class="active" data-matrix-filter="all">Todos</button><button data-matrix-filter="pending">Pendentes</button><button data-matrix-filter="difficult">DIF</button><button data-matrix-filter="review">REV</button><button data-matrix-filter="due">Revisar</button><button data-matrix-filter="done">OK</button></div><div id="matrixMaps" class="matrix-map-stack"></div>';
+    document.querySelector('.content')?.appendChild(view);
+    view.querySelector('[data-matrix-errors]').onclick=()=>nav('errors');
+    view.querySelector('#matrixCourseSelect').onchange=()=>renderMatrix();
+    view.querySelectorAll('[data-matrix-filter]').forEach(button=>button.onclick=()=>{view.querySelectorAll('[data-matrix-filter]').forEach(b=>b.classList.toggle('active',b===button));view.dataset.matrixFilter=button.dataset.matrixFilter;renderMatrix()});
+    return view;
+  }
+  function renderMatrix(){
+    const view=ensureMatrixView(),select=view.querySelector('#matrixCourseSelect'),courses=combinedCourses(),current=select.value||state.courseId||courses[0]?.id||'';
+    select.innerHTML=courses.map(course=>'<option value="'+esc(course.id)+'"'+(course.id===current?' selected':'')+'>'+esc(course.title)+'</option>').join('');
+    const courseId=select.value||current,maps=combinedMaps().filter(map=>map.courseId===courseId),progress=aggregateProgress(maps),mastery=maps.length?Math.round(maps.reduce((sum,map)=>sum+domainEstimate(map),0)/maps.length):0,fc=forecast(courseId),filter=view.dataset.matrixFilter||'all';
+    view.querySelector('#matrixSummary').innerHTML='<div class="matrix-summary-grid"><article><span>Cobertura</span><b>'+formatProgressPercent(progress)+'</b><small>'+progress.marked+' / '+progress.total+' tópicos</small></article><article><span>Domínio estimado</span><b>'+mastery+'%</b><small>OK + REV + DIF ponderados</small></article><article><span>Pendentes</span><b>'+progress.pending+'</b><small>tópicos ainda não marcados</small></article><article><span>Previsão</span><b>'+esc(fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}))+'</b><small>'+esc(fmtSeconds(fc.remainingSeconds))+' estimadas</small></article></div><div class="forecast-scenarios"><span>Simular ritmo:</span>'+[60,120,180].map(min=>{const x=forecast(courseId,min);return'<button type="button" data-forecast-min="'+min+'"><b>'+fmtMinutes(min)+'/dia</b><small>'+esc(x.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}))+(x.marginDays!==null?' · '+(x.marginDays>=0?x.marginDays+'d de margem':Math.abs(x.marginDays)+'d após a prova'):'')+'</small></button>'}).join('')+'</div>';
+    view.querySelector('#matrixMaps').innerHTML=maps.map(map=>{
+      const topics=mapMatrixTopics(map),visible=filter==='all'?topics:topics.filter(topic=>topic.status.key===filter),p=mapProgress(map),due=dueTopicRows(map.courseId).filter(row=>row.mapKey===mapKeyOf(map)).length;
+      if(filter!=='all'&&!visible.length)return'';
+      return'<article class="matrix-map"><div class="matrix-map-head"><div><span class="map-code compact-code">'+esc(map.code||'MAP')+'</span><div><b>'+esc(map.title||map.shortTitle)+'</b><small>'+formatProgressPercent(p)+' coberto · domínio '+domainEstimate(map)+'%'+(due?' · '+due+' revisões vencidas':'')+'</small></div></div><button type="button" class="secondary" data-matrix-open-map="'+esc(mapKeyOf(map))+'">Abrir mapa</button></div><div class="matrix-topic-list">'+(visible.length?visible.map(topic=>'<button type="button" class="matrix-topic '+topic.status.key+'" data-matrix-topic-map="'+esc(mapKeyOf(map))+'" data-matrix-topic-id="'+esc(topic.id)+'"><span>'+esc(topic.title)+'</span><b>'+esc(topic.status.label)+'</b></button>').join(''):'<div class="empty compact">Nenhum tópico catalogado neste mapa.</div>')+'</div></article>';
+    }).join('')||'<div class="empty">Nenhum conteúdo corresponde ao filtro.</div>';
+    view.querySelectorAll('[data-matrix-open-map]').forEach(button=>button.onclick=()=>openMap(button.dataset.matrixOpenMap));
+    view.querySelectorAll('[data-matrix-topic-map]').forEach(button=>button.onclick=()=>openMap(button.dataset.matrixTopicMap,{topicId:button.dataset.matrixTopicId}));
+  }
+
+  function bestMapForError(label,courseId=''){
+    return combinedMaps().filter(map=>!courseId||map.courseId===courseId).map(map=>({map,score:sectionMatchScore(label,map)})).sort((a,b)=>b.score-a.score)[0]?.map||null;
+  }
+  function ensureErrorsView(){
+    let view=document.querySelector('[data-view="errors"]');if(view)return view;
+    view=document.createElement('section');view.className='view planner-errors-view';view.dataset.view='errors';
+    view.innerHTML='<div class="section-head planner-page-head"><div><div class="kicker">Simulados</div><h2>Caderno de erros</h2><p>Erros recentes agrupados por assunto para orientar o próximo estudo.</p></div><div class="planner-page-actions"><button type="button" class="secondary" data-errors-matrix>Matriz do edital</button><button type="button" class="primary" data-errors-simulations>Fazer simulado</button></div></div><div id="errorNotebookSummary"></div><div id="errorNotebookList" class="error-notebook-list"></div>';
+    document.querySelector('.content')?.appendChild(view);
+    view.querySelector('[data-errors-matrix]').onclick=()=>nav('matrix');view.querySelector('[data-errors-simulations]').onclick=()=>nav('simulations');
+    return view;
+  }
+  function renderErrors(){
+    const view=ensureErrorsView(),groups=errorGroups(),items=mistakeItems(),total=groups.reduce((sum,g)=>sum+g.count,0);
+    view.querySelector('#errorNotebookSummary').innerHTML='<div class="error-summary-grid"><article><span>Erros registrados</span><b>'+total+'</b><small>'+items.length+' registros/tentativas</small></article><article><span>Assuntos recorrentes</span><b>'+groups.length+'</b><small>agrupamentos detectados</small></article><article><span>Maior concentração</span><b>'+esc(groups[0]?.label||'—')+'</b><small>'+(groups[0]?.count||0)+' erro'+((groups[0]?.count||0)===1?'':'s')+'</small></article></div>';
+    view.querySelector('#errorNotebookList').innerHTML=groups.length?groups.map(group=>{
+      const sample=group.items[0],map=bestMapForError(group.label,sample?.simulation?.courseId),recent=group.items.slice(0,8);
+      return'<article class="error-group"><div class="error-group-head"><div><span>'+group.count+' erro'+(group.count===1?'':'s')+'</span><h3>'+esc(group.label)+'</h3></div><div>'+((map)?'<button type="button" class="secondary" data-error-map="'+esc(mapKeyOf(map))+'">Reestudar '+esc(map.code||'mapa')+'</button>':'')+'</div></div><div class="error-items">'+recent.map(item=>'<button type="button" data-error-sim="'+esc(item.simulationKey)+'"><span>'+(item.number?'Q'+item.number:'Bloco')+'</span><div><b>'+esc(item.stem||item.section||item.topic)+'</b><small>'+esc([item.simulation?.title,item.userAnswer?'Sua resposta '+item.userAnswer:'',item.answer?'Gabarito '+item.answer:''].filter(Boolean).join(' · '))+'</small></div></button>').join('')+'</div></article>';
+    }).join(''):'<div class="empty">Finalize simulados para montar automaticamente seu caderno de erros.</div>';
+    view.querySelectorAll('[data-error-map]').forEach(button=>button.onclick=()=>openMap(button.dataset.errorMap));
+    view.querySelectorAll('[data-error-sim]').forEach(button=>button.onclick=()=>openSimulation(button.dataset.errorSim));
+  }
+
+  function renderHomeIntelligence(){
+    const root=document.getElementById('homeStudyDashboard');if(!root)return;
+    let panel=root.querySelector('.study-intelligence-row');if(!panel){panel=document.createElement('div');panel.className='study-intelligence-row';root.appendChild(panel)}
+    const top=priorityRows()[0],courseId=top?.map?.courseId||combinedCourses()[0]?.id||'',fc=forecast(courseId),due=dueTopicRows().length;
+    panel.innerHTML='<article class="study-now-card"><span class="kicker">Tenho tempo agora</span><h3>Montar sessão rápida</h3><div class="study-now-buttons">'+[15,30,60,120].map(min=>'<button type="button" data-time-now="'+min+'">'+(min<60?min+' min':min/60+'h')+'</button>').join('')+'</div></article><article class="priority-now-card"><span class="kicker">Prioridade agora</span><h3>'+esc(top?.map?.shortTitle||top?.map?.title||'Seu próximo estudo')+'</h3><p>'+esc(top?.reasons?.slice(0,3).join(' · ')||'Continue o conteúdo pendente.')+'</p><div><button type="button" class="secondary" data-priority-why>Por que agora?</button>'+(top?'<button type="button" class="primary" data-priority-open="'+esc(top.key)+'">Estudar</button>':'')+'</div></article><article class="forecast-home-card"><span class="kicker">Ritmo atual</span><h3>'+esc(fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3><p>'+fc.remainingTopics+' tópicos restantes · '+esc(fmtSeconds(fc.remainingSeconds))+' estimadas'+(fc.marginDays!==null?' · '+(fc.marginDays>=0?fc.marginDays+' dias antes da prova':Math.abs(fc.marginDays)+' dias após a prova'):'')+'</p><div><button type="button" class="secondary" data-home-matrix>Matriz</button>'+(due?'<button type="button" class="secondary" data-home-topic-review>'+due+' revisar</button>':'')+'</div></article>';
+    panel.querySelectorAll('[data-time-now]').forEach(button=>button.onclick=()=>showTimePlan(Number(button.dataset.timeNow)));
+    panel.querySelector('[data-priority-open]')?.addEventListener('click',e=>openMap(e.currentTarget.dataset.priorityOpen));
+    panel.querySelector('[data-priority-why]')?.addEventListener('click',()=>{if(!top)return;toast((top.map.code||'Mapa')+' · '+top.reasons.join(' · ')+' · prioridade '+Math.round(top.score))});
+    panel.querySelector('[data-home-matrix]').onclick=()=>nav('matrix');panel.querySelector('[data-home-topic-review]')?.addEventListener('click',showTopicReview);
+  }
+
+  function renderProgressIntelligence(){
+    const view=document.querySelector('[data-view="progress"]');if(!view)return;
+    let root=document.getElementById('studyIntelligencePanel');if(!root){root=document.createElement('section');root.id='studyIntelligencePanel';root.className='section study-intelligence-panel';const analytics=document.getElementById('studyAnalyticsPanel');if(analytics)analytics.insertAdjacentElement('beforebegin',root);else view.appendChild(root)}
+    const top=priorityRows().slice(0,3),due=dueTopicRows(),groups=errorGroups().slice(0,4),week=weeklySnapshot(),courseId=top[0]?.map?.courseId||combinedCourses()[0]?.id||'',fc=forecast(courseId);
+    root.innerHTML='<div class="section-head"><div><div class="kicker">Planejamento adaptativo</div><h2>Próximas decisões</h2><p>Prioridade calculada a partir de DIF, REV, revisões, erros, ritmo e proximidade da prova.</p></div><div class="planner-head-actions"><button class="secondary" type="button" data-progress-matrix>Matriz do edital</button><button class="secondary" type="button" data-progress-errors>Caderno de erros</button></div></div><div class="priority-engine-grid">'+top.map((row,index)=>'<article><span>#'+(index+1)+' · '+esc(row.map.code||'MAP')+'</span><b>'+esc(row.map.shortTitle||row.map.title)+'</b><p>'+esc(row.reasons.slice(0,3).join(' · '))+'</p><div class="priority-score"><i style="width:'+Math.min(100,Math.round(row.score))+'%"></i></div><button type="button" class="secondary" data-priority-map="'+esc(row.key)+'">Abrir</button></article>').join('')+'</div><div class="intelligence-mini-grid"><article><span>Revisão espaçada</span><b>'+due.length+'</b><p>tópicos vencidos agora</p><button type="button" class="secondary" data-topic-reviews>Revisar tópicos</button></article><article><span>Caderno de erros</span><b>'+groups.reduce((sum,g)=>sum+g.count,0)+'</b><p>'+(groups[0]?esc('Mais recorrente: '+groups[0].label):'Finalize simulados para gerar erros')+'</p><button type="button" class="secondary" data-error-notebook>Ver erros</button></article><article><span>Previsão de conclusão</span><b>'+esc(fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}))+'</b><p>'+esc(fmtSeconds(fc.remainingSeconds))+' de carga estimada</p><button type="button" class="secondary" data-forecast-matrix>Simular ritmos</button></article><article><span>Revisão semanal</span><b>'+esc(fmtSeconds(week.seconds))+'</b><p>'+week.sessions+' sessões · '+week.attempts+' simulados</p><button type="button" class="secondary" data-weekly-review>Abrir resumo</button></article></div>';
+    root.querySelector('[data-progress-matrix]').onclick=()=>nav('matrix');root.querySelector('[data-progress-errors]').onclick=()=>nav('errors');root.querySelector('[data-topic-reviews]').onclick=showTopicReview;root.querySelector('[data-error-notebook]').onclick=()=>nav('errors');root.querySelector('[data-forecast-matrix]').onclick=()=>nav('matrix');root.querySelector('[data-weekly-review]').onclick=showWeeklyReview;
+    root.querySelectorAll('[data-priority-map]').forEach(button=>button.onclick=()=>openMap(button.dataset.priorityMap));
+  }
+
+  function enhanceStudySettings(){
+    const root=document.getElementById('studySettingsPanel');if(!root)return;
+    let block=document.getElementById('plannerAdvancedSettings');if(!block){block=document.createElement('section');block.id='plannerAdvancedSettings';block.className='planner-advanced-settings';root.appendChild(block)}
+    const s=read().settings;
+    block.innerHTML='<div class="planner-settings-head"><div><span class="kicker">Planejamento adaptativo</span><h3>Semana e prioridades</h3></div></div><form id="plannerSettingsForm"><label>Carga máxima por dia <span><input type="number" name="maxDailyMinutes" min="15" max="1440" step="15" value="'+s.maxDailyMinutes+'"> min</span></label><label>Prioridade <select name="priorityMode"><option value="balanced"'+(s.priorityMode==='balanced'?' selected':'')+'>Equilibrada</option><option value="reviews"'+(s.priorityMode==='reviews'?' selected':'')+'>Revisões primeiro</option><option value="specific"'+(s.priorityMode==='specific'?' selected':'')+'>Específicos primeiro</option></select></label><fieldset><legend>Dias disponíveis</legend>'+[['D',0],['S',1],['T',2],['Q',3],['Q',4],['S',5],['S',6]].map(([label,n])=>'<label><input type="checkbox" name="day" value="'+n+'"'+(s.availableDays.includes(n)?' checked':'')+'><span>'+label+'</span></label>').join('')+'</fieldset><div><button type="submit" class="primary">Salvar planejamento</button><button type="button" class="secondary" data-settings-weekly>Revisão semanal</button></div></form>';
+    const form=block.querySelector('#plannerSettingsForm');form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),days=[...form.querySelectorAll('[name="day"]:checked')].map(input=>Number(input.value));const data=read();data.settings.maxDailyMinutes=clamp(fd.get('maxDailyMinutes'),15,1440)||120;data.settings.priorityMode=String(fd.get('priorityMode')||'balanced');data.settings.availableDays=days.length?days:[1,2,3,4,5,6];write(data);toast('Planejamento salvo.');renderAll()};
+    block.querySelector('[data-settings-weekly]').onclick=showWeeklyReview;
+  }
+
+  function enhanceAgenda(){
+    const view=document.querySelector('[data-view="agenda"]');if(!view)return;
+    const head=view.querySelector('.study-agenda-head');if(head&&!head.querySelector('.agenda-v2-actions')){const actions=document.createElement('div');actions.className='agenda-v2-actions';actions.innerHTML='<button type="button" class="secondary" data-agenda-replan>Replanejar semana</button><button type="button" class="secondary" data-agenda-export>Exportar .ics</button>';head.appendChild(actions);actions.querySelector('[data-agenda-replan]').onclick=showReplanModal;actions.querySelector('[data-agenda-export]').onclick=exportAgendaIcs}
+    const form=view.querySelector('#agendaQuickForm');if(form&&!form.querySelector('[name="recurrence"]')){
+      const row=document.createElement('label');row.innerHTML='Repetição<select name="recurrence"><option value="none">Não repetir</option><option value="weekly">Semanal · 8 semanas</option><option value="weekdays">Dias úteis · 20 sessões</option><option value="daily">Diária · 14 dias</option></select>';
+      form.querySelector('.row')?.insertAdjacentElement('afterend',row);
+      form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),payload={date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes')},rule=fd.get('recurrence');if(rule&&rule!=='none')addRecurringAgenda(payload,rule);else window.StudyDashboard?.addAgenda?.(payload);form.elements.title.value='';form.elements.minutes.value='30'};
+    }
+    view.querySelectorAll('.agenda-entry').forEach(article=>{
+      const del=article.querySelector('[data-agenda-delete]');if(!del)return;const id=del.dataset.agendaDelete;article.dataset.agendaDragId=id;article.draggable=true;
+      article.ondragstart=e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';article.classList.add('is-dragging')};article.ondragend=()=>article.classList.remove('is-dragging');
+    });
+    view.querySelectorAll('.agenda-day[data-agenda-day]').forEach(day=>{
+      day.ondragover=e=>{e.preventDefault();day.classList.add('drag-over')};day.ondragleave=()=>day.classList.remove('drag-over');day.ondrop=e=>{e.preventDefault();day.classList.remove('drag-over');const id=e.dataTransfer.getData('text/plain');if(id)rescheduleAgendaItem(id,day.dataset.agendaDay)};
+    });
+  }
+
+  function applyTimerPosition(){
+    const root=document.getElementById('studyTimerFloat'),pos=read().settings.timerPosition;if(!root)return;
+    if(!pos){root.style.left='';root.style.top='';root.style.right='';root.style.bottom='';return}
+    const maxX=Math.max(8,window.innerWidth-root.offsetWidth-8),maxY=Math.max(8,window.innerHeight-root.offsetHeight-8),x=clamp(pos.x,8,maxX),y=clamp(pos.y,8,maxY);
+    root.style.left=x+'px';root.style.top=y+'px';root.style.right='auto';root.style.bottom='auto';
+  }
+  function beginTimerDrag(e){
+    const root=e.target.closest('#studyTimerFloat');if(!root||e.target.closest('button')||!e.target.closest('.study-timer-copy'))return;
+    const rect=root.getBoundingClientRect();dragState={root,pointerId:e.pointerId,dx:e.clientX-rect.left,dy:e.clientY-rect.top};root.setPointerCapture?.(e.pointerId);root.classList.add('is-dragging');e.preventDefault();
+  }
+  function moveTimerDrag(e){
+    if(!dragState||e.pointerId!==dragState.pointerId)return;const{root,dx,dy}=dragState,maxX=Math.max(8,innerWidth-root.offsetWidth-8),maxY=Math.max(8,innerHeight-root.offsetHeight-8),x=clamp(e.clientX-dx,8,maxX),y=clamp(e.clientY-dy,8,maxY);root.style.left=x+'px';root.style.top=y+'px';root.style.right='auto';root.style.bottom='auto';e.preventDefault();
+  }
+  function endTimerDrag(e){
+    if(!dragState||e.pointerId!==dragState.pointerId)return;const rect=dragState.root.getBoundingClientRect(),data=read();data.settings.timerPosition={x:Math.round(rect.left),y:Math.round(rect.top)};write(data);dragState.root.classList.remove('is-dragging');dragState=null;
+  }
+
+  function ensureReaderRail(){
+    const reader=document.getElementById('reader');if(!reader)return null;let rail=document.getElementById('studyReaderRail');if(rail)return rail;
+    rail=document.createElement('aside');rail.id='studyReaderRail';rail.className='study-reader-rail';reader.appendChild(rail);return rail;
+  }
+  function renderReaderRail(){
+    const reader=document.getElementById('reader'),rail=ensureReaderRail();if(!reader||!rail)return;
+    const open=reader.classList.contains('open'),map=state?.readerMapKey?mapById(state.readerMapKey):null;if(!open||!map){rail.hidden=true;return}rail.hidden=false;
+    const active=window.StudyDashboard?.active?.(),p=mapProgress(map),due=dueTopicRows(map.courseId).filter(row=>row.mapKey===mapKeyOf(map)).length,next=nextPriority(mapKeyOf(map));
+    rail.innerHTML='<button type="button" data-rail-session><span>◷</span><b>'+(active?(active.running?'Pausar':'Retomar'):'Sessão')+'</b></button><button type="button" data-rail-doubt><span>?</span><b>Dúvida</b></button><button type="button" data-rail-review><span>R</span><b>'+due+' revisar</b></button><button type="button" data-rail-next '+(!next?'disabled':'')+'><span>→</span><b>Próximo</b></button><small>OK '+p.done+' · REV '+p.review+' · DIF '+p.difficult+'</small>';
+    rail.querySelector('[data-rail-session]').onclick=()=>{const a=window.StudyDashboard?.active?.();if(!a)window.StudyDashboard?.start?.({map,mode:'free'});else if(a.running)window.StudyDashboard?.pause?.();else window.StudyDashboard?.resume?.();setTimeout(renderReaderRail,30)};
+    rail.querySelector('[data-rail-doubt]').onclick=()=>window.StudyDashboard?.openDoubt?.();rail.querySelector('[data-rail-review]').onclick=showTopicReview;rail.querySelector('[data-rail-next]').onclick=()=>{if(next)openMap(next.key)};
+  }
+
+  function handlePlannerShortcut(e){
+    if(e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey)return;const tag=e.target?.tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||e.target?.isContentEditable)return;
+    if(document.querySelector('.modal.open')||document.querySelector('.planner-modal:not([hidden])'))return;
+    const key=e.key.toLowerCase(),readerOpen=document.getElementById('reader')?.classList.contains('open'),active=window.StudyDashboard?.active?.();
+    if(e.code==='Space'&&active){e.preventDefault();active.running?window.StudyDashboard.pause():window.StudyDashboard.resume();return}
+    if(key==='f'&&readerOpen&&typeof toggleReaderFocus==='function'){e.preventDefault();toggleReaderFocus();return}
+    if(key==='d'&&readerOpen){e.preventDefault();window.StudyDashboard?.openDoubt?.();return}
+    if(key==='r'){e.preventDefault();showTopicReview();return}
+  }
+
+  function searchOptions(query=''){
+    const q=norm(query),commands=[
+      {title:'Agenda de estudos',meta:'Hoje · semana · mês',action:'nav-agenda',tokens:'agenda calendario planejar'},
+      {title:'Matriz do edital',meta:'Cobertura · domínio · previsão',action:'nav-matrix',tokens:'matriz edital cobertura'},
+      {title:'Caderno de erros',meta:'Erros dos simulados',action:'nav-errors',tokens:'erros simulado'},
+      {title:'Revisões por tópico',meta:dueTopicRows().length+' vencidas',action:'topic-review',tokens:'revisao revisar rev dif'},
+      {title:'Replanejar minha semana',meta:'Redistribuir sessões atrasadas',action:'replan',tokens:'replanejar semana agenda'},
+      {title:'Revisão semanal',meta:'Resumo e próximos focos',action:'weekly-review',tokens:'resumo semana revisao'},
+      {title:'Sessão rápida · 30 min',meta:'Plano automático para agora',action:'time-30',tokens:'30 minutos agora sessao'},
+      {title:'Sessão rápida · 1h',meta:'Plano automático para agora',action:'time-60',tokens:'60 minutos 1h agora sessao'}
+    ];
+    const out=q?commands.filter(item=>norm(item.title+' '+item.meta+' '+item.tokens).includes(q)):commands.slice(0,6);
+    if(q){
+      const dashboard=window.StudyDashboard?.exportData?.()||{};
+      for(const doubt of (dashboard.doubts||[]).filter(row=>!row.deleted&&norm(row.text).includes(q)).slice(0,4)){const map=mapById(doubt.mapKey);out.push({title:doubt.text,meta:'Dúvida · '+(map?.code||'Mapa'),action:'open-map:'+doubt.mapKey})}
+      for(const group of errorGroups().filter(group=>norm(group.label).includes(q)).slice(0,4)){const map=bestMapForError(group.label,group.items[0]?.simulation?.courseId);out.push({title:group.label,meta:group.count+' erros recorrentes',action:map?'open-map:'+mapKeyOf(map):'nav-errors'})}
+      for(const row of dueTopicRows().filter(row=>norm(row.title+' '+row.map.code).includes(q)).slice(0,5))out.push({title:row.title,meta:'Revisar · '+(row.map.code||'MAP'),action:'open-topic:'+row.mapKey+'|'+row.topicId});
+      for(const sim of (typeof combinedSimulations==='function'?combinedSimulations():[]).filter(sim=>norm(sim.title+' '+sim.code+' '+sim.board).includes(q)).slice(0,3))out.push({title:sim.title||sim.code,meta:'Simulado · '+(sim.board||''),action:'open-sim:'+(sim._key||simulationKey(sim))});
+      if(q.startsWith('dif ')){
+        const term=q.slice(4);for(const map of combinedMaps())for(const[id,stateValue]of Object.entries(readMapState(map).topicStates||{}))if(stateValue==='difficult'&&norm(topicTitle(map,id)).includes(term))out.push({title:topicTitle(map,id),meta:'DIF · '+(map.code||'MAP'),action:'open-topic:'+mapKeyOf(map)+'|'+id});
+      }
+    }
+    return out.slice(0,12);
+  }
+  function activateSearch(action){
+    if(!action)return false;
+    if(action==='nav-agenda'){nav('agenda');return true}if(action==='nav-matrix'){nav('matrix');return true}if(action==='nav-errors'){nav('errors');return true}if(action==='topic-review'){showTopicReview();return true}if(action==='replan'){showReplanModal();return true}if(action==='weekly-review'){showWeeklyReview();return true}if(action==='time-30'){showTimePlan(30);return true}if(action==='time-60'){showTimePlan(60);return true}
+    if(action.startsWith('open-map:')){openMap(action.slice(9));return true}
+    if(action.startsWith('open-topic:')){const[value,id]=action.slice(11).split('|');openMap(value,{topicId:id});return true}
+    if(action.startsWith('open-sim:')){openSimulation(action.slice(9));return true}
+    return false;
+  }
+
+  function renderAll(){
+    renderHomeIntelligence();renderProgressIntelligence();renderMatrix();renderErrors();enhanceStudySettings();enhanceAgenda();renderReaderRail();applyTimerPosition();
+  }
+  Object.assign(window.StudyPlanner,{render:renderAll,renderHome:renderHomeIntelligence,renderProgress:renderProgressIntelligence,renderMatrix,renderErrors,enhanceAgenda,renderReaderRail,searchOptions,activateSearch});
+
+  function init(){
+    ensureMatrixView();ensureErrorsView();ensureReaderRail();
+    document.addEventListener('pointerdown',beginTimerDrag,{passive:false});document.addEventListener('pointermove',moveTimerDrag,{passive:false});document.addEventListener('pointerup',endTimerDrag);document.addEventListener('pointercancel',endTimerDrag);document.addEventListener('keydown',handlePlannerShortcut);
+    window.addEventListener('resize',()=>setTimeout(applyTimerPosition,40));
+    const reader=document.getElementById('reader');if(reader)new MutationObserver(()=>renderReaderRail()).observe(reader,{attributes:true,attributeFilter:['class']});
+    const agenda=document.querySelector('[data-view="agenda"]');if(agenda){let pending=0;new MutationObserver(()=>{clearTimeout(pending);pending=setTimeout(enhanceAgenda,20)}).observe(agenda,{childList:true,subtree:true})}
+    const timer=document.getElementById('studyTimerFloat');if(timer)new MutationObserver(()=>applyTimerPosition()).observe(timer,{childList:true,subtree:true});
+    if(new Date().getDay()===read().settings.weeklyReviewDay){const key=dateKey(weekStart());if(!read().weeklyReports[key])saveWeeklySnapshot(weeklySnapshot())}
+  }
+
+  const previousRenderHome=window.renderHome;
+  if(typeof previousRenderHome==='function')window.renderHome=function(){const result=previousRenderHome.apply(this,arguments);setTimeout(renderHomeIntelligence,0);return result};
+  const previousRenderProgress=window.renderProgress;
+  if(typeof previousRenderProgress==='function')window.renderProgress=function(){const result=previousRenderProgress.apply(this,arguments);setTimeout(renderProgressIntelligence,0);return result};
+  const previousRenderSettings=window.renderSettings;
+  if(typeof previousRenderSettings==='function')window.renderSettings=function(){const result=previousRenderSettings.apply(this,arguments);setTimeout(enhanceStudySettings,0);return result};
+  const previousAgenda=window.renderStudyAgenda;
+  if(typeof previousAgenda==='function')window.renderStudyAgenda=function(){const result=previousAgenda.apply(this,arguments);setTimeout(enhanceAgenda,0);return result};
+
+  init();
+
 })();
