@@ -290,7 +290,7 @@
     const start=weekStart(value),end=addDays(start,7),prevStart=addDays(start,-7),days=studyTimeDays();
     let seconds=0,prevSeconds=0;
     for(let i=0;i<7;i++){seconds+=Number(days[dateKey(addDays(start,i))]||0);prevSeconds+=Number(days[dateKey(addDays(prevStart,i))]||0)}
-    const sessions=(window.StudyDashboard?.exportData?.().sessions||[]).filter(row=>{const t=Date.parse(row.startedAt||0)||0;return t>=start.getTime()&&t<end.getTime()});
+    const sessions=(window.StudyDashboard?.exportData?.().sessions||[]).filter(row=>{if(row.deleted)return false;const t=Date.parse(row.startedAt||0)||0;return t>=start.getTime()&&t<end.getTime()});
     const attempts=latestAttempts().filter(row=>row.at>=start.getTime()&&row.at<end.getTime());
     const ratings=Object.values(read().topicReviews).filter(row=>{const t=Date.parse(row.lastReviewedAt||0)||0;return t>=start.getTime()&&t<end.getTime()});
     const progress=statProgress(),delta=seconds-prevSeconds,avgScore=attempts.length?Math.round(attempts.reduce((sum,row)=>sum+(Number(row.attempt.score)||0),0)/attempts.length):null,resolvedDifficult=ratings.filter(row=>row.previousState==='difficult'&&(row.rating==='ok'||row.rating==='easy')).length;
