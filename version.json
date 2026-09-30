@@ -1,18 +1,13 @@
 {
-  "version": "15.1.0",
-  "label": "V15.1.0",
-  "releasedAt": "2026-09-30T12:43:00-03:00",
-  "notes": "Nova central de estudo com agenda, sessões cronometradas, metas, revisão integrada, contagem para provas, heatmap, analytics, foco e captura rápida de dúvidas.",
+  "version": "15.1.1",
+  "label": "V15.1.1",
+  "releasedAt": "2026-09-30T13:08:00-03:00",
+  "notes": "Hotfix da Central de Estudo: corrige persistência das metas, conflito visual entre timer e captura de dúvidas e compatibilidade do novo painel com os testes de Configurações.",
   "showWhatsNew": true,
   "highlights": [
-    "Timer flutuante com sessão livre, Pomodoro, pausar, retomar e finalizar",
-    "Agenda Hoje/Semana/Mês integrada a revisões, provas e sessões",
-    "Metas diária e semanal com progresso em tempo real",
-    "Plano do dia conectado ao timer e às prioridades DIF/REV",
-    "Contagem regressiva para a próxima prova",
-    "Heatmap de consistência e analytics por mapa, disciplina e curso",
-    "Modo foco integrado às sessões e opção de ativação automática",
-    "Captura rápida de dúvidas dentro do leitor e caixa de dúvidas no Progresso",
-    "Home recorrente com central Hoje e informações acionáveis acima do conteúdo"
+    "Metas diária e semanal passam a salvar imediatamente pelo formulário",
+    "Timer flutuante deixa de sobrepor o botão Anotar dúvida dentro do leitor",
+    "Painel de metas preserva a estrutura existente de Configurações",
+    "Mantidas todas as novidades da V15.1.0: Agenda, sessões, revisões, heatmap, analytics e foco"
   ]
 }
