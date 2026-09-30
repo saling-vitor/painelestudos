@@ -1,15 +1,14 @@
 {
-  "version": "15.0.9",
-  "label": "V15.0.9",
-  "releasedAt": "2026-09-30T08:12:00-03:00",
-  "notes": "Tela Progresso reorganizada para reduzir repetição, destacar próximas ações e deixar concursos e mapas muito mais compactos e navegáveis.",
+  "version": "15.0.10",
+  "label": "V15.0.10",
+  "releasedAt": "2026-09-30T08:34:00-03:00",
+  "notes": "Nova arte oficial da Home aplicada ao hero, com o mascote e a colagem de estudos preservados à direita e as informações concentradas na área escura.",
   "showWhatsNew": true,
   "highlights": [
-    "Indicadores de progresso agora cabem em uma faixa compacta",
-    "Onde focar agora mostra somente ações úteis, sem cards vazios",
-    "Filtros e ordenação foram integrados ao progresso geral",
-    "Concursos ficam recolhidos por padrão e podem ser expandidos",
-    "Mapas não iniciados deixam de repetir barras e contadores zerados",
-    "Ordenação por prioridade, atividade, progresso ou nome"
+    "Nova arte central da Home com o mascote oficial",
+    "Texto, ações e métricas ficam concentrados na área escura à esquerda",
+    "A ilustração do lado direito fica livre de cards sobrepostos",
+    "Overlay foi suavizado para preservar os detalhes da colagem",
+    "Imagem do hero é pré-carregada e fica disponível no cache offline"
   ]
 }
