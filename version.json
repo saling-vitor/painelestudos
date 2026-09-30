@@ -1,13 +1,20 @@
 {
-  "version": "15.3.1",
-  "label": "V15.3.1",
-  "releasedAt": "2026-09-30T16:46:00-03:00",
-  "notes": "Hotfix da rodada mobile-first: elimina overflow horizontal em 430/390/360 px e garante que a Home realmente fique compacta no smartphone, preservando três indicadores dentro do hero.",
+  "version": "15.4.0",
+  "label": "V15.4.0",
+  "releasedAt": "2026-09-30T17:18:00-03:00",
+  "notes": "Revisão completa da experiência no iPhone real: menos densidade, curso e leitor mais compactos, Agenda realmente orientada ao Hoje, Progresso mais direto, Configurações sem títulos duplicados e navegação mais leve.",
   "showWhatsNew": true,
   "highlights": [
-    "Corrige largura excedente em smartphones de 430, 390 e 360 px",
-    "Hero da Home passa a ter altura móvel controlada entre 284 e 306 px",
-    "Três indicadores essenciais ficam posicionados dentro da capa sem aumentar sua altura",
-    "Mantidas todas as melhorias mobile-first da V15.3.0"
+    "Home reduz ainda mais a altura da capa e transforma os indicadores em uma única faixa compacta",
+    "Plano do dia mostra somente o essencial e Simulados recentes viram carrossel horizontal",
+    "Tela do concurso passa a priorizar título, prova, progresso e mapas, com detalhes sob demanda",
+    "Cards dos mapas ficam menores e os controles visuais deixam de parecer maiores que a capa",
+    "Leitor usa barra única de 52 px, esconde o botão Salvar agora da barra e adiciona skeleton durante o carregamento",
+    "Barra rápida do leitor fica mais discreta e o botão de dúvida duplicado é removido no smartphone",
+    "Agenda em Hoje elimina o calendário duplicado e mostra diretamente a lista de sessões do dia",
+    "Progresso reduz o resumo a quatro KPIs principais e mantém Prioridades logo após o resumo",
+    "Configurações usam accordion exclusivo e deixam de repetir os títulos dentro dos painéis",
+    "Topbar e bottom-nav ficam menores, menos opacas e com tipografia mais legível",
+    "Contraste e tamanhos mínimos de texto foram recalibrados a partir da gravação em iPhone real"
   ]
 }
