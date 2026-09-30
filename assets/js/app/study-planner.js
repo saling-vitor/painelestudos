@@ -515,8 +515,11 @@
       const del=article.querySelector('[data-agenda-delete]');if(!del)return;const id=del.dataset.agendaDelete;article.dataset.agendaDragId=id;article.draggable=true;
       article.ondragstart=e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';article.classList.add('is-dragging')};article.ondragend=()=>article.classList.remove('is-dragging');
     });
+    const agenda=agendaData().agenda||[],max=read().settings.maxDailyMinutes;
     view.querySelectorAll('.agenda-day[data-agenda-day]').forEach(day=>{
       day.ondragover=e=>{e.preventDefault();day.classList.add('drag-over')};day.ondragleave=()=>day.classList.remove('drag-over');day.ondrop=e=>{e.preventDefault();day.classList.remove('drag-over');const id=e.dataTransfer.getData('text/plain');if(id)rescheduleAgendaItem(id,day.dataset.agendaDay)};
+      const mins=dailyPlannedMinutes(parseDate(day.dataset.agendaDay)||new Date(),agenda);day.classList.toggle('over-capacity',mins>max);
+      let load=day.querySelector('.agenda-day-load');if(mins&&!load){load=document.createElement('small');load.className='agenda-day-load';day.appendChild(load)}if(load)load.textContent=mins?mins+'m':'';
     });
   }
 
