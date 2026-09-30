@@ -524,6 +524,21 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
 });
 
 
+test('iPad mostra Calendário na barra inferior e não mostra Estudar ocioso',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação específica do app no iPad.');
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#home');
+  const calendar=page.locator('.bottom-nav [data-nav="agenda"]');
+  await expect(calendar).toBeVisible();
+  await expect(calendar).toContainText('Calendário');
+  await expect(page.locator('.bottom-nav [data-nav]')).toHaveCount(7);
+  await expect(page.locator('#studyTimerFloat')).toBeHidden();
+  await expect(page.locator('#studyTimerFloat')).not.toContainText('Estudar');
+  await calendar.click();
+  await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
+  await expect(calendar).toHaveClass(/active/);
+});
+
 test('agenda de estudos renderiza calendário e troca de modos',async({page})=>{
   await page.goto('/#agenda');
   await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
@@ -553,6 +568,8 @@ test('timer flutuante inicia pausa retoma e finaliza sessão',async({page},testI
   expect(result.active).toBeNull();
   expect(result.last.durationSeconds).toBeGreaterThanOrEqual(2);
   await expect(page.locator('#studyTimerFloat')).toHaveClass(/is-idle/);
+  await expect(page.locator('#studyTimerFloat')).toBeHidden();
+  await expect(page.locator('#studyTimerFloat')).not.toContainText('Estudar');
 });
 
 test('metas e analytics da central de estudo ficam disponíveis',async({page})=>{
