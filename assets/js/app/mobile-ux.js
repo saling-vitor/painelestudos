@@ -454,7 +454,7 @@
     const active=window.StudyDashboard?.active?.(),time=railClock();
     button.setAttribute('aria-expanded',collapsed?'false':'true');
     button.setAttribute('aria-label',collapsed?'Mostrar controles de estudo':'Ocultar controles de estudo');
-    button.innerHTML='<i aria-hidden="true">'+(collapsed?'⌃':'⌄')+'</i>'+(active&&time?'<span class="mobile-rail-time">'+(active.running?'● ':'')+time+'</span>':'');
+    const markup='<i aria-hidden="true">'+(collapsed?'⌃':'⌄')+'</i>'+(active&&time?'<span class="mobile-rail-time">'+(active.running?'● ':'')+time+'</span>':'');if(button.innerHTML!==markup)button.innerHTML=markup;
   }
 
   function setRailCollapsed(value){
