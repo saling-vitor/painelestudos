@@ -52,7 +52,7 @@
   function readActive(){const value=safeJson(localStorage.getItem(ACTIVE_KEY)||'null',null);return value&&typeof value==='object'?value:null}
   function saveActive(value){try{if(value)localStorage.setItem(ACTIVE_KEY,JSON.stringify(value));else localStorage.removeItem(ACTIVE_KEY)}catch{}return value}
   function activeElapsed(active=readActive(),now=Date.now()){if(!active)return 0;const base=Math.max(0,Number(active.elapsedSeconds)||0);if(!active.running||!active.lastResumeAt)return base;return base+Math.max(0,Math.floor((now-(Date.parse(active.lastResumeAt)||now))/1000))}
-  function currentMapForTimer(){if(state?.readerMapKey){const map=mapById(state.readerMapKey);if(map)return map}const last=typeof lastMap==='function'?lastMap():null;return last||combinedMaps()[0]||null}
+  function currentMapForTimer(){if(state?.readerMapKey){const map=mapById(state.readerMapKey);if(map)return map}const last=typeof lastMap==='function'?lastMap():null;return last||null}
   function activeMap(active=readActive()){return active?.mapKey?mapById(active.mapKey):null}
   function flushActive(){const active=readActive();if(!active||!active.running)return 0;const elapsed=activeElapsed(active),accounted=Math.max(0,Number(active.accountedSeconds)||0),delta=Math.max(0,elapsed-accounted);if(delta>0&&window.StudyTime?.add){StudyTime.add(active.mapKey||'__general__',delta,new Date());active.accountedSeconds=accounted+delta;saveActive(active)}return delta}
   function pauseSession({automatic=false}={}){const active=readActive();if(!active||!active.running)return active;flushActive();const fresh=readActive()||active;fresh.elapsedSeconds=activeElapsed(fresh);fresh.running=false;fresh.lastResumeAt='';fresh.pausedAt=isoNow();fresh.updatedAt=isoNow();saveActive(fresh);window.__manualStudySessionActive=true;renderTimer();renderHomeDashboard();if(!automatic)toast('Sessão pausada.');return fresh}
@@ -240,8 +240,8 @@
     root.querySelector('[data-dashboard-start]').onclick=()=>{
       if(active){ensureTimerRoot().classList.add('is-open');renderTimer();return}
       if(nextPlan?.kind==='map'&&nextPlan.key){
-        openMap(nextPlan.key).then?.(()=>startSession({map:mapById(nextPlan.key),mode:'planned',minutes:nextPlan.minutes||20,label:nextPlan.title}));
-        if(!openMap(nextPlan.key)?.then)startSession({map:mapById(nextPlan.key),mode:'planned',minutes:nextPlan.minutes||20,label:nextPlan.title});
+        const map=mapById(nextPlan.key);
+        Promise.resolve(openMap(nextPlan.key)).then(()=>startSession({map,mode:'planned',minutes:nextPlan.minutes||20,label:nextPlan.title}));
       }else startSession({mode:'free'});
     };
     root.querySelectorAll('[data-dashboard-agenda]').forEach(button=>button.onclick=()=>nav('agenda'));
