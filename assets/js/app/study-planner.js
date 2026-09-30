@@ -138,7 +138,7 @@
     else return null;
     const at=new Date(),record={
       mapKey:row.mapKey,courseId:row.courseId,topicId:row.topicId,title:row.title,
-      rating,repetitions:nextReps,intervalDays:interval,lastReviewedAt:at.toISOString(),
+      rating,previousState:row.state,repetitions:nextReps,intervalDays:interval,lastReviewedAt:at.toISOString(),
       dueAt:addDays(at,interval).toISOString(),updatedAt:at.toISOString()
     };
     data.topicReviews[reviewId]=record;write(data);updateMapTopicState(row,nextState);
@@ -293,8 +293,8 @@
     const sessions=(window.StudyDashboard?.exportData?.().sessions||[]).filter(row=>{const t=Date.parse(row.startedAt||0)||0;return t>=start.getTime()&&t<end.getTime()});
     const attempts=latestAttempts().filter(row=>row.at>=start.getTime()&&row.at<end.getTime());
     const ratings=Object.values(read().topicReviews).filter(row=>{const t=Date.parse(row.lastReviewedAt||0)||0;return t>=start.getTime()&&t<end.getTime()});
-    const progress=statProgress(),delta=seconds-prevSeconds,avgScore=attempts.length?Math.round(attempts.reduce((sum,row)=>sum+(Number(row.attempt.score)||0),0)/attempts.length):null;
-    return{weekKey:dateKey(start),start,end,seconds,prevSeconds,delta,sessions:sessions.length,attempts:attempts.length,avgScore,ratings:ratings.length,difficult:progress.difficult,review:progress.review,marked:progress.marked,total:progress.total,dueTopics:dueTopicRows().length};
+    const progress=statProgress(),delta=seconds-prevSeconds,avgScore=attempts.length?Math.round(attempts.reduce((sum,row)=>sum+(Number(row.attempt.score)||0),0)/attempts.length):null,resolvedDifficult=ratings.filter(row=>row.previousState==='difficult'&&(row.rating==='ok'||row.rating==='easy')).length;
+    return{weekKey:dateKey(start),start,end,seconds,prevSeconds,delta,sessions:sessions.length,attempts:attempts.length,avgScore,ratings:ratings.length,resolvedDifficult,difficult:progress.difficult,review:progress.review,marked:progress.marked,total:progress.total,dueTopics:dueTopicRows().length};
   }
   function saveWeeklySnapshot(snapshot=weeklySnapshot()){
     const data=read();data.weeklyReports[snapshot.weekKey]={...snapshot,start:snapshot.start.toISOString(),end:snapshot.end.toISOString(),savedAt:nowIso()};write(data);return snapshot;
@@ -400,7 +400,7 @@
   function showWeeklyReview(){
     const s=weeklySnapshot(),modal=makeModal('weeklyReviewModal'),pct=s.total?Math.round(s.marked/s.total*100):0,trend=s.delta===0?'igual à semana anterior':(s.delta>0?'+'+fmtSeconds(s.delta)+' vs. semana anterior':'-'+fmtSeconds(Math.abs(s.delta))+' vs. semana anterior');
     saveWeeklySnapshot(s);
-    modal.innerHTML='<div class="planner-modal-card weekly-review-card"><div class="planner-modal-head"><div><span class="kicker">Revisão semanal</span><h2>'+s.start.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' — '+addDays(s.end,-1).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+'</h2><p>'+esc(trend)+'</p></div><button type="button" data-planner-close>×</button></div><div class="weekly-review-metrics"><div><b>'+esc(fmtSeconds(s.seconds))+'</b><span>tempo estudado</span></div><div><b>'+s.sessions+'</b><span>sessões</span></div><div><b>'+s.ratings+'</b><span>revisões de tópico</span></div><div><b>'+s.attempts+'</b><span>simulados</span></div><div><b>'+(s.avgScore===null?'—':s.avgScore+'%')+'</b><span>média simulados</span></div><div><b>'+pct+'%</b><span>cobertura geral</span></div></div><div class="weekly-review-next"><b>Próxima semana</b><p>'+esc(s.dueTopics?('Comece pelas '+s.dueTopics+' revisões por tópico vencidas e pelos mapas com DIF/REV.'):'Mantenha o ritmo e avance nos mapas ainda pendentes.')+'</p><button class="primary" type="button" data-week-replan>Replanejar minha semana</button></div></div>';
+    modal.innerHTML='<div class="planner-modal-card weekly-review-card"><div class="planner-modal-head"><div><span class="kicker">Revisão semanal</span><h2>'+s.start.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' — '+addDays(s.end,-1).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+'</h2><p>'+esc(trend)+'</p></div><button type="button" data-planner-close>×</button></div><div class="weekly-review-metrics"><div><b>'+esc(fmtSeconds(s.seconds))+'</b><span>tempo estudado</span></div><div><b>'+s.sessions+'</b><span>sessões</span></div><div><b>'+s.ratings+'</b><span>revisões de tópico</span></div><div><b>'+s.resolvedDifficult+'</b><span>DIF recuperados</span></div><div><b>'+s.attempts+'</b><span>simulados</span></div><div><b>'+(s.avgScore===null?'—':s.avgScore+'%')+'</b><span>média simulados</span></div><div><b>'+pct+'%</b><span>cobertura geral</span></div></div><div class="weekly-review-next"><b>Próxima semana</b><p>'+esc(s.dueTopics?('Comece pelas '+s.dueTopics+' revisões por tópico vencidas e pelos mapas com DIF/REV.'):'Mantenha o ritmo e avance nos mapas ainda pendentes.')+'</p><button class="primary" type="button" data-week-replan>Replanejar minha semana</button></div></div>';
     modal.hidden=false;modal.querySelector('[data-planner-close]').onclick=()=>modal.hidden=true;modal.querySelector('[data-week-replan]').onclick=()=>{modal.hidden=true;showReplanModal()};
   }
   function showReplanModal(){
