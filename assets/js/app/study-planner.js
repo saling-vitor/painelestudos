@@ -518,13 +518,18 @@
     const view=document.querySelector('[data-view="agenda"]');if(!view)return;
     const head=view.querySelector('.study-agenda-head');if(head&&!head.querySelector('.agenda-v2-actions')){const actions=document.createElement('div');actions.className='agenda-v2-actions';actions.innerHTML='<button type="button" class="secondary" data-agenda-replan>Replanejar semana</button><button type="button" class="secondary" data-agenda-export>Exportar .ics</button>';head.appendChild(actions);actions.querySelector('[data-agenda-replan]').onclick=showReplanModal;actions.querySelector('[data-agenda-export]').onclick=exportAgendaIcs}
     const form=view.querySelector('#agendaQuickForm');if(form&&!form.querySelector('[name="recurrence"]')){
+      const mapLabel=document.createElement('label');mapLabel.innerHTML='Mapa (opcional)<select name="mapKey"><option value="">Sessão geral</option>'+combinedMaps().map(map=>'<option value="'+esc(mapKeyOf(map))+'">'+esc((map.code||'MAP')+' · '+(map.shortTitle||map.title||''))+'</option>').join('')+'</select>';
       const row=document.createElement('label');row.innerHTML='Repetição<select name="recurrence"><option value="none">Não repetir</option><option value="weekly">Semanal · 8 semanas</option><option value="weekdays">Dias úteis · 20 sessões</option><option value="daily">Diária · 14 dias</option></select>';
-      form.querySelector('.row')?.insertAdjacentElement('afterend',row);
-      form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),payload={date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes')},rule=fd.get('recurrence');if(rule&&rule!=='none')addRecurringAgenda(payload,rule);else window.StudyDashboard?.addAgenda?.(payload);form.elements.title.value='';form.elements.minutes.value='30'};
+      form.querySelector('.row')?.insertAdjacentElement('afterend',mapLabel);mapLabel.insertAdjacentElement('afterend',row);
+      form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),payload={date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes'),mapKey:fd.get('mapKey')||''},rule=fd.get('recurrence');if(rule&&rule!=='none')addRecurringAgenda(payload,rule);else window.StudyDashboard?.addAgenda?.(payload);form.elements.title.value='';form.elements.minutes.value='30'};
     }
+    const manualRows=agendaData().agenda||[];
     view.querySelectorAll('.agenda-entry').forEach(article=>{
-      const del=article.querySelector('[data-agenda-delete]');if(!del)return;const id=del.dataset.agendaDelete;article.dataset.agendaDragId=id;article.draggable=true;
+      const del=article.querySelector('[data-agenda-delete]');if(!del)return;const id=del.dataset.agendaDelete,row=manualRows.find(item=>item.id===id);article.dataset.agendaDragId=id;article.draggable=true;
+      article.classList.toggle('is-completed',!!row?.completedAt);
       article.ondragstart=e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';article.classList.add('is-dragging')};article.ondragend=()=>article.classList.remove('is-dragging');
+      const open=article.querySelector('[data-agenda-open]');if(open&&row&&!row.completedAt){open.textContent='Iniciar';open.onclick=e=>{e.preventDefault();startAgendaItem(id)}}
+      if(row?.completedAt){const badge=document.createElement('span');badge.className='agenda-completed-badge';badge.textContent='✓ concluído';article.querySelector('div')?.appendChild(badge)}
     });
     const agenda=agendaData().agenda||[],max=read().settings.maxDailyMinutes;
     view.querySelectorAll('.agenda-day[data-agenda-day]').forEach(day=>{
