@@ -1,11 +1,14 @@
 {
-  "version": "15.2.1",
-  "label": "V15.2.1",
-  "releasedAt": "2026-09-30T15:36:00-03:00",
-  "notes": "Ajuste específico para o app no iPad: o Calendário passa a ter acesso direto na barra inferior e o botão flutuante “Estudar” deixa de aparecer quando não há sessão ativa.",
+  "version": "15.2.2",
+  "label": "V15.2.2",
+  "releasedAt": "2026-09-30T15:49:00-03:00",
+  "notes": "Polimento visual e de UX após validação real no iPad: CTA mais claro, Agenda com hierarquia melhor, Progresso menos denso e layouts refinados para retrato, paisagem e Split View.",
   "showWhatsNew": true,
   "highlights": [
-    "Calendário adicionado à barra inferior do app no iPad, mantendo Início, Cursos, Mapas, Simulados, Progresso e Mais",
-    "Botão flutuante “Estudar” removido do estado ocioso; o timer continua aparecendo normalmente durante uma sessão ativa"
+    "CTA contextual da Home passa de “Estudar” para “Começar agora”",
+    "Agenda destaca Hoje/Semana/Mês e move Replanejar/Exportar para um menu discreto",
+    "Progresso mostra primeiro quatro decisões principais e recolhe as prioridades detalhadas",
+    "Cards recebem alturas, espaçamentos e raios mais consistentes",
+    "iPad retrato, paisagem e Split View ganham layouts específicos e mais estáveis"
   ]
 }
