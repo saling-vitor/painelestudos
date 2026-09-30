@@ -57,12 +57,12 @@
   function flushActive(){const active=readActive();if(!active||!active.running)return 0;const elapsed=activeElapsed(active),accounted=Math.max(0,Number(active.accountedSeconds)||0),delta=Math.max(0,elapsed-accounted);if(delta>0&&window.StudyTime?.add){StudyTime.add(active.mapKey||'__general__',delta,new Date());active.accountedSeconds=accounted+delta;saveActive(active)}return delta}
   function pauseSession({automatic=false}={}){const active=readActive();if(!active||!active.running)return active;flushActive();const fresh=readActive()||active;fresh.elapsedSeconds=activeElapsed(fresh);fresh.running=false;fresh.lastResumeAt='';fresh.pausedAt=isoNow();fresh.updatedAt=isoNow();saveActive(fresh);window.__manualStudySessionActive=true;renderTimer();renderHomeDashboard();if(!automatic)toast('Sessão pausada.');return fresh}
   function resumeSession(){const active=readActive();if(!active||active.running)return active;if(active.targetSeconds&&activeElapsed(active)>=active.targetSeconds)return active;active.running=true;active.lastResumeAt=isoNow();active.updatedAt=isoNow();saveActive(active);if(window.StudyTime?.pause)StudyTime.pause();window.__manualStudySessionActive=true;renderTimer();if(readData().goals.autoFocus&&state?.readerMapKey&&typeof setReaderFocus==='function')setReaderFocus(true);return active}
-  function finishSession({silent=false}={}){let active=readActive();if(!active)return null;if(active.running){flushActive();active=readActive()||active;active.elapsedSeconds=activeElapsed(active)}const duration=Math.max(0,Math.floor(Number(active.elapsedSeconds)||0));const data=readData();data.sessions.push({id:active.id,mapKey:active.mapKey||'',courseId:active.courseId||'',label:active.label||'Sessão livre',mode:active.mode||'free',plannedSeconds:Number(active.targetSeconds)||0,durationSeconds:duration,startedAt:active.startedAt||isoNow(),endedAt:isoNow(),createdAt:active.startedAt||isoNow(),updatedAt:isoNow()});writeData(data);saveActive(null);window.__manualStudySessionActive=false;stopTimerIntervals();renderAll();if(!silent)toast('Sessão finalizada · '+fmtMin(duration));return duration}
+  function finishSession({silent=false,suppressSummary=false}={}){let active=readActive();if(!active)return null;if(active.running){flushActive();active=readActive()||active;active.elapsedSeconds=activeElapsed(active)}const duration=Math.max(0,Math.floor(Number(active.elapsedSeconds)||0));const data=readData(),record={id:active.id,mapKey:active.mapKey||'',courseId:active.courseId||'',label:active.label||'Sessão livre',agendaId:active.agendaId||'',mode:active.mode||'free',plannedSeconds:Number(active.targetSeconds)||0,durationSeconds:duration,startedAt:active.startedAt||isoNow(),endedAt:isoNow(),createdAt:active.startedAt||isoNow(),updatedAt:isoNow(),startProgress:active.startProgress||null};data.sessions.push(record);writeData(data);saveActive(null);window.__manualStudySessionActive=false;stopTimerIntervals();renderAll();if(!silent)toast('Sessão finalizada · '+fmtMin(duration));if(record.agendaId&&window.StudyPlanner?.completeAgendaItem)StudyPlanner.completeAgendaItem(record.agendaId);if(!suppressSummary&&window.StudyPlanner?.showSessionSummary)setTimeout(()=>StudyPlanner.showSessionSummary(record),40);return duration}
 
   function startSession(options={}){
     const existing=readActive();
     if(existing)return existing;
-    const map=options.map||currentMapForTimer();
+    const map=options.general?null:(options.map||currentMapForTimer());
     const data=readData();
     const mode=options.mode||'free';
     const plannedMinutes=Math.max(0,Number(options.minutes)||0);
@@ -73,6 +73,7 @@
       mapKey:map?String(map._key||mapKey(map)):'',
       courseId:map?.courseId||'',
       label:options.label||(map?.shortTitle||map?.title||map?.code||'Sessão de estudo'),
+      agendaId:options.agendaId||'',
       mode,
       targetSeconds,
       elapsedSeconds:0,
@@ -81,7 +82,8 @@
       lastResumeAt:now,
       running:true,
       createdAt:now,
-      updatedAt:now
+      updatedAt:now,
+      startProgress:map?mapProgress(map):null
     };
     saveActive(active);
     if(window.StudyTime?.pause)StudyTime.pause();
@@ -158,19 +160,19 @@
     return readData().sessions.filter(row=>row.startedAt).map(row=>({id:'done-'+row.id,date:dateKey(row.startedAt),kind:'session',title:row.label||'Sessão',meta:fmtMin(row.durationSeconds),mapKey:row.mapKey||'',computed:true}));
   }
   function allAgendaEntries(){
-    const manual=readData().agenda.filter(row=>!row.deleted).map(row=>({...row,kind:row.kind||'study'}));
-    return[...manual,...reviewEntries(),...examEntries(),...sessionEntries()];
+    const manual=readData().agenda.filter(row=>!row.deleted).map(row=>({...row,kind:row.kind||'study'})),topicReviews=window.StudyPlanner?.topicReviews?.().map(row=>({id:'topic-review-'+row.id,date:dateKey(row.dueAt),kind:'topic-review',title:(row.map.code||'MAP')+' · '+row.title,meta:'Revisão por tópico',mapKey:row.mapKey,topicId:row.topicId,dueAt:row.dueAt,computed:true}))||[];
+    return[...manual,...topicReviews,...reviewEntries(),...examEntries(),...sessionEntries()];
   }
   function entriesForDate(value){
     const key=dateKey(value),todayKey=dateKey();
-    return allAgendaEntries().filter(item=>item.date===key||(key===todayKey&&item.kind==='review'&&item.date<todayKey)).map(item=>item.kind==='review'&&item.date<todayKey?{...item,meta:[item.meta,'Atrasada'].filter(Boolean).join(' · ')}:item).sort((a,b)=>{
-      const order={exam:0,review:1,study:2,simulation:3,session:4};
+    return allAgendaEntries().filter(item=>item.date===key||(key===todayKey&&(item.kind==='review'||item.kind==='topic-review')&&item.date<todayKey)).map(item=>(item.kind==='review'||item.kind==='topic-review')&&item.date<todayKey?{...item,meta:[item.meta,'Atrasada'].filter(Boolean).join(' · ')}:item).sort((a,b)=>{
+      const order={exam:0,'topic-review':1,review:2,study:3,simulation:4,session:5};
       return(order[a.kind]??9)-(order[b.kind]??9);
     });
   }
   function addAgendaItem(payload={}){
     const data=readData(),now=isoNow();
-    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),mapKey:payload.mapKey||'',createdAt:now,updatedAt:now};
+    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
     data.agenda.push(row);writeData(data);renderAgenda();renderHomeDashboard();return row;
   }
   function deleteAgendaItem(id){
@@ -245,6 +247,7 @@
       }else startSession({mode:'free'});
     };
     root.querySelectorAll('[data-dashboard-agenda]').forEach(button=>button.onclick=()=>nav('agenda'));
+    if(window.StudyPlanner?.renderHome)setTimeout(()=>StudyPlanner.renderHome(),0);
   }
 
   function ensureAgendaView(){
@@ -289,8 +292,8 @@
     const root=document.getElementById('agendaDayDetail');
     if(!root)return;
     const entries=entriesForDate(agendaCursor);
-    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'">Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover">×</button>':'')+'</article>').join(''):'<div class="empty compact">Nada planejado para este dia.</div>')+'</div>';
-    root.querySelectorAll('[data-agenda-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.agendaOpen));
+    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover">×</button>':'')+'</article>').join(''):'<div class="empty compact">Nada planejado para este dia.</div>')+'</div>';
+    root.querySelectorAll('[data-agenda-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.agendaOpen,{topicId:button.dataset.agendaTopic||''}));
     root.querySelectorAll('[data-agenda-delete]').forEach(button=>button.onclick=()=>deleteAgendaItem(button.dataset.agendaDelete));
     const form=document.getElementById('agendaQuickForm');if(form)form.elements.date.value=dateKey(agendaCursor);
   }
@@ -310,6 +313,7 @@
     }
     grid.querySelectorAll('[data-agenda-day]').forEach(button=>button.onclick=()=>{agendaCursor=parseDate(button.dataset.agendaDay)||new Date();renderAgenda()});
     renderAgendaDayDetail();
+    if(window.StudyPlanner?.enhanceAgenda)setTimeout(()=>StudyPlanner.enhanceAgenda(),0);
   }
 
   function heatmapHtml(){
@@ -417,6 +421,7 @@
     form.onsubmit=e=>{e.preventDefault();saveGoalsFromForm(form)};
     form.querySelector('button[type="submit"]').onclick=e=>{e.preventDefault();saveGoalsFromForm(form)};
     root.querySelector('[data-settings-pomodoro]').onclick=()=>startPomodoro(g.pomodoroWork);
+    if(window.StudyPlanner?.render)setTimeout(()=>StudyPlanner.render(),0);
   }
   function enhanceStudyPlan(){
     const grid=document.getElementById('homeStudyPlan'),section=document.getElementById('homeReviewSection');

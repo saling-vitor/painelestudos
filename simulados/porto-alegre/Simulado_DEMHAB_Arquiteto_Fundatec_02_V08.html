@@ -2395,8 +2395,19 @@
       const wrong=Math.max(0,answered-correct);
       const blank=Math.max(0,total-answered);
       const score=maxPoints>0?Math.round((totalPoints/maxPoints)*100):(total?Math.round((correct/total)*100):0);
+      const sections={};
+      (state.data.sections||[]).forEach(sec=>{
+        const arr=sec.questions||[],hits=arr.filter(q=>(state.answers[q.number]||'')===(q.answer||'').toUpperCase()).length;
+        if(arr.length)sections[String(sec.title||'Disciplina')]={correct:hits,total:arr.length};
+      });
+      const mistakes=[];
+      (state.data.sections||[]).forEach(sec=>(sec.questions||[]).forEach(q=>{
+        const userAnswer=(state.answers[q.number]||'').toUpperCase(),answer=(q.answer||'').toUpperCase();
+        if(userAnswer===answer)return;
+        mistakes.push({number:q.number,section:sec.title||'',topic:q.topic||sec.title||'',stem:String(q.stem||q.body||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,420),userAnswer,answer,difficulty:q.difficulty||''});
+      }));
       if(window.parent&&window.parent!==window){
-        window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{score,correct,wrong,blank,total,finishedAt:new Date().toISOString()}},location.origin);
+        window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{score,correct,wrong,blank,total,sections,mistakes,finishedAt:new Date().toISOString()}},location.origin);
       }
     }catch(_){}
   }
