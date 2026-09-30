@@ -311,3 +311,74 @@
     grid.querySelectorAll('[data-agenda-day]').forEach(button=>button.onclick=()=>{agendaCursor=parseDate(button.dataset.agendaDay)||new Date();renderAgenda()});
     renderAgendaDayDetail();
   }
+
+  function heatmapHtml(){
+    const days=sumStudyDays(),end=startOfDay(new Date()),start=addDays(end,-83),values=[];
+    for(let i=0;i<84;i++){const day=addDays(start,i),seconds=days[dateKey(day)]||0;values.push({day,seconds})}
+    const max=Math.max(1,...values.map(item=>item.seconds));
+    return '<div class="study-heatmap" aria-label="Consistência dos últimos 84 dias">'+values.map(item=>{const ratio=item.seconds/max,level=item.seconds<=0?0:ratio<.25?1:ratio<.5?2:ratio<.75?3:4;return '<i class="heat-'+level+'" title="'+escape(item.day.toLocaleDateString('pt-BR'))+' · '+escape(fmtMin(item.seconds))+'"></i>'}).join('')+'</div><div class="study-heatmap-legend"><span>Menos</span><i class="heat-0"></i><i class="heat-1"></i><i class="heat-2"></i><i class="heat-3"></i><i class="heat-4"></i><span>Mais</span></div>';
+  }
+  function analyticsSnapshot(){
+    const data=readData(),maps=combinedMaps(),times=sumStudyMaps(),ranked=Object.entries(times).map(([key,seconds])=>({key,seconds,map:mapById(key)})).filter(row=>row.seconds>0).sort((a,b)=>b.seconds-a.seconds);
+    const weak=maps.map(map=>({map,progress:mapProgress(map)})).filter(row=>row.progress.difficult||row.progress.review).sort((a,b)=>(b.progress.difficult||0)-(a.progress.difficult||0)||(b.progress.review||0)-(a.progress.review||0)).slice(0,5);
+    const sessions=data.sessions.filter(row=>Number(row.durationSeconds)>0),total=sessions.reduce((sum,row)=>sum+(Number(row.durationSeconds)||0),0),average=sessions.length?Math.round(total/sessions.length):0;
+    const openDoubts=data.doubts.filter(row=>!row.resolved&&!row.deleted);
+    return{data,ranked,weak,sessions,total,average,openDoubts};
+  }
+  function renderProgressDashboard(){
+    const view=document.querySelector('[data-view="progress"]');
+    if(!view)return;
+    let root=document.getElementById('studyAnalyticsPanel');
+    if(!root){
+      root=document.createElement('section');
+      root.id='studyAnalyticsPanel';
+      root.className='study-analytics-panel section';
+      const insights=document.getElementById('progressInsights');
+      if(insights)insights.insertAdjacentElement('afterend',root);else view.appendChild(root);
+    }
+    const snap=analyticsSnapshot(),top=snap.ranked.slice(0,5);
+    root.innerHTML='<div class="section-head"><div><div class="kicker">Consistência</div><h2>Ritmo de estudo</h2><p>Tempo real, sessões, pontos frágeis e dúvidas abertas.</p></div><button type="button" class="secondary" data-analytics-agenda>Ver agenda</button></div><div class="study-analytics-grid"><article class="panel study-heatmap-card"><div class="study-card-head"><span>Últimos 84 dias</span><b>'+escape(fmtMin(window.StudyTime?.week?.()||0))+' nesta semana</b></div>'+heatmapHtml()+'</article><article class="panel study-session-stats"><span>Sessões concluídas</span><b>'+snap.sessions.length+'</b><small>Média '+escape(fmtMin(snap.average))+' · total '+escape(fmtMin(snap.total))+'</small><div class="study-stat-line"><span>Dúvidas abertas</span><strong>'+snap.openDoubts.length+'</strong></div></article><article class="panel study-map-time"><div class="study-card-head"><span>Mais estudados</span><b>Tempo por mapa</b></div>'+(top.length?top.map(row=>'<div class="study-ranking-row"><span>'+escape(row.map?.code||row.map?.shortTitle||row.key)+'</span><b>'+escape(fmtMin(row.seconds))+'</b></div>').join(''):'<div class="empty compact">O tempo por mapa aparecerá conforme você estudar.</div>')+'</article><article class="panel study-weak-points"><div class="study-card-head"><span>Pontos de atenção</span><b>DIF + REV</b></div>'+(snap.weak.length?snap.weak.map(row=>'<button type="button" data-weak-map="'+escape(row.map._key||mapKey(row.map))+'"><span>'+escape(row.map.code||row.map.shortTitle||'MAP')+'</span><b>'+(row.progress.difficult?'DIF '+row.progress.difficult:'')+(row.progress.review?' · REV '+row.progress.review:'')+'</b></button>').join(''):'<div class="empty compact">Nenhum ponto frágil marcado agora.</div>')+'</article></div>';
+    root.querySelector('[data-analytics-agenda]').onclick=()=>nav('agenda');
+    root.querySelectorAll('[data-weak-map]').forEach(button=>button.onclick=()=>openMap(button.dataset.weakMap));
+  }
+  function ensureDoubtPanel(){
+    let panel=document.getElementById('studyDoubtPanel');
+    if(panel)return panel;
+    panel=document.createElement('div');
+    panel.id='studyDoubtPanel';
+    panel.className='study-doubt-panel';
+    panel.hidden=true;
+    panel.innerHTML='<div class="study-doubt-card"><div class="study-doubt-head"><div><span class="kicker">Captura rápida</span><h3>Anotar dúvida</h3><small id="studyDoubtMapLabel"></small></div><button type="button" data-doubt-close aria-label="Fechar">×</button></div><textarea id="studyDoubtText" rows="5" maxlength="1200" placeholder="Escreva a dúvida sem sair do mapa…"></textarea><div class="study-doubt-actions"><button type="button" class="secondary" data-doubt-close>Cancelar</button><button type="button" class="primary" data-doubt-save>Salvar dúvida</button></div></div>';
+    document.body.appendChild(panel);
+    panel.querySelectorAll('[data-doubt-close]').forEach(button=>button.onclick=()=>panel.hidden=true);
+    panel.querySelector('[data-doubt-save]').onclick=saveDoubtFromPanel;
+    return panel;
+  }
+  function openDoubtPanel(){
+    if(!state?.readerMapKey)return toast('Abra um mapa antes de anotar uma dúvida.');
+    const panel=ensureDoubtPanel(),map=mapById(state.readerMapKey);
+    panel.hidden=false;
+    panel.querySelector('#studyDoubtMapLabel').textContent=[map?.code,map?.shortTitle||map?.title].filter(Boolean).join(' · ');
+    const input=panel.querySelector('#studyDoubtText');input.value='';setTimeout(()=>input.focus(),0);
+  }
+  function saveDoubtFromPanel(){
+    const panel=ensureDoubtPanel(),input=panel.querySelector('#studyDoubtText'),text=String(input.value||'').trim();
+    if(!text)return toast('Escreva a dúvida antes de salvar.');
+    const map=mapById(state.readerMapKey),data=readData(),now=isoNow();
+    data.doubts.push({id:uid('doubt'),mapKey:state.readerMapKey||'',courseId:map?.courseId||'',text,resolved:false,createdAt:now,updatedAt:now});
+    writeData(data);panel.hidden=true;toast('Dúvida salva.');renderHomeDashboard();renderProgressDashboard();
+  }
+  function toggleDoubtResolved(id){
+    const data=readData(),row=data.doubts.find(item=>item.id===id);if(!row)return;
+    row.resolved=!row.resolved;row.updatedAt=isoNow();writeData(data);renderDoubtInbox();renderHomeDashboard();renderProgressDashboard();
+  }
+  function renderDoubtInbox(){
+    let root=document.getElementById('studyDoubtInbox');
+    const view=document.querySelector('[data-view="progress"]');
+    if(!view)return;
+    if(!root){root=document.createElement('section');root.id='studyDoubtInbox';root.className='section study-doubt-inbox';view.appendChild(root)}
+    const rows=readData().doubts.filter(row=>!row.deleted).sort((a,b)=>(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0)).slice(0,12);
+    root.innerHTML='<div class="section-head"><div><div class="kicker">Anotações</div><h2>Minhas dúvidas</h2><p>Capture durante o estudo e marque quando estiver resolvida.</p></div></div><div class="study-doubt-list">'+(rows.length?rows.map(row=>{const map=mapById(row.mapKey);return '<article class="'+(row.resolved?'resolved':'')+'"><button type="button" data-doubt-toggle="'+escape(row.id)+'">'+(row.resolved?'✓':'○')+'</button><div><b>'+escape(map?.code||'Dúvida')+'</b><p>'+escape(row.text)+'</p><small>'+escape(new Date(row.createdAt).toLocaleString('pt-BR'))+'</small></div>'+(map?'<button type="button" class="secondary" data-doubt-open="'+escape(row.mapKey)+'">Abrir mapa</button>':'')+'</article>'}).join(''):'<div class="empty">Nenhuma dúvida registrada.</div>')+'</div>';
+    root.querySelectorAll('[data-doubt-toggle]').forEach(button=>button.onclick=()=>toggleDoubtResolved(button.dataset.doubtToggle));
+    root.querySelectorAll('[data-doubt-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.doubtOpen));
+  }
