@@ -1,20 +1,12 @@
 {
-  "version": "15.4.0",
-  "label": "V15.4.0",
-  "releasedAt": "2026-09-30T17:18:00-03:00",
-  "notes": "Revisão completa da experiência no iPhone real: menos densidade, curso e leitor mais compactos, Agenda realmente orientada ao Hoje, Progresso mais direto, Configurações sem títulos duplicados e navegação mais leve.",
+  "version": "15.4.1",
+  "label": "V15.4.1",
+  "releasedAt": "2026-09-30T17:25:00-03:00",
+  "notes": "Hotfix da revisão Mobile UX 2: remove definitivamente o botão de dúvida duplicado do leitor no iPhone e preserva a barra inferior compacta de ações do mapa.",
   "showWhatsNew": true,
   "highlights": [
-    "Home reduz ainda mais a altura da capa e transforma os indicadores em uma única faixa compacta",
-    "Plano do dia mostra somente o essencial e Simulados recentes viram carrossel horizontal",
-    "Tela do concurso passa a priorizar título, prova, progresso e mapas, com detalhes sob demanda",
-    "Cards dos mapas ficam menores e os controles visuais deixam de parecer maiores que a capa",
-    "Leitor usa barra única de 52 px, esconde o botão Salvar agora da barra e adiciona skeleton durante o carregamento",
-    "Barra rápida do leitor fica mais discreta e o botão de dúvida duplicado é removido no smartphone",
-    "Agenda em Hoje elimina o calendário duplicado e mostra diretamente a lista de sessões do dia",
-    "Progresso reduz o resumo a quatro KPIs principais e mantém Prioridades logo após o resumo",
-    "Configurações usam accordion exclusivo e deixam de repetir os títulos dentro dos painéis",
-    "Topbar e bottom-nav ficam menores, menos opacas e com tipografia mais legível",
-    "Contraste e tamanhos mínimos de texto foram recalibrados a partir da gravação em iPhone real"
+    "Corrige conflito de CSS que mantinha o botão ? visível no leitor mobile",
+    "Mantém Salvar agora apenas dentro do menu Mais no smartphone",
+    "Preserva todas as melhorias da V15.4.0 para Home, curso, mapas, Agenda, Progresso e Configurações"
   ]
 }
