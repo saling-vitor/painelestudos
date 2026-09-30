@@ -81,7 +81,7 @@
     const view=q('[data-view="settings"]');if(!view)return;
     qa('.panel',view).forEach(panel=>{
       if(panel.closest('.modal'))return;
-      if(panel.dataset.mobileAccordion==='1')return;
+      if(panel.querySelector(':scope > .mobile-settings-toggle'))return;
       panel.dataset.mobileAccordion='1';
       panel.classList.add('mobile-settings-panel');
       const label=panelLabel(panel),button=document.createElement('button');
@@ -98,7 +98,7 @@
       panel.prepend(button);
     });
     const advanced=q('#plannerAdvancedSettings',view);
-    if(advanced&&advanced.dataset.mobileAccordion!=='1'){
+    if(advanced&&!advanced.querySelector(':scope > .mobile-subsettings-toggle')){
       advanced.dataset.mobileAccordion='1';
       advanced.classList.add('mobile-subsettings','mobile-subsettings-collapsed');
       const button=document.createElement('button');button.type='button';button.className='mobile-subsettings-toggle';button.setAttribute('aria-expanded','false');button.innerHTML='<span>Semana e prioridades</span><i aria-hidden="true">⌄</i>';
