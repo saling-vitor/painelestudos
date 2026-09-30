@@ -1,7 +1,7 @@
 {
   "version": "15.6.1",
   "label": "V15.6.1",
-  "releasedAt": "2026-09-30T18:58:00-03:00",
+  "releasedAt": "2026-09-30T18:56:00-03:00",
   "notes": "Hotfix de estabilidade do smartphone: elimina observação duplicada do DOM, corrige o Menu e isola componentes de telefone do iPad.",
   "showWhatsNew": true,
   "highlights": [
