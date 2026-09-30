@@ -1,14 +1,14 @@
 {
-  "version": "15.0.12",
-  "label": "V15.0.12",
-  "releasedAt": "2026-09-30T11:23:00-03:00",
-  "notes": "A capa da Home voltou ao enquadramento editorial do layout aprovado: a arte HQ agora ocupa o hero inteiro, com transição suave para a área de texto e sem a divisão visual em duas colunas.",
+  "version": "15.0.13",
+  "label": "V15.0.13",
+  "releasedAt": "2026-09-30T11:30:00-03:00",
+  "notes": "Refinamento completo da experiência no iPad: densidade da Home, topbar, leitor, métricas, controles touch, orientação e safe areas foram ajustados sem alterar o layout de desktop.",
   "showWhatsNew": true,
   "highlights": [
-    "Arte da Home volta a preencher toda a largura do hero",
-    "Mascote e colagem recuperam escala e protagonismo",
-    "Transição em gradiente integra imagem e conteúdo sem corte vertical",
-    "Área esquerda permanece escura para preservar a leitura do título e das métricas",
-    "WebP HQ continua sendo usado para manter a nitidez da imagem"
+    "Hero da Home ocupa menos altura no iPad sem perder o enquadramento editorial full-cover",
+    "Os cinco indicadores permanecem alinhados em uma única linha no iPad em paisagem",
+    "Busca, sincronização e cabeçalho do leitor ficaram mais compactos e proporcionais",
+    "Botões sobre as capas ficaram menores visualmente, preservando uma área confortável de toque",
+    "Safe areas, 100dvh, portrait/landscape e estados de toque e foco foram refinados para iPadOS"
   ]
 }
