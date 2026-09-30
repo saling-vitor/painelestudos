@@ -862,6 +862,18 @@ test('smartphone Agenda abre em Hoje e mantém Semana e Mês disponíveis',async
   await expect(page.locator('.agenda-day')).toHaveCount(42);
 });
 
+test('smartphone mantém Calendário e Simulados dentro de Mais',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#settings');
+  const shortcuts=page.locator('#mobileMoreShortcuts');
+  await expect(shortcuts).toBeVisible();
+  await expect(shortcuts.locator('[data-mobile-more-nav="agenda"]')).toContainText('Calendário');
+  await expect(shortcuts.locator('[data-mobile-more-nav="simulations"]')).toContainText('Simulados');
+  await shortcuts.locator('[data-mobile-more-nav="agenda"]').click();
+  await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
+});
+
 test('smartphone Configurações usa accordions e controles touch',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
