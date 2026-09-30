@@ -619,7 +619,7 @@
   }
 
   function renderAll(){
-    renderHomeIntelligence();renderProgressIntelligence();renderMatrix();renderErrors();enhanceStudySettings();enhanceAgenda();renderReaderRail();applyTimerPosition();
+    if(state?.view==='home')renderHomeIntelligence();if(state?.view==='progress')renderProgressIntelligence();if(state?.view==='matrix')renderMatrix();if(state?.view==='errors')renderErrors();if(state?.view==='settings')enhanceStudySettings();if(state?.view==='agenda')enhanceAgenda();renderReaderRail();applyTimerPosition();
   }
   Object.assign(window.StudyPlanner,{render:renderAll,renderHome:renderHomeIntelligence,renderProgress:renderProgressIntelligence,renderMatrix,renderErrors,enhanceAgenda,renderReaderRail,searchOptions,activateSearch});
 
