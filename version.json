@@ -1,20 +1,13 @@
 {
-  "version": "15.3.0",
-  "label": "V15.3.0",
-  "releasedAt": "2026-09-30T16:32:00-03:00",
-  "notes": "Rodada mobile-first exclusiva para smartphone: Home mais compacta, topbar adaptativa, cards simplificados, Progresso reorganizado, Agenda em Hoje, Configurações em accordions, leitor imersivo e breakpoints reais de 360–430 px.",
+  "version": "15.3.1",
+  "label": "V15.3.1",
+  "releasedAt": "2026-09-30T16:46:00-03:00",
+  "notes": "Hotfix da rodada mobile-first: elimina overflow horizontal em 430/390/360 px e garante que a Home realmente fique compacta no smartphone, preservando três indicadores dentro do hero.",
   "showWhatsNew": true,
   "highlights": [
-    "Home reduzida para mostrar conteúdo útil já na primeira tela",
-    "Topbar compacta e recolhível durante a rolagem no smartphone",
-    "Cards de curso mostram só o essencial, com Detalhes sob demanda",
-    "Cards de mapas ficam muito menores e preservam capa, título, progresso e Abrir",
-    "Progresso vira Resumo, Prioridades, Desempenho e Disciplinas em blocos expansíveis",
-    "Agenda abre em Hoje no smartphone e mantém Semana/Mês como consultas secundárias",
-    "Configurações ficam verticalizadas em accordions com alvos touch maiores",
-    "Leitor entra em modo imersivo e oculta topbar/bottom-nav enquanto o mapa está aberto",
-    "Bottom-nav do smartphone mantém somente cinco itens",
-    "Estados de carregamento principais usam skeletons em vez de vazios/spinners",
-    "Layout calibrado e testado em 430 px, 390 px e 360 px"
+    "Corrige largura excedente em smartphones de 430, 390 e 360 px",
+    "Hero da Home passa a ter altura móvel controlada entre 284 e 306 px",
+    "Três indicadores essenciais ficam posicionados dentro da capa sem aumentar sua altura",
+    "Mantidas todas as melhorias mobile-first da V15.3.0"
   ]
 }
