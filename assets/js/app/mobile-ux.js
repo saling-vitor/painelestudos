@@ -378,8 +378,8 @@
     form?.classList.remove('mobile-agenda-form-collapsed');
     q('#mobileAgendaPlanToggle')?.remove();
     const reader=q('#reader');
-    reader?.classList.remove('mobile-reader-rail-collapsed');
-    delete reader?.dataset.mobileRailOpen;
+    if(reader?.classList.contains('mobile-reader-rail-collapsed'))reader.classList.remove('mobile-reader-rail-collapsed');
+    if(reader?.dataset.mobileRailOpen)delete reader.dataset.mobileRailOpen;
     q('#mobileReaderRailToggle')?.remove();
   }
 
@@ -505,8 +505,8 @@
     const reader=q('#reader'),frame=q('#readerFrame');
     if(!reader)return;
     if(!isPhone()){
-      reader.classList.remove('mobile-reader-rail-collapsed');
-      delete reader.dataset.mobileRailOpen;
+      if(reader.classList.contains('mobile-reader-rail-collapsed'))reader.classList.remove('mobile-reader-rail-collapsed');
+      if(reader.dataset.mobileRailOpen)delete reader.dataset.mobileRailOpen;
       q('#mobileReaderRailToggle',reader)?.remove();
       return;
     }
@@ -523,7 +523,7 @@
     if(reader.classList.contains('open')){
       if(reader.dataset.mobileRailOpen!=='1'){
         reader.dataset.mobileRailOpen='1';
-        reader.classList.remove('mobile-reader-rail-collapsed');
+        if(reader.classList.contains('mobile-reader-rail-collapsed'))reader.classList.remove('mobile-reader-rail-collapsed');
         readerLastY=0;
       }
       bindReaderFrameScroll();
@@ -532,8 +532,8 @@
         frame.addEventListener('load',()=>requestAnimationFrame(bindReaderFrameScroll));
       }
     }else{
-      delete reader.dataset.mobileRailOpen;
-      reader.classList.remove('mobile-reader-rail-collapsed');
+      if(reader.dataset.mobileRailOpen)delete reader.dataset.mobileRailOpen;
+      if(reader.classList.contains('mobile-reader-rail-collapsed'))reader.classList.remove('mobile-reader-rail-collapsed');
     }
     updateRailToggle();
   }
