@@ -152,6 +152,10 @@
   /* 2 · topbar móvel: compacta e recolhe ao rolar para baixo */
   html.is-phone-layout .topbar-wrap{
     padding:5px 7px 6px!important;
+    background:transparent!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    box-shadow:none!important;
     transition:transform .22s ease,opacity .18s ease,padding .18s ease;
     will-change:transform;
   }
@@ -1877,7 +1881,7 @@
   html.is-phone-layout .map-card.has-cover{
     min-height:206px!important;max-height:232px!important;padding:0 10px 34px!important;border-radius:12px!important
   }
-  html.is-phone-layout .map-card.has-cover .map-cover{height:80px!important;margin:0 -10px!important}
+  html.is-phone-layout .map-card.has-cover .map-cover{height:80px!important;margin:0 -10px!important;overflow:clip!important;border-radius:11px 11px 0 0!important}
   html.is-phone-layout .map-card.has-cover .fav,
   html.is-phone-layout .map-card.has-cover .map-admin-btn{
     width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
@@ -1910,8 +1914,8 @@
   html.is-phone-layout .map-card.has-cover .map-open-label{font-size:9px!important}
 
   html.is-phone-layout .simulation-grid{gap:8px!important}
-  html.is-phone-layout .simulation-card{border-radius:12px!important}
-  html.is-phone-layout .simulation-cover{height:104px!important;aspect-ratio:auto!important}
+  html.is-phone-layout .simulation-card{overflow:clip!important;isolation:isolate;border-radius:12px!important}
+  html.is-phone-layout .simulation-cover{height:104px!important;aspect-ratio:auto!important;overflow:clip!important;border-radius:11px 11px 0 0!important}
   html.is-phone-layout .simulation-card-body{min-height:0!important;padding:10px 11px!important}
   html.is-phone-layout .simulation-card-top{gap:7px!important}
   html.is-phone-layout .simulation-code,
