@@ -1,14 +1,14 @@
 {
-  "version": "15.0.10",
-  "label": "V15.0.10",
-  "releasedAt": "2026-09-30T08:34:00-03:00",
-  "notes": "Nova arte oficial da Home aplicada ao hero, com o mascote e a colagem de estudos preservados à direita e as informações concentradas na área escura.",
+  "version": "15.0.11",
+  "label": "V15.0.11",
+  "releasedAt": "2026-09-30T08:50:00-03:00",
+  "notes": "Hero da Home atualizado com a arte original em WebP de alta qualidade, preservando textura, contornos e detalhes do mascote sem voltar ao arquivo pesado em PNG.",
   "showWhatsNew": true,
   "highlights": [
-    "Nova arte central da Home com o mascote oficial",
-    "Texto, ações e métricas ficam concentrados na área escura à esquerda",
-    "A ilustração do lado direito fica livre de cards sobrepostos",
-    "Overlay foi suavizado para preservar os detalhes da colagem",
-    "Imagem do hero é pré-carregada e fica disponível no cache offline"
+    "Hero agora usa imagem HQ de 1600 px em WebP",
+    "Texturas, papel, halftone e contornos ficam muito mais nítidos",
+    "Mascote e elementos de estudo deixam de aparentar compressão excessiva",
+    "Novo arquivo usa nome próprio para evitar cache da versão borrada",
+    "Imagem HQ continua pré-carregada e disponível offline"
   ]
 }
