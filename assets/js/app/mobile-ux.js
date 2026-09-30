@@ -78,9 +78,20 @@
     if(panel.classList.contains('backup-panel'))return'Backup e restauração';
     return panel.querySelector('h2')?.textContent?.trim()||'Configurações';
   };
+  function ensureMoreShortcuts(view){
+    if(!isPhone()||!view||q('#mobileMoreShortcuts',view))return;
+    const block=document.createElement('section');
+    block.id='mobileMoreShortcuts';
+    block.className='mobile-more-shortcuts';
+    block.innerHTML='<div class="mobile-more-shortcuts-head"><span class="kicker">Acesso rápido</span><b>Mais</b></div><div class="mobile-more-shortcuts-grid"><button type="button" data-mobile-more-nav="agenda"><span class="ui-icon icon-calendar ui-icon-md" aria-hidden="true"></span><b>Calendário</b><small>Agenda de estudos</small></button><button type="button" data-mobile-more-nav="simulations"><span class="ui-icon icon-simulations ui-icon-md" aria-hidden="true"></span><b>Simulados</b><small>Treino de prova</small></button></div>';
+    const layout=q('.settings-layout',view);if(layout)layout.insertAdjacentElement('beforebegin',block);else view.appendChild(block);
+    qa('[data-mobile-more-nav]',block).forEach(button=>button.onclick=()=>nav(button.dataset.mobileMoreNav));
+  }
+
   function enhanceSettings(){
     if(!isPhone())return;
     const view=q('[data-view="settings"]');if(!view)return;
+    ensureMoreShortcuts(view);
     qa('.panel',view).forEach(panel=>{
       if(panel.closest('.modal'))return;
       if(panel.querySelector(':scope > .mobile-settings-toggle'))return;
