@@ -67,3 +67,5 @@
 }
 
 .agenda-entry.is-dragging-touch{opacity:.55;outline:1px solid rgba(195,170,132,.45);touch-action:none}
+
+.agenda-day{position:relative}.agenda-day-load{position:absolute;right:5px;top:5px;font-size:6px!important;color:#747a83}.agenda-day.over-capacity{border-color:rgba(201,104,114,.38)!important}.agenda-day.over-capacity .agenda-day-load{color:#c96872}
