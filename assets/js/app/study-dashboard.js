@@ -157,7 +157,7 @@
     }).filter(Boolean);
   }
   function sessionEntries(){
-    return readData().sessions.filter(row=>row.startedAt).map(row=>({id:'done-'+row.id,date:dateKey(row.startedAt),kind:'session',title:row.label||'Sessão',meta:fmtMin(row.durationSeconds),mapKey:row.mapKey||'',computed:true}));
+    return readData().sessions.filter(row=>row.startedAt&&!row.deleted).map(row=>({id:'done-'+row.id,sessionId:row.id,date:dateKey(row.startedAt),kind:'session',title:row.label||'Sessão',meta:fmtMin(row.durationSeconds),mapKey:row.mapKey||'',computed:true,removable:true}));
   }
   function allAgendaEntries(){
     const manual=readData().agenda.filter(row=>!row.deleted).map(row=>({...row,kind:row.kind||'study'})),topicReviews=window.StudyPlanner?.topicReviews?.().map(row=>({id:'topic-review-'+row.id,date:dateKey(row.dueAt),kind:'topic-review',title:(row.map.code||'MAP')+' · '+row.title,meta:'Revisão por tópico',mapKey:row.mapKey,topicId:row.topicId,dueAt:row.dueAt,computed:true}))||[];
@@ -188,6 +188,21 @@
     const recurrence=row.recurrence&&row.recurrence!=='none'?' Apenas esta ocorrência será removida.':'',message='“'+(row.title||'Evento')+'” será removido da agenda.'+recurrence,action=()=>deleteAgendaItem(id);
     if(typeof askConfirm==='function'){askConfirm('Remover da agenda?',message,action,'Remover');return true}
     if(window.confirm('Remover da agenda?\n\n'+message))action();
+    return true;
+  }
+  function deleteSessionRecord(id){
+    const data=readData(),row=data.sessions.find(item=>item.id===id);
+    if(!row)return false;
+    row.deleted=true;row.updatedAt=isoNow();writeData(data);renderAll();
+    if(typeof toast==='function')toast('Registro de estudo removido.');
+    return true;
+  }
+  function requestDeleteSessionRecord(id){
+    const row=readData().sessions.find(item=>item.id===id&&!item.deleted);
+    if(!row)return false;
+    const message='“'+(row.label||'Sessão de estudo')+'” será removido da Agenda e do histórico de sessões.',action=()=>deleteSessionRecord(id);
+    if(typeof askConfirm==='function'){askConfirm('Remover registro de estudo?',message,action,'Remover');return true}
+    if(window.confirm('Remover registro de estudo?\n\n'+message))action();
     return true;
   }
 
@@ -301,9 +316,10 @@
     const root=document.getElementById('agendaDayDetail');
     if(!root)return;
     const entries=entriesForDate(agendaCursor);
-    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover da agenda"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':'')+'</article>').join(''):'<div class="empty compact">Nada planejado para este dia.</div>')+'</div>';
+    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover da agenda"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':item.kind==='session'&&item.sessionId?'<button type="button" class="agenda-delete" data-session-delete="'+escape(item.sessionId)+'" aria-label="Remover registro de estudo"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':'')+'</article>').join(''):'<div class="empty compact">Nada planejado para este dia.</div>')+'</div>';
     root.querySelectorAll('[data-agenda-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.agendaOpen,{topicId:button.dataset.agendaTopic||''}));
     root.querySelectorAll('[data-agenda-delete]').forEach(button=>button.onclick=()=>requestDeleteAgendaItem(button.dataset.agendaDelete));
+    root.querySelectorAll('[data-session-delete]').forEach(button=>button.onclick=()=>requestDeleteSessionRecord(button.dataset.sessionDelete));
     const form=document.getElementById('agendaQuickForm');if(form)form.elements.date.value=dateKey(agendaCursor);
   }
   function renderAgenda(){
@@ -334,7 +350,7 @@
   function analyticsSnapshot(){
     const data=readData(),maps=combinedMaps(),times=sumStudyMaps(),ranked=Object.entries(times).map(([key,seconds])=>({key,seconds,map:mapById(key)})).filter(row=>row.seconds>0).sort((a,b)=>b.seconds-a.seconds);
     const weak=maps.map(map=>({map,progress:mapProgress(map)})).filter(row=>row.progress.difficult||row.progress.review).sort((a,b)=>(b.progress.difficult||0)-(a.progress.difficult||0)||(b.progress.review||0)-(a.progress.review||0)).slice(0,5);
-    const sessions=data.sessions.filter(row=>Number(row.durationSeconds)>0),total=sessions.reduce((sum,row)=>sum+(Number(row.durationSeconds)||0),0),average=sessions.length?Math.round(total/sessions.length):0;
+    const sessions=data.sessions.filter(row=>!row.deleted&&Number(row.durationSeconds)>0),total=sessions.reduce((sum,row)=>sum+(Number(row.durationSeconds)||0),0),average=sessions.length?Math.round(total/sessions.length):0;
     const openDoubts=data.doubts.filter(row=>!row.resolved&&!row.deleted),categoryMap={},courseMap={};
     for(const row of ranked){
       const map=row.map;if(!map)continue;
@@ -531,6 +547,7 @@
     elapsed:()=>activeElapsed(readActive()),
     addAgenda:addAgendaItem,
     removeAgenda:requestDeleteAgendaItem,
+    removeSession:requestDeleteSessionRecord,
     goals:()=>({...readData().goals}),
     openDoubt:openDoubtPanel
   };
