@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.4.3'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.5.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -9,7 +9,7 @@ test('simulados renderizam',async({page})=>{await page.goto('/#simulations');awa
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
 test('barra sticky do curso aparece após toolbar sair pelo topo',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.locator('#courseMaps').evaluate(el=>el.scrollIntoView({block:'start'}));await page.waitForTimeout(150);await expect(page.locator('#courseStickyBar')).toBeVisible();await expect(page.locator('#courseStickyTitle')).toContainText('DEMHAB')});
-test('tempo de estudo conta atividade, pausa por inatividade e retoma',async({page},testInfo)=>{test.skip(testInfo.project.name==='ipad','Cobertura funcional única; UI iPad permanece coberta pelos demais testes.');const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();const card=page.locator('#courseMaps [data-map]').first();await card.click();await expect(page.locator('#reader')).toHaveClass(/open/);const result=await page.evaluate(()=>{const key=StudyTime.currentKey(),base=Date.now(),before=StudyTime.mapSeconds(key);StudyTime.activity(base);StudyTime.tick(base+45000);const afterActive=StudyTime.mapSeconds(key);StudyTime.tick(base+120000);const afterIdleLimit=StudyTime.mapSeconds(key);StudyTime.tick(base+150000);const afterStopped=StudyTime.mapSeconds(key);StudyTime.activity(base+150000);StudyTime.tick(base+165000);const afterResume=StudyTime.mapSeconds(key);return{before,afterActive,afterIdleLimit,afterStopped,afterResume}});expect(result.afterActive-result.before).toBeGreaterThanOrEqual(44);expect(result.afterStopped).toBe(result.afterIdleLimit);expect(result.afterResume).toBeGreaterThan(result.afterStopped)});
+test('tempo de estudo só conta após iniciar sessão manualmente',async({page},testInfo)=>{test.skip(testInfo.project.name==='ipad','Cobertura funcional única; UI iPad permanece coberta pelos demais testes.');const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();const card=page.locator('#courseMaps [data-map]').first();await card.click();await expect(page.locator('#reader')).toHaveClass(/open/);const passive=await page.evaluate(()=>{const key=StudyTime.currentKey(),base=Date.now(),before=StudyTime.mapSeconds(key);StudyTime.activity(base);StudyTime.tick(base+45000);return{key,before,after:StudyTime.mapSeconds(key)}});expect(passive.after).toBe(passive.before);const start=page.locator('[data-rail-session]');await expect(start).toBeVisible();await expect(start).toContainText('Iniciar estudo');await start.click();await page.waitForTimeout(1100);const manual=await page.evaluate(key=>{StudyDashboard.pause();const after=StudyTime.mapSeconds(key),active=StudyDashboard.active();StudyDashboard.finish({silent:true,suppressSummary:true});return{after,active}},passive.key);expect(manual.after).toBeGreaterThan(passive.after);expect(manual.active?.running).toBe(false)});
 
 test('regras de revisão programada usam os atrasos definidos',async({page})=>{const delays=await page.evaluate(()=>({difficult:reviewDelayDays({difficult:1,review:0,total:10,marked:1,done:0}),review:reviewDelayDays({difficult:0,review:1,total:10,marked:1,done:0}),done:reviewDelayDays({difficult:0,review:0,total:10,marked:1,done:1}),completed:reviewDelayDays({difficult:0,review:0,total:10,marked:10,done:10})}));expect(delays).toEqual({difficult:1,review:3,done:7,completed:14})});
 test('restore point é reversível e mantém apenas os cinco mais recentes',async({page})=>{const result=await page.evaluate(async()=>{const key='mindmap_state::e2e-restore',modified='studyapp.modified::'+key;localStorage.setItem(key,'antes');localStorage.setItem(modified,new Date().toISOString());const point=await createRestorePoint('e2e','Teste reversível');localStorage.setItem(key,'depois');localStorage.setItem(modified,new Date(Date.now()+1000).toISOString());await restorePointNow(point.id);for(let i=0;i<6;i++)await createRestorePoint('e2e-limit','Ponto '+i);const points=await listRestorePoints();return{value:localStorage.getItem(key),count:points.length,labels:points.map(p=>p.label)}});expect(result.value).toBe('antes');expect(result.count).toBeLessThanOrEqual(5);expect(result.labels.length).toBeGreaterThan(0)});
@@ -18,7 +18,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.4.3');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.5.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -62,11 +62,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.4.3');
+  expect(result.version).toBe('15.5.0');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.4.3');
+  expect(result.scriptURL).toContain('sw.js?v=15.5.0');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -309,7 +309,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.4.3');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.5.0');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -450,7 +450,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.4.3',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.5.0',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -548,6 +548,20 @@ test('agenda de estudos renderiza calendário e troca de modos',async({page})=>{
   await expect(page.locator('.agenda-week-card')).toHaveCount(7);
   await page.locator('[data-agenda-mode="today"]').click();
   await expect(page.locator('.agenda-today-card')).toBeVisible();
+});
+
+test('agenda permite remover eventos manuais com confirmação',async({page})=>{
+  await page.goto('/#agenda');
+  const id=await page.evaluate(()=>{const d=new Date(),pad=n=>String(n).padStart(2,'0'),date=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),row=StudyDashboard.addAgenda({date,title:'Evento E2E removível',kind:'study',minutes:25});StudyDashboard.renderAgenda();return row.id});
+  const remove=page.locator('[data-agenda-delete="'+id+'"]');
+  await expect(remove).toBeVisible();
+  await expect(remove).toContainText('Remover');
+  await remove.click();
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await expect(page.locator('#confirmText')).toContainText('Evento E2E removível');
+  await page.locator('#confirmAccept').click();
+  await expect(page.locator('[data-agenda-delete="'+id+'"]')).toHaveCount(0);
+  expect(await page.evaluate(id=>!!StudyDashboard.exportData().agenda.find(item=>item.id===id)?.deleted,id)).toBe(true);
 });
 
 test('timer flutuante inicia pausa retoma e finaliza sessão',async({page},testInfo)=>{
