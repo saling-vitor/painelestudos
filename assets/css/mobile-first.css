@@ -1751,3 +1751,16 @@
     font-size:23px!important;
   }
 }
+
+
+/* V15.4.2 · garantir caixa real dos accordions de Progresso no smartphone */
+@media(max-width:480px){
+  html.is-phone-layout details.mobile-progress-group{
+    display:block!important;
+    visibility:visible!important;
+  }
+  html.is-phone-layout details.mobile-progress-group>summary{
+    display:flex!important;
+    visibility:visible!important;
+  }
+}
