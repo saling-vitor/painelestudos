@@ -1,12 +1,13 @@
 {
-  "version": "15.4.1",
-  "label": "V15.4.1",
-  "releasedAt": "2026-09-30T17:25:00-03:00",
-  "notes": "Hotfix da revisão Mobile UX 2: remove definitivamente o botão de dúvida duplicado do leitor no iPhone e preserva a barra inferior compacta de ações do mapa.",
+  "version": "15.4.2",
+  "label": "V15.4.2",
+  "releasedAt": "2026-09-30T17:34:00-03:00",
+  "notes": "Hotfix final da Mobile UX 2: estabiliza a caixa visual dos accordions de Progresso no smartphone e mantém visível o cabeçalho de Prioridades, preservando todas as correções feitas a partir do vídeo real do iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "Corrige conflito de CSS que mantinha o botão ? visível no leitor mobile",
-    "Mantém Salvar agora apenas dentro do menu Mais no smartphone",
-    "Preserva todas as melhorias da V15.4.0 para Home, curso, mapas, Agenda, Progresso e Configurações"
+    "Prioridades permanece visível e expansível na tela Progresso do smartphone",
+    "Corrige conflito de layout do elemento details usado nos blocos mobile",
+    "Mantém o leitor sem botão de dúvida duplicado e com Salvar agora no menu Mais",
+    "Preserva toda a revisão V15.4 para Home, curso, mapas, Agenda, Progresso, Configurações e navegação"
   ]
 }
