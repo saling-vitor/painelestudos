@@ -1,14 +1,20 @@
 {
-  "version": "15.2.2",
-  "label": "V15.2.2",
-  "releasedAt": "2026-09-30T15:49:00-03:00",
-  "notes": "Polimento visual e de UX após validação real no iPad: CTA mais claro, Agenda com hierarquia melhor, Progresso menos denso e layouts refinados para retrato, paisagem e Split View.",
+  "version": "15.3.0",
+  "label": "V15.3.0",
+  "releasedAt": "2026-09-30T16:32:00-03:00",
+  "notes": "Rodada mobile-first exclusiva para smartphone: Home mais compacta, topbar adaptativa, cards simplificados, Progresso reorganizado, Agenda em Hoje, Configurações em accordions, leitor imersivo e breakpoints reais de 360–430 px.",
   "showWhatsNew": true,
   "highlights": [
-    "CTA contextual da Home passa de “Estudar” para “Começar agora”",
-    "Agenda destaca Hoje/Semana/Mês e move Replanejar/Exportar para um menu discreto",
-    "Progresso mostra primeiro quatro decisões principais e recolhe as prioridades detalhadas",
-    "Cards recebem alturas, espaçamentos e raios mais consistentes",
-    "iPad retrato, paisagem e Split View ganham layouts específicos e mais estáveis"
+    "Home reduzida para mostrar conteúdo útil já na primeira tela",
+    "Topbar compacta e recolhível durante a rolagem no smartphone",
+    "Cards de curso mostram só o essencial, com Detalhes sob demanda",
+    "Cards de mapas ficam muito menores e preservam capa, título, progresso e Abrir",
+    "Progresso vira Resumo, Prioridades, Desempenho e Disciplinas em blocos expansíveis",
+    "Agenda abre em Hoje no smartphone e mantém Semana/Mês como consultas secundárias",
+    "Configurações ficam verticalizadas em accordions com alvos touch maiores",
+    "Leitor entra em modo imersivo e oculta topbar/bottom-nav enquanto o mapa está aberto",
+    "Bottom-nav do smartphone mantém somente cinco itens",
+    "Estados de carregamento principais usam skeletons em vez de vazios/spinners",
+    "Layout calibrado e testado em 430 px, 390 px e 360 px"
   ]
 }
