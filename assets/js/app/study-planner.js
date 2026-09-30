@@ -316,7 +316,7 @@
   }
   function replanWeek(mode='balanced'){
     const data=agendaData(),agenda=data.agenda||[],today=startDay(new Date()),end=addDays(weekStart(today),7),settings=read().settings,max=settings.maxDailyMinutes||120;
-    const movable=agenda.filter(item=>!item.deleted&&!item.completed&&(item.kind==='study'||item.kind==='simulation')&&parseDate(item.date)&&parseDate(item.date)<today);
+    const movable=agenda.filter(item=>!item.deleted&&!item.completedAt&&(item.kind==='study'||item.kind==='simulation')&&parseDate(item.date)&&parseDate(item.date)<today);
     const future=availableDateCandidates(today,14).filter(d=>d<end||movable.length>3);
     if(!movable.length)return{moved:0,minutes:0};
     if(mode==='reviews')movable.sort((a,b)=>(String(b.title).match(/revis/i)?1:0)-(String(a.title).match(/revis/i)?1:0));
@@ -331,6 +331,17 @@
     }
     replaceAgendaData(data);if(typeof toast==='function')toast(moved+' item'+(moved===1?'':'s')+' redistribuído'+(moved===1?'':'s')+'.');return{moved,minutes};
   }
+  function completeAgendaItem(id){
+    if(!id)return false;const data=agendaData(),row=data.agenda?.find(item=>item.id===id);if(!row)return false;row.completedAt=nowIso();row.updatedAt=nowIso();replaceAgendaData(data);return true;
+  }
+  async function startAgendaItem(id){
+    const data=agendaData(),item=data.agenda?.find(row=>row.id===id&&!row.deleted);if(!item)return false;
+    const map=item.mapKey?mapById(item.mapKey):null;
+    if(map)await openMap(item.mapKey);
+    window.StudyDashboard?.start?.({map,mode:'planned',minutes:Number(item.minutes)||20,label:item.title||'Sessão planejada',agendaId:item.id});
+    return true;
+  }
+
   function recurrenceDates(start,rule){
     const first=parseDate(start)||new Date(),out=[first];
     if(rule==='none'||!rule)return out;
@@ -404,7 +415,7 @@
     priorityRows,nextPriority,buildTimePlan,showTimePlan,forecast,
     mistakes:mistakeItems,errorGroups,
     weeklySnapshot,showWeeklyReview,
-    replanWeek,showReplanModal,rescheduleAgendaItem,addRecurringAgenda,exportAgendaIcs,
+    replanWeek,showReplanModal,rescheduleAgendaItem,completeAgendaItem,startAgendaItem,addRecurringAgenda,exportAgendaIcs,
     showSessionSummary,
     settings:()=>({...read().settings}),
     saveSettings:patch=>{const data=read();data.settings={...data.settings,...patch};write(data);renderAll();return data.settings}
