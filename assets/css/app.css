@@ -2198,14 +2198,16 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .view[data-view="home"]>.section{margin-top:24px}
 .view[data-view="home"]>.section .section-head{margin-bottom:11px}
 @media(min-width:900px){
-  .view[data-view="home"].home-returning .hero{min-height:250px;padding:28px 31px}
-  .view[data-view="home"].home-returning .hero h1{max-width:720px;margin-top:12px;font-size:clamp(34px,3.65vw,49px);line-height:.98}
-  .view[data-view="home"].home-returning .hero p{max-width:690px;margin-top:10px;font-size:12px;line-height:1.55}
-  .view[data-view="home"].home-returning .hero-actions{margin-top:14px}
-  .view[data-view="home"].home-returning .hero-stats{margin-top:15px}
-  .view[data-view="home"].home-returning .stat{min-width:108px;padding:8px 10px}
-  .view[data-view="home"].home-returning .stat b{font-size:16px}
-  .view[data-view="home"].home-returning .stat span{margin-top:4px;font-size:7px}
+  .view[data-view="home"].home-returning .hero{min-height:0}
+  .view[data-view="home"].home-returning .hero-copy{max-width:790px;padding:20px 26px 19px}
+  .view[data-view="home"].home-returning .eyebrow{padding:5px 8px;font-size:7px}
+  .view[data-view="home"].home-returning .hero h1{max-width:700px;margin-top:10px;font-size:clamp(32px,3.25vw,44px);line-height:.96}
+  .view[data-view="home"].home-returning .hero p{display:none}
+  .view[data-view="home"].home-returning .hero-actions{margin-top:11px}
+  .view[data-view="home"].home-returning .hero-stats{margin-top:11px}
+  .view[data-view="home"].home-returning .stat{min-width:100px;padding:7px 9px}
+  .view[data-view="home"].home-returning .stat b{font-size:15px}
+  .view[data-view="home"].home-returning .stat span{margin-top:3px;font-size:7px}
 }
 .home-review-section{padding:15px 16px 13px;border:1px solid rgba(216,197,158,.16);border-radius:12px;background:linear-gradient(135deg,rgba(216,197,158,.035),rgba(8,10,13,.82));box-shadow:0 12px 28px rgba(0,0,0,.22)}
 .home-review-section .section-head{margin:0 0 10px!important;align-items:center}
