@@ -82,3 +82,404 @@
  .study-agenda-layout{grid-template-columns:1fr}.study-agenda-side{grid-template-columns:1fr 1fr}
  .planner-modal-card{width:min(760px,96vw)}
 }
+
+
+/* ========================================
+   V15.2.2 · POLIMENTO UX · IPAD + DESKTOP
+   ======================================== */
+
+/* Home: cards com ritmo e altura coerentes */
+.study-intelligence-row{
+  gap:12px;
+  margin-top:12px;
+}
+.study-intelligence-row>article{
+  min-height:148px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+}
+.study-intelligence-row>article>div:last-child{
+  margin-top:auto;
+}
+.study-intelligence-row h3{
+  margin:5px 0 7px;
+  font-size:13px;
+  line-height:1.25;
+}
+.study-intelligence-row p{
+  margin-bottom:12px;
+  line-height:1.55;
+}
+.priority-now-card .primary{
+  min-width:108px;
+}
+
+/* Agenda: Hoje/Semana/Mês vira o controle principal.
+   Ações ocasionais ficam discretas em um menu único. */
+.study-agenda-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:end!important;
+  gap:10px 12px;
+}
+.study-agenda-modes{
+  display:inline-grid!important;
+  grid-template-columns:repeat(3,minmax(68px,1fr));
+  gap:2px!important;
+  padding:3px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:10px;
+  background:rgba(10,12,15,.72);
+}
+.study-agenda-modes button{
+  height:34px!important;
+  padding:0 12px!important;
+  border:0!important;
+  border-radius:7px!important;
+  background:transparent!important;
+  color:#7f858e!important;
+  font-size:9px!important;
+  font-weight:700;
+}
+.study-agenda-modes button.active{
+  background:rgba(195,170,132,.11)!important;
+  color:#ead9bd!important;
+  box-shadow:inset 0 0 0 1px rgba(195,170,132,.18);
+}
+.agenda-v2-actions{
+  position:relative;
+  margin-left:0!important;
+}
+.agenda-more{
+  position:relative;
+}
+.agenda-more>summary{
+  width:38px;
+  height:38px;
+  list-style:none;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:9px;
+  background:#101216;
+  color:#9ca1aa;
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.08em;
+  cursor:pointer;
+}
+.agenda-more>summary::-webkit-details-marker{display:none}
+.agenda-more[open]>summary{
+  border-color:rgba(195,170,132,.3);
+  background:rgba(195,170,132,.07);
+  color:#e5d4b6;
+}
+.agenda-more-menu{
+  position:absolute;
+  top:44px;
+  right:0;
+  z-index:40;
+  width:244px;
+  padding:6px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:10px;
+  background:#111318;
+  box-shadow:0 18px 50px rgba(0,0,0,.48);
+}
+.agenda-more-menu button{
+  width:100%;
+  min-height:48px;
+  padding:8px 9px;
+  border:0;
+  border-radius:7px;
+  background:transparent;
+  color:#b9bdc3;
+  display:grid;
+  grid-template-columns:24px minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+  text-align:left;
+  cursor:pointer;
+}
+.agenda-more-menu button:hover{
+  background:rgba(255,255,255,.04);
+}
+.agenda-more-menu button>span{
+  color:#c3aa84;
+  font-size:14px;
+  text-align:center;
+}
+.agenda-more-menu button>div{
+  display:grid;
+  gap:2px;
+}
+.agenda-more-menu b{font-size:9px}
+.agenda-more-menu small{
+  font-size:7px;
+  color:#727881;
+}
+.study-agenda-layout{
+  gap:14px!important;
+}
+.study-agenda-calendar,
+.study-agenda-side{
+  padding:16px!important;
+}
+
+/* Progresso: quatro decisões principais primeiro; detalhes ficam recolhidos. */
+.study-intelligence-panel{
+  margin-top:20px!important;
+}
+.progress-intelligence-head{
+  margin-bottom:12px;
+}
+.intelligence-primary-actions{
+  margin-top:0!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+.intelligence-primary-actions>article{
+  min-height:142px;
+  padding:14px!important;
+  display:flex!important;
+  flex-direction:column;
+}
+.intelligence-primary-actions>article>p{
+  min-height:0!important;
+  margin-bottom:10px!important;
+  line-height:1.5!important;
+}
+.intelligence-primary-actions>article>button{
+  margin-top:auto!important;
+}
+.priority-details{
+  margin-top:12px;
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:10px;
+  background:rgba(255,255,255,.012);
+  overflow:hidden;
+}
+.priority-details>summary{
+  min-height:58px;
+  padding:11px 13px;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  cursor:pointer;
+}
+.priority-details>summary::-webkit-details-marker{display:none}
+.priority-details>summary:hover{
+  background:rgba(255,255,255,.018);
+}
+.priority-details>summary>span{
+  display:grid;
+  gap:3px;
+}
+.priority-details>summary b{
+  font-size:9px;
+  color:#c6c9ce;
+}
+.priority-details>summary small{
+  font-size:7px;
+  color:#70767f;
+}
+.priority-details>summary em{
+  font-style:normal;
+  font-size:8px;
+  color:#c3aa84;
+}
+.priority-details[open]>summary{
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+.priority-details[open]>summary em::after{
+  content:" · aberto";
+  color:#717780;
+}
+.priority-details .priority-engine-grid{
+  padding:10px;
+  gap:10px!important;
+}
+.priority-details .priority-engine-grid>article{
+  min-height:132px;
+  padding:13px!important;
+}
+.priority-details-footer{
+  padding:0 10px 10px;
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+}
+.study-analytics-panel{
+  margin-top:26px!important;
+}
+.study-analytics-grid{
+  gap:12px!important;
+}
+.study-analytics-grid>.panel{
+  padding:15px!important;
+}
+
+/* Ritmo geral de cartões */
+.study-command-card,
+.study-analytics-grid>.panel,
+.study-agenda-calendar,
+.study-agenda-side,
+.study-intelligence-row>article,
+.intelligence-primary-actions>article,
+.priority-details{
+  border-radius:11px!important;
+}
+.section-head{
+  row-gap:8px;
+}
+
+/* iPad retrato */
+@media (min-width:700px) and (max-width:900px) and (orientation:portrait){
+  html.is-ipad .study-intelligence-row{
+    grid-template-columns:1fr 1fr!important;
+  }
+  html.is-ipad .study-intelligence-row .forecast-home-card{
+    grid-column:1/-1;
+    min-height:126px;
+  }
+  html.is-ipad .intelligence-primary-actions{
+    grid-template-columns:1fr 1fr!important;
+  }
+  html.is-ipad .study-agenda-head{
+    grid-template-columns:minmax(0,1fr) auto;
+  }
+  html.is-ipad .study-agenda-head>div:first-child{
+    grid-column:1/-1;
+  }
+  html.is-ipad .study-agenda-modes{
+    grid-column:1;
+    width:max-content;
+  }
+  html.is-ipad .agenda-v2-actions{
+    grid-column:2;
+    justify-self:end;
+  }
+  html.is-ipad .study-agenda-layout{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad .study-agenda-side{
+    display:grid!important;
+    grid-template-columns:1.05fr .95fr!important;
+    gap:16px!important;
+  }
+  html.is-ipad .study-agenda-form{
+    margin-top:0!important;
+    padding-top:0!important;
+    padding-left:16px!important;
+    border-top:0!important;
+    border-left:1px solid rgba(255,255,255,.07)!important;
+  }
+  html.is-ipad .priority-details .priority-engine-grid{
+    grid-template-columns:1fr 1fr!important;
+  }
+  html.is-ipad .priority-details .priority-engine-grid>article:last-child{
+    grid-column:1/-1;
+  }
+}
+
+/* iPad paisagem */
+@media (min-width:901px) and (max-width:1400px) and (orientation:landscape){
+  html.is-ipad .study-intelligence-row{
+    grid-template-columns:.82fr 1.12fr 1.12fr!important;
+  }
+  html.is-ipad .study-intelligence-row .forecast-home-card{
+    grid-column:auto!important;
+  }
+  html.is-ipad .intelligence-primary-actions{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+  html.is-ipad .study-agenda-layout{
+    grid-template-columns:minmax(0,1.48fr) minmax(280px,.72fr)!important;
+  }
+  html.is-ipad .study-agenda-side{
+    display:block!important;
+  }
+  html.is-ipad .study-agenda-form{
+    margin-top:15px!important;
+    padding-top:14px!important;
+    padding-left:0!important;
+    border-left:0!important;
+    border-top:1px solid rgba(255,255,255,.07)!important;
+  }
+  html.is-ipad .priority-details .priority-engine-grid{
+    grid-template-columns:repeat(3,1fr)!important;
+  }
+}
+
+/* iPad Split View / janela estreita */
+@media (min-width:560px) and (max-width:699px) and (pointer:coarse){
+  html.is-ipad .study-intelligence-row{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad .study-intelligence-row>article{
+    min-height:126px;
+  }
+  html.is-ipad .intelligence-primary-actions{
+    grid-template-columns:1fr 1fr!important;
+  }
+  html.is-ipad .study-agenda-head{
+    grid-template-columns:minmax(0,1fr) auto;
+  }
+  html.is-ipad .study-agenda-head>div:first-child{
+    grid-column:1/-1;
+  }
+  html.is-ipad .study-agenda-modes{
+    grid-column:1;
+    width:100%;
+  }
+  html.is-ipad .agenda-v2-actions{
+    grid-column:2;
+  }
+  html.is-ipad .study-agenda-layout{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad .study-agenda-side{
+    display:block!important;
+  }
+  html.is-ipad .study-agenda-form{
+    margin-top:14px!important;
+    padding-top:14px!important;
+    padding-left:0!important;
+    border-left:0!important;
+    border-top:1px solid rgba(255,255,255,.07)!important;
+  }
+  html.is-ipad .priority-details .priority-engine-grid{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad .priority-details-footer{
+    flex-direction:column;
+  }
+  html.is-ipad .priority-details-footer button{
+    width:100%;
+  }
+  html.is-ipad .bottom-nav .bottom-nav-label{
+    font-size:8px!important;
+  }
+}
+
+/* Telefones continuam simples e empilhados */
+@media(max-width:559px){
+  .study-agenda-head{
+    grid-template-columns:1fr auto;
+  }
+  .study-agenda-head>div:first-child{
+    grid-column:1/-1;
+  }
+  .study-agenda-modes{
+    width:100%;
+  }
+  .intelligence-primary-actions{
+    grid-template-columns:1fr!important;
+  }
+  .priority-details .priority-engine-grid{
+    grid-template-columns:1fr!important;
+  }
+}
