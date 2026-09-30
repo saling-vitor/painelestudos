@@ -382,3 +382,120 @@
     root.querySelectorAll('[data-doubt-toggle]').forEach(button=>button.onclick=()=>toggleDoubtResolved(button.dataset.doubtToggle));
     root.querySelectorAll('[data-doubt-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.doubtOpen));
   }
+
+  function saveGoalsFromForm(form){
+    const data=readData(),fd=new FormData(form);
+    data.goals.dailyMinutes=clamp(fd.get('dailyMinutes'),1,1440)||120;
+    data.goals.weeklyMinutes=clamp(fd.get('weeklyMinutes'),1,10080)||600;
+    data.goals.pomodoroWork=clamp(fd.get('pomodoroWork'),5,180)||25;
+    data.goals.pomodoroBreak=clamp(fd.get('pomodoroBreak'),1,60)||5;
+    data.goals.autoFocus=form.elements.autoFocus.checked;
+    writeData(data);renderAll();toast('Metas de estudo salvas.');
+  }
+  function renderStudySettings(){
+    const view=document.querySelector('[data-view="settings"]');
+    if(!view)return;
+    let root=document.getElementById('studySettingsPanel');
+    if(!root){
+      root=document.createElement('div');
+      root.id='studySettingsPanel';
+      root.className='panel study-settings-panel settings-full-panel';
+      const layout=view.querySelector('.settings-layout')||view;
+      layout.insertAdjacentElement('afterend',root);
+    }
+    const data=readData(),g=data.goals,snap=goalSnapshot();
+    root.innerHTML='<div class="panel-kicker">Rotina de estudo</div><div class="study-settings-head"><div><h2>Metas, timer e foco</h2><p>Defina sua carga de estudo e o comportamento das sessões.</p></div><div class="study-settings-summary"><span>Hoje <b>'+escape(fmtMin(snap.today))+'</b></span><span>Semana <b>'+escape(fmtMin(snap.week))+'</b></span></div></div><form id="studyGoalsForm" class="study-goals-form"><label>Meta diária <span><input name="dailyMinutes" type="number" min="1" max="1440" step="5" value="'+g.dailyMinutes+'"> min</span></label><label>Meta semanal <span><input name="weeklyMinutes" type="number" min="1" max="10080" step="15" value="'+g.weeklyMinutes+'"> min</span></label><label>Pomodoro <span><input name="pomodoroWork" type="number" min="5" max="180" step="5" value="'+g.pomodoroWork+'"> min</span></label><label>Pausa <span><input name="pomodoroBreak" type="number" min="1" max="60" step="1" value="'+g.pomodoroBreak+'"> min</span></label><label class="study-settings-toggle"><span><b>Modo foco automático</b><small>Oculta controles secundários ao iniciar uma sessão dentro de um mapa.</small></span><input name="autoFocus" type="checkbox" '+(g.autoFocus?'checked':'')+'></label><div class="study-settings-actions"><button class="primary" type="submit">Salvar metas</button><button class="secondary" type="button" data-settings-pomodoro>Iniciar Pomodoro</button></div></form>';
+    root.querySelector('#studyGoalsForm').onsubmit=e=>{e.preventDefault();saveGoalsFromForm(e.currentTarget)};
+    root.querySelector('[data-settings-pomodoro]').onclick=()=>startPomodoro(g.pomodoroWork);
+  }
+  function enhanceStudyPlan(){
+    const grid=document.getElementById('homeStudyPlan'),section=document.getElementById('homeReviewSection');
+    if(!grid||!section||section.hidden)return;
+    let footer=section.querySelector('.study-plan-footer');
+    if(!footer){footer=document.createElement('div');footer.className='study-plan-footer';grid.insertAdjacentElement('afterend',footer)}
+    const snap=window.StudyCoach?.snapshot?.(),planned=Number(snap?.summary?.plannedMinutes)||0,today=window.StudyTime?.today?.()||0,realized=Math.round(today/60),pct=planned?Math.min(100,Math.round(realized/planned*100)):0;
+    footer.innerHTML='<span>Planejado <b>'+planned+' min</b></span><span>Realizado <b>'+realized+' min</b></span><i><em style="width:'+pct+'%"></em></i><strong>'+pct+'%</strong>';
+    const start=document.getElementById('homeReviewNowBtn');
+    if(start)start.onclick=()=>startDailyPlanFirst();
+  }
+  async function startDailyPlanFirst(){
+    const item=window.StudyCoach?.snapshot?.().items?.[0];
+    if(!item)return startSession({mode:'free'});
+    if(item.kind==='simulation'){nav('simulations');return}
+    if(item.key){
+      const map=mapById(item.key);
+      await openMap(item.key);
+      startSession({map,mode:'planned',minutes:item.minutes||20,label:item.title||map?.shortTitle||'Sessão planejada'});
+    }
+  }
+  function ensureQuickDoubtButton(){
+    const reader=document.getElementById('reader');
+    if(!reader||document.getElementById('readerDoubtQuick'))return;
+    const button=document.createElement('button');
+    button.id='readerDoubtQuick';
+    button.type='button';
+    button.className='reader-doubt-quick';
+    button.innerHTML='<span>?</span><b>Anotar dúvida</b>';
+    button.onclick=openDoubtPanel;
+    reader.appendChild(button);
+  }
+  function ensureAgendaNav(){
+    if(document.querySelector('.nav [data-nav="agenda"]'))return;
+    const progress=document.querySelector('.nav [data-nav="progress"]');
+    if(!progress)return;
+    const button=document.createElement('button');
+    button.className='nav-btn';
+    button.dataset.nav='agenda';
+    button.setAttribute('aria-label','Agenda');
+    button.innerHTML='<span class="ui-icon icon-calendar ui-icon-md" aria-hidden="true"></span><span class="txt">Agenda</span>';
+    progress.insertAdjacentElement('afterend',button);
+  }
+  function renderAll(){
+    renderTimer();
+    if(state?.view==='home'){renderHomeDashboard();enhanceStudyPlan()}
+    if(state?.view==='agenda')renderAgenda();
+    if(state?.view==='progress'){renderProgressDashboard();renderDoubtInbox()}
+    if(state?.view==='settings')renderStudySettings();
+  }
+
+  const baseRenderHome=renderHome;
+  renderHome=function(){baseRenderHome();renderHomeDashboard();enhanceStudyPlan()};
+  const baseRenderProgress=renderProgress;
+  renderProgress=function(){baseRenderProgress();renderProgressDashboard();renderDoubtInbox()};
+  const baseRenderSettings=renderSettings;
+  renderSettings=function(){baseRenderSettings();renderStudySettings()};
+
+  function init(){
+    ensureAgendaNav();
+    ensureAgendaView();
+    ensureQuickDoubtButton();
+    ensureDoubtPanel();
+    renderTimer();
+    ensureTimerIntervals();
+    if(readActive())window.__manualStudySessionActive=true;
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&readActive()?.running)pauseSession({automatic:true})});
+    window.addEventListener('pagehide',()=>{if(readActive()?.running)pauseSession({automatic:true})});
+    window.addEventListener('storage',e=>{if(e.key===DATA_KEY||e.key===ACTIVE_KEY)renderAll()});
+  }
+
+  window.StudyDashboard={
+    exportData:()=>readData(),
+    importData,
+    mergeData,
+    hasData:()=>{const d=readData();return!!(d.sessions.length||d.agenda.length||d.doubts.length||d.updatedAt)},
+    render:renderAll,
+    renderAgenda,
+    start:startSession,
+    startPomodoro,
+    pause:pauseSession,
+    resume:resumeSession,
+    finish:finishSession,
+    active:readActive,
+    elapsed:()=>activeElapsed(readActive()),
+    addAgenda:addAgendaItem,
+    goals:()=>({...readData().goals}),
+    openDoubt:openDoubtPanel
+  };
+  window.renderStudyAgenda=renderAgenda;
+  init();
+})();
