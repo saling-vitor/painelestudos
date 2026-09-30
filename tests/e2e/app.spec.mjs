@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.5.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.5.1'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -18,7 +18,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.5.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.5.1');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -62,11 +62,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.5.0');
+  expect(result.version).toBe('15.5.1');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.5.0');
+  expect(result.scriptURL).toContain('sw.js?v=15.5.1');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -309,7 +309,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.5.0');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.5.1');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -450,7 +450,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.5.0',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.5.1',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -562,6 +562,23 @@ test('agenda permite remover eventos manuais com confirmação',async({page})=>{
   await page.locator('#confirmAccept').click();
   await expect(page.locator('[data-agenda-delete="'+id+'"]')).toHaveCount(0);
   expect(await page.evaluate(id=>!!StudyDashboard.exportData().agenda.find(item=>item.id===id)?.deleted,id)).toBe(true);
+});
+
+test('agenda permite remover sessões concluídas e desconta o tempo efetivo',async({page})=>{
+  await page.goto('/#agenda');
+  const setup=await page.evaluate(()=>{const map=combinedMaps()[0],key=map._key||mapKey(map),id='session-e2e-remove-'+Date.now(),startedAt=new Date().toISOString(),before=StudyTime.today();StudyTime.add(key,5,new Date(startedAt));const data=StudyDashboard.exportData();data.sessions.push({id,mapKey:key,courseId:map.courseId||'',label:'Pomodoro E2E removível',agendaId:'',mode:'pomodoro',plannedSeconds:1500,durationSeconds:5,startedAt,endedAt:startedAt,createdAt:startedAt,updatedAt:startedAt,startProgress:null});StudyDashboard.importData(data,{merge:false,silent:true});StudyDashboard.renderAgenda();return{id,key,before,afterAdd:StudyTime.today()}});
+  expect(setup.afterAdd-setup.before).toBeGreaterThanOrEqual(5);
+  const remove=page.locator('[data-session-delete="'+setup.id+'"]');
+  await expect(remove).toBeVisible();
+  await expect(remove).toContainText('Remover');
+  await remove.click();
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await expect(page.locator('#confirmText')).toContainText('Pomodoro E2E removível');
+  await page.locator('#confirmAccept').click();
+  await expect(page.locator('[data-session-delete="'+setup.id+'"]')).toHaveCount(0);
+  const result=await page.evaluate(({id,key})=>({deleted:!!StudyDashboard.exportData().sessions.find(item=>item.id===id)?.deleted,today:StudyTime.today(),map:StudyTime.mapSeconds(key)}),setup);
+  expect(result.deleted).toBe(true);
+  expect(result.today).toBe(setup.before);
 });
 
 test('timer flutuante inicia pausa retoma e finaliza sessão',async({page},testInfo)=>{
