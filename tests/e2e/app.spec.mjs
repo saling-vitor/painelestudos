@@ -1089,6 +1089,8 @@ test('iPhone real UX2 leitor usa barra única e move Salvar para Mais',async({pa
   await page.locator('#courseMaps .map-card').first().click();
   await expect(page.locator('#reader')).toHaveClass(/open/);
   await expect(page.locator('#mobileReaderSkeleton')).toHaveCount(1);
+  await expect(page.locator('html')).toHaveClass(/mobile-reader-open/);
+  await page.waitForFunction(()=>document.querySelector('.readerbar')?.getBoundingClientRect().height<=54);
   const reader=await page.evaluate(()=>({
     bar:document.querySelector('.readerbar').getBoundingClientRect().height,
     saveDisplay:getComputedStyle(document.querySelector('#readerSave')).display,
