@@ -162,8 +162,8 @@
     return[...manual,...reviewEntries(),...examEntries(),...sessionEntries()];
   }
   function entriesForDate(value){
-    const key=dateKey(value);
-    return allAgendaEntries().filter(item=>item.date===key).sort((a,b)=>{
+    const key=dateKey(value),todayKey=dateKey();
+    return allAgendaEntries().filter(item=>item.date===key||(key===todayKey&&item.kind==='review'&&item.date<todayKey)).map(item=>item.kind==='review'&&item.date<todayKey?{...item,meta:[item.meta,'Atrasada'].filter(Boolean).join(' · ')}:item).sort((a,b)=>{
       const order={exam:0,review:1,study:2,simulation:3,session:4};
       return(order[a.kind]??9)-(order[b.kind]??9);
     });
@@ -322,8 +322,16 @@
     const data=readData(),maps=combinedMaps(),times=sumStudyMaps(),ranked=Object.entries(times).map(([key,seconds])=>({key,seconds,map:mapById(key)})).filter(row=>row.seconds>0).sort((a,b)=>b.seconds-a.seconds);
     const weak=maps.map(map=>({map,progress:mapProgress(map)})).filter(row=>row.progress.difficult||row.progress.review).sort((a,b)=>(b.progress.difficult||0)-(a.progress.difficult||0)||(b.progress.review||0)-(a.progress.review||0)).slice(0,5);
     const sessions=data.sessions.filter(row=>Number(row.durationSeconds)>0),total=sessions.reduce((sum,row)=>sum+(Number(row.durationSeconds)||0),0),average=sessions.length?Math.round(total/sessions.length):0;
-    const openDoubts=data.doubts.filter(row=>!row.resolved&&!row.deleted);
-    return{data,ranked,weak,sessions,total,average,openDoubts};
+    const openDoubts=data.doubts.filter(row=>!row.resolved&&!row.deleted),categoryMap={},courseMap={};
+    for(const row of ranked){
+      const map=row.map;if(!map)continue;
+      const category=map.category||'Outros',course=courseById(map.courseId),courseLabel=course?.title||map.courseId||'Outros';
+      categoryMap[category]=(categoryMap[category]||0)+row.seconds;
+      courseMap[courseLabel]=(courseMap[courseLabel]||0)+row.seconds;
+    }
+    const categories=Object.entries(categoryMap).map(([label,seconds])=>({label,seconds})).sort((a,b)=>b.seconds-a.seconds);
+    const courses=Object.entries(courseMap).map(([label,seconds])=>({label,seconds})).sort((a,b)=>b.seconds-a.seconds);
+    return{data,ranked,weak,sessions,total,average,openDoubts,categories,courses};
   }
   function renderProgressDashboard(){
     const view=document.querySelector('[data-view="progress"]');
@@ -336,8 +344,8 @@
       const insights=document.getElementById('progressInsights');
       if(insights)insights.insertAdjacentElement('afterend',root);else view.appendChild(root);
     }
-    const snap=analyticsSnapshot(),top=snap.ranked.slice(0,5);
-    root.innerHTML='<div class="section-head"><div><div class="kicker">Consistência</div><h2>Ritmo de estudo</h2><p>Tempo real, sessões, pontos frágeis e dúvidas abertas.</p></div><button type="button" class="secondary" data-analytics-agenda>Ver agenda</button></div><div class="study-analytics-grid"><article class="panel study-heatmap-card"><div class="study-card-head"><span>Últimos 84 dias</span><b>'+escape(fmtMin(window.StudyTime?.week?.()||0))+' nesta semana</b></div>'+heatmapHtml()+'</article><article class="panel study-session-stats"><span>Sessões concluídas</span><b>'+snap.sessions.length+'</b><small>Média '+escape(fmtMin(snap.average))+' · total '+escape(fmtMin(snap.total))+'</small><div class="study-stat-line"><span>Dúvidas abertas</span><strong>'+snap.openDoubts.length+'</strong></div></article><article class="panel study-map-time"><div class="study-card-head"><span>Mais estudados</span><b>Tempo por mapa</b></div>'+(top.length?top.map(row=>'<div class="study-ranking-row"><span>'+escape(row.map?.code||row.map?.shortTitle||row.key)+'</span><b>'+escape(fmtMin(row.seconds))+'</b></div>').join(''):'<div class="empty compact">O tempo por mapa aparecerá conforme você estudar.</div>')+'</article><article class="panel study-weak-points"><div class="study-card-head"><span>Pontos de atenção</span><b>DIF + REV</b></div>'+(snap.weak.length?snap.weak.map(row=>'<button type="button" data-weak-map="'+escape(row.map._key||mapKey(row.map))+'"><span>'+escape(row.map.code||row.map.shortTitle||'MAP')+'</span><b>'+(row.progress.difficult?'DIF '+row.progress.difficult:'')+(row.progress.review?' · REV '+row.progress.review:'')+'</b></button>').join(''):'<div class="empty compact">Nenhum ponto frágil marcado agora.</div>')+'</article></div>';
+    const snap=analyticsSnapshot(),top=snap.ranked.slice(0,3),topCategories=snap.categories.slice(0,2),topCourses=snap.courses.slice(0,2);
+    root.innerHTML='<div class="section-head"><div><div class="kicker">Consistência</div><h2>Ritmo de estudo</h2><p>Tempo real, sessões, pontos frágeis e dúvidas abertas.</p></div><button type="button" class="secondary" data-analytics-agenda>Ver agenda</button></div><div class="study-analytics-grid"><article class="panel study-heatmap-card"><div class="study-card-head"><span>Últimos 84 dias</span><b>'+escape(fmtMin(window.StudyTime?.week?.()||0))+' nesta semana</b></div>'+heatmapHtml()+'</article><article class="panel study-session-stats"><span>Sessões concluídas</span><b>'+snap.sessions.length+'</b><small>Média '+escape(fmtMin(snap.average))+' · total '+escape(fmtMin(snap.total))+'</small><div class="study-stat-line"><span>Dúvidas abertas</span><strong>'+snap.openDoubts.length+'</strong></div></article><article class="panel study-map-time"><div class="study-card-head"><span>Distribuição</span><b>Tempo estudado</b></div>'+(top.length?'<small class="study-ranking-label">Mapas</small>'+top.map(row=>'<div class="study-ranking-row"><span>'+escape(row.map?.code||row.map?.shortTitle||row.key)+'</span><b>'+escape(fmtMin(row.seconds))+'</b></div>').join('')+'<small class="study-ranking-label">Disciplinas</small>'+topCategories.map(row=>'<div class="study-ranking-row"><span>'+escape(row.label)+'</span><b>'+escape(fmtMin(row.seconds))+'</b></div>').join('')+'<small class="study-ranking-label">Cursos</small>'+topCourses.map(row=>'<div class="study-ranking-row"><span>'+escape(row.label)+'</span><b>'+escape(fmtMin(row.seconds))+'</b></div>').join(''):'<div class="empty compact">O tempo por mapa aparecerá conforme você estudar.</div>')+'</article><article class="panel study-weak-points"><div class="study-card-head"><span>Pontos de atenção</span><b>DIF + REV</b></div>'+(snap.weak.length?snap.weak.map(row=>'<button type="button" data-weak-map="'+escape(row.map._key||mapKey(row.map))+'"><span>'+escape(row.map.code||row.map.shortTitle||'MAP')+'</span><b>'+(row.progress.difficult?'DIF '+row.progress.difficult:'')+(row.progress.review?' · REV '+row.progress.review:'')+'</b></button>').join(''):'<div class="empty compact">Nenhum ponto frágil marcado agora.</div>')+'</article></div>';
     root.querySelector('[data-analytics-agenda]').onclick=()=>nav('agenda');
     root.querySelectorAll('[data-weak-map]').forEach(button=>button.onclick=()=>openMap(button.dataset.weakMap));
   }
