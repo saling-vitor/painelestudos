@@ -1,20 +1,11 @@
 {
-  "version": "15.2.0",
-  "label": "V15.2.0",
-  "releasedAt": "2026-09-30T14:38:00-03:00",
-  "notes": "O Meus Mapas passa a usar seu progresso real para planejar o estudo: prioridades adaptativas, revisão espaçada por tópico, replanejamento semanal, caderno de erros, matriz do edital, previsão de conclusão e novas ferramentas para iPad.",
+  "version": "15.2.1",
+  "label": "V15.2.1",
+  "releasedAt": "2026-09-30T15:36:00-03:00",
+  "notes": "Ajuste específico para o app no iPad: o Calendário passa a ter acesso direto na barra inferior e o botão flutuante “Estudar” deixa de aparecer quando não há sessão ativa.",
   "showWhatsNew": true,
   "highlights": [
-    "Motor inteligente de prioridade combina DIF, REV, revisão atrasada, erros de simulados, peso do conteúdo, ritmo e proximidade da prova",
-    "Revisão espaçada por tópico com Errei, Difícil, OK e Fácil e intervalos adaptativos",
-    "Replanejamento automático da semana respeitando carga máxima e dias disponíveis",
-    "Resumo de encerramento da sessão com tópicos trabalhados, OK, REV, DIF e dúvidas",
-    "Caderno de erros dos simulados com erros por questão/assunto e atalhos para reestudo",
-    "Matriz do edital com cobertura, domínio estimado, pendências e previsão de conclusão",
-    "Atalhos Tenho 15/30/60/120 min para montar sessões automaticamente",
-    "Agenda 2.0 com recorrência, arrastar e soltar, carga diária e exportação .ics",
-    "Busca global vira Command Palette com ações, dúvidas, revisões, erros e simulados",
-    "iPad ganha timer arrastável, atalhos de teclado e barra rápida dentro do leitor",
-    "Revisão semanal automática com tempo, sessões, simulados, cobertura e próximos focos"
+    "Calendário adicionado à barra inferior do app no iPad, mantendo Início, Cursos, Mapas, Simulados, Progresso e Mais",
+    "Botão flutuante “Estudar” removido do estado ocioso; o timer continua aparecendo normalmente durante uma sessão ativa"
   ]
 }

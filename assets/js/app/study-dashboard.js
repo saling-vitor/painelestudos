@@ -199,12 +199,11 @@
     const root=ensureTimerRoot(),active=readActive();
     if(!active){
       root.className='study-timer-float is-idle';
-      root.innerHTML='<button type="button" class="study-timer-launch" data-study-start><span>▶</span><b>Estudar</b></button><div class="study-timer-idle-menu"><button type="button" data-study-free>Sessão livre</button><button type="button" data-study-pomodoro="25">25 min</button><button type="button" data-study-pomodoro="50">50 min</button></div>';
-      root.querySelector('[data-study-start]').onclick=()=>root.classList.toggle('is-open');
-      root.querySelector('[data-study-free]').onclick=()=>startSession({mode:'free'});
-      root.querySelectorAll('[data-study-pomodoro]').forEach(button=>button.onclick=()=>startPomodoro(Number(button.dataset.studyPomodoro)));
+      root.innerHTML='';
+      root.hidden=true;
       return;
     }
+    root.hidden=false;
     ensureTimerIntervals();
     const elapsed=activeElapsed(active),target=Math.max(0,Number(active.targetSeconds)||0),progress=target?Math.min(100,Math.round(elapsed/target*100)):0,remaining=target?Math.max(0,target-elapsed):0;
     root.className='study-timer-float is-active'+(active.running?' is-running':' is-paused');
@@ -455,15 +454,28 @@
     reader.appendChild(button);
   }
   function ensureAgendaNav(){
-    if(document.querySelector('.nav [data-nav="agenda"]'))return;
-    const progress=document.querySelector('.nav [data-nav="progress"]');
-    if(!progress)return;
-    const button=document.createElement('button');
-    button.className='nav-btn';
-    button.dataset.nav='agenda';
-    button.setAttribute('aria-label','Agenda');
-    button.innerHTML='<span class="ui-icon icon-calendar ui-icon-md" aria-hidden="true"></span><span class="txt">Agenda</span>';
-    progress.insertAdjacentElement('afterend',button);
+    if(!document.querySelector('.nav [data-nav="agenda"]')){
+      const progress=document.querySelector('.nav [data-nav="progress"]');
+      if(progress){
+        const button=document.createElement('button');
+        button.className='nav-btn';
+        button.dataset.nav='agenda';
+        button.setAttribute('aria-label','Agenda');
+        button.innerHTML='<span class="ui-icon icon-calendar ui-icon-md" aria-hidden="true"></span><span class="txt">Agenda</span>';
+        progress.insertAdjacentElement('afterend',button);
+      }
+    }
+    if(!document.querySelector('.bottom-nav [data-nav="agenda"]')){
+      const progress=document.querySelector('.bottom-nav [data-nav="progress"]');
+      if(progress){
+        const button=document.createElement('button');
+        button.className='bottom-nav-agenda';
+        button.dataset.nav='agenda';
+        button.setAttribute('aria-label','Calendário');
+        button.innerHTML='<span class="ui-icon icon-calendar ui-icon-lg" aria-hidden="true"></span><span class="bottom-nav-label">Calendário</span>';
+        progress.insertAdjacentElement('beforebegin',button);
+      }
+    }
   }
   function renderAll(){
     renderTimer();
