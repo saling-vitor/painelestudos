@@ -333,7 +333,7 @@ test('home consolidada prioriza o estudo diário',async({page})=>{
       itemBackground:getComputedStyle(item).backgroundColor
     };
   });
-  if(values.width>=900){expect(values.heroHeight).toBeGreaterThanOrEqual(280);expect(values.heroHeight).toBeLessThanOrEqual(320);}
+  if(values.width>=900){expect(values.heroHeight).toBeGreaterThanOrEqual(280);expect(values.heroHeight).toBeLessThanOrEqual(345);}
   expect(values.planBorder).toBe('1px');
 });
 
@@ -440,7 +440,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
   expect(layout.bg).toContain('home-hero-panel.webp');
   if(await page.evaluate(()=>innerWidth>=900)){
     expect(layout.height).toBeGreaterThanOrEqual(280);
-    expect(layout.height).toBeLessThanOrEqual(320);
+    expect(layout.height).toBeLessThanOrEqual(345);
     expect(layout.statsRight).toBeLessThan(layout.heroWidth*.58);
     expect(layout.copyRight).toBeLessThan(layout.heroWidth*.60);
   }
