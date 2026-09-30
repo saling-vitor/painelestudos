@@ -164,7 +164,7 @@
   }
   function entriesForDate(value){
     const key=dateKey(value),todayKey=dateKey();
-    return allAgendaEntries().filter(item=>item.date===key||(key===todayKey&&item.kind==='review'&&item.date<todayKey)).map(item=>item.kind==='review'&&item.date<todayKey?{...item,meta:[item.meta,'Atrasada'].filter(Boolean).join(' · ')}:item).sort((a,b)=>{
+    return allAgendaEntries().filter(item=>item.date===key||(key===todayKey&&(item.kind==='review'||item.kind==='topic-review')&&item.date<todayKey)).map(item=>(item.kind==='review'||item.kind==='topic-review')&&item.date<todayKey?{...item,meta:[item.meta,'Atrasada'].filter(Boolean).join(' · ')}:item).sort((a,b)=>{
       const order={exam:0,'topic-review':1,review:2,study:3,simulation:4,session:5};
       return(order[a.kind]??9)-(order[b.kind]??9);
     });
