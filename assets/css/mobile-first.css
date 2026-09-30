@@ -1786,6 +1786,14 @@
 .mobile-reader-rail-toggle,
 .mobile-agenda-plan-toggle{display:none}
 
+/* V15.6.1 · componentes exclusivos de telefone nunca vazam para iPad/tablet */
+@media(min-width:481px){
+  .bottom-nav .mobile-menu-trigger,
+  .mobile-menu-layer,
+  .mobile-reader-rail-toggle,
+  .mobile-agenda-plan-toggle{display:none!important}
+}
+
 @keyframes mobileSyncSpin{to{transform:rotate(360deg)}}
 
 @media(max-width:480px){
@@ -1803,17 +1811,17 @@
     min-width:0!important;height:44px!important;min-height:44px!important;padding:2px 1px!important
   }
   html.is-phone-layout .bottom-nav .mobile-menu-trigger>.ui-icon{--icon-size:19px!important;margin:0!important}
-  html.is-phone-layout .bottom-nav{padding:2px!important;border-radius:12px!important}
-  html.is-phone-layout .bottom-nav button{height:44px!important;min-height:44px!important}
+  html.is-phone-layout .bottom-nav{padding:2px!important;border-radius:12px!important;backdrop-filter:none!important;background:rgba(9,11,14,.985)!important}
+  html.is-phone-layout .bottom-nav button{height:44px!important;min-height:44px!important;touch-action:manipulation}
   html.is-phone-layout .bottom-nav button>.ui-icon{--icon-size:19px!important}
   html.is-phone-layout .bottom-nav-label{margin-top:1px!important;font-size:8px!important}
-  html.mobile-menu-open.is-phone-layout .bottom-nav{z-index:146!important}
+  html.mobile-menu-open.is-phone-layout .bottom-nav{z-index:100!important}
 
-  html.is-phone-layout .mobile-menu-layer{position:fixed;inset:0;z-index:145;display:block}
+  html.is-phone-layout .mobile-menu-layer{position:fixed;inset:0;z-index:180;display:block}
   html.is-phone-layout .mobile-menu-layer[hidden]{display:none!important}
   html.is-phone-layout .mobile-menu-backdrop{
     position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:0;
-    background:rgba(0,0,0,.58);backdrop-filter:blur(3px)
+    background:rgba(0,0,0,.64);backdrop-filter:none
   }
   html.is-phone-layout .mobile-menu-sheet{
     position:absolute;left:8px;right:8px;bottom:calc(59px + var(--safe-bottom));
@@ -1833,7 +1841,7 @@
   }
   html.is-phone-layout .mobile-menu-options{display:grid;gap:5px;margin-top:3px}
   html.is-phone-layout .mobile-menu-option{
-    width:100%;min-height:54px;padding:8px 10px;border:1px solid rgba(255,255,255,.055);
+    width:100%;min-height:54px;touch-action:manipulation;padding:8px 10px;border:1px solid rgba(255,255,255,.055);
     border-radius:11px;background:rgba(255,255,255,.018);color:#d1d4d8;
     display:grid;grid-template-columns:34px minmax(0,1fr) 18px;align-items:center;gap:8px;text-align:left
   }
