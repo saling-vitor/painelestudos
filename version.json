@@ -1,14 +1,14 @@
 {
-  "version": "15.0.11",
-  "label": "V15.0.11",
-  "releasedAt": "2026-09-30T08:50:00-03:00",
-  "notes": "Hero da Home atualizado com a arte original em WebP de alta qualidade, preservando textura, contornos e detalhes do mascote sem voltar ao arquivo pesado em PNG.",
+  "version": "15.0.12",
+  "label": "V15.0.12",
+  "releasedAt": "2026-09-30T11:23:00-03:00",
+  "notes": "A capa da Home voltou ao enquadramento editorial do layout aprovado: a arte HQ agora ocupa o hero inteiro, com transição suave para a área de texto e sem a divisão visual em duas colunas.",
   "showWhatsNew": true,
   "highlights": [
-    "Hero agora usa imagem HQ de 1600 px em WebP",
-    "Texturas, papel, halftone e contornos ficam muito mais nítidos",
-    "Mascote e elementos de estudo deixam de aparentar compressão excessiva",
-    "Novo arquivo usa nome próprio para evitar cache da versão borrada",
-    "Imagem HQ continua pré-carregada e disponível offline"
+    "Arte da Home volta a preencher toda a largura do hero",
+    "Mascote e colagem recuperam escala e protagonismo",
+    "Transição em gradiente integra imagem e conteúdo sem corte vertical",
+    "Área esquerda permanece escura para preservar a leitura do título e das métricas",
+    "WebP HQ continua sendo usado para manter a nitidez da imagem"
   ]
 }
