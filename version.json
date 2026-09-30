@@ -1,14 +1,14 @@
 {
-  "version": "15.0.7",
-  "label": "V15.0.7",
-  "releasedAt": "2026-09-29T20:28:00-03:00",
-  "notes": "Configurações reorganizadas para aproveitar melhor o desktop, reduzir redundâncias e deixar backup, diagnóstico e sincronização mais claros.",
+  "version": "15.0.8",
+  "label": "V15.0.8",
+  "releasedAt": "2026-09-29T21:15:00-03:00",
+  "notes": "Home refinada para funcionar mais como painel diário: hero compacto, plano do dia integrado, simulados legíveis, cursos mais largos e proteção reforçada contra autofill.",
   "showWhatsNew": true,
   "highlights": [
-    "Configurações agora usa duas colunas de forma consistente",
-    "Atalho redundante de Simulados foi removido da tela",
-    "Atualizações e diagnóstico ficaram mais compactos",
-    "Backup e restauração agora ocupam toda a largura",
-    "Pontos de restauração mostram três itens por padrão com opção de expandir"
+    "Hero fica mais compacto após o início dos estudos",
+    "Plano do dia e sequência sugerida agora formam um único card",
+    "Simulados recentes usam títulos legíveis e mostram estado ou última nota",
+    "Cursos da Home ocupam melhor a largura e usam cards compactos",
+    "Busca global ganhou proteção contínua contra autofill de e-mail"
   ]
 }
