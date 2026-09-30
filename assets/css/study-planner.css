@@ -73,3 +73,5 @@
 @media(max-width:820px){.reader.open #readerDoubtQuick{left:12px;right:auto;bottom:calc(142px + env(safe-area-inset-bottom))}}
 
 .agenda-dot.topic-review{background:#d6b06e}.agenda-entry.topic-review{border-color:rgba(214,176,110,.13)}
+
+.agenda-entry.is-completed{opacity:.58}.agenda-completed-badge{display:inline-flex;margin-top:3px;padding:2px 5px;border-radius:4px;background:rgba(98,169,120,.08);color:#62a978;font-size:6px;text-transform:uppercase;letter-spacing:.08em}
