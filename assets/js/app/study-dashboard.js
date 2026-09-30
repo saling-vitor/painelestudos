@@ -178,3 +178,71 @@
     if(!row)return;
     row.deleted=true;row.updatedAt=isoNow();writeData(data);renderAgenda();renderHomeDashboard();
   }
+
+  function timerMapLabel(active){
+    const map=activeMap(active);
+    return map?.code||map?.shortTitle||map?.title||active?.label||'Estudo';
+  }
+  function ensureTimerRoot(){
+    let root=document.getElementById('studyTimerFloat');
+    if(root)return root;
+    root=document.createElement('aside');
+    root.id='studyTimerFloat';
+    root.className='study-timer-float';
+    root.setAttribute('aria-live','polite');
+    document.body.appendChild(root);
+    return root;
+  }
+  function renderTimer(){
+    const root=ensureTimerRoot(),active=readActive();
+    if(!active){
+      root.className='study-timer-float is-idle';
+      root.innerHTML='<button type="button" class="study-timer-launch" data-study-start><span>▶</span><b>Estudar</b></button><div class="study-timer-idle-menu"><button type="button" data-study-free>Sessão livre</button><button type="button" data-study-pomodoro="25">25 min</button><button type="button" data-study-pomodoro="50">50 min</button></div>';
+      root.querySelector('[data-study-start]').onclick=()=>root.classList.toggle('is-open');
+      root.querySelector('[data-study-free]').onclick=()=>startSession({mode:'free'});
+      root.querySelectorAll('[data-study-pomodoro]').forEach(button=>button.onclick=()=>startPomodoro(Number(button.dataset.studyPomodoro)));
+      return;
+    }
+    ensureTimerIntervals();
+    const elapsed=activeElapsed(active),target=Math.max(0,Number(active.targetSeconds)||0),progress=target?Math.min(100,Math.round(elapsed/target*100)):0,remaining=target?Math.max(0,target-elapsed):0;
+    root.className='study-timer-float is-active'+(active.running?' is-running':' is-paused');
+    root.innerHTML='<div class="study-timer-main"><span class="study-timer-pulse"></span><div class="study-timer-copy"><small>'+escape(timerMapLabel(active))+'</small><b>'+fmtClock(target?remaining:elapsed)+'</b><span>'+(target?(progress+'% · '+fmtMin(elapsed)):(active.running?'sessão em andamento':'sessão pausada'))+'</span></div><div class="study-timer-actions"><button type="button" data-study-toggle aria-label="'+(active.running?'Pausar':'Retomar')+'">'+(active.running?'Ⅱ':'▶')+'</button><button type="button" data-study-finish aria-label="Finalizar">■</button><button type="button" data-study-focus aria-label="Modo foco">◎</button></div></div>'+(target?'<div class="study-timer-progress"><i style="width:'+progress+'%"></i></div>':'');
+    root.querySelector('[data-study-toggle]').onclick=()=>active.running?pauseSession():resumeSession();
+    root.querySelector('[data-study-finish]').onclick=()=>finishSession();
+    root.querySelector('[data-study-focus]').onclick=()=>{if(state?.readerMapKey&&typeof toggleReaderFocus==='function')toggleReaderFocus();else toast('Abra um mapa para usar o modo foco.')};
+  }
+  function goalSnapshot(){
+    const data=readData(),today=window.StudyTime?.today?.()||0,week=window.StudyTime?.week?.()||0,dailyTarget=data.goals.dailyMinutes*60,weeklyTarget=data.goals.weeklyMinutes*60;
+    return{data,today,week,dailyTarget,weeklyTarget,dailyPct:dailyTarget?Math.min(100,Math.round(today/dailyTarget*100)):0,weeklyPct:weeklyTarget?Math.min(100,Math.round(week/weeklyTarget*100)):0};
+  }
+  function todayPlanned(){
+    const key=dateKey();
+    return readData().agenda.filter(item=>!item.deleted&&item.date===key);
+  }
+  function renderHomeDashboard(){
+    const home=document.querySelector('[data-view="home"]');
+    if(!home)return;
+    let root=document.getElementById('homeStudyDashboard');
+    if(!root){
+      root=document.createElement('section');
+      root.id='homeStudyDashboard';
+      root.className='home-study-dashboard';
+      const hero=home.querySelector('.hero');
+      if(hero)hero.insertAdjacentElement('afterend',root);else home.prepend(root);
+    }
+    const snap=goalSnapshot(),exam=nearestExam(),planned=todayPlanned(),review=typeof reviewScheduleSummary==='function'?reviewScheduleSummary(combinedMaps()):{dueCount:0},active=readActive();
+    const returning=!!(active||window.StudyTime?.week?.()||localStorage.getItem('studyapp.lastMap'));
+    home.classList.toggle('study-dashboard-returning',returning);
+    const nextPlan=window.StudyCoach?.snapshot?.().items?.[0]||null;
+    const nextTitle=nextPlan?.title||planned[0]?.title||'Escolher próximo estudo';
+    const nextMeta=nextPlan?((nextPlan.reason||'')+(nextPlan.minutes?' · '+nextPlan.minutes+' min':'')):planned[0]?.minutes?(planned[0].minutes+' min planejados'):'Abra um mapa ou use uma sessão livre';
+    root.innerHTML='<div class="study-command-card"><div class="study-command-head"><div><span class="kicker">Hoje</span><h2>'+escape(nextTitle)+'</h2><p>'+escape(nextMeta)+'</p></div><button type="button" class="primary" data-dashboard-start>'+(active?'Ver sessão':'Começar agora')+'</button></div><div class="study-command-metrics"><button type="button" data-dashboard-agenda><span>Meta de hoje</span><b>'+escape(fmtMin(snap.today))+' / '+escape(fmtMin(snap.dailyTarget))+'</b><i><em style="width:'+snap.dailyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Semana</span><b>'+escape(fmtMin(snap.week))+' / '+escape(fmtMin(snap.weeklyTarget))+'</b><i><em style="width:'+snap.weeklyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Revisões</span><b>'+Number(review.dueCount||0)+'</b><small>pendentes</small></button>'+(exam?'<button type="button" data-dashboard-agenda><span>Próxima prova</span><b>'+exam.days+' dia'+(exam.days===1?'':'s')+'</b><small>'+escape(exam.course.title||'Concurso')+'</small></button>':'<button type="button" data-dashboard-agenda><span>Agenda</span><b>'+planned.length+'</b><small>itens hoje</small></button>')+'</div></div>';
+    root.querySelector('[data-dashboard-start]').onclick=()=>{
+      if(active){ensureTimerRoot().classList.add('is-open');renderTimer();return}
+      if(nextPlan?.kind==='map'&&nextPlan.key){
+        openMap(nextPlan.key).then?.(()=>startSession({map:mapById(nextPlan.key),mode:'planned',minutes:nextPlan.minutes||20,label:nextPlan.title}));
+        if(!openMap(nextPlan.key)?.then)startSession({map:mapById(nextPlan.key),mode:'planned',minutes:nextPlan.minutes||20,label:nextPlan.title});
+      }else startSession({mode:'free'});
+    };
+    root.querySelectorAll('[data-dashboard-agenda]').forEach(button=>button.onclick=()=>nav('agenda'));
+  }
