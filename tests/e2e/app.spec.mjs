@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.7.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.8.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -18,7 +18,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.7.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.8.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -62,11 +62,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.7.0');
+  expect(result.version).toBe('15.8.0');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.7.0');
+  expect(result.scriptURL).toContain('sw.js?v=15.8.0');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -309,7 +309,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.7.0');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.8.0');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -420,6 +420,52 @@ test('indicadores de progresso formam uma faixa compacta no desktop',async({page
   }
 });
 
+test('estrutura visual preserva respiro, clipping de capas e topbar limpa',async({page})=>{
+  await page.goto('/#progress');
+  await expect(page.locator('#studyAnalyticsPanel')).toBeVisible();
+  await expect(page.locator('#progressInfo .progress-global-panel')).toBeVisible();
+  await expect(page.locator('#progressInfo .progress-course-stack')).toBeVisible();
+  const spacing=await page.evaluate(()=>({
+    rhythm:parseFloat(getComputedStyle(document.querySelector('#studyAnalyticsPanel')).marginTop)||0,
+    progress:parseFloat(getComputedStyle(document.querySelector('#progressInfo')).marginTop)||0,
+    courses:parseFloat(getComputedStyle(document.querySelector('#progressInfo .progress-course-stack')).marginTop)||0
+  }));
+  expect(spacing.rhythm).toBeGreaterThanOrEqual(19);
+  expect(spacing.progress).toBeGreaterThanOrEqual(19);
+  expect(spacing.courses).toBeGreaterThanOrEqual(19);
+
+  const topbar=await page.locator('.topbar-wrap').evaluate(el=>{
+    const style=getComputedStyle(el);
+    return{backgroundImage:style.backgroundImage,backdrop:style.backdropFilter||style.webkitBackdropFilter||'none',boxShadow:style.boxShadow};
+  });
+  expect(topbar.backgroundImage).toBe('none');
+  expect(['none','']).toContain(topbar.backdrop);
+  expect(topbar.boxShadow).toBe('none');
+
+  await page.goto('/#course/porto-alegre');
+  const card=page.locator('#courseMaps .map-card.has-cover').first();
+  await expect(card).toBeVisible();
+  const clipping=await card.evaluate(el=>{
+    const cover=el.querySelector('.map-cover'),img=cover?.querySelector('img'),cardStyle=getComputedStyle(el),coverStyle=getComputedStyle(cover),imageStyle=getComputedStyle(img),cardBox=el.getBoundingClientRect(),coverBox=cover.getBoundingClientRect();
+    return{
+      cardOverflow:cardStyle.overflow,
+      isolation:cardStyle.isolation,
+      coverOverflow:coverStyle.overflow,
+      radius:parseFloat(coverStyle.borderTopLeftRadius)||0,
+      objectFit:imageStyle.objectFit,
+      insideLeft:coverBox.left>=cardBox.left-1,
+      insideRight:coverBox.right<=cardBox.right+1,
+      insideTop:coverBox.top>=cardBox.top-1
+    };
+  });
+  expect(['clip','hidden']).toContain(clipping.cardOverflow);
+  expect(['clip','hidden']).toContain(clipping.coverOverflow);
+  expect(clipping.isolation).toBe('isolate');
+  expect(clipping.radius).toBeGreaterThan(0);
+  expect(clipping.objectFit).toBe('cover');
+  expect(clipping.insideLeft&&clipping.insideRight&&clipping.insideTop).toBe(true);
+});
+
 test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({page})=>{
   await page.goto('/#home');
   await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()});
@@ -450,7 +496,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.7.0',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.8.0',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -1133,6 +1179,49 @@ test('smartphone compacta também os cards de simulados',async({page},testInfo)=
   const box=await card.evaluate(el=>({height:el.getBoundingClientRect().height,cover:el.querySelector('.simulation-cover')?.getBoundingClientRect().height||0}));
   expect.soft(box.height).toBeLessThanOrEqual(340);
   expect.soft(box.cover).toBeLessThanOrEqual(112);
+});
+
+test('iPhone real mantém topbar sem faixa e capas presas aos cantos',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#course/porto-alegre');
+  await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
+  const topbar=await page.locator('.topbar-wrap').evaluate(el=>{
+    const style=getComputedStyle(el);
+    return{backgroundImage:style.backgroundImage,backdrop:style.backdropFilter||style.webkitBackdropFilter||'none',boxShadow:style.boxShadow};
+  });
+  expect(topbar.backgroundImage).toBe('none');
+  expect(['none','']).toContain(topbar.backdrop);
+  expect(topbar.boxShadow).toBe('none');
+
+  const mapCard=page.locator('#courseMaps .map-card.has-cover').first();
+  await expect(mapCard).toBeVisible();
+  const mapClip=await mapCard.evaluate(el=>{
+    const cover=el.querySelector('.map-cover'),cardStyle=getComputedStyle(el),coverStyle=getComputedStyle(cover),cardBox=el.getBoundingClientRect(),coverBox=cover.getBoundingClientRect();
+    return{
+      cardOverflow:cardStyle.overflow,
+      coverOverflow:coverStyle.overflow,
+      coverRadius:parseFloat(coverStyle.borderTopLeftRadius)||0,
+      left:coverBox.left>=cardBox.left-1,
+      right:coverBox.right<=cardBox.right+1,
+      top:coverBox.top>=cardBox.top-1
+    };
+  });
+  expect(['clip','hidden']).toContain(mapClip.cardOverflow);
+  expect(['clip','hidden']).toContain(mapClip.coverOverflow);
+  expect(mapClip.coverRadius).toBeGreaterThan(0);
+  expect(mapClip.left&&mapClip.right&&mapClip.top).toBe(true);
+
+  await page.goto('/#simulations');
+  const simCard=page.locator('#simulationGrid .simulation-card').filter({has:page.locator('.simulation-cover:not([hidden])')}).first();
+  await expect(simCard).toBeVisible();
+  const simClip=await simCard.evaluate(el=>{
+    const cover=el.querySelector('.simulation-cover:not([hidden])'),cardStyle=getComputedStyle(el),coverStyle=getComputedStyle(cover);
+    return{cardOverflow:cardStyle.overflow,coverOverflow:coverStyle.overflow,coverRadius:parseFloat(coverStyle.borderTopLeftRadius)||0};
+  });
+  expect(['clip','hidden']).toContain(simClip.cardOverflow);
+  expect(['clip','hidden']).toContain(simClip.coverOverflow);
+  expect(simClip.coverRadius).toBeGreaterThan(0);
 });
 
 test('agenda de revisão invalida é regenerada sem atraso absurdo',async({page})=>{
