@@ -761,7 +761,7 @@ test('iPad retrato paisagem e Split View permanecem sem overflow',async({page},t
     if(scenario.width<=820){
       await expect(page.locator('.bottom-nav')).toBeVisible();
     }else{
-      await expect(page.locator('.sidebar')).toBeVisible();
+      await expect(page.locator('.side')).toBeVisible();
       await expect(page.locator('.bottom-nav')).toBeHidden();
     }
   }
