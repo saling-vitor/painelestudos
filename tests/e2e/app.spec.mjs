@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.8.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.9.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -18,7 +18,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.8.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.9.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -62,11 +62,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.8.0');
+  expect(result.version).toBe('15.9.0');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.8.0');
+  expect(result.scriptURL).toContain('sw.js?v=15.9.0');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -309,7 +309,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.8.0');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.9.0');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -466,6 +466,33 @@ test('estrutura visual preserva respiro, clipping de capas e topbar limpa',async
   expect(clipping.insideLeft&&clipping.insideRight&&clipping.insideTop).toBe(true);
 });
 
+test('sistema glass mantém cards e controles na mesma família visual',async({page})=>{
+  await page.goto('/#progress');
+  await expect(page.locator('#progressMetrics .metric').first()).toBeVisible();
+  await expect(page.locator('#studyAnalyticsPanel .panel').first()).toBeVisible();
+  const glass=await page.evaluate(()=>{
+    const metric=getComputedStyle(document.querySelector('#progressMetrics .metric'));
+    const panel=getComputedStyle(document.querySelector('#studyAnalyticsPanel .panel'));
+    const secondary=getComputedStyle(document.querySelector('#studyAnalyticsPanel .secondary'));
+    const primary=getComputedStyle(document.querySelector('.primary'));
+    return{
+      metricBg:metric.backgroundImage,
+      panelBg:panel.backgroundImage,
+      metricRadius:parseFloat(metric.borderTopLeftRadius)||0,
+      panelRadius:parseFloat(panel.borderTopLeftRadius)||0,
+      secondaryRadius:parseFloat(secondary.borderTopLeftRadius)||0,
+      primaryRadius:parseFloat(primary.borderTopLeftRadius)||0,
+      panelShadow:panel.boxShadow
+    };
+  });
+  expect(glass.metricBg).toContain('linear-gradient');
+  expect(glass.panelBg).toContain('linear-gradient');
+  expect(glass.metricRadius).toBeGreaterThanOrEqual(9);
+  expect(glass.panelRadius).toBeGreaterThanOrEqual(10);
+  expect(Math.abs(glass.secondaryRadius-glass.primaryRadius)).toBeLessThanOrEqual(1);
+  expect(glass.panelShadow).not.toBe('none');
+});
+
 test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({page})=>{
   await page.goto('/#home');
   await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()});
@@ -496,7 +523,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.8.0',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.9.0',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -1222,6 +1249,25 @@ test('iPhone real mantém topbar sem faixa e capas presas aos cantos',async({pag
   expect(['clip','hidden']).toContain(simClip.cardOverflow);
   expect(['clip','hidden']).toContain(simClip.coverOverflow);
   expect(simClip.coverRadius).toBeGreaterThan(0);
+});
+
+
+test('iPhone real usa glass leve sem blur pesado nos cards',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#progress');
+  await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
+  const style=await page.locator('#progressMetrics .metric').first().evaluate(el=>{
+    const computed=getComputedStyle(el);
+    return{
+      backdrop:computed.backdropFilter||computed.webkitBackdropFilter||'none',
+      background:computed.backgroundImage,
+      shadow:computed.boxShadow
+    };
+  });
+  expect(['none','']).toContain(style.backdrop);
+  expect(style.background).toContain('linear-gradient');
+  expect(style.shadow).not.toBe('none');
 });
 
 test('agenda de revisão invalida é regenerada sem atraso absurdo',async({page})=>{
