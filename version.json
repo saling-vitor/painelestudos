@@ -1,14 +1,14 @@
 {
-  "version": "15.4.3",
-  "label": "V15.4.3",
-  "releasedAt": "2026-09-30T17:42:00-03:00",
-  "notes": "Hotfix da Mobile UX 2: normaliza a ordem dos blocos de Progresso no smartphone para impedir accordions aninhados e torna o teste de novidades independente do texto específico de cada release.",
+  "version": "15.5.0",
+  "label": "V15.5.0",
+  "releasedAt": "2026-09-30T21:05:05.177Z",
+  "notes": "O tempo de estudo passa a ser iniciado manualmente, e a Agenda ganha remoção explícita de eventos criados pelo usuário.",
   "showWhatsNew": true,
   "highlights": [
-    "Resumo, Prioridades, Desempenho e Disciplinas passam a ficar em uma pilha mobile estável e independente",
-    "Prioridades não fica mais escondido dentro de Desempenho quando os painéis são criados em ordens diferentes",
-    "Mantém quatro KPIs principais no topo da tela Progresso no iPhone",
-    "Corrige o teste de novidades para acompanhar automaticamente a versão instalada",
-    "Preserva todas as melhorias de Home, curso, mapas, leitor, Agenda, Configurações e navegação da V15.4"
+    "Abrir um mapa não soma mais tempo de estudo automaticamente",
+    "O leitor mostra “Iniciar estudo” e só contabiliza tempo durante uma sessão ativa",
+    "Sessões mantêm pausar, retomar, finalizar e pausa automática ao sair do app",
+    "Eventos manuais da Agenda agora têm botão Remover com confirmação",
+    "Remover um evento da Agenda não apaga o histórico de sessões já concluídas"
   ]
 }
