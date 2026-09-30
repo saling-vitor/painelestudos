@@ -997,3 +997,89 @@
     animation:none!important;
   }
 }
+
+
+/* V15.3.1 · HOTFIX SMARTPHONE · largura real e hero compacto */
+@media(max-width:480px){
+  html.is-phone-layout,
+  html.is-phone-layout body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+  html.is-phone-layout .app,
+  html.is-phone-layout .main,
+  html.is-phone-layout .content,
+  html.is-phone-layout .view,
+  html.is-phone-layout .hero,
+  html.is-phone-layout .home-study-dashboard,
+  html.is-phone-layout .study-command-card,
+  html.is-phone-layout .study-intelligence-row,
+  html.is-phone-layout .section{
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  html.is-phone-layout .content>*,
+  html.is-phone-layout .study-command-card>*,
+  html.is-phone-layout .study-intelligence-row>*{
+    min-width:0;
+  }
+  html.is-phone-layout [data-view="home"] .hero{
+    height:306px!important;
+    min-height:306px!important;
+    max-height:306px!important;
+    overflow:hidden!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-copy{
+    height:100%;
+    min-height:0!important;
+    padding:16px 14px 72px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats{
+    position:absolute!important;
+    left:14px;
+    right:14px;
+    bottom:10px;
+    z-index:3;
+    width:auto!important;
+    max-width:none!important;
+    margin:0!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat{
+    min-height:42px!important;
+  }
+  html.is-phone-layout .forecast-scenarios,
+  html.is-phone-layout .progress-filter-row,
+  html.is-phone-layout .category-row,
+  html.is-phone-layout .course-study-filters{
+    max-width:100%;
+  }
+}
+@media(max-width:430px){
+  html.is-phone-layout [data-view="home"] .hero{
+    height:298px!important;
+    min-height:298px!important;
+    max-height:298px!important;
+  }
+}
+@media(max-width:390px){
+  html.is-phone-layout [data-view="home"] .hero{
+    height:290px!important;
+    min-height:290px!important;
+    max-height:290px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-copy{
+    padding:14px 12px 70px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats{
+    left:12px;
+    right:12px;
+  }
+}
+@media(max-width:360px){
+  html.is-phone-layout [data-view="home"] .hero{
+    height:284px!important;
+    min-height:284px!important;
+    max-height:284px!important;
+  }
+}
