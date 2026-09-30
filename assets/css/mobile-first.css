@@ -1875,7 +1875,7 @@
 
   html.is-phone-layout .map-grid{gap:7px!important}
   html.is-phone-layout .map-card.has-cover{
-    min-height:206px!important;padding:0 10px 39px!important;border-radius:12px!important
+    min-height:206px!important;max-height:232px!important;padding:0 10px 34px!important;border-radius:12px!important
   }
   html.is-phone-layout .map-card.has-cover .map-cover{height:80px!important;margin:0 -10px!important}
   html.is-phone-layout .map-card.has-cover .fav,
@@ -1885,27 +1885,27 @@
   }
   html.is-phone-layout .map-card.has-cover .fav{right:1px!important;top:1px!important}
   html.is-phone-layout .map-card.has-cover .map-admin-btn{right:43px!important;top:1px!important}
-  html.is-phone-layout .map-card-status-row{gap:6px!important;margin-top:5px!important}
+  html.is-phone-layout .map-card-status-row{gap:6px!important;margin-top:4px!important}
   html.is-phone-layout .map-card-status-row .map-code,
   html.is-phone-layout .map-card-status-row .map-study-status{
     min-height:24px!important;padding:4px 7px!important;font-size:7.5px!important
   }
   html.is-phone-layout .map-card.has-cover h3{
     display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
-    min-height:0!important;max-height:34px;margin-top:5px!important;font-size:13.5px!important;line-height:1.22!important
+    min-height:0!important;max-height:32px;margin-top:4px!important;font-size:13.5px!important;line-height:1.18!important
   }
   html.is-phone-layout .map-card.has-cover>p,
   html.is-phone-layout .map-card.has-cover>.meta{display:none!important}
   html.is-phone-layout .map-card.has-cover .map-progress-mini{
-    margin-top:5px!important;padding:5px 7px!important;gap:4px!important;border-radius:8px!important
+    margin-top:4px!important;padding:4px 6px!important;gap:3px!important;border-radius:8px!important
   }
   html.is-phone-layout .map-card.has-cover .map-progress-mini .progress-line b{font-size:10px!important}
   html.is-phone-layout .map-card.has-cover .map-progress-mini .progress-line span{font-size:7.5px!important}
   html.is-phone-layout .map-card.has-cover .map-progress-mini .progress-track{height:4px!important}
   html.is-phone-layout .map-card.has-cover .map-progress-mini .progress-states{display:none!important}
   html.is-phone-layout .map-card.has-cover .foot{
-    left:10px!important;right:10px!important;bottom:5px!important;min-height:29px!important;
-    padding-top:4px!important;font-size:8px!important
+    left:10px!important;right:10px!important;bottom:4px!important;min-height:27px!important;
+    padding-top:3px!important;font-size:8px!important
   }
   html.is-phone-layout .map-card.has-cover .map-open-label{font-size:9px!important}
 
@@ -2035,7 +2035,7 @@
 }
 
 @media(max-width:390px){
-  html.is-phone-layout .map-card.has-cover{min-height:200px!important}
-  html.is-phone-layout .map-card.has-cover .map-cover{height:76px!important}
+  html.is-phone-layout .map-card.has-cover{min-height:200px!important;max-height:228px!important}
+  html.is-phone-layout .map-card.has-cover .map-cover{height:74px!important}
   html.is-phone-layout .simulation-cover{height:98px!important}
 }
