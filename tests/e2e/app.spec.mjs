@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.5.1'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.6.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -18,7 +18,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.5.1');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.6.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -62,11 +62,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.5.1');
+  expect(result.version).toBe('15.6.0');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.5.1');
+  expect(result.scriptURL).toContain('sw.js?v=15.6.0');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -309,7 +309,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.5.1');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.6.0');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -450,7 +450,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.5.1',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.6.0',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -810,11 +810,11 @@ test('smartphone 430 390 e 360 mantém layout mobile-first sem overflow',async({
       width:innerWidth,
       scrollWidth:document.documentElement.scrollWidth,
       heroHeight:document.querySelector('[data-view="home"] .hero')?.getBoundingClientRect().height||0,
-      visibleNav:[...document.querySelectorAll('.bottom-nav [data-nav]')].filter(el=>getComputedStyle(el).display!=='none').map(el=>el.dataset.nav)
+      visibleNav:[...document.querySelectorAll('.bottom-nav button')].filter(el=>getComputedStyle(el).display!=='none').map(el=>el.dataset.nav||el.dataset.mobileMenu||'')
     }));
     expect.soft(layout.scrollWidth,'sem overflow horizontal em '+width+'px').toBeLessThanOrEqual(width+2);
     expect.soft(layout.heroHeight,'hero compacto em '+width+'px').toBeLessThanOrEqual(320);
-    expect.soft(layout.visibleNav,'bottom-nav com cinco itens em '+width+'px').toEqual(['home','courses','maps','progress','settings']);
+    expect.soft(layout.visibleNav,'bottom-nav com cinco itens em '+width+'px').toEqual(['home','courses','maps','progress','menu']);
   }
 });
 
@@ -823,6 +823,9 @@ test('smartphone topbar compacta e recolhe durante a rolagem',async({page},testI
   await page.setViewportSize({width:390,height:700});
   await page.goto('/#home');
   await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
+  const syncVisual=await page.locator('#syncTop').evaluate(el=>({icons:el.querySelectorAll('.ui-icon').length,pseudo:getComputedStyle(el,'::before').content}));
+  expect(syncVisual.icons).toBe(1);
+  expect(['none','normal','""']).toContain(syncVisual.pseudo);
   await page.evaluate(()=>window.scrollTo(0,700));
   await page.waitForTimeout(120);
   await expect(page.locator('html')).toHaveClass(/mobile-topbar-hidden/);
@@ -859,8 +862,8 @@ test('smartphone compacta cards de mapas e preserva alvos touch',async({page},te
     menu:el.querySelector('.map-admin-btn')?.getBoundingClientRect().width||0,
     metaDisplay:getComputedStyle(el.querySelector('.meta')).display
   }));
-  expect.soft(size.height).toBeLessThanOrEqual(290);
-  expect.soft(size.cover).toBeLessThanOrEqual(120);
+  expect.soft(size.height).toBeLessThanOrEqual(235);
+  expect.soft(size.cover).toBeLessThanOrEqual(90);
   expect.soft(size.fav).toBeGreaterThanOrEqual(44);
   expect.soft(size.menu).toBeGreaterThanOrEqual(44);
   expect.soft(size.metaDisplay).toBe('none');
@@ -890,23 +893,37 @@ test('smartphone Agenda abre em Hoje sem calendário redundante e mantém Semana
   await expect(page.locator('.study-agenda-calendar')).toBeHidden();
   await expect(page.locator('#agendaDayDetail')).toBeVisible();
   await expect(page.locator('.study-agenda-day-head .kicker')).toHaveText('Hoje');
+  await expect(page.locator('#mobileAgendaPlanToggle')).toBeVisible();
+  await expect(page.locator('#agendaQuickForm')).toBeHidden();
+  const naturalDate=await page.locator('.study-agenda-day-head h3').innerText();
+  expect(naturalDate).not.toMatch(/\sDe\s/);
+  await page.locator('#mobileAgendaPlanToggle').click();
+  await expect(page.locator('#agendaQuickForm')).toBeVisible();
   await page.locator('[data-agenda-mode="week"]').click();
   await expect(page.locator('.study-agenda-calendar')).toBeVisible();
   await expect(page.locator('.agenda-week-card')).toHaveCount(7);
+  const weekOverflow=await page.locator('.agenda-week-grid').evaluate(el=>getComputedStyle(el).overflowX);
+  expect(['auto','scroll']).toContain(weekOverflow);
   await page.locator('[data-agenda-mode="month"]').click();
   await expect(page.locator('.agenda-day')).toHaveCount(42);
 });
 
-test('smartphone mantém Calendário e Simulados dentro de Mais',async({page},testInfo)=>{
+test('smartphone Menu abre Agenda Simulados e Configurações em bottom sheet',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/#settings');
-  const shortcuts=page.locator('#mobileMoreShortcuts');
-  await expect(shortcuts).toBeVisible();
-  await expect(shortcuts.locator('[data-mobile-more-nav="agenda"]')).toContainText('Calendário');
-  await expect(shortcuts.locator('[data-mobile-more-nav="simulations"]')).toContainText('Simulados');
-  await shortcuts.locator('[data-mobile-more-nav="agenda"]').click();
+  await page.goto('/#home');
+  const trigger=page.locator('#mobileMenuBtn');
+  await expect(trigger).toBeVisible();
+  await expect(trigger).toContainText('Menu');
+  await trigger.click();
+  const layer=page.locator('#mobileMenuLayer');
+  await expect(layer).toBeVisible();
+  await expect(layer.locator('[data-mobile-sheet-nav="agenda"]')).toContainText('Agenda');
+  await expect(layer.locator('[data-mobile-sheet-nav="simulations"]')).toContainText('Simulados');
+  await expect(layer.locator('[data-mobile-sheet-nav="settings"]')).toContainText('Configurações');
+  await layer.locator('[data-mobile-sheet-nav="agenda"]').click();
   await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
+  await expect(layer).toBeHidden();
 });
 
 test('smartphone Configurações usa accordion exclusivo sem títulos duplicados',async({page},testInfo)=>{
@@ -1019,6 +1036,11 @@ test('iPhone real UX2 leitor usa barra única e move Salvar para Mais',async({pa
   expect(reader.saveDisplay).toBe('none');
   expect(reader.doubtDisplay).toBe('none');
   expect(reader.railHeight).toBeLessThanOrEqual(62);
+  await expect(page.locator('#mobileReaderRailToggle')).toBeVisible();
+  await page.locator('#mobileReaderRailToggle').click();
+  await expect(page.locator('#reader')).toHaveClass(/mobile-reader-rail-collapsed/);
+  await page.locator('#mobileReaderRailToggle').click();
+  await expect(page.locator('#reader')).not.toHaveClass(/mobile-reader-rail-collapsed/);
   await page.locator('#readerMoreBtn').click();
   await expect(page.locator('#mobileReaderSave')).toBeVisible();
 });
@@ -1030,5 +1052,38 @@ test('iPhone real UX2 mantém somente quatro KPIs no resumo de Progresso',async(
   await page.waitForTimeout(120);
   const visible=await page.locator('#progressMetrics .metric').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
   expect(visible).toBe(4);
+  const insightLayout=await page.locator('.progress-insights-grid').evaluate(el=>({display:getComputedStyle(el).display,overflow:getComputedStyle(el).overflowX}));
+  expect(insightLayout.display).toBe('flex');
+  expect(['auto','scroll']).toContain(insightLayout.overflow);
   await expect(page.locator('[data-mobile-progress-group="priority"]>summary')).toBeVisible();
+});
+
+
+test('smartphone compacta também os cards de simulados',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#simulations');
+  const card=page.locator('#simulationGrid .simulation-card').first();
+  await expect(card).toBeVisible();
+  const box=await card.evaluate(el=>({height:el.getBoundingClientRect().height,cover:el.querySelector('.simulation-cover')?.getBoundingClientRect().height||0}));
+  expect.soft(box.height).toBeLessThanOrEqual(340);
+  expect.soft(box.cover).toBeLessThanOrEqual(112);
+});
+
+test('agenda de revisão invalida é regenerada sem atraso absurdo',async({page})=>{
+  await page.goto('/#home');
+  const result=await page.evaluate(()=>{
+    const map=combinedMaps()[0],key=map._key||mapKey(map),schedule=readReviewSchedule();
+    schedule[key]={dueAt:'0000-01-01T00:00:00.000Z',reason:'legacy',lastReviewedAt:'',sourceModifiedAt:''};
+    writeReviewSchedule(schedule);
+    const invalid=reviewScheduleDueTimestamp('0000-01-01T00:00:00.000Z');
+    const validFuture=reviewScheduleDueTimestamp(new Date(Date.now()+7*86400000).toISOString());
+    const rows=window.StudyPlanner?.priorityRows?.()||[];
+    const huge=rows.flatMap(row=>row.reasons||[]).some(reason=>/revisão atrasada \d{4,}d/i.test(reason));
+    return{invalid,validFuture,huge,stored:readReviewSchedule()[key]?.dueAt||''};
+  });
+  expect(result.invalid).toBe(0);
+  expect(result.validFuture).toBeGreaterThan(Date.now());
+  expect(result.huge).toBe(false);
+  expect(result.stored).not.toContain('0000-01-01');
 });
