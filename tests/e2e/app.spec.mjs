@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.6.1'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.7.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
@@ -18,7 +18,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.6.1');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.7.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -62,11 +62,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.6.1');
+  expect(result.version).toBe('15.7.0');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.6.1');
+  expect(result.scriptURL).toContain('sw.js?v=15.7.0');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -309,7 +309,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.6.1');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.7.0');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -450,7 +450,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.6.1',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.7.0',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -629,6 +629,33 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   await page.goto('/#progress');
   await expect(page.locator('#studyAnalyticsPanel')).toBeVisible();
   await expect(page.locator('.study-heatmap i')).toHaveCount(84);
+});
+
+test('configurações permitem zerar tempo sem apagar sessão ou progresso',async({page})=>{
+  await page.goto('/#settings');
+  const setup=await page.evaluate(()=>{const map=combinedMaps()[0],key=map._key||mapKey(map),now=new Date().toISOString(),data=StudyDashboard.exportData(),id='time-reset-e2e-'+Date.now();StudyTime.add(key,120,new Date(now));data.sessions.push({id,mapKey:key,courseId:map.courseId||'',label:'Sessão preservada',agendaId:'',mode:'free',plannedSeconds:0,durationSeconds:120,startedAt:now,endedAt:now,createdAt:now,updatedAt:now,startProgress:null});StudyDashboard.importData(data,{merge:false,silent:true});renderSettings();return{id,key,before:StudyTime.today(),revision:StudyTime.read().revision}});
+  expect(setup.before).toBeGreaterThanOrEqual(120);
+  const reset=page.locator('[data-study-time-reset="today"]');
+  await expect(reset).toBeVisible();
+  await reset.click();
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await expect(page.locator('#confirmText')).toContainText('Sessões e progresso dos mapas não serão apagados');
+  await page.locator('#confirmAccept').click();
+  const result=await page.evaluate(({id,key})=>({today:StudyTime.today(),map:StudyTime.mapSeconds(key),revision:StudyTime.read().revision,session:StudyDashboard.exportData().sessions.find(row=>row.id===id)}),setup);
+  expect(result.today).toBe(0);
+  expect(result.map).toBe(0);
+  expect(result.revision).toBeGreaterThan(setup.revision);
+  expect(result.session?.deleted).not.toBe(true);
+});
+
+test('limpeza inicial remove tempo legado órfão e vence cópia antiga da nuvem',async({page})=>{
+  const result=await page.evaluate(()=>{const key='legacy-e2e',today=StudyTime.todayKey(),legacy={version:1,devices:{old:{days:{[today]:780},maps:{[key]:780}}}};localStorage.setItem('studyapp.studyTime',JSON.stringify(legacy));localStorage.removeItem('studyapp.studyTime.manualBaseline.v1');const data=StudyDashboard.exportData();data.sessions=[];StudyDashboard.importData(data,{merge:false,silent:true});const migrated=StudyTime.migrateLegacy();const local=StudyTime.read(),merged=studyTimeMergeData(local,legacy);return{migrated,today:StudyTime.today(),all:StudyTime.all(),revision:local.revision,mergedRevision:merged.revision,mergedDevices:Object.keys(merged.devices||{}).length}});
+  expect(result.migrated).toBe(true);
+  expect(result.today).toBe(0);
+  expect(result.all).toBe(0);
+  expect(result.revision).toBeGreaterThan(0);
+  expect(result.mergedRevision).toBe(result.revision);
+  expect(result.mergedDevices).toBe(0);
 });
 
 test('captura rápida de dúvida salva a anotação do mapa',async({page},testInfo)=>{
