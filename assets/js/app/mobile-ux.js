@@ -137,7 +137,7 @@
         const dateInput=q('#agendaQuickForm [name="date"]',view),date=dateInput?.value?new Date(dateInput.value+'T12:00:00'):new Date();
         const kicker=head.querySelector('.kicker'),title=head.querySelector('h3');
         if(kicker)kicker.textContent='Hoje';
-        if(title)title.textContent=date.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'short'}).replace('.','');
+        if(title){const label=date.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'short'});title.textContent=label.charAt(0).toLocaleUpperCase('pt-BR')+label.slice(1)}
       }
     }
   }
@@ -343,4 +343,195 @@
   window.MobileUX={refresh:enhanceAll,isPhone};
   observe();
   enhanceAll();
+})();
+
+
+/* V15.6.0 · extras específicos de smartphone */
+(()=>{
+  if(window.__mobileUxV156)return;
+  window.__mobileUxV156=true;
+
+  const mq=window.matchMedia('(max-width: 480px)');
+  const q=(s,r=document)=>r.querySelector(s);
+  const qa=(s,r=document)=>[...r.querySelectorAll(s)];
+  const isPhone=()=>mq.matches;
+  let readerLastY=0;
+  let readerTimer=0;
+
+  function closeMobileMenu({restoreFocus=true}={}){
+    const layer=q('#mobileMenuLayer'),trigger=q('#mobileMenuBtn');
+    if(!layer)return;
+    layer.hidden=true;
+    document.documentElement.classList.remove('mobile-menu-open');
+    trigger?.setAttribute('aria-expanded','false');
+    if(restoreFocus&&isPhone())trigger?.focus({preventScroll:true});
+  }
+
+  function openMobileMenu(){
+    if(!isPhone())return;
+    const layer=ensureMobileMenu(),trigger=q('#mobileMenuBtn');
+    layer.hidden=false;
+    document.documentElement.classList.add('mobile-menu-open');
+    trigger?.setAttribute('aria-expanded','true');
+    qa('[data-mobile-sheet-nav]',layer).forEach(button=>button.classList.toggle('is-current',button.dataset.mobileSheetNav===state?.view));
+    setTimeout(()=>q('[data-mobile-sheet-nav]',layer)?.focus({preventScroll:true}),0);
+  }
+
+  function ensureMobileMenu(){
+    const navBar=q('.bottom-nav');
+    if(navBar&&!q('#mobileMenuBtn',navBar)){
+      const button=document.createElement('button');
+      button.id='mobileMenuBtn';
+      button.type='button';
+      button.className='mobile-menu-trigger';
+      button.dataset.mobileMenu='menu';
+      button.setAttribute('aria-label','Abrir menu');
+      button.setAttribute('aria-haspopup','dialog');
+      button.setAttribute('aria-expanded','false');
+      button.innerHTML='<span class="ui-icon icon-more ui-icon-lg" aria-hidden="true"></span><span class="bottom-nav-label">Menu</span>';
+      button.addEventListener('click',()=>{
+        const layer=ensureMobileMenu();
+        if(layer.hidden)openMobileMenu();else closeMobileMenu();
+      });
+      navBar.appendChild(button);
+    }
+    let layer=q('#mobileMenuLayer');
+    if(!layer){
+      layer=document.createElement('div');
+      layer.id='mobileMenuLayer';
+      layer.className='mobile-menu-layer';
+      layer.hidden=true;
+      layer.innerHTML='<button type="button" class="mobile-menu-backdrop" aria-label="Fechar menu"></button><section class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle"><div class="mobile-menu-handle" aria-hidden="true"></div><div class="mobile-menu-head"><b id="mobileMenuTitle">Menu</b><button type="button" class="mobile-menu-close" aria-label="Fechar">×</button></div><nav class="mobile-menu-options"><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="agenda"><span class="ui-icon icon-calendar" aria-hidden="true"></span><span><b>Agenda</b><small>Hoje, semana e planejamento</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="simulations"><span class="ui-icon icon-simulations" aria-hidden="true"></span><span><b>Simulados</b><small>Provas, tentativas e desempenho</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="settings"><span class="ui-icon icon-settings" aria-hidden="true"></span><span><b>Configurações</b><small>Metas, nuvem, backup e aplicativo</small></span><i aria-hidden="true">›</i></button></nav></section>';
+      document.body.appendChild(layer);
+      q('.mobile-menu-backdrop',layer)?.addEventListener('click',()=>closeMobileMenu());
+      q('.mobile-menu-close',layer)?.addEventListener('click',()=>closeMobileMenu());
+      qa('[data-mobile-sheet-nav]',layer).forEach(button=>button.addEventListener('click',()=>{
+        const target=button.dataset.mobileSheetNav;
+        closeMobileMenu({restoreFocus:false});
+        if(typeof nav==='function')nav(target);
+      }));
+    }
+    return layer;
+  }
+
+  function ensureAgendaPlanToggle(){
+    const view=q('[data-view="agenda"]'),form=q('#agendaQuickForm',view);
+    if(!view||!form)return;
+    let button=q('#mobileAgendaPlanToggle',view);
+    if(!button){
+      button=document.createElement('button');
+      button.id='mobileAgendaPlanToggle';
+      button.type='button';
+      button.className='mobile-agenda-plan-toggle';
+      button.setAttribute('aria-controls','agendaQuickForm');
+      button.setAttribute('aria-expanded','false');
+      button.innerHTML='<span><span class="ui-icon icon-plus ui-icon-sm" aria-hidden="true"></span>Planejar sessão</span><i aria-hidden="true">+</i>';
+      form.insertAdjacentElement('beforebegin',button);
+      form.classList.add('mobile-agenda-form-collapsed');
+      button.addEventListener('click',()=>{
+        const collapsed=form.classList.toggle('mobile-agenda-form-collapsed');
+        button.setAttribute('aria-expanded',collapsed?'false':'true');
+      });
+      form.addEventListener('submit',()=>setTimeout(()=>{
+        if(!isPhone())return;
+        form.classList.add('mobile-agenda-form-collapsed');
+        button.setAttribute('aria-expanded','false');
+      },0));
+    }
+  }
+
+  function railClock(){
+    const active=window.StudyDashboard?.active?.();
+    if(!active)return'';
+    const total=Math.max(0,Math.floor(Number(window.StudyDashboard?.elapsed?.())||0));
+    return Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
+  }
+
+  function updateRailToggle(){
+    const button=q('#mobileReaderRailToggle'),reader=q('#reader');
+    if(!button||!reader)return;
+    const collapsed=reader.classList.contains('mobile-reader-rail-collapsed');
+    const active=window.StudyDashboard?.active?.(),time=railClock();
+    button.setAttribute('aria-expanded',collapsed?'false':'true');
+    button.setAttribute('aria-label',collapsed?'Mostrar controles de estudo':'Ocultar controles de estudo');
+    button.innerHTML='<i aria-hidden="true">'+(collapsed?'⌃':'⌄')+'</i>'+(active&&time?'<span class="mobile-rail-time">'+(active.running?'● ':'')+time+'</span>':'');
+  }
+
+  function setRailCollapsed(value){
+    const reader=q('#reader');
+    if(!reader||!isPhone())return;
+    reader.classList.toggle('mobile-reader-rail-collapsed',!!value);
+    updateRailToggle();
+  }
+
+  function bindReaderFrameScroll(){
+    const frame=q('#readerFrame');
+    if(!frame)return;
+    try{
+      const win=frame.contentWindow,doc=frame.contentDocument;
+      if(!win||!doc||win.__mobileRailScrollV156)return;
+      win.__mobileRailScrollV156=true;
+      readerLastY=Math.max(0,win.scrollY||doc.documentElement?.scrollTop||doc.body?.scrollTop||0);
+      const handler=e=>{
+        if(!isPhone()||!q('#reader')?.classList.contains('open'))return;
+        const targetY=Number(e?.target?.scrollTop)||0;
+        const y=Math.max(0,win.scrollY||0,doc.documentElement?.scrollTop||0,doc.body?.scrollTop||0,targetY);
+        const delta=y-readerLastY;
+        if(delta>10&&y>48)setRailCollapsed(true);
+        else if(delta<-10)setRailCollapsed(false);
+        readerLastY=y;
+      };
+      win.addEventListener('scroll',handler,{passive:true});
+      doc.addEventListener('scroll',handler,{passive:true,capture:true});
+    }catch{}
+  }
+
+  function ensureReaderRailToggle(){
+    const reader=q('#reader'),frame=q('#readerFrame');
+    if(!reader)return;
+    let button=q('#mobileReaderRailToggle',reader);
+    if(!button){
+      button=document.createElement('button');
+      button.id='mobileReaderRailToggle';
+      button.type='button';
+      button.className='mobile-reader-rail-toggle';
+      button.setAttribute('aria-controls','studyReaderRail');
+      button.addEventListener('click',()=>setRailCollapsed(!reader.classList.contains('mobile-reader-rail-collapsed')));
+      reader.appendChild(button);
+    }
+    if(reader.classList.contains('open')){
+      if(reader.dataset.mobileRailOpen!=='1'){
+        reader.dataset.mobileRailOpen='1';
+        reader.classList.remove('mobile-reader-rail-collapsed');
+        readerLastY=0;
+      }
+      bindReaderFrameScroll();
+      if(frame&&frame.dataset.mobileRailLoadBound!=='1'){
+        frame.dataset.mobileRailLoadBound='1';
+        frame.addEventListener('load',()=>setTimeout(bindReaderFrameScroll,20));
+      }
+    }else{
+      delete reader.dataset.mobileRailOpen;
+      reader.classList.remove('mobile-reader-rail-collapsed');
+    }
+    updateRailToggle();
+  }
+
+  function enhanceExtras(){
+    ensureMobileMenu();
+    ensureAgendaPlanToggle();
+    ensureReaderRailToggle();
+    if(!isPhone())closeMobileMenu({restoreFocus:false});
+  }
+
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!q('#mobileMenuLayer')?.hidden)closeMobileMenu()});
+  window.addEventListener('hashchange',()=>{closeMobileMenu({restoreFocus:false});setTimeout(enhanceExtras,0)});
+  window.addEventListener('resize',()=>setTimeout(enhanceExtras,40));
+  mq.addEventListener?.('change',()=>setTimeout(enhanceExtras,0));
+
+  const extraObserver=new MutationObserver(()=>setTimeout(enhanceExtras,0));
+  extraObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','src']});
+  clearInterval(readerTimer);
+  readerTimer=setInterval(()=>{if(isPhone()&&q('#reader')?.classList.contains('open'))updateRailToggle()},1000);
+  enhanceExtras();
 })();
