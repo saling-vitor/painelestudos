@@ -429,6 +429,15 @@
     data.goals.autoFocus=form.elements.autoFocus.checked;
     writeData(data);renderAll();toast('Metas de estudo salvas.');
   }
+  function requestResetStudyTime(scope){
+    if(readActive())return toast('Finalize a sessão ativa antes de zerar o tempo de estudo.');
+    const labels={today:['Zerar tempo de hoje?','Os minutos contabilizados hoje serão zerados. Sessões e progresso dos mapas não serão apagados.'],week:['Zerar tempo desta semana?','Os minutos contabilizados nesta semana serão zerados. Sessões e progresso dos mapas não serão apagados.'],all:['Zerar todo o histórico de tempo?','Todos os minutos acumulados serão zerados. Sessões, agenda, OK/DIF/REV, notas, simulados e demais dados serão preservados.']},entry=labels[scope];
+    if(!entry||!window.StudyTime?.reset)return false;
+    const action=async()=>{const result=StudyTime.reset(scope);if(result===false)return toast('Finalize a sessão ativa antes de zerar o tempo.');renderAll();if(typeof syncPreferencesCloud==='function')await syncPreferencesCloud().catch(()=>{});toast(scope==='all'?'Histórico de tempo zerado.':scope==='week'?'Tempo da semana zerado.':'Tempo de hoje zerado.');};
+    if(typeof askConfirm==='function'){askConfirm(entry[0],entry[1],action,'Zerar tempo');return true}
+    if(window.confirm(entry[0]+'\n\n'+entry[1]))void action();
+    return true;
+  }
   function renderStudySettings(){
     const view=document.querySelector('[data-view="settings"]');
     if(!view)return;
@@ -441,11 +450,13 @@
       layout.insertAdjacentElement('afterend',root);
     }
     const data=readData(),g=data.goals,snap=goalSnapshot();
-    root.innerHTML='<div class="panel-kicker">Rotina de estudo</div><div class="study-settings-head"><div><h2>Metas, timer e foco</h2><p>Defina sua carga de estudo e o comportamento das sessões.</p></div><div class="study-settings-summary"><span>Hoje <b>'+escape(fmtMin(snap.today))+'</b></span><span>Semana <b>'+escape(fmtMin(snap.week))+'</b></span></div></div><form id="studyGoalsForm" class="study-goals-form"><label>Meta diária <span><input name="dailyMinutes" type="number" min="1" max="1440" step="5" value="'+g.dailyMinutes+'"> min</span></label><label>Meta semanal <span><input name="weeklyMinutes" type="number" min="1" max="10080" step="15" value="'+g.weeklyMinutes+'"> min</span></label><label>Pomodoro <span><input name="pomodoroWork" type="number" min="5" max="180" step="5" value="'+g.pomodoroWork+'"> min</span></label><label>Pausa <span><input name="pomodoroBreak" type="number" min="1" max="60" step="1" value="'+g.pomodoroBreak+'"> min</span></label><label class="study-settings-toggle"><span><b>Modo foco automático</b><small>Oculta controles secundários ao iniciar uma sessão dentro de um mapa.</small></span><input name="autoFocus" type="checkbox" '+(g.autoFocus?'checked':'')+'></label><div class="study-settings-actions"><button class="primary" type="submit">Salvar metas</button><button class="secondary" type="button" data-settings-pomodoro>Iniciar Pomodoro</button></div></form>';
+    const allTime=window.StudyTime?.all?.()||0;
+    root.innerHTML='<div class="panel-kicker">Rotina de estudo</div><div class="study-settings-head"><div><h2>Metas, timer e foco</h2><p>Defina sua carga de estudo e o comportamento das sessões.</p></div><div class="study-settings-summary"><span>Hoje <b>'+escape(fmtMin(snap.today))+'</b></span><span>Semana <b>'+escape(fmtMin(snap.week))+'</b></span></div></div><form id="studyGoalsForm" class="study-goals-form"><label>Meta diária <span><input name="dailyMinutes" type="number" min="1" max="1440" step="5" value="'+g.dailyMinutes+'"> min</span></label><label>Meta semanal <span><input name="weeklyMinutes" type="number" min="1" max="10080" step="15" value="'+g.weeklyMinutes+'"> min</span></label><label>Pomodoro <span><input name="pomodoroWork" type="number" min="5" max="180" step="5" value="'+g.pomodoroWork+'"> min</span></label><label>Pausa <span><input name="pomodoroBreak" type="number" min="1" max="60" step="1" value="'+g.pomodoroBreak+'"> min</span></label><label class="study-settings-toggle"><span><b>Modo foco automático</b><small>Oculta controles secundários ao iniciar uma sessão dentro de um mapa.</small></span><input name="autoFocus" type="checkbox" '+(g.autoFocus?'checked':'')+'></label><div class="study-settings-actions"><button class="primary" type="submit">Salvar metas</button><button class="secondary" type="button" data-settings-pomodoro>Iniciar Pomodoro</button></div></form><section class="study-time-manage" aria-labelledby="studyTimeManageTitle"><div class="study-time-manage-head"><div><span class="panel-kicker">Tempo registrado</span><h3 id="studyTimeManageTitle">Gerenciar tempo de estudo</h3><p>Corrija apenas os contadores de tempo sem apagar sessões, agenda, progresso ou anotações.</p></div><div class="study-time-manage-total"><span>Total acumulado</span><b>'+escape(fmtMin(allTime))+'</b></div></div><div class="study-time-manage-actions"><button type="button" class="secondary" data-study-time-reset="today">Zerar hoje</button><button type="button" class="secondary" data-study-time-reset="week">Zerar semana</button><button type="button" class="danger" data-study-time-reset="all">Zerar todo o histórico</button></div><small class="study-time-manage-note">A limpeza altera somente as métricas de tempo. OK/DIF/REV, notas, agenda, simulados e demais dados permanecem intactos.</small></section>';
     const form=root.querySelector('#studyGoalsForm');
     form.onsubmit=e=>{e.preventDefault();saveGoalsFromForm(form)};
     form.querySelector('button[type="submit"]').onclick=e=>{e.preventDefault();saveGoalsFromForm(form)};
     root.querySelector('[data-settings-pomodoro]').onclick=()=>startPomodoro(g.pomodoroWork);
+    root.querySelectorAll('[data-study-time-reset]').forEach(button=>button.onclick=()=>requestResetStudyTime(button.dataset.studyTimeReset));
     if(window.StudyPlanner?.render)setTimeout(()=>StudyPlanner.render(),0);
   }
   function enhanceStudyPlan(){
@@ -526,6 +537,7 @@
     renderTimer();
     ensureTimerIntervals();
     if(readActive())window.__manualStudySessionActive=true;
+    window.StudyTime?.migrateLegacy?.();
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&readActive()?.running)pauseSession({automatic:true})});
     window.addEventListener('pagehide',()=>{if(readActive()?.running)pauseSession({automatic:true})});
     window.addEventListener('storage',e=>{if(e.key===DATA_KEY||e.key===ACTIVE_KEY)renderAll()});
