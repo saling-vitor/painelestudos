@@ -50,6 +50,7 @@
   }
 
   function enhanceCourseCards(){
+    if(!isPhone())return;
     qa('.course-card').forEach(card=>{
       if(card.dataset.mobileEnhanced==='1')return;
       card.dataset.mobileEnhanced='1';
@@ -78,6 +79,7 @@
     return panel.querySelector('h2')?.textContent?.trim()||'Configurações';
   };
   function enhanceSettings(){
+    if(!isPhone())return;
     const view=q('[data-view="settings"]');if(!view)return;
     qa('.panel',view).forEach(panel=>{
       if(panel.closest('.modal'))return;
@@ -124,6 +126,8 @@
   }
   function enhanceProgress(){
     const view=q('[data-view="progress"]');if(!view)return;
+    if(!isPhone()){qa('.mobile-progress-group',view).forEach(group=>group.open=true);return}
+    if(!view.classList.contains('active'))return;
     wrapProgressNode(q('#progressMetrics',view),'summary','Resumo','Progresso, tópicos e tempo',true);
     const insights=q('#progressInsights',view);
     const summaryGroup=q('[data-mobile-progress-group="summary"]',view);
@@ -137,6 +141,7 @@
   }
 
   function enhanceSkeletons(){
+    if(!isPhone())return;
     qa('.boot-loading,.diagnostic-loading,.restore-points-loading').forEach(el=>{
       if(el.dataset.mobileSkeleton==='1')return;
       el.dataset.mobileSkeleton='1';
