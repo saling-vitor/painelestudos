@@ -850,13 +850,17 @@ test('smartphone reorganiza Progresso em quatro blocos expansíveis',async({page
   await expect(page.locator('#studyAnalyticsPanel')).toBeVisible();
 });
 
-test('smartphone Agenda abre em Hoje e mantém Semana e Mês disponíveis',async({page},testInfo)=>{
+test('smartphone Agenda abre em Hoje sem calendário redundante e mantém Semana e Mês',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#agenda');
   await expect(page.locator('[data-agenda-mode="today"]')).toHaveClass(/active/);
-  await expect(page.locator('.agenda-today-card')).toBeVisible();
+  await expect(page.locator('[data-view="agenda"]')).toHaveAttribute('data-mobile-agenda-mode','today');
+  await expect(page.locator('.study-agenda-calendar')).toBeHidden();
+  await expect(page.locator('#agendaDayDetail')).toBeVisible();
+  await expect(page.locator('.study-agenda-day-head .kicker')).toHaveText('Hoje');
   await page.locator('[data-agenda-mode="week"]').click();
+  await expect(page.locator('.study-agenda-calendar')).toBeVisible();
   await expect(page.locator('.agenda-week-card')).toHaveCount(7);
   await page.locator('[data-agenda-mode="month"]').click();
   await expect(page.locator('.agenda-day')).toHaveCount(42);
@@ -874,21 +878,27 @@ test('smartphone mantém Calendário e Simulados dentro de Mais',async({page},te
   await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
 });
 
-test('smartphone Configurações usa accordions e controles touch',async({page},testInfo)=>{
+test('smartphone Configurações usa accordion exclusivo sem títulos duplicados',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#settings');
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(120);
+  const study=page.locator('#studySettingsPanel');
   const sync=page.locator('.sync-panel');
   const admin=page.locator('.admin-panel');
-  await expect(sync.locator(':scope > .mobile-settings-toggle')).toBeVisible();
-  await expect(sync).not.toHaveClass(/mobile-settings-collapsed/);
+  await expect(study.locator(':scope > .mobile-settings-toggle')).toBeVisible();
+  await expect(study).not.toHaveClass(/mobile-settings-collapsed/);
+  await expect(sync).toHaveClass(/mobile-settings-collapsed/);
   await expect(admin).toHaveClass(/mobile-settings-collapsed/);
+  await expect(study.locator(':scope > .panel-kicker')).toBeHidden();
   const adminToggle=admin.locator(':scope > .mobile-settings-toggle');
   const h=await adminToggle.evaluate(el=>el.getBoundingClientRect().height);
   expect(h).toBeGreaterThanOrEqual(44);
   await adminToggle.click();
   await expect(admin).not.toHaveClass(/mobile-settings-collapsed/);
+  await expect(study).toHaveClass(/mobile-settings-collapsed/);
+  const openCount=await page.locator('.mobile-settings-panel:not(.mobile-settings-collapsed)').count();
+  expect(openCount).toBe(1);
 });
 
 test('smartphone leitor entra em modo imersivo e devolve a navegação ao fechar',async({page},testInfo)=>{
@@ -920,4 +930,74 @@ test('smartphone troca estados de carregamento por skeleton',async({page},testIn
   });
   expect(skeleton.className).toContain('mobile-skeleton');
   expect(skeleton.backgroundImage).toContain('linear-gradient');
+});
+
+
+test('iPhone real UX2 compacta Home e transforma simulados em carrossel',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#home');
+  await page.waitForTimeout(100);
+  const data=await page.evaluate(()=>({
+    hero:document.querySelector('[data-view="home"] .hero').getBoundingClientRect().height,
+    metricVisible:[...document.querySelectorAll('.study-command-metrics>button')].filter(el=>getComputedStyle(el).display!=='none').length,
+    simDisplay:getComputedStyle(document.querySelector('.simulation-recent-list')).display,
+    simOverflow:getComputedStyle(document.querySelector('.simulation-recent-list')).overflowX,
+    navHeight:document.querySelector('.bottom-nav').getBoundingClientRect().height
+  }));
+  expect(data.hero).toBeLessThanOrEqual(270);
+  expect(data.metricVisible).toBe(2);
+  expect(data.simDisplay).toBe('flex');
+  expect(['auto','scroll']).toContain(data.simOverflow);
+  expect(data.navHeight).toBeLessThanOrEqual(60);
+  await page.locator('.mobile-study-plan-toggle').click();
+  const expanded=await page.locator('.study-command-metrics>button').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
+  expect(expanded).toBeGreaterThanOrEqual(4);
+});
+
+test('iPhone real UX2 compacta curso e mostra mapa no primeiro viewport',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#course/porto-alegre');
+  await page.waitForTimeout(120);
+  const hero=page.locator('[data-view="course"] .course-hero');
+  await expect(hero.locator('.mobile-course-actions')).toBeVisible();
+  await expect(page.locator('#courseDesc')).toBeHidden();
+  await expect(page.locator('.course-study-filter-wrap')).toBeHidden();
+  const position=await page.locator('#courseMaps .map-card').first().evaluate(el=>el.getBoundingClientRect().top);
+  expect(position).toBeLessThan(844);
+  await hero.locator('[data-mobile-course-details]').click();
+  await expect(hero).toHaveClass(/mobile-course-expanded/);
+  await expect(page.locator('#courseDesc')).toBeVisible();
+});
+
+test('iPhone real UX2 leitor usa barra única e move Salvar para Mais',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#course/porto-alegre');
+  await page.locator('#courseMaps .map-card').first().click();
+  await expect(page.locator('#reader')).toHaveClass(/open/);
+  await expect(page.locator('#mobileReaderSkeleton')).toHaveCount(1);
+  const reader=await page.evaluate(()=>({
+    bar:document.querySelector('.readerbar').getBoundingClientRect().height,
+    saveDisplay:getComputedStyle(document.querySelector('#readerSave')).display,
+    doubtDisplay:getComputedStyle(document.querySelector('#readerDoubtQuick')).display,
+    railHeight:document.querySelector('.study-reader-rail')?.getBoundingClientRect().height||0
+  }));
+  expect(reader.bar).toBeLessThanOrEqual(54);
+  expect(reader.saveDisplay).toBe('none');
+  expect(reader.doubtDisplay).toBe('none');
+  expect(reader.railHeight).toBeLessThanOrEqual(62);
+  await page.locator('#readerMoreBtn').click();
+  await expect(page.locator('#mobileReaderSave')).toBeVisible();
+});
+
+test('iPhone real UX2 mantém somente quatro KPIs no resumo de Progresso',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#progress');
+  await page.waitForTimeout(120);
+  const visible=await page.locator('#progressMetrics .metric').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
+  expect(visible).toBe(4);
+  await expect(page.locator('[data-mobile-progress-group="priority"]')).toBeVisible();
 });
