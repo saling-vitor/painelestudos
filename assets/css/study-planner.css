@@ -71,3 +71,5 @@
 .agenda-day{position:relative}.agenda-day-load{position:absolute;right:5px;top:5px;font-size:6px!important;color:#747a83}.agenda-day.over-capacity{border-color:rgba(201,104,114,.38)!important}.agenda-day.over-capacity .agenda-day-load{color:#c96872}
 
 @media(max-width:820px){.reader.open #readerDoubtQuick{left:12px;right:auto;bottom:calc(142px + env(safe-area-inset-bottom))}}
+
+.agenda-dot.topic-review{background:#d6b06e}.agenda-entry.topic-review{border-color:rgba(214,176,110,.13)}
