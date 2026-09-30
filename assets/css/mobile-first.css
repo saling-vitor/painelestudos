@@ -1083,3 +1083,671 @@
     max-height:284px!important;
   }
 }
+
+
+/* =========================================================
+   V15.4.0 · MOBILE UX 2 · revisão em iPhone real
+   ========================================================= */
+@media(max-width:480px){
+
+  /* HOME · menos altura, menos caixas, ação primeiro */
+  html.is-phone-layout [data-view="home"] .hero{
+    height:270px!important;
+    min-height:270px!important;
+    max-height:270px!important;
+    background-size:auto 45%!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-copy{
+    padding:14px 13px 64px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero h1{
+    max-width:285px!important;
+    margin-top:8px!important;
+    font-size:26px!important;
+    line-height:1!important;
+  }
+  html.is-phone-layout [data-view="home"] .eyebrow{
+    max-width:245px!important;
+    padding:4px 6px!important;
+    font-size:7px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-actions{
+    margin-top:10px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-actions .primary{
+    height:40px!important;
+    min-height:40px!important;
+    padding-inline:11px!important;
+    font-size:10px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats{
+    left:10px!important;
+    right:10px!important;
+    bottom:8px!important;
+    gap:0!important;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.075);
+    border-radius:10px;
+    background:rgba(8,10,13,.76);
+    backdrop-filter:blur(10px);
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat{
+    min-height:45px!important;
+    padding:6px 8px!important;
+    border:0!important;
+    border-right:1px solid rgba(255,255,255,.06)!important;
+    border-radius:0!important;
+    background:transparent!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat:last-child{
+    border-right:0!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat b{
+    font-size:13px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat span{
+    font-size:7px!important;
+    color:#9aa0a8!important;
+  }
+  html.is-phone-layout .study-command-card{
+    padding:11px!important;
+  }
+  html.is-phone-layout .study-command-head{
+    align-items:flex-start!important;
+  }
+  html.is-phone-layout .study-command-head>div{
+    min-width:0;
+  }
+  html.is-phone-layout .study-command-head h2{
+    font-size:14px!important;
+    line-height:1.2!important;
+  }
+  html.is-phone-layout .study-command-head p{
+    max-width:240px;
+    margin-top:3px!important;
+    font-size:10px!important;
+  }
+  html.is-phone-layout .study-command-head .primary{
+    min-height:40px!important;
+    height:40px!important;
+    padding:0 10px!important;
+    white-space:nowrap;
+  }
+  html.is-phone-layout .study-command-metrics{
+    grid-template-columns:1fr 1fr!important;
+    gap:5px!important;
+    margin-top:8px!important;
+  }
+  html.is-phone-layout .study-command-metrics>button{
+    min-height:52px!important;
+    padding:7px 8px!important;
+  }
+  html.is-phone-layout .study-command-metrics>button:nth-child(n+3){
+    display:none!important;
+  }
+  html.is-phone-layout .study-command-card.mobile-plan-expanded .study-command-metrics>button:nth-child(n+3){
+    display:flex!important;
+  }
+  html.is-phone-layout .mobile-study-plan-toggle{
+    width:100%;
+    min-height:38px;
+    margin-top:6px;
+    padding:0 8px;
+    border:0;
+    border-top:1px solid rgba(255,255,255,.05);
+    background:transparent;
+    color:#9da3ab;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:9px;
+    font-weight:700;
+  }
+  html.is-phone-layout .mobile-study-plan-toggle i{
+    font-style:normal;
+    transition:transform .16s ease;
+  }
+  html.is-phone-layout .mobile-study-plan-toggle[aria-expanded="true"] i{
+    transform:rotate(180deg);
+  }
+  html.is-phone-layout .simulation-home-section{
+    margin-top:18px!important;
+  }
+  html.is-phone-layout #homeSimulations{
+    margin-left:calc(var(--phone-side) * -1);
+    margin-right:calc(var(--phone-side) * -1);
+    overflow:hidden;
+  }
+  html.is-phone-layout .simulation-recent-list{
+    display:flex!important;
+    gap:8px!important;
+    padding:0 var(--phone-side) 4px!important;
+    overflow-x:auto!important;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+  }
+  html.is-phone-layout .simulation-recent-list::-webkit-scrollbar{display:none}
+  html.is-phone-layout .simulation-recent-item{
+    flex:0 0 min(82vw,315px)!important;
+    min-height:74px!important;
+    padding:10px!important;
+    scroll-snap-align:start;
+    border-radius:10px!important;
+  }
+  html.is-phone-layout .simulation-recent-copy b{font-size:11px!important}
+  html.is-phone-layout .simulation-recent-copy span{font-size:9px!important;line-height:1.35!important}
+
+  /* CURSO · primeiro mapa chega cedo no viewport */
+  html.is-phone-layout [data-view="course"] .course-hero{
+    padding:9px 0 0!important;
+  }
+  html.is-phone-layout [data-view="course"] .breadcrumb{
+    min-height:28px!important;
+    margin-bottom:5px!important;
+    font-size:9px!important;
+  }
+  html.is-phone-layout [data-view="course"] .breadcrumb>.breadcrumb-separator,
+  html.is-phone-layout [data-view="course"] .breadcrumb>span:last-child{
+    display:none!important;
+  }
+  html.is-phone-layout [data-view="course"] #courseTitle{
+    margin:3px 0 0!important;
+    font-size:22px!important;
+    line-height:1.03!important;
+    letter-spacing:-.025em;
+  }
+  html.is-phone-layout [data-view="course"] #courseTitle span{
+    display:block;
+    margin-top:3px;
+    font-size:11px!important;
+    line-height:1.25!important;
+    color:#8e949c!important;
+  }
+  html.is-phone-layout [data-view="course"] #courseDesc{
+    display:none!important;
+    margin:6px 0!important;
+    font-size:10px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-progress-summary{
+    margin-top:8px!important;
+    padding:8px!important;
+    border-radius:9px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-status-metrics{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:0!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-status-metric{
+    min-height:42px!important;
+    padding:4px 6px!important;
+    border-right:1px solid rgba(255,255,255,.055);
+  }
+  html.is-phone-layout [data-view="course"] .course-status-metric:nth-child(3){
+    display:none!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-status-metric:last-child{
+    border-right:0;
+  }
+  html.is-phone-layout [data-view="course"] .course-status-metric b{
+    font-size:11px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-status-metric span{
+    font-size:7px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-summary-bar{
+    margin-top:6px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-status-footer,
+  html.is-phone-layout [data-view="course"] .course-offline-status,
+  html.is-phone-layout [data-view="course"] #courseContinue,
+  html.is-phone-layout [data-view="course"] .course-primary-actions,
+  html.is-phone-layout [data-view="course"] .course-study-filter-wrap,
+  html.is-phone-layout [data-view="course"] .course-category-wrap{
+    display:none!important;
+  }
+  html.is-phone-layout [data-view="course"] .mobile-course-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-top:7px;
+  }
+  html.is-phone-layout [data-view="course"] .mobile-course-actions button{
+    min-height:40px;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:8px;
+    background:rgba(255,255,255,.018);
+    color:#aeb3ba;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    font-size:9px;
+  }
+  html.is-phone-layout [data-view="course"] .course-toolbar{
+    display:none!important;
+    margin-top:7px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-search-open .course-toolbar{
+    display:block!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-search-open .course-primary-actions{
+    display:none!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-search-box{
+    width:100%!important;
+    min-height:44px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-search-box input{
+    height:44px!important;
+    font-size:12px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded #courseDesc{
+    display:block!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-status-footer,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-offline-status,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded #courseContinue,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-primary-actions,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-study-filter-wrap,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-category-wrap{
+    display:flex!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-primary-actions{
+    margin-top:7px;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-study-filter-wrap,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-expanded .course-category-wrap{
+    margin-top:8px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-study-filters,
+  html.is-phone-layout [data-view="course"] .category-row{
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    scrollbar-width:none;
+  }
+  html.is-phone-layout [data-view="course"] .course-study-filters::-webkit-scrollbar,
+  html.is-phone-layout [data-view="course"] .category-row::-webkit-scrollbar{display:none}
+  html.is-phone-layout [data-view="course"] .section-head[style]{
+    margin-top:10px!important;
+    margin-bottom:7px!important;
+  }
+  html.is-phone-layout [data-view="course"] .section-head[style] h2{
+    font-size:16px!important;
+  }
+  html.is-phone-layout [data-view="course"] #courseMapCount{
+    font-size:9px!important;
+  }
+  html.is-phone-layout [data-view="course"] #layoutGrid,
+  html.is-phone-layout [data-view="course"] #layoutList{
+    display:none!important;
+  }
+
+  /* MAPAS · visual menor sem sacrificar área de toque */
+  html.is-phone-layout .map-card.has-cover{
+    min-height:232px!important;
+    padding:0 11px 43px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .map-cover{
+    height:92px!important;
+    margin:0 -11px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .fav,
+  html.is-phone-layout .map-card.has-cover .map-admin-btn{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  html.is-phone-layout .map-card.has-cover .fav>.ui-icon,
+  html.is-phone-layout .map-card.has-cover .map-admin-btn>.ui-icon{
+    --icon-size:17px!important;
+    filter:drop-shadow(0 1px 5px rgba(0,0,0,.7));
+  }
+  html.is-phone-layout .map-card.has-cover .fav{right:0!important;top:0!important}
+  html.is-phone-layout .map-card.has-cover .map-admin-btn{right:42px!important;top:0!important}
+  html.is-phone-layout .map-card-status-row{
+    margin-top:7px!important;
+  }
+  html.is-phone-layout .map-card.has-cover h3{
+    min-height:32px!important;
+    margin-top:6px!important;
+    font-size:14px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .map-progress-mini{
+    margin-top:5px!important;
+    padding:6px 7px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .foot{
+    bottom:8px!important;
+    min-height:30px!important;
+  }
+
+  /* LEITOR · uma linha, mapa como protagonista */
+  html.mobile-reader-open.is-phone-layout .readerbar{
+    height:52px!important;
+    min-height:52px!important;
+    max-height:52px!important;
+    padding:4px 6px!important;
+    display:grid!important;
+    grid-template-columns:44px minmax(0,1fr) 44px!important;
+    gap:5px!important;
+    align-items:center!important;
+    overflow:hidden!important;
+  }
+  html.mobile-reader-open.is-phone-layout #readerClose{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    padding:0!important;
+    display:grid!important;
+    place-items:center;
+  }
+  html.mobile-reader-open.is-phone-layout #readerClose>span:last-child{
+    display:none!important;
+  }
+  html.mobile-reader-open.is-phone-layout .readerbar .title{
+    min-width:0!important;
+    display:block!important;
+  }
+  html.mobile-reader-open.is-phone-layout #readerTitle{
+    display:block;
+    overflow:hidden;
+    font-size:11px!important;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  html.mobile-reader-open.is-phone-layout #readerMeta,
+  html.mobile-reader-open.is-phone-layout #readerStudyTime,
+  html.mobile-reader-open.is-phone-layout #readerSaveStatus,
+  html.mobile-reader-open.is-phone-layout #readerSave{
+    display:none!important;
+  }
+  html.mobile-reader-open.is-phone-layout .reader-more-wrap{
+    width:44px!important;
+    justify-self:end;
+  }
+  html.mobile-reader-open.is-phone-layout #readerMoreBtn{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    padding:0!important;
+  }
+  html.mobile-reader-open.is-phone-layout .reader-more-menu{
+    right:0!important;
+    top:48px!important;
+    min-width:210px!important;
+  }
+  html.is-phone-layout #readerDoubtQuick{
+    display:none!important;
+  }
+  html.mobile-reader-open.is-phone-layout .study-reader-rail{
+    left:8px!important;
+    right:8px!important;
+    bottom:calc(8px + env(safe-area-inset-bottom))!important;
+    width:auto!important;
+    padding:4px!important;
+    border-radius:12px!important;
+    grid-template-columns:repeat(4,1fr)!important;
+    background:rgba(7,9,12,.78)!important;
+    backdrop-filter:blur(14px)!important;
+  }
+  html.mobile-reader-open.is-phone-layout .study-reader-rail button{
+    min-height:46px!important;
+    border:0!important;
+    background:transparent!important;
+  }
+  html.mobile-reader-open.is-phone-layout .study-reader-rail button>span{
+    font-size:13px!important;
+  }
+  html.mobile-reader-open.is-phone-layout .study-reader-rail button>b{
+    font-size:8px!important;
+  }
+  html.mobile-reader-open.is-phone-layout .study-reader-rail>small{
+    display:none!important;
+  }
+  html.mobile-reader-open.is-phone-layout #readerFrame{
+    height:calc(100dvh - 52px)!important;
+  }
+  html.is-phone-layout .mobile-reader-skeleton{
+    position:absolute;
+    z-index:5;
+    inset:52px 0 0;
+    padding:18px 15px;
+    background:#05070a;
+    pointer-events:none;
+  }
+  html.is-phone-layout .mobile-reader-skeleton[hidden]{display:none!important}
+  html.is-phone-layout .mobile-reader-skeleton-cover,
+  html.is-phone-layout .mobile-reader-skeleton-line{
+    border-radius:8px;
+    background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.10),rgba(255,255,255,.04));
+    background-size:220% 100%;
+    animation:mobileSkeleton 1.25s ease-in-out infinite;
+  }
+  html.is-phone-layout .mobile-reader-skeleton-cover{
+    height:122px;
+    margin-bottom:18px;
+  }
+  html.is-phone-layout .mobile-reader-skeleton-line{
+    width:72%;
+    height:13px;
+    margin:10px 0;
+  }
+  html.is-phone-layout .mobile-reader-skeleton-line.wide{width:94%}
+  html.is-phone-layout .mobile-reader-skeleton-line.short{width:48%}
+
+  /* AGENDA · Hoje não parece calendário */
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-calendar{
+    display:none!important;
+  }
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-layout{
+    display:block!important;
+  }
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-side{
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+  }
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-day-head{
+    padding:10px 11px!important;
+    border:1px solid rgba(255,255,255,.065);
+    border-radius:10px 10px 0 0;
+    background:rgba(255,255,255,.015);
+  }
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-day-head .kicker{
+    font-size:8px!important;
+  }
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-day-head h3{
+    margin-top:3px!important;
+    font-size:15px!important;
+    text-transform:capitalize;
+  }
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-day-list{
+    padding:8px!important;
+    border:1px solid rgba(255,255,255,.065);
+    border-top:0;
+    border-radius:0 0 10px 10px;
+    background:rgba(255,255,255,.01);
+  }
+  html.is-phone-layout .study-agenda-view[data-mobile-agenda-mode="today"] .study-agenda-form{
+    margin-top:9px!important;
+    padding:11px!important;
+    border:1px solid rgba(255,255,255,.065)!important;
+    border-radius:10px;
+    background:rgba(255,255,255,.01);
+  }
+  html.is-phone-layout .study-agenda-head>div:first-child p{
+    display:none!important;
+  }
+
+  /* PROGRESSO · quatro KPIs e prioridade chega cedo */
+  html.is-phone-layout #progressMetrics .metric:nth-child(n+5){
+    display:none!important;
+  }
+  html.is-phone-layout #progressMetrics{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-phone-layout #progressMetrics .metric{
+    min-height:62px!important;
+    padding:8px!important;
+  }
+  html.is-phone-layout #progressMetrics .metric b{
+    font-size:17px!important;
+  }
+  html.is-phone-layout #progressMetrics .metric span{
+    font-size:9px!important;
+  }
+  html.is-phone-layout .mobile-progress-group{
+    margin-top:7px!important;
+  }
+  html.is-phone-layout .mobile-progress-group>summary{
+    min-height:52px!important;
+    padding:8px 10px!important;
+  }
+  html.is-phone-layout .mobile-progress-group>summary b{
+    font-size:12px!important;
+  }
+  html.is-phone-layout .mobile-progress-group>summary small{
+    font-size:9px!important;
+  }
+  html.is-phone-layout [data-mobile-progress-group="summary"]>#progressInsights{
+    padding-top:0!important;
+  }
+  html.is-phone-layout .progress-global-head p{
+    display:none!important;
+  }
+  html.is-phone-layout .progress-global-panel{
+    padding:9px!important;
+  }
+  html.is-phone-layout .progress-global-footer{
+    margin-top:8px!important;
+  }
+
+  /* CONFIGURAÇÕES · sem títulos duplicados e um accordion por vez */
+  html.is-phone-layout .mobile-settings-panel>.panel-kicker,
+  html.is-phone-layout .mobile-settings-panel>.icon-heading{
+    display:none!important;
+  }
+  html.is-phone-layout .mobile-settings-panel>.settings-panel-title-row>h2{
+    display:none!important;
+  }
+  html.is-phone-layout .mobile-settings-panel>.settings-panel-title-row{
+    min-height:30px!important;
+    justify-content:flex-end!important;
+  }
+  html.is-phone-layout #studySettingsPanel>.panel-kicker,
+  html.is-phone-layout #studySettingsPanel .study-settings-head>div>h2,
+  html.is-phone-layout #studySettingsPanel .study-settings-head>div>p{
+    display:none!important;
+  }
+  html.is-phone-layout .mobile-settings-toggle{
+    min-height:50px!important;
+    padding:9px 11px!important;
+    font-size:12px!important;
+  }
+  html.is-phone-layout .mobile-more-shortcuts-head>b{
+    display:none!important;
+  }
+  html.is-phone-layout .mobile-more-shortcuts-head{
+    justify-content:flex-start!important;
+  }
+
+  /* TOPBAR + BOTTOM-NAV · mais leves no iPhone */
+  html.is-phone-layout .topbar-wrap{
+    padding:4px 6px 5px!important;
+  }
+  html.is-phone-layout .topbar{
+    padding:4px!important;
+    border-radius:11px!important;
+    background:rgba(9,11,14,.87)!important;
+  }
+  html.is-phone-layout .search,
+  html.is-phone-layout #syncTop{
+    height:42px!important;
+    min-height:42px!important;
+  }
+  html.is-phone-layout #syncTop{
+    width:42px!important;
+    min-width:42px!important;
+    border-color:rgba(255,255,255,.06)!important;
+    background:transparent!important;
+  }
+  html.is-phone-layout .search{
+    border-color:rgba(255,255,255,.055)!important;
+    background:rgba(255,255,255,.025)!important;
+  }
+  html.is-phone-layout .bottom-nav{
+    left:6px!important;
+    right:6px!important;
+    bottom:calc(5px + var(--safe-bottom))!important;
+    padding:3px!important;
+    border-radius:13px!important;
+    background:rgba(8,10,13,.86)!important;
+    backdrop-filter:blur(16px)!important;
+  }
+  html.is-phone-layout .bottom-nav button{
+    height:48px!important;
+    min-height:48px!important;
+  }
+  html.is-phone-layout .bottom-nav button>.ui-icon{
+    --icon-size:21px!important;
+  }
+  html.is-phone-layout .bottom-nav-label{
+    margin-top:2px!important;
+    font-size:8.5px!important;
+  }
+
+  /* TIPOGRAFIA + CONTRASTE · filmagem real, não apenas emulador */
+  html.is-phone-layout .kicker,
+  html.is-phone-layout .panel-kicker{
+    font-size:8px!important;
+    color:#9a835e!important;
+  }
+  html.is-phone-layout small,
+  html.is-phone-layout .meta,
+  html.is-phone-layout .course-card-meta,
+  html.is-phone-layout .map-card .meta{
+    color:#8f959e;
+  }
+  html.is-phone-layout .section-head p,
+  html.is-phone-layout .panel p,
+  html.is-phone-layout .study-command-head p,
+  html.is-phone-layout .simulation-recent-copy span{
+    color:#9aa0a8!important;
+  }
+  html.is-phone-layout .progress-state,
+  html.is-phone-layout .chip,
+  html.is-phone-layout .map-study-status{
+    font-size:8px!important;
+  }
+}
+
+@media(max-width:390px){
+  html.is-phone-layout [data-view="home"] .hero{
+    height:260px!important;
+    min-height:260px!important;
+    max-height:260px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero h1{
+    font-size:24px!important;
+  }
+  html.is-phone-layout .map-card.has-cover{
+    min-height:225px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .map-cover{
+    height:88px!important;
+  }
+}
+@media(max-width:360px){
+  html.is-phone-layout [data-view="home"] .hero{
+    height:252px!important;
+    min-height:252px!important;
+    max-height:252px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero h1{
+    font-size:23px!important;
+  }
+}
