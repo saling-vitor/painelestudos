@@ -223,7 +223,7 @@
     for(const item of maps){const course=item.courseId||'',cat=item.category||'Outros';courseTotals[course]||={total:0,cats:{}};const n=Math.max(1,Number(item.topics)||1);courseTotals[course].total+=n;courseTotals[course].cats[cat]=(courseTotals[course].cats[cat]||0)+n}
     return maps.map(map=>{
       const key=mapKeyOf(map),p=mapProgress(map),weak=simulationWeaknessForMap(map),days=daysUntilExam(map),courseWeight=courseTotals[map.courseId||'']||{total:1,cats:{}},categoryShare=(courseWeight.cats[map.category||'Outros']||0)/Math.max(1,courseWeight.total);
-      const schedule=reviewSummary.schedule?.[key],due=Date.parse(schedule?.dueAt||0)||0,today=startDay(new Date()).getTime(),overdueDays=due&&due<today?Math.ceil((today-due)/86400000):0;
+      const schedule=reviewSummary.schedule?.[key],due=typeof reviewScheduleDueTimestamp==='function'?reviewScheduleDueTimestamp(schedule?.dueAt):Date.parse(schedule?.dueAt||'')||0,today=startDay(new Date()).getTime(),overdueDays=due&&due<today?Math.ceil((today-due)/86400000):0;
       const last=typeof activityTimestamp==='function'?activityTimestamp(p.lastActivity):Date.parse(p.lastActivity||0)||0,ageDays=last?Math.floor((Date.now()-last)/86400000):30;
       let score=(p.difficult||0)*12+(p.review||0)*7+(topicCounts[key]||0)*9+weak.score+Math.round(categoryShare*12);
       if(overdueDays)score+=28+Math.min(25,overdueDays*3);
