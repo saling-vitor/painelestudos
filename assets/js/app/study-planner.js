@@ -338,7 +338,7 @@
     const data=agendaData(),item=data.agenda?.find(row=>row.id===id&&!row.deleted);if(!item)return false;
     const map=item.mapKey?mapById(item.mapKey):null;
     if(map)await openMap(item.mapKey);
-    window.StudyDashboard?.start?.({map,mode:'planned',minutes:Number(item.minutes)||20,label:item.title||'Sessão planejada',agendaId:item.id});
+    window.StudyDashboard?.start?.({map,general:!map,mode:'planned',minutes:Number(item.minutes)||20,label:item.title||'Sessão planejada',agendaId:item.id});
     return true;
   }
 
