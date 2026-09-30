@@ -1,14 +1,14 @@
 {
-  "version": "15.8.0",
-  "label": "V15.8.0",
-  "releasedAt": "2026-09-30T23:25:42.190Z",
-  "notes": "Segunda etapa do pacote visual: corrige espaçamentos estruturais do Progresso, recorte das capas e a faixa residual da topbar.",
+  "version": "15.9.0",
+  "label": "V15.9.0",
+  "releasedAt": "2026-09-30T23:52:16.385Z",
+  "notes": "Terceira etapa do pacote visual: unifica glassmorphism, profundidade, bordas, raios e controles em todo o aplicativo, com versão leve no smartphone.",
   "showWhatsNew": true,
   "highlights": [
-    "Ritmo de estudo, Progresso geral e concursos agora mantêm respiro estrutural consistente",
-    "Capas de mapas, simulados e pré-visualizações ficam recortadas dentro dos cantos dos cards",
-    "A faixa residual sob a busca foi removida sem alterar o glass da topbar",
-    "Clipping das capas foi reforçado para desktop, iPad e smartphone, inclusive em imagens com hover",
-    "Mantém as correções de tempo de estudo e sincronização da V15.7.0"
+    "Painéis, métricas, agenda e progresso agora compartilham a mesma linguagem de vidro",
+    "Botões, campos, chips e modais foram harmonizados sem remover hierarquia ou acentos de cor",
+    "Cards de cursos, mapas e simulados preservam sua identidade com bordas e profundidade consistentes",
+    "Dashboard, planner, dúvidas e modais de estudo seguem os mesmos tokens visuais",
+    "No smartphone, o visual é mantido com blur reduzido para preservar fluidez e estabilidade"
   ]
 }
