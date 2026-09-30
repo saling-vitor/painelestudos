@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.0.8'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.0.9'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
 test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
-test('botão Abrir da tela Progresso abre mapa',async({page})=>{await page.goto('/#progress');const button=page.locator('#progressInfo [data-progress-open]').first();await expect(button).toBeVisible();await button.click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerClose').click();await expect(page.locator('#reader')).not.toHaveClass(/open/)});
+test('botão Abrir da tela Progresso abre mapa',async({page})=>{await page.goto('/#progress');const toggle=page.locator('#progressInfo [data-progress-course-toggle]').first();await expect(toggle).toBeVisible();await toggle.click();const button=page.locator('#progressInfo [data-progress-open]').first();await expect(button).toBeVisible();await button.click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerClose').click();await expect(page.locator('#reader')).not.toHaveClass(/open/)});
 test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#progress');const filters=page.locator('[data-progress-filter]'),count=await filters.count();for(let i=0;i<count;i++)await filters.nth(i).click()});
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
@@ -15,10 +15,10 @@ test('regras de revisão programada usam os atrasos definidos',async({page})=>{c
 test('restore point é reversível e mantém apenas os cinco mais recentes',async({page})=>{const result=await page.evaluate(async()=>{const key='mindmap_state::e2e-restore',modified='studyapp.modified::'+key;localStorage.setItem(key,'antes');localStorage.setItem(modified,new Date().toISOString());const point=await createRestorePoint('e2e','Teste reversível');localStorage.setItem(key,'depois');localStorage.setItem(modified,new Date(Date.now()+1000).toISOString());await restorePointNow(point.id);for(let i=0;i<6;i++)await createRestorePoint('e2e-limit','Ponto '+i);const points=await listRestorePoints();return{value:localStorage.getItem(key),count:points.length,labels:points.map(p=>p.label)}});expect(result.value).toBe('antes');expect(result.count).toBeLessThanOrEqual(5);expect(result.labels.length).toBeGreaterThan(0)});
 
 test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page})=>{await page.goto('/#simulations');const key=await page.evaluate(()=>{const simulation=combinedSimulations()[0],key=simulation._key||simulationKey(simulation),now=Date.now();state.simAttempts[key]=[{score:80,correct:8,total:10,durationSeconds:900,finishedAt:new Date(now).toISOString(),sections:{Português:{correct:8,total:10}}},{score:70,correct:7,total:10,durationSeconds:840,finishedAt:new Date(now-60000).toISOString()},{score:60,correct:6,total:10,durationSeconds:780,finishedAt:new Date(now-120000).toISOString()}];state.simResults[key]=state.simAttempts[key][0];localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults));renderSimulations();return key});const analytics=await page.evaluate(key=>simulationAnalytics(key),key);expect(analytics.count).toBe(3);expect(analytics.latest.score).toBe(80);expect(analytics.best).toBe(80);expect(analytics.average).toBe(70);const card=page.locator('[data-simulation-history="'+key+'"]').locator('xpath=ancestor::article');await expect(card).toContainText('Última');await expect(card).toContainText('80%');await expect(card).toContainText('Média');await expect(card).toContainText('70%');await card.locator('[data-simulation-history]').click();await expect(page.locator('#simulationHistoryModal')).toHaveClass(/open/);await expect(page.locator('#simulationAnalyticsSummary')).toContainText('Tempo médio');await expect(page.locator('#simulationAnalyticsTrend span')).toHaveCount(3);const heights=await page.locator('#simulationAnalyticsTrend span').evaluateAll(nodes=>nodes.map(node=>node.style.height));expect(heights).toEqual(['60%','70%','80%']);await expect(page.locator('#simulationAnalyticsSections')).toContainText('Português')});
-test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:'15.0.8',label:'V15.0.8',showWhatsNew:true,highlights:['Hero fica mais compacto após o início dos estudos','Plano do dia e sequência sugerida agora formam um único card','Simulados recentes usam títulos legíveis e mostram estado ou última nota','Cursos da Home ocupam melhor a largura e usam cards compactos','Busca global ganhou proteção contínua contra autofill de e-mail']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Hero fica mais compacto após o início dos estudos');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe('15.0.8')});
+test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:'15.0.9',label:'V15.0.9',showWhatsNew:true,highlights:['Indicadores de progresso agora cabem em uma faixa compacta','Onde focar agora mostra somente ações úteis, sem cards vazios','Filtros e ordenação foram integrados ao progresso geral','Concursos ficam recolhidos por padrão e podem ser expandidos','Mapas não iniciados deixam de repetir barras e contadores zerados','Ordenação por prioridade, atividade, progresso ou nome']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Concursos ficam recolhidos por padrão e podem ser expandidos');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe('15.0.9')});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.0.8');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.0.9');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -61,11 +61,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.0.8');
+  expect(result.version).toBe('15.0.9');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.0.8');
+  expect(result.scriptURL).toContain('sw.js?v=15.0.9');
   expect(result.status).toContain('Aplicativo atualizado');
 });
 
@@ -87,8 +87,13 @@ test('home fica mais compacta depois que existe atividade',async({page})=>{
 test('progresso mostra prioridades acionáveis',async({page})=>{
   await page.goto('/#progress');
   await expect(page.locator('#progressInsights')).toBeVisible();
-  await expect(page.locator('#progressInsights .progress-insight-card')).toHaveCount(4);
+  const cards=page.locator('#progressInsights .progress-insight-card');
+  const count=await cards.count();
+  expect(count).toBeGreaterThan(0);
+  expect(count).toBeLessThanOrEqual(3);
   await expect(page.locator('#progressInsights')).toContainText('Onde focar agora');
+  await expect(page.locator('#progressInsights')).not.toContainText('nenhum mapa parado');
+  await expect(page.locator('#progressInsights')).not.toContainText('sem tentativa finalizada');
 });
 
 test('simulado sugere mapas para revisar após resultado',async({page})=>{
@@ -303,7 +308,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.0.8');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.0.9');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -360,4 +365,56 @@ test('autofill tardio de e-mail é removido continuamente da busca',async({page}
   await page.waitForTimeout(1500);
   await expect(input).toHaveValue('');
   await expect(input).toHaveAttribute('autocomplete','new-password');
+});
+
+test('progresso usa cursos recolhíveis e lista compacta',async({page})=>{
+  await page.goto('/#progress');
+  const course=page.locator('#progressInfo .progress-course').first();
+  await expect(course).toHaveClass(/is-collapsed/);
+  await expect(course.locator('.progress-map-row')).toHaveCount(0);
+  await course.locator('[data-progress-course-toggle]').click();
+  await expect(course).toHaveClass(/is-expanded/);
+  const visible=await course.locator('.progress-map-row').count();
+  expect(visible).toBeGreaterThan(0);
+  expect(visible).toBeLessThanOrEqual(6);
+  const more=course.locator('[data-progress-show-all]');
+  if(await more.count()){
+    await expect(more).toContainText('Mostrar todos');
+    await more.click();
+    expect(await course.locator('.progress-map-row').count()).toBeGreaterThan(6);
+    await expect(course.locator('[data-progress-show-all]')).toContainText('Mostrar menos');
+  }
+});
+
+test('mapas não iniciados não repetem barras e estados zerados',async({page})=>{
+  await page.goto('/#progress');
+  const course=page.locator('#progressInfo .progress-course').first();
+  await course.locator('[data-progress-course-toggle]').click();
+  const row=course.locator('.progress-map-unstarted').first();
+  await expect(row).toBeVisible();
+  await expect(row).toContainText(/Não iniciado|Aberto/);
+  await expect(row.locator('.progress-map-bar')).toHaveCount(0);
+  await expect(row.locator('.progress-map-states')).toHaveCount(0);
+});
+
+test('progresso integra filtros e ordenação no painel geral',async({page})=>{
+  await page.goto('/#progress');
+  const panel=page.locator('#progressGlobalPanel');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('#progressFilters')).toBeVisible();
+  await expect(panel.locator('#progressSort')).toBeVisible();
+  await expect(page.locator('.progress-filter-shell')).toHaveCount(0);
+  await panel.locator('#progressSort').selectOption('alpha');
+  const stored=await page.evaluate(()=>localStorage.getItem('studyapp.progressSort'));
+  expect(stored).toBe('alpha');
+});
+
+test('indicadores de progresso formam uma faixa compacta no desktop',async({page})=>{
+  await page.goto('/#progress');
+  await expect(page.locator('#progressMetrics .metric')).toHaveCount(6);
+  const layout=await page.locator('#progressMetrics').evaluate(el=>({width:innerWidth,columns:getComputedStyle(el).gridTemplateColumns,height:el.getBoundingClientRect().height}));
+  if(layout.width>=1180){
+    expect(layout.columns.trim().split(/\s+/).length).toBe(6);
+    expect(layout.height).toBeLessThan(100);
+  }
 });

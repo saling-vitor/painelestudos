@@ -1,14 +1,15 @@
 {
-  "version": "15.0.8",
-  "label": "V15.0.8",
-  "releasedAt": "2026-09-29T21:15:00-03:00",
-  "notes": "Home refinada para funcionar mais como painel diário: hero compacto, plano do dia integrado, simulados legíveis, cursos mais largos e proteção reforçada contra autofill.",
+  "version": "15.0.9",
+  "label": "V15.0.9",
+  "releasedAt": "2026-09-30T08:12:00-03:00",
+  "notes": "Tela Progresso reorganizada para reduzir repetição, destacar próximas ações e deixar concursos e mapas muito mais compactos e navegáveis.",
   "showWhatsNew": true,
   "highlights": [
-    "Hero fica mais compacto após o início dos estudos",
-    "Plano do dia e sequência sugerida agora formam um único card",
-    "Simulados recentes usam títulos legíveis e mostram estado ou última nota",
-    "Cursos da Home ocupam melhor a largura e usam cards compactos",
-    "Busca global ganhou proteção contínua contra autofill de e-mail"
+    "Indicadores de progresso agora cabem em uma faixa compacta",
+    "Onde focar agora mostra somente ações úteis, sem cards vazios",
+    "Filtros e ordenação foram integrados ao progresso geral",
+    "Concursos ficam recolhidos por padrão e podem ser expandidos",
+    "Mapas não iniciados deixam de repetir barras e contadores zerados",
+    "Ordenação por prioridade, atividade, progresso ou nome"
   ]
 }
