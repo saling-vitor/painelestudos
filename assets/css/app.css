@@ -2378,6 +2378,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(min-width:900px){
   .view[data-view="home"].home-returning .hero{
     min-height:300px;
+    padding:0!important;
   }
   .view[data-view="home"].home-returning .hero-copy{
     width:min(690px,55%);
