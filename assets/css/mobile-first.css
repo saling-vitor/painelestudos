@@ -2043,3 +2043,56 @@
   html.is-phone-layout .map-card.has-cover .map-cover{height:74px!important}
   html.is-phone-layout .simulation-cover{height:98px!important}
 }
+
+
+/* =========================================================
+   V15.9.0 · PHONE GLASS · mesma linguagem, menor custo gráfico
+   ========================================================= */
+@media(max-width:480px){
+  html.is-phone-layout .panel,
+  html.is-phone-layout .metric,
+  html.is-phone-layout .continue-card,
+  html.is-phone-layout .progress-insights,
+  html.is-phone-layout .progress-global-panel,
+  html.is-phone-layout .progress-attention,
+  html.is-phone-layout .study-command-card,
+  html.is-phone-layout .study-analytics-grid>.panel,
+  html.is-phone-layout .study-agenda-calendar,
+  html.is-phone-layout .study-agenda-side,
+  html.is-phone-layout .study-settings-panel,
+  html.is-phone-layout .study-intelligence-row>article,
+  html.is-phone-layout .intelligence-primary-actions>article,
+  html.is-phone-layout .priority-details{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:
+      linear-gradient(145deg,rgba(255,255,255,.022),rgba(255,255,255,.006)),
+      rgba(9,11,14,.94)!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.026)!important;
+  }
+
+  html.is-phone-layout .course-card,
+  html.is-phone-layout .map-card,
+  html.is-phone-layout .simulation-card{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    box-shadow:0 10px 24px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.028)!important;
+  }
+
+  html.is-phone-layout .modal-card,
+  html.is-phone-layout .planner-modal-card,
+  html.is-phone-layout .study-doubt-card{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:
+      linear-gradient(155deg,rgba(255,255,255,.026),transparent 38%),
+      rgba(9,11,14,.985)!important;
+  }
+
+  html.is-phone-layout .icon-btn,
+  html.is-phone-layout .secondary,
+  html.is-phone-layout .primary,
+  html.is-phone-layout .danger{
+    box-shadow:none!important;
+  }
+}
