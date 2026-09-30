@@ -47,6 +47,7 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
   await page.evaluate(()=>checkForAppUpdate({silent:true}));
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
+  await page.waitForFunction(()=>document.querySelector('#appUpdateStatus')?.textContent?.includes('Aplicativo atualizado'),null,{timeout:10000});
   const result=await page.evaluate(async()=>{
     if(!('serviceWorker' in navigator))return{supported:false};
     const registration=await navigator.serviceWorker.ready;
