@@ -8,6 +8,7 @@
   let lastY=window.scrollY||0;
   let raf=0;
   let observer=null;
+  let readerSkeletonSrc='';
 
   const isPhone=()=>mq.matches;
   const q=(s,r=document)=>r.querySelector(s);
@@ -47,6 +48,98 @@
     view.dataset.mobileAgendaOpened='1';
     const today=q('[data-agenda-mode="today"]',view);
     if(today&&!today.classList.contains('active'))today.click();
+  }
+
+  function enhanceHome(){
+    if(!isPhone())return;
+    const card=q('.study-command-card');
+    if(card&&!q('.mobile-study-plan-toggle',card)){
+      const metrics=q('.study-command-metrics',card),button=document.createElement('button');
+      button.type='button';button.className='mobile-study-plan-toggle';button.setAttribute('aria-expanded','false');
+      button.innerHTML='<span>Ver plano completo</span><i aria-hidden="true">⌄</i>';
+      button.onclick=()=>{
+        const open=card.classList.toggle('mobile-plan-expanded');
+        button.setAttribute('aria-expanded',open?'true':'false');
+        button.querySelector('span').textContent=open?'Ocultar detalhes':'Ver plano completo';
+      };
+      metrics?.insertAdjacentElement('afterend',button);
+    }
+  }
+
+  function enhanceCourseView(){
+    if(!isPhone())return;
+    const view=q('[data-view="course"]');if(!view)return;
+    const hero=q('.course-hero',view);if(!hero)return;
+    hero.classList.add('mobile-course-compact');
+    if(!q('.mobile-course-actions',hero)){
+      const actions=document.createElement('div');actions.className='mobile-course-actions';
+      actions.innerHTML='<button type="button" data-mobile-course-search><span class="ui-icon icon-search ui-icon-sm" aria-hidden="true"></span><b>Buscar</b></button><button type="button" data-mobile-course-details><span class="ui-icon icon-more ui-icon-sm" aria-hidden="true"></span><b>Detalhes</b></button>';
+      const summary=q('#courseProgressSummary',hero);
+      (summary||q('#courseDesc',hero)||q('#courseTitle',hero))?.insertAdjacentElement('afterend',actions);
+      actions.querySelector('[data-mobile-course-search]').onclick=()=>{
+        const open=hero.classList.toggle('mobile-course-search-open');
+        if(open)setTimeout(()=>q('#courseSearch',hero)?.focus(),40);
+      };
+      actions.querySelector('[data-mobile-course-details]').onclick=e=>{
+        const open=hero.classList.toggle('mobile-course-expanded');
+        e.currentTarget.querySelector('b').textContent=open?'Menos':'Detalhes';
+        e.currentTarget.setAttribute('aria-expanded',open?'true':'false');
+      };
+    }
+  }
+
+  function ensureReaderSkeleton(){
+    const reader=q('#reader');if(!reader)return null;
+    let skeleton=q('#mobileReaderSkeleton',reader);
+    if(!skeleton){
+      skeleton=document.createElement('div');skeleton.id='mobileReaderSkeleton';skeleton.className='mobile-reader-skeleton';skeleton.hidden=true;
+      skeleton.innerHTML='<div class="mobile-reader-skeleton-cover"></div><div class="mobile-reader-skeleton-line wide"></div><div class="mobile-reader-skeleton-line"></div><div class="mobile-reader-skeleton-line short"></div>';
+      q('#readerFrame',reader)?.insertAdjacentElement('beforebegin',skeleton);
+    }
+    return skeleton;
+  }
+  function showReaderSkeleton(){
+    if(!isPhone())return;
+    const reader=q('#reader'),frame=q('#readerFrame'),skeleton=ensureReaderSkeleton();
+    if(!reader?.classList.contains('open')||!frame||!skeleton)return;
+    const src=frame.getAttribute('src')||'';
+    if(!src||src==='about:blank')return;
+    if(readerSkeletonSrc!==src){readerSkeletonSrc=src;skeleton.hidden=false}
+  }
+  function hideReaderSkeleton(){const skeleton=q('#mobileReaderSkeleton');if(skeleton)skeleton.hidden=true}
+  function enhanceReader(){
+    if(!isPhone())return;
+    const reader=q('#reader'),frame=q('#readerFrame');if(!reader||!frame)return;
+    ensureReaderSkeleton();
+    if(frame.dataset.mobileLoadBound!=='1'){
+      frame.dataset.mobileLoadBound='1';
+      frame.addEventListener('load',()=>setTimeout(hideReaderSkeleton,40));
+    }
+    let save=q('#mobileReaderSave',reader);
+    if(!save){
+      save=document.createElement('button');save.id='mobileReaderSave';save.type='button';save.setAttribute('role','menuitem');
+      save.innerHTML='<span class="ui-icon icon-download ui-icon-sm" aria-hidden="true"></span><span>Salvar agora</span>';
+      save.onclick=()=>{closeReaderMoreMenu?.();if(typeof forceSaveCurrentMap==='function')forceSaveCurrentMap();else q('#readerSave')?.click()};
+      q('#readerMoreMenu',reader)?.appendChild(save);
+    }
+    save.hidden=!state?.readerMapKey;
+    if(reader.classList.contains('open'))showReaderSkeleton();else{hideReaderSkeleton();readerSkeletonSrc=''}
+  }
+
+  function enhanceAgendaMobile(){
+    if(!isPhone())return;
+    const view=q('[data-view="agenda"]');if(!view)return;
+    const active=q('[data-agenda-mode].active',view)?.dataset.agendaMode||'month';
+    view.dataset.mobileAgendaMode=active;
+    if(active==='today'){
+      const head=q('.study-agenda-day-head',view);
+      if(head){
+        const dateInput=q('#agendaQuickForm [name="date"]',view),date=dateInput?.value?new Date(dateInput.value+'T12:00:00'):new Date();
+        const kicker=head.querySelector('.kicker'),title=head.querySelector('h3');
+        if(kicker)kicker.textContent='Hoje';
+        if(title)title.textContent=date.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'short'}).replace('.','');
+      }
+    }
   }
 
   function enhanceCourseCards(){
@@ -105,6 +198,13 @@
       button.setAttribute('aria-expanded',open?'true':'false');
       button.onclick=()=>{
         const next=panel.classList.contains('mobile-settings-collapsed');
+        if(next){
+          qa('.mobile-settings-panel',view).forEach(other=>{
+            if(other===panel)return;
+            other.classList.add('mobile-settings-collapsed');
+            other.querySelector(':scope > .mobile-settings-toggle')?.setAttribute('aria-expanded','false');
+          });
+        }
         panel.classList.toggle('mobile-settings-collapsed',!next);
         button.setAttribute('aria-expanded',next?'true':'false');
       };
@@ -175,11 +275,15 @@
     setPhoneClass();
     updateReaderMode();
     enforcePhoneBottomNav();
+    enhanceHome();
     enhanceCourseCards();
+    enhanceCourseView();
     enhanceSettings();
     enhanceProgress();
     enhanceSkeletons();
     ensureAgendaToday();
+    enhanceAgendaMobile();
+    enhanceReader();
     updateTopbar();
   }
 
