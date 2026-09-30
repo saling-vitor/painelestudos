@@ -5,6 +5,7 @@
 .mobile-course-details,
 .mobile-settings-toggle,
 .mobile-subsettings-toggle{display:none}
+.mobile-progress-stack{display:contents}
 .mobile-progress-group{display:contents}
 .mobile-progress-group>summary{display:none}
 
@@ -1762,5 +1763,16 @@
   html.is-phone-layout details.mobile-progress-group>summary{
     display:flex!important;
     visibility:visible!important;
+  }
+}
+
+
+/* V15.4.3 · pilha estável do Progresso mobile */
+@media(max-width:480px){
+  html.is-phone-layout .mobile-progress-stack{
+    display:block!important;
+  }
+  html.is-phone-layout .mobile-progress-stack>.mobile-progress-group{
+    width:100%;
   }
 }

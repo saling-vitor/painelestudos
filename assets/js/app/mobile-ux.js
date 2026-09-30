@@ -250,6 +250,23 @@
     node.parentNode.insertBefore(details,node);
     details.append(summary,node);
   }
+  function normalizeProgressGroups(view){
+    let stack=q('#mobileProgressStack',view);
+    if(!stack){
+      stack=document.createElement('div');
+      stack.id='mobileProgressStack';
+      stack.className='mobile-progress-stack';
+      const head=q(':scope > .section-head',view);
+      if(head)head.insertAdjacentElement('afterend',stack);else view.prepend(stack);
+    }
+    const order=['summary','priority','performance','subjects'];
+    const groups=order.map(key=>q('[data-mobile-progress-group="'+key+'"]',view)).filter(Boolean);
+    groups.forEach(group=>{if(group.parentElement!==stack)stack.appendChild(group)});
+    const current=[...stack.children].filter(node=>node.matches?.('.mobile-progress-group')).map(node=>node.dataset.mobileProgressGroup);
+    const desired=groups.map(node=>node.dataset.mobileProgressGroup);
+    if(current.join('|')!==desired.join('|'))groups.forEach(group=>stack.appendChild(group));
+  }
+
   function enhanceProgress(){
     const view=q('[data-view="progress"]');if(!view)return;
     if(!isPhone()){qa('.mobile-progress-group',view).forEach(group=>group.open=true);return}
@@ -263,7 +280,7 @@
     const doubts=q('#studyDoubtInbox',view),performance=q('[data-mobile-progress-group="performance"]',view);
     if(doubts&&performance&&!doubts.closest('.mobile-progress-group'))performance.appendChild(doubts);
     wrapProgressNode(q('#progressInfo',view),'subjects','Disciplinas','Mapas, estados e cobertura',false);
-    if(!isPhone())qa('.mobile-progress-group',view).forEach(d=>d.open=true);
+    normalizeProgressGroups(view);
   }
 
   function enhanceSkeletons(){
