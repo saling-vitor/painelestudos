@@ -347,7 +347,7 @@
     return created.filter(Boolean);
   }
   function exportAgendaIcs(){
-    const dashboard=agendaData(),manual=(dashboard.agenda||[]).filter(item=>!item.deleted),topics=dueTopicRows().slice(0,100).map(row=>({id:'topic-'+row.id,date:dateKey(row.dueAt),title:'Revisão · '+(row.map.code||'MAP')+' · '+row.title,kind:'review'})),exams=combinedCourses().map(course=>({id:'exam-'+course.id,date:dateKey(parseDate(course.examDate)||new Date()),title:'Prova · '+course.title,kind:'exam'})).filter(item=>item.date);
+    const dashboard=agendaData(),manual=(dashboard.agenda||[]).filter(item=>!item.deleted),topics=dueTopicRows().slice(0,100).map(row=>({id:'topic-'+row.id,date:dateKey(row.dueAt),title:'Revisão · '+(row.map.code||'MAP')+' · '+row.title,kind:'review'})),exams=combinedCourses().map(course=>{const d=parseDate(course.examDate);return d?{id:'exam-'+course.id,date:dateKey(d),title:'Prova · '+course.title,kind:'exam'}:null}).filter(Boolean);
     const events=[...manual,...topics,...exams],stamp=nowIso().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
     const clean=value=>String(value||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
     const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Meus Mapas//Agenda de Estudos//PT-BR','CALSCALE:GREGORIAN'];
