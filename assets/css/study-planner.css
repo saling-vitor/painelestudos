@@ -65,3 +65,5 @@
  .matrix-topic,.replan-options button,.error-items>button{min-height:48px}
  .topic-rating button,.study-now-buttons button{min-height:44px}
 }
+
+.agenda-entry.is-dragging-touch{opacity:.55;outline:1px solid rgba(195,170,132,.45);touch-action:none}
