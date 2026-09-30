@@ -1,17 +1,19 @@
 {
-  "version": "15.6.0",
-  "label": "V15.6.0",
-  "releasedAt": "2026-09-30T18:25:00-03:00",
-  "notes": "Refino mobile baseado na gravação e nos prints reais do iPhone: navegação por Menu, cards mais compactos, rail retrátil no leitor, Agenda sob demanda e correção da revisão com data inválida.",
+  "version": "15.6.1",
+  "label": "V15.6.1",
+  "releasedAt": "2026-09-30T18:58:00-03:00",
+  "notes": "Hotfix de estabilidade do smartphone: elimina observação duplicada do DOM, corrige o Menu e isola componentes de telefone do iPad.",
   "showWhatsNew": true,
   "highlights": [
-    "Menu do smartphone concentra Agenda, Simulados e Configurações sem ocupar a barra inferior",
-    "Sincronização do topo usa um único ícone e estados visuais consistentes",
-    "Cards de mapas, cursos e simulados ficam mais compactos preservando capas e alvos de toque",
-    "Controles de estudo do leitor podem recolher e reaparecem ao rolar para cima",
-    "Agenda recolhe o formulário de planejamento e melhora a leitura da semana e das datas",
-    "Progresso fica mais denso com próximas ações em faixa horizontal",
-    "Datas inválidas de revisão são autocorrigidas, eliminando atrasos absurdos como 740255d",
-    "Preserva a correção de remoção de eventos e sessões já publicada"
+    "Menu passa a existir somente em smartphones de até 480 px e desaparece completamente no iPad/tablet",
+    "Remove o segundo MutationObserver global e concentra as atualizações mobile em um único agendador por frame",
+    "Menu fecha explicitamente em toda navegação e o overlay fica acima da barra inferior",
+    "Remove blur de tela cheia e reduz composição pesada no Safari do iPhone",
+    "Leitor mantém a barra retrátil sem timer mobile duplicado e usa apenas um listener de rolagem",
+    "Navegação e leitores passam a emitir eventos próprios em vez de depender de varreduras contínuas do DOM",
+    "Configurações não recriam atalhos duplicados de Agenda e Simulados",
+    "CI passa a executar testes de smartphone também em WebKit com perfil de iPhone",
+    "Adiciona teste de estresse do Menu e proteção para impedir Menu de smartphone no iPad",
+    "Preserva todos os ajustes visuais, Agenda, revisão e remoção de sessões da V15.6.0/V15.5.1"
   ]
 }
