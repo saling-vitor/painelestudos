@@ -1,19 +1,15 @@
 {
-  "version": "15.6.1",
-  "label": "V15.6.1",
-  "releasedAt": "2026-09-30T18:56:00-03:00",
-  "notes": "Hotfix de estabilidade do smartphone: elimina observação duplicada do DOM, corrige o Menu e isola componentes de telefone do iPad.",
+  "version": "15.7.0",
+  "label": "V15.7.0",
+  "releasedAt": "2026-09-30T22:54:16.388Z",
+  "notes": "Primeira etapa do pacote visual/funcional: limpa o tempo legado contabilizado sem sessão real e adiciona gerenciamento seguro dos contadores de estudo.",
   "showWhatsNew": true,
   "highlights": [
-    "Menu passa a existir somente em smartphones de até 480 px e desaparece completamente no iPad/tablet",
-    "Remove o segundo MutationObserver global e concentra as atualizações mobile em um único agendador por frame",
-    "Menu fecha explicitamente em toda navegação e o overlay fica acima da barra inferior",
-    "Remove blur de tela cheia e reduz composição pesada no Safari do iPhone",
-    "Leitor mantém a barra retrátil sem timer mobile duplicado e usa apenas um listener de rolagem",
-    "Navegação e leitores passam a emitir eventos próprios em vez de depender de varreduras contínuas do DOM",
-    "Configurações não recriam atalhos duplicados de Agenda e Simulados",
-    "CI passa a executar testes de smartphone também em WebKit com perfil de iPhone",
-    "Adiciona teste de estresse do Menu e proteção para impedir Menu de smartphone no iPad",
-    "Preserva todos os ajustes visuais, Agenda, revisão e remoção de sessões da V15.6.0/V15.5.1"
+    "Tempo legado órfão é limpo automaticamente quando não existe nenhuma sessão real preservada",
+    "Configurações ganha Gerenciar tempo de estudo com Zerar hoje, Zerar semana e Zerar todo o histórico",
+    "Os resets alteram somente contadores de tempo e preservam sessões, agenda, OK/DIF/REV, notas e simulados",
+    "Resets usam revisão sincronizável para impedir que uma cópia antiga da nuvem restaure minutos apagados",
+    "Abrir um mapa continua sem contabilizar tempo; somente uma sessão iniciada manualmente soma minutos",
+    "Preserva as correções de estabilidade mobile da V15.6.1"
   ]
 }
