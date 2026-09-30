@@ -246,6 +246,7 @@
       }else startSession({mode:'free'});
     };
     root.querySelectorAll('[data-dashboard-agenda]').forEach(button=>button.onclick=()=>nav('agenda'));
+    if(window.StudyPlanner?.renderHome)setTimeout(()=>StudyPlanner.renderHome(),0);
   }
 
   function ensureAgendaView(){
@@ -311,6 +312,7 @@
     }
     grid.querySelectorAll('[data-agenda-day]').forEach(button=>button.onclick=()=>{agendaCursor=parseDate(button.dataset.agendaDay)||new Date();renderAgenda()});
     renderAgendaDayDetail();
+    if(window.StudyPlanner?.enhanceAgenda)setTimeout(()=>StudyPlanner.enhanceAgenda(),0);
   }
 
   function heatmapHtml(){
@@ -418,6 +420,7 @@
     form.onsubmit=e=>{e.preventDefault();saveGoalsFromForm(form)};
     form.querySelector('button[type="submit"]').onclick=e=>{e.preventDefault();saveGoalsFromForm(form)};
     root.querySelector('[data-settings-pomodoro]').onclick=()=>startPomodoro(g.pomodoroWork);
+    if(window.StudyPlanner?.render)setTimeout(()=>StudyPlanner.render(),0);
   }
   function enhanceStudyPlan(){
     const grid=document.getElementById('homeStudyPlan'),section=document.getElementById('homeReviewSection');
