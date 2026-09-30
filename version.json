@@ -1,15 +1,14 @@
 {
-  "version": "15.7.0",
-  "label": "V15.7.0",
-  "releasedAt": "2026-09-30T22:54:16.388Z",
-  "notes": "Primeira etapa do pacote visual/funcional: limpa o tempo legado contabilizado sem sessão real e adiciona gerenciamento seguro dos contadores de estudo.",
+  "version": "15.8.0",
+  "label": "V15.8.0",
+  "releasedAt": "2026-09-30T23:25:42.190Z",
+  "notes": "Segunda etapa do pacote visual: corrige espaçamentos estruturais do Progresso, recorte das capas e a faixa residual da topbar.",
   "showWhatsNew": true,
   "highlights": [
-    "Tempo legado órfão é limpo automaticamente quando não existe nenhuma sessão real preservada",
-    "Configurações ganha Gerenciar tempo de estudo com Zerar hoje, Zerar semana e Zerar todo o histórico",
-    "Os resets alteram somente contadores de tempo e preservam sessões, agenda, OK/DIF/REV, notas e simulados",
-    "Resets usam revisão sincronizável para impedir que uma cópia antiga da nuvem restaure minutos apagados",
-    "Abrir um mapa continua sem contabilizar tempo; somente uma sessão iniciada manualmente soma minutos",
-    "Preserva as correções de estabilidade mobile da V15.6.1"
+    "Ritmo de estudo, Progresso geral e concursos agora mantêm respiro estrutural consistente",
+    "Capas de mapas, simulados e pré-visualizações ficam recortadas dentro dos cantos dos cards",
+    "A faixa residual sob a busca foi removida sem alterar o glass da topbar",
+    "Clipping das capas foi reforçado para desktop, iPad e smartphone, inclusive em imagens com hover",
+    "Mantém as correções de tempo de estudo e sincronização da V15.7.0"
   ]
 }
