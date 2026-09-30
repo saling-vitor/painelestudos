@@ -219,11 +219,13 @@
     const dueTopics=dueTopicRows(),topicCounts={};
     dueTopics.forEach(row=>topicCounts[row.mapKey]=(topicCounts[row.mapKey]||0)+1);
     const reviewSummary=typeof reviewScheduleSummary==='function'?reviewScheduleSummary(maps):{schedule:{}};
+    const courseTotals={};
+    for(const item of maps){const course=item.courseId||'',cat=item.category||'Outros';courseTotals[course]||={total:0,cats:{}};const n=Math.max(1,Number(item.topics)||1);courseTotals[course].total+=n;courseTotals[course].cats[cat]=(courseTotals[course].cats[cat]||0)+n}
     return maps.map(map=>{
-      const key=mapKeyOf(map),p=mapProgress(map),weak=simulationWeaknessForMap(map),days=daysUntilExam(map);
+      const key=mapKeyOf(map),p=mapProgress(map),weak=simulationWeaknessForMap(map),days=daysUntilExam(map),courseWeight=courseTotals[map.courseId||'']||{total:1,cats:{}},categoryShare=(courseWeight.cats[map.category||'Outros']||0)/Math.max(1,courseWeight.total);
       const schedule=reviewSummary.schedule?.[key],due=Date.parse(schedule?.dueAt||0)||0,today=startDay(new Date()).getTime(),overdueDays=due&&due<today?Math.ceil((today-due)/86400000):0;
       const last=typeof activityTimestamp==='function'?activityTimestamp(p.lastActivity):Date.parse(p.lastActivity||0)||0,ageDays=last?Math.floor((Date.now()-last)/86400000):30;
-      let score=(p.difficult||0)*12+(p.review||0)*7+(topicCounts[key]||0)*9+weak.score;
+      let score=(p.difficult||0)*12+(p.review||0)*7+(topicCounts[key]||0)*9+weak.score+Math.round(categoryShare*12);
       if(overdueDays)score+=28+Math.min(25,overdueDays*3);
       else if(due&&due<today+86400000)score+=20;
       if(p.marked>0&&p.pending>0)score+=8;
@@ -240,7 +242,7 @@
       if(overdueDays)reasons.push('revisão atrasada '+overdueDays+'d');
       if(weak.score)reasons.push('erros em simulados');
       if(days!==null&&days>=0&&days<=30)reasons.push('prova em '+days+'d');
-      if(!reasons.length&&p.pending)reasons.push('conteúdo pendente');
+      if(categoryShare>=.28)reasons.push('peso alto no conteúdo');if(!reasons.length&&p.pending)reasons.push('conteúdo pendente');
       const minutes=topicCounts[key]?Math.min(25,10+topicCounts[key]*3):p.difficult?25:p.review?20:p.pending?20:15;
       return{map,key,progress:p,score,reasons,minutes,dueTopics:topicCounts[key]||0,weakness:weak,daysUntilExam:days};
     }).sort((a,b)=>b.score-a.score||b.progress.difficult-a.progress.difficult||b.progress.review-a.progress.review);
