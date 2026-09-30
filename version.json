@@ -1,14 +1,17 @@
 {
-  "version": "15.5.1",
-  "label": "V15.5.1",
-  "releasedAt": "2026-09-30T21:16:40.069Z",
-  "notes": "Corrige a remoção dos registros concluídos que aparecem na Agenda, incluindo testes de Pomodoro e sessões de estudo.",
+  "version": "15.6.0",
+  "label": "V15.6.0",
+  "releasedAt": "2026-09-30T18:25:00-03:00",
+  "notes": "Refino mobile baseado na gravação e nos prints reais do iPhone: navegação por Menu, cards mais compactos, rail retrátil no leitor, Agenda sob demanda e correção da revisão com data inválida.",
   "showWhatsNew": true,
   "highlights": [
-    "Sessões concluídas exibidas na Agenda agora também mostram o botão Remover",
-    "Pomodoros e sessões de estudo de teste podem ser apagados diretamente no dia selecionado",
-    "A remoção usa confirmação antes de excluir o registro",
-    "Sessões removidas deixam de aparecer no histórico e nas contagens de sessões",
-    "O tempo dessas sessões removidas é descontado das métricas efetivas de hoje, semana e mapa"
+    "Menu do smartphone concentra Agenda, Simulados e Configurações sem ocupar a barra inferior",
+    "Sincronização do topo usa um único ícone e estados visuais consistentes",
+    "Cards de mapas, cursos e simulados ficam mais compactos preservando capas e alvos de toque",
+    "Controles de estudo do leitor podem recolher e reaparecem ao rolar para cima",
+    "Agenda recolhe o formulário de planejamento e melhora a leitura da semana e das datas",
+    "Progresso fica mais denso com próximas ações em faixa horizontal",
+    "Datas inválidas de revisão são autocorrigidas, eliminando atrasos absurdos como 740255d",
+    "Preserva a correção de remoção de eventos e sessões já publicada"
   ]
 }
