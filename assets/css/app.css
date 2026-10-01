@@ -3165,3 +3165,180 @@ html.is-ipad .topbar{
   font-size:9.5px;
   line-height:1.42;
 }
+
+
+/* =========================================================
+   V15.11.0 · FINAL POLISH · estados, divisórias e microdetalhes
+   ========================================================= */
+:root{
+  --ui-divider:rgba(255,255,255,.058);
+  --ui-divider-strong:rgba(255,255,255,.082);
+  --ui-focus:#a9c8e7;
+  --ui-focus-ring:0 0 0 3px rgba(123,165,205,.16);
+  --ui-hover-edge:rgba(216,197,158,.25);
+  --ui-pressed-bg:rgba(216,197,158,.075);
+  --ui-motion-fast:140ms;
+  --ui-motion:180ms;
+}
+
+/* Interações consistentes sem alterar a geometria aprovada. */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex]{
+  -webkit-tap-highlight-color:transparent;
+}
+button,
+a,
+[role="button"]{
+  transition:
+    border-color var(--ui-motion-fast) ease,
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease,
+    box-shadow var(--ui-motion) ease,
+    opacity var(--ui-motion-fast) ease,
+    transform var(--ui-motion-fast) ease;
+}
+input,select,textarea{
+  transition:
+    border-color var(--ui-motion-fast) ease,
+    background-color var(--ui-motion-fast) ease,
+    box-shadow var(--ui-motion-fast) ease;
+}
+
+/* Foco de teclado forte o suficiente para acessibilidade, sem glow excessivo. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible{
+  outline:1px solid var(--ui-focus)!important;
+  outline-offset:2px!important;
+  box-shadow:var(--ui-focus-ring)!important;
+}
+.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible,
+.course-toolbar input:focus-visible,.course-toolbar select:focus-visible,
+.simulation-search input:focus-visible,.simulation-toolbar select:focus-visible{
+  border-color:rgba(169,200,231,.44)!important;
+  background:rgba(12,15,19,.92)!important;
+}
+
+/* Botões: alinhamento de ícones e feedback de pressão. */
+button.primary,
+button.secondary,
+button.danger,
+button.icon-btn,
+button.close{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+button.primary>.ui-icon,
+button.secondary>.ui-icon,
+button.danger>.ui-icon,
+button.icon-btn>.ui-icon,
+button.close>.ui-icon{
+  flex:0 0 auto;
+  vertical-align:middle;
+}
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled{
+  cursor:not-allowed!important;
+  opacity:.42!important;
+}
+.primary:not(:disabled):active,
+.secondary:not(:disabled):active,
+.danger:not(:disabled):active,
+.icon-btn:not(:disabled):active,
+.category-btn:not(:disabled):active,
+.progress-filter:not(:disabled):active,
+.course-study-filter:not(:disabled):active{
+  transform:scale(.985)!important;
+  background-color:var(--ui-pressed-bg)!important;
+}
+
+/* Divisórias compartilhadas ficam menos pesadas e mais uniformes. */
+.course-footer,
+.map-card .foot,
+.simulation-card-footer,
+.progress-global-footer,
+.progress-map-list,
+.study-stat-line,
+.readerbar{
+  border-color:var(--ui-divider)!important;
+}
+
+/* Cartões clicáveis ganham profundidade sutil; nada de glow forte. */
+.course-card,
+.map-card,
+.simulation-card,
+.progress-insight-card,
+.progress-attention-card{
+  transition:
+    border-color var(--ui-motion) ease,
+    box-shadow var(--ui-motion) ease,
+    transform var(--ui-motion) ease,
+    background-color var(--ui-motion) ease;
+}
+@media(hover:hover){
+  .course-card:hover,
+  .map-card:hover,
+  .simulation-card:hover{
+    border-color:var(--ui-hover-edge)!important;
+    box-shadow:0 20px 46px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.04)!important;
+  }
+  .progress-insight-card:hover,
+  .progress-attention-card:hover{
+    border-color:rgba(255,255,255,.11)!important;
+    background:rgba(255,255,255,.022)!important;
+  }
+}
+
+/* Estado ativo/selecionado segue a mesma assinatura visual em filtros. */
+.category-btn.active,
+.progress-filter.active,
+.course-study-filter.active{
+  border-color:rgba(216,197,158,.30)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025),0 0 0 1px rgba(216,197,158,.025);
+}
+
+/* Ícones mascarados ficam visualmente centralizados em linhas e botões. */
+.ui-icon{
+  vertical-align:-.12em;
+}
+button>.ui-icon,
+.nav-btn>.ui-icon,
+.bottom-nav button>.ui-icon{
+  vertical-align:0;
+}
+
+/* Menus/modais: separação do fundo e borda superior limpa. */
+.reader-more-menu,
+.course-more-menu,
+.agenda-more-menu{
+  border-color:var(--ui-divider-strong)!important;
+  box-shadow:0 18px 54px rgba(0,0,0,.52),inset 0 1px rgba(255,255,255,.025)!important;
+}
+.modal,
+.planner-modal,
+.study-doubt-panel{
+  overscroll-behavior:contain;
+}
+
+/* Respeita usuários que preferem menos movimento. */
+@media(prefers-reduced-motion:reduce){
+  button,a,[role="button"],
+  input,select,textarea,
+  .course-card,.map-card,.simulation-card,
+  .progress-insight-card,.progress-attention-card{
+    transition:none!important;
+  }
+}
