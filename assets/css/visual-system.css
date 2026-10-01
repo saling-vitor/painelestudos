@@ -1,0 +1,260 @@
+/* =========================================================
+   V15.20.0-G · ETAPA 4 [G] · SISTEMA VISUAL GERAL
+   Linguagem compartilhada entre desktop/notebook, iPad/tablet
+   e smartphone. O iPhone mantém integralmente a camada mobile
+   já aprovada; esta folha harmoniza [D+T] e expõe tokens [G].
+   ========================================================= */
+
+:root{
+  --system-bg:#030405;
+  --system-surface:
+    linear-gradient(145deg,rgba(255,255,255,.026),rgba(255,255,255,.007) 48%,transparent 76%),
+    rgba(9,11,14,.84);
+  --system-surface-strong:
+    linear-gradient(145deg,rgba(255,255,255,.032),rgba(255,255,255,.009) 45%,transparent 74%),
+    rgba(8,10,13,.93);
+  --system-surface-soft:rgba(255,255,255,.017);
+  --system-surface-soft-2:rgba(255,255,255,.025);
+  --system-edge:rgba(255,255,255,.064);
+  --system-edge-strong:rgba(255,255,255,.090);
+  --system-divider:rgba(255,255,255,.048);
+  --system-shadow:0 12px 32px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.020);
+  --system-shadow-soft:0 7px 20px rgba(0,0,0,.19),inset 0 1px rgba(255,255,255,.016);
+  --system-radius-panel:14px;
+  --system-radius-card:14px;
+  --system-radius-control:9px;
+  --system-radius-chip:7px;
+  --system-text:#d9dce0;
+  --system-text-soft:#989ea7;
+  --system-text-dim:#747b84;
+  --system-accent:#c5b18b;
+  --system-ok:#9fd5ae;
+  --system-rev:#aec3d8;
+  --system-dif:#e4a0a8;
+  --system-pend:#d6c18d;
+}
+
+/* [D+T] Fundo menos chapado, sem transformar o app em uma superfície neon. */
+html:not(.is-phone-layout) body{
+  background:
+    radial-gradient(920px 620px at 10% -8%,rgba(42,49,59,.13),transparent 68%),
+    radial-gradient(760px 520px at 104% 20%,rgba(216,197,158,.020),transparent 74%),
+    linear-gradient(180deg,#030405 0%,#050609 46%,#020304 100%)!important;
+}
+
+/* [D+T] Ritmo e hierarquia comuns. Geometria específica das Etapas 1–3 é preservada. */
+html:not(.is-phone-layout) .section{
+  margin-top:26px;
+}
+html:not(.is-phone-layout) .section-head{
+  margin-bottom:11px;
+}
+html:not(.is-phone-layout) .section-head h2{
+  color:#e8eaed;
+  letter-spacing:-.016em;
+}
+html:not(.is-phone-layout) .section-head p{
+  color:var(--system-text-soft);
+}
+html:not(.is-phone-layout) .kicker,
+html:not(.is-phone-layout) .panel-kicker{
+  color:#8f8068;
+}
+
+/* [D+T] Superfícies principais: profundidade única e glassmorphism controlado. */
+html:not(.is-phone-layout) .panel,
+html:not(.is-phone-layout) .metric,
+html:not(.is-phone-layout) .continue-card,
+html:not(.is-phone-layout) .progress-insights,
+html:not(.is-phone-layout) .progress-global-panel,
+html:not(.is-phone-layout) .progress-attention,
+html:not(.is-phone-layout) .cloud-diagnostic,
+html:not(.is-phone-layout) .document-upload,
+html:not(.is-phone-layout) .document-admin,
+html:not(.is-phone-layout) .import-preview,
+html:not(.is-phone-layout) .study-command-card,
+html:not(.is-phone-layout) .study-agenda-calendar{
+  border-color:var(--system-edge)!important;
+  background:var(--system-surface)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(105%)!important;
+  backdrop-filter:blur(10px) saturate(105%)!important;
+  box-shadow:var(--system-shadow)!important;
+}
+html:not(.is-phone-layout) .panel,
+html:not(.is-phone-layout) .progress-insights,
+html:not(.is-phone-layout) .progress-global-panel,
+html:not(.is-phone-layout) .progress-attention,
+html:not(.is-phone-layout) .document-upload,
+html:not(.is-phone-layout) .document-admin,
+html:not(.is-phone-layout) .study-command-card,
+html:not(.is-phone-layout) .study-agenda-calendar{
+  border-radius:var(--system-radius-panel)!important;
+}
+html:not(.is-phone-layout) .metric,
+html:not(.is-phone-layout) .import-preview,
+html:not(.is-phone-layout) .cloud-diagnostic{
+  border-radius:11px!important;
+}
+
+/* [D+T] Subsuperfícies usam contraste de plano, não caixas pesadas aninhadas. */
+html:not(.is-phone-layout) .study-plan-item,
+html:not(.is-phone-layout) .progress-insight-card,
+html:not(.is-phone-layout) .progress-attention-card,
+html:not(.is-phone-layout) .agenda-entry,
+html:not(.is-phone-layout) .study-doubt-list article,
+html:not(.is-phone-layout) .agenda-week-card,
+html:not(.is-phone-layout) .agenda-day{
+  border-color:var(--system-divider)!important;
+  background:var(--system-surface-soft)!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) .agenda-today-card{
+  border-color:var(--system-edge)!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.018),transparent 58%),
+    rgba(255,255,255,.012)!important;
+  box-shadow:var(--system-shadow-soft)!important;
+}
+
+/* [D+T] Cards de conteúdo mantêm identidade/arte, mas compartilham borda e profundidade. */
+html:not(.is-phone-layout) .map-card,
+html:not(.is-phone-layout) .simulation-card{
+  border-color:var(--system-edge)!important;
+  box-shadow:0 15px 36px rgba(0,0,0,.29),inset 0 1px rgba(255,255,255,.020)!important;
+}
+html:not(.is-phone-layout) .course-hero{
+  border-color:var(--system-edge)!important;
+  box-shadow:var(--system-shadow)!important;
+}
+
+/* [D+T] Controles neutros; dourado somente para ação principal e seleção. */
+html:not(.is-phone-layout) .secondary,
+html:not(.is-phone-layout) .icon-btn,
+html:not(.is-phone-layout) .close{
+  border-color:var(--system-edge)!important;
+  border-radius:var(--system-radius-control)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.014))!important;
+  color:#b9bec5;
+  box-shadow:inset 0 1px rgba(255,255,255,.018)!important;
+}
+html:not(.is-phone-layout) .primary{
+  border-color:rgba(216,197,158,.20)!important;
+  border-radius:var(--system-radius-control)!important;
+  background:linear-gradient(180deg,rgba(216,197,158,.090),rgba(216,197,158,.036))!important;
+  color:#ded4c0;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) .danger{
+  border-color:rgba(201,104,114,.18)!important;
+  border-radius:var(--system-radius-control)!important;
+  background:rgba(201,104,114,.035)!important;
+  color:#d08e95;
+  box-shadow:none!important;
+}
+
+/* [D+T] Chips/filtros: neutros por padrão, acento apenas quando ativo. */
+html:not(.is-phone-layout) .chip,
+html:not(.is-phone-layout) .pill,
+html:not(.is-phone-layout) .progress-state,
+html:not(.is-phone-layout) .category-btn,
+html:not(.is-phone-layout) .progress-filter,
+html:not(.is-phone-layout) .course-study-filter,
+html:not(.is-phone-layout) .study-agenda-modes button{
+  border-color:var(--system-divider)!important;
+  border-radius:var(--system-radius-chip)!important;
+  background:rgba(255,255,255,.010)!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) .chip.accent,
+html:not(.is-phone-layout) .category-btn.active,
+html:not(.is-phone-layout) .progress-filter.active,
+html:not(.is-phone-layout) .course-study-filter.active,
+html:not(.is-phone-layout) .study-agenda-modes button.active{
+  border-color:rgba(216,197,158,.15)!important;
+  background:rgba(216,197,158,.032)!important;
+  color:#c8b994!important;
+}
+
+/* [G] Estados OK / REV / DIF / PEND seguem a mesma semântica cromática. */
+html:not(.is-phone-layout) .progress-state.ok{color:var(--system-ok)!important}
+html:not(.is-phone-layout) .progress-state.rev{color:var(--system-rev)!important}
+html:not(.is-phone-layout) .progress-state.dif{color:var(--system-dif)!important}
+html:not(.is-phone-layout) .progress-state.pending{color:var(--system-pend)!important}
+
+/* [D+T] Campos e barra de progresso entram na mesma família visual. */
+html:not(.is-phone-layout) input:not([type="checkbox"]):not([type="radio"]),
+html:not(.is-phone-layout) select,
+html:not(.is-phone-layout) textarea{
+  border-color:var(--system-edge)!important;
+  border-radius:var(--system-radius-control)!important;
+  background:rgba(8,10,13,.76)!important;
+  color:#d0d3d8!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.014)!important;
+}
+html:not(.is-phone-layout) input:not([type="checkbox"]):not([type="radio"]):focus,
+html:not(.is-phone-layout) select:focus,
+html:not(.is-phone-layout) textarea:focus{
+  border-color:rgba(169,200,231,.28)!important;
+  background:rgba(10,12,15,.90)!important;
+}
+html:not(.is-phone-layout) .progress-track{
+  min-height:7px;
+  background:rgba(255,255,255,.050)!important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.30)!important;
+}
+
+/* [D+T] Divisórias, estados vazios, menus e modais ficam no mesmo nível de acabamento. */
+html:not(.is-phone-layout) .course-footer,
+html:not(.is-phone-layout) .map-card .foot,
+html:not(.is-phone-layout) .simulation-card-footer,
+html:not(.is-phone-layout) .progress-global-footer,
+html:not(.is-phone-layout) .progress-map-list,
+html:not(.is-phone-layout) .study-stat-line,
+html:not(.is-phone-layout) .readerbar,
+html:not(.is-phone-layout) .study-agenda-form{
+  border-color:var(--system-divider)!important;
+}
+html:not(.is-phone-layout) .empty:not(.mobile-skeleton){
+  border-color:var(--system-edge)!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.008)!important;
+  color:var(--system-text-dim)!important;
+}
+html:not(.is-phone-layout) .modal-card,
+html:not(.is-phone-layout) .reader-more-menu,
+html:not(.is-phone-layout) .course-more-menu,
+html:not(.is-phone-layout) .agenda-more-menu{
+  border-color:var(--system-edge-strong)!important;
+  background:var(--system-surface-strong)!important;
+  box-shadow:0 24px 68px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.026)!important;
+}
+
+/* [D] Hover; [T] permanece orientado a toque sem depender de hover. */
+@media(hover:hover){
+  html:not(.is-phone-layout) .secondary:hover,
+  html:not(.is-phone-layout) .icon-btn:hover,
+  html:not(.is-phone-layout) .close:hover{
+    border-color:rgba(255,255,255,.115)!important;
+    background:linear-gradient(180deg,rgba(255,255,255,.046),rgba(255,255,255,.019))!important;
+    color:#d7dbe0;
+  }
+  html:not(.is-phone-layout) .primary:hover{
+    border-color:rgba(216,197,158,.26)!important;
+    background:linear-gradient(180deg,rgba(216,197,158,.115),rgba(216,197,158,.045))!important;
+  }
+  html:not(.is-phone-layout) .panel:hover,
+  html:not(.is-phone-layout) .progress-insights:hover,
+  html:not(.is-phone-layout) .progress-global-panel:hover,
+  html:not(.is-phone-layout) .progress-attention:hover{
+    border-color:var(--system-edge-strong)!important;
+  }
+}
+
+/* Redução de movimento continua prevalecendo no sistema inteiro. */
+@media(prefers-reduced-motion:reduce){
+  html:not(.is-phone-layout) .panel,
+  html:not(.is-phone-layout) .metric,
+  html:not(.is-phone-layout) .study-command-card{
+    transition:none!important;
+  }
+}
