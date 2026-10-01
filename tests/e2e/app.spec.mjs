@@ -318,6 +318,7 @@ test('atualizações e diagnóstico ficam compactos',async({page})=>{
 
 test('home consolidada prioriza o estudo diário',async({page})=>{
   await page.goto('/#home');
+  await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
   await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()});
   await expect(page.locator('[data-view="home"]')).toHaveClass(/home-returning/);
   await expect(page.locator('#homeReviewSection')).toBeVisible();
