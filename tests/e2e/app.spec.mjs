@@ -1401,3 +1401,67 @@ test('agenda de revisão invalida é regenerada sem atraso absurdo',async({page}
   expect(result.huge).toBe(false);
   expect(result.stored).not.toContain('0000-01-01');
 });
+
+
+test('smartphone etapa 1 desencaixota curso sem perder respiro',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#course/porto-alegre');
+  await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card').length>0);
+  const data=await page.evaluate(()=>{
+    const content=document.querySelector('.content');
+    const hero=document.querySelector('[data-view="course"] .course-hero');
+    const summary=document.querySelector('[data-view="course"] .course-progress-summary');
+    const metric=[...document.querySelectorAll('[data-view="course"] .course-status-metric')].find(el=>getComputedStyle(el).display!=='none');
+    const action=document.querySelector('[data-view="course"] .mobile-course-actions button');
+    const sticky=document.querySelector('[data-view="course"] .course-sticky-bar');
+    const cs=getComputedStyle(content),hs=getComputedStyle(hero),ss=getComputedStyle(summary),ms=getComputedStyle(metric),as=getComputedStyle(action),sts=getComputedStyle(sticky);
+    return{
+      phone:document.documentElement.classList.contains('is-phone-layout'),
+      paddingLeft:parseFloat(cs.paddingLeft),
+      paddingRight:parseFloat(cs.paddingRight),
+      heroBorder:parseFloat(hs.borderTopWidth),
+      heroShadow:hs.boxShadow,
+      heroBackground:hs.backgroundImage,
+      summaryBorder:parseFloat(ss.borderTopWidth),
+      summaryShadow:ss.boxShadow,
+      metricBorderTop:parseFloat(ms.borderTopWidth),
+      actionBorder:parseFloat(as.borderTopWidth),
+      stickyBorder:parseFloat(sts.borderTopWidth),
+      stickyBackdrop:sts.backdropFilter||sts.webkitBackdropFilter||'none'
+    };
+  });
+  expect(data.phone).toBe(true);
+  expect(data.paddingLeft).toBeGreaterThanOrEqual(12);
+  expect(data.paddingLeft).toBeLessThanOrEqual(14.5);
+  expect(data.paddingRight).toBeGreaterThanOrEqual(12);
+  expect(data.heroBorder).toBe(0);
+  expect(data.heroShadow).toBe('none');
+  expect(data.heroBackground).toBe('none');
+  expect(data.summaryBorder).toBe(0);
+  expect(data.summaryShadow).toBe('none');
+  expect(data.metricBorderTop).toBe(0);
+  expect(data.actionBorder).toBe(0);
+  expect(data.stickyBorder).toBe(0);
+  expect(['none','']).toContain(data.stickyBackdrop);
+  const firstMapTop=await page.locator('#courseMaps .map-card').first().evaluate(el=>el.getBoundingClientRect().top);
+  expect(firstMapTop).toBeLessThan(844);
+});
+
+test('iPad preserva estrutura do curso fora da etapa 1 de smartphone',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#course/porto-alegre');
+  await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card').length>0);
+  const data=await page.locator('[data-view="course"] .course-hero').evaluate(el=>{
+    const style=getComputedStyle(el);
+    return{
+      phone:document.documentElement.classList.contains('is-phone-layout'),
+      border:parseFloat(style.borderTopWidth),
+      background:style.backgroundImage
+    };
+  });
+  expect(data.phone).toBe(false);
+  expect(data.border).toBeGreaterThan(0);
+  expect(data.background).not.toBe('none');
+});
