@@ -213,8 +213,11 @@ test('curso atual continua mostrando apenas categorias realmente usadas',async({
   expect(labels).not.toContain('Informática');
 });
 
-test('filtro do curso não exibe bloco escuro lateral',async({page})=>{
+test('filtro do curso não exibe bloco escuro lateral',async({page},testInfo)=>{
+  const viewport=testInfo.project.name==='ipad'?{width:820,height:1180}:{width:1280,height:800};
+  await page.setViewportSize(viewport);
   await page.goto('/#course/porto-alegre');
+  await expect(page.locator('html')).not.toHaveClass(/is-phone-layout/);
   await expect(page.locator('.course-study-filter-wrap')).toBeVisible();
   const pseudo=await page.locator('.course-study-filter-wrap').evaluate(el=>{
     const style=getComputedStyle(el,'::after');
