@@ -1,18 +1,18 @@
 {
-  "version": "15.20.0",
-  "label": "V15.20.0-G",
-  "releasedAt": "2026-10-01T20:06:00.000Z",
-  "notes": "Etapa 4 [G]: sistema visual geral consolidado entre desktop/notebook, iPad/tablet e smartphone, harmonizando superfícies, bordas, sombras, tipografia, controles e estados sem alterar funcionalidades.",
+  "version": "15.19.0",
+  "label": "V15.19.0-G",
+  "releasedAt": "2026-10-01T19:45:00.000Z",
+  "notes": "Etapa 3 [G]: cabeçalho, busca, sidebar e estados de sincronização refinados em desktop e iPad/tablet, preservando integralmente o fluxo mobile já aprovado.",
   "showWhatsNew": true,
   "highlights": [
-    "Etapa 4 [G]: linguagem visual comum consolidada em tokens reutilizáveis",
-    "[D+T] Fundo preto/grafite ganha profundidade muito sutil, sem efeito neon",
-    "[D+T] Painéis, métricas e superfícies passam a compartilhar bordas, radius e sombras consistentes",
-    "[D+T] Glassmorphism fica controlado e restrito às superfícies principais",
-    "[D+T] Botões e campos ficam neutros; dourado é reservado para ação principal e seleção",
-    "[G] Estados OK / REV / DIF / PEND passam a seguir a mesma semântica visual",
-    "[D+T] Chips, filtros, divisórias, vazios, menus e modais usam o mesmo acabamento",
-    "[M] Sistema visual aprovado do iPhone é preservado integralmente",
-    "Nenhuma lógica de conta, nuvem, cursos, progresso ou sincronização foi alterada"
+    "Etapa 3 [D+T]: cabeçalho superior mais compacto, leve e consistente",
+    "[D+T] Busca ganha hierarquia mais clara e foco visual mais discreto",
+    "[D+T] Instalar app e Sincronizar passam a compartilhar o mesmo sistema de controles",
+    "[D+T] Sincronizado deixa somente o ícone da nuvem/estado em verde; o texto permanece neutro",
+    "[D+T] Sincronizando usa animação discreta; offline e erro usam apenas o ícone como indicador",
+    "[D] Sidebar recebe item ativo mais leve, alinhamento de ícones refinado e rótulos Biblioteca/Sistema mais discretos",
+    "[D] Cartão de nuvem conectada fica mais leve sem perder o estado da conta",
+    "[D+T] Meus Cursos integra a contagem de concursos ao cabeçalho e aproxima visualmente Novo concurso",
+    "[M] Interface do iPhone permanece no padrão já aprovado"
   ]
 }
