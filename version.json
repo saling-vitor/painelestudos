@@ -1,14 +1,16 @@
 {
-  "version": "15.11.0",
-  "label": "V15.11.0",
-  "releasedAt": "2026-10-01T10:08:10.360Z",
-  "notes": "Quinta etapa do pacote visual: acabamento final de estados, foco, divisórias, ícones e microinterações, preservando a identidade e a geometria aprovadas.",
+  "version": "15.12.0",
+  "label": "V15.12.0",
+  "releasedAt": "2026-10-01T08:05:00-03:00",
+  "notes": "Etapa 1 do refinamento exclusivo para smartphone: remove molduras e caixas excessivas da tela do curso, melhora o respiro lateral e simplifica filtros e ações sem alterar iPad ou desktop.",
   "showWhatsNew": true,
   "highlights": [
-    "Foco de teclado ficou consistente e claramente visível em controles, campos e ações",
-    "Hover, pressed, active e disabled agora seguem a mesma assinatura visual em todo o aplicativo",
-    "Divisórias, bordas e sombras receberam ajuste fino para reduzir ruído visual",
-    "Ícones de botões e navegação foram alinhados sem alterar tamanhos ou estrutura dos componentes",
-    "Agenda, timer, planner, menus contextuais e smartphone receberam feedback tátil e visual harmonizado"
+    "Tela do curso no smartphone deixa de usar uma grande moldura com borda, sombra e glow",
+    "Resumo do curso vira uma faixa leve, sem caixas aninhadas em cada indicador",
+    "Buscar e Detalhes ficam visualmente mais simples e com menos contornos",
+    "Barra sticky e filtros do curso ficam mais leves e menos encaixotados",
+    "Margem lateral passa a usar respiro consistente de 12 a 14 px no smartphone",
+    "Mudanças ficam restritas a até 480 px; iPad e desktop permanecem fora do escopo",
+    "Cards dos mapas não foram redesenhados nesta etapa e ficam reservados para a Etapa 2"
   ]
 }
