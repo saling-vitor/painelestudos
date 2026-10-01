@@ -1,16 +1,16 @@
 {
-  "version": "15.12.0",
-  "label": "V15.12.0",
-  "releasedAt": "2026-10-01T08:05:00-03:00",
-  "notes": "Etapa 1 do refinamento exclusivo para smartphone: remove molduras e caixas excessivas da tela do curso, melhora o respiro lateral e simplifica filtros e ações sem alterar iPad ou desktop.",
+  "version": "15.12.1",
+  "label": "V15.12.1",
+  "releasedAt": "2026-10-01T09:49:00-03:00",
+  "notes": "Correção de entrega da interface exclusiva do iPad: publica corretamente o dock lateral recolhível dos controles de estudo e força a atualização do PWA para sair do cache da V15.12.0.",
   "showWhatsNew": true,
   "highlights": [
-    "Tela do curso no smartphone deixa de usar uma grande moldura com borda, sombra e glow",
-    "Resumo do curso vira uma faixa leve, sem caixas aninhadas em cada indicador",
-    "Buscar e Detalhes ficam visualmente mais simples e com menos contornos",
-    "Barra sticky e filtros do curso ficam mais leves e menos encaixotados",
-    "Margem lateral passa a usar respiro consistente de 12 a 14 px no smartphone",
-    "Mudanças ficam restritas a até 480 px; iPad e desktop permanecem fora do escopo",
-    "Cards dos mapas não foram redesenhados nesta etapa e ficam reservados para a Etapa 2"
+    "No iPad, os controles Iniciar estudo, Dúvida, Revisar e Próximo passam para um dock lateral recolhível",
+    "A alça lateral permite abrir e fechar o dock sem cobrir o conteúdo do mapa",
+    "A posição do dock pode ser movida verticalmente e alternada entre as bordas esquerda e direita",
+    "O botão separado Anotar dúvida deixa de ocupar a área de leitura no iPad",
+    "A posição e o estado do dock ficam salvos no próprio aparelho",
+    "Desktop e smartphone permanecem fora desta alteração",
+    "A versão do PWA foi incrementada para garantir que iPads instalados recebam os novos CSS e JavaScript"
   ]
 }
