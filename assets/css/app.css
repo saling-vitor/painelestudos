@@ -3457,3 +3457,185 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-footer{
   }
 }
 
+/* =========================================================
+   V15.18.0-G · ETAPA 2 · MEUS CURSOS — design e hierarquia
+   Escopo: [G] linguagem compartilhada, [D+T] acabamento visual.
+   [M] smartphone preservado integralmente pela exclusão .is-phone-layout.
+   ========================================================= */
+
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
+  border-color:rgba(255,255,255,.078)!important;
+  border-radius:16px!important;
+  background:
+    radial-gradient(420px 190px at 0% 0%,rgba(216,197,158,.045),transparent 68%),
+    linear-gradient(180deg,rgba(13,15,19,.985),rgba(8,10,13,.995))!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.025)!important;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card:before{opacity:.22}
+html:not(.is-phone-layout) #coursesGrid .course-card-kicker-row{gap:10px}
+html:not(.is-phone-layout) #coursesGrid .course-card-code{
+  color:#989ea7;
+  font-size:7.5px;
+  letter-spacing:.12em;
+}
+html:not(.is-phone-layout) #coursesGrid .course-status-pill{
+  min-height:22px;
+  padding:3px 8px;
+  border-radius:999px!important;
+  font-size:7.5px;
+  letter-spacing:.075em;
+}
+html:not(.is-phone-layout) #coursesGrid .course-status-pill.is-active{
+  border-color:rgba(98,169,120,.26)!important;
+  background:rgba(98,169,120,.06)!important;
+  color:#9fd5ae!important;
+}
+html:not(.is-phone-layout) #coursesGrid .course-status-pill.is-archived{
+  border-color:rgba(255,255,255,.065)!important;
+  background:rgba(255,255,255,.018)!important;
+  color:#858b94!important;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card h3{
+  color:#f3f3f5;
+  font-weight:780;
+  letter-spacing:-.014em;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card-role{
+  color:#d5c39e;
+  letter-spacing:.04em;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card-institution{color:#858b94}
+html:not(.is-phone-layout) #coursesGrid .course-card-meta-item,
+html:not(.is-phone-layout) #coursesGrid .course-exam-info,
+html:not(.is-phone-layout) #coursesGrid .course-edital-btn{
+  min-height:28px;
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:8px!important;
+  background:rgba(255,255,255,.018);
+  box-shadow:none;
+  font-size:7.75px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card-meta-item{padding:0 8px}
+html:not(.is-phone-layout) #coursesGrid .course-board-chip.accent{
+  border-color:rgba(255,255,255,.065)!important;
+  background:rgba(255,255,255,.018)!important;
+  color:#a8aeb7!important;
+}
+html:not(.is-phone-layout) #coursesGrid .course-map-count-chip{color:#9298a1}
+html:not(.is-phone-layout) #coursesGrid .course-exam-info{
+  border-color:rgba(216,184,88,.18);
+  background:rgba(216,184,88,.035);
+}
+html:not(.is-phone-layout) #coursesGrid .course-exam-info b{
+  color:#dcc890;
+  font-size:7.75px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-exam-info small{
+  color:#7e848d;
+  font-size:7px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-edital-btn{
+  gap:5px;
+  padding:0 9px;
+  color:#aeb4bd;
+}
+html:not(.is-phone-layout) #coursesGrid .course-edital-btn:focus-visible{
+  outline:2px solid rgba(216,197,158,.32);
+  outline-offset:2px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-head{align-items:center}
+html:not(.is-phone-layout) #coursesGrid .course-progress-head b{
+  color:#ead8b4;
+  font-size:12.5px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-head b small{
+  color:#808690;
+  font-size:7.75px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-head>span{
+  color:#9298a1;
+  font-size:7.75px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-track{
+  height:7px;
+  background:rgba(255,255,255,.055);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.32);
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state{
+  min-height:22px;
+  padding:3px 7px;
+  border-radius:7px;
+  font-size:7.25px;
+  letter-spacing:.045em;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.ok{
+  border-color:rgba(98,169,120,.24);
+  background:rgba(98,169,120,.055);
+  color:#9fd5ae;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.rev{
+  border-color:rgba(109,130,152,.25);
+  background:rgba(109,130,152,.055);
+  color:#aec3d8;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.dif{
+  border-color:rgba(214,104,117,.25);
+  background:rgba(214,104,117,.055);
+  color:#eba0a9;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.pending{
+  border-color:rgba(216,184,88,.20);
+  background:rgba(216,184,88,.045);
+  color:#d9c590;
+}
+html:not(.is-phone-layout) #coursesGrid .course-footer{
+  border-top-color:rgba(255,255,255,.055)!important;
+  color:#7f858e;
+}
+html:not(.is-phone-layout) #coursesGrid .course-last-activity-card{
+  color:#80868f;
+  font-size:10px;
+}
+html:not(.is-phone-layout) #coursesGrid .enter{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-height:32px;
+  padding:0 9px;
+  border:1px solid rgba(216,197,158,.15);
+  border-radius:8px;
+  background:rgba(216,197,158,.035);
+  color:#e2cfa8;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.015em;
+}
+@media(hover:hover){
+  html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card:hover{
+    transform:translateY(-2px);
+    border-color:rgba(216,197,158,.20)!important;
+    box-shadow:0 20px 46px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.035)!important;
+  }
+  html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card:hover .enter,
+  html:not(.is-phone-layout) #coursesGrid .course-edital-btn:hover{
+    border-color:rgba(216,197,158,.24);
+    background:rgba(216,197,158,.06);
+    color:#ead7af;
+  }
+}
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card:active{
+  transform:translateY(0) scale(.998);
+}
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card:focus-within{
+  border-color:rgba(216,197,158,.20)!important;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-edital-btn{
+  min-height:36px;
+  padding-inline:10px;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .enter{
+  min-height:36px;
+  padding-inline:11px;
+}
+
