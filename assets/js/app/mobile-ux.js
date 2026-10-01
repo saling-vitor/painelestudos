@@ -562,10 +562,10 @@
 })();
 
 
-/* V15.14.0 · Etapa 3 smartphone · cabeçalho, busca, menu e estado de nuvem */
+/* V15.14.1 · Etapa 3 smartphone · cabeçalho, busca, menu e estado de nuvem */
 (()=>{
-  if(window.__mobileUxV15140)return;
-  window.__mobileUxV15140=true;
+  if(window.__mobileUxV15141)return;
+  window.__mobileUxV15141=true;
   const mq=window.matchMedia('(max-width: 480px)');
   const root=document.documentElement;
   const q=(selector,scope=document)=>scope.querySelector(selector);
@@ -585,7 +585,8 @@
       copy.appendChild(count);
     }
     const total=qa('#coursesGrid .course-card',view).length;
-    count.textContent=total+' '+(total===1?'concurso':'concursos');
+    const label=total+' '+(total===1?'concurso':'concursos');
+    if(count.textContent!==label)count.textContent=label;
   }
 
   function bindSearch(){
@@ -609,9 +610,12 @@
     const label=q('#mobileMenuCloudLabel'),meta=q('#mobileMenuCloudMeta'),sync=q('#syncTop');
     const sourceLabel=q('.side .cloud-label')||q('.cloud-label');
     const sourceMeta=q('#cloudSideMeta');
-    if(label)label.textContent=sourceLabel?.textContent?.trim()||'Nuvem';
-    if(meta)meta.textContent=sourceMeta?.textContent?.trim()||'Estado de sincronização';
-    cloud.dataset.syncState=sync?.dataset.syncState||'idle';
+    const nextLabel=sourceLabel?.textContent?.trim()||'Nuvem';
+    const nextMeta=sourceMeta?.textContent?.trim()||'Estado de sincronização';
+    const nextState=sync?.dataset.syncState||'idle';
+    if(label&&label.textContent!==nextLabel)label.textContent=nextLabel;
+    if(meta&&meta.textContent!==nextMeta)meta.textContent=nextMeta;
+    if(cloud.dataset.syncState!==nextState)cloud.dataset.syncState=nextState;
   }
 
   function syncMenuState(){

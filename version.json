@@ -1,6 +1,6 @@
 {
-  "version": "15.14.0",
-  "label": "V15.14.0",
+  "version": "15.14.1",
+  "label": "V15.14.1",
   "releasedAt": "2026-10-01T10:24:00-03:00",
   "notes": "Etapa 3 do refinamento exclusivo para smartphone: cabeçalho e busca mais leves, menu mobile refinado e sincronização com estado visual discreto na nuvem.",
   "showWhatsNew": true,

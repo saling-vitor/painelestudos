@@ -2764,7 +2764,7 @@
 
 
 /* =========================================================
-   V15.14.0 · ETAPA 3 SMARTPHONE · cabeçalho, busca e menu
+   V15.14.1 · ETAPA 3 SMARTPHONE · cabeçalho, busca e menu
    Escopo: somente iPhone/smartphone. iPad (inclusive Split View)
    e desktop permanecem fora desta rodada.
    ========================================================= */
@@ -2819,6 +2819,7 @@
   }
   html.mobile-search-active.is-phone-layout .topbar{
     grid-template-columns:minmax(0,1fr) 0!important;
+    gap:0!important;
   }
   html.mobile-search-active.is-phone-layout .topbar .actions{
     width:0!important;
@@ -2876,6 +2877,11 @@
   html.is-phone-layout #syncTop[data-sync-state="offline"]{color:#b89a63!important}
   html.is-phone-layout #syncTop[data-sync-state="error"]{color:#cc7c83!important}
   html.is-phone-layout #syncTop:disabled{cursor:default!important}
+  html.mobile-topbar-compact.is-phone-layout .search,
+  html.mobile-topbar-compact.is-phone-layout #syncTop{
+    height:44px!important;
+    min-height:44px!important;
+  }
 
   html.is-phone-layout [data-view="courses"]>.section-head{
     display:grid!important;
