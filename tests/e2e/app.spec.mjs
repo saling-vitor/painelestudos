@@ -277,6 +277,41 @@ test('cards da biblioteca de cursos usam nova hierarquia',async({page},testInfo)
   expect(styles.gap).toBe(testInfo.project.name==='ipad'?'12px':'14px');
 });
 
+test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',async({page},testInfo)=>{
+  await page.goto('/#courses');
+  const card=page.locator('#coursesGrid .course-card.course-library-card').first();
+  await expect(card).toBeVisible();
+  await expect(card.locator('.course-status-pill')).toBeVisible();
+  await expect(card.locator('.course-board-chip')).toBeVisible();
+  await expect(card.locator('.course-map-count-chip')).toBeVisible();
+  const styles=await card.evaluate(el=>{
+    const meta=el.querySelector('.course-card-meta-item');
+    const board=el.querySelector('.course-board-chip');
+    const exam=el.querySelector('.course-exam-info');
+    const track=el.querySelector('.course-progress-mini .progress-track');
+    const state=el.querySelector('.course-progress-mini .progress-state');
+    const enter=el.querySelector('.enter');
+    const status=el.querySelector('.course-status-pill');
+    return{
+      cardRadius:getComputedStyle(el).borderRadius,
+      metaRadius:getComputedStyle(meta).borderRadius,
+      boardColor:getComputedStyle(board).color,
+      examColor:getComputedStyle(exam.querySelector('b')).color,
+      trackHeight:getComputedStyle(track).height,
+      stateRadius:getComputedStyle(state).borderRadius,
+      enterHeight:getComputedStyle(enter).minHeight,
+      statusRadius:getComputedStyle(status).borderRadius
+    };
+  });
+  expect(styles.cardRadius).toBe('16px');
+  expect(styles.metaRadius).toBe('8px');
+  expect(styles.trackHeight).toBe('7px');
+  expect(styles.stateRadius).toBe('7px');
+  expect(styles.statusRadius).toBe('999px');
+  expect(styles.enterHeight).toBe(testInfo.project.name==='ipad'?'36px':'32px');
+  expect(styles.boardColor).not.toBe(styles.examColor);
+});
+
 test('rodapé dos concursos usa somente atividade e ação de entrada',async({page})=>{
   await page.goto('/#courses');
   const card=page.locator('#coursesGrid .course-card').first();
