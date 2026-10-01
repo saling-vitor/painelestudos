@@ -1,14 +1,14 @@
 {
-  "version": "15.9.0",
-  "label": "V15.9.0",
-  "releasedAt": "2026-09-30T23:52:16.385Z",
-  "notes": "Terceira etapa do pacote visual: unifica glassmorphism, profundidade, bordas, raios e controles em todo o aplicativo, com versão leve no smartphone.",
+  "version": "15.10.0",
+  "label": "V15.10.0",
+  "releasedAt": "2026-10-01T00:18:01.886Z",
+  "notes": "Quarta etapa do pacote visual: refina tipografia, hierarquia, densidade e alinhamentos entre Home, Cursos, Progresso, Agenda, Planner e Simulados.",
   "showWhatsNew": true,
   "highlights": [
-    "Painéis, métricas, agenda e progresso agora compartilham a mesma linguagem de vidro",
-    "Botões, campos, chips e modais foram harmonizados sem remover hierarquia ou acentos de cor",
-    "Cards de cursos, mapas e simulados preservam sua identidade com bordas e profundidade consistentes",
-    "Dashboard, planner, dúvidas e modais de estudo seguem os mesmos tokens visuais",
-    "No smartphone, o visual é mantido com blur reduzido para preservar fluidez e estabilidade"
+    "Títulos de página, seções, cards e labels agora seguem uma escala tipográfica mais clara",
+    "Métricas e números ganharam hierarquia consistente e alinhamento tabular",
+    "Cards de cursos, mapas e simulados ficaram mais densos sem perder legibilidade",
+    "Progresso, Dashboard e Planner receberam espaçamentos internos e textos secundários harmonizados",
+    "Smartphone mantém a hierarquia visual com tamanhos compactos e áreas de toque preservadas"
   ]
 }
