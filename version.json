@@ -1,16 +1,17 @@
 {
-  "version": "15.12.1",
-  "label": "V15.12.1",
-  "releasedAt": "2026-10-01T09:49:00-03:00",
-  "notes": "Correção de entrega da interface exclusiva do iPad: publica corretamente o dock lateral recolhível dos controles de estudo e força a atualização do PWA para sair do cache da V15.12.0.",
+  "version": "15.13.0",
+  "label": "V15.13.0",
+  "releasedAt": "2026-10-01T09:24:00-03:00",
+  "notes": "Etapa 2 do refinamento exclusivo para smartphone: redesenha cards de mapas, cursos e simulados para manter densidade sem aparência espremida ou excesso de molduras.",
   "showWhatsNew": true,
   "highlights": [
-    "No iPad, os controles Iniciar estudo, Dúvida, Revisar e Próximo passam para um dock lateral recolhível",
-    "A alça lateral permite abrir e fechar o dock sem cobrir o conteúdo do mapa",
-    "A posição do dock pode ser movida verticalmente e alternada entre as bordas esquerda e direita",
-    "O botão separado Anotar dúvida deixa de ocupar a área de leitura no iPad",
-    "A posição e o estado do dock ficam salvos no próprio aparelho",
-    "Desktop e smartphone permanecem fora desta alteração",
-    "A versão do PWA foi incrementada para garantir que iPads instalados recebam os novos CSS e JavaScript"
+    "Capas dos mapas ficam mais altas e reconhecíveis no smartphone, com enquadramento menos agressivo",
+    "Controles de ações e favorito sobre a capa passam a usar botões visuais menores e discretos, mantendo área ampliada de toque",
+    "Tags, título, progresso e rodapé dos mapas ganham respiro e deixam de usar caixas e divisórias pesadas",
+    "Cards de cursos mantêm formato compacto, mas reduzem bordas internas e simplificam metadados, prova e progresso",
+    "Cards de simulados recebem capa mais legível, metadados leves e rodapé simplificado",
+    "A cor da disciplina permanece como acento, sem contornar todo o card",
+    "Todas as mudanças ficam restritas ao smartphone de até 480 px",
+    "A interface e o dock recém-publicado do iPad permanecem preservados"
   ]
 }
