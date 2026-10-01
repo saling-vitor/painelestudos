@@ -3564,7 +3564,7 @@ html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-track{
 html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state{
   min-height:22px;
   padding:3px 7px;
-  border-radius:7px;
+  border-radius:7px!important;
   font-size:7.25px;
   letter-spacing:.045em;
 }
