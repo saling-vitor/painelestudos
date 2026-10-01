@@ -604,3 +604,98 @@
   .agenda-more-menu b{font-size:9.5px;line-height:1.3}
   .agenda-more-menu small{font-size:7.5px;line-height:1.4}
 }
+
+
+/* =========================================================
+   V15.11.0 · PLANNER POLISH · microestados e consistência
+   ========================================================= */
+.study-intelligence-row>article,
+.intelligence-primary-actions>article,
+.priority-details,
+.matrix-map,
+.error-group,
+.matrix-topic,
+.error-items>button,
+.replan-options button,
+.topic-rating button,
+.agenda-more>summary,
+.agenda-more-menu button{
+  transition:
+    border-color var(--ui-motion-fast) ease,
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease,
+    box-shadow var(--ui-motion-fast) ease,
+    transform var(--ui-motion-fast) ease;
+}
+
+.priority-details[open],
+.matrix-map,
+.error-group{
+  box-shadow:inset 0 1px rgba(255,255,255,.018);
+}
+.priority-details[open]>summary,
+.matrix-map-head,
+.error-group-head{
+  border-bottom-color:var(--ui-divider)!important;
+}
+
+@media(hover:hover){
+  .study-intelligence-row>article:hover,
+  .intelligence-primary-actions>article:hover{
+    border-color:rgba(255,255,255,.10)!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.025);
+  }
+  .priority-details>summary:hover,
+  .matrix-topic:hover,
+  .error-items>button:hover,
+  .replan-options button:hover,
+  .topic-rating button:hover{
+    background:rgba(255,255,255,.025)!important;
+  }
+  .agenda-more>summary:hover{
+    border-color:rgba(216,197,158,.24)!important;
+    background:rgba(216,197,158,.045)!important;
+    color:#dfcfb3!important;
+  }
+  .agenda-more-menu button:hover{
+    background:rgba(255,255,255,.035)!important;
+    color:#dde0e4!important;
+  }
+}
+
+.matrix-topic:active,
+.error-items>button:active,
+.replan-options button:active,
+.topic-rating button:active,
+.agenda-more>summary:active,
+.agenda-more-menu button:active{
+  transform:scale(.99);
+}
+
+/* Menus ocasionais usam a mesma borda e profundidade dos demais popovers. */
+.agenda-more-menu{
+  border-color:var(--ui-divider-strong)!important;
+  box-shadow:0 18px 54px rgba(0,0,0,.52),inset 0 1px rgba(255,255,255,.025)!important;
+}
+.agenda-more-menu button+button{
+  border-top:1px solid rgba(255,255,255,.035);
+}
+
+/* Campos avançados e seletores deixam claro o estado de foco. */
+.planner-page-actions select:focus-visible,
+.planner-advanced-settings input:focus-visible,
+.planner-advanced-settings select:focus-visible{
+  border-color:rgba(169,200,231,.44)!important;
+  background:#11151a!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .study-intelligence-row>article,
+  .intelligence-primary-actions>article,
+  .priority-details,.matrix-map,.error-group,
+  .matrix-topic,.error-items>button,
+  .replan-options button,.topic-rating button,
+  .agenda-more>summary,.agenda-more-menu button{
+    transition:none!important;
+  }
+}
