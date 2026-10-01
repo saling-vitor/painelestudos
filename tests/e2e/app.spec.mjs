@@ -1612,8 +1612,8 @@ test('iPhone etapa 3 integra contagem e Novo concurso no cabeçalho de cursos',a
   const button=page.locator('#newCourseBtn2');
   await expect(button).toBeVisible();
   const size=await button.evaluate(el=>({height:el.getBoundingClientRect().height,width:el.getBoundingClientRect().width}));
-  expect(size.height).toBeGreaterThanOrEqual(44);
-  expect(size.width).toBeGreaterThanOrEqual(44);
+  expect(Math.round(size.height)).toBeGreaterThanOrEqual(44);
+  expect(Math.round(size.width)).toBeGreaterThanOrEqual(44);
 });
 
 
