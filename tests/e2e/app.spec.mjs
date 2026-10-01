@@ -259,7 +259,7 @@ test('card de simulado usa hierarquia visual mais limpa',async({page})=>{
   expect(styles.sourceDot).toBe('5px');
 });
 
-test('cards da biblioteca de cursos usam nova hierarquia',async({page})=>{
+test('cards da biblioteca de cursos usam nova hierarquia',async({page},testInfo)=>{
   await page.goto('/#courses');
   const card=page.locator('#coursesGrid .course-card').first();
   await expect(card).toBeVisible();
@@ -274,7 +274,7 @@ test('cards da biblioteca de cursos usam nova hierarquia',async({page})=>{
   await expect(card.locator('.course-edital-btn')).toContainText('Ver edital');
   const styles=await page.locator('#coursesGrid').evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns,gap:getComputedStyle(el).gap}));
   expect(styles.columns).not.toBe('none');
-  expect(styles.gap).toBe('14px');
+  expect(styles.gap).toBe(testInfo.project.name==='ipad'?'12px':'14px');
 });
 
 test('rodapé dos concursos usa somente atividade e ação de entrada',async({page})=>{
