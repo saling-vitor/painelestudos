@@ -1187,6 +1187,7 @@ test('smartphone Menu permanece responsivo após navegação repetida',async({pa
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#home');
+  await page.evaluate(()=>localStorage.setItem('studyapp.lastSeenVersion',APP_VERSION));
   const targets=['agenda','simulations','settings','agenda','simulations','settings'];
   for(const target of targets){
     const trigger=page.locator('#mobileMenuBtn');
@@ -1210,6 +1211,7 @@ test('smartphone Configurações usa accordion exclusivo sem títulos duplicados
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#settings');
+  await page.evaluate(()=>localStorage.setItem('studyapp.lastSeenVersion',APP_VERSION));
   await page.waitForTimeout(120);
   const study=page.locator('#studySettingsPanel');
   const sync=page.locator('.sync-panel');
