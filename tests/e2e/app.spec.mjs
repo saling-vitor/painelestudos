@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.route('https://hapyzjfhbobtaellaejv.supabase.co/**',async route=>{const url=route.request().url();if(url.includes('/auth/v1/user'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({id:'e2e-user',email:'e2e@example.com'})});if(url.includes('/rest/v1/courses'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify([{id:'porto-alegre',user_id:'e2e-user',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',exam_date:'2026-10-18',status:'active',created_at:'2026-09-01T00:00:00.000Z'}])});return route.fulfill({status:200,contentType:'application/json',body:'[]'})});await page.addInitScript(()=>{localStorage.setItem('studyapp.lastSeenVersion','15.16.0');if(localStorage.getItem('studyapp.e2eLoggedOut')==='1'){localStorage.removeItem('studyapp.auth');return}const user={id:'e2e-user',email:'e2e@example.com'},session={access_token:'e2e-token',refresh_token:'',expires_at:4102444800,user};localStorage.setItem('studyapp.auth',JSON.stringify(session));localStorage.setItem('studyapp.cloudCatalog::e2e-user',JSON.stringify({courses:[{id:'porto-alegre',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',examDate:'2026-10-18',status:'active',source:'cloud',maps:14}],maps:[],docs:[],simulations:[],user,savedAt:new Date().toISOString()}))});await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.waitForFunction(()=>typeof combinedCourses==='function'&&combinedCourses().length>0)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.route('https://hapyzjfhbobtaellaejv.supabase.co/**',async route=>{const url=route.request().url();if(url.includes('/auth/v1/user'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({id:'e2e-user',email:'e2e@example.com'})});if(url.includes('/rest/v1/courses'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify([{id:'porto-alegre',user_id:'e2e-user',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',exam_date:'2026-10-18',status:'active',created_at:'2026-09-01T00:00:00.000Z'}])});return route.fulfill({status:200,contentType:'application/json',body:'[]'})});await page.addInitScript(()=>{localStorage.setItem('studyapp.lastSeenVersion','15.17.0');if(localStorage.getItem('studyapp.e2eLoggedOut')==='1'){localStorage.removeItem('studyapp.auth');return}const user={id:'e2e-user',email:'e2e@example.com'},session={access_token:'e2e-token',refresh_token:'',expires_at:4102444800,user};localStorage.setItem('studyapp.auth',JSON.stringify(session));localStorage.setItem('studyapp.cloudCatalog::e2e-user',JSON.stringify({courses:[{id:'porto-alegre',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',examDate:'2026-10-18',status:'active',source:'cloud',maps:14}],maps:[],docs:[],simulations:[],user,savedAt:new Date().toISOString()}))});await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.waitForFunction(()=>typeof combinedCourses==='function'&&combinedCourses().length>0)});
 test.afterEach(async({page},testInfo)=>{const errors=(page.runtimeErrors||[]).filter(message=>!(testInfo.project.name==='iphone-webkit'&&/version\.json.*access control checks/i.test(message)));expect(errors,errors.join('\n')).toEqual([])});
 
 test('etapa 0 [G] mantém a template sem cursos quando não há conta',async({page})=>{await page.evaluate(()=>{localStorage.setItem('studyapp.e2eLoggedOut','1');localStorage.setItem('studyapp.localCourses',JSON.stringify([{id:'legado-local',title:'Curso local legado'}]));localStorage.removeItem('studyapp.auth')});await page.reload();await page.goto('/#courses');await expect(page.locator('#coursesGrid .course-card')).toHaveCount(0);await expect(page.locator('#coursesGrid')).toContainText('Entre na sua conta para carregar seus concursos.');await page.waitForTimeout(250);const result=await page.evaluate(()=>({courses:combinedCourses().length,maps:combinedMaps().length,search:globalSearchResults('demhab'),legacy:localStorage.getItem('studyapp.localCourses'),cache:localStorage.getItem('studyapp.cloudCatalog::e2e-user')}));expect(result.courses).toBe(0);expect(result.maps).toBe(0);expect(result.search.courses).toHaveLength(0);expect(result.search.maps).toHaveLength(0);expect(result.search.topics).toHaveLength(0);expect(result.legacy).toContain('legado-local');expect(result.cache).toContain('porto-alegre')});
@@ -22,7 +22,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.16.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.17.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -66,11 +66,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.16.0');
+  expect(result.version).toBe('15.17.0');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.16.0');
+  expect(result.scriptURL).toContain('sw.js?v=15.17.0');
   expect(result.status).toContain('Aplicativo atualizado');
 })
 test('home monta plano inteligente de estudo',async({page})=>{
@@ -316,7 +316,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.16.0');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.17.0');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -593,7 +593,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.16.0',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.17.0',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -1659,4 +1659,80 @@ test('iPad não recebe tokens visuais exclusivos da etapa 4 do smartphone',async
   await expect(page.locator('html')).not.toHaveClass(/is-phone-layout/);
   const token=await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--phone-surface').trim());
   expect(token).toBe('');
+});
+
+
+test('etapa 1 [D] Meus Cursos usa três colunas e cards compactos no desktop amplo',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#courses');
+  const card=page.locator('#coursesGrid .course-card.course-library-card').first();
+  await expect(card).toBeVisible();
+  const data=await page.evaluate(()=>{
+    const grid=document.querySelector('#coursesGrid'),card=document.querySelector('#coursesGrid .course-card.course-library-card'),title=card?.querySelector('h3');
+    const gs=getComputedStyle(grid),ts=getComputedStyle(title);
+    return{
+      columns:gs.gridTemplateColumns.split(' ').filter(Boolean).length,
+      height:card.getBoundingClientRect().height,
+      width:card.getBoundingClientRect().width,
+      titleOverflow:ts.overflow,
+      titleLines:ts.webkitLineClamp||''
+    };
+  });
+  expect(data.columns).toBe(3);
+  expect(data.height).toBeGreaterThanOrEqual(260);
+  expect(data.height).toBeLessThanOrEqual(315);
+  expect(data.width).toBeLessThan(500);
+  expect(data.titleOverflow).toBe('hidden');
+  expect(String(data.titleLines)).toBe('2');
+});
+
+test('etapa 1 [D] Meus Cursos usa duas colunas no notebook',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
+  await page.setViewportSize({width:1280,height:800});
+  await page.goto('/#courses');
+  const grid=page.locator('#coursesGrid');
+  await expect(grid.locator('.course-card.course-library-card').first()).toBeVisible();
+  const columns=await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+  expect(columns).toBe(2);
+});
+
+test('etapa 1 [T] Meus Cursos usa duas colunas no iPad e mantém densidade confortável',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#courses');
+  await expect(page.locator('html')).toHaveClass(/is-ipad/);
+  const card=page.locator('#coursesGrid .course-card.course-library-card').first();
+  await expect(card).toBeVisible();
+  const data=await page.evaluate(()=>{
+    const grid=document.querySelector('#coursesGrid'),card=document.querySelector('#coursesGrid .course-card.course-library-card');
+    return{
+      columns:getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length,
+      height:card.getBoundingClientRect().height,
+      width:card.getBoundingClientRect().width
+    };
+  });
+  expect(data.columns).toBe(2);
+  expect(data.height).toBeGreaterThanOrEqual(260);
+  expect(data.height).toBeLessThanOrEqual(310);
+  expect(data.width).toBeGreaterThan(300);
+});
+
+test('etapa 1 [M] preserva Meus Cursos em uma coluna no iPhone',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#courses');
+  await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
+  const card=page.locator('#coursesGrid .course-card.course-library-card').first();
+  await expect(card).toBeVisible();
+  const data=await page.evaluate(()=>{
+    const grid=document.querySelector('#coursesGrid'),card=document.querySelector('#coursesGrid .course-card.course-library-card');
+    return{
+      columns:getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length,
+      height:card.getBoundingClientRect().height
+    };
+  });
+  expect(data.columns).toBe(1);
+  expect(data.height).toBeGreaterThanOrEqual(180);
+  expect(data.height).toBeLessThanOrEqual(250);
 });
