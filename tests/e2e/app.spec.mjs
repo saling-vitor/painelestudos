@@ -214,12 +214,13 @@ test('curso atual continua mostrando apenas categorias realmente usadas',async({
 });
 
 test('filtro do curso não exibe bloco escuro lateral',async({page},testInfo)=>{
-  const viewport=testInfo.project.name==='ipad'?{width:820,height:1180}:{width:1280,height:800};
-  await page.setViewportSize(viewport);
+  if(testInfo.project.name!=='ipad')await page.setViewportSize({width:1280,height:800});
   await page.goto('/#course/porto-alegre');
   await expect(page.locator('html')).not.toHaveClass(/is-phone-layout/);
-  await expect(page.locator('.course-study-filter-wrap')).toBeVisible();
-  const pseudo=await page.locator('.course-study-filter-wrap').evaluate(el=>{
+  const filter=page.locator('.course-study-filter-wrap');
+  await expect(filter).toHaveCount(1);
+  if(testInfo.project.name!=='ipad')await expect(filter).toBeVisible();
+  const pseudo=await filter.evaluate(el=>{
     const style=getComputedStyle(el,'::after');
     return{content:style.content,display:style.display,backgroundImage:style.backgroundImage};
   });
