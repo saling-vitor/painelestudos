@@ -1,17 +1,15 @@
 {
-  "version": "15.13.0",
-  "label": "V15.13.0",
-  "releasedAt": "2026-10-01T09:24:00-03:00",
-  "notes": "Etapa 2 do refinamento exclusivo para smartphone: redesenha cards de mapas, cursos e simulados para manter densidade sem aparência espremida ou excesso de molduras.",
+  "version": "15.13.1",
+  "label": "V15.13.1",
+  "releasedAt": "2026-10-01T10:16:00-03:00",
+  "notes": "Correção exclusiva do iPad/tablet para o dock lateral do leitor: toque curto volta a recolher o painel com confiabilidade, enquanto o arraste permanece disponível sem confundir pequenos movimentos do dedo.",
   "showWhatsNew": true,
   "highlights": [
-    "Capas dos mapas ficam mais altas e reconhecíveis no smartphone, com enquadramento menos agressivo",
-    "Controles de ações e favorito sobre a capa passam a usar botões visuais menores e discretos, mantendo área ampliada de toque",
-    "Tags, título, progresso e rodapé dos mapas ganham respiro e deixam de usar caixas e divisórias pesadas",
-    "Cards de cursos mantêm formato compacto, mas reduzem bordas internas e simplificam metadados, prova e progresso",
-    "Cards de simulados recebem capa mais legível, metadados leves e rodapé simplificado",
-    "A cor da disciplina permanece como acento, sem contornar todo o card",
-    "Todas as mudanças ficam restritas ao smartphone de até 480 px",
-    "A interface e o dock recém-publicado do iPad permanecem preservados"
+    "Toque curto na alça lateral abre e recolhe o dock de estudo no iPad",
+    "O arraste só é iniciado após um movimento real, evitando falsos gestos durante o toque",
+    "A alça ficou um pouco maior e alinhada diretamente à borda do painel aberto",
+    "Arraste vertical e troca entre as bordas esquerda e direita continuam disponíveis",
+    "Posição e estado do dock continuam salvos no aparelho",
+    "Desktop e smartphone não recebem mudanças de layout ou comportamento"
   ]
 }

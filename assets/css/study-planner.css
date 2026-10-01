@@ -769,10 +769,10 @@ html.is-ipad .reader.open .ipad-reader-rail-handle{
   top:var(--ipad-reader-dock-y,68%);
   left:0;
   right:auto;
-  width:28px;
-  min-width:28px;
-  height:58px;
-  min-height:58px;
+  width:34px;
+  min-width:34px;
+  height:62px;
+  min-height:62px;
   padding:0;
   border:1px solid rgba(255,255,255,.10);
   border-left:0;
@@ -804,11 +804,11 @@ html.is-ipad .reader.open.ipad-reader-rail-right .ipad-reader-rail-handle{
 }
 
 html.is-ipad .reader.open:not(.ipad-reader-rail-collapsed):not(.ipad-reader-rail-right) .ipad-reader-rail-handle{
-  left:92px;
+  left:86px;
 }
 
 html.is-ipad .reader.open:not(.ipad-reader-rail-collapsed).ipad-reader-rail-right .ipad-reader-rail-handle{
-  right:92px;
+  right:86px;
 }
 
 html.is-ipad .reader.open .ipad-reader-rail-handle[hidden]{

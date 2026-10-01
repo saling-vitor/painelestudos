@@ -641,9 +641,16 @@
     handle.type='button';
     handle.className='ipad-reader-rail-handle';
     handle.setAttribute('aria-controls','studyReaderRail');
-    handle.addEventListener('click',()=>{
-      if(handle.dataset.dragged==='1'){delete handle.dataset.dragged;return}
-      const pos=readIPadReaderDock();pos.collapsed=!pos.collapsed;saveIPadReaderDock();applyIPadReaderDock();
+    const toggleDock=()=>{
+      const pos=readIPadReaderDock();
+      pos.collapsed=!pos.collapsed;
+      saveIPadReaderDock();
+      applyIPadReaderDock();
+    };
+    handle.addEventListener('keydown',e=>{
+      if(e.key!=='Enter'&&e.key!==' ')return;
+      e.preventDefault();
+      toggleDock();
     });
     handle.addEventListener('pointerdown',e=>{
       if(e.button!=null&&e.button!==0)return;
@@ -655,7 +662,7 @@
     },{passive:false});
     handle.addEventListener('pointermove',e=>{
       if(!ipadReaderDockDrag||ipadReaderDockDrag.pointerId!==e.pointerId)return;
-      if(Math.hypot(e.clientX-ipadReaderDockDrag.startX,e.clientY-ipadReaderDockDrag.startY)>6)ipadReaderDockDrag.moved=true;
+      if(Math.hypot(e.clientX-ipadReaderDockDrag.startX,e.clientY-ipadReaderDockDrag.startY)>14)ipadReaderDockDrag.moved=true;
       if(!ipadReaderDockDrag.moved)return;
       const rect=reader.getBoundingClientRect(),pos=readIPadReaderDock();
       pos.y=clamp((e.clientY-rect.top)/Math.max(1,rect.height),.18,.82);
@@ -664,15 +671,19 @@
       applyIPadReaderDock();
       e.preventDefault();
     },{passive:false});
-    const finish=e=>{
+    const finish=(e,cancelled=false)=>{
       if(!ipadReaderDockDrag||ipadReaderDockDrag.pointerId!==e.pointerId)return;
-      if(ipadReaderDockDrag.moved){handle.dataset.dragged='1';saveIPadReaderDock()}
+      const moved=ipadReaderDockDrag.moved;
       ipadReaderDockDrag=null;
       reader.classList.remove('ipad-reader-rail-dragging');
-      applyIPadReaderDock();
+      try{if(handle.hasPointerCapture?.(e.pointerId))handle.releasePointerCapture?.(e.pointerId)}catch(_){}
+      if(cancelled){applyIPadReaderDock();return}
+      if(moved){saveIPadReaderDock();applyIPadReaderDock()}
+      else toggleDock();
+      e.preventDefault();
     };
-    handle.addEventListener('pointerup',finish);
-    handle.addEventListener('pointercancel',finish);
+    handle.addEventListener('pointerup',e=>finish(e,false),{passive:false});
+    handle.addEventListener('pointercancel',e=>finish(e,true),{passive:false});
     reader.appendChild(handle);
     applyIPadReaderDock();
     return handle;
