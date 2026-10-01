@@ -42,34 +42,37 @@ test('backup preserva dados locais mais novos e permite restauração completa',
   expect(result.afterReplace).toBe('valor-do-backup');
 });
 
-test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
-  await page.goto('/#settings');
-  await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
-  await page.evaluate(()=>checkForAppUpdate({silent:true}));
-  await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
-  await page.waitForFunction(()=>document.querySelector('#appUpdateStatus')?.textContent?.includes('Aplicativo atualizado'),null,{timeout:10000});
-  const result=await page.evaluate(async()=>{
-    if(!('serviceWorker' in navigator))return{supported:false};
-    const registration=await navigator.serviceWorker.ready;
-    return{
-      supported:true,
-      version:APP_VERSION,
-      active:!!registration.active,
-      waiting:!!registration.waiting,
-      updateAvailable:!!appUpdateState.updateAvailable,
-      scriptURL:registration.active?.scriptURL||'',
-      status:document.querySelector('#appUpdateStatus')?.textContent?.trim()||''
-    };
+test.describe('PWA service worker',()=>{
+  test.use({serviceWorkers:'allow'});
+  test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
+    await page.goto('/#settings');
+    await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
+    await page.evaluate(()=>checkForAppUpdate({silent:true}));
+    await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
+    await page.waitForFunction(()=>document.querySelector('#appUpdateStatus')?.textContent?.includes('Aplicativo atualizado'),null,{timeout:10000});
+    const result=await page.evaluate(async()=>{
+      if(!('serviceWorker' in navigator))return{supported:false};
+      const registration=await navigator.serviceWorker.ready;
+      return{
+        supported:true,
+        version:APP_VERSION,
+        active:!!registration.active,
+        waiting:!!registration.waiting,
+        updateAvailable:!!appUpdateState.updateAvailable,
+        scriptURL:registration.active?.scriptURL||'',
+        status:document.querySelector('#appUpdateStatus')?.textContent?.trim()||''
+      };
+    });
+    expect(result.supported).toBe(true);
+    expect(result.version).toBe('15.12.0');
+    expect(result.active).toBe(true);
+    expect(result.waiting).toBe(false);
+    expect(result.updateAvailable).toBe(false);
+    expect(result.scriptURL).toContain('sw.js?v=15.12.0');
+    expect(result.status).toContain('Aplicativo atualizado');
   });
-  expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.12.0');
-  expect(result.active).toBe(true);
-  expect(result.waiting).toBe(false);
-  expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.12.0');
-  expect(result.status).toContain('Aplicativo atualizado');
+  
 });
-
 test('home monta plano inteligente de estudo',async({page})=>{
   await page.goto('/#home');
   await expect(page.locator('#homeReviewSection')).toBeVisible();
