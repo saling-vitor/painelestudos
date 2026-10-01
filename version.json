@@ -1,16 +1,14 @@
 {
-  "version": "15.15.0",
-  "label": "V15.15.0",
-  "releasedAt": "2026-10-01T11:54:00-03:00",
-  "notes": "Etapa 4 do refinamento visual do smartphone: sistema visual geral unificado com fundo mais profundo, superfícies neutras, bordas, sombras, espaçamentos, tipografia, controles e estados consistentes.",
+  "version": "15.15.1",
+  "label": "V15.15.1",
+  "releasedAt": "2026-10-01T12:17:00-03:00",
+  "notes": "Hotfix de estabilidade da Etapa 4: evita sobrescrita concorrente do modal de novidades e torna o modo imersivo do leitor no smartphone síncrono ao abrir/fechar.",
   "showWhatsNew": true,
   "highlights": [
-    "Fundo do iPhone ganha profundidade sutil em preto e grafite sem pesar visualmente",
-    "Painéis, métricas e blocos funcionais passam a compartilhar a mesma família de superfície, borda, radius e sombra",
-    "Glassmorphism fica restrito aos elementos que realmente precisam dele, evitando camadas pesadas dentro de camadas",
-    "Botões, filtros, chips e campos passam a usar linguagem visual consistente com dourado reservado para ações e estados importantes",
-    "Agenda, Progresso, Home e Configurações recebem a mesma hierarquia de superfícies e tipografia sem alterar lógica ou dados",
-    "Cards de cursos, mapas e simulados preservam o desenho aprovado na Etapa 2 e recebem apenas consistência de profundidade",
-    "Escopo continua exclusivo do smartphone; iPad, Split View e desktop permanecem preservados"
+    "Mantém integralmente o sistema visual da Etapa 4 no smartphone",
+    "Modal de novidades não é sobrescrito por uma segunda verificação automática enquanto já está aberto",
+    "Leitor no iPhone aplica e remove o modo imersivo de forma síncrona ao abrir e fechar",
+    "A proteção do iPad e Split View continua ativa",
+    "Desktop e demais funcionalidades permanecem preservados"
   ]
 }
