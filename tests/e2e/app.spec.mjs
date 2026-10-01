@@ -1377,6 +1377,7 @@ test('iPhone real mantém feedback tátil e navegação alinhada',async({page},t
   await page.goto('/#course/porto-alegre');
   const map=page.locator('#courseMaps .map-card').first();
   await expect(map).toBeVisible();
+  await page.waitForTimeout(220);
   const transform=await map.evaluate(el=>getComputedStyle(el).transform);
   expect(['none','matrix(1, 0, 0, 1, 0, 0)']).toContain(transform);
 });
