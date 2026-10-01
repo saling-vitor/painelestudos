@@ -2096,3 +2096,65 @@
     box-shadow:none!important;
   }
 }
+
+
+/* =========================================================
+   V15.10.0 · PHONE TYPE · hierarquia compacta e legível
+   ========================================================= */
+@media(max-width:480px){
+  html.is-phone-layout .section-head{
+    gap:8px!important;
+    margin-bottom:9px!important;
+  }
+  html.is-phone-layout .section-head h2{
+    font-size:17px!important;
+    line-height:1.14!important;
+    letter-spacing:-.015em!important;
+  }
+  html.is-phone-layout .section-head p{
+    margin-top:3px!important;
+    font-size:10px!important;
+    line-height:1.45!important;
+  }
+  html.is-phone-layout .kicker,
+  html.is-phone-layout .panel-kicker{
+    font-size:7.5px!important;
+    line-height:1.2!important;
+    letter-spacing:.12em!important;
+  }
+
+  html.is-phone-layout .panel h2{
+    font-size:14px!important;
+    line-height:1.18!important;
+    letter-spacing:-.008em!important;
+  }
+  html.is-phone-layout .panel p{
+    font-size:9px!important;
+    line-height:1.45!important;
+  }
+
+  html.is-phone-layout .study-card-head{
+    min-height:18px!important;
+    margin-bottom:7px!important;
+    align-items:flex-end!important;
+  }
+  html.is-phone-layout .study-card-head span{font-size:7px!important;line-height:1.2!important}
+  html.is-phone-layout .study-card-head b{font-size:8.5px!important;line-height:1.2!important}
+
+  html.is-phone-layout .progress-global-head h3,
+  html.is-phone-layout .progress-attention-head h3{
+    font-size:13px!important;
+    line-height:1.18!important;
+  }
+  html.is-phone-layout .progress-global-head p{
+    font-size:8.5px!important;
+    line-height:1.42!important;
+  }
+
+  html.is-phone-layout .primary,
+  html.is-phone-layout .secondary,
+  html.is-phone-layout .danger,
+  html.is-phone-layout .icon-btn{
+    line-height:1!important;
+  }
+}
