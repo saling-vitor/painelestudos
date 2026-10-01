@@ -1,15 +1,16 @@
 {
-  "version": "15.13.1",
-  "label": "V15.13.1",
-  "releasedAt": "2026-10-01T10:16:00-03:00",
-  "notes": "Correção exclusiva do iPad/tablet para o dock lateral do leitor: toque curto volta a recolher o painel com confiabilidade, enquanto o arraste permanece disponível sem confundir pequenos movimentos do dedo.",
+  "version": "15.14.0",
+  "label": "V15.14.0",
+  "releasedAt": "2026-10-01T10:24:00-03:00",
+  "notes": "Etapa 3 do refinamento exclusivo para smartphone: cabeçalho e busca mais leves, menu mobile refinado e sincronização com estado visual discreto na nuvem.",
   "showWhatsNew": true,
   "highlights": [
-    "Toque curto na alça lateral abre e recolhe o dock de estudo no iPad",
-    "O arraste só é iniciado após um movimento real, evitando falsos gestos durante o toque",
-    "A alça ficou um pouco maior e alinhada diretamente à borda do painel aberto",
-    "Arraste vertical e troca entre as bordas esquerda e direita continuam disponíveis",
-    "Posição e estado do dock continuam salvos no aparelho",
-    "Desktop e smartphone não recebem mudanças de layout ou comportamento"
+    "Busca global passa a ser a ação protagonista no iPhone e ocupa a barra inteira quando recebe foco",
+    "Topbar fica mais compacta, neutra e respeita a safe area sem adicionar uma faixa visual extra",
+    "Sincronização usa uma nuvem neutra; durante a sincronização a animação é discreta e, ao concluir, somente a nuvem fica verde",
+    "Menu do smartphone ganha hierarquia Biblioteca/Sistema, item atual mais sutil e estado da nuvem sem caixa pesada",
+    "Cabeçalho de Meus Cursos integra contagem de concursos e o botão Novo concurso em uma composição mais compacta",
+    "iPad continua excluído do layout de smartphone mesmo quando a largura cai para 480 px ou menos em Split View",
+    "Desktop, layout do iPad e funcionalidades já aprovadas permanecem preservados"
   ]
 }

@@ -11,7 +11,7 @@
   let enhanceRaf=0;
   let readerSkeletonSrc='';
 
-  const isPhone=()=>mq.matches;
+  const isPhone=()=>mq.matches&&!document.documentElement.classList.contains('is-ipad');
   const q=(s,r=document)=>r.querySelector(s);
   const qa=(s,r=document)=>[...r.querySelectorAll(s)];
   const setPhoneClass=()=>document.documentElement.classList.toggle('is-phone-layout',isPhone());
@@ -359,7 +359,7 @@
   const mq=window.matchMedia('(max-width: 480px)');
   const q=(selector,root=document)=>root.querySelector(selector);
   const qa=(selector,root=document)=>[...root.querySelectorAll(selector)];
-  const isPhone=()=>mq.matches;
+  const isPhone=()=>mq.matches&&!document.documentElement.classList.contains('is-ipad');
   let readerLastY=0;
 
   function closeMobileMenu({restoreFocus=false}={}){
@@ -559,4 +559,123 @@
   window.MobileUX.refreshExtras=enhanceExtras;
   window.MobileUX.closeMenu=closeMobileMenu;
   enhanceExtras();
+})();
+
+
+/* V15.14.0 · Etapa 3 smartphone · cabeçalho, busca, menu e estado de nuvem */
+(()=>{
+  if(window.__mobileUxV15140)return;
+  window.__mobileUxV15140=true;
+  const mq=window.matchMedia('(max-width: 480px)');
+  const root=document.documentElement;
+  const q=(selector,scope=document)=>scope.querySelector(selector);
+  const qa=(selector,scope=document)=>[...scope.querySelectorAll(selector)];
+  const isPhone=()=>mq.matches&&!root.classList.contains('is-ipad');
+  let boundSearch=null;
+
+  function syncCoursesHeader(){
+    const view=q('[data-view="courses"]'),head=q(':scope > .section-head',view),copy=head?.querySelector(':scope > div');
+    if(!isPhone()){q('#mobileCoursesCount',view)?.remove();return}
+    if(!head||!copy)return;
+    let count=q('#mobileCoursesCount',view);
+    if(!count){
+      count=document.createElement('span');
+      count.id='mobileCoursesCount';
+      count.setAttribute('aria-live','polite');
+      copy.appendChild(count);
+    }
+    const total=qa('#coursesGrid .course-card',view).length;
+    count.textContent=total+' '+(total===1?'concurso':'concursos');
+  }
+
+  function bindSearch(){
+    const input=q('#globalSearch');
+    if(!input||input===boundSearch)return;
+    boundSearch=input;
+    input.addEventListener('focus',()=>{
+      if(!isPhone())return;
+      root.classList.add('mobile-search-active');
+      root.classList.remove('mobile-topbar-hidden');
+    });
+    input.addEventListener('blur',()=>setTimeout(()=>{
+      if(document.activeElement===input)return;
+      root.classList.remove('mobile-search-active');
+    },100));
+  }
+
+  function updateMenuCloud(){
+    const cloud=q('#mobileMenuCloud');
+    if(!cloud)return;
+    const label=q('#mobileMenuCloudLabel'),meta=q('#mobileMenuCloudMeta'),sync=q('#syncTop');
+    const sourceLabel=q('.side .cloud-label')||q('.cloud-label');
+    const sourceMeta=q('#cloudSideMeta');
+    if(label)label.textContent=sourceLabel?.textContent?.trim()||'Nuvem';
+    if(meta)meta.textContent=sourceMeta?.textContent?.trim()||'Estado de sincronização';
+    cloud.dataset.syncState=sync?.dataset.syncState||'idle';
+  }
+
+  function syncMenuState(){
+    const trigger=q('#mobileMenuBtn');
+    const inMenu=['agenda','simulations','settings'].includes(state?.view);
+    trigger?.classList.toggle('active',isPhone()&&inMenu);
+    qa('[data-mobile-sheet-nav]').forEach(button=>{
+      const current=button.dataset.mobileSheetNav===state?.view;
+      button.classList.toggle('is-current',current);
+      if(current)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+    });
+    updateMenuCloud();
+  }
+
+  function enhanceMenu(){
+    if(!isPhone())return;
+    const layer=q('#mobileMenuLayer'),options=q('.mobile-menu-options',layer);
+    if(!layer||!options)return;
+    if(!q('.mobile-menu-label[data-mobile-menu-label="library"]',options)){
+      const label=document.createElement('div');
+      label.className='mobile-menu-label';
+      label.dataset.mobileMenuLabel='library';
+      label.textContent='Biblioteca';
+      options.prepend(label);
+    }
+    if(!q('.mobile-menu-label[data-mobile-menu-label="system"]',options)){
+      const settings=q('[data-mobile-sheet-nav="settings"]',options),label=document.createElement('div');
+      label.className='mobile-menu-label';
+      label.dataset.mobileMenuLabel='system';
+      label.textContent='Sistema';
+      if(settings)options.insertBefore(label,settings);else options.appendChild(label);
+    }
+    if(!q('#mobileMenuCloud',options)){
+      const cloud=document.createElement('div');
+      cloud.id='mobileMenuCloud';
+      cloud.className='mobile-menu-cloud';
+      cloud.innerHTML='<span class="ui-icon icon-cloud" aria-hidden="true"></span><span class="mobile-menu-cloud-copy"><b id="mobileMenuCloudLabel">Nuvem</b><small id="mobileMenuCloudMeta">Estado de sincronização</small></span>';
+      options.appendChild(cloud);
+    }
+    syncMenuState();
+  }
+
+  function refresh(){
+    if(!isPhone()){
+      root.classList.remove('mobile-search-active');
+      q('#mobileCoursesCount')?.remove();
+      return;
+    }
+    bindSearch();
+    syncCoursesHeader();
+    enhanceMenu();
+    syncMenuState();
+  }
+
+  const observer=new MutationObserver(mutations=>{
+    if(!isPhone())return;
+    if(mutations.some(m=>m.type==='childList'||(m.type==='attributes'&&(m.target?.id==='syncTop'||m.target?.id==='mobileMenuLayer')))){
+      requestAnimationFrame(refresh);
+    }
+  });
+  observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['data-sync-state','hidden','class']});
+  window.addEventListener('studyapp:navigation',()=>requestAnimationFrame(refresh));
+  window.addEventListener('resize',()=>requestAnimationFrame(refresh));
+  mq.addEventListener?.('change',()=>requestAnimationFrame(refresh));
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')requestAnimationFrame(refresh)});
+  requestAnimationFrame(refresh);
 })();
