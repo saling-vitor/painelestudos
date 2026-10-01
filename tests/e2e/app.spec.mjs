@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.11.0'));await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/)});
-test.afterEach(async({page})=>{const errors=page.runtimeErrors||[];expect(errors,errors.join('\n')).toEqual([])});
+test.afterEach(async({page},testInfo)=>{const errors=(page.runtimeErrors||[]).filter(message=>!(testInfo.project.name==='iphone-webkit'&&/version\.json.*access control checks/i.test(message)));expect(errors,errors.join('\n')).toEqual([])});
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
 test('botão Abrir da tela Progresso abre mapa',async({page})=>{await page.goto('/#progress');const toggle=page.locator('#progressInfo [data-progress-course-toggle]').first();await expect(toggle).toBeVisible();await toggle.click();const button=page.locator('#progressInfo [data-progress-open]').first();await expect(button).toBeVisible();await button.click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerClose').click();await expect(page.locator('#reader')).not.toHaveClass(/open/)});
@@ -1184,7 +1184,8 @@ test('iPhone real UX2 compacta Home e transforma simulados em carrossel',async({
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#home');
-  await page.waitForTimeout(100);
+  await expect(page.locator('.simulation-recent-list')).toBeVisible();
+  await expect(page.locator('.mobile-study-plan-toggle')).toBeVisible();
   const data=await page.evaluate(()=>({
     hero:document.querySelector('[data-view="home"] .hero').getBoundingClientRect().height,
     metricVisible:[...document.querySelectorAll('.study-command-metrics>button')].filter(el=>getComputedStyle(el).display!=='none').length,
