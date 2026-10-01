@@ -601,26 +601,35 @@
     if(!ipadReaderDockState)return;
     try{localStorage.setItem(IPAD_READER_DOCK_KEY,JSON.stringify(ipadReaderDockState))}catch(_){}
   }
+  function setReaderClass(reader,name,enabled){
+    const has=reader.classList.contains(name);
+    if(has!==enabled)reader.classList.toggle(name,enabled);
+  }
   function applyIPadReaderDock(){
     const reader=document.getElementById('reader'),rail=document.getElementById('studyReaderRail'),handle=document.getElementById('ipadReaderRailHandle');
     if(!reader)return;
     if(!ipadReaderDockEnabled()){
-      reader.classList.remove('ipad-reader-rail-right','ipad-reader-rail-collapsed','ipad-reader-rail-dragging');
-      reader.style.removeProperty('--ipad-reader-dock-y');
-      if(handle)handle.hidden=true;
+      for(const name of ['ipad-reader-rail-right','ipad-reader-rail-collapsed','ipad-reader-rail-dragging']){
+        if(reader.classList.contains(name))reader.classList.remove(name);
+      }
+      if(reader.style.getPropertyValue('--ipad-reader-dock-y'))reader.style.removeProperty('--ipad-reader-dock-y');
+      if(handle&&!handle.hidden)handle.hidden=true;
       return;
     }
-    const pos=readIPadReaderDock();
-    reader.classList.toggle('ipad-reader-rail-right',pos.side==='right');
-    reader.classList.toggle('ipad-reader-rail-collapsed',!!pos.collapsed);
-    reader.style.setProperty('--ipad-reader-dock-y',(Math.round(pos.y*1000)/10)+'%');
+    const pos=readIPadReaderDock(),right=pos.side==='right',collapsed=!!pos.collapsed;
+    setReaderClass(reader,'ipad-reader-rail-right',right);
+    setReaderClass(reader,'ipad-reader-rail-collapsed',collapsed);
+    const y=(Math.round(pos.y*1000)/10)+'%';
+    if(reader.style.getPropertyValue('--ipad-reader-dock-y')!==y)reader.style.setProperty('--ipad-reader-dock-y',y);
     if(handle){
       const available=reader.classList.contains('open')&&rail&&!rail.hidden;
-      handle.hidden=!available;
-      handle.setAttribute('aria-expanded',String(!pos.collapsed));
-      handle.setAttribute('aria-label',pos.collapsed?'Mostrar controles de estudo':'Ocultar controles de estudo');
-      const inward=pos.side==='right'?'‹':'›',outward=pos.side==='right'?'›':'‹';
-      handle.innerHTML='<span class="ipad-reader-rail-grip" aria-hidden="true">⋮</span><span class="ipad-reader-rail-chevron" aria-hidden="true">'+(pos.collapsed?inward:outward)+'</span>';
+      if(handle.hidden===available)handle.hidden=!available;
+      const expanded=String(!collapsed);
+      if(handle.getAttribute('aria-expanded')!==expanded)handle.setAttribute('aria-expanded',expanded);
+      const label=collapsed?'Mostrar controles de estudo':'Ocultar controles de estudo';
+      if(handle.getAttribute('aria-label')!==label)handle.setAttribute('aria-label',label);
+      const inward=right?'‹':'›',outward=right?'›':'‹',html='<span class="ipad-reader-rail-grip" aria-hidden="true">⋮</span><span class="ipad-reader-rail-chevron" aria-hidden="true">'+(collapsed?inward:outward)+'</span>';
+      if(handle.innerHTML!==html)handle.innerHTML=html;
     }
   }
   function ensureIPadReaderDock(reader){
