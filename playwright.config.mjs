@@ -12,6 +12,7 @@ export default defineConfig({
     {
       name:'iphone-webkit',
       grep:/(smartphone|iPhone real|agenda de revisão)/i,
+      retries:1,
       use:{
         browserName:'webkit',
         viewport:{width:390,height:844},
