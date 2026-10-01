@@ -22,8 +22,8 @@
   --system-shadow-soft:0 7px 20px rgba(0,0,0,.19),inset 0 1px rgba(255,255,255,.016);
   --system-radius-panel:14px;
   --system-radius-card:14px;
-  --system-radius-control:9px;
-  --system-radius-chip:7px;
+  --system-radius-control:7px;
+  --system-radius-chip:5px;
   --system-text:#d9dce0;
   --system-text-soft:#989ea7;
   --system-text-dim:#747b84;
