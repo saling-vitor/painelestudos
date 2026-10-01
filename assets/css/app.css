@@ -3995,3 +3995,55 @@ html.is-phone-layout .courses-count{
   .simulation-home-empty.empty-state{grid-template-columns:58px minmax(0,1fr)}
   .simulation-home-empty.empty-state>button{grid-column:1/-1;justify-self:stretch;width:100%}
 }
+
+
+/* =========================================================
+   V15.22.1-G · [G] MEUS CURSOS — progresso mais limpo
+   Remove redundância visual de PEND, suaviza os estados e
+   elimina a divisória horizontal que competia com o rodapé.
+   ========================================================= */
+.course-progress-empty{
+  min-height:19px;
+  color:#707680;
+  font:700 8px var(--mono);
+  letter-spacing:.01em;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini{
+  bottom:56px;
+  gap:7px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-states{
+  min-height:19px;
+  align-items:center;
+  gap:5px;
+  margin-top:1px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state{
+  min-height:19px;
+  padding:2px 6px;
+  border-radius:6px!important;
+  font-size:6.9px;
+  letter-spacing:.04em;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.ok{
+  border-color:rgba(98,169,120,.20);
+  background:rgba(98,169,120,.035);
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.rev{
+  border-color:rgba(109,130,152,.20);
+  background:rgba(109,130,152,.035);
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.dif{
+  border-color:rgba(214,104,117,.20);
+  background:rgba(214,104,117,.035);
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-empty{
+  display:flex;
+  align-items:center;
+  color:#717781;
+  font-size:8px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-footer{
+  padding-top:8px;
+  border-top:0!important;
+}
