@@ -1,17 +1,15 @@
 {
-  "version": "15.22.0",
-  "label": "V15.22.0-G",
-  "releasedAt": "2026-10-01T20:55:00.000Z",
-  "notes": "Etapa 6 [G+D+T+M]: estados vazios padronizados com mascotes oficiais e hierarquia discreta, preservando os componentes que já possuem conteúdo.",
+  "version": "15.22.1",
+  "label": "V15.22.1-G",
+  "releasedAt": "2026-10-01T23:20:00.000Z",
+  "notes": "Ajuste [G] nos cards de Meus Cursos: progresso mais limpo, sem PEND redundante e sem a divisória horizontal marcada no rodapé.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Novo componente reutilizável para estados vazios com mascote, título e orientação curta",
-    "[G] Concursos vazios usam o mascote de livros; mapas usam o mascote pensando",
-    "[G] Simulados vazios usam o mascote de notebook e mantêm a ação de importar",
-    "[G] Progresso sem resultados usa o mascote de ideia sem competir com métricas existentes",
-    "[G] Retomar, agenda, histórico de estudo, pontos de atenção e dúvidas recebem estados compactos",
-    "[D+T] Estados vazios mantêm largura, alinhamento e densidade adequados a grids maiores",
-    "[M] iPhone recebe versões menores e compactas, sem aumentar desnecessariamente a rolagem",
-    "[G] Mascotes usados na Etapa 6 passam a integrar explicitamente o cache offline do PWA"
+    "[G] Remove o indicador PEND dos cards de curso; o restante já é comunicado por percentual e tópicos",
+    "[G] Cursos sem progresso passam a mostrar “Ainda sem progresso registrado.” em vez de quatro estados zerados",
+    "[D+T] OK, REV e DIF ficam menores e visualmente secundários",
+    "[D+T] A divisória horizontal antes de “Última atividade / Entrar” é removida",
+    "[G] Mais respiro entre barra de progresso, estados e rodapé sem alterar dados ou navegação",
+    "[M] O layout compacto do iPhone continua ocultando os estados auxiliares como antes"
   ]
 }
