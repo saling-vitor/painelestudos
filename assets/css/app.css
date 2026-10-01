@@ -3934,3 +3934,64 @@ html.is-phone-layout .courses-count{
   }
 }
 
+
+
+/* =========================================================
+   V15.22.0-G · ETAPA 6 · ESTADOS VAZIOS + MASCOTES
+   Escopo: [G+D+T+M] · sem alterar componentes com conteúdo.
+   ========================================================= */
+.empty.empty-state{
+  grid-column:1/-1;
+  width:100%;
+  min-width:0;
+  min-height:210px;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:12px;
+  padding:28px 22px;
+  border:1px dashed rgba(255,255,255,.105);
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.012),rgba(255,255,255,.004));
+  color:#7f848c;
+  text-align:center;
+}
+.empty.empty-state::before{content:none!important;display:none!important}
+.empty-state .empty-state-graphic{
+  display:block;
+  width:min(124px,34vw);
+  max-height:124px;
+  object-fit:contain;
+  opacity:.9;
+  filter:none;
+}
+.empty-state-copy{display:grid;justify-items:center;gap:5px;min-width:0}
+.empty-state-copy h3{margin:0;color:#d9dce0;font-size:14px;line-height:1.25}
+.empty-state-copy p{max-width:430px;margin:0;color:#7d828a;font-size:11px;line-height:1.55}
+.empty.empty-state--compact{
+  min-height:0;
+  grid-template-columns:64px minmax(0,1fr);
+  place-items:center start;
+  align-content:center;
+  gap:13px;
+  padding:15px 16px;
+  text-align:left;
+}
+.empty-state--compact .empty-state-graphic{width:64px;height:64px;max-height:64px}
+.empty-state--compact .empty-state-copy{justify-items:start}
+.empty-state--compact .empty-state-copy p{max-width:560px}
+.simulation-home-empty.empty-state{
+  grid-template-columns:64px minmax(0,1fr) auto;
+  align-items:center;
+  width:100%;
+}
+.simulation-home-empty.empty-state>button{justify-self:end}
+#continueBox>.empty-state{margin-top:0}
+#courseMaps>.empty-state,#simulationGrid>.empty-state,#allMaps>.empty-state,#coursesGrid>.empty-state{grid-column:1/-1}
+.progress-map-list>.empty-state,.study-agenda-items>.empty-state{margin:6px 0}
+@media(max-width:900px){
+  .empty.empty-state{min-height:190px;padding:24px 18px}
+  .empty-state .empty-state-graphic{width:min(112px,32vw)}
+  .simulation-home-empty.empty-state{grid-template-columns:58px minmax(0,1fr)}
+  .simulation-home-empty.empty-state>button{grid-column:1/-1;justify-self:stretch;width:100%}
+}

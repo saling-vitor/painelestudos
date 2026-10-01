@@ -3358,3 +3358,35 @@
     box-shadow:var(--phone-shadow)!important;
   }
 }
+
+
+/* V15.22.0-G · Etapa 6 [M] · estados vazios proporcionais no iPhone */
+html.is-phone-layout .empty.empty-state{
+  min-height:176px!important;
+  padding:20px 14px!important;
+  gap:10px!important;
+  border-color:var(--phone-edge)!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.008)!important;
+}
+html.is-phone-layout .empty-state .empty-state-graphic{
+  width:min(96px,30vw)!important;
+  max-height:96px!important;
+}
+html.is-phone-layout .empty-state-copy h3{font-size:13.5px!important}
+html.is-phone-layout .empty-state-copy p{font-size:10.5px!important;line-height:1.5!important}
+html.is-phone-layout .empty.empty-state--compact{
+  min-height:0!important;
+  grid-template-columns:50px minmax(0,1fr)!important;
+  gap:10px!important;
+  padding:12px!important;
+  text-align:left!important;
+}
+html.is-phone-layout .empty-state--compact .empty-state-graphic{
+  width:50px!important;
+  height:50px!important;
+}
+html.is-phone-layout .simulation-home-empty.empty-state>button{
+  grid-column:1/-1!important;
+  width:100%!important;
+}

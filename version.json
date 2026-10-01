@@ -1,17 +1,17 @@
 {
-  "version": "15.21.0",
-  "label": "V15.21.0-G",
-  "releasedAt": "2026-10-01T20:39:00.000Z",
-  "notes": "Etapa 5 [G]: identidade oficial e pacote PWA consolidados sobre a V15.19.0-G, sem recolorir a interface e sem reaproveitar a antiga marca com borda branca.",
+  "version": "15.22.0",
+  "label": "V15.22.0-G",
+  "releasedAt": "2026-10-01T20:55:00.000Z",
+  "notes": "Etapa 6 [G+D+T+M]: estados vazios padronizados com mascotes oficiais e hierarquia discreta, preservando os componentes que já possuem conteúdo.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Logos oficiais passam a usar arquivos físicos versionados da identidade final",
-    "[G] Versões oficial e alternativa da logo são preservadas sem filtros ou recolorização por CSS",
-    "[G] Ícones PWA 192/512 e maskable recebem filenames físicos novos",
-    "[G] Apple Touch Icon, favicon, splash e Open Graph passam ao pacote ativo da nova identidade",
-    "[G] Manifest deixa de depender de query string para os ícones ativos",
-    "[G] Reader e tela offline passam a usar o mesmo conjunto oficial de identidade",
-    "[G] Service Worker recebe novo cache e remove referências V13.1.7 do precache ativo",
-    "[G] Navegação, capas, funcionalidades e linguagem cromática da V15.19.0-G permanecem preservadas"
+    "[G] Novo componente reutilizável para estados vazios com mascote, título e orientação curta",
+    "[G] Concursos vazios usam o mascote de livros; mapas usam o mascote pensando",
+    "[G] Simulados vazios usam o mascote de notebook e mantêm a ação de importar",
+    "[G] Progresso sem resultados usa o mascote de ideia sem competir com métricas existentes",
+    "[G] Retomar, agenda, histórico de estudo, pontos de atenção e dúvidas recebem estados compactos",
+    "[D+T] Estados vazios mantêm largura, alinhamento e densidade adequados a grids maiores",
+    "[M] iPhone recebe versões menores e compactas, sem aumentar desnecessariamente a rolagem",
+    "[G] Mascotes usados na Etapa 6 passam a integrar explicitamente o cache offline do PWA"
   ]
 }
