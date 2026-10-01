@@ -2985,3 +2985,183 @@ html.is-ipad .topbar{
     background:linear-gradient(180deg,rgba(216,197,158,.085),rgba(216,197,158,.025))!important;
   }
 }
+
+
+/* =========================================================
+   V15.10.0 · TYPOGRAPHY RHYTHM · hierarquia e densidade
+   ========================================================= */
+:root{
+  --type-label:8px;
+  --type-meta:9px;
+  --type-caption:10px;
+  --type-body:11px;
+  --type-card:17px;
+  --type-section:20px;
+  --type-panel:16px;
+  --leading-body:1.5;
+}
+
+/* Ritmo vertical principal: seções distintas, sem espaço desperdiçado. */
+@media(min-width:481px){
+  .section{margin-top:28px}
+  .section-head{
+    gap:16px;
+    margin-bottom:12px;
+    align-items:flex-end;
+  }
+  .section-head h2{
+    font-size:var(--type-section);
+    line-height:1.12;
+    font-weight:780;
+    letter-spacing:-.018em;
+    text-wrap:balance;
+  }
+  .section-head p{
+    max-width:760px;
+    margin-top:4px;
+    font-size:11px;
+    line-height:1.48;
+  }
+  .section-head.compact{margin-bottom:9px}
+  .section-head.compact h2{font-size:15px;line-height:1.18}
+  .section-head.compact p{font-size:9.5px;line-height:1.45}
+}
+
+/* Kicker/labels deixam de competir com os títulos. */
+.kicker,.panel-kicker{
+  font-size:var(--type-label);
+  line-height:1.2;
+  letter-spacing:.135em;
+}
+.panel h2{
+  font-size:var(--type-panel);
+  line-height:1.18;
+  letter-spacing:-.01em;
+}
+.panel p{
+  font-size:var(--type-body);
+  line-height:var(--leading-body);
+}
+
+/* Indicadores usam números fortes e legendas mais discretas. */
+.metric{padding:14px 15px}
+.metric b{
+  font-size:22px;
+  line-height:1.05;
+  font-variant-numeric:tabular-nums;
+}
+.metric span{
+  display:block;
+  margin-top:4px;
+  font-size:var(--type-label);
+  line-height:1.25;
+  letter-spacing:.10em;
+}
+
+/* Biblioteca e cards: títulos passam a seguir a mesma escala. */
+#coursesGrid .course-card h3{
+  margin-top:15px;
+  font-size:20px;
+  line-height:1.14;
+  letter-spacing:-.012em;
+}
+.course-card-role{font-size:8.5px;line-height:1.3}
+.course-card-institution{font-size:9.5px;line-height:1.42}
+.course-card-meta{margin-top:12px}
+
+.map-card.has-cover h3{
+  font-size:17px;
+  line-height:1.25;
+  letter-spacing:-.01em;
+}
+.map-card.has-cover p{
+  font-size:11px;
+  line-height:1.45;
+}
+.map-card.has-cover .meta{margin-top:10px}
+.map-card.has-cover .map-progress-mini{margin-top:13px}
+
+.simulation-card h3{
+  margin-top:13px;
+  font-size:17px;
+  line-height:1.22;
+  letter-spacing:-.01em;
+}
+.simulation-subtitle{
+  margin-top:4px;
+  font-size:10.5px;
+  line-height:1.42;
+}
+.simulation-meta{margin-top:11px}
+.simulation-card-footer{margin-top:13px}
+
+/* Progresso: mesma hierarquia para visão geral, alertas e concursos. */
+.progress-insights-head,
+.progress-global-head,
+.progress-attention-head{
+  align-items:flex-end;
+}
+.progress-insights-head h3,
+.progress-global-head h3,
+.progress-attention-head h3{
+  font-size:15px;
+  line-height:1.2;
+  letter-spacing:-.008em;
+}
+.progress-insights-head>span,
+.progress-attention-head>span,
+.progress-global-score span{
+  font-size:var(--type-label);
+  line-height:1.25;
+}
+.progress-global-head p{
+  margin-top:4px;
+  font-size:9.5px;
+  line-height:1.48;
+}
+.progress-global-score b{
+  font-size:21px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.progress-course-head h3{
+  font-size:16px;
+  line-height:1.2;
+}
+.progress-course-head p{
+  margin-top:3px;
+  font-size:10px;
+  line-height:1.42;
+}
+.progress-course-score b{
+  font-size:21px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Ações e campos usam densidade coerente sem reduzir área de toque. */
+.icon-btn,.primary,.secondary,.danger{
+  font-size:10.5px;
+  line-height:1;
+}
+.course-toolbar input,.course-toolbar select,
+.simulation-search input,.simulation-toolbar select{
+  font-size:11px;
+}
+
+/* Home mantém sua capa forte, mas o conteúdo abaixo entra no mesmo ritmo. */
+#homeCourses .home-course-card h3{
+  font-size:18px;
+  line-height:1.15;
+}
+.study-plan-copy b{font-size:11.5px;line-height:1.3}
+.study-plan-copy span{font-size:9.5px;line-height:1.4}
+.progress-insight-card>b{
+  font-size:19px;
+  line-height:1.05;
+  font-variant-numeric:tabular-nums;
+}
+.progress-insight-card p{
+  font-size:9.5px;
+  line-height:1.42;
+}
