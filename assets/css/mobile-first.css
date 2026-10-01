@@ -3036,3 +3036,325 @@
 @media(max-width:480px) and (prefers-reduced-motion:reduce){
   html.is-phone-layout #syncTop[data-sync-state="syncing"]::after{animation:none!important}
 }
+
+
+/* =========================================================
+   V15.15.0 · ETAPA 4 SMARTPHONE · sistema visual geral
+   Fundo, superfícies, bordas, sombras, espaçamento, tipografia,
+   botões, chips e estados. Escopo exclusivo do smartphone.
+   ========================================================= */
+@media(max-width:480px){
+  html.is-phone-layout{
+    --phone-bg:#030405;
+    --phone-surface:
+      linear-gradient(145deg,rgba(255,255,255,.022),rgba(255,255,255,.006) 48%,transparent 76%),
+      rgba(9,11,14,.86);
+    --phone-surface-strong:
+      linear-gradient(145deg,rgba(255,255,255,.026),rgba(255,255,255,.008) 45%,transparent 74%),
+      rgba(8,10,13,.94);
+    --phone-surface-soft:rgba(255,255,255,.016);
+    --phone-surface-soft-2:rgba(255,255,255,.024);
+    --phone-edge:rgba(255,255,255,.058);
+    --phone-edge-strong:rgba(255,255,255,.082);
+    --phone-divider:rgba(255,255,255,.045);
+    --phone-shadow:0 10px 28px rgba(0,0,0,.27),inset 0 1px rgba(255,255,255,.018);
+    --phone-shadow-soft:0 6px 18px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.014);
+    --phone-radius-panel:14px;
+    --phone-radius-card:14px;
+    --phone-radius-control:9px;
+    --phone-radius-chip:7px;
+    --phone-text:#d7d9dd;
+    --phone-text-soft:#969ca5;
+    --phone-text-dim:#747b84;
+    --phone-accent:#c3aa84;
+  }
+
+  /* Fundo com profundidade discreta, sem "mancha" dourada decorativa. */
+  html.is-phone-layout body{
+    background:
+      radial-gradient(560px 390px at 12% -6%,rgba(39,50,64,.15),transparent 67%),
+      radial-gradient(440px 320px at 104% 22%,rgba(216,197,158,.022),transparent 72%),
+      linear-gradient(180deg,#030405 0%,#050609 44%,#020304 100%)!important;
+  }
+  html.is-phone-layout .content{
+    padding-top:9px!important;
+  }
+
+  /* Ritmo vertical e hierarquia compartilhados. */
+  html.is-phone-layout .section{
+    margin-top:20px!important;
+  }
+  html.is-phone-layout .section-head{
+    margin-bottom:10px!important;
+  }
+  html.is-phone-layout .section-head h2{
+    color:#e8e9eb!important;
+    font-size:19px!important;
+    line-height:1.14!important;
+    letter-spacing:-.016em!important;
+  }
+  html.is-phone-layout .section-head p{
+    margin-top:3px!important;
+    color:var(--phone-text-soft)!important;
+    font-size:10.5px!important;
+    line-height:1.45!important;
+  }
+  html.is-phone-layout .kicker,
+  html.is-phone-layout .panel-kicker{
+    margin-bottom:3px!important;
+    color:#8f8068!important;
+    font-size:7.5px!important;
+    letter-spacing:.13em!important;
+  }
+
+  /* Superfícies principais: uma família só, sem vidro pesado aninhado. */
+  html.is-phone-layout .study-command-card,
+  html.is-phone-layout .progress-insights,
+  html.is-phone-layout .progress-global-panel,
+  html.is-phone-layout .progress-attention,
+  html.is-phone-layout .study-analytics-grid>.panel,
+  html.is-phone-layout .continue-card,
+  html.is-phone-layout .mobile-progress-group,
+  html.is-phone-layout .mobile-more-shortcuts,
+  html.is-phone-layout .mobile-settings-panel{
+    border:1px solid var(--phone-edge)!important;
+    border-radius:var(--phone-radius-panel)!important;
+    background:var(--phone-surface)!important;
+    box-shadow:var(--phone-shadow)!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  html.is-phone-layout .study-command-card,
+  html.is-phone-layout .progress-insights,
+  html.is-phone-layout .progress-global-panel,
+  html.is-phone-layout .progress-attention{
+    padding:12px!important;
+  }
+  html.is-phone-layout .study-analytics-grid>.panel{
+    padding:11px!important;
+  }
+
+  /* A "central do dia" deixa o dourado apenas em ações/progresso. */
+  html.is-phone-layout .study-command-card{
+    border-color:var(--phone-edge)!important;
+  }
+  html.is-phone-layout .study-command-metrics{
+    gap:7px!important;
+  }
+  html.is-phone-layout .study-command-metrics>button{
+    border:1px solid var(--phone-divider)!important;
+    border-radius:var(--phone-radius-control)!important;
+    background:var(--phone-surface-soft)!important;
+    box-shadow:none!important;
+  }
+  html.is-phone-layout .study-command-metrics>button:active{
+    border-color:rgba(216,197,158,.12)!important;
+    background:rgba(216,197,158,.032)!important;
+  }
+  html.is-phone-layout .study-command-metrics span,
+  html.is-phone-layout .study-command-metrics small{
+    color:var(--phone-text-dim)!important;
+  }
+
+  /* Subcards: diferença de plano, não uma nova moldura pesada. */
+  html.is-phone-layout .study-plan-grid,
+  html.is-phone-layout .progress-insights-grid,
+  html.is-phone-layout .progress-attention-grid,
+  html.is-phone-layout .study-doubt-list{
+    gap:7px!important;
+  }
+  html.is-phone-layout .study-plan-item,
+  html.is-phone-layout .progress-insight-card,
+  html.is-phone-layout .progress-attention-card,
+  html.is-phone-layout .agenda-entry,
+  html.is-phone-layout .study-doubt-list article{
+    border:1px solid var(--phone-divider)!important;
+    border-radius:10px!important;
+    background:var(--phone-surface-soft)!important;
+    box-shadow:none!important;
+  }
+  html.is-phone-layout .study-plan-item{
+    padding:9px 10px!important;
+  }
+  html.is-phone-layout .progress-insight-card{
+    min-height:108px!important;
+    padding:10px!important;
+  }
+  html.is-phone-layout .progress-attention-card{
+    padding:9px!important;
+  }
+  html.is-phone-layout .agenda-entry{
+    border-radius:9px!important;
+  }
+
+  /* Agenda usa a mesma materialidade; o destaque de Hoje é textual. */
+  html.is-phone-layout .study-agenda-calendar{
+    border-color:var(--phone-edge)!important;
+    border-radius:var(--phone-radius-panel)!important;
+    background:var(--phone-surface)!important;
+    box-shadow:var(--phone-shadow-soft)!important;
+  }
+  html.is-phone-layout .agenda-today-card{
+    border:1px solid var(--phone-edge)!important;
+    border-radius:11px!important;
+    background:
+      linear-gradient(145deg,rgba(255,255,255,.018),transparent 58%),
+      rgba(255,255,255,.012)!important;
+    box-shadow:none!important;
+  }
+  html.is-phone-layout .agenda-today-card strong{
+    color:#c8b58f!important;
+  }
+  html.is-phone-layout .agenda-week-card,
+  html.is-phone-layout .agenda-day{
+    border-color:var(--phone-divider)!important;
+    background:var(--phone-surface-soft)!important;
+    box-shadow:none!important;
+  }
+  html.is-phone-layout .agenda-week-card.today,
+  html.is-phone-layout .agenda-day.today,
+  html.is-phone-layout .agenda-day.selected{
+    border-color:rgba(216,197,158,.14)!important;
+    background:rgba(216,197,158,.028)!important;
+  }
+
+  /* Settings: accordions mantêm estrutura da Etapa 3, agora com mesma superfície. */
+  html.is-phone-layout .mobile-settings-toggle,
+  html.is-phone-layout .mobile-subsettings-toggle,
+  html.is-phone-layout .mobile-agenda-plan-toggle{
+    border-color:transparent!important;
+    background:transparent!important;
+    color:#c8ccd1!important;
+    box-shadow:none!important;
+  }
+  html.is-phone-layout .mobile-settings-panel:not(.mobile-settings-collapsed)>.mobile-settings-toggle,
+  html.is-phone-layout .mobile-subsettings:not(.mobile-subsettings-collapsed)>.mobile-subsettings-toggle{
+    border-bottom:1px solid var(--phone-divider)!important;
+  }
+  html.is-phone-layout .mobile-subsettings{
+    border-color:var(--phone-divider)!important;
+    border-radius:10px!important;
+    background:rgba(255,255,255,.010)!important;
+  }
+
+  /* Botões: neutros por padrão; dourado somente para ação principal/seleção. */
+  html.is-phone-layout .primary,
+  html.is-phone-layout .secondary,
+  html.is-phone-layout .icon-btn,
+  html.is-phone-layout .close,
+  html.is-phone-layout .danger{
+    min-height:44px!important;
+    border-radius:var(--phone-radius-control)!important;
+    box-shadow:none!important;
+  }
+  html.is-phone-layout .secondary,
+  html.is-phone-layout .icon-btn,
+  html.is-phone-layout .close{
+    border-color:var(--phone-edge)!important;
+    background:var(--phone-surface-soft)!important;
+    color:#b9bec5!important;
+  }
+  html.is-phone-layout .primary{
+    border-color:rgba(216,197,158,.19)!important;
+    background:linear-gradient(180deg,rgba(216,197,158,.085),rgba(216,197,158,.035))!important;
+    color:#ded4c0!important;
+  }
+  html.is-phone-layout .danger{
+    border-color:rgba(201,104,114,.18)!important;
+    background:rgba(201,104,114,.035)!important;
+    color:#d08e95!important;
+  }
+  html.is-phone-layout .secondary:active,
+  html.is-phone-layout .icon-btn:active,
+  html.is-phone-layout .close:active{
+    border-color:var(--phone-edge-strong)!important;
+    background:var(--phone-surface-soft-2)!important;
+  }
+  html.is-phone-layout .primary:active{
+    background:rgba(216,197,158,.065)!important;
+  }
+
+  /* Filtros/chips: estado neutro leve; ativo ganha apenas um acento. */
+  html.is-phone-layout .chip,
+  html.is-phone-layout .pill,
+  html.is-phone-layout .progress-state,
+  html.is-phone-layout .category-btn,
+  html.is-phone-layout .progress-filter,
+  html.is-phone-layout .course-study-filter,
+  html.is-phone-layout .study-agenda-modes button{
+    border-color:var(--phone-divider)!important;
+    border-radius:var(--phone-radius-chip)!important;
+    background:rgba(255,255,255,.010)!important;
+    box-shadow:none!important;
+    color:#969ca5!important;
+  }
+  html.is-phone-layout .chip.accent,
+  html.is-phone-layout .category-btn.active,
+  html.is-phone-layout .progress-filter.active,
+  html.is-phone-layout .course-study-filter.active,
+  html.is-phone-layout .study-agenda-modes button.active{
+    border-color:rgba(216,197,158,.14)!important;
+    background:rgba(216,197,158,.032)!important;
+    color:#c8b994!important;
+  }
+
+  /* Campos seguem o mesmo plano e ficam visualmente atrás das ações. */
+  html.is-phone-layout input:not([type="checkbox"]):not([type="radio"]),
+  html.is-phone-layout select,
+  html.is-phone-layout textarea{
+    border-color:var(--phone-edge)!important;
+    border-radius:var(--phone-radius-control)!important;
+    background:rgba(8,10,13,.78)!important;
+    color:#cdd0d5!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.012)!important;
+  }
+  html.is-phone-layout input:not([type="checkbox"]):not([type="radio"]):focus,
+  html.is-phone-layout select:focus,
+  html.is-phone-layout textarea:focus{
+    border-color:rgba(169,200,231,.28)!important;
+    background:rgba(10,12,15,.90)!important;
+  }
+
+  /* Divisórias e estados vazios: mais baixos na hierarquia. */
+  html.is-phone-layout .course-footer,
+  html.is-phone-layout .map-card .foot,
+  html.is-phone-layout .simulation-card-footer,
+  html.is-phone-layout .progress-global-footer,
+  html.is-phone-layout .study-stat-line,
+  html.is-phone-layout .study-agenda-form{
+    border-color:var(--phone-divider)!important;
+  }
+  html.is-phone-layout .empty:not(.mobile-skeleton){
+    padding:20px 14px!important;
+    border-color:var(--phone-edge)!important;
+    border-radius:12px!important;
+    background:rgba(255,255,255,.008)!important;
+    color:#777e87!important;
+  }
+
+  /* Tipografia interna: dado importante > rótulo > apoio. */
+  html.is-phone-layout .panel h2,
+  html.is-phone-layout .study-command-head h2{
+    color:#dde0e4!important;
+    font-size:14.5px!important;
+    line-height:1.2!important;
+  }
+  html.is-phone-layout .panel p,
+  html.is-phone-layout .study-command-head p{
+    color:var(--phone-text-soft)!important;
+    font-size:9.5px!important;
+    line-height:1.45!important;
+  }
+  html.is-phone-layout small,
+  html.is-phone-layout .meta{
+    color:var(--phone-text-dim);
+  }
+
+  /* Cards aprovados na Etapa 2 apenas herdam a profundidade, sem redesenho. */
+  html.is-phone-layout .course-card.course-library-card,
+  html.is-phone-layout .map-card,
+  html.is-phone-layout .simulation-card{
+    border-color:var(--phone-edge)!important;
+    box-shadow:var(--phone-shadow)!important;
+  }
+}
