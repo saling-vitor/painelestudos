@@ -1,15 +1,17 @@
 {
-  "version": "15.17.0",
-  "label": "V15.17.0-G",
-  "releasedAt": "2026-10-01T18:22:49.580Z",
-  "notes": "Etapa 1 [G]: estrutura e proporções de Meus Cursos revisadas para desktop, notebook, iPad/tablet e smartphone, preservando o layout mobile já aprovado.",
+  "version": "15.18.0",
+  "label": "V15.18.0-G",
+  "releasedAt": "2026-10-01T18:50:00.000Z",
+  "notes": "Etapa 2 [G]: design e hierarquia dos cards de Meus Cursos refinados em desktop e iPad/tablet, mantendo integralmente o visual já aprovado no iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "Etapa 1 [G]: Meus Cursos com proporções consistentes entre telas",
-    "[D] Desktop amplo passa a usar três colunas e evita card único esticado",
-    "[D+T] Cards ficam cerca de 20–30% mais compactos, com menos espaços vazios",
-    "[T] iPad usa duas colunas e Split View estreito retorna para uma coluna",
-    "[M] Estrutura já aprovada do iPhone foi preservada",
-    "Títulos e instituições longos respeitam limites sem quebrar o card"
+    "Etapa 2 [G]: hierarquia de título, cargo, instituição, banca, prova, mapas e edital refinada",
+    "[D+T] Chips passam a ter alturas, raios, espaçamentos e tipografia consistentes",
+    "[D+T] Cores ficam reservadas por função: prazo em dourado, ativo/concluído em verde, dificuldade em vermelho e dados auxiliares em neutros",
+    "[D+T] OK, REV, DIF e PEND usam tratamento visual padronizado",
+    "[D+T] Barra de progresso ganha mais contraste e leitura mais clara de percentual e tópicos",
+    "[D+T] Entrar ganha presença de CTA sem aumentar o peso visual do card",
+    "[D+T] Bordas, superfície, sombra, hover, focus e pressed foram suavizados e unificados",
+    "[M] Cards do iPhone permanecem exatamente no padrão já aprovado"
   ]
 }
