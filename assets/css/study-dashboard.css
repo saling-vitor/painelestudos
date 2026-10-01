@@ -225,3 +225,106 @@
     line-height:1.45;
   }
 }
+
+
+/* =========================================================
+   V15.11.0 · DASHBOARD POLISH · estados e separadores
+   ========================================================= */
+.study-command-metrics>button,
+.agenda-day,
+.agenda-week-card,
+.agenda-entry,
+.study-weak-points>button,
+.study-ranking-row{
+  transition:
+    border-color var(--ui-motion-fast) ease,
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease,
+    box-shadow var(--ui-motion-fast) ease,
+    transform var(--ui-motion-fast) ease;
+}
+
+.study-plan-footer,
+.study-agenda-form,
+.study-stat-line,
+.study-time-manage{
+  border-color:var(--ui-divider)!important;
+}
+
+.agenda-entry,
+.study-ranking-row,
+.study-weak-points>button{
+  border-bottom-color:var(--ui-divider)!important;
+}
+
+@media(hover:hover){
+  .study-command-metrics>button:hover{
+    border-color:rgba(216,197,158,.23)!important;
+    background:rgba(216,197,158,.032)!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.025);
+  }
+  .agenda-day:hover,
+  .agenda-week-card:hover{
+    border-color:rgba(216,197,158,.24)!important;
+    background:rgba(216,197,158,.035)!important;
+  }
+  .agenda-entry:hover{
+    border-color:rgba(255,255,255,.085)!important;
+    background:rgba(255,255,255,.020)!important;
+  }
+  .study-weak-points>button:hover,
+  .study-ranking-row:hover{
+    background:rgba(255,255,255,.016);
+  }
+}
+
+.agenda-day.selected{
+  border-color:rgba(216,197,158,.34)!important;
+  background:rgba(216,197,158,.052)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025);
+}
+.agenda-day.today{
+  box-shadow:inset 0 0 0 1px rgba(216,197,158,.08);
+}
+.agenda-day:active,
+.agenda-week-card:active,
+.study-command-metrics>button:active{
+  transform:scale(.99);
+}
+
+/* Timer e ações rápidas seguem o mesmo acabamento dos controles globais. */
+.study-timer-launch,
+.study-timer-actions button,
+.reader-doubt-quick,
+.agenda-delete{
+  transition:
+    border-color var(--ui-motion-fast) ease,
+    background-color var(--ui-motion-fast) ease,
+    color var(--ui-motion-fast) ease,
+    box-shadow var(--ui-motion-fast) ease,
+    transform var(--ui-motion-fast) ease;
+}
+@media(hover:hover){
+  .study-timer-launch:hover,
+  .study-timer-actions button:hover,
+  .reader-doubt-quick:hover{
+    border-color:rgba(216,197,158,.32)!important;
+    box-shadow:0 12px 32px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025);
+  }
+}
+.study-timer-launch:active,
+.study-timer-actions button:active,
+.reader-doubt-quick:active,
+.agenda-delete:active{
+  transform:scale(.985);
+}
+
+@media(prefers-reduced-motion:reduce){
+  .study-command-metrics>button,
+  .agenda-day,.agenda-week-card,.agenda-entry,
+  .study-weak-points>button,.study-ranking-row,
+  .study-timer-launch,.study-timer-actions button,
+  .reader-doubt-quick,.agenda-delete{
+    transition:none!important;
+  }
+}
