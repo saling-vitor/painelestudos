@@ -2885,10 +2885,10 @@ html.is-ipad .topbar{
   --glass-shadow-soft:0 14px 34px rgba(0,0,0,.27);
   --glass-shadow-card:0 18px 42px rgba(0,0,0,.33);
   --glass-blur:blur(18px) saturate(108%);
-  --radius-control:9px;
-  --radius-compact:11px;
-  --radius-panel:14px;
-  --radius-modal:18px;
+  --radius-control:var(--ui-radius-sm);
+  --radius-compact:var(--ui-radius-md);
+  --radius-panel:var(--ui-radius-lg);
+  --radius-modal:var(--ui-radius-lg);
 }
 
 /* Superfícies neutras: mesma profundidade, borda e brilho interno. */
@@ -2910,8 +2910,8 @@ html.is-ipad .topbar{
   backdrop-filter:var(--glass-blur);
   box-shadow:var(--glass-shadow-soft),inset 0 1px var(--glass-topline)!important;
 }
-.panel,.progress-insights,.progress-global-panel,.progress-attention{border-radius:var(--radius-panel)!important}
-.metric,.document-upload,.document-admin,.import-preview,.cloud-diagnostic{border-radius:var(--radius-compact)!important}
+.panel,.metric,.progress-insights,.progress-global-panel,.progress-attention,.document-upload,.document-admin{border-radius:var(--radius-panel)!important}
+.import-preview,.cloud-diagnostic{border-radius:var(--radius-compact)!important}
 
 /* Cards com identidade própria mantêm cor/arte, mas usam a mesma leitura de material. */
 .course-hero,
@@ -2925,9 +2925,7 @@ html.is-ipad .topbar{
   -webkit-backdrop-filter:var(--glass-blur);
   backdrop-filter:var(--glass-blur);
 }
-.course-card{border-radius:16px!important}
-.map-card{border-radius:15px!important}
-.simulation-card{border-radius:15px!important}
+.course-card,.map-card,.simulation-card{border-radius:var(--ui-radius-lg)!important}
 
 /* Controles: uma única família de vidro. */
 .icon-btn,
@@ -2939,7 +2937,7 @@ html.is-ipad .topbar{
   box-shadow:inset 0 1px rgba(255,255,255,.028);
 }
 .icon-btn,.secondary,.close{border-radius:var(--radius-control)!important}
-.category-btn{border-radius:999px!important}
+.category-btn{border-radius:var(--ui-radius-xs)!important}
 .primary{
   border-color:rgba(216,197,158,.34)!important;
   background:linear-gradient(180deg,rgba(216,197,158,.155),rgba(216,197,158,.052))!important;
