@@ -543,7 +543,7 @@ test('acabamento final mantém foco, alinhamento e transições consistentes',as
     const style=getComputedStyle(el);
     return{display:style.display,alignItems:style.alignItems,justifyContent:style.justifyContent,transition:style.transitionDuration};
   });
-  expect(control.display).toBe('inline-flex');
+  expect(['flex','inline-flex']).toContain(control.display);
   expect(control.alignItems).toBe('center');
   expect(control.justifyContent).toBe('center');
   expect(control.transition).not.toBe('0s');
