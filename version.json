@@ -1,6 +1,6 @@
 {
   "version": "15.16.0",
-  "label": "V15.16.0",
+  "label": "V15.16.0-G",
   "releasedAt": "2026-10-01T16:50:05.634Z",
   "notes": "Etapa 0 [G]: a biblioteca de cursos passa a pertencer à conta/nuvem; a template abre vazia sem sessão e preserva o cache da conta para uso offline.",
   "showWhatsNew": true,
