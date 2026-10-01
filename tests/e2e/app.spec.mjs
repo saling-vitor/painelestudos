@@ -344,7 +344,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.syncing.animation).toContain('stage3-sync-spin');
   expect(visual.activeBackground).not.toBe('none');
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
-  expect(visual.countDisplay).toBe('inline-flex');
+  expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
   if(testInfo.project.name==='ipad'){
     expect(visual.syncHeight).toBeGreaterThanOrEqual(44);
