@@ -1,14 +1,14 @@
 {
-  "version": "15.10.0",
-  "label": "V15.10.0",
-  "releasedAt": "2026-10-01T00:18:01.886Z",
-  "notes": "Quarta etapa do pacote visual: refina tipografia, hierarquia, densidade e alinhamentos entre Home, Cursos, Progresso, Agenda, Planner e Simulados.",
+  "version": "15.11.0",
+  "label": "V15.11.0",
+  "releasedAt": "2026-10-01T10:08:10.360Z",
+  "notes": "Quinta etapa do pacote visual: acabamento final de estados, foco, divisórias, ícones e microinterações, preservando a identidade e a geometria aprovadas.",
   "showWhatsNew": true,
   "highlights": [
-    "Títulos de página, seções, cards e labels agora seguem uma escala tipográfica mais clara",
-    "Métricas e números ganharam hierarquia consistente e alinhamento tabular",
-    "Cards de cursos, mapas e simulados ficaram mais densos sem perder legibilidade",
-    "Progresso, Dashboard e Planner receberam espaçamentos internos e textos secundários harmonizados",
-    "Smartphone mantém a hierarquia visual com tamanhos compactos e áreas de toque preservadas"
+    "Foco de teclado ficou consistente e claramente visível em controles, campos e ações",
+    "Hover, pressed, active e disabled agora seguem a mesma assinatura visual em todo o aplicativo",
+    "Divisórias, bordas e sombras receberam ajuste fino para reduzir ruído visual",
+    "Ícones de botões e navegação foram alinhados sem alterar tamanhos ou estrutura dos componentes",
+    "Agenda, timer, planner, menus contextuais e smartphone receberam feedback tátil e visual harmonizado"
   ]
 }
