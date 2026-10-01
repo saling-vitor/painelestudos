@@ -3342,3 +3342,118 @@ button>.ui-icon,
     transition:none!important;
   }
 }
+
+/* =========================================================
+   V15.17.0-G · ETAPA 1 · MEUS CURSOS — estrutura e proporções
+   Escopo: [G] base compartilhada, [D] desktop/notebook,
+   [T] iPad/tablet e [M] preservado/validado.
+   ========================================================= */
+
+#coursesGrid>.empty{
+  grid-column:1/-1;
+  width:100%;
+  min-width:0;
+}
+
+html:not(.is-phone-layout) [data-view="courses"]>.section-head{
+  align-items:center;
+  margin-bottom:16px;
+}
+html:not(.is-phone-layout) #coursesGrid.course-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  align-items:stretch;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
+  min-height:292px;
+  padding:16px 16px 56px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card h3{
+  display:-webkit-box;
+  min-height:2.32em;
+  margin-top:12px;
+  overflow:hidden;
+  font-size:19px;
+  line-height:1.16;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card-role{
+  margin-top:4px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card-institution{
+  display:-webkit-box;
+  min-height:0;
+  max-height:2.9em;
+  margin-top:4px;
+  overflow:hidden;
+  line-height:1.42;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card-meta{
+  gap:5px;
+  margin-top:10px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card-meta-item,
+html:not(.is-phone-layout) #coursesGrid .course-exam-info,
+html:not(.is-phone-layout) #coursesGrid .course-edital-btn{
+  min-height:27px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini{
+  left:16px;
+  right:16px;
+  bottom:54px;
+  gap:6px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-states{
+  gap:4px;
+}
+html:not(.is-phone-layout) #coursesGrid .course-footer{
+  left:16px;
+  right:16px;
+  bottom:12px;
+  min-height:32px;
+  padding-top:9px;
+}
+
+@media(min-width:1440px){
+  html:not(.is-ipad):not(.is-phone-layout) #coursesGrid.course-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:16px;
+  }
+}
+
+@media(min-width:821px) and (max-width:1439px){
+  html:not(.is-ipad):not(.is-phone-layout) #coursesGrid.course-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+html.is-ipad:not(.is-phone-layout) #coursesGrid.course-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
+  min-height:286px;
+  padding:15px 15px 54px;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-progress-mini{
+  left:15px;
+  right:15px;
+  bottom:52px;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-footer{
+  left:15px;
+  right:15px;
+}
+
+@media(max-width:720px){
+  html.is-ipad:not(.is-phone-layout) #coursesGrid.course-grid{
+    grid-template-columns:1fr;
+  }
+  html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
+    min-height:278px;
+  }
+}
+
