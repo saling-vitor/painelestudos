@@ -699,3 +699,160 @@
     transition:none!important;
   }
 }
+
+/* =========================================================
+   V15.12.0 · IPAD READER EDGE DOCK
+   Escopo deliberado: somente html.is-ipad. Desktop e phone intactos.
+   ========================================================= */
+.ipad-reader-rail-handle{display:none}
+
+html.is-ipad .reader.open #readerDoubtQuick{
+  display:none!important;
+}
+
+html.is-ipad .reader.open .study-reader-rail{
+  --ipad-reader-rail-width:78px;
+  position:absolute!important;
+  top:var(--ipad-reader-dock-y,68%)!important;
+  bottom:auto!important;
+  left:8px!important;
+  right:auto!important;
+  width:var(--ipad-reader-rail-width)!important;
+  grid-template-columns:1fr!important;
+  padding:6px!important;
+  transform:translateY(-50%)!important;
+  border-radius:12px!important;
+  background:rgba(8,10,13,.88)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+  backdrop-filter:blur(18px)!important;
+  box-shadow:0 16px 44px rgba(0,0,0,.46)!important;
+  opacity:1;
+  transition:opacity .18s ease,transform .2s ease!important;
+}
+
+html.is-ipad .reader.open.ipad-reader-rail-right .study-reader-rail{
+  left:auto!important;
+  right:8px!important;
+}
+
+html.is-ipad .reader.open .study-reader-rail button{
+  min-height:48px!important;
+  padding:4px 3px!important;
+}
+
+html.is-ipad .reader.open .study-reader-rail button>span{
+  font-size:12px!important;
+}
+
+html.is-ipad .reader.open .study-reader-rail button>b{
+  font-size:7px!important;
+  line-height:1.15!important;
+}
+
+html.is-ipad .reader.open .study-reader-rail>small{
+  display:block!important;
+}
+
+html.is-ipad .reader.open.ipad-reader-rail-collapsed .study-reader-rail{
+  opacity:0!important;
+  pointer-events:none!important;
+  transform:translateY(-50%) translateX(calc(-100% - 18px))!important;
+}
+
+html.is-ipad .reader.open.ipad-reader-rail-right.ipad-reader-rail-collapsed .study-reader-rail{
+  transform:translateY(-50%) translateX(calc(100% + 18px))!important;
+}
+
+html.is-ipad .reader.open .ipad-reader-rail-handle{
+  position:absolute;
+  z-index:242;
+  top:var(--ipad-reader-dock-y,68%);
+  left:0;
+  right:auto;
+  width:28px;
+  min-width:28px;
+  height:58px;
+  min-height:58px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.10);
+  border-left:0;
+  border-radius:0 12px 12px 0;
+  background:rgba(8,10,13,.90);
+  color:#aeb3ba;
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+  box-shadow:0 10px 30px rgba(0,0,0,.42);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  transform:translateY(-50%);
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  cursor:grab;
+  transition:left .2s ease,right .2s ease,background-color .18s ease,border-color .18s ease,transform .18s ease!important;
+}
+
+html.is-ipad .reader.open.ipad-reader-rail-right .ipad-reader-rail-handle{
+  left:auto;
+  right:0;
+  border-left:1px solid rgba(255,255,255,.10);
+  border-right:0;
+  border-radius:12px 0 0 12px;
+}
+
+html.is-ipad .reader.open:not(.ipad-reader-rail-collapsed):not(.ipad-reader-rail-right) .ipad-reader-rail-handle{
+  left:92px;
+}
+
+html.is-ipad .reader.open:not(.ipad-reader-rail-collapsed).ipad-reader-rail-right .ipad-reader-rail-handle{
+  right:92px;
+}
+
+html.is-ipad .reader.open .ipad-reader-rail-handle[hidden]{
+  display:none!important;
+}
+
+html.is-ipad .reader.open .ipad-reader-rail-grip{
+  color:#6f757e;
+  font-size:13px;
+  line-height:10px;
+}
+
+html.is-ipad .reader.open .ipad-reader-rail-chevron{
+  color:#d9c7a6;
+  font-size:15px;
+  line-height:14px;
+}
+
+html.is-ipad .reader.open.ipad-reader-rail-dragging .ipad-reader-rail-handle{
+  cursor:grabbing;
+  transition:none!important;
+  transform:translateY(-50%) scale(1.04);
+}
+
+html.is-ipad .reader.open.ipad-reader-rail-dragging .study-reader-rail{
+  transition:none!important;
+}
+
+html.is-ipad .reader.focus-mode .study-reader-rail,
+html.is-ipad .reader.focus-mode .ipad-reader-rail-handle{
+  display:none!important;
+}
+
+@media(hover:hover){
+  html.is-ipad .reader.open .ipad-reader-rail-handle:hover{
+    border-color:rgba(195,170,132,.28);
+    background:rgba(14,16,20,.96);
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.is-ipad .reader.open .study-reader-rail,
+  html.is-ipad .reader.open .ipad-reader-rail-handle{
+    transition:none!important;
+  }
+}
+
