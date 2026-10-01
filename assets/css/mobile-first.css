@@ -2158,3 +2158,90 @@
     line-height:1!important;
   }
 }
+
+
+/* =========================================================
+   V15.11.0 · PHONE POLISH · feedback tátil sem custo gráfico
+   ========================================================= */
+@media(max-width:480px){
+  html.is-phone-layout .bottom-nav button,
+  html.is-phone-layout .mobile-menu-option,
+  html.is-phone-layout .mobile-settings-toggle,
+  html.is-phone-layout .mobile-agenda-plan-toggle,
+  html.mobile-reader-open.is-phone-layout .mobile-reader-rail-toggle,
+  html.mobile-reader-open.is-phone-layout .study-reader-rail button{
+    transition:
+      background-color var(--ui-motion-fast) ease,
+      color var(--ui-motion-fast) ease,
+      border-color var(--ui-motion-fast) ease,
+      opacity var(--ui-motion-fast) ease,
+      transform var(--ui-motion-fast) ease!important;
+  }
+
+  html.is-phone-layout .bottom-nav button:active,
+  html.is-phone-layout .mobile-menu-option:active,
+  html.is-phone-layout .mobile-settings-toggle:active,
+  html.is-phone-layout .mobile-agenda-plan-toggle:active,
+  html.mobile-reader-open.is-phone-layout .mobile-reader-rail-toggle:active,
+  html.mobile-reader-open.is-phone-layout .study-reader-rail button:active{
+    transform:scale(.985)!important;
+    background-color:rgba(216,197,158,.055)!important;
+  }
+
+  html.is-phone-layout .bottom-nav button.active{
+    box-shadow:inset 0 0 0 1px rgba(216,197,158,.08)!important;
+  }
+
+  html.is-phone-layout .mobile-menu-option,
+  html.is-phone-layout .mobile-settings-toggle,
+  html.is-phone-layout .mobile-agenda-plan-toggle{
+    border-color:var(--ui-divider)!important;
+  }
+
+  html.is-phone-layout .course-footer,
+  html.is-phone-layout .map-card .foot,
+  html.is-phone-layout .simulation-card-footer,
+  html.is-phone-layout .progress-global-footer,
+  html.is-phone-layout .progress-map-list,
+  html.is-phone-layout .study-agenda-form,
+  html.is-phone-layout .study-time-manage{
+    border-color:var(--ui-divider)!important;
+  }
+
+  /* No toque, evita elevação/hover “preso” de desktop. */
+  html.is-phone-layout .course-card:hover,
+  html.is-phone-layout .map-card:hover,
+  html.is-phone-layout .simulation-card:hover{
+    transform:none!important;
+  }
+
+  /* Ícones e rótulos da navegação ficam no mesmo eixo visual. */
+  html.is-phone-layout .bottom-nav button{
+    display:grid!important;
+    place-content:center;
+    justify-items:center;
+    align-items:center;
+  }
+  html.is-phone-layout .bottom-nav button>.ui-icon{
+    margin-inline:auto!important;
+  }
+
+  /* Foco via teclado externo continua visível no iPhone/iPadOS. */
+  html.is-phone-layout button:focus-visible,
+  html.is-phone-layout input:focus-visible,
+  html.is-phone-layout select:focus-visible,
+  html.is-phone-layout textarea:focus-visible{
+    outline-offset:1px!important;
+  }
+}
+
+@media(max-width:480px) and (prefers-reduced-motion:reduce){
+  html.is-phone-layout .bottom-nav button,
+  html.is-phone-layout .mobile-menu-option,
+  html.is-phone-layout .mobile-settings-toggle,
+  html.is-phone-layout .mobile-agenda-plan-toggle,
+  html.mobile-reader-open.is-phone-layout .mobile-reader-rail-toggle,
+  html.mobile-reader-open.is-phone-layout .study-reader-rail button{
+    transition:none!important;
+  }
+}
