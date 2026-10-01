@@ -1,23 +1,5 @@
 {
-  "courses": [
-    {
-      "id": "porto-alegre",
-      "title": "DEMHAB Porto Alegre",
-      "subtitle": "CP 01 · Arquiteto",
-      "city": "Porto Alegre/RS",
-      "institution": "Departamento Municipal de Habitação · DEMHAB",
-      "board": "FUNDATEC",
-      "examDate": "18/10/2026",
-      "maps": 14,
-      "topics": 408,
-      "driveFolder": "https://drive.google.com/drive/folders/1CuA7TdW1XpiK8sKPNtEgvfUMHJG3K0Vc",
-      "sourceDriveRoot": "https://drive.google.com/drive/folders/1kYgw-E3CaJVrwNsqDZ_ErP5ZNUAWm8b_?hl=pt-br",
-      "edital": "cursos/porto-alegre/documentos/edital-abertura-001-2026.pdf",
-      "hero": "assets/study-collage.jpg",
-      "source": "bundled",
-      "status": "active"
-    }
-  ],
+  "courses": [],
   "maps": [
     {
       "id": "demhab",
@@ -300,5 +282,11 @@
       "cover": "assets/capas/gco.webp"
     }
   ],
-  "generated": "2026-09-28"
+  "generated": "2026-09-28",
+  "bundledCourseAssets": {
+    "porto-alegre": {
+      "edital": "cursos/porto-alegre/documentos/edital-abertura-001-2026.pdf",
+      "hero": "assets/study-collage.jpg"
+    }
+  }
 }

@@ -1,14 +1,14 @@
 {
-  "version": "15.15.1",
-  "label": "V15.15.1",
-  "releasedAt": "2026-10-01T12:17:00-03:00",
-  "notes": "Hotfix de estabilidade da Etapa 4: evita sobrescrita concorrente do modal de novidades e torna o modo imersivo do leitor no smartphone síncrono ao abrir/fechar.",
+  "version": "15.16.0",
+  "label": "V15.16.0",
+  "releasedAt": "2026-10-01T16:50:05.634Z",
+  "notes": "Etapa 0 [G]: a biblioteca de cursos passa a pertencer à conta/nuvem; a template abre vazia sem sessão e preserva o cache da conta para uso offline.",
   "showWhatsNew": true,
   "highlights": [
-    "Mantém integralmente o sistema visual da Etapa 4 no smartphone",
-    "Modal de novidades não é sobrescrito por uma segunda verificação automática enquanto já está aberto",
-    "Leitor no iPhone aplica e remove o modo imersivo de forma síncrona ao abrir e fechar",
-    "A proteção do iPad e Split View continua ativa",
-    "Desktop e demais funcionalidades permanecem preservados"
+    "Etapa 0 [G]: cursos agora pertencem à conta e à nuvem",
+    "Sem conta conectada, Meus Cursos e os mapas vinculados ficam vazios",
+    "A template não cria mais automaticamente o curso DEMHAB",
+    "Sessão válida offline continua usando o último catálogo da conta em cache",
+    "Cursos já existentes na nuvem permanecem preservados"
   ]
 }
