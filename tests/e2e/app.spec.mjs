@@ -1054,18 +1054,33 @@ test('smartphone compacta cards de mapas e preserva alvos touch',async({page},te
   await page.goto('/#course/porto-alegre');
   const card=page.locator('#courseMaps .map-card.has-cover').first();
   await expect(card).toBeVisible();
-  const size=await card.evaluate(el=>({
-    height:el.getBoundingClientRect().height,
-    cover:el.querySelector('.map-cover')?.getBoundingClientRect().height||0,
-    fav:el.querySelector('.fav')?.getBoundingClientRect().width||0,
-    menu:el.querySelector('.map-admin-btn')?.getBoundingClientRect().width||0,
-    metaDisplay:getComputedStyle(el.querySelector('.meta')).display
-  }));
-  expect.soft(size.height).toBeLessThanOrEqual(235);
-  expect.soft(size.cover).toBeLessThanOrEqual(90);
-  expect.soft(size.fav).toBeGreaterThanOrEqual(44);
-  expect.soft(size.menu).toBeGreaterThanOrEqual(44);
+  const size=await card.evaluate(el=>{
+    const cover=el.querySelector('.map-cover'),fav=el.querySelector('.fav'),menu=el.querySelector('.map-admin-btn'),progress=el.querySelector('.map-progress-mini'),foot=el.querySelector('.foot');
+    return{
+      height:el.getBoundingClientRect().height,
+      cover:cover?.getBoundingClientRect().height||0,
+      fav:fav?.getBoundingClientRect().width||0,
+      menu:menu?.getBoundingClientRect().width||0,
+      metaDisplay:getComputedStyle(el.querySelector('.meta')).display,
+      progressBorder:parseFloat(getComputedStyle(progress).borderTopWidth)||0,
+      progressBackground:getComputedStyle(progress).backgroundImage,
+      footBorder:parseFloat(getComputedStyle(foot).borderTopWidth)||0,
+      favBefore:getComputedStyle(fav,'::before').content
+    };
+  });
+  expect.soft(size.height).toBeGreaterThanOrEqual(240);
+  expect.soft(size.height).toBeLessThanOrEqual(300);
+  expect.soft(size.cover).toBeGreaterThanOrEqual(105);
+  expect.soft(size.cover).toBeLessThanOrEqual(115);
+  expect.soft(size.fav).toBeGreaterThanOrEqual(36);
+  expect.soft(size.fav).toBeLessThanOrEqual(40);
+  expect.soft(size.menu).toBeGreaterThanOrEqual(36);
+  expect.soft(size.menu).toBeLessThanOrEqual(40);
   expect.soft(size.metaDisplay).toBe('none');
+  expect.soft(size.progressBorder).toBe(0);
+  expect.soft(size.progressBackground).toBe('none');
+  expect.soft(size.footBorder).toBe(0);
+  expect.soft(size.favBefore).not.toBe('none');
 });
 
 test('smartphone reorganiza Progresso em quatro blocos expansíveis',async({page},testInfo)=>{
@@ -1290,9 +1305,22 @@ test('smartphone compacta também os cards de simulados',async({page},testInfo)=
   await page.goto('/#simulations');
   const card=page.locator('#simulationGrid .simulation-card').first();
   await expect(card).toBeVisible();
-  const box=await card.evaluate(el=>({height:el.getBoundingClientRect().height,cover:el.querySelector('.simulation-cover')?.getBoundingClientRect().height||0}));
-  expect.soft(box.height).toBeLessThanOrEqual(340);
-  expect.soft(box.cover).toBeLessThanOrEqual(112);
+  const box=await card.evaluate(el=>{
+    const cover=el.querySelector('.simulation-cover:not([hidden])'),meta=el.querySelector('.simulation-meta-item'),footer=el.querySelector('.simulation-card-footer');
+    return{
+      height:el.getBoundingClientRect().height,
+      cover:cover?.getBoundingClientRect().height||0,
+      metaBorder:meta?parseFloat(getComputedStyle(meta).borderTopWidth)||0:0,
+      footerBorder:footer?parseFloat(getComputedStyle(footer).borderTopWidth)||0:0
+    };
+  });
+  expect.soft(box.height).toBeLessThanOrEqual(370);
+  if(box.cover){
+    expect.soft(box.cover).toBeGreaterThanOrEqual(112);
+    expect.soft(box.cover).toBeLessThanOrEqual(120);
+  }
+  expect.soft(box.metaBorder).toBe(0);
+  expect.soft(box.footerBorder).toBe(0);
 });
 
 test('iPhone real mantém topbar sem faixa e capas presas aos cantos',async({page},testInfo)=>{
@@ -1487,4 +1515,56 @@ test('iPad preserva estrutura do curso fora da etapa 1 de smartphone',async({pag
   expect(data.phone).toBe(false);
   expect(data.border).toBeGreaterThan(0);
   expect(data.background).not.toBe('none');
+});
+
+
+test('smartphone etapa 2 usa cards leves sem molduras internas',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
+  await page.setViewportSize({width:390,height:844});
+
+  await page.goto('/#courses');
+  const course=page.locator('#coursesGrid .course-card.course-library-card').first();
+  await expect(course).toBeVisible();
+  const courseStyle=await course.evaluate(el=>{
+    const meta=el.querySelector('.course-card-meta-item'),exam=el.querySelector('.course-exam-info'),footer=el.querySelector('.course-footer'),progress=el.querySelector('.course-progress-mini');
+    return{
+      height:el.getBoundingClientRect().height,
+      border:parseFloat(getComputedStyle(el).borderTopWidth)||0,
+      metaBorder:meta?parseFloat(getComputedStyle(meta).borderTopWidth)||0:0,
+      examBorder:exam?parseFloat(getComputedStyle(exam).borderTopWidth)||0:0,
+      footerBorder:footer?parseFloat(getComputedStyle(footer).borderTopWidth)||0:0,
+      progressStates:progress?.querySelector('.progress-states')?getComputedStyle(progress.querySelector('.progress-states')).display:'none'
+    };
+  });
+  expect(courseStyle.height).toBeGreaterThanOrEqual(190);
+  expect(courseStyle.height).toBeLessThanOrEqual(250);
+  expect(courseStyle.border).toBeGreaterThan(0);
+  expect(courseStyle.metaBorder).toBe(0);
+  expect(courseStyle.examBorder).toBe(0);
+  expect(courseStyle.footerBorder).toBe(0);
+  expect(courseStyle.progressStates).toBe('none');
+
+  await page.goto('/#course/porto-alegre');
+  const maps=page.locator('#courseMaps .map-card.has-cover');
+  await expect(maps.first()).toBeVisible();
+  const gap=await page.locator('#courseMaps').evaluate(el=>parseFloat(getComputedStyle(el).rowGap)||parseFloat(getComputedStyle(el).gap)||0);
+  expect(gap).toBeGreaterThanOrEqual(10);
+});
+
+test('iPad preserva cards fora da etapa 2 de smartphone',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#course/porto-alegre');
+  await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card.has-cover').length>0);
+  const data=await page.locator('#courseMaps .map-card.has-cover').first().evaluate(el=>{
+    const fav=el.querySelector('.fav'),cover=el.querySelector('.map-cover');
+    return{
+      phone:document.documentElement.classList.contains('is-phone-layout'),
+      favWidth:fav?.getBoundingClientRect().width||0,
+      coverHeight:cover?.getBoundingClientRect().height||0
+    };
+  });
+  expect(data.phone).toBe(false);
+  expect(data.favWidth).toBeLessThanOrEqual(32);
+  expect(data.coverHeight).toBeGreaterThan(120);
 });
