@@ -578,18 +578,117 @@
     if(!dragState||e.pointerId!==dragState.pointerId)return;const rect=dragState.root.getBoundingClientRect(),data=read();data.settings.timerPosition={x:Math.round(rect.left),y:Math.round(rect.top)};write(data);dragState.root.classList.remove('is-dragging');dragState=null;
   }
 
+  const IPAD_READER_DOCK_KEY='studyapp.ipadReaderDock.v1';
+  let ipadReaderDockState=null,ipadReaderDockDrag=null;
+
+  function ipadReaderDockEnabled(){
+    return document.documentElement.classList.contains('is-ipad');
+  }
+  function readIPadReaderDock(){
+    if(ipadReaderDockState)return ipadReaderDockState;
+    const fallback={side:'right',y:.68,collapsed:true};
+    try{
+      const saved=JSON.parse(localStorage.getItem(IPAD_READER_DOCK_KEY)||'{}'),y=Number(saved.y);
+      ipadReaderDockState={
+        side:saved.side==='left'?'left':'right',
+        y:Number.isFinite(y)?clamp(y,.18,.82):fallback.y,
+        collapsed:saved.collapsed!==false
+      };
+    }catch(_){ipadReaderDockState={...fallback}}
+    return ipadReaderDockState;
+  }
+  function saveIPadReaderDock(){
+    if(!ipadReaderDockState)return;
+    try{localStorage.setItem(IPAD_READER_DOCK_KEY,JSON.stringify(ipadReaderDockState))}catch(_){}
+  }
+  function applyIPadReaderDock(){
+    const reader=document.getElementById('reader'),rail=document.getElementById('studyReaderRail'),handle=document.getElementById('ipadReaderRailHandle');
+    if(!reader)return;
+    if(!ipadReaderDockEnabled()){
+      reader.classList.remove('ipad-reader-rail-right','ipad-reader-rail-collapsed','ipad-reader-rail-dragging');
+      reader.style.removeProperty('--ipad-reader-dock-y');
+      if(handle)handle.hidden=true;
+      return;
+    }
+    const pos=readIPadReaderDock();
+    reader.classList.toggle('ipad-reader-rail-right',pos.side==='right');
+    reader.classList.toggle('ipad-reader-rail-collapsed',!!pos.collapsed);
+    reader.style.setProperty('--ipad-reader-dock-y',(Math.round(pos.y*1000)/10)+'%');
+    if(handle){
+      const available=reader.classList.contains('open')&&rail&&!rail.hidden;
+      handle.hidden=!available;
+      handle.setAttribute('aria-expanded',String(!pos.collapsed));
+      handle.setAttribute('aria-label',pos.collapsed?'Mostrar controles de estudo':'Ocultar controles de estudo');
+      const inward=pos.side==='right'?'‹':'›',outward=pos.side==='right'?'›':'‹';
+      handle.innerHTML='<span class="ipad-reader-rail-grip" aria-hidden="true">⋮</span><span class="ipad-reader-rail-chevron" aria-hidden="true">'+(pos.collapsed?inward:outward)+'</span>';
+    }
+  }
+  function ensureIPadReaderDock(reader){
+    if(!reader||!ipadReaderDockEnabled())return null;
+    let handle=document.getElementById('ipadReaderRailHandle');
+    if(handle)return handle;
+    handle=document.createElement('button');
+    handle.id='ipadReaderRailHandle';
+    handle.type='button';
+    handle.className='ipad-reader-rail-handle';
+    handle.setAttribute('aria-controls','studyReaderRail');
+    handle.addEventListener('click',()=>{
+      if(handle.dataset.dragged==='1'){delete handle.dataset.dragged;return}
+      const pos=readIPadReaderDock();pos.collapsed=!pos.collapsed;saveIPadReaderDock();applyIPadReaderDock();
+    });
+    handle.addEventListener('pointerdown',e=>{
+      if(e.button!=null&&e.button!==0)return;
+      const pos=readIPadReaderDock();
+      ipadReaderDockDrag={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,moved:false,collapsed:pos.collapsed};
+      handle.setPointerCapture?.(e.pointerId);
+      reader.classList.add('ipad-reader-rail-dragging');
+      e.preventDefault();
+    },{passive:false});
+    handle.addEventListener('pointermove',e=>{
+      if(!ipadReaderDockDrag||ipadReaderDockDrag.pointerId!==e.pointerId)return;
+      if(Math.hypot(e.clientX-ipadReaderDockDrag.startX,e.clientY-ipadReaderDockDrag.startY)>6)ipadReaderDockDrag.moved=true;
+      if(!ipadReaderDockDrag.moved)return;
+      const rect=reader.getBoundingClientRect(),pos=readIPadReaderDock();
+      pos.y=clamp((e.clientY-rect.top)/Math.max(1,rect.height),.18,.82);
+      pos.side=e.clientX<(rect.left+rect.width/2)?'left':'right';
+      pos.collapsed=ipadReaderDockDrag.collapsed;
+      applyIPadReaderDock();
+      e.preventDefault();
+    },{passive:false});
+    const finish=e=>{
+      if(!ipadReaderDockDrag||ipadReaderDockDrag.pointerId!==e.pointerId)return;
+      if(ipadReaderDockDrag.moved){handle.dataset.dragged='1';saveIPadReaderDock()}
+      ipadReaderDockDrag=null;
+      reader.classList.remove('ipad-reader-rail-dragging');
+      applyIPadReaderDock();
+    };
+    handle.addEventListener('pointerup',finish);
+    handle.addEventListener('pointercancel',finish);
+    reader.appendChild(handle);
+    applyIPadReaderDock();
+    return handle;
+  }
+
   function ensureReaderRail(){
-    const reader=document.getElementById('reader');if(!reader)return null;let rail=document.getElementById('studyReaderRail');if(rail)return rail;
-    rail=document.createElement('aside');rail.id='studyReaderRail';rail.className='study-reader-rail';reader.appendChild(rail);return rail;
+    const reader=document.getElementById('reader');if(!reader)return null;
+    let rail=document.getElementById('studyReaderRail');
+    if(!rail){rail=document.createElement('aside');rail.id='studyReaderRail';rail.className='study-reader-rail';reader.appendChild(rail)}
+    ensureIPadReaderDock(reader);
+    return rail;
   }
   function renderReaderRail(){
     const reader=document.getElementById('reader'),rail=ensureReaderRail();if(!reader||!rail)return;
-    const open=reader.classList.contains('open'),map=state?.readerMapKey?mapById(state.readerMapKey):null;if(!open||!map){rail.hidden=true;return}rail.hidden=false;
+    const open=reader.classList.contains('open'),map=state?.readerMapKey?mapById(state.readerMapKey):null;
+    if(!open||!map){rail.hidden=true;applyIPadReaderDock();return}
+    rail.hidden=false;
     const active=window.StudyDashboard?.active?.(),p=mapProgress(map),due=dueTopicRows(map.courseId).filter(row=>row.mapKey===mapKeyOf(map)).length,next=nextPriority(mapKeyOf(map));
     const markup='<button type="button" data-rail-session><span>◷</span><b>'+(active?(active.running?'Pausar':'Retomar'):'Iniciar estudo')+'</b></button><button type="button" data-rail-doubt><span>?</span><b>Dúvida</b></button><button type="button" data-rail-review><span>R</span><b>'+due+' revisar</b></button><button type="button" data-rail-next '+(!next?'disabled':'')+'><span>→</span><b>Próximo</b></button><small>OK '+p.done+' · REV '+p.review+' · DIF '+p.difficult+'</small>';
     if(rail.innerHTML!==markup)rail.innerHTML=markup;
     rail.querySelector('[data-rail-session]').onclick=()=>{const a=window.StudyDashboard?.active?.();if(!a)window.StudyDashboard?.start?.({map,mode:'free'});else if(a.running)window.StudyDashboard?.pause?.();else window.StudyDashboard?.resume?.();setTimeout(renderReaderRail,30)};
-    rail.querySelector('[data-rail-doubt]').onclick=()=>window.StudyDashboard?.openDoubt?.();rail.querySelector('[data-rail-review]').onclick=showTopicReview;rail.querySelector('[data-rail-next]').onclick=()=>{if(next)openMap(next.key)};
+    rail.querySelector('[data-rail-doubt]').onclick=()=>window.StudyDashboard?.openDoubt?.();
+    rail.querySelector('[data-rail-review]').onclick=showTopicReview;
+    rail.querySelector('[data-rail-next]').onclick=()=>{if(next)openMap(next.key)};
+    applyIPadReaderDock();
   }
 
   function handlePlannerShortcut(e){
@@ -643,7 +742,7 @@
   function init(){
     ensureMatrixView();ensureErrorsView();ensureReaderRail();
     document.addEventListener('pointerdown',beginTimerDrag,{passive:false});document.addEventListener('pointermove',moveTimerDrag,{passive:false});document.addEventListener('pointerup',endTimerDrag);document.addEventListener('pointercancel',endTimerDrag);document.addEventListener('pointerdown',beginAgendaPointerDrag,{passive:true});document.addEventListener('pointermove',moveAgendaPointerDrag,{passive:false});document.addEventListener('pointerup',endAgendaPointerDrag);document.addEventListener('pointercancel',endAgendaPointerDrag);document.addEventListener('keydown',handlePlannerShortcut);
-    window.addEventListener('resize',()=>setTimeout(applyTimerPosition,40));
+    window.addEventListener('resize',()=>setTimeout(()=>{applyTimerPosition();applyIPadReaderDock()},40));
     const reader=document.getElementById('reader');if(reader)new MutationObserver(()=>renderReaderRail()).observe(reader,{attributes:true,attributeFilter:['class']});
     const agenda=document.querySelector('[data-view="agenda"]');if(agenda){let pending=0;new MutationObserver(()=>{clearTimeout(pending);pending=setTimeout(enhanceAgenda,20)}).observe(agenda,{childList:true,subtree:true})}
     const timer=document.getElementById('studyTimerFloat');if(timer)new MutationObserver(()=>applyTimerPosition()).observe(timer,{childList:true,subtree:true});
