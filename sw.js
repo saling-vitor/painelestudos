@@ -1,23 +1,24 @@
-// V13.1.0 · final brand kit
-const V='study-pwa-v15-19-0-stage3-header-navigation-sync';
-const CORE=['./','./index.html','./manifest-v13.1.7.webmanifest','./assets/css/app.css?v=15.19.0','./assets/css/study-dashboard.css?v=15.19.0','./assets/css/study-planner.css?v=15.19.0-ipad-dock2','./assets/css/mobile-first.css?v=15.19.0','./assets/js/config.js?v=12.7','./assets/js/cloud-core.js?v=15.19.0','./assets/js/map-cloud-bridge.js?v=15.19.0','./assets/js/app/state.js?v=15.19.0','./assets/js/app/core.js?v=15.19.0','./assets/js/app/study-time.js?v=15.19.0','./assets/js/app/router.js?v=15.19.0','./assets/js/app/maps.js?v=15.19.0','./assets/js/app/review-schedule.js?v=15.19.0','./assets/js/app/courses.js?v=15.19.0','./assets/js/app/search.js?v=15.19.0','./assets/js/app/progress.js?v=15.19.0','./assets/js/app/reader.js?v=15.19.0','./assets/js/app/sync.js?v=15.19.0','./assets/js/app/diagnostics.js?v=15.19.0','./assets/js/app/backup.js?v=15.19.0','./assets/js/app/restore-points.js?v=15.19.0','./assets/js/app/ui.js?v=15.19.0','./assets/js/app/simulations.js?v=15.19.0','./assets/js/app/study-coach.js?v=15.19.0','./assets/js/app/study-dashboard.js?v=15.19.0','./assets/js/app/study-planner.js?v=15.19.0-ipad-dock2','./assets/js/app/mobile-ux.js?v=15.19.0','./assets/js/app/updates.js?v=15.19.0','./assets/js/app.js?v=15.19.0','./assets/home-hero-panel-hq.webp','./data/catalog.json','./data/simulados.json','./data/search-index.json','./reader.html','./offline.html'];
+// V15.21.0-G · Etapa 5 · identidade e PWA
+const V='study-pwa-v15-21-0-stage5-brand-pwa';
+const CORE=['./','./index.html','./manifest-v15.21.0.webmanifest','./assets/css/app.css?v=15.21.0','./assets/css/study-dashboard.css?v=15.21.0','./assets/css/study-planner.css?v=15.21.0-ipad-dock2','./assets/css/mobile-first.css?v=15.21.0','./assets/js/config.js?v=12.7','./assets/js/cloud-core.js?v=15.21.0','./assets/js/map-cloud-bridge.js?v=15.21.0','./assets/js/app/state.js?v=15.21.0','./assets/js/app/core.js?v=15.21.0','./assets/js/app/study-time.js?v=15.21.0','./assets/js/app/router.js?v=15.21.0','./assets/js/app/maps.js?v=15.21.0','./assets/js/app/review-schedule.js?v=15.21.0','./assets/js/app/courses.js?v=15.21.0','./assets/js/app/search.js?v=15.21.0','./assets/js/app/progress.js?v=15.21.0','./assets/js/app/reader.js?v=15.21.0','./assets/js/app/sync.js?v=15.21.0','./assets/js/app/diagnostics.js?v=15.21.0','./assets/js/app/backup.js?v=15.21.0','./assets/js/app/restore-points.js?v=15.21.0','./assets/js/app/ui.js?v=15.21.0','./assets/js/app/simulations.js?v=15.21.0','./assets/js/app/study-coach.js?v=15.21.0','./assets/js/app/study-dashboard.js?v=15.21.0','./assets/js/app/study-planner.js?v=15.21.0-ipad-dock2','./assets/js/app/mobile-ux.js?v=15.21.0','./assets/js/app/updates.js?v=15.21.0','./assets/js/app.js?v=15.21.0','./assets/home-hero-panel-hq.webp','./data/catalog.json','./data/simulados.json','./data/search-index.json','./reader.html','./offline.html'];
 const UI_ICONS=['./assets/ui-icons/sf-black-filled/admin.png','./assets/ui-icons/sf-black-filled/archive.png','./assets/ui-icons/sf-black-filled/calendar.png','./assets/ui-icons/sf-black-filled/chevron-left.png','./assets/ui-icons/sf-black-filled/chevron-right.png','./assets/ui-icons/sf-black-filled/close.png','./assets/ui-icons/sf-black-filled/cloud.png','./assets/ui-icons/sf-black-filled/courses.png','./assets/ui-icons/sf-black-filled/device.png','./assets/ui-icons/sf-black-filled/document.png','./assets/ui-icons/sf-black-filled/simulations.png','./assets/ui-icons/sf-black-filled/download.png','./assets/ui-icons/sf-black-filled/grid.png','./assets/ui-icons/sf-black-filled/home.png','./assets/ui-icons/sf-black-filled/list.png','./assets/ui-icons/sf-black-filled/maps.png','./assets/ui-icons/sf-black-filled/more.png','./assets/ui-icons/sf-black-filled/plus.png','./assets/ui-icons/sf-black-filled/progress.png','./assets/ui-icons/sf-black-filled/search.png','./assets/ui-icons/sf-black-filled/settings.png','./assets/ui-icons/sf-black-filled/star.png','./assets/ui-icons/sf-black-filled/success.png','./assets/ui-icons/sf-black-filled/sync.png','./assets/ui-icons/sf-black-filled/trash.png','./assets/ui-icons/sf-black-filled/upload.png','./assets/ui-icons/sf-black-filled/user.png','./assets/ui-icons/sf-black-filled/warning.png'];
 const BRAND_ASSETS=[
-  './assets/brand/logo/logo-horizontal-v13-1-7.png',
-  './assets/brand/logo/marca-simplificada-v13-1-7.png',
-  './assets/brand/app-icons/apple-touch-icon-v13-1-7.png',
-  './assets/brand/app-icons/icon-192-v13-1-7.png',
-  './assets/brand/app-icons/icon-512-v13-1-7.png',
-  './assets/brand/app-icons/icon-maskable-192-v13-1-7.png',
-  './assets/brand/app-icons/icon-maskable-512-v13-1-7.png',
-  './assets/brand/favicon/favicon-v13-1-7.ico',
-  './assets/brand/favicon/favicon-16x16-v13-1-7.png',
-  './assets/brand/favicon/favicon-32x32-v13-1-7.png',
-  './assets/brand/favicon/favicon-48x48-v13-1-7.png',
-  './assets/brand/favicon/favicon-96x96-v13-1-7.png',
-  './assets/brand/splash/splash-iphone-1290x2796-v13-1-7.png',
-  './assets/brand/splash/splash-ipad-2048x2732-v13-1-7.png',
-  './assets/brand/social/og-image-v13-1-7.png',
+  './assets/brand/logo/logo-horizontal-v15-21-0.png',
+  './assets/brand/logo/logo-horizontal-alt-v15-21-0.png',
+  './assets/brand/logo/marca-simplificada-v15-21-0.png',
+  './assets/brand/app-icons/apple-touch-icon-v15-21-0.png',
+  './assets/brand/app-icons/icon-192-v15-21-0.png',
+  './assets/brand/app-icons/icon-512-v15-21-0.png',
+  './assets/brand/app-icons/icon-maskable-192-v15-21-0.png',
+  './assets/brand/app-icons/icon-maskable-512-v15-21-0.png',
+  './assets/brand/favicon/favicon-v15-21-0.ico',
+  './assets/brand/favicon/favicon-16x16-v15-21-0.png',
+  './assets/brand/favicon/favicon-32x32-v15-21-0.png',
+  './assets/brand/favicon/favicon-48x48-v15-21-0.png',
+  './assets/brand/favicon/favicon-96x96-v15-21-0.png',
+  './assets/brand/splash/splash-iphone-1290x2796-v15-21-0.png',
+  './assets/brand/splash/splash-ipad-2048x2732-v15-21-0.png',
+  './assets/brand/social/og-image-v15-21-0.png',
   './assets/brand/mascot/mascote-pensando.png?v=13.1.0',
   './assets/brand/mascot/mascote-livros-feliz.png?v=13.1.0',
   './assets/brand/mascot/mascote-ideia.png?v=13.1.0'

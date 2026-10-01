@@ -1,18 +1,17 @@
 {
-  "version": "15.19.0",
-  "label": "V15.19.0-G",
-  "releasedAt": "2026-10-01T19:45:00.000Z",
-  "notes": "Etapa 3 [G]: cabeçalho, busca, sidebar e estados de sincronização refinados em desktop e iPad/tablet, preservando integralmente o fluxo mobile já aprovado.",
+  "version": "15.21.0",
+  "label": "V15.21.0-G",
+  "releasedAt": "2026-10-01T20:39:00.000Z",
+  "notes": "Etapa 5 [G]: identidade oficial e pacote PWA consolidados sobre a V15.19.0-G, sem recolorir a interface e sem reaproveitar a antiga marca com borda branca.",
   "showWhatsNew": true,
   "highlights": [
-    "Etapa 3 [D+T]: cabeçalho superior mais compacto, leve e consistente",
-    "[D+T] Busca ganha hierarquia mais clara e foco visual mais discreto",
-    "[D+T] Instalar app e Sincronizar passam a compartilhar o mesmo sistema de controles",
-    "[D+T] Sincronizado deixa somente o ícone da nuvem/estado em verde; o texto permanece neutro",
-    "[D+T] Sincronizando usa animação discreta; offline e erro usam apenas o ícone como indicador",
-    "[D] Sidebar recebe item ativo mais leve, alinhamento de ícones refinado e rótulos Biblioteca/Sistema mais discretos",
-    "[D] Cartão de nuvem conectada fica mais leve sem perder o estado da conta",
-    "[D+T] Meus Cursos integra a contagem de concursos ao cabeçalho e aproxima visualmente Novo concurso",
-    "[M] Interface do iPhone permanece no padrão já aprovado"
+    "[G] Logos oficiais passam a usar arquivos físicos versionados da identidade final",
+    "[G] Versões oficial e alternativa da logo são preservadas sem filtros ou recolorização por CSS",
+    "[G] Ícones PWA 192/512 e maskable recebem filenames físicos novos",
+    "[G] Apple Touch Icon, favicon, splash e Open Graph passam ao pacote ativo da nova identidade",
+    "[G] Manifest deixa de depender de query string para os ícones ativos",
+    "[G] Reader e tela offline passam a usar o mesmo conjunto oficial de identidade",
+    "[G] Service Worker recebe novo cache e remove referências V13.1.7 do precache ativo",
+    "[G] Navegação, capas, funcionalidades e linguagem cromática da V15.19.0-G permanecem preservadas"
   ]
 }
