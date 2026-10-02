@@ -1,0 +1,163 @@
+/* Meus Mapas · restauração cromática V01
+   Recupera a identidade anterior sem alterar layout, responsividade ou dados. */
+
+.nav-btn[data-nav="home"],.bottom-nav button[data-nav="home"]{--nav-accent:#c3aa84}
+.nav-btn[data-nav="courses"],.bottom-nav button[data-nav="courses"]{--nav-accent:#6d8298}
+.nav-btn[data-nav="maps"],.bottom-nav button[data-nav="maps"]{--nav-accent:#7e687f}
+.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:var(--brand-coral,#FF6B6B)}
+.nav-btn[data-nav="progress"],.bottom-nav button[data-nav="progress"]{--nav-accent:#62a978}
+.nav-btn[data-nav="agenda"],.bottom-nav button[data-nav="agenda"],.bottom-nav .bottom-nav-agenda{--nav-accent:#d8b858}
+.nav-btn[data-nav="settings"],.bottom-nav button[data-nav="settings"]{--nav-accent:#4f938f}
+
+html:not(.is-phone-layout) .side{
+  border-right-color:rgba(216,197,158,.095);
+  background:
+    radial-gradient(310px 230px at 0% 0%,rgba(109,130,152,.13),transparent 72%),
+    radial-gradient(240px 260px at 100% 92%,rgba(216,197,158,.045),transparent 72%),
+    linear-gradient(180deg,rgba(7,9,12,.99),rgba(5,6,8,.99));
+  box-shadow:14px 0 38px rgba(0,0,0,.20),inset -1px 0 rgba(216,197,158,.018)
+}
+html:not(.is-phone-layout) .nav-label{color:#766f62}
+html:not(.is-phone-layout) .nav-btn.active{
+  border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 34%,rgba(255,255,255,.055));
+  background:
+    radial-gradient(170px 68px at 0% 50%,color-mix(in srgb,var(--nav-accent,#c3aa84) 17%,transparent),transparent 76%),
+    linear-gradient(90deg,color-mix(in srgb,var(--nav-accent,#c3aa84) 11%,rgba(255,255,255,.012)),color-mix(in srgb,var(--nav-accent,#c3aa84) 4%,rgba(8,10,13,.84)) 70%,transparent);
+  color:color-mix(in srgb,var(--nav-accent,#c3aa84) 82%,white);
+  box-shadow:inset 0 1px rgba(255,255,255,.022)
+}
+html:not(.is-phone-layout) .nav-btn.active::before{
+  width:3px;
+  background:var(--nav-accent,#c3aa84);
+  box-shadow:0 0 12px color-mix(in srgb,var(--nav-accent,#c3aa84) 38%,transparent)
+}
+html:not(.is-phone-layout) .nav-btn.active .ui-icon{
+  color:var(--nav-accent,#c3aa84);
+  filter:drop-shadow(0 0 5px color-mix(in srgb,var(--nav-accent,#c3aa84) 28%,transparent))
+}
+html:not(.is-phone-layout) .nav-btn:hover:not(.active){
+  border-color:rgba(216,197,158,.08);
+  background:linear-gradient(90deg,rgba(109,130,152,.045),rgba(216,197,158,.014));
+  color:#d4d8de
+}
+
+html:not(.is-phone-layout) .topbar{
+  border-color:rgba(216,197,158,.12);
+  background:
+    radial-gradient(460px 120px at 0% 0%,rgba(109,130,152,.08),transparent 72%),
+    radial-gradient(360px 120px at 100% 0%,rgba(216,197,158,.035),transparent 74%),
+    linear-gradient(135deg,rgba(24,25,28,.72),rgba(13,15,18,.66) 52%,rgba(8,10,12,.74));
+  box-shadow:0 16px 42px rgba(0,0,0,.31),0 3px 12px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.07)
+}
+html:not(.is-phone-layout) .search:focus-within{
+  border-color:rgba(216,197,158,.28);
+  box-shadow:0 0 0 3px rgba(216,197,158,.045),inset 0 1px rgba(255,255,255,.045)
+}
+
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card{
+  border-color:rgba(216,197,158,.17)!important;
+  background:
+    radial-gradient(430px 205px at 0% 0%,rgba(216,197,158,.075),transparent 68%),
+    radial-gradient(340px 220px at 100% 0%,rgba(109,130,152,.10),transparent 70%),
+    linear-gradient(145deg,rgba(14,16,20,.985),rgba(9,11,14,.99) 48%,rgba(7,8,10,.997))!important;
+  box-shadow:0 17px 40px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.03)!important
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card::before{opacity:.58}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-board-chip.accent{
+  border-color:rgba(216,197,158,.20)!important;
+  background:rgba(216,197,158,.055)!important;
+  color:#d8c59e!important
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-exam-info{
+  border-color:rgba(216,184,88,.24);
+  background:rgba(216,184,88,.055)
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .enter{
+  border-color:rgba(216,197,158,.22);
+  background:rgba(216,197,158,.055);
+  color:#ead7af
+}
+
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.ok{
+  border-color:rgba(98,169,120,.28);
+  background:rgba(98,169,120,.065);
+  color:#a8d9b5
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.rev{
+  border-color:rgba(109,130,152,.30);
+  background:rgba(109,130,152,.07);
+  color:#b1c7da
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.dif{
+  border-color:rgba(214,104,117,.30);
+  background:rgba(214,104,117,.065);
+  color:#eea5ae
+}
+html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.pending{
+  border-color:rgba(216,184,88,.25);
+  background:rgba(216,184,88,.06);
+  color:#ddc78e
+}
+
+@media(max-width:480px){
+  html.is-phone-layout .bottom-nav button.active{
+    color:color-mix(in srgb,var(--nav-accent,#c3aa84) 86%,white)!important;
+    border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 24%,transparent)!important;
+    background:linear-gradient(180deg,
+      color-mix(in srgb,var(--nav-accent,#c3aa84) 14%,rgba(255,255,255,.022)),
+      color-mix(in srgb,var(--nav-accent,#c3aa84) 7%,rgba(7,9,12,.94))
+    )!important;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--nav-accent,#c3aa84) 12%,transparent)!important
+  }
+  html.is-phone-layout .bottom-nav button.active>.ui-icon{color:var(--nav-accent,#c3aa84)!important}
+
+  html.is-phone-layout .course-card.course-library-card{
+    border-color:rgba(216,197,158,.13)!important;
+    background:
+      radial-gradient(330px 170px at 0% 0%,rgba(216,197,158,.065),transparent 70%),
+      radial-gradient(260px 170px at 100% 0%,rgba(109,130,152,.085),transparent 72%),
+      linear-gradient(145deg,rgba(13,15,19,.985),rgba(8,10,13,.995))!important;
+    box-shadow:0 11px 28px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.022)!important
+  }
+  html.is-phone-layout .course-card.course-library-card::before{opacity:.55!important}
+
+  html.is-phone-layout .chip.accent,
+  html.is-phone-layout .category-btn.active,
+  html.is-phone-layout .progress-filter.active,
+  html.is-phone-layout .course-study-filter.active,
+  html.is-phone-layout .study-agenda-modes button.active{
+    border-color:rgba(216,197,158,.22)!important;
+    background:rgba(216,197,158,.06)!important;
+    color:#d7c49a!important
+  }
+  html.is-phone-layout .progress-state.ok{
+    border-color:rgba(98,169,120,.26)!important;
+    background:rgba(98,169,120,.06)!important;
+    color:#a4d4b1!important
+  }
+  html.is-phone-layout .progress-state.rev{
+    border-color:rgba(109,130,152,.28)!important;
+    background:rgba(109,130,152,.065)!important;
+    color:#adc4d8!important
+  }
+  html.is-phone-layout .progress-state.dif{
+    border-color:rgba(214,104,117,.28)!important;
+    background:rgba(214,104,117,.06)!important;
+    color:#eba0aa!important
+  }
+  html.is-phone-layout .progress-state.pending{
+    border-color:rgba(216,184,88,.24)!important;
+    background:rgba(216,184,88,.055)!important;
+    color:#dac58b!important
+  }
+}
+
+html.is-ipad:not(.is-phone-layout) .bottom-nav button.active{
+  color:color-mix(in srgb,var(--nav-accent,#c3aa84) 86%,white);
+  border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 25%,transparent);
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--nav-accent,#c3aa84) 14%,rgba(255,255,255,.022)),
+    color-mix(in srgb,var(--nav-accent,#c3aa84) 7%,rgba(7,9,12,.94))
+  )
+}
+html.is-ipad:not(.is-phone-layout) .bottom-nav button.active>.ui-icon{color:var(--nav-accent,#c3aa84)}
