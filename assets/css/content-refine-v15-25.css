@@ -66,8 +66,12 @@ html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-li
   background:linear-gradient(90deg,rgba(5,7,10,.62),rgba(5,7,10,.16) 50%,rgba(5,7,10,.30))
 }
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card>
-  :not(.course-card-cover){
+  :is(.course-card-kicker-row,h3,.course-card-role,.course-card-institution,.course-card-meta){
   position:relative;
+  z-index:1
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card>
+  :is(.course-progress-mini,.course-footer){
   z-index:1
 }
 
