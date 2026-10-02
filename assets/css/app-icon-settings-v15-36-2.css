@@ -1,0 +1,144 @@
+/* Meus Mapas · V15.36.2-G · seleção de ícone do aplicativo */
+@media(min-width:1101px){
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3{
+    grid-template-areas:
+      "admin sync"
+      "update sync"
+      "appearance sync"
+      "backup backup"!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .app-appearance-panel{grid-area:appearance}
+}
+
+.app-appearance-panel .settings-panel-title-row{align-items:center}
+.app-icon-current{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:0 9px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:999px;
+  background:rgba(255,255,255,.025);
+  color:#9fa6af;
+  font:750 8px var(--mono);
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+.app-icon-choice-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  margin-top:15px;
+}
+.app-icon-choice{
+  min-width:0;
+  min-height:124px;
+  display:grid;
+  justify-items:center;
+  align-content:center;
+  gap:7px;
+  padding:11px 9px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:13px;
+  background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.012));
+  color:#a9afb8;
+  cursor:pointer;
+  transition:border-color .16s ease,background .16s ease,transform .16s ease,color .16s ease;
+}
+.app-icon-choice:hover{
+  border-color:rgba(216,197,158,.24);
+  background:rgba(216,197,158,.045);
+  color:#d8dde3;
+}
+.app-icon-choice.is-selected{
+  border-color:rgba(216,197,158,.34);
+  background:linear-gradient(180deg,rgba(216,197,158,.085),rgba(216,197,158,.028));
+  color:#f0dfbc;
+  box-shadow:inset 0 0 0 1px rgba(216,197,158,.035);
+}
+.app-icon-choice-preview{
+  position:relative;
+  width:58px;
+  height:58px;
+  display:block;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:14px;
+  background:#0b0d10;
+  box-shadow:0 8px 20px rgba(0,0,0,.22);
+}
+.app-icon-choice-preview>img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.app-icon-choice-preview.app-icon-auto-preview{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+.app-icon-choice-preview.app-icon-auto-preview>img{
+  width:58px;
+  height:58px;
+}
+.app-icon-choice-preview.app-icon-auto-preview .auto-light{transform:translateX(-29px)}
+.app-icon-choice-preview.app-icon-auto-preview .auto-dark{transform:translateX(-29px)}
+.app-icon-choice b{font-size:11px;line-height:1.1}
+.app-icon-choice small{
+  color:#707780;
+  font:700 7.5px/1.25 var(--mono);
+  text-align:center;
+}
+.app-icon-choice.is-selected small{color:#a99a7f}
+
+.app-icon-live-preview{
+  display:grid;
+  grid-template-columns:66px minmax(0,1fr);
+  gap:13px;
+  align-items:center;
+  margin-top:12px;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  background:rgba(255,255,255,.016);
+}
+.app-icon-live-preview-image{
+  width:66px;
+  height:66px;
+  overflow:hidden;
+  border-radius:15px;
+  background:#0a0c0f;
+  box-shadow:0 8px 22px rgba(0,0,0,.28);
+}
+.app-icon-live-preview-image img{width:100%;height:100%;display:block;object-fit:cover}
+.app-icon-live-preview-copy{min-width:0}
+.app-icon-live-preview-copy b{display:block;color:#dfe2e7;font-size:11.5px}
+.app-icon-live-preview-copy span{display:block;margin-top:4px;color:#7f858e;font-size:9.5px;line-height:1.45}
+.app-icon-install-note{margin-top:10px!important}
+
+@media(max-width:760px){
+  .app-icon-choice-grid{gap:6px}
+  .app-icon-choice{min-height:102px;padding:9px 5px;border-radius:11px}
+  .app-icon-choice-preview{width:48px;height:48px;border-radius:12px}
+  .app-icon-choice-preview.app-icon-auto-preview>img{width:48px;height:48px}
+  .app-icon-choice-preview.app-icon-auto-preview .auto-light,
+  .app-icon-choice-preview.app-icon-auto-preview .auto-dark{transform:translateX(-24px)}
+  .app-icon-choice b{font-size:10px}
+  .app-icon-choice small{display:none}
+  .app-icon-live-preview{grid-template-columns:54px minmax(0,1fr);gap:11px;padding:10px}
+  .app-icon-live-preview-image{width:54px;height:54px;border-radius:13px}
+  .app-icon-current{font-size:7.5px}
+}
+
+@media(max-width:390px){
+  .app-icon-choice-grid{grid-template-columns:1fr}
+  .app-icon-choice{
+    min-height:70px;
+    grid-template-columns:48px minmax(0,1fr);
+    justify-items:start;
+    align-items:center;
+    align-content:center;
+    text-align:left;
+  }
+  .app-icon-choice b{font-size:11px}
+}
