@@ -374,7 +374,7 @@ test('cards da biblioteca de cursos usam nova hierarquia',async({page},testInfo)
   await expect(card.locator('.course-icon')).toHaveCount(0);
   await expect(card.locator('.course-card-code')).toBeVisible();
   await expect(card.locator('.course-card-role')).toBeVisible();
-  await expect(card.locator('.course-card-institution')).toBeVisible();
+  await expect(card.locator('.course-card-institution')).toBeHidden();
   await expect(card.locator('.course-progress-head')).toContainText('concluído');
   await expect(card.locator('.progress-state.pending')).toHaveCount(0);
   await expect(card.locator('.course-progress-empty')).toContainText('Ainda sem progresso registrado.');
@@ -417,7 +417,7 @@ test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',a
     };
   });
   expect(styles.cardRadius).toBe('16px');
-  expect(styles.metaRadius).toBe('8px');
+  expect(styles.metaRadius).toBe('0px');
   expect(styles.trackHeight).toBe('5px');
   expect(styles.emptyDisplay).toBe('none');
   expect(['0px','']).toContain(styles.footerBorder);
@@ -2114,7 +2114,7 @@ test('smartphone etapa 2 usa cards editoriais com capa independente',async({page
   expect(['static','none']).toContain(courseStyle.editPosition);
   expect(courseStyle.border).toBeGreaterThan(0);
   expect(courseStyle.metaBorder).toBe(0);
-  expect(courseStyle.examBorder).toBe(0);
+  expect(courseStyle.examBorder).toBe(1);
   expect(courseStyle.footerBorder).toBe(0);
   expect(courseStyle.progressStates).toBe('none');
 

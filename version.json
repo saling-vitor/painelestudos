@@ -1,15 +1,13 @@
 {
-  "version": "15.27.0",
-  "label": "V15.27.0-G",
-  "releasedAt": "2026-10-02T16:58:00.000Z",
-  "notes": "Meus Cursos ganha cards editoriais mais compactos por dispositivo: status e menu ficam sobre a capa, o iPad reduz informação simultânea, a Home usa uma variante menor e o iPhone recebe correções de sobreposição e safe-area.",
+  "version": "15.27.1",
+  "label": "V15.27.1-G",
+  "releasedAt": "2026-10-02T17:22:00.000Z",
+  "notes": "Fechamento do pacote de Meus Cursos: cards editoriais compactos, status e menu sobre a capa, densidade própria de iPad, safe-area no iPhone e alvo touch estabilizado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Status ATIVO/ARQUIVADO e menu ••• ficam sobre a capa dos cards de curso",
-    "[D] Cards de Meus Cursos ficam mais baixos e removem informação redundante",
-    "[D] Home usa uma variante de curso ainda mais compacta para não competir com Retomar e Simulados",
-    "[T] Cards de curso reduzem a capa, ocultam instituição longa e condensam banca, mapas e prazo em uma faixa leve",
-    "[M] Cards recolhidos mostram somente título, prazo, progresso e ações essenciais; Detalhes preserva as informações extras",
-    "[M] Meus Cursos ganha folga adicional acima da bottom-nav para impedir sobreposição do último card"
+    "[G] ATIVO/ARQUIVADO e ••• permanecem sobre a imagem sem disputar espaço com o título",
+    "[D] Meus Cursos e Home usam densidades diferentes para evitar cards altos demais",
+    "[T] Instituição redundante é ocultada, metadados viram faixa leve e busca preserva alvo touch de 45 px",
+    "[M] Prazo recebe destaque próprio, Detalhes mantém informações secundárias e a bottom-nav não cobre o último curso"
   ]
 }

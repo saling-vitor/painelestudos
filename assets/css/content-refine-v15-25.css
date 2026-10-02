@@ -1058,3 +1058,10 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn{
 :is(#coursesGrid,#homeCourses) .course-card[data-course="tapera"]>.course-card-cover img{
   object-position:center center!important;
 }
+
+
+/* V15.27.1-G · fechamento de alvo touch no iPad */
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-search-box{
+  height:45px!important;
+  min-height:45px!important;
+}
