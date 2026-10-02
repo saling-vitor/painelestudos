@@ -2754,3 +2754,46 @@ test('V15.32 [G] accent respeita prioridade mapa categoria curso e neutro',async
   expect(result).toEqual({explicit:'red',category:'blue',courseFallback:'teal',neutral:'gold'});
 });
 
+
+
+test('[G] refinamento visual mantém foco discreto, select funcional e modal rolável',async({page})=>{
+  const search=page.locator('#globalSearch');
+  await expect(search).toBeVisible();
+  await search.focus();
+  const searchFocus=await search.evaluate(el=>{
+    const style=getComputedStyle(el),box=el.getBoundingClientRect();
+    return{outline:parseFloat(style.outlineWidth)||0,width:box.width,height:box.height};
+  });
+  expect(searchFocus.outline).toBeGreaterThan(0);
+  expect(searchFocus.outline).toBeLessThanOrEqual(1.5);
+  expect(searchFocus.width).toBeGreaterThan(0);
+  expect(searchFocus.height).toBeGreaterThan(0);
+
+  await page.goto('/#progress');
+  const sort=page.locator('#progressSort');
+  await expect(sort).toBeVisible();
+  const before=await sort.boundingBox();
+  await sort.focus();
+  const selectFocus=await sort.evaluate(el=>parseFloat(getComputedStyle(el).outlineWidth)||0);
+  expect(selectFocus).toBeGreaterThan(0);
+  expect(selectFocus).toBeLessThanOrEqual(1.5);
+  const after=await sort.boundingBox();
+  expect(Math.abs((after?.width||0)-(before?.width||0))).toBeLessThanOrEqual(.5);
+  expect(Math.abs((after?.height||0)-(before?.height||0))).toBeLessThanOrEqual(.5);
+  await sort.selectOption('alpha');
+  await expect(sort).toHaveValue('alpha');
+
+  await page.evaluate(()=>document.getElementById('mapManageModal')?.classList.add('open'));
+  const modal=page.locator('#mapManageModal .modal-card');
+  await expect(modal).toBeVisible();
+  const scrolling=await modal.evaluate(el=>{
+    const before=el.scrollTop;
+    el.scrollTop=Math.min(140,Math.max(0,el.scrollHeight-el.clientHeight));
+    return{before,after:el.scrollTop,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight};
+  });
+  if(scrolling.scrollHeight>scrolling.clientHeight){
+    expect(scrolling.after).toBeGreaterThan(scrolling.before);
+  }
+  const viewport=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
+  expect(viewport.scrollWidth).toBeLessThanOrEqual(viewport.width+2);
+});
