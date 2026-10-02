@@ -380,7 +380,7 @@ test('cards da biblioteca de cursos usam nova hierarquia',async({page},testInfo)
   await expect(card.locator('.course-edital-btn')).toContainText('Ver edital');
   const styles=await page.locator('#coursesGrid').evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns,gap:getComputedStyle(el).gap}));
   expect(styles.columns).not.toBe('none');
-  expect(styles.gap).toBe(testInfo.project.name==='ipad'?'12px':'14px');
+  expect(styles.gap).toBe(testInfo.project.name==='ipad'?'12px':'16px');
 });
 
 test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',async({page},testInfo)=>{
@@ -415,11 +415,11 @@ test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',a
   });
   expect(styles.cardRadius).toBe('16px');
   expect(styles.metaRadius).toBe('8px');
-  expect(styles.trackHeight).toBe('7px');
+  expect(styles.trackHeight).toBe('5px');
   expect(styles.emptyDisplay).toBe('flex');
-  expect(styles.footerBorder).toBe('0px');
+  expect(styles.footerBorder).toBe('1px');
   expect(styles.statusRadius).toBe('999px');
-  expect(styles.enterHeight).toBe(testInfo.project.name==='ipad'?'36px':'32px');
+  expect(styles.enterHeight).toBe(testInfo.project.name==='ipad'?'44px':'34px');
   expect(styles.boardColor).not.toBe(styles.examColor);
 });
 
@@ -1855,37 +1855,53 @@ test('iPad não recebe tokens visuais exclusivos da etapa 4 do smartphone',async
 });
 
 
-test('etapa 1 [D] Meus Cursos usa três colunas e cards compactos no desktop amplo',async({page},testInfo)=>{
+test('etapa 1 [D] Meus Cursos aproveita a largura com dois concursos no desktop amplo',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
   await page.setViewportSize({width:1600,height:900});
   await page.goto('/#courses');
-  const card=page.locator('#coursesGrid .course-card.course-library-card').first();
-  await expect(card).toBeVisible();
+  await page.evaluate(()=>{
+    if(state.cloudCourses.length===1){
+      const first=state.cloudCourses[0];
+      state.cloudCourses=[first,{...first,id:'e2e-second-course',title:'SEGUNDO CONCURSO',subtitle:'CP 02 · Arquiteto'}];
+      renderCoursesPage();
+    }
+  });
+  const cards=page.locator('#coursesGrid .course-card.course-library-card');
+  await expect(cards).toHaveCount(2);
   const data=await page.evaluate(()=>{
-    const grid=document.querySelector('#coursesGrid'),card=document.querySelector('#coursesGrid .course-card.course-library-card'),title=card?.querySelector('h3');
+    const grid=document.querySelector('#coursesGrid'),all=[...grid.querySelectorAll('.course-card.course-library-card')],card=all[0],title=card?.querySelector('h3');
     const gs=getComputedStyle(grid),ts=getComputedStyle(title);
     return{
       columns:gs.gridTemplateColumns.split(' ').filter(Boolean).length,
       height:card.getBoundingClientRect().height,
       width:card.getBoundingClientRect().width,
       titleOverflow:ts.overflow,
-      titleLines:ts.webkitLineClamp||''
+      titleLines:ts.webkitLineClamp||'',
+      accents:all.map(el=>getComputedStyle(el).getPropertyValue('--course-accent').trim())
     };
   });
-  expect(data.columns).toBe(3);
+  expect(data.columns).toBe(2);
   expect(data.height).toBeGreaterThanOrEqual(260);
   expect(data.height).toBeLessThanOrEqual(315);
-  expect(data.width).toBeLessThan(500);
+  expect(data.width).toBeGreaterThan(500);
   expect(data.titleOverflow).toBe('hidden');
   expect(String(data.titleLines)).toBe('2');
+  expect(new Set(data.accents).size).toBe(2);
 });
 
-test('etapa 1 [D] Meus Cursos usa duas colunas no notebook',async({page},testInfo)=>{
+test('etapa 1 [D] Meus Cursos usa duas colunas no notebook quando há dois concursos',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
   await page.setViewportSize({width:1280,height:800});
   await page.goto('/#courses');
+  await page.evaluate(()=>{
+    if(state.cloudCourses.length===1){
+      const first=state.cloudCourses[0];
+      state.cloudCourses=[first,{...first,id:'e2e-second-course',title:'SEGUNDO CONCURSO',subtitle:'CP 02 · Arquiteto'}];
+      renderCoursesPage();
+    }
+  });
   const grid=page.locator('#coursesGrid');
-  await expect(grid.locator('.course-card.course-library-card').first()).toBeVisible();
+  await expect(grid.locator('.course-card.course-library-card')).toHaveCount(2);
   const columns=await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
   expect(columns).toBe(2);
 });
