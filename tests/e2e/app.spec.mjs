@@ -627,6 +627,27 @@ test('simulados recentes usam títulos legíveis e estado',async({page})=>{
   expect(action).toMatch(/Começar|Continuar|Rever/i);
 });
 
+test('[G] Simulados vinculados herdam o accent do curso sem alterar o badge da banca',async({page})=>{
+  await page.goto('/#home');
+  const card=page.locator('#homeSimulations .simulation-recent-item').first();
+  await expect(card).toBeVisible();
+  await expect(card.locator('.simulation-recent-board')).toBeVisible();
+  const visual=await card.evaluate(async el=>{
+    for(let i=0;i<20&&el.dataset.simulationCourseCover&&!el.dataset.simulationCourseAccentSrc;i++)await new Promise(resolve=>setTimeout(resolve,50));
+    const style=getComputedStyle(el),board=el.querySelector('.simulation-recent-board');
+    return{
+      linked:!!el.dataset.simulationCourseCover,
+      accent:style.getPropertyValue('--simulation-accent').trim(),
+      genericAccent:style.getPropertyValue('--accent').trim(),
+      boardColor:board?getComputedStyle(board).color:''
+    };
+  });
+  expect(visual.linked).toBe(true);
+  expect(visual.accent).not.toBe('');
+  expect(visual.genericAccent).toBe(visual.accent);
+  expect(visual.boardColor).not.toBe('');
+});
+
 test('cursos da home ocupam a largura em grade responsiva',async({page})=>{
   await page.goto('/#home');
   const count=await page.locator('#homeCourses .home-course-card').count();
