@@ -485,3 +485,288 @@ html.is-ipad:not(.is-phone-layout) #syncTop>.ui-icon{--icon-size:15px}
 @media(prefers-reduced-motion:reduce){
   html:not(.is-phone-layout) #syncTop[data-sync-state="syncing"]>.ui-icon{animation:none!important}
 }
+
+
+/* V15.23.5-B · Biblioteca e treino responsivos */
+/* Escopo: Meus Cursos + Curso + Todos os Mapas + Simulados.
+   Desktop mantém a composição aprovada; iPad recebe layout próprio; iPhone permanece no mobile-first. */
+
+/* [D] Guardrails da composição já aprovada. */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-toolbar{
+    grid-template-columns:minmax(260px,1fr) auto!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] #courseMaps.map-grid,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="maps"] #allMaps.map-grid,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="simulations"] .simulation-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+
+/* [T] Ritmo, espaçamento e alvos touch comuns ao tablet. */
+html.is-ipad:not(.is-phone-layout) [data-view="courses"]>.section-head,
+html.is-ipad:not(.is-phone-layout) [data-view="maps"]>.section-head,
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"]>.section-head{
+  gap:12px;
+  margin-bottom:12px;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="courses"]>.section-head h2,
+html.is-ipad:not(.is-phone-layout) [data-view="maps"]>.section-head h2,
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"]>.section-head h2{
+  font-size:20px;
+  line-height:1.08;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="courses"]>.section-head p,
+html.is-ipad:not(.is-phone-layout) [data-view="maps"]>.section-head p,
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"]>.section-head p{
+  font-size:10.5px;
+  line-height:1.45;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="courses"] button,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] button,
+html.is-ipad:not(.is-phone-layout) [data-view="maps"] button,
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] button,
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] input,
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] select{
+  min-height:44px;
+}
+
+/* Meus Cursos: duas colunas reais no iPad normal, sem cards altos demais. */
+html.is-ipad:not(.is-phone-layout) #coursesGrid.course-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
+  min-height:238px!important;
+  padding:15px 15px 56px!important;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card h3{
+  margin-top:9px!important;
+  font-size:17px!important;
+  line-height:1.15!important;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card-meta{
+  margin-top:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-progress-mini{
+  left:15px!important;
+  right:15px!important;
+  bottom:54px!important;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-footer{
+  left:15px!important;
+  right:15px!important;
+  bottom:10px!important;
+}
+
+/* Curso: hero e ferramentas usam a largura antes de empilhar. */
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-hero{
+  padding:20px 21px!important;
+  border-radius:14px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .breadcrumb{
+  margin-bottom:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseTitle{
+  font-size:clamp(30px,4.1vw,42px)!important;
+  line-height:1!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseDesc{
+  max-width:720px;
+  margin-top:6px!important;
+  font-size:11px!important;
+  line-height:1.45;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-progress-summary{
+  margin-top:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+  margin-top:12px!important;
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-search-box{
+  min-height:44px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+  min-height:44px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter-wrap,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-category-wrap{
+  max-width:100%;
+  overflow:hidden;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filters,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-row{
+  flex-wrap:nowrap!important;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+  scrollbar-width:none;
+  padding-bottom:3px;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filters::-webkit-scrollbar,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-row::-webkit-scrollbar{
+  display:none;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter,.category-btn){
+  flex:0 0 auto;
+  min-height:40px!important;
+}
+
+/* Mapas: capa continua protagonista, mas com densidade adequada ao tablet. */
+html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps).map-grid{
+  gap:11px!important;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-card.has-cover{
+  min-height:250px!important;
+  padding:0 14px 48px!important;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-cover{
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:16/9!important;
+  margin:0 -14px 11px!important;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-card h3{
+  margin-top:9px!important;
+  font-size:15px!important;
+  line-height:1.18!important;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-card>p{
+  margin-top:5px!important;
+  font-size:9.5px!important;
+  line-height:1.4;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-card .foot{
+  left:14px!important;
+  right:14px!important;
+  bottom:10px!important;
+  min-height:38px;
+}
+
+/* Simulados: toolbar e cards seguem as mesmas quebras dos mapas. */
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-toolbar{
+  margin-bottom:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-search input,
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-toolbar select{
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-grid{
+  gap:11px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card-body{
+  min-height:176px!important;
+  padding:12px 13px 13px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card h3{
+  margin-top:9px!important;
+  font-size:15px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-meta{
+  margin-top:8px!important;
+  gap:5px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card-footer{
+  margin-top:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card-actions :is(.primary,.secondary){
+  min-height:44px!important;
+}
+
+/* [T · paisagem] 3 colunas para mapas/simulados e toolbar do curso em uma linha. */
+@media(min-width:900px){
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+    grid-template-columns:minmax(260px,1fr) auto!important;
+    align-items:center;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+    display:flex!important;
+    width:auto!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button{
+    width:auto!important;
+    min-width:96px;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap,
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+    width:44px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps).map-grid,
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-toolbar{
+    grid-template-columns:minmax(280px,1.45fr) minmax(150px,.65fr) minmax(150px,.65fr)!important;
+  }
+}
+
+/* [T · retrato] 2 colunas e filtros sem esmagar a busca. */
+@media(min-width:701px) and (max-width:899px){
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr 44px!important;
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button{
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap,
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps).map-grid,
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-toolbar{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-search{
+    grid-column:1/-1;
+  }
+}
+
+/* [T · Split View/estreito] tablet continua tablet, mas vira uma coluna sem overflow. */
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) #coursesGrid.course-grid,
+  html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps).map-grid,
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-grid{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="courses"] .courses-head,
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulations-head{
+    align-items:flex-start!important;
+    flex-direction:column!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="courses"] #newCourseBtn2,
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] #importSimulationBtn{
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-hero{
+    padding:17px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar,
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-toolbar{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr 44px!important;
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button{
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap,
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+    width:100%!important;
+  }
+}
+
+/* [M] Nenhuma recomposição: o mobile-first já aprovado continua sendo a fonte da verdade. */
