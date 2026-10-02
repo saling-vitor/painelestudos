@@ -2856,3 +2856,40 @@ test('[G] V15.36 atualização forçada preserva dados do usuário',async({page}
   expect(source).not.toContain("localStorage.clear");
   expect(source).not.toContain("indexedDB.deleteDatabase");
 });
+
+
+test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',async({page})=>{
+  await page.goto('/#settings');
+  const panel=page.locator('#appAppearancePanel');
+  await expect(panel).toBeVisible();
+  const choices=panel.locator('[data-app-icon-mode]');
+  await expect(choices).toHaveCount(3);
+
+  const light=panel.locator('[data-app-icon-mode="light"]');
+  await light.click();
+  await expect(light).toHaveAttribute('aria-pressed','true');
+  expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('light');
+  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-light-rounded-192/);
+  expect(await page.locator('#appIconExplicitFavicon').getAttribute('media')).toBe('all');
+  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-light-rounded-192/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-light-v15.36.2.webmanifest');
+
+  const dark=panel.locator('[data-app-icon-mode="dark"]');
+  await dark.click();
+  await expect(dark).toHaveAttribute('aria-pressed','true');
+  expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('dark');
+  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-dark-rounded-192/);
+  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-dark-rounded-180/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-v15.23.6.webmanifest');
+
+  const automatic=panel.locator('[data-app-icon-mode="auto"]');
+  await automatic.click();
+  await expect(automatic).toHaveAttribute('aria-pressed','true');
+  expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('auto');
+  expect(await page.locator('#appIconExplicitFavicon').getAttribute('media')).toBe('not all');
+  await expect(page.locator('#appIconCurrent')).toContainText('Automático');
+
+  const layout=await panel.evaluate(el=>({right:el.getBoundingClientRect().right,width:innerWidth,grid:getComputedStyle(el.querySelector('.app-icon-choice-grid')).gridTemplateColumns}));
+  expect(layout.right).toBeLessThanOrEqual(layout.width+1);
+  expect(layout.grid).not.toBe('none');
+});

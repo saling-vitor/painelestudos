@@ -1,13 +1,14 @@
 {
-  "version": "15.36.1",
-  "label": "V15.36.1-T",
-  "releasedAt": "2026-10-02T23:20:00.000Z",
-  "notes": "No iPad em paisagem, o status de sincronização da barra lateral foi reduzido a um único ícone de nuvem, preservando os estados sem ocupar o rodapé da dock.",
+  "version": "15.36.2",
+  "label": "V15.36.2-G",
+  "releasedAt": "2026-10-02T23:38:00.000Z",
+  "notes": "Configurações agora permitem escolher o ícone do aplicativo em modo Claro, Escuro ou Automático, com preferência local por dispositivo e pré-visualização responsiva.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] iPad paisagem usa um único ícone de nuvem no rodapé da dock lateral",
-    "[T] Verde indica conectado; âmbar indica atenção; vermelho indica erro; cinza representa estado neutro ou offline",
-    "[T] Textos detalhados deixam de ocupar espaço visual na lateral e continuam disponíveis em Configurações",
-    "[T] Desktop, iPad retrato e iPhone permanecem sem alteração neste refinamento"
+    "[G] Novo painel Aparência do app em Configurações",
+    "[G] Escolha entre ícone Claro, Escuro ou Automático",
+    "[G] Automático acompanha a preferência de aparência do sistema",
+    "[G] Preferência é salva por dispositivo e atualiza favicon e referência Apple Touch quando suportado",
+    "[G] Layout responsivo validado para Desktop, iPad e iPhone"
   ]
 }
