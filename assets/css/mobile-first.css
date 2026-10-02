@@ -3390,3 +3390,9 @@ html.is-phone-layout .simulation-home-empty.empty-state>button{
   grid-column:1/-1!important;
   width:100%!important;
 }
+
+/* V15.24.0-G · nuvem compacta permanece visível no Reader do iPhone */
+@media(max-width:480px){
+  html.mobile-reader-open.is-phone-layout #readerSaveStatus{display:inline-flex!important;width:40px!important;min-width:40px!important;height:40px!important;flex:0 0 40px!important}
+  html.mobile-reader-open.is-phone-layout #readerSaveStatus .reader-cloud-icon{--icon-size:19px}
+}

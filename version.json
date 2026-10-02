@@ -1,14 +1,14 @@
 {
-  "version": "15.23.6",
-  "label": "V15.23.6-G",
-  "releasedAt": "2026-10-02T13:23:00.000Z",
-  "notes": "Etapa C — Ferramentas responsivas: Progresso, Agenda, Configurações e modais agora têm composição própria para iPad landscape, portrait e Split View, preservando Desktop e o mobile-first do iPhone.",
+  "version": "15.24.0",
+  "label": "V15.24.0-G",
+  "releasedAt": "2026-10-02T13:49:00.000Z",
+  "notes": "Simulados agora têm gerenciamento completo por card, vínculo com curso, capa personalizada e manutenção de HTML; o Reader passa a mostrar a sincronização por um ícone compacto de nuvem.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Progresso reorganiza métricas, próximas ações e análises em grades 3/2/1 conforme a largura",
-    "[T] Agenda preserva calendário principal e reorganiza o painel lateral em landscape, portrait e Split View",
-    "[T] Configurações mantém Conta e Sincronização como prioridade no tablet e preserva alvos touch",
-    "[T] Modais respeitam viewport, safe area e botões de 44 px no iPad",
-    "[M] Progresso, Agenda, Configurações e modais mantêm o mobile-first já aprovado"
+    "[G] Simulados recebem menu ••• com gerenciar, trocar capa, vincular a curso, substituir HTML, duplicar, exportar e excluir",
+    "[G] Gerenciamento do simulado separa Identificação, Organização, Aparência, Prova e dados e Avançado",
+    "[G] Vínculo de simulado com curso fica na conta/nuvem e não modifica o HTML original",
+    "[G] Capas personalizadas de simulados são sincronizadas e preservadas para uso offline",
+    "[G] Reader troca o texto de sincronização por nuvem vermelha/âmbar/verde com tooltip e estado acessível"
   ]
 }
