@@ -185,7 +185,7 @@ test('home monta plano inteligente de estudo',async({page})=>{
   const snapshot=await page.evaluate(()=>StudyCoach.snapshot());
   expect(snapshot.items.length).toBeGreaterThan(0);
   expect(snapshot.summary.plannedMinutes).toBeGreaterThan(0);
-  await expect(page.locator('#homeReviewNowBtn')).toContainText('Começar sessão');
+  await expect(page.locator('#homeReviewNowBtn')).toContainText('Começar');
 });
 
 test('home fica mais compacta depois que existe atividade',async({page})=>{
@@ -555,6 +555,40 @@ test('cursos da home ocupam a largura em grade responsiva',async({page})=>{
   const layout=await page.locator('#homeCourses').evaluate(el=>({width:innerWidth,columns:getComputedStyle(el).gridTemplateColumns}));
   if(layout.width>980&&count>=2)expect(layout.columns.trim().split(/\s+/).length).toBe(2);
   else expect(layout.columns).not.toBe('none');
+});
+
+test('home refinada usa composição compacta e hierarquia coerente no desktop',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
+  await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome();StudyCoach.renderHome?.();StudyPlanner.renderHome?.()});
+  await expect(page.locator('.home-continue-section')).toBeVisible();
+  await expect(page.locator('.home-simulations-section')).toBeVisible();
+  await expect(page.locator('#continueBox .continue-thumb img')).toBeVisible();
+  await expect(page.locator('.priority-now-card h3')).toContainText('Por que este estudo?');
+  await expect(page.locator('.forecast-home-card h3')).toContainText(/tópicos restantes/);
+  await expect(page.locator('.forecast-home-card')).toContainText('Planejamento até');
+  const layout=await page.evaluate(()=>{
+    const home=document.querySelector('[data-view="home"]'),resume=document.querySelector('.home-continue-section'),sims=document.querySelector('.home-simulations-section'),command=document.querySelector('.study-command-card'),intel=document.querySelector('.study-intelligence-row'),course=document.querySelector('#homeCourses .home-course-card');
+    const hr=home.getBoundingClientRect(),rr=resume.getBoundingClientRect(),sr=sims.getBoundingClientRect();
+    return{
+      display:getComputedStyle(home).display,
+      sameRow:Math.abs(rr.top-sr.top)<2,
+      resumeBeforeSims:rr.left<sr.left,
+      inside:rr.left>=hr.left&&sr.right<=hr.right+1,
+      commandHeight:command?.getBoundingClientRect().height||0,
+      intelligenceHeight:intel?.getBoundingClientRect().height||0,
+      courseHeight:course?.getBoundingClientRect().height||0
+    };
+  });
+  expect(layout.display).toBe('grid');
+  expect(layout.sameRow).toBe(true);
+  expect(layout.resumeBeforeSims).toBe(true);
+  expect(layout.inside).toBe(true);
+  expect(layout.commandHeight).toBeLessThan(180);
+  expect(layout.intelligenceHeight).toBeLessThan(160);
+  expect(layout.courseHeight).toBeLessThanOrEqual(280);
 });
 
 test('autofill tardio de e-mail é removido continuamente da busca',async({page})=>{
