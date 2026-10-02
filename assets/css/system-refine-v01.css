@@ -315,7 +315,7 @@
 
 /* Capas continuam protagonistas, mas deixam o card menos alto. */
 @media(min-width:761px){
-  .simulation-cover{aspect-ratio:2/1!important}
+  html:not(.is-phone-layout) .simulation-cover{aspect-ratio:2/1!important}
   .simulation-card-body{
     min-height:188px!important;
     padding:14px 15px 15px!important;
