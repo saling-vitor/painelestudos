@@ -939,6 +939,58 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
 
 
 
+test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação específica da Home responsiva no iPad.');
+  for(const scenario of [
+    {name:'landscape',width:1194,height:834,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
+    {name:'portrait',width:820,height:1180,simulationMode:'flex',simulationColumns:0,intelligenceColumns:2,courseColumns:2}
+  ]){
+    await page.setViewportSize({width:scenario.width,height:scenario.height});
+    await page.goto('/#home');
+    await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
+    await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome();StudyCoach.renderHome?.();StudyPlanner.renderHome?.()});
+    await expect(page.locator('.home-continue-section')).toBeVisible();
+    await expect(page.locator('.home-simulations-section')).toBeVisible();
+    await expect(page.locator('#homeSimulations .simulation-recent-item')).toHaveCount(3);
+    const data=await page.evaluate(()=> {
+      const sims=document.querySelector('.simulation-recent-list');
+      const intel=document.querySelector('.study-intelligence-row');
+      const courses=document.querySelector('#homeCourses');
+      const hero=document.querySelector('[data-view="home"] .hero');
+      const resume=document.querySelector('.home-continue-section');
+      const simSection=document.querySelector('.home-simulations-section');
+      const third=document.querySelector('#homeSimulations .simulation-recent-item:nth-child(3)');
+      const action=document.querySelector('#continueBox .continue-card>.primary');
+      const cols=el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length;
+      return{
+        width:innerWidth,
+        scrollWidth:document.documentElement.scrollWidth,
+        heroHeight:hero.getBoundingClientRect().height,
+        resumeWidth:resume.getBoundingClientRect().width,
+        simSectionWidth:simSection.getBoundingClientRect().width,
+        simDisplay:getComputedStyle(sims).display,
+        simOverflow:getComputedStyle(sims).overflowX,
+        simColumns:getComputedStyle(sims).display==='grid'?cols(sims):0,
+        intelligenceColumns:cols(intel),
+        courseColumns:cols(courses),
+        thirdDisplay:getComputedStyle(third).display,
+        continueActionHeight:action?.getBoundingClientRect().height||0
+      };
+    });
+    expect.soft(data.scrollWidth,scenario.name+' sem overflow horizontal').toBeLessThanOrEqual(data.width+2);
+    expect.soft(data.heroHeight,scenario.name+' hero compacto').toBeLessThanOrEqual(270);
+    expect.soft(data.resumeWidth,scenario.name+' Retomar ocupa largura disponível').toBeGreaterThan(data.width*.55);
+    expect.soft(data.simSectionWidth,scenario.name+' Simulados ocupa largura disponível').toBeGreaterThan(data.width*.55);
+    expect.soft(data.thirdDisplay,scenario.name+' terceiro simulado nunca é ocultado').not.toBe('none');
+    expect.soft(data.continueActionHeight,scenario.name+' ação Retomar preserva alvo touch').toBeGreaterThanOrEqual(44);
+    expect.soft(data.courseColumns,scenario.name+' cursos').toBe(scenario.courseColumns);
+    expect.soft(data.intelligenceColumns,scenario.name+' inteligência').toBe(scenario.intelligenceColumns);
+    expect.soft(data.simDisplay,scenario.name+' simulados').toBe(scenario.simulationMode);
+    if(scenario.simulationMode==='grid')expect.soft(data.simColumns,scenario.name+' colunas de simulados').toBe(scenario.simulationColumns);
+    else expect.soft(['auto','scroll'],scenario.name+' faixa rolável').toContain(data.simOverflow);
+  }
+});
+
 test('iPad usa dock lateral recolhível no leitor',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica do dock lateral do iPad.');
   await page.setViewportSize({width:820,height:1180});
@@ -1523,6 +1575,36 @@ test('iPhone real UX2 compacta Home e transforma simulados em carrossel',async({
   await page.locator('.mobile-study-plan-toggle').click();
   const expanded=await page.locator('.study-command-metrics>button').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
   expect(expanded).toBeGreaterThanOrEqual(4);
+});
+
+test('A Home responsiva preserva a composição aprovada no iPhone',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Validação específica do iPhone WebKit.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#home');
+  await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
+  await expect(page.locator('#homeSimulations .simulation-recent-item')).toHaveCount(3);
+  const data=await page.evaluate(()=>{
+    const sims=document.querySelector('.simulation-recent-list');
+    const action=document.querySelector('#homeSimulations .simulation-recent-action');
+    const courses=document.querySelector('#homeCourses');
+    return{
+      width:innerWidth,
+      scrollWidth:document.documentElement.scrollWidth,
+      heroHeight:document.querySelector('[data-view="home"] .hero').getBoundingClientRect().height,
+      simDisplay:getComputedStyle(sims).display,
+      simOverflow:getComputedStyle(sims).overflowX,
+      thirdDisplay:getComputedStyle(document.querySelector('#homeSimulations .simulation-recent-item:nth-child(3)')).display,
+      actionHeight:action?.getBoundingClientRect().height||0,
+      courseColumns:getComputedStyle(courses).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length
+    };
+  });
+  expect(data.scrollWidth).toBeLessThanOrEqual(data.width+2);
+  expect(data.heroHeight).toBeLessThanOrEqual(270);
+  expect(data.simDisplay).toBe('flex');
+  expect(['auto','scroll']).toContain(data.simOverflow);
+  expect(data.thirdDisplay).not.toBe('none');
+  expect(data.actionHeight).toBeGreaterThanOrEqual(44);
+  expect(data.courseColumns).toBe(1);
 });
 
 test('iPhone real UX2 compacta curso e mostra mapa no primeiro viewport',async({page},testInfo)=>{
