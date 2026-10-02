@@ -1,14 +1,15 @@
 {
-  "version": "15.34.0",
-  "label": "V15.34.0-G",
-  "releasedAt": "2026-10-02T22:08:00.000Z",
-  "notes": "Correção do mecanismo de atualização do PWA para evitar versões publicadas presas no estado 'disponível'.",
+  "version": "15.35.0",
+  "label": "V15.35.0-G",
+  "releasedAt": "2026-10-02T22:32:00.000Z",
+  "notes": "Identidade cromática do conteúdo passa a usar cores reais de capas, cursos e tags, removendo o dourado genérico dos acentos de estudo e refinando a composição no desktop.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Atualizar agora passa a revalidar o Service Worker antes de aplicar",
-    "[G] Se o novo Service Worker já estiver ativo, o aplicativo recarrega automaticamente",
-    "[G] Ativação recebe fallback e nova tentativa quando o controllerchange não chega",
-    "[G] Service Worker usa waitUntil ao receber SKIP_WAITING",
-    "[QA] Novo contrato E2E cobre detecção de worker mais novo que o bundle aberto"
+    "[G] Mapas e Retomar usam a cor contextual da capa/tag em Desktop, iPad e iPhone",
+    "[G] Dourado deixa de ser fallback de conteúdo; ausência de cor usa um neutro do tema",
+    "[G] Simulados vinculados herdam a cor do curso sem alterar a identidade da banca",
+    "[D] Home equilibra Retomar e Simulados em aproximadamente 41/59 com cards de treino mais compactos",
+    "[D] Cards dos mapas ficam mais densos sem reduzir as capas 16:9",
+    "[QA] Contratos E2E atualizados para o novo fallback automático/neutro"
   ]
 }
