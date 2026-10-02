@@ -691,3 +691,48 @@ html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card .course-footer
 html.is-phone-layout .home-simulations-section .simulation-recent-item:nth-child(3){
   display:grid!important;
 }
+
+
+/* =========================================================
+   V15.31.0-G · RETOMAR COM TAGS DA IDENTIDADE DO MAPA
+   ========================================================= */
+.continue-map-tags{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:5px;
+  min-width:0;
+  margin-bottom:5px;
+}
+.continue-map-code,
+.continue-map-category{
+  display:inline-flex;
+  align-items:center;
+  min-height:18px;
+  padding:3px 6px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:5px;
+  background:rgba(255,255,255,.018);
+  font:800 7px/1 var(--mono);
+  letter-spacing:.035em;
+}
+.continue-map-category{
+  max-width:min(100%,260px);
+  overflow:hidden;
+  font-weight:700;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.continue-thumb-code-fallback{
+  left:50%;
+  bottom:50%;
+  transform:translate(-50%,50%);
+  max-width:calc(100% - 16px);
+}
+html.is-phone-layout .continue-map-tags{margin-bottom:4px}
+html.is-phone-layout .continue-map-code,
+html.is-phone-layout .continue-map-category{
+  min-height:17px;
+  padding:3px 5px;
+  font-size:6.5px;
+}

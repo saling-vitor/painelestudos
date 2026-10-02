@@ -1,14 +1,14 @@
 {
-  "version": "15.30.0",
-  "label": "V15.30.0-G",
-  "releasedAt": "2026-10-02T19:05:00.000Z",
-  "notes": "Etapa 3: organização completa de Todos os Mapas com busca, ordenação, filtros, agrupamento e layout responsivo.",
+  "version": "15.31.0",
+  "label": "V15.31.0-G",
+  "releasedAt": "2026-10-02T20:24:00.000Z",
+  "notes": "Retomar onde parei agora reutiliza a identidade cromática do próprio mapa em Desktop, iPad e iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Todos os Mapas ganha busca local, ordenação A–Z/Z–A, recentes, progresso e quantidade de tópicos",
-    "[G] Filtros por categoria, curso, status, favoritos e disponibilidade offline com chips ativos e contador dinâmico",
-    "[G] Agrupamento opcional por categoria ou curso e persistência de ordenação + grade/lista",
-    "[D/T/M] Desktop e iPad usam controles compactos; iPhone usa Ordenar e Filtrar em bottom sheet",
-    "[QA] CI padrão remove execução targeted redundante antes da suíte completa"
+    "[G] Retomar passa a exibir código e categoria com a mesma cor usada nos cards da biblioteca",
+    "[G] Progresso, borda e ação Continuar herdam o accent do mapa sem colorir excessivamente o fundo",
+    "[G] Desktop, iPad e iPhone preservam a mesma fonte de cor e a mesma hierarquia visual",
+    "[QA] Novo E2E [G] valida a identidade cromática nos três projetos e o iPhone passa a selecionar testes [G]",
+    "[QA] Validate confere APP_VERSION_LABEL e rótulos exibidos antes dos E2E"
   ]
 }

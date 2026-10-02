@@ -542,6 +542,53 @@ test('home consolidada prioriza o estudo diário',async({page})=>{
   expect(values.planBorder).toBe('1px');
 });
 
+test('[G] Retomar replica a identidade cromática do mapa em todas as telas',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
+  const selected=await page.evaluate(()=>{
+    const map=combinedMaps().find(item=>typeof mapAccentKey==='function'&&mapAccentKey(item)!=='gold')||combinedMaps()[0];
+    localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));
+    renderHome();
+    return{code:String(map.code||''),category:String(map.category||'Estudo')};
+  });
+  const card=page.locator('#continueBox .continue-card');
+  await expect(card).toBeVisible();
+  await expect(card.locator('.continue-map-code')).toHaveText(selected.code);
+  await expect(card.locator('.continue-map-category')).toHaveText(selected.category);
+  await expect(card.locator('.continue-thumb img')).toBeVisible();
+  const visual=await card.evaluate(el=>{
+    const mapAccent=getComputedStyle(el).getPropertyValue('--map-accent').trim();
+    const probe=document.createElement('span');
+    probe.style.color=mapAccent;probe.style.position='fixed';probe.style.left='-9999px';document.body.append(probe);
+    const accentColor=getComputedStyle(probe).color;probe.remove();
+    const generic=document.createElement('button');
+    generic.className='primary';generic.textContent='x';generic.style.position='fixed';generic.style.left='-9999px';document.body.append(generic);
+    const genericStyle=getComputedStyle(generic),genericColor=genericStyle.color,genericBorder=genericStyle.borderTopColor;generic.remove();
+    const button=el.querySelector(':scope > .primary'),buttonStyle=getComputedStyle(button),rect=el.getBoundingClientRect();
+    return{
+      accentColor,
+      codeColor:getComputedStyle(el.querySelector('.continue-map-code')).color,
+      categoryColor:getComputedStyle(el.querySelector('.continue-map-category')).color,
+      progressColor:getComputedStyle(el.querySelector('.continue-progress span')).backgroundColor,
+      buttonColor:buttonStyle.color,
+      buttonBorder:buttonStyle.borderTopColor,
+      genericColor,genericBorder,
+      buttonHeight:button.getBoundingClientRect().height,
+      insideViewport:rect.left>=-1&&rect.right<=innerWidth+1,
+      viewportWidth:innerWidth,
+      scrollWidth:document.documentElement.scrollWidth
+    };
+  });
+  expect(visual.codeColor).toBe(visual.accentColor);
+  expect(visual.categoryColor).toBe(visual.accentColor);
+  expect(visual.progressColor).toBe(visual.accentColor);
+  expect(visual.buttonColor).not.toBe(visual.genericColor);
+  expect(visual.buttonBorder).not.toBe(visual.genericBorder);
+  expect(visual.buttonHeight).toBeGreaterThanOrEqual(39.9);
+  expect(visual.insideViewport).toBe(true);
+  expect(visual.scrollWidth).toBeLessThanOrEqual(visual.viewportWidth+2);
+});
+
 test('simulados recentes usam títulos legíveis e estado',async({page})=>{
   await page.goto('/#home');
   const first=page.locator('#homeSimulations .simulation-recent-item').first();
