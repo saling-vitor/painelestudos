@@ -210,6 +210,46 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter sma
 
 /* Paisagem [T] · aproxima de desktop compacto. */
 @media(orientation:landscape){
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero{
+    min-height:258px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero-copy{
+    width:min(760px,66%)!important;
+    max-width:760px!important;
+    padding:18px 22px!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(248px,280px)!important;
+    grid-template-areas:
+      "eyebrow stats"
+      "title stats"
+      "actions stats"!important;
+    column-gap:18px!important;
+    row-gap:8px!important;
+    align-items:center!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .eyebrow{
+    grid-area:eyebrow!important;
+    justify-self:start;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero h1{
+    grid-area:title!important;
+    margin-top:0!important;
+    font-size:clamp(31px,3.7vw,40px)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero p{
+    display:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero-actions{
+    grid-area:actions!important;
+    margin-top:0!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning #homeStats{
+    grid-area:stats!important;
+    width:100%!important;
+    max-width:280px!important;
+    margin:0!important;
+    align-self:center!important;
+  }
   html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metrics{
     grid-template-columns:repeat(4,minmax(0,1fr))!important;
   }

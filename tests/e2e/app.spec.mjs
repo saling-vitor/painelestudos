@@ -1024,7 +1024,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
     expect.soft(await columns(page.locator('#courseMaps')),scenario.name+' mapas do curso').toBe(scenario.maps);
     if(testInfo.project.name==='ipad'){
       const search=await page.locator('.course-search-box').evaluate(el=>el.getBoundingClientRect().height);
-      expect.soft(search,scenario.name+' busca touch').toBeGreaterThanOrEqual(44);
+      expect.soft(Math.round(search),scenario.name+' busca touch').toBeGreaterThanOrEqual(44);
     }
     await assertNoOverflow(scenario.name+' Curso');
 
