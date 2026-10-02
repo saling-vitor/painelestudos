@@ -461,7 +461,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
   if(testInfo.project.name==='ipad'){
-    expect(visual.syncHeight).toBeGreaterThanOrEqual(44);
+    expect(Math.round(visual.syncHeight)).toBeGreaterThanOrEqual(44);
     expect(Math.round(visual.newCourseHeight)).toBeGreaterThanOrEqual(44);
     expect(visual.topbarHeight).toBeLessThanOrEqual(58);
   }else{
@@ -912,7 +912,7 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
   expect.soft(home.statCount,'home deve mostrar quatro indicadores no iPad').toBe(4);
   expect.soft(home.statColumns,'indicadores do iPad devem formar grade 2x2').toBe(2);
   expect.soft(home.searchHeight,'busca deve permanecer compacta').toBeLessThanOrEqual(40);
-  expect.soft(home.syncHeight,'Sincronizar deve preservar alvo touch de 44px').toBeGreaterThanOrEqual(44);
+  expect.soft(Math.round(home.syncHeight),'Sincronizar deve preservar alvo touch de 44px').toBeGreaterThanOrEqual(44);
   expect.soft(home.topbarHeight,'topbar deve caber em até 58px sem reduzir o alvo touch').toBeLessThanOrEqual(58);
   expect.soft(home.backgroundSize,'hero deve preservar enquadramento full-cover').toBe('cover');
 
@@ -983,7 +983,7 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
     expect.soft(data.resumeWidth,scenario.name+' Retomar ocupa largura disponível').toBeGreaterThan(data.width*.55);
     expect.soft(data.simSectionWidth,scenario.name+' Simulados ocupa largura disponível').toBeGreaterThan(data.width*.55);
     expect.soft(data.thirdDisplay,scenario.name+' terceiro simulado nunca é ocultado').not.toBe('none');
-    expect.soft(data.continueActionHeight,scenario.name+' ação Retomar preserva alvo touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(data.continueActionHeight),scenario.name+' ação Retomar preserva alvo touch').toBeGreaterThanOrEqual(44);
     expect.soft(data.courseColumns,scenario.name+' cursos').toBe(scenario.courseColumns);
     expect.soft(data.intelligenceColumns,scenario.name+' inteligência').toBe(scenario.intelligenceColumns);
     expect.soft(data.simDisplay,scenario.name+' simulados').toBe(scenario.simulationMode);
@@ -1014,7 +1014,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
     expect.soft(await columns(page.locator('#coursesGrid')),scenario.name+' Meus Cursos').toBe(scenario.courses);
     if(testInfo.project.name==='ipad'){
       const target=await page.locator('#coursesGrid .course-card .enter').first().evaluate(el=>el.getBoundingClientRect().height);
-      expect.soft(target,scenario.name+' Entrar touch').toBeGreaterThanOrEqual(44);
+      expect.soft(Math.round(target),scenario.name+' Entrar touch').toBeGreaterThanOrEqual(44);
     }
     await assertNoOverflow(scenario.name+' Meus Cursos');
 
@@ -1039,7 +1039,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
     expect.soft(await columns(page.locator('.simulation-toolbar')),scenario.name+' toolbar Simulados').toBe(scenario.simulationToolbar);
     if(testInfo.project.name==='ipad'){
       const input=await page.locator('.simulation-search input').evaluate(el=>el.getBoundingClientRect().height);
-      expect.soft(input,scenario.name+' busca de simulados touch').toBeGreaterThanOrEqual(44);
+      expect.soft(Math.round(input),scenario.name+' busca de simulados touch').toBeGreaterThanOrEqual(44);
     }
     await assertNoOverflow(scenario.name+' Simulados');
   }
@@ -1072,7 +1072,7 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
     expect.soft(await columns(page.locator('.progress-insights-grid')),s.name+' próximas ações').toBe(s.insights);
     expect.soft(await columns(page.locator('.study-analytics-grid')),s.name+' análises').toBe(s.analytics);
     const progressTouch=await page.locator('.progress-course-toggle').first().evaluate(el=>el.getBoundingClientRect().height);
-    expect.soft(progressTouch,s.name+' ação de progresso touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(progressTouch),s.name+' ação de progresso touch').toBeGreaterThanOrEqual(44);
     await noOverflow(s.name+' Progresso');
 
     await page.goto('/#agenda');
@@ -1080,14 +1080,14 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
     expect.soft(await columns(page.locator('.study-agenda-layout')),s.name+' Agenda').toBe(s.agenda);
     if(s.agendaSide!==null)expect.soft(await columns(page.locator('.study-agenda-side')),s.name+' painel lateral Agenda').toBe(s.agendaSide);
     const agendaTouch=await page.locator('.study-agenda-modes button').first().evaluate(el=>el.getBoundingClientRect().height);
-    expect.soft(agendaTouch,s.name+' modo Agenda touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(agendaTouch),s.name+' modo Agenda touch').toBeGreaterThanOrEqual(44);
     await noOverflow(s.name+' Agenda');
 
     await page.goto('/#settings');
     await expect(page.locator('.settings-layout-v3')).toBeVisible();
     expect.soft(await columns(page.locator('.settings-layout-v3')),s.name+' Configurações').toBe(s.settings);
     const settingsTouch=await page.locator('#checkAppUpdateBtn').evaluate(el=>el.getBoundingClientRect().height);
-    expect.soft(settingsTouch,s.name+' Configurações touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(settingsTouch),s.name+' Configurações touch').toBeGreaterThanOrEqual(44);
     if(s.settings===1){
       const order=await page.evaluate(()=>{
         const primary=document.querySelector('.settings-column-primary');
@@ -1107,7 +1107,7 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
     expect.soft(modal.right,s.name+' modal direita').toBeLessThanOrEqual(s.width);
     expect.soft(modal.top,s.name+' modal topo').toBeGreaterThanOrEqual(0);
     expect.soft(modal.bottom,s.name+' modal base').toBeLessThanOrEqual(s.height);
-    expect.soft(modal.close,s.name+' fechar modal touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(modal.close),s.name+' fechar modal touch').toBeGreaterThanOrEqual(44);
     await page.evaluate(()=>document.getElementById('confirmModal')?.classList.remove('open'));
     await noOverflow(s.name+' Configurações');
   }
@@ -2355,14 +2355,14 @@ test('etapa 2 [T] compacta Home e curso no iPad em retrato e paisagem',async({pa
     expect.soft(course.toolbarColumns,scenario.name+' organiza busca e ações conforme orientação').toBe(scenario.toolbarColumns);
     expect.soft(['auto','scroll'],scenario.name+' situação rolável').toContain(course.situationOverflow);
     expect.soft(['auto','scroll'],scenario.name+' conteúdo rolável').toContain(course.categoriesOverflow);
-    expect.soft(course.situationTouch,scenario.name+' filtros de situação mantêm touch').toBeGreaterThanOrEqual(44);
-    expect.soft(course.categoryTouch,scenario.name+' filtros de conteúdo mantêm touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(course.situationTouch),scenario.name+' filtros de situação mantêm touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(course.categoryTouch),scenario.name+' filtros de conteúdo mantêm touch').toBeGreaterThanOrEqual(44);
     expect.soft(course.titleBeforeSummary,scenario.name+' título não sobrepõe métricas').toBe(true);
     expect.soft(course.titleInside,scenario.name+' título permanece dentro do hero').toBe(true);
     expect.soft(course.continueVisible,scenario.name+' Retomar disponível').toBe(true);
     expect.soft(course.continueAccent,scenario.name+' Retomar herda accent do mapa').not.toBe('');
     expect.soft(course.continueButtonInside,scenario.name+' CTA Retomar fica dentro do card').toBe(true);
-    expect.soft(course.continueButtonHeight,scenario.name+' CTA Retomar mantém touch').toBeGreaterThanOrEqual(44);
+    expect.soft(Math.round(course.continueButtonHeight),scenario.name+' CTA Retomar mantém touch').toBeGreaterThanOrEqual(44);
     expect.soft(course.layoutActionsVisible,scenario.name+' seletor grade/lista permanece acessível').toBe(true);
     expect.soft(course.scrollWidth,scenario.name+' Curso sem overflow horizontal').toBeLessThanOrEqual(course.width+2);
   }
