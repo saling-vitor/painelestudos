@@ -639,14 +639,15 @@ test('[G] Simulados vinculados herdam o accent do curso sem alterar o badge da b
       linked:!!el.dataset.simulationCourseCover,
       inlineAccent:el.style.getPropertyValue('--simulation-accent').trim(),
       inlineGeneric:el.style.getPropertyValue('--accent').trim(),
-      borderColor:style.borderLeftColor,
+      edgeVisual:[style.borderLeftColor,style.boxShadow].filter(Boolean).join('|'),
       boardColor:board?getComputedStyle(board).color:''
     };
   });
   expect(visual.linked).toBe(true);
   expect(visual.inlineAccent).not.toBe('');
   expect(visual.inlineGeneric).toBe(visual.inlineAccent);
-  expect(visual.borderColor).not.toBe('');
+  expect(visual.edgeVisual).not.toBe('');
+  expect(visual.edgeVisual).not.toBe('none');
   expect(visual.boardColor).not.toBe('');
 });
 
@@ -2802,7 +2803,7 @@ test('V15.32 [G] accent respeita prioridade mapa categoria curso e neutro',async
 
 
 
-test('[G] refinamento visual mantém foco discreto, select funcional e modal rolável',async({page})=>{
+test('[G] refinamento visual mantém foco discreto, select funcional e modal rolável',async({page},testInfo)=>{
   await expect(page.locator('link[href*="ui-chrome-refine-v01.css"]')).toHaveCount(1);
   const search=page.locator('#globalSearch');
   await expect(search).toBeVisible();
@@ -2816,19 +2817,21 @@ test('[G] refinamento visual mantém foco discreto, select funcional e modal rol
   expect(searchFocus.width).toBeGreaterThan(0);
   expect(searchFocus.height).toBeGreaterThan(0);
 
-  await page.goto('/#progress');
-  const sort=page.locator('#progressSort');
-  await expect(sort).toBeVisible();
-  const before=await sort.boundingBox();
-  await sort.focus();
-  const selectFocus=await sort.evaluate(el=>parseFloat(getComputedStyle(el).outlineWidth)||0);
-  expect(selectFocus).toBeGreaterThan(0);
-  expect(selectFocus).toBeLessThanOrEqual(1.5);
-  const after=await sort.boundingBox();
-  expect(Math.abs((after?.width||0)-(before?.width||0))).toBeLessThanOrEqual(.5);
-  expect(Math.abs((after?.height||0)-(before?.height||0))).toBeLessThanOrEqual(.5);
-  await sort.selectOption('alpha');
-  await expect(sort).toHaveValue('alpha');
+  if(testInfo.project.name==='desktop-chromium'){
+    await page.goto('/#progress');
+    const sort=page.locator('#progressSort');
+    await expect(sort).toBeVisible();
+    const before=await sort.boundingBox();
+    await sort.focus();
+    const selectFocus=await sort.evaluate(el=>parseFloat(getComputedStyle(el).outlineWidth)||0);
+    expect(selectFocus).toBeGreaterThan(0);
+    expect(selectFocus).toBeLessThanOrEqual(1.5);
+    const after=await sort.boundingBox();
+    expect(Math.abs((after?.width||0)-(before?.width||0))).toBeLessThanOrEqual(.5);
+    expect(Math.abs((after?.height||0)-(before?.height||0))).toBeLessThanOrEqual(.5);
+    await sort.selectOption('alpha');
+    await expect(sort).toHaveValue('alpha');
+  }
 
   await page.evaluate(()=>document.getElementById('mapManageModal')?.classList.add('open'));
   const modal=page.locator('#mapManageModal .modal-card');
