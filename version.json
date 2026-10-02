@@ -1,14 +1,14 @@
 {
-  "version": "15.23.1",
-  "label": "V15.23.1-G",
-  "releasedAt": "2026-10-02T01:05:00.000Z",
-  "notes": "Correção final da importação e dos ícones do PWA: categorias automáticas por HTML, mapas vinculados somente à conta/nuvem, remoção dos mapas de um curso e PNGs arredondados válidos para instalação.",
+  "version": "15.23.2",
+  "label": "V15.23.2-G",
+  "releasedAt": "2026-10-02T11:15:00.000Z",
+  "notes": "Refinamento da Home: Simulados recentes ganharam hierarquia mais clara, banca e status separados, ação contextual e leitura de desempenho; Retomar onde parei recebeu apenas microajustes de legibilidade.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cada HTML novo recebe categoria automaticamente por metadados, sigla e conteúdo, com opção de ajuste manual",
-    "[G] Cursos exibem somente mapas realmente vinculados à conta/nuvem; mapas empacotados não reaparecem após exclusão",
-    "[G] Gerenciar curso agora permite excluir todos os mapas mantendo o curso e o edital",
-    "[G] Ícones do PWA foram regenerados como PNGs válidos, com cantos arredondados e versões clara/escura",
-    "[G] Corrigido o salvamento das metas de estudo e atualizada a validação visual dos cards sem exigir blur pesado"
+    "[G] Simulados recentes agora separam título, banca, metadados e estado em níveis visuais distintos",
+    "[G] Ação contextual por estado: Começar, Continuar ou Rever",
+    "[G] Simulados concluídos exibem acertos e percentual diretamente na Home",
+    "[G] Simulados em andamento ganham indicador discreto de atividade sem inventar percentual de progresso",
+    "[G] Retomar onde parei preservado, com barra e metadados levemente refinados"
   ]
 }
