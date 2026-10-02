@@ -78,6 +78,7 @@
   .maps-toolbar{display:block}
   .maps-search-control{height:44px}
   .maps-desktop-only{display:none!important}
+  .maps-desktop-layout{display:none!important}
   .maps-mobile-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:6px;margin-top:7px}
   .maps-mobile-controls>.secondary{min-width:0;min-height:44px;padding:0 9px;display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden}
   .maps-mobile-controls>.secondary>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

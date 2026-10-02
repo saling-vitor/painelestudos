@@ -1,14 +1,14 @@
 {
-  "version": "15.31.0",
-  "label": "V15.31.0-G",
-  "releasedAt": "2026-10-02T20:24:00.000Z",
-  "notes": "Retomar onde parei agora reutiliza a identidade cromática do próprio mapa em Desktop, iPad e iPhone.",
+  "version": "15.31.1",
+  "label": "V15.31.1-G",
+  "releasedAt": "2026-10-02T20:50:00.000Z",
+  "notes": "Fechamento de QA da identidade cromática do Retomar, incluindo correções reais descobertas ao executar os testes gerais no iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Retomar passa a exibir código e categoria com a mesma cor usada nos cards da biblioteca",
-    "[G] Progresso, borda e ação Continuar herdam o accent do mapa sem colorir excessivamente o fundo",
-    "[G] Desktop, iPad e iPhone preservam a mesma fonte de cor e a mesma hierarquia visual",
-    "[QA] Novo E2E [G] valida a identidade cromática nos três projetos e o iPhone passa a selecionar testes [G]",
-    "[QA] Validate confere APP_VERSION_LABEL e rótulos exibidos antes dos E2E"
+    "[G] Retomar mantém código, categoria, progresso e ação Continuar com a identidade cromática do mapa",
+    "[M] Todos os Mapas deixa de exibir dois conjuntos de controles Grade/Lista no iPhone",
+    "[QA] Teste de Meus Cursos no iPhone passa a proteger conteúdo, viewport e overflow em vez de altura histórica arbitrária",
+    "[QA] Estado vazio de pontos de restauração deixa de depender do IndexedDB entre cenários E2E",
+    "[QA] Desktop e iPad permaneceram verdes; correções fecham as falhas reveladas pela nova cobertura [G]/[M] do iPhone"
   ]
 }

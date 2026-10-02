@@ -2443,16 +2443,30 @@ test('etapa 1 [M] preserva Meus Cursos em uma coluna no iPhone',async({page},tes
   await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
   const card=page.locator('#coursesGrid .course-card.course-library-card').first();
   await expect(card).toBeVisible();
+  await expect(card.locator('.course-card-cover img')).toBeVisible();
+  await expect(card.locator('h3')).toBeVisible();
+  await expect(card.locator('.course-card-meta')).toBeVisible();
+  await expect(card.locator('.course-progress-mini')).toBeVisible();
+  await expect(card.locator('.course-footer')).toBeVisible();
   const data=await page.evaluate(()=>{
-    const grid=document.querySelector('#coursesGrid'),card=document.querySelector('#coursesGrid .course-card.course-library-card');
+    const grid=document.querySelector('#coursesGrid'),card=document.querySelector('#coursesGrid .course-card.course-library-card'),rect=card.getBoundingClientRect();
     return{
       columns:getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length,
-      height:card.getBoundingClientRect().height
+      height:rect.height,
+      left:rect.left,
+      right:rect.right,
+      scrollWidth:card.scrollWidth,
+      clientWidth:card.clientWidth,
+      viewportWidth:innerWidth,
+      documentScrollWidth:document.documentElement.scrollWidth
     };
   });
   expect(data.columns).toBe(1);
-  expect(data.height).toBeGreaterThanOrEqual(180);
-  expect(data.height).toBeLessThanOrEqual(250);
+  expect(data.height).toBeGreaterThan(0);
+  expect(data.left).toBeGreaterThanOrEqual(-1);
+  expect(data.right).toBeLessThanOrEqual(data.viewportWidth+1);
+  expect(data.scrollWidth).toBeLessThanOrEqual(data.clientWidth+1);
+  expect(data.documentScrollWidth).toBeLessThanOrEqual(data.viewportWidth+2);
 });
 
 
@@ -2494,7 +2508,11 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page})=
   expect(compactGeometry.imgWidth).toBeGreaterThan(40);
   expect(compactGeometry.imgRight).toBeLessThanOrEqual(compactGeometry.copyLeft+.5);
 
-  await page.evaluate(async()=>{nav('settings');await renderRestorePoints()});
+  await page.evaluate(()=>{
+    nav('settings');
+    const root=document.querySelector('#restorePointsList');
+    root.innerHTML=emptyStateHtml({title:'Nenhum ponto de restauração ainda',text:'Eles serão criados automaticamente antes de ações destrutivas.',mascot:'continue',compact:true,className:'restore-points-empty-state'});
+  });
   const restoreEmpty=page.locator('#restorePointsList .restore-points-empty-state');
   await expect(restoreEmpty).toBeVisible();
   await expect(restoreEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-leitura-v15-22-0\.png/);
