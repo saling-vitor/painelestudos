@@ -1,0 +1,208 @@
+/* Meus Mapas · refinamento visual da biblioteca de cursos V01
+   [G] hierarquia e contraste · [D] aproveitamento de largura · [T+M] preservação responsiva */
+
+/* Paleta discreta e repetível para diferenciar concursos sem criar identidade nova. */
+:is(#coursesGrid,#homeCourses)>.course-card:nth-child(6n+1){--course-accent:#b99c68}
+:is(#coursesGrid,#homeCourses)>.course-card:nth-child(6n+2){--course-accent:#6d8298}
+:is(#coursesGrid,#homeCourses)>.course-card:nth-child(6n+3){--course-accent:#7e687f}
+:is(#coursesGrid,#homeCourses)>.course-card:nth-child(6n+4){--course-accent:#4f938f}
+:is(#coursesGrid,#homeCourses)>.course-card:nth-child(6n+5){--course-accent:#b8755d}
+:is(#coursesGrid,#homeCourses)>.course-card:nth-child(6n){--course-accent:#62a978}
+
+/* [D] O grid volta a aproveitar a largura: 2 concursos ocupam 2 colunas; 3+ usam 3 quando couber. */
+@media(min-width:821px){
+  html:not(.is-ipad):not(.is-phone-layout) #coursesGrid.course-grid{
+    width:100%;
+    grid-template-columns:repeat(auto-fit,minmax(440px,1fr))!important;
+    gap:16px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .topbar-wrap{
+    padding-left:24px;
+    padding-right:24px;
+  }
+}
+
+/* Cabeçalho e ação principal da página. */
+html:not(.is-phone-layout) [data-view="courses"] .courses-head{
+  padding-bottom:15px;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+html:not(.is-phone-layout) [data-view="courses"] #newCourseBtn2{
+  border-color:rgba(216,197,158,.28)!important;
+  background:
+    linear-gradient(180deg,rgba(216,197,158,.11),rgba(216,197,158,.045))!important;
+  color:#ead8b2!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035),0 8px 20px rgba(0,0,0,.16)!important;
+}
+html:not(.is-phone-layout) [data-view="courses"] #newCourseBtn2 .ui-icon{color:#d8c59e}
+
+/* Cards: acento próprio, sem perder o preto dominante. */
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card{
+  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 24%,rgba(255,255,255,.075))!important;
+  background:
+    radial-gradient(500px 245px at -7% -12%,color-mix(in srgb,var(--course-accent,#b99c68) 10%,transparent),transparent 69%),
+    radial-gradient(330px 190px at 104% 0%,rgba(216,197,158,.028),transparent 74%),
+    linear-gradient(145deg,rgba(14,16,20,.985),rgba(9,11,14,.992) 58%,rgba(7,8,10,.998))!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.31),inset 0 1px rgba(255,255,255,.028)!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card-code{
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 72%,#c7cbd1)!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card-role{
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 46%,#d7d1c7)!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card-institution{
+  color:#8d939c!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-status-pill.is-active{
+  border-color:rgba(98,169,120,.27)!important;
+  background:rgba(98,169,120,.065)!important;
+  color:#a8d9b5!important;
+}
+
+/* Menos "caixinhas": banca permanece relevante; contadores e edital recuam. */
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-board-chip{
+  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 32%,rgba(255,255,255,.07))!important;
+  background:color-mix(in srgb,var(--course-accent,#b99c68) 7%,rgba(255,255,255,.012))!important;
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 66%,#e0e2e6)!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-map-count-chip{
+  border-color:rgba(255,255,255,.045)!important;
+  background:rgba(255,255,255,.009)!important;
+  color:#9298a0!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-edital-btn{
+  border-color:rgba(255,255,255,.045)!important;
+  background:transparent!important;
+  color:#969ca5!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-edital-btn .ui-icon{
+  color:#7f8791!important;
+}
+
+/* Prova: prazo é a informação principal; data fica claramente secundária. */
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-exam-info{
+  min-width:94px;
+  border-color:rgba(216,184,88,.23)!important;
+  background:
+    linear-gradient(180deg,rgba(216,184,88,.065),rgba(216,184,88,.025))!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-exam-info b{
+  color:#e3cc8e!important;
+  font-size:8.5px!important;
+  letter-spacing:.01em;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-exam-info small{
+  color:#8d846b!important;
+  font-size:6.8px!important;
+}
+
+/* Progresso com leitura mais rápida e trilho menos apagado. */
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-head b{
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 70%,#f1f2f4)!important;
+  font-size:12.5px!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-head b small{
+  color:#858b94!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-head>span{
+  color:#858b94!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-mini .progress-track{
+  height:5px;
+  background:rgba(255,255,255,.052)!important;
+  box-shadow:inset 0 1px rgba(0,0,0,.45);
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-mini .progress-track>span{
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--course-accent,#b99c68) 72%,#15181c),
+    color-mix(in srgb,var(--course-accent,#b99c68) 92%,#fff))!important;
+  box-shadow:0 0 12px color-mix(in srgb,var(--course-accent,#b99c68) 20%,transparent);
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-empty{
+  color:#7e848d!important;
+}
+
+/* Rodapé: separação estrutural suave e ação Entrar claramente principal. */
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-footer{
+  padding-top:11px!important;
+  border-top:1px solid color-mix(in srgb,var(--course-accent,#b99c68) 12%,rgba(255,255,255,.045))!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-last-activity-card{
+  color:#8b9199!important;
+}
+html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .enter{
+  min-height:34px;
+  padding-inline:11px;
+  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 38%,rgba(255,255,255,.08))!important;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--course-accent,#b99c68) 13%,rgba(255,255,255,.018)),
+      color-mix(in srgb,var(--course-accent,#b99c68) 7%,rgba(7,9,12,.92)))!important;
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 74%,#fff)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025),0 5px 14px rgba(0,0,0,.13);
+}
+
+/* Topbar: instalar é ocasional; sincronizar é ação recorrente. */
+html:not(.is-phone-layout) #installBtn{
+  border-color:rgba(255,255,255,.05)!important;
+  background:rgba(255,255,255,.008)!important;
+  color:#8d939c!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) #installBtn .ui-icon{color:#747b84!important}
+html:not(.is-phone-layout) #syncTop{
+  border-color:rgba(98,169,120,.12)!important;
+  background:linear-gradient(180deg,rgba(98,169,120,.032),rgba(255,255,255,.012))!important;
+}
+
+/* Sidebar: menos caixa cinza, mais marcador/acento da seção. */
+html:not(.is-phone-layout) .nav-btn.active{
+  border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 22%,rgba(255,255,255,.04))!important;
+  background:
+    radial-gradient(180px 68px at 0% 50%,color-mix(in srgb,var(--nav-accent,#c3aa84) 13%,transparent),transparent 76%),
+    linear-gradient(90deg,color-mix(in srgb,var(--nav-accent,#c3aa84) 7%,rgba(255,255,255,.006)),transparent 82%)!important;
+}
+html:not(.is-phone-layout) .nav-btn.active::before{
+  width:3px!important;
+  box-shadow:0 0 13px color-mix(in srgb,var(--nav-accent,#c3aa84) 40%,transparent)!important;
+}
+
+/* Hover acompanha o acento do concurso, sem efeito neon. */
+@media(hover:hover){
+  html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card:hover{
+    border-color:color-mix(in srgb,var(--course-accent,#b99c68) 38%,rgba(255,255,255,.08))!important;
+    box-shadow:0 22px 50px rgba(0,0,0,.34),0 0 24px color-mix(in srgb,var(--course-accent,#b99c68) 4%,transparent),inset 0 1px rgba(255,255,255,.032)!important;
+  }
+  html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card:hover .enter{
+    border-color:color-mix(in srgb,var(--course-accent,#b99c68) 50%,rgba(255,255,255,.10))!important;
+    background:color-mix(in srgb,var(--course-accent,#b99c68) 12%,#0b0d10)!important;
+  }
+}
+
+/* [T] Mantém duas colunas e alvos de toque; apenas replica a nova hierarquia. */
+html.is-ipad:not(.is-phone-layout) #coursesGrid.course-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+html.is-ipad:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .enter{
+  min-height:44px;
+}
+html.is-ipad:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-edital-btn{
+  min-height:44px;
+}
+
+/* [M] Não muda a estrutura do smartphone; só preserva a identificação cromática e a ação principal. */
+html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card{
+  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 18%,rgba(255,255,255,.065))!important;
+}
+html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card-code,
+html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card-role{
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 56%,#d8dbe0)!important;
+}
+html.is-phone-layout :is(#coursesGrid,#homeCourses) .enter{
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 68%,#fff)!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card:hover{transform:none}
+}
