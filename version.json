@@ -1,14 +1,14 @@
 {
-  "version": "15.23.3",
-  "label": "V15.23.3-G",
-  "releasedAt": "2026-10-02T11:40:00.000Z",
-  "notes": "Refinamento da sincronização em desktop e iPad: status da nuvem mais discreto na sidebar, botão de sincronização neutro e feedback contextual de sincronizando, sincronizado, offline e erro. O modo celular foi preservado.",
+  "version": "15.23.4",
+  "label": "V15.23.4-G",
+  "releasedAt": "2026-10-02T12:28:00.000Z",
+  "notes": "Etapa A — Home responsiva: adaptação da Home para iPad landscape e portrait, preservando a composição aprovada no desktop e no iPhone. Hero, Central do dia, Plano do dia, Retomar, Simulados recentes e Meus Cursos agora reorganizam densidade e colunas conforme a largura disponível.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Rodapé da sidebar simplificado para um status discreto de nuvem, sem aparência de card concorrente",
-    "[D+T] Botão Sincronizar passa a usar ícone de nuvem e estado visual neutro por padrão",
-    "[D+T] Feedback contextual: Sincronizando, Sincronizado, Offline e Tentar novamente",
-    "[T] Alvo touch de 44 px preservado no iPad",
-    "[M] Nenhuma alteração visual no modo celular"
+    "[T] iPad landscape exibe os três simulados recentes e mantém a faixa de inteligência em três colunas",
+    "[T] iPad portrait usa faixa rolável de simulados sem ocultar o terceiro card",
+    "[T] Hero, Plano do dia, Retomar e Meus Cursos ganham proporções próprias para tablet",
+    "[M] Composição aprovada do iPhone preservada, incluindo carrossel e alvos touch",
+    "[D] Layout desktop aprovado mantido como referência visual"
   ]
 }
