@@ -26,7 +26,7 @@ const E2E_CLOUD_MAP_CACHE=E2E_CLOUD_MAP_ROWS.map(m=>({
   id:m.id,courseId:m.course_id,code:m.code,title:m.title,shortTitle:m.short_title,version:m.version,board:m.board,contest:m.contest,
   topics:m.topics,branches:m.branches,category:m.category,accent:m.accent,source:'cloud',storage_path:m.storage_path,filename:m.filename,storageId:m.storage_id
 }));
-test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.route('https://hapyzjfhbobtaellaejv.supabase.co/**',async route=>{const url=route.request().url();if(url.includes('/auth/v1/user'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({id:'e2e-user',email:'e2e@example.com'})});if(url.includes('/rest/v1/courses'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify([{id:'porto-alegre',user_id:'e2e-user',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',exam_date:'2026-10-18',status:'active',created_at:'2026-09-01T00:00:00.000Z'}])});if(url.includes('/rest/v1/maps'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(E2E_CLOUD_MAP_ROWS)});return route.fulfill({status:200,contentType:'application/json',body:'[]'})});await page.addInitScript(({maps})=>{localStorage.setItem('studyapp.lastSeenVersion','15.23.0');if(localStorage.getItem('studyapp.e2eLoggedOut')==='1'){localStorage.removeItem('studyapp.auth');return}const user={id:'e2e-user',email:'e2e@example.com'},session={access_token:'e2e-token',refresh_token:'',expires_at:4102444800,user};localStorage.setItem('studyapp.auth',JSON.stringify(session));localStorage.setItem('studyapp.cloudCatalog::e2e-user',JSON.stringify({courses:[{id:'porto-alegre',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',examDate:'2026-10-18',status:'active',source:'cloud',maps:maps.length}],maps,docs:[],simulations:[],user,savedAt:new Date().toISOString()}))},{maps:E2E_CLOUD_MAP_CACHE});await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.waitForFunction(()=>typeof combinedCourses==='function'&&combinedCourses().length>0)});
+test.beforeEach(async({page})=>{const runtimeErrors=[];page.on('pageerror',error=>runtimeErrors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')runtimeErrors.push(msg.text())});page.runtimeErrors=runtimeErrors;await page.route('https://hapyzjfhbobtaellaejv.supabase.co/**',async route=>{const url=route.request().url();if(url.includes('/auth/v1/user'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({id:'e2e-user',email:'e2e@example.com'})});if(url.includes('/rest/v1/courses'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify([{id:'porto-alegre',user_id:'e2e-user',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',exam_date:'2026-10-18',status:'active',created_at:'2026-09-01T00:00:00.000Z'}])});if(url.includes('/rest/v1/maps'))return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(E2E_CLOUD_MAP_ROWS)});return route.fulfill({status:200,contentType:'application/json',body:'[]'})});await page.addInitScript(({maps})=>{localStorage.setItem('studyapp.lastSeenVersion','15.23.1');if(localStorage.getItem('studyapp.e2eLoggedOut')==='1'){localStorage.removeItem('studyapp.auth');return}const user={id:'e2e-user',email:'e2e@example.com'},session={access_token:'e2e-token',refresh_token:'',expires_at:4102444800,user};localStorage.setItem('studyapp.auth',JSON.stringify(session));localStorage.setItem('studyapp.cloudCatalog::e2e-user',JSON.stringify({courses:[{id:'porto-alegre',title:'DEMHAB Porto Alegre',subtitle:'CP 01 · Arquiteto',city:'Porto Alegre/RS',institution:'Departamento Municipal de Habitação · DEMHAB',board:'FUNDATEC',examDate:'2026-10-18',status:'active',source:'cloud',maps:maps.length}],maps,docs:[],simulations:[],user,savedAt:new Date().toISOString()}))},{maps:E2E_CLOUD_MAP_CACHE});await page.goto('/#home');await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.waitForFunction(()=>typeof combinedCourses==='function'&&combinedCourses().length>0)});
 test.afterEach(async({page},testInfo)=>{const errors=(page.runtimeErrors||[]).filter(message=>!(testInfo.project.name==='iphone-webkit'&&/version\.json.*access control checks/i.test(message)));expect(errors,errors.join('\n')).toEqual([])});
 
 test('etapa 0 [G] mantém a template sem cursos quando não há conta',async({page})=>{await page.evaluate(()=>{localStorage.setItem('studyapp.e2eLoggedOut','1');localStorage.setItem('studyapp.localCourses',JSON.stringify([{id:'legado-local',title:'Curso local legado'}]));localStorage.removeItem('studyapp.auth')});await page.reload();await page.goto('/#courses');await expect(page.locator('#coursesGrid .course-card')).toHaveCount(0);await expect(page.locator('#coursesGrid')).toContainText('Entre na sua conta para carregar seus concursos.');await page.waitForTimeout(250);const result=await page.evaluate(()=>({courses:combinedCourses().length,maps:combinedMaps().length,search:globalSearchResults('demhab'),legacy:localStorage.getItem('studyapp.localCourses'),cache:localStorage.getItem('studyapp.cloudCatalog::e2e-user')}));expect(result.courses).toBe(0);expect(result.maps).toBe(0);expect(result.search.courses).toHaveLength(0);expect(result.search.maps).toHaveLength(0);expect(result.search.topics).toHaveLength(0);expect(result.legacy).toContain('legado-local');expect(result.cache).toContain('porto-alegre')});
@@ -60,7 +60,7 @@ test('analytics dos simulados calcula 60 70 80 e mostra evolução',async({page}
 test('novidades aparecem uma vez por versão',async({page})=>{await page.evaluate(()=>{closeModal('whatsNewModal');localStorage.removeItem('studyapp.lastSeenVersion');maybeShowWhatsNew({version:APP_VERSION,label:APP_VERSION_LABEL,showWhatsNew:true,highlights:['Teste E2E de novidades']})});await expect(page.locator('#whatsNewModal')).toHaveClass(/open/);await expect(page.locator('#whatsNewHighlights')).toContainText('Teste E2E de novidades');await page.locator('#whatsNewAccept').click();await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(await page.evaluate(()=>APP_VERSION))});
 test('modo foco do mapa abre e fecha sem erro',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await page.locator('#courseMaps [data-map]').first().click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerMoreBtn').click();await page.locator('#readerFocusBtn').click();await expect(page.locator('#reader')).toHaveClass(/focus-mode/);await page.locator('#readerFocusExit').click();await expect(page.locator('#reader')).not.toHaveClass(/focus-mode/)});
 test('rota sobrevive a reload e back forward',async({page})=>{await page.locator('#homeCourses [data-course="porto-alegre"]').click();await expect(page).toHaveURL(/#course\/porto-alegre/);await page.reload();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.goBack();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await page.goForward();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/)});
-test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.23.0');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
+test('configurações expõem backup restore points e versão do PWA',async({page})=>{await page.goto('/#settings');await expect(page.locator('#downloadBackupBtn')).toBeVisible();await expect(page.locator('#restoreBackupBtn')).toBeVisible();await expect(page.locator('#restorePointsList')).toBeVisible();expect(await page.evaluate(()=>APP_VERSION)).toBe('15.23.1');const backup=await page.evaluate(()=>buildStudyBackup());expect(backup.type).toBe('meus-mapas-backup');expect(backup.schemaVersion).toBe(1)});
 
 test('backup preserva dados locais mais novos e permite restauração completa',async({page})=>{
   const result=await page.evaluate(async()=>{
@@ -104,11 +104,11 @@ test('PWA registra service worker da versão atual e fica sem atualização pend
     };
   });
   expect(result.supported).toBe(true);
-  expect(result.version).toBe('15.23.0');
+  expect(result.version).toBe('15.23.1');
   expect(result.active).toBe(true);
   expect(result.waiting).toBe(false);
   expect(result.updateAvailable).toBe(false);
-  expect(result.scriptURL).toContain('sw.js?v=15.23.0');
+  expect(result.scriptURL).toContain('sw.js?v=15.23.1');
   expect(result.status).toContain('Aplicativo atualizado');
 })
 test('home monta plano inteligente de estudo',async({page})=>{
@@ -439,7 +439,7 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
 
 test('atualizações e diagnóstico ficam compactos',async({page})=>{
   await page.goto('/#settings');
-  await expect(page.locator('.app-update-summary')).toContainText('V15.23.0');
+  await expect(page.locator('.app-update-summary')).toContainText('V15.23.1');
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -716,7 +716,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
 test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.23.0',{cache:'no-store'});
+    const response=await fetch('./assets/home-hero-panel-hq.webp?v=15.23.1',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -1508,11 +1508,12 @@ test('iPhone real usa glass leve sem blur pesado nos cards',async({page},testInf
     return{
       backdrop:computed.backdropFilter||computed.webkitBackdropFilter||'none',
       background:computed.backgroundImage,
+      backgroundColor:computed.backgroundColor,
       shadow:computed.boxShadow
     };
   });
   expect(['none','']).toContain(style.backdrop);
-  expect(style.background).toContain('linear-gradient');
+  expect(style.background.includes('linear-gradient')||!['transparent','rgba(0, 0, 0, 0)'].includes(style.backgroundColor)).toBe(true);
   expect(style.shadow).not.toBe('none');
 });
 

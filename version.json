@@ -1,15 +1,14 @@
 {
-  "version": "15.23.0",
-  "label": "V15.23.0-G",
-  "releasedAt": "2026-10-01T23:55:00.000Z",
-  "notes": "Importação com categoria automática por HTML, mapas pertencentes somente à conta/nuvem e novo ícone PWA realmente arredondado.",
+  "version": "15.23.1",
+  "label": "V15.23.1-G",
+  "releasedAt": "2026-10-02T01:05:00.000Z",
+  "notes": "Correção final da importação e dos ícones do PWA: categorias automáticas por HTML, mapas vinculados somente à conta/nuvem, remoção dos mapas de um curso e PNGs arredondados válidos para instalação.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Novos mapas detectam automaticamente a categoria usando metadados, sigla, título, ramos e tópicos do HTML",
-    "[G] A categoria automática é mostrada antes da importação e continua podendo ser substituída manualmente por lote",
-    "[G] Mapas empacotados no aplicativo deixam de aparecer automaticamente em cursos da conta; a biblioteca passa a refletir somente os mapas salvos na nuvem",
-    "[G] Excluir um mapa da nuvem agora faz o mapa desaparecer do curso sem o catálogo interno recriá-lo",
-    "[G] Ícone do PWA atualizado para PNG com cantos transparentes e arredondados, sem a moldura quadrada externa",
-    "[G] Navegador usa variação clara ou escura do ícone conforme o tema; a instalação usa a versão escura arredondada"
+    "[G] Cada HTML novo recebe categoria automaticamente por metadados, sigla e conteúdo, com opção de ajuste manual",
+    "[G] Cursos exibem somente mapas realmente vinculados à conta/nuvem; mapas empacotados não reaparecem após exclusão",
+    "[G] Gerenciar curso agora permite excluir todos os mapas mantendo o curso e o edital",
+    "[G] Ícones do PWA foram regenerados como PNGs válidos, com cantos arredondados e versões clara/escura",
+    "[G] Corrigido o salvamento das metas de estudo e atualizada a validação visual dos cards sem exigir blur pesado"
   ]
 }
