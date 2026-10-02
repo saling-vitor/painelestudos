@@ -770,3 +770,281 @@ html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card-ac
 }
 
 /* [M] Nenhuma recomposição: o mobile-first já aprovado continua sendo a fonte da verdade. */
+
+
+/* V15.23.6-C · Ferramentas responsivas */
+/* Escopo: Progresso + Agenda + Configurações + modais.
+   Desktop preserva a composição aprovada; iPad recebe quebras próprias; iPhone segue o mobile-first. */
+
+/* [T] Cabeçalhos e alvos touch das ferramentas. */
+html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"])>.section-head{
+  gap:12px;
+  margin-bottom:12px;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"])>.section-head h2{
+  font-size:20px;
+  line-height:1.08;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"])>.section-head p{
+  margin-top:3px;
+  font-size:10.5px;
+  line-height:1.45;
+}
+html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"]) button,
+html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"]) summary{
+  min-height:44px;
+}
+
+/* PROGRESSO · hierarquia do desktop adaptada à largura do tablet. */
+html.is-ipad:not(.is-phone-layout) #progressMetrics{
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) #progressMetrics .metric{
+  min-height:72px!important;
+  padding:10px 11px!important;
+}
+html.is-ipad:not(.is-phone-layout) #progressInsights{
+  padding:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insights-grid,
+html.is-ipad:not(.is-phone-layout) .intelligence-primary-actions,
+html.is-ipad:not(.is-phone-layout) .study-analytics-grid{
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-card,
+html.is-ipad:not(.is-phone-layout) .intelligence-primary-actions>article{
+  min-height:108px!important;
+  padding:11px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-global-panel{
+  padding:13px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-controls{
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-filter-row{
+  flex-wrap:nowrap!important;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+  scrollbar-width:none;
+  padding-bottom:2px;
+}
+html.is-ipad:not(.is-phone-layout) .progress-filter-row::-webkit-scrollbar{display:none}
+html.is-ipad:not(.is-phone-layout) .progress-filter{
+  flex:0 0 auto;
+  min-height:40px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-sort-control select{
+  min-height:44px!important;
+}
+
+/* AGENDA · calendário principal + planejamento lateral sem esmagar campos. */
+html.is-ipad:not(.is-phone-layout) .study-agenda-head{
+  gap:10px;
+}
+html.is-ipad:not(.is-phone-layout) .study-agenda-modes button,
+html.is-ipad:not(.is-phone-layout) .study-agenda-toolbar button{
+  min-height:44px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-agenda-calendar,
+html.is-ipad:not(.is-phone-layout) .study-agenda-side{
+  padding:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-agenda-toolbar{
+  grid-template-columns:44px 58px minmax(0,1fr) 44px!important;
+  gap:6px!important;
+  margin-bottom:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-agenda-form input,
+html.is-ipad:not(.is-phone-layout) .study-agenda-form select,
+html.is-ipad:not(.is-phone-layout) .study-agenda-form button{
+  min-height:44px!important;
+}
+
+/* CONFIGURAÇÕES · mantém Conta/Nuvem prioritária no tablet. */
+html.is-ipad:not(.is-phone-layout) .settings-layout-v3{
+  gap:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) .settings-layout-v3 .settings-column{
+  gap:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) .settings-layout-v3 .panel{
+  padding:15px!important;
+}
+html.is-ipad:not(.is-phone-layout) .settings-layout-v3 :is(input,select,button){
+  min-height:44px;
+}
+html.is-ipad:not(.is-phone-layout) .settings-layout-v3 textarea{
+  min-height:92px;
+}
+html.is-ipad:not(.is-phone-layout) .settings-disclosure>summary{
+  min-height:50px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-settings-toggle input[type="checkbox"]{
+  width:46px!important;
+  min-width:46px!important;
+  height:28px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-settings-toggle input[type="checkbox"]::after{
+  top:4px;
+  left:4px;
+  width:18px;
+  height:18px;
+}
+html.is-ipad:not(.is-phone-layout) .study-settings-toggle input[type="checkbox"]:checked::after{
+  left:23px;
+}
+
+/* MODAIS · respeitam viewport, safe area e alvo touch no iPad. */
+html.is-ipad:not(.is-phone-layout) .modal{
+  padding:
+    calc(16px + env(safe-area-inset-top,0px))
+    calc(16px + env(safe-area-inset-right,0px))
+    calc(16px + env(safe-area-inset-bottom,0px))
+    calc(16px + env(safe-area-inset-left,0px))!important;
+}
+html.is-ipad:not(.is-phone-layout) .modal-card{
+  width:min(720px,calc(100vw - 32px))!important;
+  max-width:calc(100vw - 32px)!important;
+  max-height:calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
+  padding:18px!important;
+  overscroll-behavior:contain;
+}
+html.is-ipad:not(.is-phone-layout) .modal-card .close{
+  width:44px!important;
+  min-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
+  min-height:44px!important;
+}
+
+/* [T · landscape] densidade próxima ao desktop. */
+@media(min-width:900px){
+  html.is-ipad:not(.is-phone-layout) #progressMetrics{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insights-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .intelligence-primary-actions{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-analytics-grid{
+    grid-template-columns:minmax(0,1.35fr) minmax(150px,.7fr) minmax(0,1fr) minmax(0,1fr)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-layout{
+    grid-template-columns:minmax(0,1.55fr) minmax(280px,.78fr)!important;
+    gap:12px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-side{
+    display:block!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-form{
+    margin-top:14px!important;
+    padding-top:14px!important;
+    padding-left:0!important;
+    border-left:0!important;
+    border-top:1px solid rgba(255,255,255,.07)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .settings-layout-v3{
+    grid-template-columns:minmax(300px,.9fr) minmax(0,1.1fr)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .settings-column-primary{order:initial!important}
+  html.is-ipad:not(.is-phone-layout) .settings-column-secondary{order:initial!important}
+  html.is-ipad:not(.is-phone-layout) .settings-full-panel{grid-column:1/-1!important}
+}
+
+/* [T · portrait] três métricas por linha; agenda em bloco principal + painel lateral duplo. */
+@media(min-width:701px) and (max-width:899px){
+  html.is-ipad:not(.is-phone-layout) #progressMetrics{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insights-grid,
+  html.is-ipad:not(.is-phone-layout) .intelligence-primary-actions,
+  html.is-ipad:not(.is-phone-layout) .study-analytics-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-heatmap-card{
+    grid-column:1/-1!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-layout{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-side{
+    display:grid!important;
+    grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr)!important;
+    gap:12px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-form{
+    margin-top:0!important;
+    padding-top:0!important;
+    padding-left:12px!important;
+    border-top:0!important;
+    border-left:1px solid rgba(255,255,255,.07)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .settings-layout-v3{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .settings-column-primary{order:1!important}
+  html.is-ipad:not(.is-phone-layout) .settings-column-secondary{order:2!important}
+  html.is-ipad:not(.is-phone-layout) .settings-full-panel{grid-column:auto!important;order:3}
+}
+
+/* [T · Split View] uma coluna onde leitura importa; métricas continuam compactas. */
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) #progressMetrics{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insights-grid,
+  html.is-ipad:not(.is-phone-layout) .intelligence-primary-actions,
+  html.is-ipad:not(.is-phone-layout) .study-analytics-grid{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-heatmap-card{grid-column:auto!important}
+  html.is-ipad:not(.is-phone-layout) .progress-controls{
+    align-items:stretch!important;
+    flex-direction:column!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-sort-control{
+    justify-content:space-between;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-head{
+    align-items:flex-start!important;
+    flex-direction:column!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-modes{
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-modes button{
+    flex:1;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-layout,
+  html.is-ipad:not(.is-phone-layout) .study-agenda-side{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-agenda-form{
+    margin-top:0!important;
+    padding-top:12px!important;
+    padding-left:0!important;
+    border-left:0!important;
+    border-top:1px solid rgba(255,255,255,.07)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .settings-layout-v3{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .settings-column-primary{order:1!important}
+  html.is-ipad:not(.is-phone-layout) .settings-column-secondary{order:2!important}
+  html.is-ipad:not(.is-phone-layout) .settings-panel-title-row,
+  html.is-ipad:not(.is-phone-layout) .settings-backup-head,
+  html.is-ipad:not(.is-phone-layout) .app-update-summary,
+  html.is-ipad:not(.is-phone-layout) .app-update-compact-meta{
+    align-items:flex-start!important;
+    flex-direction:column!important;
+  }
+}
+
+/* [M] Mobile-first permanece fonte da verdade; sem recomposição nesta etapa. */
