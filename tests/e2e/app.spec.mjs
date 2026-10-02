@@ -612,9 +612,11 @@ test('refinamento de Progresso, Simulados e Configurações mantém densidade e 
     await expect(sim).toBeVisible();
     const simData=await sim.evaluate(el=>{
       const card=el.getBoundingClientRect(),cover=el.querySelector('.simulation-cover').getBoundingClientRect();
-      return{height:card.height,cover:cover.height,codeSize:parseFloat(getComputedStyle(el.querySelector('.simulation-code')).fontSize)||0,statusTop:el.querySelector('.simulation-study-status').getBoundingClientRect().top,codeTop:el.querySelector('.simulation-code').getBoundingClientRect().top};
+      return{height:card.height,cover:cover.height,coverWidth:cover.width,codeSize:parseFloat(getComputedStyle(el.querySelector('.simulation-code')).fontSize)||0,statusTop:el.querySelector('.simulation-study-status').getBoundingClientRect().top,codeTop:el.querySelector('.simulation-code').getBoundingClientRect().top};
     });
-    expect(simData.cover/simData.height).toBeLessThan(.5);
+    expect(simData.coverWidth/simData.cover).toBeGreaterThanOrEqual(1.95);
+    expect(simData.coverWidth/simData.cover).toBeLessThanOrEqual(2.05);
+    expect(simData.height).toBeLessThan(500);
     expect(simData.codeSize).toBeLessThanOrEqual(8);
     expect(Math.abs(simData.statusTop-simData.codeTop)).toBeLessThan(10);
 
