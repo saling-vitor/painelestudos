@@ -1,14 +1,14 @@
 {
-  "version": "15.23.5",
-  "label": "V15.23.5-G",
-  "releasedAt": "2026-10-02T13:00:00.000Z",
-  "notes": "Etapa B — Biblioteca e treino responsivos: Meus Cursos, Curso, Todos os Mapas e Simulados agora têm composição própria para iPad landscape, iPad portrait e Split View, preservando o desktop aprovado e o mobile-first do iPhone.",
+  "version": "15.23.6",
+  "label": "V15.23.6-G",
+  "releasedAt": "2026-10-02T13:23:00.000Z",
+  "notes": "Etapa C — Ferramentas responsivas: Progresso, Agenda, Configurações e modais agora têm composição própria para iPad landscape, portrait e Split View, preservando Desktop e o mobile-first do iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Meus Cursos mantém duas colunas no iPad normal e uma coluna em Split View estreito",
-    "[T] Curso reorganiza hero, busca, ações e filtros sem compressão; mapas usam 3/2/1 colunas conforme a largura",
-    "[T] Todos os Mapas acompanha a mesma grade responsiva dos mapas do curso",
-    "[T] Simulados usa toolbar 3/2/1 colunas e cards 3/2/1 em landscape, portrait e Split View",
-    "[M] Mobile-first do iPhone preservado, sem recomposição visual"
+    "[T] Progresso reorganiza métricas, próximas ações e análises em grades 3/2/1 conforme a largura",
+    "[T] Agenda preserva calendário principal e reorganiza o painel lateral em landscape, portrait e Split View",
+    "[T] Configurações mantém Conta e Sincronização como prioridade no tablet e preserva alvos touch",
+    "[T] Modais respeitam viewport, safe area e botões de 44 px no iPad",
+    "[M] Progresso, Agenda, Configurações e modais mantêm o mobile-first já aprovado"
   ]
 }
