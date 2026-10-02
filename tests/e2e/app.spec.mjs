@@ -637,14 +637,16 @@ test('[G] Simulados vinculados herdam o accent do curso sem alterar o badge da b
     const style=getComputedStyle(el),board=el.querySelector('.simulation-recent-board');
     return{
       linked:!!el.dataset.simulationCourseCover,
-      accent:style.getPropertyValue('--simulation-accent').trim(),
-      genericAccent:style.getPropertyValue('--accent').trim(),
+      inlineAccent:el.style.getPropertyValue('--simulation-accent').trim(),
+      inlineGeneric:el.style.getPropertyValue('--accent').trim(),
+      borderColor:style.borderLeftColor,
       boardColor:board?getComputedStyle(board).color:''
     };
   });
   expect(visual.linked).toBe(true);
-  expect(visual.accent).not.toBe('');
-  expect(visual.genericAccent).toBe(visual.accent);
+  expect(visual.inlineAccent).not.toBe('');
+  expect(visual.inlineGeneric).toBe(visual.inlineAccent);
+  expect(visual.borderColor).not.toBe('');
   expect(visual.boardColor).not.toBe('');
 });
 
