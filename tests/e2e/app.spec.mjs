@@ -2082,7 +2082,7 @@ test('iPad preserva estrutura do curso fora da etapa 1 de smartphone',async({pag
 });
 
 
-test('smartphone etapa 2 usa cards leves sem molduras internas',async({page},testInfo)=>{
+test('smartphone etapa 2 usa cards editoriais com capa independente',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
 
@@ -2090,18 +2090,27 @@ test('smartphone etapa 2 usa cards leves sem molduras internas',async({page},tes
   const course=page.locator('#coursesGrid .course-card.course-library-card').first();
   await expect(course).toBeVisible();
   const courseStyle=await course.evaluate(el=>{
-    const meta=el.querySelector('.course-card-meta-item'),exam=el.querySelector('.course-exam-info'),footer=el.querySelector('.course-footer'),progress=el.querySelector('.course-progress-mini');
+    const meta=el.querySelector('.course-card-meta-item'),exam=el.querySelector('.course-exam-info'),footer=el.querySelector('.course-footer'),progress=el.querySelector('.course-progress-mini'),cover=el.querySelector('.course-card-cover'),edit=el.querySelector('.course-card-edit');
+    const cardRect=el.getBoundingClientRect(),coverRect=cover?.getBoundingClientRect();
     return{
-      height:el.getBoundingClientRect().height,
+      height:cardRect.height,
       border:parseFloat(getComputedStyle(el).borderTopWidth)||0,
       metaBorder:meta?parseFloat(getComputedStyle(meta).borderTopWidth)||0:0,
       examBorder:exam?parseFloat(getComputedStyle(exam).borderTopWidth)||0:0,
       footerBorder:footer?parseFloat(getComputedStyle(footer).borderTopWidth)||0:0,
-      progressStates:progress?.querySelector('.progress-states')?getComputedStyle(progress.querySelector('.progress-states')).display:'none'
+      progressStates:progress?.querySelector('.progress-states')?getComputedStyle(progress.querySelector('.progress-states')).display:'none',
+      coverHeight:coverRect?.height||0,
+      coverWidth:coverRect?.width||0,
+      cardWidth:cardRect.width,
+      editPosition:edit?getComputedStyle(edit).position:'none'
     };
   });
-  expect(courseStyle.height).toBeGreaterThanOrEqual(190);
-  expect(courseStyle.height).toBeLessThanOrEqual(250);
+  expect(courseStyle.height).toBeGreaterThanOrEqual(300);
+  expect(courseStyle.height).toBeLessThanOrEqual(520);
+  expect(courseStyle.coverHeight).toBeGreaterThanOrEqual(140);
+  expect(courseStyle.coverHeight).toBeLessThanOrEqual(200);
+  expect(Math.abs(courseStyle.coverWidth-courseStyle.cardWidth)).toBeLessThanOrEqual(2);
+  expect(['absolute','none']).toContain(courseStyle.editPosition);
   expect(courseStyle.border).toBeGreaterThan(0);
   expect(courseStyle.metaBorder).toBe(0);
   expect(courseStyle.examBorder).toBe(0);
