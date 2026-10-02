@@ -84,6 +84,73 @@ test('backup preserva dados locais mais novos e permite restauração completa',
   expect(result.afterReplace).toBe('valor-do-backup');
 });
 
+test('sincronização preserva capas mais novas entre dispositivos e respeita preferência global mais recente',async({page})=>{
+  const result=await page.evaluate(()=>{
+    const localTs=Date.parse('2026-10-01T12:00:00.000Z'),cloudTs=Date.parse('2026-10-01T13:00:00.000Z');
+    const local={
+      favorites:['local-fav'],
+      mapLayout:'list',
+      coverOverrides:{
+        'curso::cf88':{path:'local-cf88.webp',updatedAt:'2026-10-01T15:00:00.000Z'},
+        'curso::demhab':{path:'',updatedAt:'2026-10-01T16:00:00.000Z'}
+      },
+      mapActivity:{'curso::cf88':'2026-10-01T15:30:00.000Z'}
+    };
+    const cloud={
+      favorites:['cloud-fav'],
+      mapLayout:'grid',
+      coverOverrides:{
+        'curso::cf88':{path:'cloud-cf88-antiga.webp',updatedAt:'2026-10-01T14:00:00.000Z'},
+        'curso::demhab':{path:'cloud-demhab-antiga.webp',updatedAt:'2026-10-01T14:30:00.000Z'},
+        'curso::epf':{path:'cloud-epf.webp',updatedAt:'2026-10-01T17:00:00.000Z'}
+      },
+      mapActivity:{'curso::cf88':'2026-10-01T14:00:00.000Z','curso::epf':'2026-10-01T17:00:00.000Z'}
+    };
+    const merged=mergePreferencePayloads(local,cloud,localTs,cloudTs);
+    const previous=state.coverOverrides;
+    state.coverOverrides=merged.coverOverrides;
+    const offline=offlinePrivateEntries().map(item=>item.path);
+    state.coverOverrides=previous;
+    return{
+      favorites:merged.favorites,
+      mapLayout:merged.mapLayout,
+      cf88:merged.coverOverrides['curso::cf88'],
+      demhab:merged.coverOverrides['curso::demhab'],
+      epf:merged.coverOverrides['curso::epf'],
+      cf88Activity:merged.mapActivity['curso::cf88'],
+      epfActivity:merged.mapActivity['curso::epf'],
+      offline
+    };
+  });
+  expect(result.favorites).toEqual(['cloud-fav']);
+  expect(result.mapLayout).toBe('grid');
+  expect(result.cf88.path).toBe('local-cf88.webp');
+  expect(result.demhab.path).toBe('');
+  expect(result.epf.path).toBe('cloud-epf.webp');
+  expect(result.cf88Activity).toBe('2026-10-01T15:30:00.000Z');
+  expect(result.epfActivity).toBe('2026-10-01T17:00:00.000Z');
+  expect(result.offline).toContain('local-cf88.webp');
+  expect(result.offline).toContain('cloud-epf.webp');
+});
+
+test('sincronização de capas usa updatedAt por mapa e não ressuscita capa restaurada',async({page})=>{
+  const result=await page.evaluate(()=>{
+    const local={
+      'curso::a':{path:'nova-a.webp',updatedAt:'2026-10-01T18:00:00.000Z'},
+      'curso::b':{path:'',updatedAt:'2026-10-01T19:00:00.000Z'}
+    };
+    const cloud={
+      'curso::a':{path:'antiga-a.webp',updatedAt:'2026-10-01T17:00:00.000Z'},
+      'curso::b':{path:'antiga-b.webp',updatedAt:'2026-10-01T18:30:00.000Z'},
+      'curso::c':{path:'c.webp',updatedAt:'2026-10-01T20:00:00.000Z'}
+    };
+    return mergeCoverOverrides(local,cloud,Date.parse('2026-10-01T21:00:00.000Z'),Date.parse('2026-10-01T22:00:00.000Z'),false);
+  });
+  expect(result['curso::a'].path).toBe('nova-a.webp');
+  expect(result['curso::b'].path).toBe('');
+  expect(result['curso::c'].path).toBe('c.webp');
+});
+
 test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
   await page.goto('/#settings');
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
