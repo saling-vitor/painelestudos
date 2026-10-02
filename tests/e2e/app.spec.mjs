@@ -418,7 +418,7 @@ test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',a
   });
   expect(styles.cardRadius).toBe('16px');
   expect(styles.metaRadius).toBe('0px');
-  expect(styles.trackHeight).toBe('5px');
+  expect(styles.trackHeight).toBe('4px');
   expect(styles.emptyDisplay).toBe('none');
   expect(['0px','']).toContain(styles.footerBorder);
   expect(styles.statusRadius).toBe('8px');
