@@ -504,9 +504,12 @@ test('pontos de restauração mostram três itens antes de expandir',async({page
   await expect(page.locator('[data-toggle-restore-points]')).toContainText('Mostrar menos');
 });
 
-test('atualizações e diagnóstico ficam compactos',async({page})=>{
+test('atualizações e diagnóstico ficam compactos e unificados',async({page})=>{
   await page.goto('/#settings');
   await expect(page.locator('.app-update-summary')).toContainText('V15.23.1');
+  const details=page.locator('.settings-diagnostic-disclosure');
+  await details.evaluate(el=>el.open=true);
+  await expect(page.locator('#appDiagnosticPanel')).toHaveClass(/settings-diagnostic-embedded/);
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
   const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
   expect(columns).not.toBe('none');
@@ -589,6 +592,40 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.commandHeight).toBeLessThan(180);
   expect(layout.intelligenceHeight).toBeLessThan(160);
   expect(layout.courseHeight).toBeLessThanOrEqual(280);
+});
+
+test('refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
+  if(testInfo.project.name==='desktop-chromium'){
+    await page.setViewportSize({width:1600,height:900});
+    await page.goto('/#progress');
+    const metricHeight=await page.locator('#progressMetrics .metric').first().evaluate(el=>el.getBoundingClientRect().height);
+    expect(metricHeight).toBeLessThanOrEqual(78);
+    const course=page.locator('#progressInfo .progress-course.is-collapsed').first();
+    await expect(course).toBeVisible();
+    const courseHeight=await course.evaluate(el=>el.getBoundingClientRect().height);
+    expect(courseHeight).toBeLessThan(125);
+    const analyticsColumns=await page.locator('.study-analytics-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+    expect(analyticsColumns).toBe(4);
+
+    await page.goto('/#simulations');
+    const sim=page.locator('#simulationGrid .simulation-card.has-cover').first();
+    await expect(sim).toBeVisible();
+    const simData=await sim.evaluate(el=>{
+      const card=el.getBoundingClientRect(),cover=el.querySelector('.simulation-cover').getBoundingClientRect();
+      return{height:card.height,cover:cover.height,codeSize:parseFloat(getComputedStyle(el.querySelector('.simulation-code')).fontSize)||0,statusTop:el.querySelector('.simulation-study-status').getBoundingClientRect().top,codeTop:el.querySelector('.simulation-code').getBoundingClientRect().top};
+    });
+    expect(simData.cover/simData.height).toBeLessThan(.5);
+    expect(simData.codeSize).toBeLessThanOrEqual(8);
+    expect(Math.abs(simData.statusTop-simData.codeTop)).toBeLessThan(10);
+
+    await page.goto('/#settings');
+    const layout=await page.locator('.settings-layout-v3').evaluate(el=>({cols:getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length}));
+    expect(layout.cols).toBe(2);
+    await expect(page.locator('.study-goal-human').first()).toContainText(/h/);
+    const toggle=page.locator('.study-settings-toggle input[type="checkbox"]');
+    const appearance=await toggle.evaluate(el=>getComputedStyle(el).appearance);
+    expect(['none','']).toContain(appearance);
+  }
 });
 
 test('autofill tardio de e-mail é removido continuamente da busca',async({page})=>{
@@ -1027,6 +1064,10 @@ test('configurações permitem zerar tempo sem apagar sessão ou progresso',asyn
   await page.goto('/#settings');
   const setup=await page.evaluate(()=>{const map=combinedMaps()[0],key=map._key||mapKey(map),now=new Date().toISOString(),data=StudyDashboard.exportData(),id='time-reset-e2e-'+Date.now();StudyTime.add(key,120,new Date(now));data.sessions.push({id,mapKey:key,courseId:map.courseId||'',label:'Sessão preservada',agendaId:'',mode:'free',plannedSeconds:0,durationSeconds:120,startedAt:now,endedAt:now,createdAt:now,updatedAt:now,startProgress:null});StudyDashboard.importData(data,{merge:false,silent:true});renderSettings();return{id,key,before:StudyTime.today(),revision:StudyTime.read().revision}});
   expect(setup.before).toBeGreaterThanOrEqual(120);
+  const manage=page.locator('.study-time-manage');
+  await expect(manage).toBeVisible();
+  await manage.locator('summary').click();
+  await expect(manage).toHaveAttribute('open','');
   const reset=page.locator('[data-study-time-reset="today"]');
   await expect(reset).toBeVisible();
   await reset.click();
@@ -1170,12 +1211,12 @@ test('resumo semanal e previsão usam dados do progresso',async({page})=>{
 });
 
 
-test('Home usa CTA Começar agora no card de prioridade',async({page})=>{
+test('Home usa CTA Começar no card de prioridade',async({page})=>{
   await page.goto('/#home');
   const cta=page.locator('[data-priority-open]').first();
   await expect(cta).toBeVisible();
-  await expect(cta).toHaveText('Começar agora');
-  await expect(page.locator('.priority-now-card')).not.toContainText(/^Estudar$/);
+  await expect(cta).toHaveText('Começar');
+  await expect(page.locator('.priority-now-card')).toContainText('Por que este estudo?');
 });
 
 test('Agenda prioriza modos e recolhe ações secundárias no menu',async({page})=>{
