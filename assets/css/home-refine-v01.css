@@ -108,7 +108,7 @@ html:not(.is-phone-layout) .study-plan-footer{padding-top:8px}
 
 /* Retomar: capa pequena + accent do mapa. */
 .continue-card{
-  --continue-accent:#b99c68;
+  --continue-accent:#9aa1aa;
 }
 html:not(.is-phone-layout) .continue-card{
   min-height:104px!important;
@@ -232,7 +232,7 @@ html:not(.is-phone-layout) #syncTop{
 @media(min-width:1181px){
   html:not(.is-ipad):not(.is-phone-layout) [data-view="home"].active{
     display:grid;
-    grid-template-columns:minmax(360px,.78fr) minmax(0,1.22fr);
+    grid-template-columns:minmax(360px,.82fr) minmax(0,1.18fr);
     column-gap:16px;
     row-gap:20px;
     align-items:start;
@@ -303,7 +303,7 @@ html.is-phone-layout .study-plan-item:first-child{
 html:not(.is-phone-layout) .continue-content>p{margin-top:4px}
 html:not(.is-phone-layout) .continue-progress{height:7px!important;margin-top:9px!important}
 html:not(.is-phone-layout) .continue-states .activity-label{margin-left:2px;color:#626871;font-weight:650}
-html:not(.is-phone-layout) .continue-states .study-time-inline{color:#9f8b69}
+html:not(.is-phone-layout) .continue-states .study-time-inline{color:#8b9199}
 
 /* Cards de treino: mais informação, menos aparência de linha de tabela. */
 .home-simulations-section .simulation-recent-list{gap:8px;align-items:stretch}
@@ -735,4 +735,35 @@ html.is-phone-layout .continue-map-category{
   min-height:17px;
   padding:3px 5px;
   font-size:6.5px;
+}
+
+
+/* =========================================================
+   V15.35.0-G · identidade cromática do conteúdo sem gold genérico
+   ========================================================= */
+.continue-card{--continue-accent:#9aa1aa}
+.home-simulations-section .simulation-recent-item{
+  --simulation-accent:#9aa1aa;
+  border-color:color-mix(in srgb,var(--simulation-accent) 24%,rgba(255,255,255,.07))!important;
+  box-shadow:inset 2px 0 color-mix(in srgb,var(--simulation-accent) 58%,transparent),inset 0 1px rgba(255,255,255,.012)!important;
+}
+.home-simulations-section .simulation-recent-status-progress{
+  border-color:color-mix(in srgb,var(--simulation-accent) 22%,rgba(255,255,255,.06))!important;
+  background:color-mix(in srgb,var(--simulation-accent) 6%,transparent)!important;
+  color:color-mix(in srgb,var(--simulation-accent) 58%,#aeb4bc)!important;
+}
+.home-simulations-section .simulation-recent-item-progress .simulation-recent-action{
+  border-color:color-mix(in srgb,var(--simulation-accent) 24%,rgba(255,255,255,.07))!important;
+  background:color-mix(in srgb,var(--simulation-accent) 5%,rgba(255,255,255,.014))!important;
+  color:color-mix(in srgb,var(--simulation-accent) 56%,#b8bdc5)!important;
+}
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"].active{
+    grid-template-columns:minmax(360px,.82fr) minmax(0,1.18fr);
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item{
+    min-height:88px!important;
+    padding:9px 10px 9px 12px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-copy{gap:4px}
 }
