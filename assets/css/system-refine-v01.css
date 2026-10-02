@@ -1,0 +1,363 @@
+/* Meus Mapas · refinamento Progresso / Simulados / Configurações V01
+   [G] hierarquia · [D] densidade · [T+M] preservação responsiva */
+
+/* =========================================================
+   CONFIGURAÇÕES
+   ========================================================= */
+@media(min-width:1101px){
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3{
+    display:grid!important;
+    grid-template-columns:minmax(0,.92fr) minmax(0,1.18fr)!important;
+    grid-template-areas:
+      "admin sync"
+      "update sync"
+      "backup backup"!important;
+    gap:16px!important;
+    align-items:start!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3>.settings-column{display:contents!important}
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .admin-panel{grid-area:admin}
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .app-update-panel{grid-area:update}
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .sync-panel{grid-area:sync}
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .backup-panel{grid-area:backup}
+}
+
+/* Diagnóstico único: conteúdo técnico fica dentro do disclosure da nuvem. */
+#appDiagnosticPanel.settings-diagnostic-embedded{
+  margin:2px 0 0!important;
+  padding:14px 0 0!important;
+  border:0!important;
+  border-top:1px solid rgba(255,255,255,.055)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#appDiagnosticPanel.settings-diagnostic-embedded>.panel-kicker{display:none}
+#appDiagnosticPanel.settings-diagnostic-embedded>h2{
+  margin:0;
+  font-size:12px;
+}
+#appDiagnosticPanel.settings-diagnostic-embedded>p{
+  margin:4px 0 0;
+  font-size:8.5px;
+}
+#appDiagnosticPanel.settings-diagnostic-embedded .diagnostic-grid{
+  margin-top:9px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1px;
+  border:0;
+  background:rgba(255,255,255,.035);
+}
+#appDiagnosticPanel.settings-diagnostic-embedded .diagnostic-row{
+  min-height:34px;
+  border:0;
+  background:#0c0e12;
+}
+#appDiagnosticPanel.settings-diagnostic-embedded .admin-actions{
+  margin-top:9px;
+}
+.settings-diagnostic-disclosure[open] .settings-cloud-diagnostics{gap:14px}
+
+/* Atualizações: status principal acima da informação técnica. */
+.app-update-panel .app-update-summary strong{font-size:14px}
+.app-update-panel .app-update-compact-meta{opacity:.72}
+.settings-backend-status{opacity:.76}
+
+/* Metas: leitura humana em horas, minutos permanecem editáveis. */
+.study-goals-form>label{position:relative}
+.study-goal-human{
+  display:block;
+  margin-top:5px;
+  color:#ded4bf;
+  font-size:14px;
+  line-height:1;
+}
+.study-goal-human small{
+  margin-left:4px;
+  color:#777e87;
+  font:650 7px var(--mono);
+}
+.study-goals-form>label>span:last-child{margin-top:7px}
+.study-goals-form>label:nth-child(-n+2)>span:last-child{
+  opacity:.74;
+}
+
+/* Toggle próprio do produto no lugar do checkbox nativo. */
+.study-settings-toggle input[type="checkbox"]{
+  appearance:none;
+  -webkit-appearance:none;
+  position:relative;
+  width:42px!important;
+  min-width:42px;
+  height:24px!important;
+  padding:0!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:999px!important;
+  background:#111419!important;
+  cursor:pointer;
+  transition:.16s ease;
+}
+.study-settings-toggle input[type="checkbox"]::after{
+  content:"";
+  position:absolute;
+  top:3px;
+  left:3px;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#7d848d;
+  box-shadow:0 2px 5px rgba(0,0,0,.35);
+  transition:.16s ease;
+}
+.study-settings-toggle input[type="checkbox"]:checked{
+  border-color:rgba(79,147,143,.42)!important;
+  background:rgba(79,147,143,.18)!important;
+}
+.study-settings-toggle input[type="checkbox"]:checked::after{
+  left:21px;
+  background:#73c2bc;
+}
+
+/* Gerenciamento de tempo vira área secundária / destrutiva recolhível. */
+.study-time-manage{
+  margin-top:14px!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+  border-radius:10px;
+  background:rgba(255,255,255,.01);
+}
+.study-time-manage>summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:62px;
+  padding:10px 12px;
+  cursor:pointer;
+  list-style:none;
+}
+.study-time-manage>summary::-webkit-details-marker{display:none}
+.study-time-manage>summary::after{
+  content:"⌄";
+  color:#737a83;
+  font-size:13px;
+}
+.study-time-manage[open]>summary::after{content:"⌃"}
+.study-time-manage[open]>summary{
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+.study-time-manage .study-time-manage-head{
+  flex:1;
+  padding:0!important;
+  border:0!important;
+}
+.study-time-manage .study-time-manage-body{padding:10px 12px 12px}
+.study-time-manage-actions{display:flex;gap:7px;flex-wrap:wrap}
+.study-time-manage-danger{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(217,103,115,.12);
+}
+.study-time-manage-danger .danger{min-height:36px}
+.study-time-manage-note{display:block;margin-top:8px}
+
+/* Dias legíveis no desktop. */
+.planner-advanced-settings fieldset label span{
+  min-width:44px;
+  padding-inline:8px!important;
+  text-align:center;
+}
+@media(max-width:820px){
+  .planner-advanced-settings fieldset label span{
+    min-width:36px;
+    font-size:0!important;
+  }
+  .planner-advanced-settings fieldset label span::after{
+    content:attr(data-short);
+    font-size:8px;
+  }
+}
+
+/* =========================================================
+   PROGRESSO
+   ========================================================= */
+[data-view="progress"]>.section-head{margin-bottom:12px}
+
+/* Faixa de seis métricas mais baixa. */
+.progress-metrics-strip{
+  gap:8px!important;
+  margin-bottom:12px!important;
+}
+.progress-metrics-strip .metric{
+  min-height:72px!important;
+  padding:11px 12px!important;
+  align-content:center;
+}
+.progress-metrics-strip .metric b{
+  font-size:19px!important;
+  line-height:1!important;
+}
+.progress-metrics-strip .metric span{
+  margin-top:6px!important;
+  font-size:7px!important;
+}
+
+/* Próximas ações: menos vazio, mais assinatura semântica. */
+.progress-insights{
+  margin:10px 0!important;
+  padding:13px!important;
+}
+.progress-insights-head{margin-bottom:9px!important}
+.progress-insights-grid{
+  gap:8px!important;
+}
+.progress-insight-card{
+  min-height:112px!important;
+  padding:12px!important;
+}
+.progress-insight-card>span{font-size:7px!important}
+.progress-insight-card>b{font-size:18px!important}
+.progress-insight-card p{
+  min-height:28px!important;
+  margin:3px 0 8px!important;
+}
+.progress-insight-resume{box-shadow:inset 2px 0 rgba(109,130,152,.42)}
+.progress-insight-start{box-shadow:inset 2px 0 rgba(216,184,88,.40)}
+.progress-insight-simulation{box-shadow:inset 2px 0 rgba(217,103,115,.32)}
+.progress-insight-focus,.progress-insight-review{box-shadow:inset 2px 0 rgba(98,169,120,.35)}
+
+/* Quatro decisões viram indicadores compactos. */
+.study-intelligence-panel{margin-top:18px!important}
+.intelligence-primary-actions{gap:8px!important}
+.intelligence-primary-actions>article{
+  min-height:118px!important;
+  padding:11px 12px!important;
+}
+.intelligence-primary-actions>article>b{font-size:18px!important}
+.intelligence-primary-actions>article>p{
+  min-height:22px!important;
+  margin-bottom:6px!important;
+}
+.intelligence-primary-actions>article button{
+  min-height:29px!important;
+  margin-top:3px!important;
+}
+
+/* Prioridades calculadas: linha realmente compacta quando fechada. */
+.priority-details{
+  margin-top:9px!important;
+}
+.priority-details>summary{
+  min-height:54px!important;
+  padding:9px 12px!important;
+}
+.priority-details:not([open]) .priority-engine-grid,
+.priority-details:not([open]) .priority-details-footer{display:none!important}
+
+/* Ritmo de estudo: distribuição mais equilibrada. */
+.study-analytics-panel{margin-top:20px!important}
+.study-analytics-grid{
+  grid-template-columns:minmax(0,1.35fr) minmax(170px,.7fr) minmax(0,1.05fr) minmax(0,1.05fr)!important;
+  gap:10px!important;
+}
+.study-analytics-grid>.panel{
+  min-height:188px!important;
+  padding:13px!important;
+}
+.study-heatmap-card .study-heatmap{margin-top:8px}
+.study-weak-points .empty-state--compact{
+  min-height:118px!important;
+  padding:13px!important;
+}
+.study-weak-points .empty-state--compact .empty-state-graphic{
+  width:54px!important;
+  max-width:54px!important;
+  max-height:54px!important;
+}
+
+/* Visão geral sem repetir PEND em destaque. */
+.progress-global-panel{padding:14px 15px!important}
+.progress-global-panel .progress-state.pending{display:none!important}
+.progress-global-footer{margin-top:10px!important}
+.progress-global-bar{margin-top:10px!important}
+
+/* Concursos recolhidos: cabeçalho compacto, progresso continua visível. */
+.progress-course-stack{gap:10px!important}
+.progress-course.progress-course-compact.is-collapsed{
+  min-height:0!important;
+}
+.progress-course.is-collapsed .progress-course-head{
+  min-height:70px!important;
+  padding:11px 14px 7px!important;
+}
+.progress-course.is-collapsed .progress-course-title h3{font-size:15px!important}
+.progress-course.is-collapsed .progress-course-title p{margin-top:2px!important}
+.progress-course.is-collapsed .progress-course-score b{font-size:18px!important}
+.progress-course.is-collapsed .progress-course-summary{
+  padding:0 14px 10px!important;
+}
+.progress-course.is-collapsed .progress-course-states{display:none!important}
+.progress-course.is-collapsed .course-summary-bar{height:4px!important}
+.progress-course-toggle{min-height:34px!important}
+
+/* Curso expandido mantém a linguagem eficiente da lista. */
+.progress-course.is-expanded .progress-course-head{padding-bottom:10px!important}
+.progress-map-row{min-height:56px!important}
+
+/* =========================================================
+   SIMULADOS
+   ========================================================= */
+@media(min-width:761px){
+  .simulation-toolbar{
+    grid-template-columns:minmax(300px,1.6fr) minmax(180px,.72fr) minmax(160px,.58fr)!important;
+    gap:9px!important;
+  }
+}
+
+/* Capas continuam protagonistas, mas deixam o card menos alto. */
+@media(min-width:761px){
+  .simulation-cover{aspect-ratio:2/1!important}
+  .simulation-card-body{
+    min-height:188px!important;
+    padding:14px 15px 15px!important;
+  }
+  .simulation-card h3{
+    margin-top:10px!important;
+    font-size:16.5px!important;
+  }
+  .simulation-subtitle{margin-top:4px!important}
+  .simulation-meta{margin-top:10px!important}
+  .simulation-card-footer{
+    margin-top:11px!important;
+    min-height:34px!important;
+  }
+}
+.simulation-card-top{
+  min-height:24px;
+}
+.simulation-card-identity{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-width:0;
+}
+.simulation-code{
+  max-width:190px;
+  overflow:hidden;
+  color:#a8767b!important;
+  font-size:7.5px!important;
+  letter-spacing:.055em!important;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.simulation-study-status{
+  margin:0!important;
+  min-height:19px!important;
+  padding:2px 6px!important;
+  font-size:7px!important;
+}
+.simulation-board{font-size:8px!important}
+.simulation-card-actions .primary{min-height:34px!important}
+
+/* Mobile mantém as alturas já validadas. */
+html.is-phone-layout .simulation-cover{aspect-ratio:16/9!important}
+html.is-phone-layout .simulation-code{max-width:150px}
