@@ -2,7 +2,7 @@
    [D] composição da tela do curso · [G] accent consistente em Desktop, iPad e iPhone */
 
 .map-card{
-  --map-accent:var(--accent,#c3aa84);
+  --map-accent:var(--accent,#9aa1aa);
   border-top-color:color-mix(in srgb,var(--map-accent) 34%,#262b31)!important;
 }
 .map-card::before{background:var(--map-accent)!important}
@@ -159,7 +159,7 @@ html.is-phone-layout .map-card{
 /* Biblioteca de cursos · pacote aprovado nesta branch
    [D+T] enquadramento alinhado ao mobile · [G] controles glass + cor derivada da capa */
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card{
-  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 24%,rgba(255,255,255,.075))!important;
+  border-color:color-mix(in srgb,var(--course-accent,#9aa1aa) 24%,rgba(255,255,255,.075))!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover img{
   width:100%!important;
@@ -187,34 +187,34 @@ html.is-phone-layout .map-card{
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit{color:#c7cbd1!important}
 
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info{
-  border:1px solid color-mix(in srgb,var(--course-accent,#b99c68) 34%,rgba(255,255,255,.08))!important;
+  border:1px solid color-mix(in srgb,var(--course-accent,#9aa1aa) 34%,rgba(255,255,255,.08))!important;
   background:linear-gradient(180deg,
-    color-mix(in srgb,var(--course-accent,#b99c68) 11%,rgba(255,255,255,.018)),
-    color-mix(in srgb,var(--course-accent,#b99c68) 6%,rgba(7,9,12,.94)))!important;
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 11%,rgba(255,255,255,.018)),
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 6%,rgba(7,9,12,.94)))!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info b{
-  color:color-mix(in srgb,var(--course-accent,#b99c68) 78%,white)!important;
+  color:color-mix(in srgb,var(--course-accent,#9aa1aa) 78%,white)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info small{
-  color:color-mix(in srgb,var(--course-accent,#b99c68) 42%,#8e949c)!important;
+  color:color-mix(in srgb,var(--course-accent,#9aa1aa) 42%,#8e949c)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .enter{
-  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 48%,rgba(255,255,255,.10))!important;
+  border-color:color-mix(in srgb,var(--course-accent,#9aa1aa) 48%,rgba(255,255,255,.10))!important;
   background:linear-gradient(180deg,
-    color-mix(in srgb,var(--course-accent,#b99c68) 16%,rgba(255,255,255,.022)),
-    color-mix(in srgb,var(--course-accent,#b99c68) 9%,#0a0d10))!important;
-  color:color-mix(in srgb,var(--course-accent,#b99c68) 80%,white)!important;
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 16%,rgba(255,255,255,.022)),
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 9%,#0a0d10))!important;
+  color:color-mix(in srgb,var(--course-accent,#9aa1aa) 80%,white)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-progress-mini .progress-track>span{
   background:linear-gradient(90deg,
-    color-mix(in srgb,var(--course-accent,#b99c68) 72%,#15181c),
-    color-mix(in srgb,var(--course-accent,#b99c68) 94%,white))!important;
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 72%,#15181c),
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 94%,white))!important;
 }
 
 @media(hover:hover){
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit:hover{
-    border-color:color-mix(in srgb,var(--course-accent,#b99c68) 42%,rgba(255,255,255,.12))!important;
-    background:color-mix(in srgb,var(--course-accent,#b99c68) 12%,rgba(35,39,45,.92))!important;
+    border-color:color-mix(in srgb,var(--course-accent,#9aa1aa) 42%,rgba(255,255,255,.12))!important;
+    background:color-mix(in srgb,var(--course-accent,#9aa1aa) 12%,rgba(35,39,45,.92))!important;
     color:#fff!important;
   }
 }
@@ -250,4 +250,34 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card
   top:26px!important;
   left:26px!important;
   right:26px!important;
+}
+
+
+/* V15.35.0-D · densidade da biblioteca do curso sem reduzir a capa */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover{
+    padding-bottom:46px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card-status-row{margin-top:8px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
+    min-height:36px!important;
+    margin-top:8px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover>p{
+    min-height:22px!important;
+    margin-top:3px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover>.meta{margin-top:7px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-progress-mini{
+    margin-top:8px!important;
+    padding:8px 9px!important;
+    border-color:rgba(255,255,255,.055)!important;
+    box-shadow:none!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card .foot{
+    bottom:8px!important;
+    min-height:30px!important;
+    padding-top:6px!important;
+    border-top-color:rgba(255,255,255,.05)!important;
+  }
 }

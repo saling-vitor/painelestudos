@@ -396,9 +396,9 @@ html.is-phone-layout .course-cover-admin-controls .course-cover-notice{grid-colu
   gap:6px!important;
   min-height:34px!important;
   padding:0 11px!important;
-  border:1px solid color-mix(in srgb,var(--course-accent,#b99c68) 38%,rgba(255,255,255,.08))!important;
+  border:1px solid color-mix(in srgb,var(--course-accent,#9aa1aa) 38%,rgba(255,255,255,.08))!important;
   border-radius:9px!important;
-  background:color-mix(in srgb,var(--course-accent,#b99c68) 9%,#0b0d10)!important;
+  background:color-mix(in srgb,var(--course-accent,#9aa1aa) 9%,#0b0d10)!important;
 }
 #homeCourses .course-card.course-library-card>.course-card-cover{
   height:clamp(145px,11vw,176px)!important;
@@ -1064,4 +1064,18 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn{
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-search-box{
   height:45px!important;
   min-height:45px!important;
+}
+
+
+/* V15.35.0-G · simulado vinculado acompanha a identidade do curso */
+.simulation-card{
+  --simulation-accent:var(--accent,#9aa1aa);
+  border-color:color-mix(in srgb,var(--simulation-accent) 24%,rgba(255,255,255,.075))!important;
+  box-shadow:var(--glass-shadow-card),inset 2px 0 color-mix(in srgb,var(--simulation-accent) 52%,transparent),inset 0 1px var(--glass-topline)!important;
+}
+.simulation-card .simulation-code{color:color-mix(in srgb,var(--simulation-accent) 78%,white)!important}
+.simulation-card .simulation-card-actions .primary{
+  border-color:color-mix(in srgb,var(--simulation-accent) 30%,transparent)!important;
+  background:color-mix(in srgb,var(--simulation-accent) 8%,#0a0c0f)!important;
+  color:color-mix(in srgb,var(--simulation-accent) 72%,white)!important;
 }
