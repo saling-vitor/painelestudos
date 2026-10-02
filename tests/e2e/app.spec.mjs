@@ -1044,6 +1044,74 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
   }
 });
 
+test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
+  const scenarios=[
+    {name:'landscape',width:1194,height:834,metrics:3,insights:4,analytics:4,agenda:2,agendaSide:null,settings:2},
+    {name:'portrait',width:820,height:1180,metrics:3,insights:2,analytics:2,agenda:1,agendaSide:2,settings:1},
+    {name:'split',width:640,height:900,metrics:2,insights:1,analytics:1,agenda:1,agendaSide:1,settings:1}
+  ];
+  const columns=async locator=>locator.evaluate(el=>{
+    const value=getComputedStyle(el).gridTemplateColumns.trim();
+    return value&&value!=='none'?value.split(/\s+/).filter(Boolean).length:0;
+  });
+  const noOverflow=async label=>{
+    const data=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
+    expect.soft(data.scrollWidth,label+' sem overflow').toBeLessThanOrEqual(data.width+2);
+  };
+
+  for(const s of scenarios){
+    await page.setViewportSize({width:s.width,height:s.height});
+
+    await page.goto('/#progress');
+    await expect(page.locator('#progressMetrics .metric').first()).toBeVisible();
+    await expect(page.locator('.progress-insights-grid')).toBeVisible();
+    await expect(page.locator('.study-analytics-grid')).toBeVisible();
+    expect.soft(await columns(page.locator('#progressMetrics')),s.name+' métricas').toBe(s.metrics);
+    expect.soft(await columns(page.locator('.progress-insights-grid')),s.name+' próximas ações').toBe(s.insights);
+    expect.soft(await columns(page.locator('.study-analytics-grid')),s.name+' análises').toBe(s.analytics);
+    const progressTouch=await page.locator('.progress-course-toggle').first().evaluate(el=>el.getBoundingClientRect().height);
+    expect.soft(progressTouch,s.name+' ação de progresso touch').toBeGreaterThanOrEqual(44);
+    await noOverflow(s.name+' Progresso');
+
+    await page.goto('/#agenda');
+    await expect(page.locator('.study-agenda-layout')).toBeVisible();
+    expect.soft(await columns(page.locator('.study-agenda-layout')),s.name+' Agenda').toBe(s.agenda);
+    if(s.agendaSide!==null)expect.soft(await columns(page.locator('.study-agenda-side')),s.name+' painel lateral Agenda').toBe(s.agendaSide);
+    const agendaTouch=await page.locator('.study-agenda-modes button').first().evaluate(el=>el.getBoundingClientRect().height);
+    expect.soft(agendaTouch,s.name+' modo Agenda touch').toBeGreaterThanOrEqual(44);
+    await noOverflow(s.name+' Agenda');
+
+    await page.goto('/#settings');
+    await expect(page.locator('.settings-layout-v3')).toBeVisible();
+    expect.soft(await columns(page.locator('.settings-layout-v3')),s.name+' Configurações').toBe(s.settings);
+    const settingsTouch=await page.locator('#checkAppUpdateBtn').evaluate(el=>el.getBoundingClientRect().height);
+    expect.soft(settingsTouch,s.name+' Configurações touch').toBeGreaterThanOrEqual(44);
+    if(s.settings===1){
+      const order=await page.evaluate(()=>{
+        const primary=document.querySelector('.settings-column-primary');
+        const secondary=document.querySelector('.settings-column-secondary');
+        return{primary:parseInt(getComputedStyle(primary).order)||0,secondary:parseInt(getComputedStyle(secondary).order)||0};
+      });
+      expect.soft(order.primary,s.name+' conta priorizada').toBeLessThan(order.secondary);
+    }
+
+    await page.evaluate(()=>document.getElementById('confirmModal')?.classList.add('open'));
+    await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+    const modal=await page.locator('#confirmModal .modal-card').evaluate(el=>{
+      const box=el.getBoundingClientRect(),close=el.querySelector('.close')?.getBoundingClientRect();
+      return{left:box.left,right:box.right,top:box.top,bottom:box.bottom,width:box.width,height:box.height,close:close?.height||0};
+    });
+    expect.soft(modal.left,s.name+' modal esquerda').toBeGreaterThanOrEqual(0);
+    expect.soft(modal.right,s.name+' modal direita').toBeLessThanOrEqual(s.width);
+    expect.soft(modal.top,s.name+' modal topo').toBeGreaterThanOrEqual(0);
+    expect.soft(modal.bottom,s.name+' modal base').toBeLessThanOrEqual(s.height);
+    expect.soft(modal.close,s.name+' fechar modal touch').toBeGreaterThanOrEqual(44);
+    await page.evaluate(()=>document.getElementById('confirmModal')?.classList.remove('open'));
+    await noOverflow(s.name+' Configurações');
+  }
+});
+
 test('iPad usa dock lateral recolhível no leitor',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica do dock lateral do iPad.');
   await page.setViewportSize({width:820,height:1180});
@@ -1738,6 +1806,46 @@ test('iPhone real UX2 leitor usa barra única e move Salvar para Mais',async({pa
   await expect(page.locator('#reader')).not.toHaveClass(/mobile-reader-rail-collapsed/);
   await page.locator('#readerMoreBtn').click();
   await expect(page.locator('#mobileReaderSave')).toBeVisible();
+});
+
+test('C Ferramentas preserva Progresso Agenda Configurações e modais no iPhone',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva do iPhone WebKit.');
+  await page.setViewportSize({width:390,height:844});
+  const columns=async locator=>locator.evaluate(el=>{
+    const value=getComputedStyle(el).gridTemplateColumns.trim();
+    return value&&value!=='none'?value.split(/\s+/).filter(Boolean).length:0;
+  });
+  const noOverflow=async label=>{
+    const data=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
+    expect.soft(data.scrollWidth,label+' sem overflow').toBeLessThanOrEqual(data.width+2);
+  };
+
+  await page.goto('/#progress');
+  await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
+  expect(await columns(page.locator('#progressMetrics'))).toBe(2);
+  const visibleMetrics=await page.locator('#progressMetrics .metric').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
+  expect(visibleMetrics).toBe(4);
+  await noOverflow('Progresso iPhone');
+
+  await page.goto('/#agenda');
+  await expect(page.locator('[data-view="agenda"]')).toHaveAttribute('data-mobile-agenda-mode','today');
+  expect(await columns(page.locator('.study-agenda-layout'))).toBe(1);
+  await noOverflow('Agenda iPhone');
+
+  await page.goto('/#settings');
+  const openPanels=await page.locator('.mobile-settings-panel:not(.mobile-settings-collapsed)').count();
+  expect(openPanels).toBe(1);
+  await page.evaluate(()=>document.getElementById('confirmModal')?.classList.add('open'));
+  const modal=await page.locator('#confirmModal .modal-card').evaluate(el=>{
+    const box=el.getBoundingClientRect(),close=el.querySelector('.close')?.getBoundingClientRect();
+    return{left:box.left,right:box.right,top:box.top,bottom:box.bottom,close:close?.height||0};
+  });
+  expect(modal.left).toBeGreaterThanOrEqual(0);
+  expect(modal.right).toBeLessThanOrEqual(390);
+  expect(modal.top).toBeGreaterThanOrEqual(0);
+  expect(modal.bottom).toBeLessThanOrEqual(844);
+  expect(modal.close).toBeGreaterThanOrEqual(44);
+  await noOverflow('Configurações iPhone');
 });
 
 test('iPhone real UX2 mantém somente quatro KPIs no resumo de Progresso',async({page},testInfo)=>{
