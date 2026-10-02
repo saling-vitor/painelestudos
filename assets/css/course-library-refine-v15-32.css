@@ -154,3 +154,89 @@ html.is-phone-layout .map-card{
     color:#9da2aa!important;
   }
 }
+
+
+/* Biblioteca de cursos · pacote aprovado nesta branch
+   [D+T] enquadramento alinhado ao mobile · [G] controles glass + cor derivada da capa */
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card{
+  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 24%,rgba(255,255,255,.075))!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:var(--course-cover-position,center center)!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card[data-course="porto-alegre"]{--course-cover-position:46% center}
+:is(#coursesGrid,#homeCourses) .course-card[data-course="tapera"]{--course-cover-position:center center}
+
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill,
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit{
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:linear-gradient(180deg,rgba(54,59,66,.86),rgba(29,33,39,.84))!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.055)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+  backdrop-filter:blur(14px)!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill.is-active{
+  border-color:rgba(99,190,126,.28)!important;
+  background:linear-gradient(180deg,rgba(46,105,65,.86),rgba(29,68,43,.84))!important;
+  color:#b5e0bf!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill.is-archived{color:#c0c5cb!important}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit{color:#c7cbd1!important}
+
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info{
+  border:1px solid color-mix(in srgb,var(--course-accent,#b99c68) 34%,rgba(255,255,255,.08))!important;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--course-accent,#b99c68) 11%,rgba(255,255,255,.018)),
+    color-mix(in srgb,var(--course-accent,#b99c68) 6%,rgba(7,9,12,.94)))!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info b{
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 78%,white)!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info small{
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 42%,#8e949c)!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .enter{
+  border-color:color-mix(in srgb,var(--course-accent,#b99c68) 48%,rgba(255,255,255,.10))!important;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--course-accent,#b99c68) 16%,rgba(255,255,255,.022)),
+    color-mix(in srgb,var(--course-accent,#b99c68) 9%,#0a0d10))!important;
+  color:color-mix(in srgb,var(--course-accent,#b99c68) 80%,white)!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-progress-mini .progress-track>span{
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--course-accent,#b99c68) 72%,#15181c),
+    color-mix(in srgb,var(--course-accent,#b99c68) 94%,white))!important;
+}
+
+@media(hover:hover){
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit:hover{
+    border-color:color-mix(in srgb,var(--course-accent,#b99c68) 42%,rgba(255,255,255,.12))!important;
+    background:color-mix(in srgb,var(--course-accent,#b99c68) 12%,rgba(35,39,45,.92))!important;
+    color:#fff!important;
+  }
+}
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-card-cover{
+    height:auto!important;
+    aspect-ratio:16/9!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-cover-controls{
+    top:14px!important;
+    left:14px!important;
+    right:14px!important;
+  }
+}
+@media(min-width:481px) and (max-width:1180px){
+  html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-card-cover{
+    height:auto!important;
+    aspect-ratio:16/9!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-cover-controls{
+    top:12px!important;
+    left:12px!important;
+    right:12px!important;
+  }
+}

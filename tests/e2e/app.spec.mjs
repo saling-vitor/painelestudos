@@ -423,6 +423,29 @@ test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',a
   expect(styles.boardColor).not.toBe(styles.examColor);
 });
 
+test('cards de curso mantêm controles dentro da capa e enquadramento equilibrado em Desktop e iPad',async({page},testInfo)=>{
+  test.skip(!['desktop-chromium','ipad'].includes(testInfo.project.name),'Validação específica de Desktop e iPad.');
+  await page.setViewportSize(testInfo.project.name==='ipad'?{width:1194,height:834}:{width:1440,height:900});
+  await page.goto('/#courses');
+  const card=page.locator('#coursesGrid .course-card.course-library-card').first();
+  await expect(card).toBeVisible();
+  const visual=await card.evaluate(el=>{
+    const cover=el.querySelector('.course-card-cover'),status=el.querySelector('.course-status-pill'),edit=el.querySelector('.course-card-edit');
+    const c=cover.getBoundingClientRect(),s=status.getBoundingClientRect(),e=edit.getBoundingClientRect();
+    return{
+      ratio:c.width/c.height,
+      statusInside:s.left>=c.left+8&&s.top>=c.top+8&&s.right<=c.right-8&&s.bottom<=c.bottom-8,
+      editInside:e.left>=c.left+8&&e.top>=c.top+8&&e.right<=c.right-8&&e.bottom<=c.bottom-8,
+      controlsOverlap:!(s.right<=e.left||e.right<=s.left||s.bottom<=e.top||e.bottom<=s.top)
+    };
+  });
+  expect(visual.ratio).toBeGreaterThanOrEqual(1.74);
+  expect(visual.ratio).toBeLessThanOrEqual(1.82);
+  expect(visual.statusInside).toBe(true);
+  expect(visual.editInside).toBe(true);
+  expect(visual.controlsOverlap).toBe(false);
+});
+
 test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o smartphone',async({page},testInfo)=>{
   test.skip(!['desktop-chromium','ipad'].includes(testInfo.project.name),'Validação específica de desktop e iPad.');
   await page.setViewportSize(testInfo.project.name==='ipad'?{width:1194,height:834}:{width:1440,height:900});

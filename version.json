@@ -1,14 +1,14 @@
 {
-  "version": "15.32.0",
-  "label": "V15.32.0-G",
-  "releasedAt": "2026-10-02T21:15:00.000Z",
-  "notes": "Refinamento conjunto da biblioteca do curso no Desktop e consolidação da identidade cromática dos mapas em todos os dispositivos.",
+  "version": "15.33.0",
+  "label": "V15.33.0-G",
+  "releasedAt": "2026-10-02T21:30:00.000Z",
+  "notes": "Refinamento dos cards de cursos com capas mais legíveis, controles integrados e identidade cromática derivada da própria arte.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Toolbar, filtros e cabeçalho de Mapas do curso ficam mais compactos e alinhados",
-    "[D] Cards mantêm capas 16:9 em destaque e reduzem a área inferior sem perder informação",
-    "[G] Accent resolve por cor explícita do mapa, categoria, curso e fallback neutro",
-    "[G] Desktop, iPad e iPhone compartilham a mesma identidade cromática dos mapas",
-    "[QA] Contratos E2E protegem a composição Desktop e a prioridade de cores"
+    "[D+T] Capas dos cursos passam a preservar melhor a composição original em proporção 16:9",
+    "[G] ATIVO e menu ••• usam controles flutuantes glass sobre a capa",
+    "[G] A cor principal da capa passa a alimentar Entrar, prazo da prova e progresso",
+    "[G] Cards aceitam foco de enquadramento específico por curso",
+    "[M] Estrutura e dimensões aprovadas do iPhone permanecem preservadas"
   ]
 }
