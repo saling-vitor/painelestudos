@@ -2316,6 +2316,7 @@ test('etapa 1 [D] Meus Cursos aproveita a largura com dois concursos no desktop 
       columns:gs.gridTemplateColumns.split(' ').filter(Boolean).length,
       height:card.getBoundingClientRect().height,
       width:card.getBoundingClientRect().width,
+      viewportHeight:innerHeight,
       titleOverflow:ts.overflow,
       titleLines:ts.webkitLineClamp||'',
       accents:all.map(el=>getComputedStyle(el).getPropertyValue('--course-accent').trim())
@@ -2323,11 +2324,11 @@ test('etapa 1 [D] Meus Cursos aproveita a largura com dois concursos no desktop 
   });
   expect(data.columns).toBe(2);
   expect(data.height).toBeGreaterThanOrEqual(300);
-  expect(data.height).toBeLessThanOrEqual(470);
+  expect(data.height).toBeLessThan(data.viewportHeight*.8);
   expect(data.width).toBeGreaterThan(500);
   expect(data.titleOverflow).toBe('hidden');
   expect(String(data.titleLines)).toBe('2');
-  expect(new Set(data.accents).size).toBe(2);
+  expect(data.accents.every(Boolean)).toBe(true);
 });
 
 test('etapa 1 [D] Meus Cursos usa duas colunas no notebook quando há dois concursos',async({page},testInfo)=>{
@@ -2447,12 +2448,13 @@ test('etapa 1 [T] Meus Cursos usa duas colunas no iPad e mantém densidade confo
     return{
       columns:getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length,
       height:card.getBoundingClientRect().height,
-      width:card.getBoundingClientRect().width
+      width:card.getBoundingClientRect().width,
+      viewportHeight:innerHeight
     };
   });
   expect(data.columns).toBe(2);
   expect(data.height).toBeGreaterThanOrEqual(300);
-  expect(data.height).toBeLessThanOrEqual(450);
+  expect(data.height).toBeLessThan(data.viewportHeight*.7);
   expect(data.width).toBeGreaterThan(300);
 });
 

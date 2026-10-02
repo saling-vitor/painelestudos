@@ -224,9 +224,9 @@ html.is-phone-layout .map-card{
     aspect-ratio:16/9!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-cover-controls{
-    top:14px!important;
-    left:14px!important;
-    right:14px!important;
+    top:28px!important;
+    left:28px!important;
+    right:28px!important;
   }
 }
 @media(min-width:481px) and (max-width:1180px){
@@ -239,4 +239,15 @@ html.is-phone-layout .map-card{
     left:12px!important;
     right:12px!important;
   }
+}
+
+
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-card-cover{
+  height:auto!important;
+  aspect-ratio:16/9!important;
+}
+html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-cover-controls{
+  top:26px!important;
+  left:26px!important;
+  right:26px!important;
 }
