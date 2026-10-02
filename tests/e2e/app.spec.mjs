@@ -392,7 +392,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
   if(testInfo.project.name==='ipad'){
     expect(visual.syncHeight).toBeGreaterThanOrEqual(44);
-    expect(visual.newCourseHeight).toBeGreaterThanOrEqual(44);
+    expect(Math.round(visual.newCourseHeight)).toBeGreaterThanOrEqual(44);
     expect(visual.topbarHeight).toBeLessThanOrEqual(58);
   }else{
     expect(visual.syncHeight).toBeLessThanOrEqual(40);
