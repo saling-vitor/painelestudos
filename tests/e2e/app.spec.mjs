@@ -991,6 +991,59 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
   }
 });
 
+test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},testInfo)=>{
+  test.skip(!['desktop-chromium','ipad'].includes(testInfo.project.name),'Validação de Desktop e iPad.');
+  const scenarios=testInfo.project.name==='desktop-chromium'
+    ?[{name:'desktop',width:1600,height:900,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2}]
+    :[
+      {name:'ipad landscape',width:1194,height:834,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2},
+      {name:'ipad portrait',width:820,height:1180,courses:2,maps:2,simulations:2,simulationToolbar:2,courseToolbar:1},
+      {name:'ipad split',width:640,height:900,courses:1,maps:1,simulations:1,simulationToolbar:1,courseToolbar:1}
+    ];
+  const columns=async locator=>locator.evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length);
+  const assertNoOverflow=async label=>{
+    const size=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
+    expect.soft(size.scrollWidth,label+' sem overflow horizontal').toBeLessThanOrEqual(size.width+2);
+  };
+  for(const scenario of scenarios){
+    await page.setViewportSize({width:scenario.width,height:scenario.height});
+
+    await page.goto('/#courses');
+    await expect(page.locator('#coursesGrid .course-card').first()).toBeVisible();
+    expect.soft(await columns(page.locator('#coursesGrid')),scenario.name+' Meus Cursos').toBe(scenario.courses);
+    if(testInfo.project.name==='ipad'){
+      const target=await page.locator('#coursesGrid .course-card .enter').first().evaluate(el=>el.getBoundingClientRect().height);
+      expect.soft(target,scenario.name+' Entrar touch').toBeGreaterThanOrEqual(44);
+    }
+    await assertNoOverflow(scenario.name+' Meus Cursos');
+
+    await page.goto('/#course/porto-alegre');
+    await expect(page.locator('#courseMaps .map-card').first()).toBeVisible();
+    expect.soft(await columns(page.locator('.course-toolbar')),scenario.name+' toolbar do curso').toBe(scenario.courseToolbar);
+    expect.soft(await columns(page.locator('#courseMaps')),scenario.name+' mapas do curso').toBe(scenario.maps);
+    if(testInfo.project.name==='ipad'){
+      const search=await page.locator('.course-search-box').evaluate(el=>el.getBoundingClientRect().height);
+      expect.soft(search,scenario.name+' busca touch').toBeGreaterThanOrEqual(44);
+    }
+    await assertNoOverflow(scenario.name+' Curso');
+
+    await page.goto('/#maps');
+    await expect(page.locator('#allMaps .map-card').first()).toBeVisible();
+    expect.soft(await columns(page.locator('#allMaps')),scenario.name+' Todos os Mapas').toBe(scenario.maps);
+    await assertNoOverflow(scenario.name+' Todos os Mapas');
+
+    await page.goto('/#simulations');
+    await expect(page.locator('#simulationGrid .simulation-card').first()).toBeVisible();
+    expect.soft(await columns(page.locator('#simulationGrid')),scenario.name+' Simulados').toBe(scenario.simulations);
+    expect.soft(await columns(page.locator('.simulation-toolbar')),scenario.name+' toolbar Simulados').toBe(scenario.simulationToolbar);
+    if(testInfo.project.name==='ipad'){
+      const input=await page.locator('.simulation-search input').evaluate(el=>el.getBoundingClientRect().height);
+      expect.soft(input,scenario.name+' busca de simulados touch').toBeGreaterThanOrEqual(44);
+    }
+    await assertNoOverflow(scenario.name+' Simulados');
+  }
+});
+
 test('iPad usa dock lateral recolhível no leitor',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica do dock lateral do iPad.');
   await page.setViewportSize({width:820,height:1180});
@@ -1605,6 +1658,42 @@ test('A Home responsiva preserva a composição aprovada no iPhone',async({page}
   expect(data.thirdDisplay).not.toBe('none');
   expect(data.actionHeight).toBeGreaterThanOrEqual(44);
   expect(data.courseColumns).toBe(1);
+});
+
+test('B Biblioteca e treino preserva o mobile-first no iPhone',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Validação específica do iPhone WebKit.');
+  await page.setViewportSize({width:390,height:844});
+  const columns=async locator=>locator.evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length);
+  const assertPhone=async label=>{
+    await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
+    const size=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
+    expect.soft(size.scrollWidth,label+' sem overflow horizontal').toBeLessThanOrEqual(size.width+2);
+  };
+
+  await page.goto('/#courses');
+  await expect(page.locator('#coursesGrid .course-card').first()).toBeVisible();
+  expect(await columns(page.locator('#coursesGrid'))).toBe(1);
+  await expect(page.locator('#coursesGrid .mobile-course-details').first()).toBeVisible();
+  await assertPhone('Meus Cursos');
+
+  await page.goto('/#course/porto-alegre');
+  await expect(page.locator('#courseMaps .map-card').first()).toBeVisible();
+  expect(await columns(page.locator('#courseMaps'))).toBe(1);
+  await expect(page.locator('.mobile-course-actions')).toBeVisible();
+  await assertPhone('Curso');
+
+  await page.goto('/#maps');
+  await expect(page.locator('#allMaps .map-card').first()).toBeVisible();
+  expect(await columns(page.locator('#allMaps'))).toBe(1);
+  await assertPhone('Todos os Mapas');
+
+  await page.goto('/#simulations');
+  await expect(page.locator('#simulationGrid .simulation-card').first()).toBeVisible();
+  expect(await columns(page.locator('#simulationGrid'))).toBe(1);
+  expect(await columns(page.locator('.simulation-toolbar'))).toBe(1);
+  const action=await page.locator('#importSimulationBtn').evaluate(el=>el.getBoundingClientRect().height);
+  expect(action).toBeGreaterThanOrEqual(40);
+  await assertPhone('Simulados');
 });
 
 test('iPhone real UX2 compacta curso e mostra mapa no primeiro viewport',async({page},testInfo)=>{
