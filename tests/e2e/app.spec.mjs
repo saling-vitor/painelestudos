@@ -2522,3 +2522,113 @@ test('etapa 1 [G] identidade dos mapas propaga accent e capa também no smartpho
     expect(box.right).toBeLessThanOrEqual(box.vw+1);
   }
 });
+
+
+test('[G] Etapa 3 Todos os Mapas ordena filtra agrupa e alterna layout',async({page},testInfo)=>{
+  await page.goto('/#maps');
+  await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
+  const baseCount=await page.locator('#allMaps .map-card').count();
+  await expect(page.locator('#allMapsCount')).toContainText(String(baseCount));
+
+  const isPhone=testInfo.project.name==='iphone-webkit';
+  if(isPhone){
+    await expect(page.locator('.maps-mobile-controls')).toBeVisible();
+    await page.locator('#allMapsMobileSort').click();
+    await expect(page.locator('#allMapsFilterPanel')).toBeVisible();
+    await page.locator('#allMapsSortSheet').selectOption('za');
+  }else{
+    await expect(page.locator('.maps-toolbar')).toBeVisible();
+    await page.locator('#allMapsSort').selectOption('za');
+  }
+
+  const titles=await page.locator('#allMaps .map-card h3').evaluateAll(nodes=>nodes.map(node=>node.textContent.trim()));
+  const expected=[...titles].sort((a,b)=>b.localeCompare(a,'pt-BR',{sensitivity:'base',numeric:true}));
+  expect(titles).toEqual(expected);
+
+  if(isPhone)await page.locator('#allMapsMobileFilter').click();
+  else await page.locator('#allMapsFilterBtn').click();
+  await expect(page.locator('#allMapsFilterPanel')).toBeVisible();
+
+  const category=await page.locator('#allMapsCategory option').evaluateAll(options=>options.map(o=>o.value).find(Boolean)||'');
+  expect(category).not.toBe('');
+  await page.locator('#allMapsCategory').selectOption(category);
+  await expect(page.locator('#allMapsActiveFilters')).toBeVisible();
+  const categoryChip=page.locator('#allMapsActiveFilters [data-allmaps-clear="category"]');
+  await expect(categoryChip).toContainText(category);
+  expect(await categoryChip.evaluate(el=>getComputedStyle(el).getPropertyValue('--chip-accent').trim())).not.toBe('');
+
+  const filtered=await page.locator('#allMaps .map-card').count();
+  expect(filtered).toBeGreaterThan(0);
+  const categoryOk=await page.locator('#allMaps .map-card').evaluateAll(cards=>cards.every(card=>mapById(card.dataset.map)?.category===state.allMapsCategory));
+  expect(categoryOk).toBe(true);
+
+  if(isPhone){
+    await page.locator('#allMapsGroupSheet').selectOption('category');
+    await page.locator('#allMapsFilterDone').click();
+  }else{
+    await page.locator('#allMapsFilterPanel').press('Escape');
+    await page.locator('#allMapsGroup').selectOption('category');
+  }
+  await expect(page.locator('#allMaps .maps-group-section')).toHaveCount(1);
+
+  await page.locator('[data-allmaps-layout="list"]:visible').click();
+  await expect(page.locator('#allMapsWrap')).toHaveClass(/map-list/);
+  const layout=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,layout:state.mapLayout,sort:state.allMapsSort}));
+  expect(layout.layout).toBe('list');
+  expect(layout.sort).toBe('za');
+  expect(layout.scrollWidth).toBeLessThanOrEqual(layout.width+2);
+});
+
+test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros ao reentrar',async({page},testInfo)=>{
+  await page.goto('/#maps');
+  await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
+
+  if(testInfo.project.name==='iphone-webkit'){
+    await page.locator('#allMapsMobileSort').click();
+    await page.locator('#allMapsSortSheet').selectOption('topics-desc');
+    await page.locator('#allMapsMobileFilter').click();
+  }else{
+    await page.locator('#allMapsSort').selectOption('topics-desc');
+    await page.locator('#allMapsFilterBtn').click();
+  }
+
+  const category=await page.locator('#allMapsCategory option').evaluateAll(options=>options.map(o=>o.value).find(Boolean)||'');
+  await page.locator('#allMapsCategory').selectOption(category);
+  await page.locator('#allMapsFavorites').check();
+  await page.locator('#allMapsFilterDone').click();
+  await page.locator('[data-allmaps-layout="list"]:visible').click();
+
+  await page.locator('[data-nav="courses"]').first().click();
+  await expect(page.locator('[data-view="courses"]')).toHaveClass(/active/);
+  await page.locator('[data-nav="maps"]').first().click();
+  await expect(page.locator('[data-view="maps"]')).toHaveClass(/active/);
+
+  const reset=await page.evaluate(()=>({
+    query:state.allMapsQuery,
+    category:state.allMapsCategory,
+    course:state.allMapsCourse,
+    status:state.allMapsStatus,
+    favorites:state.allMapsFavorites,
+    offline:state.allMapsOffline,
+    group:state.allMapsGroup,
+    sort:state.allMapsSort,
+    layout:state.mapLayout
+  }));
+  expect(reset).toEqual({query:'',category:'',course:'',status:'',favorites:false,offline:false,group:'',sort:'topics-desc',layout:'list'});
+
+  await page.reload();
+  await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
+  const persisted=await page.evaluate(()=>({sort:state.allMapsSort,layout:state.mapLayout,storedSort:localStorage.getItem('studyapp.allMapsSort'),storedLayout:localStorage.getItem('studyapp.mapLayout')}));
+  expect(persisted).toEqual({sort:'topics-desc',layout:'list',storedSort:'topics-desc',storedLayout:'list'});
+  await expect(page.locator('#allMapsWrap')).toHaveClass(/map-list/);
+
+  const firstKey=await page.locator('#allMaps .map-card').first().getAttribute('data-map');
+  await page.evaluate(key=>{
+    state.allMapsOfflineReady={[key]:true};
+    state.allMapsOfflineCheckedAt=Date.now();
+    state.allMapsOffline=true;
+    renderAllMaps({skipOfflineRefresh:true});
+  },firstKey);
+  await expect(page.locator('#allMaps .map-card')).toHaveCount(1);
+  await expect(page.locator('#allMapsActiveFilters [data-allmaps-clear="offline"]')).toBeVisible();
+});

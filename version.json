@@ -1,13 +1,14 @@
 {
-  "version": "15.29.0",
-  "label": "V15.29.0-T",
-  "releasedAt": "2026-10-02T18:11:00.000Z",
-  "notes": "Etapa 2: refinamento exclusivo do iPad na Home e na biblioteca interna do curso, com CI separado por dispositivo.",
+  "version": "15.30.0",
+  "label": "V15.30.0-G",
+  "releasedAt": "2026-10-02T19:05:00.000Z",
+  "notes": "Etapa 3: organização completa de Todos os Mapas com busca, ordenação, filtros, agrupamento e layout responsivo.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Home do iPad passa a usar quatro métricas em grade 2x2; a contagem de cursos é incorporada ao card Mapas",
-    "[T] Curso ganha cabeçalho e métricas mais compactos, Retomar horizontal e toolbar própria para retrato/paisagem",
-    "[T] Filtros Situação e Conteúdo viram faixas roláveis sem recorte, preservando alvos touch",
-    "[QA] Desktop, iPad e iPhone agora executam em três jobs E2E independentes e paralelos"
+    "[G] Todos os Mapas ganha busca local, ordenação A–Z/Z–A, recentes, progresso e quantidade de tópicos",
+    "[G] Filtros por categoria, curso, status, favoritos e disponibilidade offline com chips ativos e contador dinâmico",
+    "[G] Agrupamento opcional por categoria ou curso e persistência de ordenação + grade/lista",
+    "[D/T/M] Desktop e iPad usam controles compactos; iPhone usa Ordenar e Filtrar em bottom sheet",
+    "[QA] CI padrão remove execução targeted redundante antes da suíte completa"
   ]
 }

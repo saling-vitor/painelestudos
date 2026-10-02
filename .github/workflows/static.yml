@@ -110,9 +110,6 @@ jobs:
       - name: Build search index
         run: node scripts/build-search-index.mjs
 
-      - name: Targeted E2E — etapa 2 tablet
-        run: npx playwright test --project=ipad --grep "etapa 2 \[T\]"
-
       - name: Browser E2E — iPad
         run: npx playwright test --project=ipad
 
