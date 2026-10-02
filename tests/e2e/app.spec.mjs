@@ -2705,3 +2705,52 @@ test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros a
   await expect(page.locator('#allMaps .map-card')).toHaveCount(1);
   await expect(page.locator('#allMapsActiveFilters [data-allmaps-clear="offline"]')).toBeVisible();
 });
+
+test('V15.32 [D] biblioteca do curso mantém composição compacta e três colunas',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#course/porto-alegre');
+  await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card').length>2);
+  const data=await page.evaluate(()=>{
+    const toolbar=document.querySelector('.course-toolbar'),search=document.querySelector('.course-search-box'),actions=document.querySelector('.course-primary-actions');
+    const categories=document.querySelector('#categoryRow'),maps=document.querySelector('#courseMaps');
+    const heading=document.querySelector('[data-view="course"] .section-head[style]'),headingCopy=heading?.firstElementChild,layout=heading?.querySelector('.actions');
+    const card=maps.querySelector('.map-card.has-cover'),cover=card?.querySelector('.map-cover'),foot=card?.querySelector('.foot');
+    const sr=search.getBoundingClientRect(),ar=actions.getBoundingClientRect(),hr=headingCopy.getBoundingClientRect(),lr=layout.getBoundingClientRect(),cr=card.getBoundingClientRect(),vr=cover.getBoundingClientRect(),fr=foot.getBoundingClientRect();
+    return{
+      toolbarColumns:getComputedStyle(toolbar).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+      toolbarAligned:Math.abs(sr.top-ar.top)<=1&&Math.abs(sr.height-ar.height)<=1,
+      categoriesWrap:getComputedStyle(categories).flexWrap,
+      mapColumns:getComputedStyle(maps).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+      layoutNearTitle:lr.left>=hr.right-1&&lr.left-hr.right<48,
+      coverRatio:vr.width/vr.height,
+      footerInside:fr.left>=cr.left-1&&fr.right<=cr.right+1&&fr.bottom<=cr.bottom+1,
+      scrollWidth:document.documentElement.scrollWidth,
+      viewportWidth:innerWidth
+    };
+  });
+  expect(data.toolbarColumns).toBe(2);
+  expect(data.toolbarAligned).toBe(true);
+  expect(data.categoriesWrap).toBe('nowrap');
+  expect(data.mapColumns).toBe(3);
+  expect(data.layoutNearTitle).toBe(true);
+  expect(data.coverRatio).toBeGreaterThan(1.74);
+  expect(data.coverRatio).toBeLessThan(1.82);
+  expect(data.footerInside).toBe(true);
+  expect(data.scrollWidth).toBeLessThanOrEqual(data.viewportWidth+2);
+});
+
+test('V15.32 [G] accent respeita prioridade mapa categoria curso e neutro',async({page})=>{
+  const result=await page.evaluate(()=>{
+    const course=state.cloudCourses.find(item=>item.id==='porto-alegre'),before=course?.accent;
+    if(course)course.accent='teal';
+    const explicit=mapAccentKey({courseId:'porto-alegre',category:'Acessibilidade e Segurança',accent:'red'});
+    const category=mapAccentKey({courseId:'porto-alegre',category:'Acessibilidade e Segurança',accent:''});
+    const courseFallback=mapAccentKey({courseId:'porto-alegre',category:'',accent:''});
+    const neutral=mapAccentKey({courseId:'__sem_curso__',category:'',accent:''});
+    if(course){if(before===undefined)delete course.accent;else course.accent=before}
+    return{explicit,category,courseFallback,neutral};
+  });
+  expect(result).toEqual({explicit:'red',category:'blue',courseFallback:'teal',neutral:'gold'});
+});
+

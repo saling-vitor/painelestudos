@@ -1,14 +1,14 @@
 {
-  "version": "15.31.1",
-  "label": "V15.31.1-G",
-  "releasedAt": "2026-10-02T20:50:00.000Z",
-  "notes": "Fechamento de QA da identidade cromática do Retomar, incluindo correções reais descobertas ao executar os testes gerais no iPhone.",
+  "version": "15.32.0",
+  "label": "V15.32.0-G",
+  "releasedAt": "2026-10-02T21:15:00.000Z",
+  "notes": "Refinamento conjunto da biblioteca do curso no Desktop e consolidação da identidade cromática dos mapas em todos os dispositivos.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Retomar mantém código, categoria, progresso e ação Continuar com a identidade cromática do mapa",
-    "[M] Todos os Mapas deixa de exibir dois conjuntos de controles Grade/Lista no iPhone",
-    "[QA] Teste de Meus Cursos no iPhone passa a proteger conteúdo, viewport e overflow em vez de altura histórica arbitrária",
-    "[QA] Estado vazio de pontos de restauração deixa de depender do IndexedDB entre cenários E2E",
-    "[QA] Desktop e iPad permaneceram verdes; correções fecham as falhas reveladas pela nova cobertura [G]/[M] do iPhone"
+    "[D] Toolbar, filtros e cabeçalho de Mapas do curso ficam mais compactos e alinhados",
+    "[D] Cards mantêm capas 16:9 em destaque e reduzem a área inferior sem perder informação",
+    "[G] Accent resolve por cor explícita do mapa, categoria, curso e fallback neutro",
+    "[G] Desktop, iPad e iPhone compartilham a mesma identidade cromática dos mapas",
+    "[QA] Contratos E2E protegem a composição Desktop e a prioridade de cores"
   ]
 }

@@ -1,0 +1,156 @@
+/* V15.32.0 · biblioteca do curso mais compacta + identidade cromática canônica
+   [D] composição da tela do curso · [G] accent consistente em Desktop, iPad e iPhone */
+
+.map-card{
+  --map-accent:var(--accent,#c3aa84);
+  border-top-color:color-mix(in srgb,var(--map-accent) 34%,#262b31)!important;
+}
+.map-card::before{background:var(--map-accent)!important}
+.map-card .map-code,
+.map-card .map-category-chip,
+.map-card .progress-line b,
+.map-card .map-open-label{color:var(--map-accent)!important}
+.map-card .map-code,
+.map-card .map-category-chip{
+  border-color:color-mix(in srgb,var(--map-accent) 50%,#30343a)!important;
+  background:color-mix(in srgb,var(--map-accent) 9%,transparent)!important;
+}
+.map-card .progress-track>span{background:var(--map-accent)!important}
+.map-card .foot{border-top-color:color-mix(in srgb,var(--map-accent) 22%,#1f2329)!important}
+.map-card .map-open-label .ui-icon{color:inherit}
+@media(hover:hover){
+  .map-card:hover{
+    border-color:color-mix(in srgb,var(--map-accent) 46%,#2b3037)!important;
+    box-shadow:0 16px 34px rgba(0,0,0,.30),0 0 0 1px color-mix(in srgb,var(--map-accent) 10%,transparent)!important;
+  }
+}
+html.is-ipad:not(.is-phone-layout) .map-card{
+  border-color:color-mix(in srgb,var(--map-accent) 24%,rgba(255,255,255,.08))!important;
+}
+html.is-phone-layout .map-card{
+  border-color:color-mix(in srgb,var(--map-accent) 22%,rgba(255,255,255,.075))!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.28),inset 2px 0 color-mix(in srgb,var(--map-accent) 58%,transparent)!important;
+}
+
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-toolbar{
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:8px!important;
+    align-items:stretch!important;
+    margin-top:13px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-search-box,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-primary-actions>button,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+    height:40px!important;
+    min-height:40px!important;
+    border-radius:8px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-search-box{
+    padding-inline:12px!important;
+    border-color:rgba(255,255,255,.075)!important;
+    background:rgba(12,15,19,.88)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-primary-actions{gap:6px!important}
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-study-filter-wrap,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-category-wrap{
+    gap:6px!important;
+    margin-top:10px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-study-filters,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .category-row{
+    flex-wrap:nowrap!important;
+    gap:6px!important;
+    overflow-x:auto!important;
+    overscroll-behavior-inline:contain;
+    scrollbar-width:none;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-study-filters::-webkit-scrollbar,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .category-row::-webkit-scrollbar{display:none}
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-study-filter{
+    min-height:30px!important;
+    padding-inline:9px!important;
+    gap:5px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-study-filter small{
+    min-width:16px!important;
+    height:16px!important;
+    padding-inline:3px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .category-btn{
+    flex:0 0 auto;
+    min-height:29px!important;
+    padding-inline:9px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .section-head[style]{
+    justify-content:flex-start!important;
+    align-items:flex-end!important;
+    gap:14px!important;
+    margin-top:8px!important;
+    margin-bottom:10px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .section-head[style]>.actions{
+    margin-left:0!important;
+    padding-bottom:1px;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .section-head[style] .compact-icon-btn{
+    width:38px!important;
+    min-width:38px!important;
+    height:38px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps.map-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:16px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover{
+    min-height:0!important;
+    padding:0 16px 50px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover .map-cover{
+    margin:0 -16px!important;
+    aspect-ratio:16/9!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card-status-row{margin-top:10px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
+    min-height:40px!important;
+    margin-top:9px!important;
+    font-size:17px!important;
+    line-height:1.22!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover>p{
+    min-height:24px!important;
+    margin-top:4px!important;
+    font-size:11px!important;
+    line-height:1.35!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover>.meta{
+    margin-top:8px!important;
+    gap:5px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-progress-mini{
+    margin-top:9px!important;
+    padding:9px 10px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card .foot{
+    left:16px!important;
+    right:16px!important;
+    bottom:9px!important;
+    min-height:32px;
+    padding-top:7px!important;
+    align-items:center!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-open-label{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .section-head,
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .section-head{align-items:flex-end!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .section-head>.secondary{
+    min-height:34px!important;
+    padding-inline:11px!important;
+    border-color:rgba(255,255,255,.065)!important;
+    background:rgba(255,255,255,.012)!important;
+    color:#9da2aa!important;
+  }
+}
