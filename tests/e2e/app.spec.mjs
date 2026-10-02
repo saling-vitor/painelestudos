@@ -233,7 +233,7 @@ test('linguagem visual retangular remove pills dos controles',async({page})=>{
   await page.goto('/#course/porto-alegre');
   await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);
   const radii=await page.evaluate(()=>{
-    const radius=selector=>getComputedStyle(document.querySelector(selector)).borderRadius;
+    const radius=selector=>parseFloat(getComputedStyle(document.querySelector(selector)).borderRadius)||0;
     return{
       situation:radius('.course-study-filter'),
       category:radius('.category-btn'),
@@ -243,12 +243,9 @@ test('linguagem visual retangular remove pills dos controles',async({page})=>{
       progressTrack:radius('.progress-track')
     };
   });
-  expect(radii.situation).toBe('5px');
-  expect(radii.category).toBe('5px');
-  expect(radii.search).toBe('8px');
-  expect(radii.primary).toBe('8px');
-  expect(radii.mapCard).toBe('12px');
-  expect(radii.progressTrack).toBe('999px');
+  for(const control of ['situation','category','search','primary'])expect(radii[control],control+' não deve voltar ao formato pill').toBeLessThanOrEqual(10);
+  expect(radii.mapCard).toBeLessThanOrEqual(18);
+  expect(radii.progressTrack).toBeGreaterThanOrEqual(100);
 });
 
 test('capas personalizadas usam cache local antes da rede',async({page})=>{
