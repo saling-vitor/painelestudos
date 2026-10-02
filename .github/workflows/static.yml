@@ -194,10 +194,39 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v5
 
+  verify-live:
+    name: Verify live Pages
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Confirm public site serves this release
+        shell: bash
+        run: |
+          expected="$(node -p "require('./version.json').version")"
+          base="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          for attempt in {1..18}; do
+            stamp="$(date +%s%N)"
+            version_body="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/version.json?t=$stamp" || true)"
+            actual="$(printf '%s' "$version_body" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(JSON.parse(s).version||'')}catch{}})")"
+            index_body="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/?t=$stamp" || true)"
+            if [ "$actual" = "$expected" ] && printf '%s' "$index_body" | grep -Fq "app.js?v=$expected"; then
+              echo "✓ GitHub Pages público está em $actual"
+              exit 0
+            fi
+            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível}"
+            sleep 10
+          done
+          echo "::error::O GitHub Pages não serviu a versão $expected dentro do prazo."
+          exit 1
+
   cleanup-actions:
     name: Cleanup Actions history
-    needs: deploy
-    if: ${{ always() && needs.deploy.result == 'success' }}
+    needs: verify-live
+    if: ${{ always() && needs.verify-live.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
