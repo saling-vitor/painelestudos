@@ -1889,10 +1889,13 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page})=
   expect(geometry.display).toBe('grid');
 
   await page.evaluate(()=>{
+    nav('home');
     const box=document.querySelector('#continueBox');
     box.innerHTML=emptyStateHtml({title:'Pronto para começar?',text:'Abra um mapa pela primeira vez.',mascot:'continue',compact:true,className:'compact-geometry-probe'});
   });
-  const compactGeometry=await page.locator('#continueBox .compact-geometry-probe').evaluate(el=>{
+  const compactProbe=page.locator('#continueBox .compact-geometry-probe');
+  await expect(compactProbe).toBeVisible();
+  const compactGeometry=await compactProbe.evaluate(el=>{
     const img=el.querySelector('.empty-state-graphic'),copy=el.querySelector('.empty-state-copy'),ir=img.getBoundingClientRect(),cr=copy.getBoundingClientRect();
     return{imgRight:ir.right,copyLeft:cr.left,imgWidth:ir.width};
   });
