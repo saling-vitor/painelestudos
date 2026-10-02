@@ -154,6 +154,7 @@ test('sincronização de capas usa updatedAt por mapa e não ressuscita capa res
   expect(result['curso::c'].path).toBe('c.webp');
 });
 
+test('PWA detecta worker mais novo que o bundle aberto',async({page})=>{await page.goto('/#settings');const result=await page.evaluate(()=>({same:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v='+APP_VERSION}),newer:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v=99.0.0'}),older:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v=1.0.0'}),parsed:serviceWorkerAppVersion({scriptURL:location.origin+location.pathname+'sw.js?v=99.0.0'})}));expect(result.same).toBe(false);expect(result.newer).toBe(true);expect(result.older).toBe(false);expect(result.parsed).toBe('99.0.0')});
 test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
   await page.goto('/#settings');
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);

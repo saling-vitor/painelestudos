@@ -1,14 +1,14 @@
 {
-  "version": "15.33.0",
-  "label": "V15.33.0-G",
-  "releasedAt": "2026-10-02T21:30:00.000Z",
-  "notes": "Refinamento dos cards de cursos com capas mais legíveis, controles integrados e identidade cromática derivada da própria arte.",
+  "version": "15.34.0",
+  "label": "V15.34.0-G",
+  "releasedAt": "2026-10-02T22:08:00.000Z",
+  "notes": "Correção do mecanismo de atualização do PWA para evitar versões publicadas presas no estado 'disponível'.",
   "showWhatsNew": true,
   "highlights": [
-    "[D+T] Capas dos cursos passam a preservar melhor a composição original em proporção 16:9",
-    "[G] ATIVO e menu ••• usam controles flutuantes glass sobre a capa",
-    "[G] A cor principal da capa passa a alimentar Entrar, prazo da prova e progresso",
-    "[G] Cards aceitam foco de enquadramento específico por curso",
-    "[M] Estrutura e dimensões aprovadas do iPhone permanecem preservadas"
+    "[G] Atualizar agora passa a revalidar o Service Worker antes de aplicar",
+    "[G] Se o novo Service Worker já estiver ativo, o aplicativo recarrega automaticamente",
+    "[G] Ativação recebe fallback e nova tentativa quando o controllerchange não chega",
+    "[G] Service Worker usa waitUntil ao receber SKIP_WAITING",
+    "[QA] Novo contrato E2E cobre detecção de worker mais novo que o bundle aberto"
   ]
 }
