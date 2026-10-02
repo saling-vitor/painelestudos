@@ -41,7 +41,7 @@ test('importação detecta categoria individual pelo HTML',async({page})=>{
     const make=(code,title,body)=>parseMap('<!doctype html><html><head><meta name="study-short-code" content="'+code+'"><meta name="study-display-title" content="'+title+'"></head><body><main><section class="ramo"><h2 class="ramo-title">'+body+'</h2><article class="topic-card"></article></section></main></body></html>',new File(['x'],code+'.html',{type:'text/html'})).category;
     return{port:make('PORT','Língua Portuguesa','Sintaxe, crase e concordância'),uti:make('UTI','Urbanismo, Topografia e Infraestrutura','Mobilidade urbana e drenagem')};
   });
-  expect(categories).toEqual({port:'Português',uti:'Urbanismo e Habitação'});
+  expect(categories).toEqual({port:'Português',uti:'Infraestrutura e Mobilidade Urbana'});
 });
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
