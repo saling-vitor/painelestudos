@@ -537,7 +537,7 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid.course-grid{
   gap:12px!important;
 }
 html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
-  min-height:238px!important;
+  min-height:260px!important;
   padding:15px 15px 56px!important;
 }
 html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card h3{
@@ -662,7 +662,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card-bo
   padding:12px 13px 13px!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card h3{
-  margin-top:9px!important;
+  margin-top:10px!important;
   font-size:15px!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-meta{
