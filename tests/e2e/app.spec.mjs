@@ -18,7 +18,7 @@ const E2E_CLOUD_MAP_ROWS=(E2E_CATALOG.maps||[]).map((m,i)=>({
   topics:Number(m.topics||0),
   branches:Number(m.branches||0),
   category:m.category||'Outros',
-  accent:m.accent||'gold',
+  accent:m.accent||'auto',
   filename:m.filename||'',
   storage_path:'e2e-user/'+String(m.courseId||'curso')+'/'+String(m.filename||m.code||m.id||('map-'+i)),
   storage_id:m.storageId||'',
@@ -567,7 +567,7 @@ test('[G] Retomar replica a identidade cromática do mapa em todas as telas',asy
   await page.goto('/#home');
   await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
   const selected=await page.evaluate(()=>{
-    const map=combinedMaps().find(item=>typeof mapAccentKey==='function'&&mapAccentKey(item)!=='gold')||combinedMaps()[0];
+    const map=combinedMaps().find(item=>typeof mapAccentKey==='function'&&mapAccentKey(item))||combinedMaps()[0];
     localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));
     renderHome();
     return{code:String(map.code||''),category:String(map.category||'Estudo')};
@@ -2774,6 +2774,6 @@ test('V15.32 [G] accent respeita prioridade mapa categoria curso e neutro',async
     if(course){if(before===undefined)delete course.accent;else course.accent=before}
     return{explicit,category,courseFallback,neutral};
   });
-  expect(result).toEqual({explicit:'red',category:'blue',courseFallback:'teal',neutral:'gold'});
+  expect(result).toEqual({explicit:'red',category:'blue',courseFallback:'teal',neutral:''});
 });
 
