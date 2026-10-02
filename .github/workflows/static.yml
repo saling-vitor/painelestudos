@@ -50,8 +50,8 @@ jobs:
       - name: Smoke test routes
         run: node scripts/smoke-static.mjs
 
-  e2e-chromium:
-    name: E2E Chromium
+  e2e-desktop:
+    name: E2E Desktop
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -73,25 +73,22 @@ jobs:
       - name: Build search index
         run: node scripts/build-search-index.mjs
 
-      - name: Targeted E2E — identidade dos mapas
-        run: npx playwright test --project=desktop-chromium --project=ipad --grep "identidade dos mapas propaga accent"
-
-      - name: Browser E2E — desktop + iPad
-        run: npx playwright test --project=desktop-chromium --project=ipad
+      - name: Browser E2E — Desktop Chromium
+        run: npx playwright test --project=desktop-chromium
 
       - name: Upload Playwright failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-chromium-${{ github.run_id }}
+          name: playwright-desktop-${{ github.run_id }}
           path: |
             test-results/
             playwright-report/
           if-no-files-found: ignore
           retention-days: 10
 
-  e2e-webkit:
-    name: E2E WebKit iPhone
+  e2e-ipad:
+    name: E2E iPad
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -113,8 +110,45 @@ jobs:
       - name: Build search index
         run: node scripts/build-search-index.mjs
 
-      - name: Targeted E2E — identidade dos mapas no iPhone
-        run: npx playwright test --project=iphone-webkit --grep "identidade dos mapas propaga accent"
+      - name: Targeted E2E — etapa 2 tablet
+        run: npx playwright test --project=ipad --grep "etapa 2 \[T\]"
+
+      - name: Browser E2E — iPad
+        run: npx playwright test --project=ipad
+
+      - name: Upload Playwright failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-ipad-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 10
+
+  e2e-iphone:
+    name: E2E iPhone
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install test dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build search index
+        run: node scripts/build-search-index.mjs
 
       - name: Browser E2E — iPhone WebKit
         run: npx playwright test --project=iphone-webkit
@@ -123,7 +157,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-webkit-${{ github.run_id }}
+          name: playwright-iphone-${{ github.run_id }}
           path: |
             test-results/
             playwright-report/
@@ -132,7 +166,7 @@ jobs:
 
   deploy:
     name: Deploy Pages
-    needs: [validate, e2e-chromium, e2e-webkit]
+    needs: [validate, e2e-desktop, e2e-ipad, e2e-iphone]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:

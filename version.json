@@ -1,13 +1,13 @@
 {
-  "version": "15.28.0",
-  "label": "V15.28.0-G",
-  "releasedAt": "2026-10-02T17:48:00.000Z",
-  "notes": "Etapa 1: identidade cromática unificada dos mapas e cartões de foco do Progresso com capa, accent e responsividade.",
+  "version": "15.29.0",
+  "label": "V15.29.0-T",
+  "releasedAt": "2026-10-02T18:11:00.000Z",
+  "notes": "Etapa 2: refinamento exclusivo do iPad na Home e na biblioteca interna do curso, com CI separado por dispositivo.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Tag, sigla, progresso e ações passam a herdar a mesma cor do mapa em toda a interface",
-    "[G] Retomar onde parei, Plano do dia e busca compartilham a identidade visual do mapa",
-    "[D/T/M] Onde focar agora ganha mini capa, accent e CTA coerente; no iPhone os cards ficam mais compactos",
-    "[QA] Playwright valida o contrato visual por resultado e preserva artifacts em caso de falha"
+    "[T] Home do iPad passa a usar quatro métricas em grade 2x2; a contagem de cursos é incorporada ao card Mapas",
+    "[T] Curso ganha cabeçalho e métricas mais compactos, Retomar horizontal e toolbar própria para retrato/paisagem",
+    "[T] Filtros Situação e Conteúdo viram faixas roláveis sem recorte, preservando alvos touch",
+    "[QA] Desktop, iPad e iPhone agora executam em três jobs E2E independentes e paralelos"
   ]
 }

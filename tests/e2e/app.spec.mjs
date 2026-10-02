@@ -899,7 +899,7 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
     return{
       isIpad:document.documentElement.classList.contains('is-ipad'),
       heroHeight:hero.getBoundingClientRect().height,
-      statCount:stats.children.length,
+      statCount:[...stats.children].filter(el=>getComputedStyle(el).display!=='none').length,
       statColumns:getComputedStyle(stats).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
       topbarHeight:topbar.getBoundingClientRect().height,
       searchHeight:document.querySelector('.search').getBoundingClientRect().height,
@@ -909,8 +909,8 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
   });
   expect.soft(home.isIpad,'classe is-ipad deve estar ativa').toBe(true);
   expect.soft(home.heroHeight,'hero deve permanecer compacto no iPad landscape').toBeLessThanOrEqual(280);
-  expect.soft(home.statCount,'home deve renderizar cinco indicadores').toBe(5);
-  expect.soft(home.statColumns,'cinco indicadores devem permanecer em uma linha').toBe(5);
+  expect.soft(home.statCount,'home deve mostrar quatro indicadores no iPad').toBe(4);
+  expect.soft(home.statColumns,'indicadores do iPad devem formar grade 2x2').toBe(2);
   expect.soft(home.searchHeight,'busca deve permanecer compacta').toBeLessThanOrEqual(40);
   expect.soft(home.syncHeight,'Sincronizar deve preservar alvo touch de 44px').toBeGreaterThanOrEqual(44);
   expect.soft(home.topbarHeight,'topbar deve caber em até 58px sem reduzir o alvo touch').toBeLessThanOrEqual(58);
@@ -998,7 +998,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
     ?[{name:'desktop',width:1600,height:900,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2}]
     :[
       {name:'ipad landscape',width:1194,height:834,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2},
-      {name:'ipad portrait',width:820,height:1180,courses:2,maps:2,simulations:2,simulationToolbar:2,courseToolbar:2},
+      {name:'ipad portrait',width:820,height:1180,courses:2,maps:2,simulations:2,simulationToolbar:2,courseToolbar:1},
       {name:'ipad split',width:640,height:900,courses:1,maps:1,simulations:1,simulationToolbar:1,courseToolbar:1}
     ];
   const columns=async locator=>locator.evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length);
@@ -2278,6 +2278,94 @@ test('etapa 1 [D] Meus Cursos usa duas colunas no notebook quando há dois concu
   await expect(grid.locator('.course-card.course-library-card')).toHaveCount(2);
   const columns=await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
   expect(columns).toBe(2);
+});
+
+test('etapa 2 [T] compacta Home e curso no iPad em retrato e paisagem',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva da etapa 2 de tablet.');
+  for(const scenario of [
+    {name:'paisagem',width:1194,height:834,metricColumns:4,toolbarColumns:2},
+    {name:'retrato',width:820,height:1180,metricColumns:2,toolbarColumns:1}
+  ]){
+    await page.setViewportSize({width:scenario.width,height:scenario.height});
+    await page.goto('/#home');
+    await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
+    await page.evaluate(()=>{
+      const map=combinedMaps().find(item=>item.courseId==='porto-alegre')||combinedMaps()[0];
+      localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));
+      renderHome();
+    });
+    const home=await page.evaluate(()=>{
+      const stats=document.querySelector('#homeStats'),hero=document.querySelector('[data-view="home"] .hero');
+      const visible=[...stats.children].filter(el=>getComputedStyle(el).display!=='none');
+      const maps=document.querySelector('#homeStats .stat-maps'),sub=maps?.querySelector('.stat-sub');
+      const heroRect=hero.getBoundingClientRect();
+      return{
+        visibleStats:visible.length,
+        columns:getComputedStyle(stats).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+        coursesHidden:getComputedStyle(document.querySelector('#homeStats .stat-courses')).display==='none',
+        subVisible:!!sub&&getComputedStyle(sub).display!=='none',
+        subText:sub?.textContent||'',
+        statsInside:visible.every(el=>{const r=el.getBoundingClientRect();return r.left>=heroRect.left-1&&r.right<=heroRect.right+1}),
+        scrollWidth:document.documentElement.scrollWidth,
+        width:innerWidth
+      };
+    });
+    expect.soft(home.visibleStats,scenario.name+' mostra quatro métricas').toBe(4);
+    expect.soft(home.columns,scenario.name+' métricas em 2x2').toBe(2);
+    expect.soft(home.coursesHidden,scenario.name+' remove card Concursos isolado').toBe(true);
+    expect.soft(home.subVisible,scenario.name+' incorpora cursos em Mapas').toBe(true);
+    expect.soft(home.subText,scenario.name+' preserva informação de cursos').toContain('curso');
+    expect.soft(home.statsInside,scenario.name+' métricas ficam dentro do hero').toBe(true);
+    expect.soft(home.scrollWidth,scenario.name+' Home sem overflow horizontal').toBeLessThanOrEqual(home.width+2);
+
+    await page.goto('/#course/porto-alegre');
+    await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card').length>0);
+    const course=await page.evaluate(()=>{
+      const hero=document.querySelector('[data-view="course"] .course-hero');
+      const title=document.querySelector('#courseTitle'),summary=document.querySelector('#courseProgressSummary');
+      const toolbar=document.querySelector('.course-toolbar'),metrics=document.querySelector('.course-status-metrics');
+      const situation=document.querySelector('#courseStudyFilters'),categories=document.querySelector('#categoryRow');
+      const continueCard=document.querySelector('#courseContinue'),continueBtn=continueCard?.querySelector('[data-course-continue]');
+      const layoutActions=document.querySelector('[data-view="course"] .section-head[style] .actions');
+      const cols=el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length;
+      const tr=title.getBoundingClientRect(),sr=summary.getBoundingClientRect(),hr=hero.getBoundingClientRect();
+      const cr=continueCard&&!continueCard.hidden?continueCard.getBoundingClientRect():null;
+      const br=continueBtn?continueBtn.getBoundingClientRect():null;
+      return{
+        metricCount:metrics.children.length,
+        metricColumns:cols(metrics),
+        toolbarColumns:cols(toolbar),
+        situationOverflow:getComputedStyle(situation).overflowX,
+        categoriesOverflow:getComputedStyle(categories).overflowX,
+        situationTouch:Math.min(...[...situation.querySelectorAll('button')].map(el=>el.getBoundingClientRect().height)),
+        categoryTouch:Math.min(...[...categories.querySelectorAll('button')].map(el=>el.getBoundingClientRect().height)),
+        titleBeforeSummary:tr.bottom<=sr.top+1,
+        titleInside:tr.left>=hr.left-1&&tr.right<=hr.right+1,
+        continueVisible:!!cr,
+        continueAccent:continueCard?getComputedStyle(continueCard).getPropertyValue('--map-accent').trim():'',
+        continueButtonInside:!cr||!br||(br.left>=cr.left-1&&br.right<=cr.right+1&&br.top>=cr.top-1&&br.bottom<=cr.bottom+1),
+        continueButtonHeight:br?.height||0,
+        layoutActionsVisible:layoutActions?getComputedStyle(layoutActions).display!=='none':false,
+        scrollWidth:document.documentElement.scrollWidth,
+        width:innerWidth
+      };
+    });
+    expect.soft(course.metricCount,scenario.name+' preserva quatro métricas do curso').toBe(4);
+    expect.soft(course.metricColumns,scenario.name+' organiza métricas conforme orientação').toBe(scenario.metricColumns);
+    expect.soft(course.toolbarColumns,scenario.name+' organiza busca e ações conforme orientação').toBe(scenario.toolbarColumns);
+    expect.soft(['auto','scroll'],scenario.name+' situação rolável').toContain(course.situationOverflow);
+    expect.soft(['auto','scroll'],scenario.name+' conteúdo rolável').toContain(course.categoriesOverflow);
+    expect.soft(course.situationTouch,scenario.name+' filtros de situação mantêm touch').toBeGreaterThanOrEqual(44);
+    expect.soft(course.categoryTouch,scenario.name+' filtros de conteúdo mantêm touch').toBeGreaterThanOrEqual(44);
+    expect.soft(course.titleBeforeSummary,scenario.name+' título não sobrepõe métricas').toBe(true);
+    expect.soft(course.titleInside,scenario.name+' título permanece dentro do hero').toBe(true);
+    expect.soft(course.continueVisible,scenario.name+' Retomar disponível').toBe(true);
+    expect.soft(course.continueAccent,scenario.name+' Retomar herda accent do mapa').not.toBe('');
+    expect.soft(course.continueButtonInside,scenario.name+' CTA Retomar fica dentro do card').toBe(true);
+    expect.soft(course.continueButtonHeight,scenario.name+' CTA Retomar mantém touch').toBeGreaterThanOrEqual(44);
+    expect.soft(course.layoutActionsVisible,scenario.name+' seletor grade/lista permanece acessível').toBe(true);
+    expect.soft(course.scrollWidth,scenario.name+' Curso sem overflow horizontal').toBeLessThanOrEqual(course.width+2);
+  }
 });
 
 test('etapa 1 [T] Meus Cursos usa duas colunas no iPad e mantém densidade confortável',async({page},testInfo)=>{

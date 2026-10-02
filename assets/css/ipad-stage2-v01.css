@@ -1,0 +1,251 @@
+/* V15.29.0-T · Etapa 2 · refinamento exclusivo do iPad/tablet */
+.hero-stats .stat-sub{display:none}
+
+/* HOME [T] · cinco métricas viram quatro em grade 2x2, sem perder a contagem de cursos. */
+html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeStats{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+  width:min(340px,100%)!important;
+  max-width:340px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeStats .stat-courses{
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeStats .stat{
+  min-width:0!important;
+  min-height:46px!important;
+  padding:6px 8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeStats .stat b{
+  font-size:14px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeStats .stat span{
+  margin-top:2px!important;
+  font-size:6.5px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeStats .stat-maps .stat-sub{
+  display:block;
+  margin-top:2px;
+  color:#747b84;
+  font:700 6.5px/1.15 var(--mono);
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+
+/* CURSO [T] · cabeçalho mais curto e leitura mais densa. */
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-hero{
+  padding:18px 20px 20px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .breadcrumb{
+  margin-bottom:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseTitle{
+  font-size:clamp(29px,4vw,38px)!important;
+  line-height:.98!important;
+  letter-spacing:-.018em;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseDesc{
+  margin-top:5px!important;
+  font-size:11px!important;
+  line-height:1.4;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-progress-summary{
+  gap:8px!important;
+  margin-top:10px!important;
+  padding:10px 11px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metrics{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric{
+  min-height:52px;
+  padding:7px 9px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric b{
+  font-size:15px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric span{
+  margin-top:2px!important;
+  font-size:7px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-exam-metric b{
+  font-size:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-summary-bar{
+  height:5px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-footer{
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-last-activity{
+  font-size:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-offline-status{
+  min-height:16px!important;
+  font-size:8.5px!important;
+}
+
+/* Retomar [T] · faixa horizontal e accent do próprio mapa. */
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin-top:8px!important;
+  padding:9px 10px!important;
+  border-color:color-mix(in srgb,var(--map-accent,#c3aa84) 28%,rgba(255,255,255,.08))!important;
+  border-left:2px solid var(--map-accent,#c3aa84)!important;
+  background:
+    linear-gradient(90deg,color-mix(in srgb,var(--map-accent,#c3aa84) 7%,rgba(255,255,255,.015)),rgba(8,10,13,.76))!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-copy{
+  gap:4px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-copy>.kicker{
+  color:color-mix(in srgb,var(--map-accent,#c3aa84) 78%,#b7bbc2)!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main{
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main .map-code{
+  min-width:42px!important;
+  height:30px!important;
+  color:var(--map-accent,#c3aa84)!important;
+  border-color:color-mix(in srgb,var(--map-accent,#c3aa84) 50%,rgba(255,255,255,.08))!important;
+  background:color-mix(in srgb,var(--map-accent,#c3aa84) 8%,#0a0b0e)!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main b{
+  font-size:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main span:not(.map-code){
+  font-size:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue>.primary{
+  width:auto!important;
+  min-width:106px;
+  min-height:44px!important;
+  padding-inline:12px!important;
+  color:color-mix(in srgb,var(--map-accent,#c3aa84) 78%,#fff)!important;
+  border-color:color-mix(in srgb,var(--map-accent,#c3aa84) 40%,rgba(255,255,255,.12))!important;
+}
+
+/* Ferramentas e filtros [T] · mais compactos, roláveis e sem recortes. */
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+  gap:7px!important;
+  margin-top:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-search-box{
+  min-height:44px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+  gap:6px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+  min-height:44px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter-wrap,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-category-wrap{
+  gap:5px!important;
+  margin-top:9px!important;
+  min-width:0;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-filter-label{
+  font-size:7.5px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filters,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-row{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:6px!important;
+  min-width:0;
+  max-width:100%;
+  margin:0!important;
+  padding:0 0 2px;
+  overflow-x:auto!important;
+  overflow-y:hidden;
+  overscroll-behavior-inline:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filters::-webkit-scrollbar,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-row::-webkit-scrollbar{
+  display:none;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn{
+  flex:0 0 auto;
+  min-height:44px!important;
+  padding-inline:9px!important;
+  font-size:8px!important;
+  white-space:nowrap;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter small{
+  min-width:17px!important;
+  height:17px!important;
+  font-size:7.5px!important;
+}
+@media(min-width:700px){
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .section-head[style]{
+    flex-direction:row!important;
+    align-items:center!important;
+    gap:10px!important;
+    margin-top:10px!important;
+    margin-bottom:8px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .section-head[style] .actions{
+    margin-left:auto;
+    gap:6px;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] #layoutGrid,
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] #layoutList{
+    min-width:44px!important;
+    min-height:44px!important;
+  }
+}
+
+/* Paisagem [T] · aproxima de desktop compacto. */
+@media(orientation:landscape){
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metrics{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+    display:flex!important;
+    width:auto!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button{
+    width:auto!important;
+    min-width:104px;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap,
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+    width:44px!important;
+  }
+}
+
+/* Retrato [T] · busca primeiro, ações logo abaixo. */
+@media(orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px!important;
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button{
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap,
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+    width:44px!important;
+  }
+}
