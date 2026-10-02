@@ -1974,7 +1974,7 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page})=
   await expect(restoreEmpty).toBeVisible();
   await expect(restoreEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-leitura-v15-22-0\.png/);
 
-  await page.evaluate(()=>{state.globalQuery='__sem_resultado_estado_vazio__';nav('maps');renderAllMaps()});
+  await page.evaluate(()=>{nav('maps');state.globalQuery='__sem_resultado_estado_vazio__';renderAllMaps()});
   const searchEmpty=page.locator('#allMaps .search-empty-state');
   await expect(searchEmpty).toBeVisible();
   await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-pensando-v15-22-0\.png/);
