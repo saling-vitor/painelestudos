@@ -38,6 +38,8 @@ check(index.includes(`study-planner.css?v=${expected}`),'index.html study-planne
 check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.css query');
 check(index.includes(`home-refine-v01.css?v=${expected}`),'index.html home-refine query');
 check(index.includes(`map-accent-v01.css?v=${expected}`),'index.html map-accent query');
+check(index.includes(`ui-chrome-refine-v01.css?v=${expected}`),'index.html ui-chrome query');
+check(index.includes('id="forceAppRefreshBtn"'),'index botão atualização forçada');
 check(allJs.includes(`sw.js?v=${expected}`),'registro sw.js query');
 
 const unsafeDollarForEach=/(?<!\$)\$\([^)]*\)\s*\.forEach\s*\(/g;
