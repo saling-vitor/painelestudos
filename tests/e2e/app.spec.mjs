@@ -2111,7 +2111,7 @@ test('smartphone etapa 2 usa cards editoriais com capa independente',async({page
   expect(courseStyle.coverHeight).toBeGreaterThanOrEqual(140);
   expect(courseStyle.coverHeight).toBeLessThanOrEqual(200);
   expect(Math.abs(courseStyle.coverWidth-courseStyle.cardWidth)).toBeLessThanOrEqual(2);
-  expect(['absolute','none']).toContain(courseStyle.editPosition);
+  expect(['static','none']).toContain(courseStyle.editPosition);
   expect(courseStyle.border).toBeGreaterThan(0);
   expect(courseStyle.metaBorder).toBe(0);
   expect(courseStyle.examBorder).toBe(0);
