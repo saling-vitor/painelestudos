@@ -455,7 +455,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   });
   expect(visual.synced.icon).not.toBe(visual.synced.text);
   expect(visual.synced.bg).not.toMatch(/114,\s*201,\s*149/);
-  expect(visual.syncing.animation).toContain('stage3-sync-spin');
+  expect(visual.syncing.animation).toContain('cloudSyncStatusPulse');
   expect(visual.activeBackground).not.toBe('none');
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
@@ -546,12 +546,17 @@ test('simulados recentes usam títulos legíveis e estado',async({page})=>{
   await page.goto('/#home');
   const first=page.locator('#homeSimulations .simulation-recent-item').first();
   await expect(first).toBeVisible();
-  const title=(await first.locator('.simulation-recent-copy b').textContent())||'';
-  const meta=(await first.locator('.simulation-recent-copy span').textContent())||'';
+  const title=(await first.locator('.simulation-recent-title-row b').textContent())||'';
+  const board=(await first.locator('.simulation-recent-board').textContent())||'';
+  const meta=(await first.locator('.simulation-recent-meta').textContent())||'';
+  const status=(await first.locator('.simulation-recent-status').textContent())||'';
+  const action=(await first.locator('.simulation-recent-action').textContent())||'';
   expect(title).toMatch(/Simulado/i);
   expect(title).not.toContain('_');
+  expect(board).toMatch(/FUNDATEC|AOCP|FEPESE|OBJETIVA|LEGALLE/i);
   expect(meta).toMatch(/questões/);
-  expect(meta).toMatch(/Não iniciado|Em andamento|Última nota|Concluído/i);
+  expect(status).toMatch(/Não iniciado|Em andamento|Concluído/i);
+  expect(action).toMatch(/Começar|Continuar|Rever/i);
 });
 
 test('cursos da home ocupam a largura em grade responsiva',async({page})=>{
