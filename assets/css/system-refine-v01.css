@@ -373,3 +373,115 @@
 /* Mobile mantém as alturas já validadas. */
 html.is-phone-layout .simulation-cover{aspect-ratio:16/9!important}
 html.is-phone-layout .simulation-code{max-width:150px}
+
+
+/* V15.23.3-G · [D+T] status da nuvem e ação de sincronização */
+@keyframes cloudSyncStatusPulse{
+  0%,100%{opacity:.55;transform:scale(.94)}
+  50%{opacity:1;transform:scale(1)}
+}
+
+/* Sidebar: status vira footer discreto, sem competir com a navegação. */
+html:not(.is-phone-layout) .side-bottom{
+  left:15px;
+  right:15px;
+  bottom:17px;
+}
+html:not(.is-phone-layout) .cloud-card{
+  padding:10px 4px 2px;
+  border:0!important;
+  border-top:1px solid rgba(255,255,255,.052)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) .cloud-line{
+  min-height:19px;
+  gap:8px;
+  color:#aeb3bb;
+  font-size:9.2px;
+  font-weight:720;
+  line-height:1.2;
+}
+html:not(.is-phone-layout) .cloud-card .cloud-dot{
+  flex:0 0 14px;
+  width:14px;
+  height:14px;
+  border-radius:0;
+  background:#7e858e;
+  box-shadow:none;
+  -webkit-mask:url('../ui-icons/sf-black-filled/cloud.png') center/contain no-repeat;
+  mask:url('../ui-icons/sf-black-filled/cloud.png') center/contain no-repeat;
+}
+html:not(.is-phone-layout) .cloud-card .cloud-dot.online{background:#72c995;box-shadow:none}
+html:not(.is-phone-layout) .cloud-card .cloud-dot.warn{background:#b99a63}
+html:not(.is-phone-layout) .cloud-card .cloud-dot.error{background:#cb7a83}
+html:not(.is-phone-layout) .cloud-side-meta{
+  margin-top:3px;
+  padding-left:22px;
+  color:#5f6670;
+  font-size:7.4px;
+  line-height:1.35;
+  letter-spacing:.005em;
+}
+
+/* Topbar: ação neutra; cor comunica somente estado real/feedback. */
+html:not(.is-phone-layout) #syncTop{
+  min-width:104px;
+  height:36px;
+  min-height:36px;
+  padding:0 11px;
+  gap:6px;
+  border-color:rgba(255,255,255,.068)!important;
+  border-radius:8px;
+  background:rgba(255,255,255,.014)!important;
+  color:#aeb4bc!important;
+  box-shadow:none!important;
+  font-size:9.5px;
+  font-weight:740;
+}
+html:not(.is-phone-layout) #syncTop>.ui-icon{
+  --icon-size:14px;
+  color:#858c95!important;
+}
+html:not(.is-phone-layout) #syncTop[data-sync-state="synced"]:not(.sync-feedback)>.ui-icon{
+  color:#858c95!important;
+}
+html:not(.is-phone-layout) #syncTop.sync-feedback{
+  border-color:rgba(114,201,149,.14)!important;
+  background:rgba(114,201,149,.025)!important;
+  color:#a9cdb5!important;
+}
+html:not(.is-phone-layout) #syncTop.sync-feedback>.ui-icon{color:#72c995!important}
+html:not(.is-phone-layout) #syncTop[data-sync-state="syncing"]>.ui-icon{
+  color:#c4b48f!important;
+  animation:cloudSyncStatusPulse 1.05s ease-in-out infinite!important;
+}
+html:not(.is-phone-layout) #syncTop[data-sync-state="offline"]{
+  border-color:rgba(185,154,99,.11)!important;
+  background:rgba(185,154,99,.018)!important;
+  color:#ac9975!important;
+}
+html:not(.is-phone-layout) #syncTop[data-sync-state="offline"]>.ui-icon{color:#b99a63!important}
+html:not(.is-phone-layout) #syncTop[data-sync-state="error"]{
+  border-color:rgba(203,122,131,.13)!important;
+  background:rgba(203,122,131,.02)!important;
+  color:#bd8c92!important;
+}
+html:not(.is-phone-layout) #syncTop[data-sync-state="error"]>.ui-icon{color:#cb7a83!important}
+html:not(.is-phone-layout) #syncTop:disabled{opacity:.82!important}
+
+/* iPad/tablet: mesma linguagem, com alvo touch de 44 px. */
+html.is-ipad:not(.is-phone-layout) #syncTop{
+  width:100%;
+  min-width:0;
+  height:44px;
+  min-height:44px;
+  padding-inline:10px;
+  border-radius:9px;
+  font-size:9.5px;
+}
+html.is-ipad:not(.is-phone-layout) #syncTop>.ui-icon{--icon-size:15px}
+@media(prefers-reduced-motion:reduce){
+  html:not(.is-phone-layout) #syncTop[data-sync-state="syncing"]>.ui-icon{animation:none!important}
+}
