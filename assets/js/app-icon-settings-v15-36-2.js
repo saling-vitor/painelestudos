@@ -8,13 +8,15 @@
       preview:'assets/brand/app-icons/app-icon-light-rounded-192-v15-23-1.png',
       favicon:'assets/brand/app-icons/app-icon-light-rounded-192-v15-23-1.png',
       touch:'assets/brand/app-icons/app-icon-light-rounded-192-v15-23-1.png',
-      touchSize:'192x192'
+      touchSize:'192x192',
+      manifest:'manifest-light-v15.36.2.webmanifest'
     },
     dark:{
       preview:'assets/brand/app-icons/app-icon-dark-rounded-192-v15-23-1.png',
       favicon:'assets/brand/app-icons/app-icon-dark-rounded-192-v15-23-1.png',
       touch:'assets/brand/app-icons/app-icon-dark-rounded-180-v15-23-1.png',
-      touchSize:'180x180'
+      touchSize:'180x180',
+      manifest:'manifest-v15.23.6.webmanifest'
     }
   };
   function readMode(){
@@ -44,6 +46,8 @@
     }
     setHref('appAppleTouchIcon',asset.touch+'?v=15.36.2-'+resolved,asset.touchSize);
     setHref('appAppleTouchIconPrecomposed',asset.touch+'?v=15.36.2-'+resolved,asset.touchSize);
+    const manifest=document.getElementById('appManifest');
+    if(manifest&&manifest.getAttribute('href')!==asset.manifest)manifest.setAttribute('href',asset.manifest);
 
     document.querySelectorAll('[data-app-icon-mode]').forEach(button=>{
       const selected=button.dataset.appIconMode===mode;
