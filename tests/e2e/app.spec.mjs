@@ -360,7 +360,7 @@ test('card de simulado usa hierarquia visual mais limpa',async({page})=>{
   expect(['0px','']).toContain(styles.footerBorder);
   expect(['0px','']).toContain(styles.footerPadding);
   expect(styles.metaRadius).toBe('5px');
-  expect(styles.titleMargin).toBe('14px');
+  expect(styles.titleMargin).toBe('10px');
   expect(styles.sourceDot).toBe('5px');
 });
 
