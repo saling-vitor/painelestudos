@@ -1887,4 +1887,25 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page})=
   expect(geometry.imgWidth).toBeGreaterThan(40);
   expect(geometry.before==='none'||geometry.before==='normal'||geometry.before==='""').toBe(true);
   expect(geometry.display).toBe('grid');
+
+  await page.evaluate(()=>{
+    const box=document.querySelector('#continueBox');
+    box.innerHTML=emptyStateHtml({title:'Pronto para começar?',text:'Abra um mapa pela primeira vez.',mascot:'continue',compact:true,className:'compact-geometry-probe'});
+  });
+  const compactGeometry=await page.locator('#continueBox .compact-geometry-probe').evaluate(el=>{
+    const img=el.querySelector('.empty-state-graphic'),copy=el.querySelector('.empty-state-copy'),ir=img.getBoundingClientRect(),cr=copy.getBoundingClientRect();
+    return{imgRight:ir.right,copyLeft:cr.left,imgWidth:ir.width};
+  });
+  expect(compactGeometry.imgWidth).toBeGreaterThan(40);
+  expect(compactGeometry.imgRight).toBeLessThanOrEqual(compactGeometry.copyLeft+.5);
+
+  await page.evaluate(async()=>{nav('settings');await renderRestorePoints()});
+  const restoreEmpty=page.locator('#restorePointsList .restore-points-empty-state');
+  await expect(restoreEmpty).toBeVisible();
+  await expect(restoreEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-leitura-v15-22-0\.png/);
+
+  await page.evaluate(()=>{state.globalQuery='__sem_resultado_estado_vazio__';nav('maps');renderAllMaps()});
+  const searchEmpty=page.locator('#allMaps .search-empty-state');
+  await expect(searchEmpty).toBeVisible();
+  await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-pensando-v15-22-0\.png/);
 });

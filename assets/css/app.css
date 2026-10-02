@@ -3977,7 +3977,7 @@ html.is-phone-layout .courses-count{
   padding:15px 16px;
   text-align:left;
 }
-.empty-state--compact .empty-state-graphic{width:64px;height:64px;max-height:64px}
+.empty-state--compact .empty-state-graphic{width:64px;max-width:64px;height:auto;max-height:64px;object-fit:contain}
 .empty-state--compact .empty-state-copy{justify-items:start}
 .empty-state--compact .empty-state-copy p{max-width:560px}
 .simulation-home-empty.empty-state{
@@ -3992,6 +3992,8 @@ html.is-phone-layout .courses-count{
 @media(max-width:900px){
   .empty.empty-state{min-height:190px;padding:24px 18px}
   .empty-state .empty-state-graphic{width:min(112px,32vw)}
+  .empty.empty-state--compact{grid-template-columns:58px minmax(0,1fr);gap:11px}
+  .empty-state--compact .empty-state-graphic{width:58px;max-width:58px;height:auto;max-height:58px;object-fit:contain}
   .simulation-home-empty.empty-state{grid-template-columns:58px minmax(0,1fr)}
   .simulation-home-empty.empty-state>button{grid-column:1/-1;justify-self:stretch;width:100%}
 }
