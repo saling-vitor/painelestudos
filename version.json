@@ -1,14 +1,13 @@
 {
-  "version": "15.36.0",
-  "label": "V15.36.0-G",
-  "releasedAt": "2026-10-02T22:55:00.000Z",
-  "notes": "Consolidação de publicação: integra refinamentos visuais pendentes, oferece atualização forçada segura do PWA e valida que o GitHub Pages público realmente recebeu a versão antes de considerar o deploy concluído.",
+  "version": "15.36.1",
+  "label": "V15.36.1-T",
+  "releasedAt": "2026-10-02T23:20:00.000Z",
+  "notes": "No iPad em paisagem, o status de sincronização da barra lateral foi reduzido a um único ícone de nuvem, preservando os estados sem ocupar o rodapé da dock.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Refinamento de scrollbars, menus, selects e foco visual consolidado em Desktop, iPad e iPhone",
-    "[G] Nova ação para forçar atualização do aplicativo sem apagar cursos, progresso, conta ou dados locais",
-    "[G] Cache do PWA renovado para impedir permanência em bundles antigos",
-    "[CI] Deploy só conclui após confirmar a versão publicada em version.json e index.html no site público",
-    "[QA] Contratos E2E cobrem o refinamento visual e a atualização forçada segura"
+    "[T] iPad paisagem usa um único ícone de nuvem no rodapé da dock lateral",
+    "[T] Verde indica conectado; âmbar indica atenção; vermelho indica erro; cinza representa estado neutro ou offline",
+    "[T] Textos detalhados deixam de ocupar espaço visual na lateral e continuam disponíveis em Configurações",
+    "[T] Desktop, iPad retrato e iPhone permanecem sem alteração neste refinamento"
   ]
 }
