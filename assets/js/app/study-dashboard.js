@@ -7,7 +7,7 @@
   const ACTIVE_KEY='studyapp.studySession.active';
   const VERSION=1;
   const DEFAULT_GOALS={dailyMinutes:120,weeklyMinutes:600,pomodoroWork:25,pomodoroBreak:5,autoFocus:false};
-  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode='month';
+  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode='month',goalDraft=null;
 
   const safeJson=(value,fallback)=>{try{return JSON.parse(value)}catch{return fallback}};
   const isoNow=()=>new Date().toISOString();
@@ -420,13 +420,14 @@
     root.querySelectorAll('[data-doubt-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.doubtOpen));
   }
 
+  function goalsFromForm(form){
+    const fd=new FormData(form);
+    return{dailyMinutes:clamp(fd.get('dailyMinutes'),1,1440)||120,weeklyMinutes:clamp(fd.get('weeklyMinutes'),1,10080)||600,pomodoroWork:clamp(fd.get('pomodoroWork'),5,180)||25,pomodoroBreak:clamp(fd.get('pomodoroBreak'),1,60)||5,autoFocus:!!form.elements.autoFocus?.checked};
+  }
   function saveGoalsFromForm(form){
-    const data=readData(),fd=new FormData(form);
-    data.goals.dailyMinutes=clamp(fd.get('dailyMinutes'),1,1440)||120;
-    data.goals.weeklyMinutes=clamp(fd.get('weeklyMinutes'),1,10080)||600;
-    data.goals.pomodoroWork=clamp(fd.get('pomodoroWork'),5,180)||25;
-    data.goals.pomodoroBreak=clamp(fd.get('pomodoroBreak'),1,60)||5;
-    data.goals.autoFocus=form.elements.autoFocus.checked;
+    const data=readData();
+    data.goals=goalsFromForm(form);
+    goalDraft=null;
     writeData(data);renderAll();toast('Metas de estudo salvas.');
   }
   function requestResetStudyTime(scope){
@@ -449,10 +450,12 @@
       const layout=view.querySelector('.settings-layout')||view;
       layout.insertAdjacentElement('afterend',root);
     }
-    const data=readData(),g=data.goals,snap=goalSnapshot();
+    const data=readData(),g=goalDraft||data.goals,snap=goalSnapshot();
     const allTime=window.StudyTime?.all?.()||0;
     root.innerHTML='<div class="panel-kicker">Rotina de estudo</div><div class="study-settings-head"><div><h2>Metas, timer e foco</h2><p>Defina sua carga de estudo e o comportamento das sessões.</p></div><div class="study-settings-summary"><span>Hoje <b>'+escape(fmtMin(snap.today))+'</b></span><span>Semana <b>'+escape(fmtMin(snap.week))+'</b></span></div></div><form id="studyGoalsForm" class="study-goals-form"><label>Meta diária <span><input name="dailyMinutes" type="number" min="1" max="1440" step="5" value="'+g.dailyMinutes+'"> min</span></label><label>Meta semanal <span><input name="weeklyMinutes" type="number" min="1" max="10080" step="15" value="'+g.weeklyMinutes+'"> min</span></label><label>Pomodoro <span><input name="pomodoroWork" type="number" min="5" max="180" step="5" value="'+g.pomodoroWork+'"> min</span></label><label>Pausa <span><input name="pomodoroBreak" type="number" min="1" max="60" step="1" value="'+g.pomodoroBreak+'"> min</span></label><label class="study-settings-toggle"><span><b>Modo foco automático</b><small>Oculta controles secundários ao iniciar uma sessão dentro de um mapa.</small></span><input name="autoFocus" type="checkbox" '+(g.autoFocus?'checked':'')+'></label><div class="study-settings-actions"><button class="primary" type="submit">Salvar metas</button><button class="secondary" type="button" data-settings-pomodoro>Iniciar Pomodoro</button></div></form><section class="study-time-manage" aria-labelledby="studyTimeManageTitle"><div class="study-time-manage-head"><div><span class="panel-kicker">Tempo registrado</span><h3 id="studyTimeManageTitle">Gerenciar tempo de estudo</h3><p>Corrija apenas os contadores de tempo sem apagar sessões, agenda, progresso ou anotações.</p></div><div class="study-time-manage-total"><span>Total acumulado</span><b>'+escape(fmtMin(allTime))+'</b></div></div><div class="study-time-manage-actions"><button type="button" class="secondary" data-study-time-reset="today">Zerar hoje</button><button type="button" class="secondary" data-study-time-reset="week">Zerar semana</button><button type="button" class="danger" data-study-time-reset="all">Zerar todo o histórico</button></div><small class="study-time-manage-note">A limpeza altera somente as métricas de tempo. OK/DIF/REV, notas, agenda, simulados e demais dados permanecem intactos.</small></section>';
     const form=root.querySelector('#studyGoalsForm');
+    form.oninput=()=>{goalDraft=goalsFromForm(form)};
+    form.onchange=()=>{goalDraft=goalsFromForm(form)};
     form.onsubmit=e=>{e.preventDefault();saveGoalsFromForm(form)};
     root.querySelector('[data-settings-pomodoro]').onclick=()=>startPomodoro(g.pomodoroWork);
     root.querySelectorAll('[data-study-time-reset]').forEach(button=>button.onclick=()=>requestResetStudyTime(button.dataset.studyTimeReset));
