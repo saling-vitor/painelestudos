@@ -1,7 +1,10 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 
-const E2E_CATALOG=JSON.parse(fs.readFileSync(new URL('../../data/catalog.json',import.meta.url),'utf8'));\nconst E2E_RELEASE=JSON.parse(fs.readFileSync(new URL('../../version.json',import.meta.url),'utf8'));\nconst E2E_APP_VERSION=String(E2E_RELEASE.version||'');\nconst E2E_APP_VERSION_LABEL=String(E2E_RELEASE.label||('V'+E2E_APP_VERSION));
+const E2E_CATALOG=JSON.parse(fs.readFileSync(new URL('../../data/catalog.json',import.meta.url),'utf8'));
+const E2E_RELEASE=JSON.parse(fs.readFileSync(new URL('../../version.json',import.meta.url),'utf8'));
+const E2E_APP_VERSION=String(E2E_RELEASE.version||'');
+const E2E_APP_VERSION_LABEL=String(E2E_RELEASE.label||('V'+E2E_APP_VERSION));
 const E2E_CLOUD_MAP_ROWS=(E2E_CATALOG.maps||[]).map((m,i)=>({
   id:m.id||('e2e-map-'+i),
   user_id:'e2e-user',
