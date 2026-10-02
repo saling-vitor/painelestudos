@@ -245,8 +245,8 @@ test('linguagem visual retangular remove pills dos controles',async({page})=>{
   });
   expect(radii.situation).toBe('5px');
   expect(radii.category).toBe('5px');
-  expect(radii.search).toBe('9px');
-  expect(radii.primary).toBe('7px');
+  expect(radii.search).toBe('8px');
+  expect(radii.primary).toBe('8px');
   expect(radii.mapCard).toBe('12px');
   expect(radii.progressTrack).toBe('999px');
 });
