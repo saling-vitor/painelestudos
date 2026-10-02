@@ -837,6 +837,9 @@ html.is-ipad:not(.is-phone-layout) .progress-filter{
 html.is-ipad:not(.is-phone-layout) .progress-sort-control select{
   min-height:44px!important;
 }
+html.is-ipad:not(.is-phone-layout) .progress-course-toggle{
+  min-height:44px!important;
+}
 
 /* AGENDA · calendário principal + planejamento lateral sem esmagar campos. */
 html.is-ipad:not(.is-phone-layout) .study-agenda-head{
