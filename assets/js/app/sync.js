@@ -1,4 +1,62 @@
-'use strict';async function syncLocalCourseDrafts(me){const owner=String(me?.id||'');if(!owner||(StudyCloud.session()?.user?.id||'')!==owner)return;const drafts=JSON.parse(localStorage.getItem('studyapp.localCourses')||'[]');if(!drafts.length)return;for(const c of drafts){if((StudyCloud.session()?.user?.id||'')!==owner)return;await StudyCloud.upsert('courses',{id:c.id,user_id:owner,title:c.title,subtitle:c.subtitle||'',city:c.city||'',institution:c.institution||'',board:c.board||'',exam_date:c.examDate||null,status:c.status||'active'},'user_id,id')}if((StudyCloud.session()?.user?.id||'')===owner)localStorage.removeItem('studyapp.localCourses')}function localCourseDrafts(){try{const a=JSON.parse(localStorage.getItem('studyapp.localCourses')||'[]');return Array.isArray(a)?a:[]}catch{return[]}}function addLocalCourseDrafts(drafts=localCourseDrafts()){const by=new Map(state.cloudCourses.map(c=>[c.id,c]));drafts.forEach(c=>by.set(c.id,{...(by.get(c.id)||{}),...c}));state.cloudCourses=[...by.values()]}function cloudCacheKey(){const uid=StudyCloud.session()?.user?.id||'anonymous';return'studyapp.cloudCatalog::'+uid}function restoreCloudCache(){try{const c=JSON.parse(localStorage.getItem(cloudCacheKey())||'null');if(!c)return false;state.cloudCourses=Array.isArray(c.courses)?c.courses:[];state.cloudMaps=Array.isArray(c.maps)?c.maps:[];state.cloudDocs=Array.isArray(c.docs)?c.docs:[];state.cloudSimulations=Array.isArray(c.simulations)?c.simulations:[];if(c.user&&!state.user)state.user=c.user;return true}catch{return false}}function saveCloudCache(){try{localStorage.setItem(cloudCacheKey(),JSON.stringify({courses:state.cloudCourses,maps:state.cloudMaps,docs:state.cloudDocs,simulations:state.cloudSimulations,user:state.user?{id:state.user.id,email:state.user.email||''}:null,savedAt:new Date().toISOString()}))}catch{}}
+'use strict';
+/* V15.23.1-G · integridade de sincronização entre dispositivos */
+(function(){
+  const originalMerge=window.mergePreferencePayloads;
+  const originalSaveCover=window.saveCoverOverride;
+  const originalResetCover=window.resetCoverOverrideNow;
+  if(typeof originalMerge!=='function')return;
+
+  window.preferenceTimestamp=function(value,fallback=0){
+    let raw=0;
+    if(typeof value==='string'||typeof value==='number')raw=value;
+    else if(value&&typeof value==='object')raw=value.updatedAt||value.updated_at||value.finishedAt||value.lastStudied||value.lastOpened||value.at||0;
+    const ts=typeof raw==='number'?raw:Date.parse(String(raw||''));
+    return Number.isFinite(ts)&&ts>0?ts:(Number(fallback)||0);
+  };
+
+  const mergeSimpleMap=(localMap={},cloudMap={},preferLocal=true)=>{
+    const out={},keys=new Set([...Object.keys(localMap||{}),...Object.keys(cloudMap||{})]);
+    for(const key of keys){
+      const local=localMap?.[key],cloud=cloudMap?.[key];
+      if(local===undefined){out[key]=cloud;continue}
+      if(cloud===undefined){out[key]=local;continue}
+      out[key]=local===cloud?local:(preferLocal?local:cloud);
+    }
+    return out;
+  };
+
+  window.mergePreferencePayloads=function(localPayload={},cloudPayload={},localTs=0,cloudTs=0){
+    const merged=originalMerge(localPayload,cloudPayload,localTs,cloudTs);
+    merged.mapContentSources=mergeSimpleMap(localPayload.mapContentSources||{},cloudPayload.mapContentSources||{},localTs>=cloudTs);
+    return merged;
+  };
+
+  const canonical=value=>{
+    if(Array.isArray(value))return value.map(canonical);
+    if(value&&typeof value==='object'){
+      const out={};
+      for(const key of Object.keys(value).sort())out[key]=canonical(value[key]);
+      return out;
+    }
+    return value;
+  };
+  window.preferencePayloadSignature=function(payload={}){
+    try{return JSON.stringify(canonical(payload))}catch{return''}
+  };
+
+  const withStrictPreferenceSync=async(fn,args)=>{
+    const normal=window.syncPreferencesCloud;
+    window.syncPreferencesCloud=async function(...syncArgs){
+      const result=await normal(...syncArgs);
+      return result==='queued'?false:result;
+    };
+    try{return await fn(...args)}
+    finally{window.syncPreferencesCloud=normal}
+  };
+  if(typeof originalSaveCover==='function')window.saveCoverOverride=function(...args){return withStrictPreferenceSync(originalSaveCover,args)};
+  if(typeof originalResetCover==='function')window.resetCoverOverrideNow=function(...args){return withStrictPreferenceSync(originalResetCover,args)};
+})();
+async function syncLocalCourseDrafts(me){const owner=String(me?.id||'');if(!owner||(StudyCloud.session()?.user?.id||'')!==owner)return;const drafts=JSON.parse(localStorage.getItem('studyapp.localCourses')||'[]');if(!drafts.length)return;for(const c of drafts){if((StudyCloud.session()?.user?.id||'')!==owner)return;await StudyCloud.upsert('courses',{id:c.id,user_id:owner,title:c.title,subtitle:c.subtitle||'',city:c.city||'',institution:c.institution||'',board:c.board||'',exam_date:c.examDate||null,status:c.status||'active'},'user_id,id')}if((StudyCloud.session()?.user?.id||'')===owner)localStorage.removeItem('studyapp.localCourses')}function localCourseDrafts(){try{const a=JSON.parse(localStorage.getItem('studyapp.localCourses')||'[]');return Array.isArray(a)?a:[]}catch{return[]}}function addLocalCourseDrafts(drafts=localCourseDrafts()){const by=new Map(state.cloudCourses.map(c=>[c.id,c]));drafts.forEach(c=>by.set(c.id,{...(by.get(c.id)||{}),...c}));state.cloudCourses=[...by.values()]}function cloudCacheKey(){const uid=StudyCloud.session()?.user?.id||'anonymous';return'studyapp.cloudCatalog::'+uid}function restoreCloudCache(){try{const c=JSON.parse(localStorage.getItem(cloudCacheKey())||'null');if(!c)return false;state.cloudCourses=Array.isArray(c.courses)?c.courses:[];state.cloudMaps=Array.isArray(c.maps)?c.maps:[];state.cloudDocs=Array.isArray(c.docs)?c.docs:[];state.cloudSimulations=Array.isArray(c.simulations)?c.simulations:[];if(c.user&&!state.user)state.user=c.user;return true}catch{return false}}function saveCloudCache(){try{localStorage.setItem(cloudCacheKey(),JSON.stringify({courses:state.cloudCourses,maps:state.cloudMaps,docs:state.cloudDocs,simulations:state.cloudSimulations,user:state.user?{id:state.user.id,email:state.user.email||''}:null,savedAt:new Date().toISOString()}))}catch{}}
 function offlinePrivateEntries(){const out=[],seen=new Set(),add=(kind,path)=>{path=String(path||'').trim();if(!path||seen.has(path))return;seen.add(path);out.push({kind,path})};for(const m of state.cloudMaps||[])add('html',m.storage_path);for(const sim of state.cloudSimulations||[])add('html',sim.storagePath);for(const doc of state.cloudDocs||[])add('blob',doc.storagePath);for(const meta of Object.values(state.coverOverrides||{}))if(meta?.path)add('blob',meta.path);return out}
 async function offlineLibraryStatus(){const entries=offlinePrivateEntries();let cached=0;for(const item of entries)if(await StudyCloud.isPrivateCached?.(item.path))cached++;return{total:entries.length,cached}}
 function updateOfflinePreparationUI(done,total,failed=0){const label=$('#offlinePrepareStatus');if(!label)return;if(!total){label.textContent='Nenhum arquivo adicional precisa ser baixado.';return}const pct=Math.round(done/total*100);label.textContent='Preparando offline · '+done+'/'+total+' · '+pct+'%'+(failed?' · '+failed+' falharam':'')}
