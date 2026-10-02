@@ -2864,6 +2864,11 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(panel).toBeVisible();
   const choices=panel.locator('[data-app-icon-mode]');
   await expect(choices).toHaveCount(3);
+  const mobileToggle=panel.locator('.mobile-settings-toggle');
+  if(await mobileToggle.count()){
+    await mobileToggle.click();
+    await expect(panel).not.toHaveClass(/mobile-settings-collapsed/);
+  }
 
   const light=panel.locator('[data-app-icon-mode="light"]');
   await light.click();
