@@ -1,14 +1,13 @@
 {
-  "version": "15.24.0",
-  "label": "V15.24.0-G",
-  "releasedAt": "2026-10-02T13:49:00.000Z",
-  "notes": "Simulados agora têm gerenciamento completo por card, vínculo com curso, capa personalizada e manutenção de HTML; o Reader passa a mostrar a sincronização por um ícone compacto de nuvem.",
+  "version": "15.25.0",
+  "label": "V15.25.0-G",
+  "releasedAt": "2026-10-02T14:45:00.000Z",
+  "notes": "Cursos agora têm capa e edição visual; iPad recebe layouts dedicados em retrato e paisagem, e os simulados recentes ficam alinhados ao card de retomada no desktop.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Simulados recebem menu ••• com gerenciar, trocar capa, vincular a curso, substituir HTML, duplicar, exportar e excluir",
-    "[G] Gerenciamento do simulado separa Identificação, Organização, Aparência, Prova e dados e Avançado",
-    "[G] Vínculo de simulado com curso fica na conta/nuvem e não modifica o HTML original",
-    "[G] Capas personalizadas de simulados são sincronizadas e preservadas para uso offline",
-    "[G] Reader troca o texto de sincronização por nuvem vermelha/âmbar/verde com tooltip e estado acessível"
+    "[G] Cursos recebem capa padrão, capa personalizada e atalho de edição direto no card",
+    "[T] Progresso e Meus Cursos ganham composição dedicada para iPad em retrato e paisagem",
+    "[D] Simulados recentes passam a acompanhar a altura do card Retomar onde parei",
+    "[M] Capas de curso ganham apresentação compacta e responsiva no celular"
   ]
 }
