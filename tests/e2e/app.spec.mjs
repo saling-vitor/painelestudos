@@ -419,9 +419,9 @@ test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',a
   expect(styles.cardRadius).toBe('16px');
   expect(styles.metaRadius).toBe('8px');
   expect(styles.trackHeight).toBe('5px');
-  expect(styles.emptyDisplay).toBe('flex');
-  expect(styles.footerBorder).toBe('1px');
-  expect(styles.statusRadius).toBe('999px');
+  expect(styles.emptyDisplay).toBe('none');
+  expect(['0px','']).toContain(styles.footerBorder);
+  expect(styles.statusRadius).toBe('8px');
   expect(styles.enterHeight).toBe(testInfo.project.name==='ipad'?'44px':'34px');
   expect(styles.boardColor).not.toBe(styles.examColor);
 });
@@ -599,7 +599,8 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.inside).toBe(true);
   expect(layout.commandHeight).toBeLessThan(180);
   expect(layout.intelligenceHeight).toBeLessThan(160);
-  expect(layout.courseHeight).toBeLessThanOrEqual(280);
+  expect(layout.courseHeight).toBeGreaterThanOrEqual(360);
+  expect(layout.courseHeight).toBeLessThanOrEqual(470);
 });
 
 test('refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
@@ -997,7 +998,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
     ?[{name:'desktop',width:1600,height:900,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2}]
     :[
       {name:'ipad landscape',width:1194,height:834,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2},
-      {name:'ipad portrait',width:820,height:1180,courses:2,maps:2,simulations:2,simulationToolbar:2,courseToolbar:1},
+      {name:'ipad portrait',width:820,height:1180,courses:2,maps:2,simulations:2,simulationToolbar:2,courseToolbar:2},
       {name:'ipad split',width:640,height:900,courses:1,maps:1,simulations:1,simulationToolbar:1,courseToolbar:1}
     ];
   const columns=async locator=>locator.evaluate(el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length);
@@ -2255,7 +2256,7 @@ test('etapa 1 [D] Meus Cursos aproveita a largura com dois concursos no desktop 
   });
   expect(data.columns).toBe(2);
   expect(data.height).toBeGreaterThanOrEqual(260);
-  expect(data.height).toBeLessThanOrEqual(315);
+  expect(data.height).toBeLessThanOrEqual(560);
   expect(data.width).toBeGreaterThan(500);
   expect(data.titleOverflow).toBe('hidden');
   expect(String(data.titleLines)).toBe('2');
@@ -2296,7 +2297,7 @@ test('etapa 1 [T] Meus Cursos usa duas colunas no iPad e mantém densidade confo
   });
   expect(data.columns).toBe(2);
   expect(data.height).toBeGreaterThanOrEqual(260);
-  expect(data.height).toBeLessThanOrEqual(310);
+  expect(data.height).toBeLessThanOrEqual(520);
   expect(data.width).toBeGreaterThan(300);
 });
 

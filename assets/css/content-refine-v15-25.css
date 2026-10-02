@@ -678,3 +678,24 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseMapCount{
     font-size:23.5px!important;
   }
 }
+
+
+/* V15.26.1-G · ajuste final de QA responsivo */
+@media(pointer:coarse){
+  html.is-ipad:not(.is-phone-layout) .map-card.has-cover .map-admin-btn,
+  html.is-ipad:not(.is-phone-layout) .simulation-card-menu-btn{
+    width:31px!important;
+    min-width:31px!important;
+    height:31px!important;
+    min-height:31px!important;
+    border-radius:9px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card .enter{
+    min-height:44px!important;
+    height:44px!important;
+  }
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn{
+  border-radius:5px!important;
+}

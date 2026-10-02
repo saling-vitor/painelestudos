@@ -1,14 +1,14 @@
 {
-  "version": "15.26.0",
-  "label": "V15.26.0-G",
-  "releasedAt": "2026-10-02T16:15:00.000Z",
-  "notes": "Cards de cursos passam a destacar a capa acima das informações; a tela interna do curso foi compactada no iPad, a hero móvel ganhou arte maior e os menus de Simulados e Mapas usam a mesma geometria.",
+  "version": "15.26.1",
+  "label": "V15.26.1-G",
+  "releasedAt": "2026-10-02T16:36:00.000Z",
+  "notes": "Pacote responsivo final: cards de curso editoriais, tela de curso otimizada no iPad, hero móvel reequilibrada e menus de Mapas/Simulados alinhados, com ajustes finais de alvo touch e QA.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Menu ••• dos Simulados passa a usar as mesmas dimensões do menu dos Mapas em desktop, iPad e celular",
-    "[G] Cards de cursos ganham capa independente no topo, informações abaixo e ação ••• sobre a imagem",
-    "[T] Tela interna do curso fica mais compacta: resumo, Retomar, busca, ações e filtros ocupam menos altura",
-    "[T] Mapas do curso aparecem mais cedo na primeira dobra e filtros passam a usar faixa horizontal mais leve",
-    "[M] Hero da Home mantém a altura compacta, aumenta bastante a arte e reduz o peso visual do título e das métricas"
+    "[G] Cards de curso usam capa independente no topo e informações abaixo",
+    "[G] Menu ••• dos Simulados acompanha exatamente a dimensão visual do menu dos Mapas por dispositivo",
+    "[T] Curso interno fica mais compacto e mantém busca + ações integradas no iPad",
+    "[T] Ação Entrar preserva alvo touch de 44 px no iPad e filtros mantêm linguagem retangular",
+    "[M] Hero da Home exibe arte maior, título menos dominante e métricas mais compactas"
   ]
 }
