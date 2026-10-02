@@ -260,9 +260,12 @@
     const returning=!!(active||window.StudyTime?.week?.()||localStorage.getItem('studyapp.lastMap'));
     home.classList.toggle('study-dashboard-returning',returning);
     const nextPlan=window.StudyCoach?.snapshot?.().items?.[0]||null;
+    const nextMap=nextPlan?.kind==='map'&&nextPlan.key?mapById(nextPlan.key):null,nextAccent=nextMap?mapAccentValue(nextMap):'',nextCode=nextMap?.code||nextPlan?.code||'';
     const nextTitle=nextPlan?.title||planned[0]?.title||'Escolher próximo estudo';
     const nextMeta=nextPlan?((nextPlan.reason||'')+(nextPlan.minutes?' · '+nextPlan.minutes+' min':'')):planned[0]?.minutes?(planned[0].minutes+' min planejados'):'Abra um mapa ou use uma sessão livre';
-    root.innerHTML='<div class="study-command-card"><div class="study-command-head"><div><span class="kicker">Hoje</span><h2>'+escape(nextTitle)+'</h2><p>'+escape(nextMeta)+'</p></div><button type="button" class="primary" data-dashboard-start>'+(active?'Ver sessão':'Começar agora')+'</button></div><div class="study-command-metrics"><button type="button" data-dashboard-agenda><span>Meta de hoje</span><b>'+escape(fmtMin(snap.today))+' / '+escape(fmtMin(snap.dailyTarget))+'</b><i><em style="width:'+snap.dailyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Semana</span><b>'+escape(fmtMin(snap.week))+' / '+escape(fmtMin(snap.weeklyTarget))+'</b><i><em style="width:'+snap.weeklyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Revisões</span><b>'+Number(review.dueCount||0)+'</b><small>pendentes</small></button>'+(exam?'<button type="button" data-dashboard-agenda><span>Próxima prova</span><b>'+exam.days+' dia'+(exam.days===1?'':'s')+'</b><small>'+escape(exam.course.title||'Concurso')+'</small></button>':'<button type="button" data-dashboard-agenda><span>Agenda</span><b>'+planned.length+'</b><small>itens hoje</small></button>')+'</div></div>';
+    const commandStyle=nextAccent?' style="'+escape('--map-accent:'+nextAccent)+'" data-map-accent="true"':'';
+    const commandMap=nextMap?'<span class="study-command-map-code">'+escape(nextCode)+'</span>':'';
+    root.innerHTML='<div class="study-command-card"'+commandStyle+'><div class="study-command-head"><div>'+commandMap+'<span class="kicker">Hoje</span><h2>'+escape(nextTitle)+'</h2><p>'+escape(nextMeta)+'</p></div><button type="button" class="primary" data-dashboard-start>'+(active?'Ver sessão':'Começar agora')+'</button></div><div class="study-command-metrics"><button type="button" data-dashboard-agenda><span>Meta de hoje</span><b>'+escape(fmtMin(snap.today))+' / '+escape(fmtMin(snap.dailyTarget))+'</b><i><em style="width:'+snap.dailyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Semana</span><b>'+escape(fmtMin(snap.week))+' / '+escape(fmtMin(snap.weeklyTarget))+'</b><i><em style="width:'+snap.weeklyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Revisões</span><b>'+Number(review.dueCount||0)+'</b><small>pendentes</small></button>'+(exam?'<button type="button" data-dashboard-agenda><span>Próxima prova</span><b>'+exam.days+' dia'+(exam.days===1?'':'s')+'</b><small>'+escape(exam.course.title||'Concurso')+'</small></button>':'<button type="button" data-dashboard-agenda><span>Agenda</span><b>'+planned.length+'</b><small>itens hoje</small></button>')+'</div></div>';
     root.querySelector('[data-dashboard-start]').onclick=()=>{
       if(active){ensureTimerRoot().classList.add('is-open');renderTimer();return}
       if(nextPlan?.kind==='map'&&nextPlan.key){
@@ -274,7 +277,7 @@
     if(window.StudyPlanner?.renderHome)setTimeout(()=>StudyPlanner.renderHome(),0);
   }
 
-  function ensureAgendaView(){
+function ensureAgendaView(){
     let view=document.querySelector('[data-view="agenda"]');
     if(view)return view;
     view=document.createElement('section');

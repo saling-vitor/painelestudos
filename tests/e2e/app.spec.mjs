@@ -2369,3 +2369,68 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page})=
   await expect(searchEmpty).toBeVisible();
   await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-pensando-v15-22-0\.png/);
 });
+
+
+test('etapa 1 [G] identidade dos mapas propaga accent e capa também no smartphone',async({page},testInfo)=>{
+  await page.goto('/#course/porto-alegre');
+  await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card').length>0);
+  const card=page.locator('#courseMaps .map-card').first();
+  const identity=await card.evaluate(el=>{
+    const key=el.dataset.map,map=mapById(key),style=getComputedStyle(el),chip=el.querySelector('.map-category-chip'),track=el.querySelector('.progress-track span');
+    return{
+      key,
+      code:map?.code||'',
+      accent:map?mapAccentValue(map):'',
+      cssAccent:style.getPropertyValue('--map-accent').trim(),
+      hasChip:!!chip,
+      chipColor:chip?getComputedStyle(chip).color:'',
+      trackColor:track?getComputedStyle(track).backgroundColor:''
+    };
+  });
+  expect(identity.accent).not.toBe('');
+  expect(identity.cssAccent).toBe(identity.accent);
+  expect(identity.hasChip).toBe(true);
+  expect(identity.chipColor).not.toBe('');
+  expect(identity.trackColor).not.toBe('');
+
+  await page.goto('/#home');
+  const input=page.locator('#globalSearch');
+  await input.fill(identity.code);
+  const mapOption=page.locator('#globalSearchPanel [data-global-search-kind="map"]').first();
+  await expect(mapOption).toBeVisible();
+  expect(await mapOption.evaluate(el=>getComputedStyle(el).getPropertyValue('--map-accent').trim())).toBe(identity.accent);
+
+  await page.evaluate(key=>{
+    localStorage.setItem('studyapp.lastMap',key);
+    renderHome();
+  },identity.key);
+  const resume=page.locator('#continueBox .continue-card');
+  await expect(resume).toBeVisible();
+  await expect(resume.locator('.continue-thumb img')).toBeVisible();
+  expect(await resume.evaluate(el=>getComputedStyle(el).getPropertyValue('--map-accent').trim())).toBe(identity.accent);
+
+  const planAccent=page.locator('#homeStudyPlan .study-plan-item.has-map-accent').first();
+  await expect(planAccent).toBeVisible();
+  expect(await planAccent.evaluate(el=>getComputedStyle(el).getPropertyValue('--map-accent').trim())).not.toBe('');
+
+  await page.goto('/#progress');
+  await page.waitForFunction(()=>document.querySelectorAll('#progressInsights .progress-insight-card').length>0);
+  const mapFocus=page.locator('#progressInsights .progress-insight-focus, #progressInsights .progress-insight-resume, #progressInsights .progress-insight-start').first();
+  await expect(mapFocus).toBeVisible();
+  await expect(mapFocus.locator('.progress-insight-thumb img')).toBeVisible();
+  const focusData=await mapFocus.evaluate(el=>({
+    accent:getComputedStyle(el).getPropertyValue('--map-accent').trim(),
+    button:!!el.querySelector('button'),
+    title:!!el.querySelector('.progress-insight-title b')
+  }));
+  expect(focusData.accent).not.toBe('');
+  expect(focusData.button).toBe(true);
+  expect(focusData.title).toBe(true);
+
+  if(testInfo.project.name==='iphone-webkit'){
+    const box=await mapFocus.evaluate(el=>{const r=el.getBoundingClientRect();return{height:r.height,left:r.left,right:r.right,vw:innerWidth}});
+    expect(box.height).toBeLessThanOrEqual(170);
+    expect(box.left).toBeGreaterThanOrEqual(0);
+    expect(box.right).toBeLessThanOrEqual(box.vw+1);
+  }
+});

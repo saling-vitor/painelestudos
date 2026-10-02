@@ -1,13 +1,13 @@
 {
-  "version": "15.27.1",
-  "label": "V15.27.1-G",
-  "releasedAt": "2026-10-02T17:22:00.000Z",
-  "notes": "Fechamento do pacote de Meus Cursos: cards editoriais compactos, status e menu sobre a capa, densidade própria de iPad, safe-area no iPhone e alvo touch estabilizado.",
+  "version": "15.28.0",
+  "label": "V15.28.0-G",
+  "releasedAt": "2026-10-02T17:48:00.000Z",
+  "notes": "Etapa 1: identidade cromática unificada dos mapas e cartões de foco do Progresso com capa, accent e responsividade.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] ATIVO/ARQUIVADO e ••• permanecem sobre a imagem sem disputar espaço com o título",
-    "[D] Meus Cursos e Home usam densidades diferentes para evitar cards altos demais",
-    "[T] Instituição redundante é ocultada, metadados viram faixa leve e busca preserva alvo touch de 45 px",
-    "[M] Prazo recebe destaque próprio, Detalhes mantém informações secundárias e a bottom-nav não cobre o último curso"
+    "[G] Tag, sigla, progresso e ações passam a herdar a mesma cor do mapa em toda a interface",
+    "[G] Retomar onde parei, Plano do dia e busca compartilham a identidade visual do mapa",
+    "[D/T/M] Onde focar agora ganha mini capa, accent e CTA coerente; no iPhone os cards ficam mais compactos",
+    "[QA] Playwright valida o contrato visual por resultado e preserva artifacts em caso de falha"
   ]
 }

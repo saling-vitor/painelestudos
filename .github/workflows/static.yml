@@ -73,8 +73,22 @@ jobs:
       - name: Build search index
         run: node scripts/build-search-index.mjs
 
+      - name: Targeted E2E — identidade dos mapas
+        run: npx playwright test --project=desktop-chromium --project=ipad --grep "identidade dos mapas propaga accent"
+
       - name: Browser E2E — desktop + iPad
         run: npx playwright test --project=desktop-chromium --project=ipad
+
+      - name: Upload Playwright failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-chromium-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 10
 
   e2e-webkit:
     name: E2E WebKit iPhone
@@ -99,8 +113,22 @@ jobs:
       - name: Build search index
         run: node scripts/build-search-index.mjs
 
+      - name: Targeted E2E — identidade dos mapas no iPhone
+        run: npx playwright test --project=iphone-webkit --grep "identidade dos mapas propaga accent"
+
       - name: Browser E2E — iPhone WebKit
         run: npx playwright test --project=iphone-webkit
+
+      - name: Upload Playwright failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-webkit-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 10
 
   deploy:
     name: Deploy Pages
@@ -142,13 +170,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Remove failed and cancelled workflow runs
+      - name: Remove failed and cancelled runs older than 10 days
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs?per_page=100"             --jq '.workflow_runs[] | select(.conclusion == "cancelled" or .conclusion == "failure") | .id' |
-          while read -r run_id; do
+          cutoff="$(date -u -d '10 days ago' +%s)"
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs?per_page=100" \
+            --jq '.workflow_runs[] | select(.conclusion == "cancelled" or .conclusion == "failure") | [.id, .created_at] | @tsv' |
+          while IFS="$(printf '\t')" read -r run_id created_at; do
             [ -z "$run_id" ] && continue
             [ "$run_id" = "$GITHUB_RUN_ID" ] && continue
+            run_ts="$(date -u -d "$created_at" +%s)"
+            [ "$run_ts" -gt "$cutoff" ] && continue
             gh api -X DELETE "repos/${GITHUB_REPOSITORY}/actions/runs/$run_id" || true
           done
