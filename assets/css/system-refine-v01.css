@@ -9,6 +9,7 @@
     display:grid!important;
     grid-template-columns:minmax(0,.92fr) minmax(0,1.18fr)!important;
     grid-template-areas:
+      "appearance sync"
       "admin sync"
       "update sync"
       "backup backup"!important;
@@ -16,6 +17,7 @@
     align-items:start!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3>.settings-column{display:contents!important}
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .appearance-panel{grid-area:appearance}
   html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .admin-panel{grid-area:admin}
   html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .app-update-panel{grid-area:update}
   html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3 .sync-panel{grid-area:sync}
@@ -1051,3 +1053,46 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
 }
 
 /* [M] Mobile-first permanece fonte da verdade; sem recomposição nesta etapa. */
+
+
+/* V02 · Aparência, diagnóstico simples e duração horas:minutos */
+.appearance-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.appearance-panel-head p{margin-top:5px}
+.appearance-brand-preview{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.appearance-brand-preview img:first-child{width:94px;height:34px;object-fit:contain;border-radius:7px}
+.appearance-brand-preview img:last-child{width:34px;height:34px;object-fit:cover;border-radius:9px}
+.appearance-segment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:14px;padding:4px;border:1px solid rgba(255,255,255,.07);border-radius:11px;background:rgba(255,255,255,.018)}
+.appearance-segment button{min-height:36px;border:0;border-radius:8px;background:transparent;color:#858b94;font-size:10px;font-weight:800;cursor:pointer}
+.appearance-segment button.active{background:rgba(216,197,158,.12);color:#ead8b4;box-shadow:inset 0 0 0 1px rgba(216,197,158,.18)}
+.appearance-note{display:block;margin-top:9px;color:#737a83;font-size:9px}
+.diagnostic-overview{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.diagnostic-overview-item{min-width:0;padding:10px 11px;border:1px solid rgba(255,255,255,.055);border-radius:9px;background:#0b0d10}
+.diagnostic-overview-item span{display:block;color:#6f7680;font:700 7px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.diagnostic-overview-item b{display:block;overflow:hidden;margin-top:5px;color:#d8dadd;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.diagnostic-primary-actions{display:flex;gap:8px;flex-wrap:wrap}
+.diagnostic-connection-result{margin-top:0!important}
+.settings-technical-details{border-top:1px solid rgba(255,255,255,.055);padding-top:9px}
+.settings-technical-details>summary{display:flex;align-items:center;justify-content:space-between;min-height:38px;cursor:pointer;list-style:none}
+.settings-technical-details>summary::-webkit-details-marker{display:none}
+.settings-technical-details>summary span{display:grid;gap:2px}
+.settings-technical-details>summary b{color:#aeb3ba;font-size:10px}
+.settings-technical-details>summary small{color:#686f78;font-size:8px}
+.settings-technical-details>summary::after{content:"⌄";color:#707780}
+.settings-technical-details[open]>summary::after{content:"⌃"}
+.settings-diagnostic-technical-body{display:grid;gap:12px;padding-top:10px}
+.study-duration-inputs,.planner-duration-inputs{display:flex!important;align-items:center;gap:7px;flex-wrap:wrap}
+.study-duration-inputs>span,.planner-duration-inputs>span{display:inline-flex!important;align-items:center;gap:5px;margin:0!important}
+.study-duration-inputs input{width:70px!important}
+.planner-duration-inputs input{width:68px!important}
+.planner-duration-label{align-items:center}
+@media(max-width:900px){
+  .diagnostic-overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .diagnostic-overview-item:last-child{grid-column:1/-1}
+}
+@media(max-width:560px){
+  .appearance-panel-head{flex-direction:column}
+  .appearance-brand-preview{width:100%;justify-content:flex-start}
+  .diagnostic-overview{grid-template-columns:1fr}
+  .diagnostic-overview-item:last-child{grid-column:auto}
+  .study-duration-inputs,.planner-duration-inputs{width:100%}
+}

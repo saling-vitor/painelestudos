@@ -856,3 +856,61 @@ html.is-ipad .reader.focus-mode .ipad-reader-rail-handle{
   }
 }
 
+
+
+/* V153 · Home Prioridade + Matriz navegável e recolhível [G] */
+.priority-now-card .priority-map-title{display:flex;align-items:center;gap:9px;margin-top:7px}
+.priority-now-card .priority-map-title h3{margin:0;min-width:0;font-size:16px;line-height:1.15}
+.priority-now-card .priority-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.priority-now-card .priority-chips span{padding:4px 7px;border:1px solid rgba(216,197,158,.13);border-radius:999px;background:rgba(216,197,158,.045);color:#b7a98e;font:700 7px var(--mono)}
+.priority-now-card .priority-next-step{display:grid;grid-template-columns:1fr auto;gap:3px 10px;margin-top:12px;padding:10px;border:1px solid rgba(255,255,255,.055);border-radius:9px;background:rgba(255,255,255,.018)}
+.priority-now-card .priority-next-step small{grid-column:1/-1;color:#6f7680;font:700 7px var(--mono);letter-spacing:.08em}
+.priority-now-card .priority-next-step b{color:#d9dadd;font-size:10.5px}
+.priority-now-card .priority-next-step span{color:#7e858e;font-size:9px;white-space:nowrap}
+.priority-now-card .priority-actions{display:flex;gap:7px;margin-top:10px}
+.matrix-sticky-head{position:sticky;top:0;z-index:18;padding:2px 0 12px;background:linear-gradient(180deg,var(--bg) 76%,transparent)}
+.planner-matrix-view .planner-page-head{align-items:flex-start}
+.planner-matrix-view .planner-page-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.planner-matrix-view .planner-page-actions select{min-width:220px}
+.matrix-map{overflow:hidden;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:rgba(8,10,13,.86)}
+.matrix-map.is-priority{border-color:rgba(216,197,158,.20);box-shadow:inset 3px 0 rgba(216,197,158,.42)}
+.matrix-map>summary{list-style:none;cursor:pointer}
+.matrix-map>summary::-webkit-details-marker{display:none}
+.matrix-map-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(145px,.38fr) auto;align-items:center;gap:12px;min-height:70px;padding:12px 14px}
+.matrix-map-title{display:flex;align-items:center;gap:10px;min-width:0}
+.matrix-map-title>div{min-width:0}
+.matrix-map-title b{display:block;overflow:hidden;color:#d9dadd;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.matrix-map-title small{display:block;margin-top:4px;color:#747b84;font-size:8.5px}
+.matrix-map-priority{display:grid;gap:3px;justify-items:start;min-width:0}
+.matrix-map-priority span{padding:3px 6px;border:1px solid rgba(216,197,158,.13);border-radius:999px;color:#b9aa8e;font:700 7px var(--mono)}
+.matrix-map-priority small{overflow:hidden;max-width:100%;color:#6e7580;font-size:8px;text-overflow:ellipsis;white-space:nowrap}
+.matrix-map-toggle{color:#747b84;transition:transform .16s ease}
+.matrix-map[open] .matrix-map-toggle{transform:rotate(180deg)}
+.matrix-map-body{padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.05)}
+.matrix-map-actions{display:flex;justify-content:flex-end;padding:9px 0 8px}
+.matrix-topic-list{display:grid;gap:5px}
+.matrix-topic{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-height:38px!important;padding:7px 10px!important;text-align:left}
+.matrix-topic span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.matrix-topic b{min-width:58px;text-align:center}
+.matrix-topic.pending{box-shadow:inset 2px 0 #656b73}
+.matrix-topic.difficult{box-shadow:inset 2px 0 #a85b66}
+.matrix-topic.review,.matrix-topic.due{box-shadow:inset 2px 0 #b99c68}
+.matrix-topic.done{box-shadow:inset 2px 0 #62a978}
+@media(max-width:900px){
+  .matrix-sticky-head{position:relative;padding-bottom:10px;background:transparent}
+  .planner-matrix-view .planner-page-actions{width:100%;justify-content:flex-start}
+  .planner-matrix-view .planner-page-actions select{flex:1 1 100%;width:100%}
+  .matrix-map-head{grid-template-columns:minmax(0,1fr) auto}
+  .matrix-map-priority{grid-column:1/-1;grid-row:2;padding-left:0}
+}
+@media(max-width:560px){
+  .priority-now-card .priority-actions{display:grid;grid-template-columns:1fr 1fr}
+  .priority-now-card .priority-actions button{width:100%}
+  .priority-now-card .priority-next-step{grid-template-columns:1fr}
+  .matrix-filters{overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px;scrollbar-width:none}
+  .matrix-filters::-webkit-scrollbar{display:none}
+  .matrix-map-head{padding:11px}
+  .matrix-map-body{padding:0 11px 11px}
+  .matrix-map-title b{white-space:normal}
+  .matrix-topic span{white-space:normal}
+}

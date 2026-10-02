@@ -1,0 +1,85 @@
+/* Meus Mapas · Aparência Automático / Claro / Escuro V01 */
+html[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f4f1ea;
+  --surface:#ffffff;
+  --surface2:#f7f5f0;
+  --surface3:#eeebe4;
+  --text:#181a1e;
+  --text2:#363a40;
+  --muted:#6f747b;
+  --muted2:#8a8f95;
+  --line:rgba(19,22,27,.12);
+  --line2:rgba(19,22,27,.075);
+  --shadow:0 20px 52px rgba(27,31,37,.12);
+}
+html[data-theme="light"],html[data-theme="light"] body{background:#f4f1ea;color:var(--text)}
+html[data-theme="light"] body{background:radial-gradient(900px 620px at 7% 0%,rgba(109,130,152,.12),transparent 62%),radial-gradient(760px 520px at 96% 12%,rgba(185,156,104,.09),transparent 65%),linear-gradient(180deg,#f7f4ee,#f1eee7)}
+html[data-theme="light"] .side{border-color:rgba(19,22,27,.09);background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(244,241,234,.97));box-shadow:18px 0 42px rgba(27,31,37,.08)}
+html[data-theme="light"] .topbar-wrap,
+html[data-theme="light"] .topbar{background:rgba(247,244,238,.84);border-color:rgba(19,22,27,.08)}
+html[data-theme="light"] .search{border-color:rgba(19,22,27,.11);background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(242,239,233,.91));box-shadow:inset 0 1px 0 rgba(255,255,255,.85)}
+html[data-theme="light"] .search input{color:#25282d!important;caret-color:#25282d}
+html[data-theme="light"] .search input::placeholder{color:rgba(54,58,64,.48)}
+html[data-theme="light"] .search input:-webkit-autofill{-webkit-text-fill-color:#25282d!important;-webkit-box-shadow:0 0 0 1000px #fff inset!important;box-shadow:0 0 0 1000px #fff inset!important}
+html[data-theme="light"] .panel,
+html[data-theme="light"] .section,
+html[data-theme="light"] .course-card,
+html[data-theme="light"] .map-card,
+html[data-theme="light"] .simulation-card,
+html[data-theme="light"] .progress-insights,
+html[data-theme="light"] .study-settings-panel,
+html[data-theme="light"] .planner-advanced-settings,
+html[data-theme="light"] .study-now-card,
+html[data-theme="light"] .priority-now-card,
+html[data-theme="light"] .forecast-home-card,
+html[data-theme="light"] .matrix-map,
+html[data-theme="light"] .matrix-summary-grid article,
+html[data-theme="light"] .forecast-scenarios button{border-color:rgba(19,22,27,.09)!important;background:#fff!important;box-shadow:0 10px 30px rgba(27,31,37,.045)}
+html[data-theme="light"] .hero{border-color:rgba(19,22,27,.08);background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(236,233,226,.93))}
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] .panel h2,
+html[data-theme="light"] .panel h3,
+html[data-theme="light"] .section-head h2,
+html[data-theme="light"] .matrix-map-title b,
+html[data-theme="light"] .priority-next-step b{color:#181a1e!important}
+html[data-theme="light"] p,
+html[data-theme="light"] small,
+html[data-theme="light"] .section-head p{color:#6e737b}
+html[data-theme="light"] .secondary,
+html[data-theme="light"] .icon-btn,
+html[data-theme="light"] .matrix-filters button,
+html[data-theme="light"] .study-now-buttons button{border-color:rgba(19,22,27,.11);background:rgba(255,255,255,.72);color:#474c53}
+html[data-theme="light"] .secondary:hover,
+html[data-theme="light"] .icon-btn:hover{background:#fff;color:#1f2227}
+html[data-theme="light"] .nav-btn{color:#686d74}
+html[data-theme="light"] .nav-btn.active{background:linear-gradient(90deg,rgba(109,130,152,.12),rgba(185,156,104,.07));color:#24272c}
+html[data-theme="light"] .nav-label,
+html[data-theme="light"] .panel-kicker,
+html[data-theme="light"] .kicker{color:#7d7567}
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea{border-color:rgba(19,22,27,.12)!important;background:#fff!important;color:#24272c!important}
+html[data-theme="light"] .settings-disclosure,
+html[data-theme="light"] .study-time-manage,
+html[data-theme="light"] .settings-technical-details{border-color:rgba(19,22,27,.08)!important;background:rgba(247,245,240,.82)}
+html[data-theme="light"] .diagnostic-overview-item,
+html[data-theme="light"] #appDiagnosticPanel.settings-diagnostic-embedded .diagnostic-row,
+html[data-theme="light"] .priority-now-card .priority-next-step{border-color:rgba(19,22,27,.08);background:#f8f6f1}
+html[data-theme="light"] .diagnostic-overview-item b,
+html[data-theme="light"] .study-goal-human{color:#383c42}
+html[data-theme="light"] .appearance-segment{border-color:rgba(19,22,27,.09);background:#f4f1ea}
+html[data-theme="light"] .appearance-segment button{color:#666b72}
+html[data-theme="light"] .appearance-segment button.active{background:#fff;color:#25282d;box-shadow:inset 0 0 0 1px rgba(19,22,27,.09),0 4px 12px rgba(27,31,37,.06)}
+html[data-theme="light"] .study-settings-toggle input[type="checkbox"]{border-color:rgba(19,22,27,.14)!important;background:#ddd9d0!important}
+html[data-theme="light"] .bottom-nav{border-color:rgba(19,22,27,.09);background:rgba(250,248,244,.96)}
+html[data-theme="light"] .bottom-nav button{color:#73777e}
+html[data-theme="light"] .bottom-nav button.active{color:#25282d}
+html[data-theme="light"] .matrix-sticky-head{background:linear-gradient(180deg,#f4f1ea 76%,transparent)}
+html[data-theme="light"] .matrix-map-body{border-color:rgba(19,22,27,.07)}
+html[data-theme="light"] .matrix-topic{border-color:rgba(19,22,27,.07)!important;background:#faf8f4!important;color:#383c42!important}
+html[data-theme="light"] .cloud-card{border-color:rgba(19,22,27,.08);background:rgba(255,255,255,.72)}
+html[data-theme="light"] .toast{background:#24272c;color:#f7f5f0}
+html[data-theme="light"] ::selection{background:rgba(109,130,152,.22);color:#17191d}

@@ -6,7 +6,7 @@
   const DATA_KEY='studyapp.studyDashboard.v1';
   const ACTIVE_KEY='studyapp.studySession.active';
   const VERSION=1;
-  const DEFAULT_GOALS={dailyMinutes:120,weeklyMinutes:600,pomodoroWork:25,pomodoroBreak:5,autoFocus:false};
+  const DEFAULT_GOALS={dailyMinutes:420,weeklyMinutes:2100,pomodoroWork:25,pomodoroBreak:5,autoFocus:false};
   let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode='month',goalDraft=null;
 
   const safeJson=(value,fallback)=>{try{return JSON.parse(value)}catch{return fallback}};
@@ -24,8 +24,8 @@
   function normalizeData(input){
     const value=input&&typeof input==='object'?input:{};
     const goals={...DEFAULT_GOALS,...(value.goals||{})};
-    goals.dailyMinutes=clamp(goals.dailyMinutes,1,1440)||120;
-    goals.weeklyMinutes=clamp(goals.weeklyMinutes,1,10080)||600;
+    goals.dailyMinutes=clamp(goals.dailyMinutes,1,1440)||420;
+    goals.weeklyMinutes=clamp(goals.weeklyMinutes,1,10080)||2100;
     goals.pomodoroWork=clamp(goals.pomodoroWork,5,180)||25;
     goals.pomodoroBreak=clamp(goals.pomodoroBreak,1,60)||5;
     goals.autoFocus=!!goals.autoFocus;
@@ -423,10 +423,12 @@ function ensureAgendaView(){
     root.querySelectorAll('[data-doubt-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.doubtOpen));
   }
 
-  function goalHuman(minutes,label){const total=Math.max(0,Math.round(Number(minutes)||0)),h=Math.floor(total/60),m=total%60;return(h?h+'h':'')+(m?(h?' '+m+'min':m+'min'):'')+(label?' '+label:'')||'0min'+(label?' '+label:'')}
+  function goalHuman(minutes,label){const total=Math.max(0,Math.round(Number(minutes)||0)),h=Math.floor(total/60),m=total%60;return h+'h '+String(m).padStart(2,'0')+'min'+(label?' '+label:'')}
+  function durationParts(minutes){const total=Math.max(0,Math.round(Number(minutes)||0));return{hours:Math.floor(total/60),minutes:total%60}}
+  function formDuration(fd,prefix,maxMinutes,fallback){const hours=Math.max(0,Number(fd.get(prefix+'Hours'))||0),minutes=Math.max(0,Math.min(59,Number(fd.get(prefix+'Remainder'))||0));return clamp(hours*60+minutes,1,maxMinutes)||fallback}
   function goalsFromForm(form){
     const fd=new FormData(form);
-    return{dailyMinutes:clamp(fd.get('dailyMinutes'),1,1440)||120,weeklyMinutes:clamp(fd.get('weeklyMinutes'),1,10080)||600,pomodoroWork:clamp(fd.get('pomodoroWork'),5,180)||25,pomodoroBreak:clamp(fd.get('pomodoroBreak'),1,60)||5,autoFocus:!!form.elements.autoFocus?.checked};
+    return{dailyMinutes:formDuration(fd,'daily',1440,420),weeklyMinutes:formDuration(fd,'weekly',10080,2100),pomodoroWork:clamp(fd.get('pomodoroWork'),5,180)||25,pomodoroBreak:clamp(fd.get('pomodoroBreak'),1,60)||5,autoFocus:!!form.elements.autoFocus?.checked};
   }
   function persistGoalDraft(form){
     goalDraft=goalsFromForm(form);
@@ -461,10 +463,10 @@ function ensureAgendaView(){
       const layout=view.querySelector('.settings-layout')||view;
       layout.insertAdjacentElement('afterend',root);
     }
-    const data=readData(),g=goalDraft||data.goals,snap=goalSnapshot();
+    const data=readData(),g=goalDraft||data.goals,snap=goalSnapshot(),daily=durationParts(g.dailyMinutes),weekly=durationParts(g.weeklyMinutes);
     const allTime=window.StudyTime?.all?.()||0;
     const manageOpen=!!root.querySelector('.study-time-manage[open]');
-    root.innerHTML='<div class="panel-kicker">Rotina de estudo</div><div class="study-settings-head"><div><h2>Metas, timer e foco</h2><p>Defina sua carga de estudo e o comportamento das sessões.</p></div><div class="study-settings-summary"><span>Hoje <b>'+escape(fmtMin(snap.today))+'</b></span><span>Semana <b>'+escape(fmtMin(snap.week))+'</b></span></div></div><form id="studyGoalsForm" class="study-goals-form"><label>Meta diária <b class="study-goal-human">'+escape(goalHuman(g.dailyMinutes,'/ dia'))+'</b><span><input name="dailyMinutes" type="number" min="1" max="1440" step="5" value="'+g.dailyMinutes+'"> min</span></label><label>Meta semanal <b class="study-goal-human">'+escape(goalHuman(g.weeklyMinutes,'/ semana'))+'</b><span><input name="weeklyMinutes" type="number" min="1" max="10080" step="15" value="'+g.weeklyMinutes+'"> min</span></label><label>Pomodoro <span><input name="pomodoroWork" type="number" min="5" max="180" step="5" value="'+g.pomodoroWork+'"> min</span></label><label>Pausa <span><input name="pomodoroBreak" type="number" min="1" max="60" step="1" value="'+g.pomodoroBreak+'"> min</span></label><label class="study-settings-toggle"><span><b>Modo foco automático</b><small>Oculta controles secundários ao iniciar uma sessão dentro de um mapa.</small></span><input name="autoFocus" type="checkbox" '+(g.autoFocus?'checked':'')+' aria-label="Modo foco automático"></label><div class="study-settings-actions"><button class="primary" type="submit">Salvar metas</button><button class="secondary" type="button" data-settings-pomodoro>Iniciar Pomodoro</button></div></form><details class="study-time-manage"'+(manageOpen?' open':'')+' aria-labelledby="studyTimeManageTitle"><summary><div class="study-time-manage-head"><div><span class="panel-kicker">Tempo registrado</span><h3 id="studyTimeManageTitle">Gerenciar tempo de estudo</h3><p>Corrija contadores sem apagar sessões, agenda, progresso ou anotações.</p></div><div class="study-time-manage-total"><span>Total acumulado</span><b>'+escape(fmtMin(allTime))+'</b></div></div></summary><div class="study-time-manage-body"><div class="study-time-manage-actions"><button type="button" class="secondary" data-study-time-reset="today">Zerar hoje</button><button type="button" class="secondary" data-study-time-reset="week">Zerar semana</button></div><div class="study-time-manage-danger"><button type="button" class="danger" data-study-time-reset="all">Zerar todo o histórico</button></div><small class="study-time-manage-note">A limpeza altera somente as métricas de tempo. OK/DIF/REV, notas, agenda, simulados e demais dados permanecem intactos.</small></div></details>';
+    root.innerHTML='<div class="panel-kicker">Rotina de estudo</div><div class="study-settings-head"><div><h2>Metas, timer e foco</h2><p>Defina sua carga de estudo e o comportamento das sessões.</p></div><div class="study-settings-summary"><span>Hoje <b>'+escape(fmtMin(snap.today))+'</b></span><span>Semana <b>'+escape(fmtMin(snap.week))+'</b></span></div></div><form id="studyGoalsForm" class="study-goals-form"><label class="study-goal-duration">Meta diária <b class="study-goal-human">'+escape(goalHuman(g.dailyMinutes,'/ dia'))+'</b><span class="study-duration-inputs"><span><input name="dailyHours" type="number" min="0" max="24" step="1" value="'+daily.hours+'" aria-label="Horas da meta diária"> h</span><span><input name="dailyRemainder" type="number" min="0" max="59" step="5" value="'+daily.minutes+'" aria-label="Minutos da meta diária"> min</span></span></label><label class="study-goal-duration">Meta semanal <b class="study-goal-human">'+escape(goalHuman(g.weeklyMinutes,'/ semana'))+'</b><span class="study-duration-inputs"><span><input name="weeklyHours" type="number" min="0" max="168" step="1" value="'+weekly.hours+'" aria-label="Horas da meta semanal"> h</span><span><input name="weeklyRemainder" type="number" min="0" max="59" step="5" value="'+weekly.minutes+'" aria-label="Minutos da meta semanal"> min</span></span></label><label>Pomodoro <span><input name="pomodoroWork" type="number" min="5" max="180" step="5" value="'+g.pomodoroWork+'"> min</span></label><label>Pausa <span><input name="pomodoroBreak" type="number" min="1" max="60" step="1" value="'+g.pomodoroBreak+'"> min</span></label><label class="study-settings-toggle"><span><b>Modo foco automático</b><small>Oculta controles secundários ao iniciar uma sessão dentro de um mapa.</small></span><input name="autoFocus" type="checkbox" '+(g.autoFocus?'checked':'')+' aria-label="Modo foco automático"></label><div class="study-settings-actions"><button class="primary" type="submit">Salvar metas</button><button class="secondary" type="button" data-settings-pomodoro>Iniciar Pomodoro</button></div></form><details class="study-time-manage"'+(manageOpen?' open':'')+' aria-labelledby="studyTimeManageTitle"><summary><div class="study-time-manage-head"><div><span class="panel-kicker">Tempo registrado</span><h3 id="studyTimeManageTitle">Gerenciar tempo de estudo</h3><p>Corrija contadores sem apagar sessões, agenda, progresso ou anotações.</p></div><div class="study-time-manage-total"><span>Total acumulado</span><b>'+escape(fmtMin(allTime))+'</b></div></div></summary><div class="study-time-manage-body"><div class="study-time-manage-actions"><button type="button" class="secondary" data-study-time-reset="today">Zerar hoje</button><button type="button" class="secondary" data-study-time-reset="week">Zerar semana</button></div><div class="study-time-manage-danger"><button type="button" class="danger" data-study-time-reset="all">Zerar todo o histórico</button></div><small class="study-time-manage-note">A limpeza altera somente as métricas de tempo. OK/DIF/REV, notas, agenda, simulados e demais dados permanecem intactos.</small></div></details>';
     const form=root.querySelector('#studyGoalsForm');
     form.oninput=()=>{persistGoalDraft(form)};
     form.onchange=()=>{persistGoalDraft(form)};

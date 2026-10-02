@@ -506,8 +506,10 @@ test('configurações usa novo layout compacto',async({page})=>{
   await expect(page.locator('.settings-full-panel')).toBeVisible();
   await expect(page.locator('.settings-diagnostic-disclosure')).toContainText('Diagnóstico e dispositivos');
   await page.locator('.settings-diagnostic-disclosure').evaluate(el=>el.open=true);
+  await expect(page.locator('#diagnosticSummaryGrid')).toBeVisible();
   await expect(page.locator('#cloudHealthBtn')).toBeVisible();
-  await expect(page.locator('#deviceProbeCreate')).toBeVisible();
+  await expect(page.locator('#copyAppDiagnosticBtn')).toBeVisible();
+  await expect(page.locator('.settings-technical-details')).not.toHaveAttribute('open');
   const layout=await page.locator('.settings-layout-v3').evaluate(el=>({display:getComputedStyle(el).display,columns:getComputedStyle(el).gridTemplateColumns,width:innerWidth}));
   expect(layout.display).toBe('grid');
   if(layout.width>1180)expect(layout.columns.split(' ').length).toBeGreaterThanOrEqual(2);
@@ -533,10 +535,12 @@ test('atualizações e diagnóstico ficam compactos e unificados',async({page})=
   await expect(page.locator('.app-update-summary')).toContainText(E2E_APP_VERSION_LABEL);
   const details=page.locator('.settings-diagnostic-disclosure');
   await details.evaluate(el=>el.open=true);
+  await expect(page.locator('#diagnosticSummaryGrid .diagnostic-overview-item')).toHaveCount(5);
+  const technical=page.locator('.settings-technical-details');
+  await expect(technical).not.toHaveAttribute('open');
+  await technical.evaluate(el=>el.open=true);
   await expect(page.locator('#appDiagnosticPanel')).toHaveClass(/settings-diagnostic-embedded/);
   await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
-  const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
-  expect(columns).not.toBe('none');
   await expect(page.locator('.settings-backup-head')).toBeVisible();
 });
 
@@ -1325,8 +1329,10 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   await expect(page.locator('#studySettingsPanel')).toBeVisible();
   await page.waitForFunction(()=>typeof state==='undefined'||state.cloudLoading===false);
   const form=page.locator('#studyGoalsForm');
-  await form.locator('[name="dailyMinutes"]').fill('90');
-  await form.locator('[name="weeklyMinutes"]').fill('480');
+  await form.locator('[name="dailyHours"]').fill('1');
+  await form.locator('[name="dailyRemainder"]').fill('30');
+  await form.locator('[name="weeklyHours"]').fill('8');
+  await form.locator('[name="weeklyRemainder"]').fill('0');
   await form.locator('button[type="submit"]').click();
   const goals=await page.evaluate(()=>StudyDashboard.goals());
   expect(goals.dailyMinutes).toBe(90);
@@ -1491,8 +1497,10 @@ test('Home usa CTA Começar no card de prioridade',async({page})=>{
   await page.goto('/#home');
   const cta=page.locator('[data-priority-open]').first();
   await expect(cta).toBeVisible();
-  await expect(cta).toHaveText('Começar');
-  await expect(page.locator('.priority-now-card')).toContainText('Por que este estudo?');
+  await expect(cta).toHaveText('Começar agora');
+  await expect(page.locator('.priority-now-card .priority-map-title .map-code')).toBeVisible();
+  await expect(page.locator('.priority-now-card .priority-chips span').first()).toBeVisible();
+  await expect(page.locator('.priority-now-card .priority-next-step')).toContainText('PRÓXIMO PASSO');
 });
 
 test('Agenda prioriza modos e recolhe ações secundárias no menu',async({page})=>{
@@ -2855,4 +2863,55 @@ test('[G] V15.36 atualização forçada preserva dados do usuário',async({page}
   expect(source).toContain("unregister");
   expect(source).not.toContain("localStorage.clear");
   expect(source).not.toContain("indexedDB.deleteDatabase");
+});
+
+
+test('[G] aparência alterna Automático Claro Escuro e troca marca/ícone',async({page})=>{
+  await page.goto('/#settings');
+  const panel=page.locator('#appearancePanel');
+  await expect(panel).toBeVisible();
+  await panel.locator('[data-appearance-mode="light"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+  await expect(page.locator('#brandLogoFull')).toHaveAttribute('src',/logo-para-fundo-claro-placa-escura\.png$/);
+  await expect(page.locator('#appThemeIcon')).toHaveAttribute('href',/app-icon-light-rounded-192-v15-23-1\.png$/);
+  await panel.locator('[data-appearance-mode="dark"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
+  await expect(page.locator('#brandLogoFull')).toHaveAttribute('src',/logo-principal-fundo-escuro\.png$/);
+  await panel.locator('[data-appearance-mode="auto"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-appearance','auto');
+});
+
+test('[G] metas e carga usam horas mais minutos e persistem em minutos',async({page})=>{
+  await page.goto('/#settings');
+  const form=page.locator('#studyGoalsForm');
+  await form.locator('[name="dailyHours"]').fill('7');
+  await form.locator('[name="dailyRemainder"]').fill('30');
+  await form.locator('[name="weeklyHours"]').fill('35');
+  await form.locator('[name="weeklyRemainder"]').fill('0');
+  await form.locator('button[type="submit"]').click();
+  const plannerForm=page.locator('#plannerSettingsForm');
+  await plannerForm.locator('[name="maxDailyHours"]').fill('5');
+  await plannerForm.locator('[name="maxDailyRemainder"]').fill('0');
+  await plannerForm.locator('button[type="submit"]').click();
+  const values=await page.evaluate(()=>({goals:StudyDashboard.goals(),planner:StudyPlanner.settings()}));
+  expect(values.goals.dailyMinutes).toBe(450);
+  expect(values.goals.weeklyMinutes).toBe(2100);
+  expect(values.planner.maxDailyMinutes).toBe(300);
+  await expect(form.locator('.study-goal-human').first()).toContainText('7h 30min');
+});
+
+test('[G] matriz mantém cabeçalho legível, mapas recolhíveis e tópicos clicáveis',async({page})=>{
+  await page.goto('/#matrix');
+  await expect(page.locator('.matrix-sticky-head')).toBeVisible();
+  await expect(page.locator('#matrixSummary .matrix-summary-grid article')).toHaveCount(4);
+  const first=page.locator('.matrix-map').first();
+  await expect(first).toBeVisible();
+  await expect(first.locator('.matrix-map-priority')).toBeVisible();
+  const wasOpen=await first.evaluate(el=>el.open);
+  await first.locator('summary').click();
+  expect(await first.evaluate(el=>el.open)).toBe(!wasOpen);
+  await first.locator('summary').click();
+  await expect(first.locator('.matrix-topic').first()).toBeVisible();
+  await expect(page.locator('[data-matrix-home]')).toBeVisible();
+  await expect(page.locator('[data-matrix-progress]')).toBeVisible();
 });
