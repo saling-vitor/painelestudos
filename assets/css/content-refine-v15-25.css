@@ -236,3 +236,445 @@ html.is-phone-layout .course-card.course-library-card.mobile-details-open{min-he
 html.is-phone-layout .course-cover-admin-layout{grid-template-columns:1fr}
 html.is-phone-layout .course-cover-admin-controls{display:grid;grid-template-columns:1fr 1fr}
 html.is-phone-layout .course-cover-admin-controls .course-cover-notice{grid-column:1/-1}
+
+
+/* =========================================================
+   V15.26.0-G · pacote responsivo aprovado
+   [G] menus consistentes · [M] hero · [T] curso · cards de curso
+   ========================================================= */
+
+/* [G] O menu de simulados segue exatamente a geometria do menu dos Mapas. */
+.simulation-card-menu-btn{
+  width:35px!important;
+  min-width:35px!important;
+  height:35px!important;
+  min-height:35px!important;
+  padding:0!important;
+  border-radius:10px!important;
+}
+@media(pointer:coarse){
+  html.is-ipad:not(.is-phone-layout) .map-card.has-cover .map-admin-btn,
+  html.is-ipad:not(.is-phone-layout) .simulation-card-menu-btn{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+    border-radius:10px!important;
+  }
+}
+@media(max-width:640px){
+  html.is-phone-layout .map-card.has-cover .map-admin-btn,
+  html.is-phone-layout .simulation-card-menu-btn{
+    width:38px!important;
+    min-width:38px!important;
+    height:38px!important;
+    min-height:38px!important;
+    border-radius:10px!important;
+  }
+}
+
+/* Cards de curso: capa real em cima, informação abaixo. */
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  isolation:isolate;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card::before{
+  display:none!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover{
+  position:relative!important;
+  z-index:1!important;
+  inset:auto!important;
+  width:100%!important;
+  height:clamp(176px,14vw,220px)!important;
+  min-height:0!important;
+  margin:0!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.075)!important;
+  border-radius:0!important;
+  opacity:1!important;
+  pointer-events:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover img{
+  filter:saturate(.93) brightness(.88) contrast(1.035)!important;
+  object-position:center!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover::after{
+  background:linear-gradient(180deg,rgba(3,4,6,.01),rgba(3,4,6,.10) 64%,rgba(3,4,6,.20))!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-actions{
+  position:static!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill{
+  position:absolute!important;
+  z-index:5!important;
+  top:12px!important;
+  left:12px!important;
+  min-height:25px!important;
+  padding:0 8px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  border-radius:8px!important;
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit{
+  position:absolute!important;
+  z-index:6!important;
+  top:12px!important;
+  right:12px!important;
+  width:35px!important;
+  min-width:35px!important;
+  height:35px!important;
+  min-height:35px!important;
+  border-radius:10px!important;
+  background:rgba(6,8,11,.78)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.34)!important;
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-kicker-row{
+  position:relative!important;
+  z-index:2!important;
+  margin:12px 16px 0!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>h3{
+  position:relative!important;
+  z-index:2!important;
+  min-height:0!important;
+  margin:8px 16px 0!important;
+  font-size:19px!important;
+  line-height:1.14!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-role{
+  margin:6px 16px 0!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-institution{
+  min-height:0!important;
+  margin:4px 16px 0!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-meta{
+  margin:11px 16px 0!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-progress-mini{
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  gap:6px!important;
+  margin:13px 16px 0!important;
+  padding:0!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-progress-states,
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-progress-empty{
+  display:none!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-footer{
+  position:static!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  min-height:38px!important;
+  margin:11px 16px 14px!important;
+  padding:0!important;
+  border-top:0!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-last-activity-card{
+  color:#818790!important;
+}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .enter{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  min-height:34px!important;
+  padding:0 11px!important;
+  border:1px solid color-mix(in srgb,var(--course-accent,#b99c68) 38%,rgba(255,255,255,.08))!important;
+  border-radius:9px!important;
+  background:color-mix(in srgb,var(--course-accent,#b99c68) 9%,#0b0d10)!important;
+}
+#homeCourses .course-card.course-library-card>.course-card-cover{
+  height:clamp(145px,11vw,176px)!important;
+}
+#homeCourses .course-card.course-library-card>h3{
+  font-size:17px!important;
+}
+@media(max-width:1180px){
+  html.is-ipad:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover{
+    height:clamp(158px,18vw,202px)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeCourses .course-card.course-library-card>.course-card-cover{
+    height:150px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+  }
+}
+@media(max-width:640px){
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover{
+    height:clamp(148px,45vw,188px)!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-card-edit{
+    width:38px!important;
+    min-width:38px!important;
+    height:38px!important;
+    min-height:38px!important;
+    top:9px!important;
+    right:9px!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill{
+    top:9px!important;
+    left:9px!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-kicker-row{
+    margin:10px 13px 0!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>h3{
+    margin:7px 13px 0!important;
+    font-size:17px!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-role,
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-institution{
+    margin-left:13px!important;
+    margin-right:13px!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-meta{
+    margin:10px 13px 0!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-progress-mini{
+    margin:11px 13px 0!important;
+  }
+  html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-footer{
+    margin:10px 13px 12px!important;
+  }
+}
+
+/* [T] Curso interno: menos caixas e a biblioteca aparece mais cedo. */
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-hero{
+  padding:18px 20px 20px!important;
+  border-radius:17px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .breadcrumb{
+  margin-bottom:10px!important;
+  font-size:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-hero h1{
+  font-size:clamp(29px,4.1vw,39px)!important;
+  line-height:1!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-hero>p{
+  max-width:none!important;
+  margin-top:6px!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-progress-summary{
+  max-width:none!important;
+  gap:7px!important;
+  margin-top:11px!important;
+  padding:10px!important;
+  border-radius:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metrics{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:7px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric{
+  min-height:54px!important;
+  padding:8px 9px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric b{
+  font-size:16px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-exam-metric b{
+  font-size:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-summary-bar{
+  height:5px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-footer{
+  flex-wrap:nowrap!important;
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-offline-status{
+  min-height:16px!important;
+  font-size:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue{
+  min-height:70px!important;
+  margin-top:9px!important;
+  padding:9px 11px!important;
+  border-radius:11px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-copy{
+  gap:4px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main{
+  gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main b{
+  font-size:13px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main span:not(.map-code){
+  font-size:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:8px!important;
+  margin-top:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-search-box{
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+  display:flex!important;
+  width:auto!important;
+  gap:7px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button{
+  width:auto!important;
+  min-width:108px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-more-wrap>#courseMoreBtn{
+  width:44px!important;
+  min-width:44px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap){
+  gap:5px!important;
+  margin-top:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-filter-label{
+  font-size:7px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filters,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-row{
+  flex-wrap:nowrap!important;
+  gap:6px!important;
+  overflow-x:auto!important;
+  overscroll-behavior-inline:contain;
+  scrollbar-width:none;
+  padding:0 18px 2px 0!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filters::-webkit-scrollbar,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-row::-webkit-scrollbar{
+  display:none;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn{
+  flex:0 0 auto!important;
+  min-height:44px!important;
+  padding:0 10px!important;
+  border-radius:10px!important;
+  background:rgba(255,255,255,.012)!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter.active,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn.active{
+  background:rgba(216,197,158,.055)!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-category-wrap+.section-head{
+  margin-top:10px!important;
+  margin-bottom:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-category-wrap+.section-head h2{
+  font-size:20px!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseMapCount{
+  font-size:10px!important;
+}
+@media(max-width:760px){
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metrics{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr 44px!important;
+    width:100%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions>button{
+    width:100%!important;
+  }
+}
+
+/* [M] Hero: mesma altura, arte maior e título menos dominante. */
+@media(max-width:480px){
+  html.is-phone-layout [data-view="home"] .hero{
+    height:270px!important;
+    min-height:270px!important;
+    max-height:270px!important;
+    background-position:62% 100%!important;
+    background-size:auto 72%!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero:before{
+    background:linear-gradient(180deg,#06080b 0%,rgba(6,8,11,.985) 42%,rgba(6,8,11,.80) 62%,rgba(6,8,11,.33) 82%,rgba(6,8,11,.12) 100%)!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-copy{
+    height:100%!important;
+    padding:13px 13px 62px!important;
+  }
+  html.is-phone-layout [data-view="home"] .eyebrow{
+    max-width:100%!important;
+    padding:4px 6px!important;
+    font-size:6.4px!important;
+    letter-spacing:.095em!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero h1{
+    max-width:270px!important;
+    margin-top:8px!important;
+    font-size:24.5px!important;
+    line-height:.98!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-actions{
+    margin-top:9px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-actions .primary{
+    height:38px!important;
+    min-height:38px!important;
+    padding-inline:10px!important;
+    font-size:9.5px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats{
+    left:9px!important;
+    right:9px!important;
+    bottom:8px!important;
+    min-height:0!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat{
+    min-height:40px!important;
+    padding:5px 7px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat b{
+    font-size:12.5px!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero-stats .stat span{
+    margin-top:3px!important;
+    font-size:6.4px!important;
+  }
+}
+@media(max-width:390px){
+  html.is-phone-layout [data-view="home"] .hero{
+    height:264px!important;
+    min-height:264px!important;
+    max-height:264px!important;
+    background-size:auto 69%!important;
+  }
+  html.is-phone-layout [data-view="home"] .hero h1{
+    max-width:250px!important;
+    font-size:23.5px!important;
+  }
+}

@@ -1,13 +1,14 @@
 {
-  "version": "15.25.0",
-  "label": "V15.25.0-G",
-  "releasedAt": "2026-10-02T14:45:00.000Z",
-  "notes": "Cursos agora têm capa e edição visual; iPad recebe layouts dedicados em retrato e paisagem, e os simulados recentes ficam alinhados ao card de retomada no desktop.",
+  "version": "15.26.0",
+  "label": "V15.26.0-G",
+  "releasedAt": "2026-10-02T16:15:00.000Z",
+  "notes": "Cards de cursos passam a destacar a capa acima das informações; a tela interna do curso foi compactada no iPad, a hero móvel ganhou arte maior e os menus de Simulados e Mapas usam a mesma geometria.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cursos recebem capa padrão, capa personalizada e atalho de edição direto no card",
-    "[T] Progresso e Meus Cursos ganham composição dedicada para iPad em retrato e paisagem",
-    "[D] Simulados recentes passam a acompanhar a altura do card Retomar onde parei",
-    "[M] Capas de curso ganham apresentação compacta e responsiva no celular"
+    "[G] Menu ••• dos Simulados passa a usar as mesmas dimensões do menu dos Mapas em desktop, iPad e celular",
+    "[G] Cards de cursos ganham capa independente no topo, informações abaixo e ação ••• sobre a imagem",
+    "[T] Tela interna do curso fica mais compacta: resumo, Retomar, busca, ações e filtros ocupam menos altura",
+    "[T] Mapas do curso aparecem mais cedo na primeira dobra e filtros passam a usar faixa horizontal mais leve",
+    "[M] Hero da Home mantém a altura compacta, aumenta bastante a arte e reduz o peso visual do título e das métricas"
   ]
 }
