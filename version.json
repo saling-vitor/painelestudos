@@ -1,14 +1,15 @@
 {
-  "version": "15.26.1",
-  "label": "V15.26.1-G",
-  "releasedAt": "2026-10-02T16:36:00.000Z",
-  "notes": "Pacote responsivo final: cards de curso editoriais, tela de curso otimizada no iPad, hero móvel reequilibrada e menus de Mapas/Simulados alinhados, com ajustes finais de alvo touch e QA.",
+  "version": "15.27.0",
+  "label": "V15.27.0-G",
+  "releasedAt": "2026-10-02T16:58:00.000Z",
+  "notes": "Meus Cursos ganha cards editoriais mais compactos por dispositivo: status e menu ficam sobre a capa, o iPad reduz informação simultânea, a Home usa uma variante menor e o iPhone recebe correções de sobreposição e safe-area.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cards de curso usam capa independente no topo e informações abaixo",
-    "[G] Menu ••• dos Simulados acompanha exatamente a dimensão visual do menu dos Mapas por dispositivo",
-    "[T] Curso interno fica mais compacto e mantém busca + ações integradas no iPad",
-    "[T] Ação Entrar preserva alvo touch de 44 px no iPad e filtros mantêm linguagem retangular",
-    "[M] Hero da Home exibe arte maior, título menos dominante e métricas mais compactas"
+    "[G] Status ATIVO/ARQUIVADO e menu ••• ficam sobre a capa dos cards de curso",
+    "[D] Cards de Meus Cursos ficam mais baixos e removem informação redundante",
+    "[D] Home usa uma variante de curso ainda mais compacta para não competir com Retomar e Simulados",
+    "[T] Cards de curso reduzem a capa, ocultam instituição longa e condensam banca, mapas e prazo em uma faixa leve",
+    "[M] Cards recolhidos mostram somente título, prazo, progresso e ações essenciais; Detalhes preserva as informações extras",
+    "[M] Meus Cursos ganha folga adicional acima da bottom-nav para impedir sobreposição do último card"
   ]
 }

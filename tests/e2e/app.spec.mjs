@@ -599,8 +599,8 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.inside).toBe(true);
   expect(layout.commandHeight).toBeLessThan(180);
   expect(layout.intelligenceHeight).toBeLessThan(160);
-  expect(layout.courseHeight).toBeGreaterThanOrEqual(360);
-  expect(layout.courseHeight).toBeLessThanOrEqual(470);
+  expect(layout.courseHeight).toBeGreaterThanOrEqual(235);
+  expect(layout.courseHeight).toBeLessThanOrEqual(360);
 });
 
 test('refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
@@ -2255,8 +2255,8 @@ test('etapa 1 [D] Meus Cursos aproveita a largura com dois concursos no desktop 
     };
   });
   expect(data.columns).toBe(2);
-  expect(data.height).toBeGreaterThanOrEqual(260);
-  expect(data.height).toBeLessThanOrEqual(560);
+  expect(data.height).toBeGreaterThanOrEqual(300);
+  expect(data.height).toBeLessThanOrEqual(470);
   expect(data.width).toBeGreaterThan(500);
   expect(data.titleOverflow).toBe('hidden');
   expect(String(data.titleLines)).toBe('2');
@@ -2296,8 +2296,8 @@ test('etapa 1 [T] Meus Cursos usa duas colunas no iPad e mantém densidade confo
     };
   });
   expect(data.columns).toBe(2);
-  expect(data.height).toBeGreaterThanOrEqual(260);
-  expect(data.height).toBeLessThanOrEqual(520);
+  expect(data.height).toBeGreaterThanOrEqual(300);
+  expect(data.height).toBeLessThanOrEqual(450);
   expect(data.width).toBeGreaterThan(300);
 });
 
