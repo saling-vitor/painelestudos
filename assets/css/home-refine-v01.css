@@ -1,0 +1,298 @@
+/* Meus Mapas · Home refinada V01
+   [G] hierarquia e ações · [D] densidade e composição · [T+M] preservação responsiva */
+
+/* Densidade geral da Home sem reduzir legibilidade. */
+html:not(.is-phone-layout) [data-view="home"] .section{margin-top:24px}
+html:not(.is-phone-layout) [data-view="home"] .section-head{gap:12px}
+html:not(.is-phone-layout) [data-view="home"] .section-head h2{letter-spacing:-.012em}
+html:not(.is-phone-layout) .home-study-dashboard{margin:16px 0 0}
+
+/* Comando principal do dia mais compacto. */
+html:not(.is-phone-layout) .study-command-card{padding:14px 15px!important}
+html:not(.is-phone-layout) .study-command-head{gap:14px}
+html:not(.is-phone-layout) .study-command-head h2{font-size:16.5px}
+html:not(.is-phone-layout) .study-command-head p{margin-top:2px}
+html:not(.is-phone-layout) .study-command-metrics{margin-top:10px;gap:7px}
+html:not(.is-phone-layout) .study-command-metrics>button{
+  min-height:58px!important;
+  padding:8px 10px!important;
+  align-content:center;
+}
+html:not(.is-phone-layout) .study-command-metrics b{font-size:14.5px}
+
+/* A faixa Tenho tempo / Prioridade / Ritmo perde altura e ganha foco. */
+html:not(.is-phone-layout) .study-intelligence-row{
+  gap:10px!important;
+  margin-top:10px!important;
+  grid-template-columns:.86fr 1.12fr 1.12fr!important;
+}
+html:not(.is-phone-layout) .study-intelligence-row>article{
+  min-height:116px!important;
+  padding:12px 13px!important;
+}
+html:not(.is-phone-layout) .study-intelligence-row h3{
+  margin:4px 0 5px!important;
+  font-size:13px!important;
+}
+html:not(.is-phone-layout) .study-intelligence-row p{
+  margin-bottom:9px!important;
+  font-size:8.5px!important;
+}
+html:not(.is-phone-layout) .study-now-buttons{
+  gap:5px;
+  margin-top:auto!important;
+}
+html:not(.is-phone-layout) .study-now-buttons button{
+  height:32px;
+  border-color:rgba(216,197,158,.16);
+  background:linear-gradient(180deg,rgba(216,197,158,.05),rgba(216,197,158,.018));
+  font-size:8.5px;
+}
+html:not(.is-phone-layout) .study-now-buttons button[data-time-now="30"],
+html:not(.is-phone-layout) .study-now-buttons button[data-time-now="60"]{
+  border-color:rgba(216,197,158,.24);
+  color:#e2cfaa;
+}
+html:not(.is-phone-layout) .priority-now-card p{
+  display:grid;
+  gap:3px;
+}
+html:not(.is-phone-layout) .priority-now-card p strong{
+  color:#d9dde2;
+  font-size:9.5px;
+  font-weight:800;
+}
+html:not(.is-phone-layout) .priority-now-card p span{
+  color:#7c828b;
+}
+html:not(.is-phone-layout) .forecast-home-card .forecast-home-date{
+  color:#b8a77f;
+  font-weight:700;
+}
+html:not(.is-phone-layout) .priority-now-card .primary{min-width:92px}
+html:not(.is-phone-layout) .priority-now-card button,
+html:not(.is-phone-layout) .forecast-home-card button{
+  min-height:31px;
+}
+
+/* Plano do dia: primeira ação é protagonista, demais itens recuam. */
+html:not(.is-phone-layout) .home-review-section{
+  gap:10px;
+  padding:12px 14px 10px!important;
+}
+html:not(.is-phone-layout) .home-review-section .section-head{
+  margin-bottom:7px!important;
+}
+html:not(.is-phone-layout) .home-review-section .study-plan-grid{padding-top:2px}
+html:not(.is-phone-layout) .home-review-section .study-plan-item{
+  min-height:46px!important;
+  padding:7px 4px!important;
+}
+html:not(.is-phone-layout) .home-review-section .study-plan-item:first-child{
+  margin-inline:-5px;
+  padding-inline:9px!important;
+  border-radius:8px!important;
+  background:linear-gradient(90deg,rgba(216,197,158,.045),rgba(216,197,158,.012) 62%,transparent)!important;
+}
+html:not(.is-phone-layout) .home-review-section .study-plan-item:first-child .study-plan-order{
+  border-color:rgba(216,197,158,.28);
+  background:rgba(216,197,158,.075);
+  color:#e0c99d;
+}
+html:not(.is-phone-layout) .home-review-section .study-plan-item:first-child [data-study-plan-open]{
+  border-color:rgba(216,197,158,.24);
+  background:rgba(216,197,158,.055);
+  color:#e3d0aa;
+}
+html:not(.is-phone-layout) .study-plan-footer{padding-top:8px}
+
+/* Retomar: capa pequena + accent do mapa. */
+.continue-card{
+  --continue-accent:#b99c68;
+}
+html:not(.is-phone-layout) .continue-card{
+  min-height:104px!important;
+  grid-template-columns:112px minmax(0,1fr) auto!important;
+  gap:14px!important;
+  padding:12px 13px!important;
+  border-color:color-mix(in srgb,var(--continue-accent) 25%,rgba(255,255,255,.075))!important;
+  background:
+    radial-gradient(360px 150px at 0 0,color-mix(in srgb,var(--continue-accent) 8%,transparent),transparent 72%),
+    linear-gradient(145deg,rgba(13,15,19,.94),rgba(8,10,13,.96))!important;
+}
+.continue-thumb{
+  position:relative;
+  width:112px;
+  height:63px;
+  overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--continue-accent) 26%,rgba(255,255,255,.08));
+  border-radius:9px;
+  background:#080a0d;
+  box-shadow:inset 0 1px rgba(255,255,255,.025);
+}
+.continue-thumb img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  filter:saturate(.92) brightness(.86);
+}
+.continue-thumb::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 42%,rgba(3,4,6,.58));
+  pointer-events:none;
+}
+.continue-thumb-code{
+  position:absolute;
+  left:6px;
+  bottom:5px;
+  z-index:1;
+  max-width:calc(100% - 12px);
+  padding:3px 5px;
+  overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--continue-accent) 42%,transparent);
+  border-radius:5px;
+  background:rgba(4,6,8,.76);
+  color:color-mix(in srgb,var(--continue-accent) 72%,white);
+  font:800 7px var(--mono);
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+html:not(.is-phone-layout) .continue-content>b{
+  font-size:14px;
+  line-height:1.2;
+}
+html:not(.is-phone-layout) .continue-content>p{
+  margin-top:3px;
+  font-size:9.5px;
+}
+html:not(.is-phone-layout) .continue-progress{margin-top:8px}
+html:not(.is-phone-layout) .continue-card>.primary{
+  border-color:color-mix(in srgb,var(--continue-accent) 36%,rgba(255,255,255,.08));
+  background:color-mix(in srgb,var(--continue-accent) 9%,#0d1013);
+  color:color-mix(in srgb,var(--continue-accent) 70%,white);
+}
+
+/* Simulados: estado não iniciado não deve parecer alerta. */
+.home-simulations-section .simulation-recent-list{gap:8px}
+.home-simulations-section .simulation-recent-item{
+  min-height:72px;
+  border-color:rgba(255,255,255,.07)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.018),rgba(8,10,13,.86))!important;
+  box-shadow:inset 2px 0 color-mix(in srgb,var(--brand-coral,#e35d63) 36%,transparent);
+}
+.home-simulations-section .simulation-recent-item b{
+  color:#dfe2e6!important;
+  letter-spacing:.035em;
+}
+.home-simulations-section .simulation-recent-item span{color:#7f858e!important}
+.home-simulations-section .simulation-recent-item .secondary{
+  border-color:rgba(255,255,255,.065);
+  background:rgba(255,255,255,.014);
+  color:#a8adb5;
+}
+
+/* Cursos da Home: mesmos conteúdos em proporção mais baixa. */
+html:not(.is-phone-layout) #homeCourses .home-course-card{
+  min-height:258px!important;
+  padding:14px 15px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card h3{
+  margin-top:10px!important;
+  font-size:17.5px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card .course-card-meta{margin-top:8px!important}
+html:not(.is-phone-layout) #homeCourses .home-course-card .course-progress-mini{
+  left:15px!important;
+  right:15px!important;
+  bottom:50px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card .course-footer{
+  left:15px!important;
+  right:15px!important;
+  bottom:11px!important;
+  padding-top:8px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card .enter{
+  min-height:31px!important;
+  padding-inline:10px!important;
+}
+
+/* Topbar: Instalar é eventual; sincronizar continua prioritário. */
+html:not(.is-phone-layout) #installBtn{
+  opacity:.82;
+}
+html:not(.is-phone-layout) #syncTop{
+  opacity:1;
+}
+
+/* [D] Em telas largas, Retomar e Simulados compartilham a mesma faixa. */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"].active{
+    display:grid;
+    grid-template-columns:minmax(360px,.78fr) minmax(0,1.22fr);
+    column-gap:16px;
+    row-gap:20px;
+    align-items:start;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.hero,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>#homeStudyDashboard,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>#homeReviewSection,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.home-courses-section{
+    grid-column:1/-1;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.home-continue-section{
+    grid-column:1;
+    margin-top:0!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.home-simulations-section{
+    grid-column:2;
+    margin-top:0!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-list{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item:nth-child(3){
+    display:flex!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .section-head,
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .section-head{
+    min-height:49px;
+    margin-bottom:10px;
+  }
+}
+
+/* [T] Mantém composição em coluna e adapta a miniatura. */
+html.is-ipad:not(.is-phone-layout) .continue-card{
+  grid-template-columns:96px minmax(0,1fr) auto!important;
+}
+html.is-ipad:not(.is-phone-layout) .continue-thumb{
+  width:96px;
+  height:54px;
+}
+html.is-ipad:not(.is-phone-layout) .study-intelligence-row{
+  grid-template-columns:1fr 1fr!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-intelligence-row .forecast-home-card{
+  grid-column:1/-1!important;
+}
+
+/* [M] Preserva fluxo vertical e alvos touch. */
+html.is-phone-layout .continue-card{
+  grid-template-columns:74px minmax(0,1fr)!important;
+  gap:10px!important;
+}
+html.is-phone-layout .continue-thumb{
+  width:74px;
+  height:48px;
+}
+html.is-phone-layout .continue-card>.primary{
+  grid-column:1/-1;
+  width:100%;
+  min-height:44px;
+}
+html.is-phone-layout .study-plan-item:first-child{
+  border-color:rgba(216,197,158,.16)!important;
+}
