@@ -38,6 +38,7 @@ jobs:
         run: |
           node --check assets/js/app.js
           for file in assets/js/app/*.js; do node --check "$file"; done
+          node --check tests/e2e/app.spec.mjs
           node --check sw.js
 
       - name: Build search index
