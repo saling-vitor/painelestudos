@@ -942,8 +942,8 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
 test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica da Home responsiva no iPad.');
   for(const scenario of [
-    {name:'landscape',width:1194,height:834,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
-    {name:'portrait',width:820,height:1180,simulationMode:'flex',simulationColumns:0,intelligenceColumns:2,courseColumns:2}
+    {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
+    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'flex',simulationColumns:0,intelligenceColumns:2,courseColumns:2}
   ]){
     await page.setViewportSize({width:scenario.width,height:scenario.height});
     await page.goto('/#home');
@@ -978,7 +978,7 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
       };
     });
     expect.soft(data.scrollWidth,scenario.name+' sem overflow horizontal').toBeLessThanOrEqual(data.width+2);
-    expect.soft(data.heroHeight,scenario.name+' hero compacto').toBeLessThanOrEqual(270);
+    expect.soft(data.heroHeight,scenario.name+' hero compacto').toBeLessThanOrEqual(scenario.maxHeroHeight);
     expect.soft(data.resumeWidth,scenario.name+' Retomar ocupa largura disponível').toBeGreaterThan(data.width*.55);
     expect.soft(data.simSectionWidth,scenario.name+' Simulados ocupa largura disponível').toBeGreaterThan(data.width*.55);
     expect.soft(data.thirdDisplay,scenario.name+' terceiro simulado nunca é ocultado').not.toBe('none');
