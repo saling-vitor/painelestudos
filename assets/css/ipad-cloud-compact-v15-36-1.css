@@ -1,5 +1,6 @@
 /* V15.36.1-T · iPad landscape: status compacto da nuvem */
 .ipad-cloud-icon{display:none}
+@keyframes ipadCloudSyncPulse{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
 
 @media (orientation:landscape){
   html.is-ipad:not(.is-phone-layout) .side-bottom{
@@ -52,6 +53,17 @@
   html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.warn) .ipad-cloud-icon{
     color:#d9a958;
     opacity:1;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.syncing) .ipad-cloud-icon{
+    color:#71c589;
+    opacity:1;
+    animation:ipadCloudSyncPulse 1.1s ease-in-out infinite;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.offline) .ipad-cloud-icon{
+    color:#68707b;
+    opacity:.55;
   }
 
   html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.error) .ipad-cloud-icon{
