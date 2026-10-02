@@ -2872,6 +2872,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-light-rounded-192/);
   expect(await page.locator('#appIconExplicitFavicon').getAttribute('media')).toBe('all');
   await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-light-rounded-192/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-light-v15.36.2.webmanifest');
 
   const dark=panel.locator('[data-app-icon-mode="dark"]');
   await dark.click();
@@ -2879,6 +2880,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('dark');
   await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-dark-rounded-192/);
   await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-dark-rounded-180/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-v15.23.6.webmanifest');
 
   const automatic=panel.locator('[data-app-icon-mode="auto"]');
   await automatic.click();
