@@ -2470,7 +2470,7 @@ test('etapa 1 [M] preserva Meus Cursos em uma coluna no iPhone',async({page},tes
 });
 
 
-test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page})=>{
+test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page},testInfo)=>{
   await page.goto('/#courses');
   await page.evaluate(()=>{state.cloudCourses=[];state.cloudMaps=[];renderCoursesPage()});
   const coursesEmpty=page.locator('#coursesGrid .empty-state');
@@ -2513,6 +2513,12 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page})=
     const root=document.querySelector('#restorePointsList');
     root.innerHTML=emptyStateHtml({title:'Nenhum ponto de restauração ainda',text:'Eles serão criados automaticamente antes de ações destrutivas.',mascot:'continue',compact:true,className:'restore-points-empty-state'});
   });
+  if(testInfo.project.name==='iphone-webkit'){
+    const backupPanel=page.locator('[data-view="settings"] .backup-panel');
+    const toggle=backupPanel.locator(':scope > .mobile-settings-toggle');
+    await expect(toggle).toBeVisible();
+    if(await backupPanel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await toggle.click();
+  }
   const restoreEmpty=page.locator('#restorePointsList .restore-points-empty-state');
   await expect(restoreEmpty).toBeVisible();
   await expect(restoreEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-leitura-v15-22-0\.png/);
@@ -2647,8 +2653,9 @@ test('[G] Etapa 3 Todos os Mapas ordena filtra agrupa e alterna layout',async({p
 test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros ao reentrar',async({page},testInfo)=>{
   await page.goto('/#maps');
   await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
+  const isPhone=testInfo.project.name==='iphone-webkit';
 
-  if(testInfo.project.name==='iphone-webkit'){
+  if(isPhone){
     await page.locator('#allMapsMobileSort').click();
     await page.locator('#allMapsSortSheet').selectOption('topics-desc');
     await page.locator('#allMapsMobileFilter').click();
@@ -2663,9 +2670,10 @@ test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros a
   await page.locator('#allMapsFilterDone').click();
   await page.locator('[data-allmaps-layout="list"]:visible').click();
 
-  await page.locator('[data-nav="courses"]').first().click();
+  const navRoot=isPhone?'.bottom-nav':'.nav';
+  await page.locator(navRoot+' [data-nav="courses"]').first().click();
   await expect(page.locator('[data-view="courses"]')).toHaveClass(/active/);
-  await page.locator('[data-nav="maps"]').first().click();
+  await page.locator(navRoot+' [data-nav="maps"]').first().click();
   await expect(page.locator('[data-view="maps"]')).toHaveClass(/active/);
 
   const reset=await page.evaluate(()=>({
