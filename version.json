@@ -1,12 +1,14 @@
 {
-  "version": "15.36.8",
-  "label": "V15.36.8-M",
-  "releasedAt": "2026-10-03T08:15:00.000Z",
-  "notes": "Busca única e controles compactos na biblioteca de mapas do smartphone.",
+  "version": "15.36.9",
+  "label": "V15.36.9-M",
+  "releasedAt": "2026-10-03T08:30:00.000Z",
+  "notes": "Progresso do smartphone mais compacto, com mapas identificados por tags e ordenação em painel inferior.",
   "showWhatsNew": true,
   "highlights": [
-    "[M] Busca superior filtra mapas sem duplicar o campo",
-    "[M] Filtros e ordenação abrem em painel inferior",
-    "[M] Ordenar, Filtrar e grade/lista ficam na mesma linha"
+    "[M] Progresso geral e concursos ocupam menos altura",
+    "[M] Mapas usam somente a tag/sigla colorida, sem miniatura da capa",
+    "[M] Títulos podem usar duas linhas e a linha inteira do mapa abre o conteúdo",
+    "[M] Filtros viram chips e a ordenação abre em bottom sheet",
+    "[M] Lista respeita a bottom-nav e mostra até 3 mapas antes de “Mostrar todos”"
   ]
 }
