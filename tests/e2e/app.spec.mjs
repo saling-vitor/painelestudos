@@ -2998,7 +2998,7 @@ test('[G] refinamento visual mantém foco discreto, menus harmonizados e modal r
     await expect(trigger).toBeVisible();
     await trigger.click();
     await expect(page.locator('.ui-select-popover')).toBeVisible();
-    await expect(page.locator('.ui-select-popover .ui-select-option').first()).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded','true');
     await page.keyboard.press('Escape');
     await sort.selectOption('alpha');
     await expect(sort).toHaveValue('alpha');
