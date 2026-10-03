@@ -30,6 +30,17 @@ const SIMULATION_COVER_OPTIONS=[{key:'auto',label:'Automática pela banca'},{key
     state.trigger.setAttribute('aria-disabled',select.disabled?'true':'false');
     state.trigger.title=state.value.textContent;
   }
+  function positionSelectPopover(trigger,popover){
+    if(!trigger?.isConnected||!popover?.isConnected)return false;
+    const rect=trigger.getBoundingClientRect(),margin=8,minWidth=Math.max(220,rect.width),maxWidth=Math.min(420,window.innerWidth-margin*2);
+    popover.style.width=Math.min(Math.max(minWidth,220),maxWidth)+'px';
+    const left=Math.max(margin,Math.min(rect.left,window.innerWidth-popover.offsetWidth-margin));
+    const roomBelow=window.innerHeight-rect.bottom-margin,roomAbove=rect.top-margin;
+    const useAbove=roomBelow<Math.min(260,popover.scrollHeight)&&roomAbove>roomBelow;
+    popover.style.left=left+'px';
+    popover.style.top=(useAbove?Math.max(margin,rect.top-popover.offsetHeight-6):Math.min(window.innerHeight-popover.offsetHeight-margin,rect.bottom+6))+'px';
+    return true;
+  }
   function optionButton(select,option,popover,trigger){
     const button=document.createElement('button');
     button.type='button';button.className='ui-select-option';button.setAttribute('role','option');
@@ -56,15 +67,9 @@ const SIMULATION_COVER_OPTIONS=[{key:'auto',label:'Automática pela banca'},{key
       }else if(child.tagName==='OPTION')optionButton(select,child,popover,state.trigger);
     }
     document.body.appendChild(popover);
-    const rect=state.trigger.getBoundingClientRect(),margin=8,minWidth=Math.max(220,rect.width),maxWidth=Math.min(420,window.innerWidth-margin*2);
-    popover.style.width=Math.min(Math.max(minWidth,220),maxWidth)+'px';
-    const left=Math.max(margin,Math.min(rect.left,window.innerWidth-popover.offsetWidth-margin));
-    const roomBelow=window.innerHeight-rect.bottom-margin,roomAbove=rect.top-margin;
-    const useAbove=roomBelow<Math.min(260,popover.scrollHeight)&&roomAbove>roomBelow;
-    popover.style.left=left+'px';
-    popover.style.top=(useAbove?Math.max(margin,rect.top-popover.offsetHeight-6):Math.min(window.innerHeight-popover.offsetHeight-margin,rect.bottom+6))+'px';
+    if(!positionSelectPopover(state.trigger,popover)){popover.remove();return}
     state.trigger.setAttribute('aria-expanded','true');openState={select,trigger:state.trigger,popover};
-    const selected=popover.querySelector('[aria-selected="true"]');selected?.scrollIntoView({block:'nearest'});
+    const selected=popover.querySelector('[aria-selected="true"]');if(selected){const top=selected.offsetTop,bottom=top+selected.offsetHeight,viewTop=popover.scrollTop,viewBottom=viewTop+popover.clientHeight;if(top<viewTop)popover.scrollTop=top;else if(bottom>viewBottom)popover.scrollTop=Math.max(0,bottom-popover.clientHeight)}
   }
   function enhanceSelect(select){
     if(!(select instanceof HTMLSelectElement)||select.multiple||select.size>1||select.dataset.uiSelectEnhanced==='1')return;
@@ -97,6 +102,6 @@ const SIMULATION_COVER_OPTIONS=[{key:'auto',label:'Automática pela banca'},{key
   document.addEventListener('input',event=>{if(event.target instanceof HTMLSelectElement)syncSelect(event.target)},true);
   document.addEventListener('pointerdown',event=>{if(openState&&!openState.popover.contains(event.target)&&event.target!==openState.trigger)closeSelect()},true);
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&openState)closeSelect({restoreFocus:true})});
-  window.addEventListener('resize',()=>closeSelect(),{passive:true});
-  window.addEventListener('scroll',()=>closeSelect(),{passive:true,capture:true});
+  window.addEventListener('resize',()=>{if(openState&&!positionSelectPopover(openState.trigger,openState.popover))closeSelect()},{passive:true});
+  window.addEventListener('scroll',event=>{if(!openState)return;const target=event.target;if(target&&target!==document&&target!==window&&openState.popover.contains(target))return;if(!positionSelectPopover(openState.trigger,openState.popover))closeSelect()},{passive:true,capture:true});
 })();

@@ -3169,6 +3169,45 @@ test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',a
 });
 
 
+test('[D+T] Progresso prioriza tags e remove miniaturas de capa',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='iphone-webkit','Validação exclusiva de Desktop e iPad.');
+  await page.goto('/#progress');
+  const course=page.locator('#progressInfo .progress-course').first();
+  await expect(course).toBeVisible();
+  if(await course.evaluate(el=>el.classList.contains('is-collapsed'))){
+    await course.locator('[data-progress-course-toggle]').click();
+  }
+  const row=course.locator('.progress-map-unstarted').first();
+  await expect(row).toBeVisible();
+  await expect(row.locator('.progress-map-thumb')).toBeHidden();
+  await expect(row.locator('.compact-code')).toBeVisible();
+  await expect(row.locator('.progress-open')).toBeVisible();
+  const layout=await row.evaluate(el=>{
+    const thumb=el.querySelector('.progress-map-thumb');
+    const tag=el.querySelector('.compact-code');
+    const title=el.querySelector('.progress-map-copy>b');
+    const summary=el.querySelector('.progress-map-summary');
+    const open=el.querySelector('.progress-open');
+    return{
+      thumbDisplay:thumb?getComputedStyle(thumb).display:'',
+      tagWidth:tag?.getBoundingClientRect().width||0,
+      titleWidth:title?.getBoundingClientRect().width||0,
+      summaryDisplay:summary?getComputedStyle(summary).display:'',
+      openWidth:open?.getBoundingClientRect().width||0,
+      rowHeight:el.getBoundingClientRect().height
+    };
+  });
+  expect(layout.thumbDisplay).toBe('none');
+  expect(layout.tagWidth).toBeGreaterThanOrEqual(50);
+  expect(layout.tagWidth).toBeLessThanOrEqual(74);
+  expect(layout.titleWidth).toBeGreaterThan(layout.tagWidth);
+  expect(layout.summaryDisplay).toBe('none');
+  expect(layout.openWidth).toBeGreaterThanOrEqual(90);
+  expect(layout.openWidth).toBeLessThanOrEqual(112);
+  expect(layout.rowHeight).toBeLessThan(90);
+});
+
+
 test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação visual exclusiva do smartphone.');
   await page.goto('/#progress');
