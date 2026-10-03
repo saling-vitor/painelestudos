@@ -2806,11 +2806,12 @@ test('etapa 1 [G] identidade dos mapas propaga accent e tags nos blocos mobile',
 });
 
 
-test('[G] Etapa 3 Todos os Mapas ordena filtra agrupa e alterna layout',async({page},testInfo)=>{
+test('[G] Etapa 3 Todos os Mapas ordena filtra agrupa e mantém visualização fixa em cards',async({page},testInfo)=>{
   await page.goto('/#maps');
   await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
   const baseCount=await page.locator('#allMaps .map-card').count();
   await expect(page.locator('#allMapsCount')).toContainText(String(baseCount));
+  await expect(page.locator('[data-allmaps-layout]')).toHaveCount(0);
 
   const isPhone=testInfo.project.name==='iphone-webkit';
   if(isPhone){
@@ -2853,18 +2854,24 @@ test('[G] Etapa 3 Todos os Mapas ordena filtra agrupa e alterna layout',async({p
   }
   await expect(page.locator('#allMaps .maps-group-section')).toHaveCount(1);
 
-  await page.locator('[data-allmaps-layout="list"]:visible').click();
-  await expect(page.locator('#allMapsWrap')).toHaveClass(/map-list/);
-  const layout=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,layout:state.mapLayout,sort:state.allMapsSort}));
-  expect(layout.layout).toBe('list');
+  await page.evaluate(()=>{state.mapLayout='list';renderAllMaps({skipOfflineRefresh:true})});
+  await expect(page.locator('#allMapsWrap')).not.toHaveClass(/map-list/);
+  await expect(page.locator('[data-allmaps-layout]')).toHaveCount(0);
+  const layout=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,sort:state.allMapsSort}));
   expect(layout.sort).toBe('za');
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.width+2);
+
+  const footBorder=await page.locator('#allMaps .map-card .foot').first().evaluate(el=>parseFloat(getComputedStyle(el).borderTopWidth)||0);
+  expect(footBorder).toBe(0);
 });
 
-test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros ao reentrar',async({page},testInfo)=>{
+test('[G] Etapa 3 Todos os Mapas persiste ordenação, limpa filtros e ignora layout legado',async({page},testInfo)=>{
+  await page.addInitScript(()=>localStorage.setItem('studyapp.mapLayout','list'));
   await page.goto('/#maps');
   await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
   const isPhone=testInfo.project.name==='iphone-webkit';
+  await expect(page.locator('[data-allmaps-layout]')).toHaveCount(0);
+  await expect(page.locator('#allMapsWrap')).not.toHaveClass(/map-list/);
 
   if(isPhone){
     await page.locator('#allMapsMobileSort').click();
@@ -2879,7 +2886,6 @@ test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros a
   await page.locator('#allMapsCategory').selectOption(category);
   await page.locator('#allMapsFavorites').check();
   await page.locator('#allMapsFilterDone').click();
-  await page.locator('[data-allmaps-layout="list"]:visible').click();
 
   await page.locator('[data-nav="courses"]:visible').first().click();
   await expect(page.locator('[data-view="courses"]')).toHaveClass(/active/);
@@ -2894,16 +2900,17 @@ test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros a
     favorites:state.allMapsFavorites,
     offline:state.allMapsOffline,
     group:state.allMapsGroup,
-    sort:state.allMapsSort,
-    layout:state.mapLayout
+    sort:state.allMapsSort
   }));
-  expect(reset).toEqual({query:'',category:'',course:'',status:'',favorites:false,offline:false,group:'',sort:'topics-desc',layout:'list'});
+  expect(reset).toEqual({query:'',category:'',course:'',status:'',favorites:false,offline:false,group:'',sort:'topics-desc'});
+  await expect(page.locator('#allMapsWrap')).not.toHaveClass(/map-list/);
 
   await page.reload();
   await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
   const persisted=await page.evaluate(()=>({sort:state.allMapsSort,layout:state.mapLayout,storedSort:localStorage.getItem('studyapp.allMapsSort'),storedLayout:localStorage.getItem('studyapp.mapLayout')}));
   expect(persisted).toEqual({sort:'topics-desc',layout:'list',storedSort:'topics-desc',storedLayout:'list'});
-  await expect(page.locator('#allMapsWrap')).toHaveClass(/map-list/);
+  await expect(page.locator('#allMapsWrap')).not.toHaveClass(/map-list/);
+  await expect(page.locator('[data-allmaps-layout]')).toHaveCount(0);
 
   const firstKey=await page.locator('#allMaps .map-card').first().getAttribute('data-map');
   await page.evaluate(key=>{
@@ -2935,6 +2942,7 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
       layoutNearTitle:lr.left>=hr.right-1&&lr.left-hr.right<48,
       coverRatio:vr.width/vr.height,
       footerInside:fr.left>=cr.left-1&&fr.right<=cr.right+1&&fr.bottom<=cr.bottom+1,
+      footerBorderTop:parseFloat(getComputedStyle(foot).borderTopWidth)||0,
       scrollWidth:document.documentElement.scrollWidth,
       viewportWidth:innerWidth
     };
@@ -2947,6 +2955,7 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
   expect(data.coverRatio).toBeGreaterThan(1.74);
   expect(data.coverRatio).toBeLessThan(1.82);
   expect(data.footerInside).toBe(true);
+  expect(data.footerBorderTop).toBe(0);
   expect(data.scrollWidth).toBeLessThanOrEqual(data.viewportWidth+2);
 });
 
@@ -3095,14 +3104,18 @@ test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',a
   expect(box.y).toBeGreaterThanOrEqual(0);
   expect(box.y+box.height).toBeLessThanOrEqual(845);
 
+  await expect(page.locator('.maps-mobile-controls .maps-layout-actions')).toHaveCount(0);
   const rowGeometry=await page.locator('.maps-mobile-controls').evaluate(el=>{
+    const row=el.getBoundingClientRect();
     const sort=el.querySelector('#allMapsMobileSort').getBoundingClientRect();
     const filter=el.querySelector('#allMapsMobileFilter').getBoundingClientRect();
-    const layout=el.querySelector('.maps-layout-actions').getBoundingClientRect();
-    return{sortTop:sort.top,filterTop:filter.top,layoutTop:layout.top,height:el.getBoundingClientRect().height};
+    return{sortTop:sort.top,filterTop:filter.top,left:row.left,right:row.right,width:innerWidth,height:row.height,sortWidth:sort.width,filterWidth:filter.width};
   });
   expect(Math.abs(rowGeometry.sortTop-rowGeometry.filterTop)).toBeLessThan(2);
-  expect(Math.abs(rowGeometry.sortTop-rowGeometry.layoutTop)).toBeLessThan(4);
+  expect(rowGeometry.left).toBeGreaterThanOrEqual(0);
+  expect(rowGeometry.right).toBeLessThanOrEqual(rowGeometry.width+1);
+  expect(rowGeometry.sortWidth).toBeGreaterThan(0);
+  expect(rowGeometry.filterWidth).toBeGreaterThan(0);
   expect(rowGeometry.height).toBeLessThan(52);
 
   await page.locator('#allMapsFilterDone').click();
