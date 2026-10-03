@@ -207,6 +207,8 @@ test('progresso mostra prioridades acionáveis',async({page})=>{
   await expect(page.locator('#progressInsights')).toContainText('Onde focar agora');
   await expect(page.locator('#progressInsights')).not.toContainText('nenhum mapa parado');
   await expect(page.locator('#progressInsights')).not.toContainText('sem tentativa finalizada');
+  await expect(page.locator('#progressInsights .progress-insight-card.is-primary')).toHaveCount(1);
+  await expect(page.locator('#progressInsights .progress-insights-head>span')).toHaveText(/^\d+h \d{2}min nesta semana$/);
 });
 
 test('simulado sugere mapas para revisar após resultado',async({page})=>{
@@ -1141,7 +1143,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
 test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   const scenarios=[
-    {name:'landscape',width:1194,height:834,metrics:3,insights:4,analytics:4,agenda:2,agendaSide:null,settings:2},
+    {name:'landscape',width:1194,height:834,metrics:3,insights:2,analytics:4,agenda:2,agendaSide:null,settings:2},
     {name:'portrait',width:820,height:1180,metrics:3,insights:2,analytics:2,agenda:1,agendaSide:2,settings:1},
     {name:'split',width:640,height:900,metrics:2,insights:1,analytics:1,agenda:1,agendaSide:1,settings:1}
   ];
@@ -1953,9 +1955,16 @@ test('iPhone real UX2 mantém somente quatro KPIs no resumo de Progresso',async(
   await page.waitForTimeout(120);
   const visible=await page.locator('#progressMetrics .metric').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
   expect(visible).toBe(4);
-  const insightLayout=await page.locator('.progress-insights-grid').evaluate(el=>({display:getComputedStyle(el).display,overflow:getComputedStyle(el).overflowX}));
-  expect(insightLayout.display).toBe('flex');
-  expect(['auto','scroll']).toContain(insightLayout.overflow);
+  const insightLayout=await page.locator('.progress-insights-grid').evaluate(el=>({
+    display:getComputedStyle(el).display,
+    width:el.getBoundingClientRect().width,
+    scrollWidth:el.scrollWidth,
+    cards:[...el.querySelectorAll('.progress-insight-card')].map(card=>{const box=card.getBoundingClientRect();return{width:box.width,left:box.left,right:box.right}})
+  }));
+  expect(insightLayout.display).toBe('grid');
+  expect(insightLayout.scrollWidth).toBeLessThanOrEqual(insightLayout.width+2);
+  expect(insightLayout.cards.length).toBeGreaterThan(0);
+  expect(insightLayout.cards.every(card=>card.width<=insightLayout.width+2&&card.left>=0&&card.right<=390+1)).toBe(true);
   await expect(page.locator('[data-mobile-progress-group="priority"]>summary')).toBeVisible();
 });
 
