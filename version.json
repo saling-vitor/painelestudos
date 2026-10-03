@@ -1,14 +1,15 @@
 {
-  "version": "15.36.5",
-  "label": "V15.36.5-G",
-  "releasedAt": "2026-10-03T01:20:00.000Z",
-  "notes": "Próximas ações redesenhadas para aproveitar melhor desktop, iPad e iPhone, sem carrossel no celular.",
+  "version": "15.36.6",
+  "label": "V15.36.6-G",
+  "releasedAt": "2026-10-03T01:44:00.000Z",
+  "notes": "Plano do dia redesenhado com hierarquia mais clara e layout próprio para desktop, iPad e iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] iPhone troca o carrossel de Próximas ações por três cards verticais completos, sem conteúdo cortado",
-    "[G] iPad usa duas ações no topo e a terceira em largura total, com capa, texto e botão sem sobreposição",
-    "[G] Desktop destaca a ação principal e organiza as demais em uma coluna compacta, reduzindo espaço vazio",
-    "[G] Código do mapa fica na capa e deixa de duplicar espaço junto ao título",
-    "[G] Tempo semanal passa a aparecer em horas e minutos na seção Onde focar agora"
+    "[G] Seu estudo de hoje passa a mostrar duração planejada, quantidade de blocos e blocos concluídos",
+    "[D] Desktop ganha sequência mais compacta, alinhada e com a próxima atividade destacada pela cor do mapa",
+    "[T] iPad preserva a leitura em linha com botões touch de 44 px e espaçamento próprio",
+    "[M] iPhone transforma cada atividade em mini-card vertical, sem comprimir título, tempo e ação",
+    "[G] Começar estudo inicia a primeira sessão planejada; quando já existe uma sessão ativa, a ação vira Continuar",
+    "[G] Rodapé do plano passa a exibir horas/minutos, tempo restante e progresso do dia"
   ]
 }

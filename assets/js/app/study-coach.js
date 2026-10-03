@@ -7,6 +7,16 @@ function norm(value){return String(value||'').normalize('NFD').replace(/[\u0300-
 function words(value){return new Set(norm(value).split(/\s+/).filter(word=>word.length>2&&!STOP_WORDS.has(word)))}
 function mapKeyOf(map){return map?String(map._key||mapKey(map)):''}
 function formatStudyHoursMinutes(seconds){const total=Math.max(0,Math.floor((Number(seconds)||0)/60)),hours=Math.floor(total/60),minutes=total%60;return hours+'h '+String(minutes).padStart(2,'0')+'min'}
+function formatPlanMinutes(minutes){const total=Math.max(0,Math.round(Number(minutes)||0)),hours=Math.floor(total/60),rest=total%60;if(hours&&rest)return hours+'h '+rest+'min';if(hours)return hours+'h';return rest+'min'}
+function todayPlanCompletionIndexes(plan){
+ const done=new Set(),now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime(),end=start+86400000,data=window.StudyDashboard?.exportData?.()||{},secondsByMap=new Map();
+ for(const row of data.sessions||[]){if(row?.deleted)continue;const stamp=Date.parse(row.startedAt||row.endedAt||'');if(!Number.isFinite(stamp)||stamp<start||stamp>=end)continue;const key=String(row.mapKey||'');if(key)secondsByMap.set(key,(secondsByMap.get(key)||0)+Math.max(0,Number(row.durationSeconds)||0))}
+ (plan?.items||[]).forEach((item,index)=>{
+   if(item.kind==='simulation'){const attempts=state?.simAttempts?.[item.key];if(Array.isArray(attempts)&&attempts.some(row=>{const stamp=Date.parse(row?.finishedAt||row?.endedAt||row?.createdAt||'');return Number.isFinite(stamp)&&stamp>=start&&stamp<end}))done.add(index);return}
+   const target=Math.max(60,Math.round((Number(item.minutes)||0)*60*.8));if((secondsByMap.get(String(item.key||''))||0)>=target)done.add(index);
+ });
+ return done
+}
 function estimateMinutes(type,progress={},simulation=null){if(type==='review')return Math.min(25,10+(Number(progress.difficult)||0)*2+(Number(progress.review)||0));if(type==='difficult')return Math.min(30,15+(Number(progress.difficult)||0)*2);if(type==='simulation')return Math.max(15,Math.min(35,Number(simulation?.durationMinutes)||20));if(type==='new')return 20;return 20}
 function simulationCandidate(){if(typeof combinedSimulations!=='function'||typeof simulationAnalytics!=='function')return null;const rows=combinedSimulations().map(sim=>({simulation:sim,analytics:simulationAnalytics(sim)})).filter(row=>row.analytics?.count&&row.analytics?.latest).sort((a,b)=>{const score=(Number(a.analytics.latest.score)||0)-(Number(b.analytics.latest.score)||0);if(score)return score;return activityTimestamp(b.analytics.latest.finishedAt)-activityTimestamp(a.analytics.latest.finishedAt)});const row=rows[0];if(!row||Number(row.analytics.latest.score)>=85)return null;return row}
 function studyCoachPlan(maps=combinedMaps()){
@@ -31,10 +41,13 @@ function itemMeta(item){if(item.kind==='simulation')return[item.reason,item.simu
 function openPlanItem(item){if(!item)return false;if(item.kind==='simulation')return openSimulation(item.key);if(item.type==='review'&&typeof openReviewQueueItem==='function')return openReviewQueueItem({map:item.map});return openMap(item.key)}
 function renderHomeCoach(){
  const section=$('#homeReviewSection'),summary=$('#homeReviewSummary'),root=$('#homeStudyPlan'),start=$('#homeReviewNowBtn'),home=$('[data-view="home"]');if(!section||!summary||!root||!start)return;
- const plan=studyCoachPlan();section.hidden=!plan.items.length;const head=section.querySelector('.section-head h2'),kicker=section.querySelector('.kicker');if(head)head.textContent='Seu estudo de hoje';if(kicker)kicker.textContent='Plano do dia';
- summary.textContent=plan.items.length?(plan.summary.plannedMinutes+' min sugeridos · '+plan.summary.dueCount+' revisões pendentes · '+plan.summary.difficult+' DIF · '+formatStudyDuration(plan.summary.todaySeconds)+' hoje'):'';
- start.textContent='Começar';start.hidden=!plan.items.length;start.onclick=()=>openPlanItem(plan.items[0]);
- root.innerHTML=plan.items.map((item,index)=>{const map=item.kind==='simulation'?null:item.map,style=map?' style="'+ESC(mapAccentVars(map))+'"':'',code=itemCode(item);return'<article class="study-plan-item'+(map?' has-map-accent':'')+'" data-study-plan-item="'+index+'"'+style+'><span class="study-plan-order">'+(index+1)+'</span><div class="study-plan-code">'+ESC(code)+'</div><div class="study-plan-copy"><b>'+ESC(itemTitle(item))+'</b><span>'+ESC(itemMeta(item))+'</span></div><span class="study-plan-time">'+item.minutes+' min</span><button type="button" class="secondary" data-study-plan-open="'+index+'">'+(index===0?'Começar':'Abrir')+'</button></article>'}).join('');
+ const plan=studyCoachPlan(),active=window.StudyDashboard?.active?.()||null,completed=todayPlanCompletionIndexes(plan),firstMap=plan.items[0]?.kind==='map'?plan.items[0].map:null,planAccent=firstMap&&typeof mapAccentValue==='function'?mapAccentValue(firstMap):'';
+ section.hidden=!plan.items.length;section.dataset.planState=active?'active':'idle';if(planAccent)section.style.setProperty('--plan-accent',planAccent);else section.style.removeProperty('--plan-accent');
+ const head=section.querySelector('.section-head h2'),kicker=section.querySelector('.kicker');if(head)head.textContent='Seu estudo de hoje';if(kicker)kicker.textContent='Plano do dia';
+ const blockLabel=plan.items.length===1?'bloco':'blocos',doneLabel=completed.size===1?'concluído':'concluídos';
+ summary.textContent=plan.items.length?(formatPlanMinutes(plan.summary.plannedMinutes)+' planejada · '+plan.items.length+' '+blockLabel+' · '+completed.size+' '+doneLabel):'';
+ start.textContent=active?'Continuar':'Começar estudo';start.hidden=!plan.items.length;start.onclick=()=>openPlanItem(plan.items[0]);
+ root.innerHTML=plan.items.map((item,index)=>{const map=item.kind==='simulation'?null:item.map,style=map?' style="'+ESC(mapAccentVars(map))+'"':'',code=itemCode(item),isDone=completed.has(index),buttonLabel=index===0?(active?'Continuar':'Começar'):'Abrir';return'<article class="study-plan-item'+(map?' has-map-accent':'')+(index===0?' is-next':'')+(isDone?' is-complete':'')+'" data-study-plan-item="'+index+'"'+style+'><span class="study-plan-order">'+(isDone?'✓':(index+1))+'</span><div class="study-plan-code">'+ESC(code)+'</div><div class="study-plan-copy"><b>'+ESC(itemTitle(item))+'</b><span>'+ESC(itemMeta(item))+'</span></div><span class="study-plan-time">'+item.minutes+' min</span><button type="button" class="secondary" data-study-plan-open="'+index+'">'+buttonLabel+'</button></article>'}).join('');
  root.querySelectorAll('[data-study-plan-open]').forEach(button=>button.onclick=()=>openPlanItem(plan.items[Number(button.dataset.studyPlanOpen)]));
  const progress=statProgress(),returning=!!lastMap()||progress.marked>0||studyTimeWeekSeconds()>0||Object.values(state.simAttempts||{}).some(list=>Array.isArray(list)&&list.length);home?.classList.toggle('home-returning',returning);
 }

@@ -480,19 +480,28 @@ function ensureAgendaView(){
     if(!grid||!section||section.hidden)return;
     let footer=section.querySelector('.study-plan-footer');
     if(!footer){footer=document.createElement('div');footer.className='study-plan-footer';grid.insertAdjacentElement('afterend',footer)}
-    const snap=window.StudyCoach?.snapshot?.(),planned=Number(snap?.summary?.plannedMinutes)||0,today=window.StudyTime?.today?.()||0,realized=Math.round(today/60),pct=planned?Math.min(100,Math.round(realized/planned*100)):0;
-    footer.innerHTML='<span>Planejado <b>'+planned+' min</b></span><span>Realizado <b>'+realized+' min</b></span><i><em style="width:'+pct+'%"></em></i><strong>'+pct+'%</strong>';
+    const snap=window.StudyCoach?.snapshot?.(),planned=Number(snap?.summary?.plannedMinutes)||0,today=window.StudyTime?.today?.()||0,realized=Math.round(today/60),remaining=Math.max(0,planned-realized),pct=planned?Math.min(100,Math.round(realized/planned*100)):0;
+    footer.innerHTML='<span class="study-plan-footer-stat">Planejado <b>'+escape(fmtDurationInput(planned))+'</b></span><span class="study-plan-footer-stat">Realizado <b>'+escape(fmtDurationInput(realized))+'</b></span><span class="study-plan-footer-remaining">'+(remaining?escape(fmtDurationInput(remaining))+' restantes':'Plano concluído')+'</span><i role="progressbar" aria-label="Progresso do plano de hoje" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><em style="width:'+pct+'%"></em></i><strong>'+pct+'%</strong>';
     const start=document.getElementById('homeReviewNowBtn');
     if(start)start.onclick=()=>startDailyPlanFirst();
+    const first=grid.querySelector('[data-study-plan-open="0"]');
+    if(first)first.onclick=()=>startDailyPlanFirst();
   }
   async function startDailyPlanFirst(){
+    const active=readActive();
+    if(active){
+      if(active.mapKey)await openMap(active.mapKey);
+      if(!active.running)resumeSession();
+      renderTimer();
+      return active;
+    }
     const item=window.StudyCoach?.snapshot?.().items?.[0];
     if(!item)return startSession({mode:'free'});
     if(item.kind==='simulation'){nav('simulations');return}
     if(item.key){
       const map=mapById(item.key);
       await openMap(item.key);
-      startSession({map,mode:'planned',minutes:item.minutes||20,label:item.title||map?.shortTitle||'Sessão planejada'});
+      return startSession({map,mode:'planned',minutes:item.minutes||20,label:item.title||map?.shortTitle||'Sessão planejada'});
     }
   }
   function ensureQuickDoubtButton(){
