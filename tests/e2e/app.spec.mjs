@@ -911,6 +911,8 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
       const style=getComputedStyle(document.querySelector(selector));
       return{
         backdrop:style.backdropFilter||style.webkitBackdropFilter||'none',
+        backgroundImage:style.backgroundImage,
+        borderColor:style.borderTopColor,
         borderWidth:parseFloat(style.borderTopWidth)||0,
         shadow:style.boxShadow,
         transform:style.transform
@@ -937,6 +939,8 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
       const style=getComputedStyle(document.querySelector(selector));
       return{
         backdrop:style.backdropFilter||style.webkitBackdropFilter||'none',
+        backgroundImage:style.backgroundImage,
+        borderColor:style.borderTopColor,
         borderWidth:parseFloat(style.borderTopWidth)||0,
         shadow:style.boxShadow
       };
@@ -950,6 +954,12 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
   expect(mapStyles.cover.borderWidth).toBeGreaterThanOrEqual(1);
   expect(mapStyles.cover.shadow).not.toBe('none');
   expect(mapStyles.filter.backdrop).toBe('none');
+
+  // O botão ••• de curso deve usar o mesmo material visual-base do ••• dos mapas.
+  expect(courseStyles.cover.backgroundImage).toBe(mapStyles.cover.backgroundImage);
+  expect(courseStyles.cover.backdrop).toBe(mapStyles.cover.backdrop);
+  expect(courseStyles.cover.shadow).toBe(mapStyles.cover.shadow);
+  expect(courseStyles.cover.borderColor).toBe(mapStyles.cover.borderColor);
 });
 
 test('hierarquia tipográfica diferencia página, seção e dados sem desperdício',async({page})=>{
