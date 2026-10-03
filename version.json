@@ -1,12 +1,13 @@
 {
-  "version": "15.36.23",
-  "label": "V15.36.23-G",
-  "releasedAt": "2026-10-03T19:02:00.000Z",
-  "notes": "Todos os Mapas passa a usar uma visualização única em cards; também foram removidas as linhas coloridas inferiores dos cards em Todos os Mapas e nos mapas do curso.",
+  "version": "15.36.24",
+  "label": "V15.36.24-G",
+  "releasedAt": "2026-10-03T19:47:00.000Z",
+  "notes": "Padroniza todos os botões de ação sobre capas no tamanho compacto do botão ••• aprovado, sem alterar o material glass ou o comportamento.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Todos os Mapas: removidos os botões de alternância entre grade e lista.",
-    "[G] Todos os Mapas: Ordenar, Filtros e Agrupar foram reorganizados sem espaço residual.",
-    "[G] Cards de mapas: removida a linha fina colorida acima do rodapé em Todos os Mapas e nos mapas do curso."
+    "[G] •••, favorito e menus sobre capas passam a usar 38 × 38 px",
+    "[D+T+M] Mesmo tamanho visual em Desktop, iPad e iPhone",
+    "[G] Glass, cores, ícones e comportamento permanecem inalterados",
+    "[QA] E2E valida cursos, mapas, favorito e simulados"
   ]
 }

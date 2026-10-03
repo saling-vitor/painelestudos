@@ -962,6 +962,34 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
   expect(courseStyles.cover.borderColor).toBe(mapStyles.cover.borderColor);
 });
 
+test('controles sobre capas usam o tamanho compacto uniforme de 38px',async({page})=>{
+  const measure=async selector=>{
+    const el=page.locator(selector).first();
+    await expect(el).toBeVisible();
+    return el.evaluate(node=>{
+      const rect=node.getBoundingClientRect();
+      return{width:rect.width,height:rect.height};
+    });
+  };
+
+  await page.goto('/#courses');
+  const course=await measure('#coursesGrid .course-card.course-library-card>.course-cover-controls .course-card-edit');
+
+  await page.goto('/#maps');
+  const menu=await measure('.map-card.has-cover>.map-admin-btn');
+  const favorite=await measure('.map-card.has-cover>.fav');
+
+  await page.goto('/#simulations');
+  const simulation=await measure('.simulation-card.has-cover .simulation-card-menu-btn');
+
+  for(const [name,size] of Object.entries({course,menu,favorite,simulation})){
+    expect.soft(Math.abs(size.width-38),name+' largura').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(size.height-38),name+' altura').toBeLessThanOrEqual(.5);
+  }
+  expect.soft(Math.abs(menu.width-favorite.width),'mapa: ••• e favorito com mesma largura').toBeLessThanOrEqual(.5);
+  expect.soft(Math.abs(menu.height-favorite.height),'mapa: ••• e favorito com mesma altura').toBeLessThanOrEqual(.5);
+});
+
 test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
   await page.goto('/#maps');
   const fav=page.locator('.map-card.has-cover>.fav').first();
