@@ -1,13 +1,14 @@
 {
-  "version": "15.36.17",
-  "label": "V15.36.17-G",
-  "releasedAt": "2026-10-03T14:03:00.000Z",
-  "notes": "Restaura a navegação inferior no iPad vertical, mantém a dock lateral no horizontal e preserva os cards de curso em uma coluna no retrato.",
+  "version": "15.36.18",
+  "label": "V15.36.18-G",
+  "releasedAt": "2026-10-03T14:36:00.000Z",
+  "notes": "Refina o efeito glass dos botões: hover permanece fumê, reduz o clareamento branco e uniformiza ações equivalentes sem alterar funções.",
   "showWhatsNew": true,
   "highlights": [
-    "[T-V] iPad vertical volta à bottom-nav com 7 itens e recupera toda a largura útil",
-    "[T-H] iPad horizontal mantém a dock lateral compacta",
-    "[T-V] Meus cursos na Home continua em uma coluna, com capas grandes",
-    "[D+M] Desktop e smartphone preservados"
+    "[G] Hover dos botões permanece escuro/fumê, sem flash branco",
+    "[D] Mouse/trackpad sem salto: removidos elevação e brilho excessivo",
+    "[T] iPad preserva o glass e recebe feedback discreto com ponteiro ou toque",
+    "[M] Toque mantém resposta curta sem hover preso",
+    "[G] Ações de cursos, mapas e simulados passam a compartilhar o mesmo material visual"
   ]
 }
