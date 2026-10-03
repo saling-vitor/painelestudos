@@ -1,4 +1,4 @@
-/* V15.36.24-G · Glass exclusivo dos controles sobre capas
+/* V15.36.25-G · Glass exclusivo dos controles sobre capas
    Regra canônica:
    - sobre capa/imagem: vidro fumê;
    - fora da capa: estilo normal da interface.
@@ -10,7 +10,7 @@
   --cover-button-glass-shadow:rgba(0,0,0,.32);
 }
 
-/* V15.36.24-G · dimensão visual canônica dos controles sobre capas.
+/* V15.36.25-G · dimensão visual canônica dos controles sobre capas.
    A referência é o botão ••• compacto aprovado; apenas a geometria externa é uniformizada. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
@@ -19,6 +19,26 @@
   .simulation-card.has-cover .simulation-card-menu-btn
 ){
   box-sizing:border-box!important;
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  min-height:38px!important;
+}
+
+/* Overrides responsivos anteriores usam !important com maior especificidade.
+   Reafirma 38px por dispositivo para garantir o mesmo tamanho visual em D/T/M. */
+html.is-ipad:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+html.is-ipad:not(.is-phone-layout) .map-card.has-cover > .map-admin-btn,
+html.is-ipad:not(.is-phone-layout) .map-card.has-cover > .fav,
+html.is-ipad:not(.is-phone-layout) .simulation-card.has-cover .simulation-card-menu-btn,
+html.is-phone-layout :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+html.is-phone-layout .map-card.has-cover > .map-admin-btn,
+html.is-phone-layout .map-card.has-cover > .fav,
+html.is-phone-layout .simulation-card.has-cover .simulation-card-menu-btn,
+html:not(.is-ipad):not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+html:not(.is-ipad):not(.is-phone-layout) .map-card.has-cover > .map-admin-btn,
+html:not(.is-ipad):not(.is-phone-layout) .map-card.has-cover > .fav,
+html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-card-menu-btn{
   width:38px!important;
   min-width:38px!important;
   height:38px!important;

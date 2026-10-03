@@ -1,13 +1,13 @@
 {
-  "version": "15.36.24",
-  "label": "V15.36.24-G",
-  "releasedAt": "2026-10-03T19:47:00.000Z",
-  "notes": "Padroniza todos os botões de ação sobre capas no tamanho compacto do botão ••• aprovado, sem alterar o material glass ou o comportamento.",
+  "version": "15.36.25",
+  "label": "V15.36.25-G",
+  "releasedAt": "2026-10-03T20:30:00.000Z",
+  "notes": "Corrige a precedência responsiva para garantir 38 × 38 px nos controles sobre capas em Desktop, iPad e iPhone, com validação pré-publicação.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] •••, favorito e menus sobre capas passam a usar 38 × 38 px",
-    "[D+T+M] Mesmo tamanho visual em Desktop, iPad e iPhone",
-    "[G] Glass, cores, ícones e comportamento permanecem inalterados",
-    "[QA] E2E valida cursos, mapas, favorito e simulados"
+    "[G] Controles sobre capas permanecem 38 × 38 px em todos os dispositivos",
+    "[T] Correção específica de precedência CSS no iPad",
+    "[G] Glass, ícones, favorito amarelo e comportamento são preservados",
+    "[QA] Release passa por PR com Validate + E2E Desktop/iPad/iPhone antes do deploy"
   ]
 }
