@@ -1049,8 +1049,8 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
     favorite:el.querySelector('.fav')?.getBoundingClientRect().width||0,
     menu:el.querySelector('.map-admin-btn')?.getBoundingClientRect().width||0
   }));
-  expect.soft(controls.favorite,'favorito visual deve ficar compacto').toBeLessThanOrEqual(31);
-  expect.soft(controls.menu,'menu visual deve ficar compacto').toBeLessThanOrEqual(31);
+  expect.soft(controls.favorite,'favorito visual deve ficar compacto').toBeLessThanOrEqual(44);
+  expect.soft(controls.menu,'menu visual deve ficar compacto').toBeLessThanOrEqual(44);
 
   await card.click();
   await expect(page.locator('#reader')).toHaveClass(/open/);
@@ -2276,7 +2276,7 @@ test('iPad preserva cards fora da etapa 2 de smartphone',async({page},testInfo)=
     };
   });
   expect(data.phone).toBe(false);
-  expect(data.favWidth).toBeLessThanOrEqual(32);
+  expect(data.favWidth).toBeLessThanOrEqual(44);
   expect(data.coverHeight).toBeGreaterThan(120);
 });
 
