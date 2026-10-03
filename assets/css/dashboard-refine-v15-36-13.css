@@ -332,3 +332,13 @@ html:not(.is-phone-layout) #homeCourses .home-course-card .course-last-activity-
 .global-search-shell{
   min-width:0!important;
 }
+
+
+/* Hotfix V15.36.13-G · garante três colunas na biblioteca desktop
+   mesmo diante das regras editoriais históricas de maior especificidade. */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) body [data-view="courses"] #coursesGrid#coursesGrid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:14px!important;
+  }
+}
