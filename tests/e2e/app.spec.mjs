@@ -485,10 +485,28 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
       const edit=el.querySelector('.course-card-edit');
       const c=cover.getBoundingClientRect(),s=status.getBoundingClientRect(),e=edit?.getBoundingClientRect();
       const card=el.getBoundingClientRect();
+      const grid=document.querySelector('#homeCourses');
+      const role=el.querySelector('.course-card-role');
+      const board=el.querySelector('.course-board-chip');
+      const maps=el.querySelector('.course-map-count-chip');
+      const activity=el.querySelector('.course-last-activity-card');
+      const exam=el.querySelector('.course-exam-info');
+      const title=el.querySelector('h3');
+      const progress=el.querySelector('.course-progress-mini');
+      const enter=el.querySelector('.enter');
       return{
         ratio:c.width/c.height,
         maxSideInset:Math.max(c.left-card.left,card.right-c.right),
         cardOverflow:getComputedStyle(el).overflow,
+        columns:getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length,
+        roleDisplay:role?getComputedStyle(role).display:'none',
+        boardDisplay:board?getComputedStyle(board).display:'none',
+        mapsDisplay:maps?getComputedStyle(maps).display:'none',
+        activityDisplay:activity?getComputedStyle(activity).display:'none',
+        examVisible:!!exam&&getComputedStyle(exam).display!=='none',
+        titleVisible:!!title&&getComputedStyle(title).display!=='none',
+        progressVisible:!!progress&&getComputedStyle(progress).display!=='none',
+        enterVisible:!!enter&&getComputedStyle(enter).display!=='none',
         statusInside:s.left>=c.left+8&&s.top>=c.top+8&&s.right<=c.right-8&&s.bottom<=c.bottom-8,
         editInside:!e||(e.left>=c.left+8&&e.top>=c.top+8&&e.right<=c.right-8&&e.bottom<=c.bottom-8),
         controlsOverlap:!!e&&!(s.right<=e.left||e.right<=s.left||s.bottom<=e.top||e.bottom<=s.top)
@@ -498,6 +516,15 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
     expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeLessThanOrEqual(1.82);
     expect.soft(visual.maxSideInset,scenario.name+' capa mantém apenas a margem editorial do card').toBeLessThanOrEqual(16);
     expect.soft(visual.cardOverflow,scenario.name+' card recorta a capa nos cantos').toBe('hidden');
+    expect.soft(visual.columns,scenario.name+' mantém dois cursos por linha').toBe(2);
+    expect.soft(visual.roleDisplay,scenario.name+' remove cargo da Home').toBe('none');
+    expect.soft(visual.boardDisplay,scenario.name+' remove banca da Home').toBe('none');
+    expect.soft(visual.mapsDisplay,scenario.name+' remove quantidade de mapas da Home').toBe('none');
+    expect.soft(visual.activityDisplay,scenario.name+' remove última atividade da Home').toBe('none');
+    expect.soft(visual.examVisible,scenario.name+' mantém data da prova').toBe(true);
+    expect.soft(visual.titleVisible,scenario.name+' mantém nome do concurso').toBe(true);
+    expect.soft(visual.progressVisible,scenario.name+' mantém progresso').toBe(true);
+    expect.soft(visual.enterVisible,scenario.name+' mantém botão Entrar').toBe(true);
     expect.soft(visual.statusInside,scenario.name+' selo ATIVO fica dentro da capa').toBe(true);
     expect.soft(visual.editInside,scenario.name+' botão de configuração fica dentro da capa').toBe(true);
     expect.soft(visual.controlsOverlap,scenario.name+' controles não se sobrepõem').toBe(false);
