@@ -1802,7 +1802,7 @@ test('smartphone troca estados de carregamento por skeleton',async({page},testIn
 });
 
 
-test('iPhone real UX2 compacta Home e transforma simulados em carrossel',async({page},testInfo)=>{
+test('iPhone real UX2 compacta Home e mostra simulados em lista vertical',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#home');
@@ -1813,12 +1813,15 @@ test('iPhone real UX2 compacta Home e transforma simulados em carrossel',async({
     metricVisible:[...document.querySelectorAll('.study-command-metrics>button')].filter(el=>getComputedStyle(el).display!=='none').length,
     simDisplay:getComputedStyle(document.querySelector('.simulation-recent-list')).display,
     simOverflow:getComputedStyle(document.querySelector('.simulation-recent-list')).overflowX,
+    simWidth:document.querySelector('.simulation-recent-list').getBoundingClientRect().width,
+    firstSimWidth:document.querySelector('.simulation-recent-item')?.getBoundingClientRect().width||0,
     navHeight:document.querySelector('.bottom-nav').getBoundingClientRect().height
   }));
   expect(data.hero).toBeLessThanOrEqual(270);
   expect(data.metricVisible).toBe(2);
-  expect(data.simDisplay).toBe('flex');
-  expect(['auto','scroll']).toContain(data.simOverflow);
+  expect(data.simDisplay).toBe('grid');
+  expect(['visible','clip']).toContain(data.simOverflow);
+  expect(Math.abs(data.firstSimWidth-data.simWidth)).toBeLessThanOrEqual(2);
   expect(data.navHeight).toBeLessThanOrEqual(60);
   await page.locator('.mobile-study-plan-toggle').click();
   const expanded=await page.locator('.study-command-metrics>button').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
@@ -1848,10 +1851,10 @@ test('A Home responsiva preserva a composição aprovada no iPhone',async({page}
   });
   expect(data.scrollWidth).toBeLessThanOrEqual(data.width+2);
   expect(data.heroHeight).toBeLessThanOrEqual(270);
-  expect(data.simDisplay).toBe('flex');
-  expect(['auto','scroll']).toContain(data.simOverflow);
+  expect(data.simDisplay).toBe('grid');
+  expect(['visible','clip']).toContain(data.simOverflow);
   expect(data.thirdDisplay).not.toBe('none');
-  expect(data.actionHeight).toBeGreaterThanOrEqual(44);
+  expect(data.actionHeight).toBeGreaterThanOrEqual(70);
   expect(data.courseColumns).toBe(1);
 });
 
@@ -3035,4 +3038,70 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   expect(sheetBox.y+sheetBox.height).toBeLessThanOrEqual(845);
   await page.locator('#progressSortClose').click();
   await expect(page.locator('#progressSortSheet')).toBeHidden();
+});
+
+
+test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva do iPhone.');
+
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#home');
+  await page.waitForFunction(()=>document.querySelector('#continueBox .continue-card')&&document.querySelectorAll('#homeSimulations .simulation-recent-item').length>0);
+
+  await expect(page.locator('#continueBox .continue-thumb')).toBeHidden();
+  await expect(page.locator('#continueBox .continue-map-code')).toBeVisible();
+  const homeData=await page.evaluate(()=>{
+    const card=document.querySelector('#continueBox .continue-card');
+    const action=card?.querySelector(':scope>.primary');
+    const sims=document.querySelector('.simulation-recent-list');
+    const items=[...document.querySelectorAll('#homeSimulations .simulation-recent-item')];
+    return{
+      continueHeight:card?.getBoundingClientRect().height||0,
+      continueActionWidth:action?.getBoundingClientRect().width||0,
+      continueWidth:card?.getBoundingClientRect().width||0,
+      simDisplay:sims?getComputedStyle(sims).display:'',
+      simOverflow:sims?getComputedStyle(sims).overflowX:'',
+      simCount:items.length,
+      simMaxHeight:Math.max(0,...items.map(el=>el.getBoundingClientRect().height)),
+      documentScrollWidth:document.documentElement.scrollWidth,
+      width:innerWidth
+    };
+  });
+  expect(homeData.continueHeight).toBeLessThan(155);
+  expect(Math.abs(homeData.continueActionWidth-homeData.continueWidth)).toBeLessThanOrEqual(2);
+  expect(homeData.simDisplay).toBe('grid');
+  expect(['visible','clip']).toContain(homeData.simOverflow);
+  expect(homeData.simCount).toBeLessThanOrEqual(3);
+  expect(homeData.simMaxHeight).toBeLessThan(110);
+  expect(homeData.documentScrollWidth).toBeLessThanOrEqual(homeData.width+2);
+
+  await page.goto('/#progress');
+  const summary=page.locator('[data-mobile-progress-group="summary"]');
+  await expect(summary).toBeVisible();
+  if(!(await summary.evaluate(el=>el.open)))await summary.locator(':scope>summary').click();
+
+  const insight=page.locator('#progressInsights .progress-insight-card').first();
+  await expect(insight).toBeVisible();
+  await expect(insight.locator('.progress-insight-thumb img')).toBeHidden();
+  await expect(insight.locator('.progress-insight-thumb>span')).toBeVisible();
+
+  const progressData=await page.evaluate(()=>{
+    const metrics=[...document.querySelectorAll('#progressMetrics .metric')];
+    const visibleMetrics=metrics.filter(el=>getComputedStyle(el).display!=='none');
+    const card=document.querySelector('#progressInsights .progress-insight-card');
+    const action=card?.querySelector(':scope>.secondary');
+    return{
+      metricCount:visibleMetrics.length,
+      metricMaxHeight:Math.max(0,...visibleMetrics.map(el=>el.getBoundingClientRect().height)),
+      insightHeight:card?.getBoundingClientRect().height||0,
+      insightWidth:card?.getBoundingClientRect().width||0,
+      actionWidth:action?.getBoundingClientRect().width||0,
+      thumbWidth:card?.querySelector('.progress-insight-thumb')?.getBoundingClientRect().width||0
+    };
+  });
+  expect(progressData.metricCount).toBe(4);
+  expect(progressData.metricMaxHeight).toBeLessThanOrEqual(82);
+  expect(progressData.insightHeight).toBeLessThan(90);
+  expect(progressData.thumbWidth).toBeLessThanOrEqual(60);
+  expect(Math.abs(progressData.actionWidth-progressData.insightWidth)).toBeLessThanOrEqual(2);
 });
