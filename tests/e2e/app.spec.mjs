@@ -1259,16 +1259,16 @@ test('iPad usa dock lateral recolhível no leitor',async({page},testInfo)=>{
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('studyapp.ipadReaderDock.v1')||'{}').collapsed)).toBe(true);
 });
 
-test('iPad usa Calendário na dock lateral e não mostra Estudar ocioso',async({page},testInfo)=>{
-  test.skip(testInfo.project.name!=='ipad','Validação específica do app no iPad.');
+test('iPad vertical usa Calendário na barra inferior e não mostra Estudar ocioso',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação específica do app no iPad vertical.');
   await page.setViewportSize({width:820,height:1180});
   await page.goto('/#home');
-  await expect(page.locator('.side')).toBeVisible();
-  await expect(page.locator('.bottom-nav')).toBeHidden();
-  const calendar=page.locator('.side [data-nav="agenda"]');
+  await expect(page.locator('.side')).toBeHidden();
+  await expect(page.locator('.bottom-nav')).toBeVisible();
+  const calendar=page.locator('.bottom-nav [data-nav="agenda"]');
   await expect(calendar).toBeVisible();
-  await expect(calendar).toHaveAttribute('aria-label','Calendário');
-  await expect(page.locator('.side [data-nav]')).toHaveCount(7);
+  await expect(calendar).toContainText('Calendário');
+  await expect(page.locator('.bottom-nav [data-nav]')).toHaveCount(7);
   await expect(page.locator('#studyTimerFloat')).toBeHidden();
   await expect(page.locator('#studyTimerFloat')).not.toContainText('Estudar');
   await calendar.click();
@@ -1575,8 +1575,13 @@ test('iPad retrato paisagem e Split View permanecem sem overflow',async({page},t
     }));
     expect.soft(layout.isIpad).toBe(true);
     expect.soft(layout.scrollWidth,'layout não deve criar overflow horizontal').toBeLessThanOrEqual(layout.width+2);
-    await expect(page.locator('.side')).toBeVisible();
-    await expect(page.locator('.bottom-nav')).toBeHidden();
+    if(scenario.height>scenario.width){
+      await expect(page.locator('.side')).toBeHidden();
+      await expect(page.locator('.bottom-nav')).toBeVisible();
+    }else{
+      await expect(page.locator('.side')).toBeVisible();
+      await expect(page.locator('.bottom-nav')).toBeHidden();
+    }
   }
 });
 

@@ -1,0 +1,116 @@
+/* V15.36.17-T · iPad vertical com bottom-nav; horizontal mantém dock lateral.
+   Regra deliberada por orientação, sem transformar tablet em smartphone. */
+
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout){
+    --nav:0px;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .app{
+    display:block!important;
+    grid-template-columns:none!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .side{
+    display:none!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .main{
+    grid-column:auto!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .content{
+    width:100%!important;
+    max-width:100%!important;
+    margin-inline:auto!important;
+    padding-left:16px!important;
+    padding-right:16px!important;
+    padding-bottom:112px!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav{
+    position:fixed!important;
+    left:10px!important;
+    right:10px!important;
+    bottom:calc(8px + var(--safe-bottom))!important;
+    z-index:100!important;
+    display:grid!important;
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    gap:2px!important;
+    padding:6px!important;
+    border:1px solid rgba(255,255,255,.10)!important;
+    border-radius:18px!important;
+    background:rgba(8,10,13,.92)!important;
+    -webkit-backdrop-filter:blur(20px)!important;
+    backdrop-filter:blur(20px)!important;
+    box-shadow:0 18px 55px rgba(0,0,0,.62)!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav button{
+    display:grid!important;
+    grid-template-rows:auto auto!important;
+    place-items:center!important;
+    align-content:center!important;
+    gap:3px!important;
+    min-width:0!important;
+    height:58px!important;
+    min-height:58px!important;
+    padding:4px 2px!important;
+    border:0!important;
+    border-radius:11px!important;
+    background:transparent!important;
+    color:#8f949c!important;
+    font-size:9px!important;
+    font-weight:750!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav button>.ui-icon{
+    --icon-size:20px;
+    margin:0!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-label{
+    display:block!important;
+    margin:0!important;
+    font-size:8px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav button.active{
+    color:#ead7af!important;
+    background:linear-gradient(180deg,rgba(216,197,158,.12),rgba(216,197,158,.055))!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.05)!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-agenda{
+    display:grid!important;
+  }
+}
+
+@media (orientation:landscape){
+  html.is-ipad:not(.is-phone-layout){
+    --nav:82px;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .app{
+    display:grid!important;
+    grid-template-columns:82px minmax(0,1fr)!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .side{
+    display:block!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .main{
+    grid-column:2!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav{
+    display:none!important;
+  }
+}
