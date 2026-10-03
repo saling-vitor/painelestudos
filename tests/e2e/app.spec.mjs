@@ -632,8 +632,8 @@ test('[G] Simulados vinculados herdam o accent do curso sem alterar o badge da b
   const card=page.locator('#homeSimulations .simulation-recent-item').first();
   await expect(card).toBeVisible();
   await expect(card.locator('.simulation-recent-board')).toBeVisible();
-  const visual=await card.evaluate(async el=>{
-    for(let i=0;i<20&&el.dataset.simulationCourseCover&&!el.dataset.simulationCourseAccentSrc;i++)await new Promise(resolve=>setTimeout(resolve,50));
+  await expect.poll(async()=>card.evaluate(el=>!el.dataset.simulationCourseCover||!!el.dataset.simulationCourseAccentSrc),{timeout:4000}).toBe(true);
+  const visual=await card.evaluate(el=>{
     const style=getComputedStyle(el),board=el.querySelector('.simulation-recent-board');
     return{
       linked:!!el.dataset.simulationCourseCover,
