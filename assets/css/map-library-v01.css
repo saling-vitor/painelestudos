@@ -267,3 +267,28 @@
     display:block!important;
   }
 }
+
+
+/* V15.36.23-G · visualização única em Todos os Mapas */
+.maps-library-view .maps-toolbar{
+  grid-template-columns:minmax(150px,180px) auto minmax(145px,220px);
+  justify-content:end;
+}
+.maps-library-view .maps-layout-actions{display:none!important}
+
+@media(min-width:701px) and (max-width:1180px){
+  .maps-library-view .maps-toolbar{
+    grid-template-columns:minmax(145px,170px) auto minmax(145px,1fr)!important;
+    grid-template-areas:"sort filter group"!important;
+    justify-content:stretch;
+  }
+  .maps-library-view .maps-toolbar>.maps-sort-control{grid-area:sort}
+  .maps-library-view .maps-filter-trigger{grid-area:filter}
+  .maps-library-view .maps-toolbar>.maps-group-control{grid-area:group}
+}
+
+@media(max-width:700px){
+  .maps-library-view .maps-mobile-controls{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
