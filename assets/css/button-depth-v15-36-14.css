@@ -1,223 +1,41 @@
-/* V15.36.14-G · Material de botões
-   Referência visual: botão ••• aprovado.
-   Objetivo: recuperar profundidade, brilho superior, sombra e resposta tátil
-   sem perder a cor contextual de cursos, mapas e simulados. */
+/* V15.36.20-G · Botões comuns sem glass
+   O efeito de vidro deixa de ser um material global.
+   Primary / secondary / icon / danger / filtros e chips voltam a usar
+   as superfícies normais definidas pelos estilos-base da interface.
+   Este arquivo mantém apenas a normalização de interação. */
 
-:root{
-  --button-depth-neutral-top:rgba(54,59,66,.92);
-  --button-depth-neutral-bottom:rgba(29,33,39,.94);
-  --button-depth-border:rgba(255,255,255,.13);
-  --button-depth-highlight:rgba(255,255,255,.085);
-  --button-depth-shadow:rgba(0,0,0,.36);
-}
-
-/* =========================================================
-   MATERIAL BASE · ações comuns
-   ========================================================= */
-:is(button.primary,a.primary,button.secondary,a.secondary,button.danger,a.danger,.icon-btn){
-  position:relative;
-  overflow:hidden;
-  -webkit-backdrop-filter:blur(14px);
-  backdrop-filter:blur(14px);
-  transform:translateZ(0);
-  transition:
-    transform .16s ease,
-    border-color .16s ease,
-    background .16s ease,
-    color .16s ease,
-    box-shadow .16s ease,
-    filter .16s ease!important;
-}
-
-/* Neutral: reproduz o acabamento exato do ••• de referência. */
-:is(button.secondary,a.secondary,.icon-btn){
-  border-color:var(--button-depth-border)!important;
-  background:
-    linear-gradient(180deg,
-      var(--button-depth-neutral-top) 0%,
-      rgba(43,47,54,.91) 54%,
-      var(--button-depth-neutral-bottom) 100%)!important;
-  color:#c7cbd1!important;
-  box-shadow:
-    0 8px 22px var(--button-depth-shadow),
-    inset 0 1px 0 var(--button-depth-highlight),
-    inset 0 -1px 0 rgba(0,0,0,.24)!important;
-}
-
-/* Primary: mesmo material, recebendo apenas uma película da cor contextual. */
-:is(button.primary,a.primary){
-  --button-depth-accent:var(--accent,var(--course-accent,var(--map-accent,var(--simulation-accent,#d8c59e))));
-  border-color:color-mix(in srgb,var(--button-depth-accent) 42%,rgba(255,255,255,.12))!important;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-depth-accent) 22%,rgba(54,59,66,.94)) 0%,
-      color-mix(in srgb,var(--button-depth-accent) 14%,rgba(40,44,50,.94)) 54%,
-      color-mix(in srgb,var(--button-depth-accent) 9%,rgba(24,28,33,.97)) 100%)!important;
-  color:color-mix(in srgb,var(--button-depth-accent) 72%,white)!important;
-  box-shadow:
-    0 8px 22px var(--button-depth-shadow),
-    inset 0 1px 0 rgba(255,255,255,.10),
-    inset 0 -1px 0 rgba(0,0,0,.28),
-    0 0 0 1px color-mix(in srgb,var(--button-depth-accent) 6%,transparent)!important;
-}
-
-/* Danger preserva semântica vermelha com o mesmo relevo. */
-:is(button.danger,a.danger){
-  --button-depth-accent:#d96773;
-  border-color:rgba(217,103,115,.38)!important;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-depth-accent) 23%,rgba(54,59,66,.94)),
-      color-mix(in srgb,var(--button-depth-accent) 10%,rgba(27,30,35,.97)))!important;
-  color:#e9a6ad!important;
-  box-shadow:
-    0 8px 22px var(--button-depth-shadow),
-    inset 0 1px 0 rgba(255,255,255,.09),
-    inset 0 -1px 0 rgba(0,0,0,.28)!important;
-}
-
-/* =========================================================
-   CONTROLES FLUTUANTES SOBRE CAPAS · padrão canônico do print
-   ========================================================= */
 :is(
-  .course-card-edit,
-  .map-admin-btn,
-  .map-card>.fav,
-  .simulation-card-menu-btn,
-  .compact-icon-btn
+  button.primary,a.primary,
+  button.secondary,a.secondary,
+  button.danger,a.danger,
+  .icon-btn,.compact-icon-btn,
+  .category-btn,.course-study-filter,.progress-filter,.close
 ){
-  border:1px solid rgba(255,255,255,.12)!important;
-  background:
-    linear-gradient(180deg,
-      rgba(54,59,66,.92) 0%,
-      rgba(43,47,54,.91) 54%,
-      rgba(29,33,39,.94) 100%)!important;
-  color:#c7cbd1!important;
-  box-shadow:
-    0 8px 22px rgba(0,0,0,.34),
-    inset 0 1px 0 rgba(255,255,255,.085),
-    inset 0 -1px 0 rgba(0,0,0,.22)!important;
-  -webkit-backdrop-filter:blur(14px)!important;
-  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
   filter:none!important;
 }
 
-/* Favorito ativo mantém indicação sem abandonar o material. */
-.map-card>.fav.on{
-  border-color:rgba(216,197,158,.30)!important;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb,#d8c59e 10%,rgba(54,59,66,.94)),
-      color-mix(in srgb,#d8c59e 5%,rgba(29,33,39,.96)))!important;
-  color:#ead7af!important;
-}
-
-/* =========================================================
-   CORES CONTEXTUAIS
-   ========================================================= */
-:is(#coursesGrid,#homeCourses) .course-card .primary{
-  --button-depth-accent:var(--course-accent,#9aa1aa);
-}
-.map-card .primary{
-  --button-depth-accent:var(--accent,var(--map-accent,#9aa1aa));
-}
-.continue-card>.primary{
-  --button-depth-accent:var(--continue-accent,var(--accent,#b88b68));
-}
-#homeReviewNowBtn{
-  --button-depth-accent:var(--plan-accent,#5eaaa6);
-}
-[data-view="simulations"] .primary,
-.simulation-card .primary,
-.home-simulations-section .simulation-recent-action{
-  --button-depth-accent:var(--simulation-accent,var(--brand-coral,#d96773));
-}
-[data-view="simulations"] .primary,
-.simulation-card .primary{
-  border-color:color-mix(in srgb,var(--button-depth-accent) 46%,rgba(255,255,255,.10))!important;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-depth-accent) 25%,rgba(54,59,66,.94)),
-      color-mix(in srgb,var(--button-depth-accent) 12%,rgba(27,30,35,.97)))!important;
-  color:color-mix(in srgb,var(--button-depth-accent) 76%,white)!important;
-}
-.home-simulations-section .simulation-recent-action{
-  border-color:color-mix(in srgb,var(--button-depth-accent) 38%,rgba(255,255,255,.10))!important;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-depth-accent) 18%,rgba(54,59,66,.92)),
-      color-mix(in srgb,var(--button-depth-accent) 8%,rgba(27,30,35,.96)))!important;
-  color:color-mix(in srgb,var(--button-depth-accent) 72%,white)!important;
-  box-shadow:
-    0 8px 22px rgba(0,0,0,.34),
-    inset 0 1px 0 rgba(255,255,255,.09),
-    inset 0 -1px 0 rgba(0,0,0,.24)!important;
-}
-
-/* =========================================================
-   INTERAÇÃO · eleva / pressiona como botão físico
-   ========================================================= */
-@media(hover:hover){
-  :is(
-    button.primary,a.primary,
-    button.secondary,a.secondary,
-    button.danger,a.danger,
-    .icon-btn,
-    .course-card-edit,
-    .map-admin-btn,
-    .map-card>.fav,
-    .simulation-card-menu-btn,
-    .compact-icon-btn
-  ):hover{
-    transform:translateY(-1px)!important;
-    filter:brightness(1.08)!important;
-    box-shadow:
-      0 11px 26px rgba(0,0,0,.40),
-      inset 0 1px 0 rgba(255,255,255,.13),
-      inset 0 -1px 0 rgba(0,0,0,.24)!important;
-  }
-}
-
+/* Sem salto/zoom nos controles comuns. */
 :is(
   button.primary,a.primary,
   button.secondary,a.secondary,
   button.danger,a.danger,
-  .icon-btn,
-  .course-card-edit,
-  .map-admin-btn,
-  .map-card>.fav,
-  .simulation-card-menu-btn,
-  .compact-icon-btn
+  .icon-btn,.compact-icon-btn,
+  .category-btn,.course-study-filter,.progress-filter,.close
 ):active{
-  transform:translateY(1px)!important;
-  filter:brightness(.97)!important;
-  box-shadow:
-    0 4px 11px rgba(0,0,0,.30),
-    inset 0 1px 0 rgba(255,255,255,.055),
-    inset 0 2px 4px rgba(0,0,0,.18)!important;
+  transform:none!important;
+  filter:none!important;
 }
 
-/* foco acessível, mas sem aro grosseiro */
+/* Foco acessível e discreto, sem transformar o botão em vidro. */
 :is(
   button.primary,a.primary,
   button.secondary,a.secondary,
   button.danger,a.danger,
-  .icon-btn,
-  .course-card-edit,
-  .map-admin-btn,
-  .map-card>.fav,
-  .simulation-card-menu-btn,
-  .compact-icon-btn
+  .icon-btn,.compact-icon-btn,
+  .category-btn,.course-study-filter,.progress-filter,.close
 ):focus-visible{
   outline:1px solid rgba(255,255,255,.24)!important;
   outline-offset:2px!important;
-}
-
-/* Botões desabilitados mantêm o relevo sem parecer acionáveis. */
-:is(button.primary,button.secondary,button.danger,.icon-btn):disabled{
-  transform:none!important;
-  filter:saturate(.55) brightness(.78)!important;
-  box-shadow:
-    0 4px 12px rgba(0,0,0,.24),
-    inset 0 1px 0 rgba(255,255,255,.045)!important;
 }
