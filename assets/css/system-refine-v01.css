@@ -1051,3 +1051,124 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
 }
 
 /* [M] Mobile-first permanece fonte da verdade; sem recomposição nesta etapa. */
+
+
+/* V15.36.3 · horas/minutos sem conversão mental */
+.study-duration-field,
+.planner-duration-field{
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  margin-top:7px!important;
+}
+.study-duration-input{
+  width:min(150px,100%)!important;
+  min-width:0!important;
+  height:35px!important;
+  padding:0 9px!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+  border-radius:7px!important;
+  background:#0e1014!important;
+  color:#e1e3e7!important;
+  font:750 10px var(--mono)!important;
+  letter-spacing:.01em;
+}
+.study-duration-input:focus{
+  outline:none!important;
+  border-color:rgba(195,170,132,.36)!important;
+  box-shadow:0 0 0 2px rgba(195,170,132,.06)!important;
+}
+.study-duration-field small,
+.planner-duration-field small{
+  color:#707780!important;
+  font:700 7px var(--mono)!important;
+  white-space:nowrap;
+}
+.study-goals-form>label:nth-child(-n+2)>span:last-child{opacity:1!important}
+.planner-advanced-settings input.study-duration-input{
+  width:126px!important;
+  height:33px!important;
+}
+
+/* Atualização disponível fica evidente no próprio painel; sem aviso duplicado em Configurações. */
+.app-update-panel.has-update{
+  border-color:rgba(216,197,158,.18)!important;
+}
+.app-update-panel.has-update .app-update-compact{
+  border-color:rgba(216,197,158,.24)!important;
+  background:rgba(216,197,158,.035)!important;
+  box-shadow:inset 2px 0 rgba(216,197,158,.52);
+}
+.app-update-panel.has-update #applyAppUpdateBtn{
+  box-shadow:0 0 0 1px rgba(216,197,158,.10);
+}
+
+/* Prioridade agora: mostrar o que estudar, por quê e por quanto tempo. */
+.priority-now-card{
+  --map-accent:#c3aa84;
+  display:grid!important;
+  align-content:start;
+  gap:6px!important;
+  border-left:2px solid var(--map-accent)!important;
+}
+.priority-now-main{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-width:0;
+}
+.priority-now-main>div{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+.priority-now-main h3{
+  margin:0!important;
+  overflow:hidden;
+  color:#e0e2e5;
+  font-size:11px!important;
+  line-height:1.25;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.priority-now-main small{
+  color:#777e86;
+  font-size:7.5px;
+}
+.priority-now-code{
+  flex:0 0 auto;
+  min-width:42px;
+  padding:7px 8px;
+  border:1px solid color-mix(in srgb,var(--map-accent) 34%,transparent);
+  border-radius:7px;
+  background:color-mix(in srgb,var(--map-accent) 9%,transparent);
+  color:var(--map-accent);
+  font:850 8px var(--mono);
+  text-align:center;
+}
+.priority-reason-list{
+  display:flex!important;
+  gap:4px!important;
+  flex-wrap:wrap;
+}
+.priority-reason-chip{
+  padding:3px 6px;
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:999px;
+  background:rgba(255,255,255,.018);
+  color:#858b93;
+  font-size:6.8px;
+  line-height:1.2;
+  white-space:nowrap;
+}
+.priority-now-actions{
+  display:flex!important;
+  gap:6px!important;
+  margin-top:1px;
+}
+.priority-now-actions .primary{min-width:112px}
+@media(max-width:620px){
+  .study-duration-input{width:100%!important}
+  .study-duration-field,.planner-duration-field{align-items:stretch!important}
+  .priority-now-main h3{white-space:normal}
+}
