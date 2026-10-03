@@ -1,4 +1,4 @@
-/* V15.36.20-G · Glass exclusivo dos controles sobre capas
+/* V15.36.21-G · Glass exclusivo dos controles sobre capas
    Regra canônica:
    - sobre capa/imagem: vidro fumê;
    - fora da capa: estilo normal da interface.
@@ -12,7 +12,7 @@
 
 /* Controles que realmente flutuam sobre a arte da capa. */
 :is(
-  .course-cover-controls .course-card-edit,
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
   .map-card.has-cover > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
@@ -75,7 +75,7 @@
    A resposta é luz sutil; sem branco, sem elevação e sem zoom. */
 @media(hover:hover) and (pointer:fine){
   :is(
-    .course-cover-controls .course-card-edit,
+    :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
     .map-card.has-cover > .map-admin-btn,
     .map-card.has-cover > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
@@ -111,7 +111,7 @@
 
 /* Press/touch: vidro permanece vidro e não muda de tamanho. */
 :is(
-  .course-cover-controls .course-card-edit,
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
   .map-card.has-cover > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
@@ -126,7 +126,7 @@
 
 /* Foco acessível sem alterar o material. */
 :is(
-  .course-cover-controls .course-card-edit,
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
   .map-card.has-cover > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
