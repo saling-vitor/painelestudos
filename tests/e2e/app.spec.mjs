@@ -582,7 +582,7 @@ test('home consolidada prioriza o estudo diário',async({page})=>{
   expect(values.planBorder).toBe('1px');
 });
 
-test('[G] Retomar replica a identidade cromática do mapa em todas as telas',async({page})=>{
+test('[G] Retomar replica a identidade cromática do mapa em todas as telas',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
   const selected=await page.evaluate(()=>{
@@ -595,7 +595,8 @@ test('[G] Retomar replica a identidade cromática do mapa em todas as telas',asy
   await expect(card).toBeVisible();
   await expect(card.locator('.continue-map-code')).toHaveText(selected.code);
   await expect(card.locator('.continue-map-category')).toHaveText(selected.category);
-  await expect(card.locator('.continue-thumb img')).toBeVisible();
+  if(testInfo.project.name==='iphone-webkit')await expect(card.locator('.continue-thumb')).toBeHidden();
+  else await expect(card.locator('.continue-thumb img')).toBeVisible();
   const visual=await card.evaluate(el=>{
     const mapAccent=getComputedStyle(el).getPropertyValue('--map-accent').trim();
     const probe=document.createElement('span');
@@ -2621,7 +2622,7 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page},t
 });
 
 
-test('etapa 1 [G] identidade dos mapas propaga accent e capa também no smartphone',async({page},testInfo)=>{
+test('etapa 1 [G] identidade dos mapas propaga accent e tags nos blocos mobile',async({page},testInfo)=>{
   await page.goto('/#course/porto-alegre');
   await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card').length>0);
   const card=page.locator('#courseMaps .map-card').first();
@@ -2656,7 +2657,12 @@ test('etapa 1 [G] identidade dos mapas propaga accent e capa também no smartpho
   },identity.key);
   const resume=page.locator('#continueBox .continue-card');
   await expect(resume).toBeVisible();
-  await expect(resume.locator('.continue-thumb img')).toBeVisible();
+  if(testInfo.project.name==='iphone-webkit'){
+    await expect(resume.locator('.continue-thumb')).toBeHidden();
+    await expect(resume.locator('.continue-map-code')).toBeVisible();
+  }else{
+    await expect(resume.locator('.continue-thumb img')).toBeVisible();
+  }
   expect(await resume.evaluate(el=>getComputedStyle(el).getPropertyValue('--map-accent').trim())).toBe(identity.accent);
 
   const planAccent=page.locator('#homeStudyPlan .study-plan-item.has-map-accent').first();
@@ -2667,7 +2673,12 @@ test('etapa 1 [G] identidade dos mapas propaga accent e capa também no smartpho
   await page.waitForFunction(()=>document.querySelectorAll('#progressInsights .progress-insight-card').length>0);
   const mapFocus=page.locator('#progressInsights .progress-insight-focus, #progressInsights .progress-insight-resume, #progressInsights .progress-insight-start').first();
   await expect(mapFocus).toBeVisible();
-  await expect(mapFocus.locator('.progress-insight-thumb img')).toBeVisible();
+  if(testInfo.project.name==='iphone-webkit'){
+    await expect(mapFocus.locator('.progress-insight-thumb img')).toBeHidden();
+    await expect(mapFocus.locator('.progress-insight-thumb>span')).toBeVisible();
+  }else{
+    await expect(mapFocus.locator('.progress-insight-thumb img')).toBeVisible();
+  }
   const focusData=await mapFocus.evaluate(el=>({
     accent:getComputedStyle(el).getPropertyValue('--map-accent').trim(),
     button:!!el.querySelector('button'),
