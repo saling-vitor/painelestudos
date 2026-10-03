@@ -1,13 +1,13 @@
 {
-  "version": "15.36.16",
-  "label": "V15.36.16-G",
-  "releasedAt": "2026-10-03T13:20:00.000Z",
-  "notes": "Refina a Home no iPad, corrige o card Retomar no desktop/tablet e leva o mascote oficial aos estados vazios de revisões e caderno de erros.",
+  "version": "15.36.17",
+  "label": "V15.36.17-G",
+  "releasedAt": "2026-10-03T14:03:00.000Z",
+  "notes": "Restaura a navegação inferior no iPad vertical, mantém a dock lateral no horizontal e preserva os cards de curso em uma coluna no retrato.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] iPad vertical usa dock lateral e um curso por linha; horizontal mantém duas colunas compactas",
-    "[D+T] Retomar onde parei ganha capa maior, melhor enquadramento e conteúdo sem cortes",
-    "[G] Revisões por tópico e Caderno de erros passam a usar o mascote oficial nos estados vazios",
-    "[M] Layout de smartphone preservado"
+    "[T-V] iPad vertical volta à bottom-nav com 7 itens e recupera toda a largura útil",
+    "[T-H] iPad horizontal mantém a dock lateral compacta",
+    "[T-V] Meus cursos na Home continua em uma coluna, com capas grandes",
+    "[D+M] Desktop e smartphone preservados"
   ]
 }
