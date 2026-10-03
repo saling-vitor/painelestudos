@@ -1,14 +1,15 @@
 {
-  "version": "15.36.26",
-  "label": "V15.36.26-T",
-  "releasedAt": "2026-10-03T20:50:00.000Z",
-  "notes": "No iPad, equaliza visualmente os botões ••• e favorito sobre as capas dos mapas, corrigindo também o espaçamento entre eles sem alterar Desktop ou iPhone.",
+  "version": "15.36.27",
+  "label": "V15.36.27-G",
+  "releasedAt": "2026-10-03T21:18:00.000Z",
+  "notes": "No Progresso, Desktop e iPad deixam de usar miniaturas de capa e passam a priorizar a tag colorida, com mais espaço para o título, metadados sem repetição e botão Abrir mais compacto. O iPhone mantém o padrão compacto já aprovado.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] ••• e favorito ficam exatamente com 38 × 38 px no iPad",
-    "[T] Ambos usam ícones de 16 px e o mesmo alinhamento vertical",
-    "[T] Gap visual de 6 px entre os dois controles, sem sobreposição",
-    "[T] Área de toque permanece em 44 px sem invadir o botão vizinho",
-    "[D+M] Desktop e iPhone permanecem sem alterações"
+    "[D+T] Miniaturas de capa removidas das linhas de mapas no Progresso",
+    "[D+T] Tag colorida passa a ser a identidade principal de cada mapa",
+    "[D+T] Títulos ganham mais espaço e podem ocupar até duas linhas",
+    "[D+T] Metadado duplicado à direita é removido nos mapas não iniciados",
+    "[D+T] Botão Abrir fica compacto e alinhado",
+    "[M] Smartphone mantém o layout por tags já aprovado"
   ]
 }
