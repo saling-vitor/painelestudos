@@ -1,13 +1,14 @@
 {
-  "version": "15.36.25",
-  "label": "V15.36.25-G",
-  "releasedAt": "2026-10-03T20:30:00.000Z",
-  "notes": "Corrige a precedência responsiva para garantir 38 × 38 px nos controles sobre capas em Desktop, iPad e iPhone, com validação pré-publicação.",
+  "version": "15.36.26",
+  "label": "V15.36.26-T",
+  "releasedAt": "2026-10-03T20:50:00.000Z",
+  "notes": "No iPad, equaliza visualmente os botões ••• e favorito sobre as capas dos mapas, corrigindo também o espaçamento entre eles sem alterar Desktop ou iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Controles sobre capas permanecem 38 × 38 px em todos os dispositivos",
-    "[T] Correção específica de precedência CSS no iPad",
-    "[G] Glass, ícones, favorito amarelo e comportamento são preservados",
-    "[QA] Release passa por PR com Validate + E2E Desktop/iPad/iPhone antes do deploy"
+    "[T] ••• e favorito ficam exatamente com 38 × 38 px no iPad",
+    "[T] Ambos usam ícones de 16 px e o mesmo alinhamento vertical",
+    "[T] Gap visual de 6 px entre os dois controles, sem sobreposição",
+    "[T] Área de toque permanece em 44 px sem invadir o botão vizinho",
+    "[D+M] Desktop e iPhone permanecem sem alterações"
   ]
 }

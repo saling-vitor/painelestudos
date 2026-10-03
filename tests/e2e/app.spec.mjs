@@ -962,13 +962,21 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
   expect(courseStyles.cover.borderColor).toBe(mapStyles.cover.borderColor);
 });
 
-test('controles sobre capas usam o tamanho compacto uniforme de 38px',async({page})=>{
+test('controles sobre capas usam o tamanho compacto uniforme de 38px',async({page},testInfo)=>{
   const measure=async selector=>{
     const el=page.locator(selector).first();
     await expect(el).toBeVisible();
     return el.evaluate(node=>{
-      const rect=node.getBoundingClientRect();
-      return{width:rect.width,height:rect.height};
+      const rect=node.getBoundingClientRect(),icon=node.querySelector('.ui-icon'),iconRect=icon?.getBoundingClientRect();
+      return{
+        width:rect.width,
+        height:rect.height,
+        left:rect.left,
+        right:rect.right,
+        top:rect.top,
+        iconWidth:iconRect?.width||0,
+        iconHeight:iconRect?.height||0
+      };
     });
   };
 
@@ -988,6 +996,16 @@ test('controles sobre capas usam o tamanho compacto uniforme de 38px',async({pag
   }
   expect.soft(Math.abs(menu.width-favorite.width),'mapa: ••• e favorito com mesma largura').toBeLessThanOrEqual(.5);
   expect.soft(Math.abs(menu.height-favorite.height),'mapa: ••• e favorito com mesma altura').toBeLessThanOrEqual(.5);
+
+  if(testInfo.project.name==='ipad'){
+    const visualGap=favorite.left-menu.right;
+    expect.soft(Math.abs(menu.top-favorite.top),'iPad: ••• e favorito alinhados no topo').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(visualGap-6),'iPad: gap visual entre ••• e favorito').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(menu.iconWidth-favorite.iconWidth),'iPad: ícones com mesma largura').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(menu.iconHeight-favorite.iconHeight),'iPad: ícones com mesma altura').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(menu.iconWidth-16),'iPad: ícone ••• em 16px').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(favorite.iconWidth-16),'iPad: estrela em 16px').toBeLessThanOrEqual(.5);
+  }
 });
 
 test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
