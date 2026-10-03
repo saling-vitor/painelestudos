@@ -1,14 +1,13 @@
 {
-  "version": "15.36.11",
-  "label": "V15.36.11-M",
-  "releasedAt": "2026-10-03T09:24:00.000Z",
-  "notes": "Home e Progresso mais compactos no smartphone, com tags no lugar de capas e simulados recentes em lista vertical.",
+  "version": "15.36.12",
+  "label": "V15.36.12-G",
+  "releasedAt": "2026-10-03T10:40:00.000Z",
+  "notes": "Refina tags, capas de cursos, simulados no iPad e o Plano do Dia no desktop/tablet.",
   "showWhatsNew": true,
   "highlights": [
-    "[M] Retomar onde parei usa tags e o card inteiro abre o mapa",
-    "[M] Simulados recentes vira lista vertical de até 3 itens, sem carrossel cortado",
-    "[M] Onde focar agora usa tags, linhas compactas e toque no card inteiro",
-    "[M] Resumo do Progresso fica 2×2 e ocupa menos altura",
-    "[M] Capas permanecem nas bibliotecas e telas em que são protagonistas"
+    "[G] Tags do mapa ganham respiro e leitura mais limpa",
+    "[D+T] Capas dos cursos preservam melhor a composição e controles ficam mais internos",
+    "[T] Simulados recentes usam a cor do curso e cartões mais compactos",
+    "[D+T] Plano do Dia reduz caixas, alturas e espaços vazios"
   ]
 }
