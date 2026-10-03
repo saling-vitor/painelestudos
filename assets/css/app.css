@@ -3617,7 +3617,6 @@ html:not(.is-phone-layout) #coursesGrid .enter{
     border-color:rgba(216,197,158,.20)!important;
     box-shadow:0 20px 46px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.035)!important;
   }
-  html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card:hover .enter,
   html:not(.is-phone-layout) #coursesGrid .course-edital-btn:hover{
     border-color:rgba(216,197,158,.24);
     background:rgba(216,197,158,.06);
