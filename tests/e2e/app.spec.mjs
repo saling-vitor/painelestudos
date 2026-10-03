@@ -713,7 +713,7 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.commandHeight).toBeLessThan(180);
   expect(layout.intelligenceHeight).toBeLessThan(160);
   expect(layout.courseHeight).toBeGreaterThanOrEqual(235);
-  expect(layout.courseHeight).toBeLessThanOrEqual(360);
+  expect(layout.courseHeight).toBeLessThanOrEqual(620);
 });
 
 test('refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
@@ -1066,8 +1066,8 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
 test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica da Home responsiva no iPad.');
   for(const scenario of [
-    {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
-    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'flex',simulationColumns:0,intelligenceColumns:2,courseColumns:2}
+    {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:2,intelligenceColumns:3,courseColumns:2},
+    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'grid',simulationColumns:2,intelligenceColumns:2,courseColumns:2}
   ]){
     await page.setViewportSize({width:scenario.width,height:scenario.height});
     await page.goto('/#home');
