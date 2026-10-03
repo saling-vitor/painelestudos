@@ -1,4 +1,4 @@
-/* V15.30.0-G · Etapa 3 · organização da biblioteca Todos os Mapas */
+/* V15.36.23-G · Todos os Mapas com visualização única em cards */
 (()=>{
   const legacyRenderAllMaps=window.renderAllMaps;
   const SORTS=Object.freeze([
@@ -205,11 +205,6 @@
       const prefix=state.allMapsOffline&&state.allMapsOfflineChecking?'Verificando offline · ':'';
       countEl.textContent=prefix+(visible.length===base.length&&!state.allMapsQuery&&!count?base.length+' mapa'+(base.length===1?'':'s'):visible.length+' de '+base.length+' mapas');
     }
-    document.querySelectorAll('[data-allmaps-layout]').forEach(btn=>{
-      const active=btn.dataset.allmapsLayout===(state.mapLayout==='list'?'list':'grid');
-      btn.classList.toggle('active',active);
-      btn.setAttribute('aria-pressed',String(active));
-    });
     renderAllMapsActiveFilters();
   }
   async function refreshAllMapsOfflineAvailability(base=combinedMaps(),options={}){
@@ -234,12 +229,6 @@
     state.allMapsSort=value;
     localStorage.setItem('studyapp.allMapsSort',value);
     if(typeof touchPreferences==='function')touchPreferences();
-  }
-  function setAllMapsLayout(layout){
-    state.mapLayout=layout==='list'?'list':'grid';
-    localStorage.setItem('studyapp.mapLayout',state.mapLayout);
-    if(typeof touchPreferences==='function')touchPreferences();
-    renderAllMaps();
   }
   function closeAllMapsPanel(){
     const panel=byId('allMapsFilterPanel'),backdrop=byId('allMapsFilterBackdrop');
@@ -297,7 +286,7 @@
     }
     if(controls)controls.hidden=false;
     const root=byId('allMaps'),wrap=byId('allMapsWrap'),base=combinedMaps(),visible=allMapsFilter(base);
-    if(wrap)wrap.classList.toggle('map-list',state.mapLayout==='list');
+    if(wrap)wrap.classList.remove('map-list');
     if(!base.length){
       root.className='map-grid';
       root.innerHTML=emptyStateHtml({
@@ -379,7 +368,6 @@
     byId('allMapsFilterDone')?.addEventListener('click',closeAllMapsPanel);
     byId('allMapsFilterBackdrop')?.addEventListener('click',closeAllMapsPanel);
     byId('allMapsClearFilters')?.addEventListener('click',()=>resetAllMapsFilters({render:true,preserveQuery:true}));
-    document.querySelectorAll('[data-allmaps-layout]').forEach(button=>button.addEventListener('click',()=>setAllMapsLayout(button.dataset.allmapsLayout)));
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!byId('allMapsFilterPanel')?.hidden)closeAllMapsPanel()});
     document.addEventListener('click',e=>{
       if(state.view!=='maps'||byId('allMapsFilterPanel')?.hidden)return;
