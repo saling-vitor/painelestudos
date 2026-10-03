@@ -129,11 +129,11 @@
   /* Botão continua acessível, mas vira o alvo de toque do card inteiro. */
   html.is-phone-layout .continue-card>.primary{
     position:absolute!important;
-    inset:0!important;
-    left:0!important;
-    right:0!important;
-    top:0!important;
-    bottom:0!important;
+    inset:auto!important;
+    left:-12px!important;
+    right:-36px!important;
+    top:-11px!important;
+    bottom:-10px!important;
     z-index:3!important;
     width:auto!important;
     max-width:none!important;
@@ -267,11 +267,11 @@
   /* O botão funcional cobre o card, mas a interface mostra só a seta. */
   html.is-phone-layout .home-simulations-section .simulation-recent-action{
     position:absolute!important;
-    inset:0!important;
-    left:0!important;
-    right:0!important;
-    top:0!important;
-    bottom:0!important;
+    inset:auto!important;
+    left:-11px!important;
+    right:-34px!important;
+    top:-9px!important;
+    bottom:-9px!important;
     z-index:3!important;
     width:auto!important;
     max-width:none!important;
@@ -457,11 +457,11 @@
   /* A ação continua semanticamente um botão, mas a linha inteira vira alvo. */
   html.is-phone-layout .progress-insight-card>.secondary{
     position:absolute!important;
-    inset:0!important;
-    left:0!important;
-    right:0!important;
-    top:0!important;
-    bottom:0!important;
+    inset:auto!important;
+    left:-9px!important;
+    right:-32px!important;
+    top:-8px!important;
+    bottom:-8px!important;
     z-index:3!important;
     width:auto!important;
     max-width:none!important;
