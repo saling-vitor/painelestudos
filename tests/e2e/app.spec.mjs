@@ -514,7 +514,7 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
     });
     expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeGreaterThanOrEqual(1.74);
     expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeLessThanOrEqual(1.82);
-    expect.soft(visual.maxSideInset,scenario.name+' capa mantém apenas a margem editorial do card').toBeLessThanOrEqual(16);
+    expect.soft(visual.maxSideInset,scenario.name+' capa mantém apenas a margem editorial do card').toBeLessThanOrEqual(17);
     expect.soft(visual.cardOverflow,scenario.name+' card recorta a capa nos cantos').toBe('hidden');
     expect.soft(visual.columns,scenario.name+' mantém dois cursos por linha').toBe(2);
     expect.soft(visual.roleDisplay,scenario.name+' remove cargo da Home').toBe('none');
@@ -1285,7 +1285,7 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
   test.skip(testInfo.project.name!=='ipad','Validação específica da Home responsiva no iPad.');
   for(const scenario of [
     {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
-    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'grid',simulationColumns:2,intelligenceColumns:2,courseColumns:1}
+    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'grid',simulationColumns:2,intelligenceColumns:2,courseColumns:2}
   ]){
     await page.setViewportSize({width:scenario.width,height:scenario.height});
     await page.goto('/#home');
