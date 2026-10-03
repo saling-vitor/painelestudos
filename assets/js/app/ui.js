@@ -6,3 +6,97 @@ function currentMapUpdateTarget(){return mapById(mapUpdate.mapKey)}function clea
    window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{simulationId:'...',score:0,correct:0,wrong:0,blank:0,durationSeconds:0}},'*');
    ======================================== */
 const SIMULATION_COVER_OPTIONS=[{key:'auto',label:'Automática pela banca'},{key:'fundatec',label:'FUNDATEC',src:'assets/capas/simulados/simulation-fundatec.webp'},{key:'aocp',label:'Instituto AOCP',src:'assets/capas/simulados/simulation-aocp.webp'},{key:'fepese',label:'FEPESE',src:'assets/capas/simulados/simulation-fepese.webp'},{key:'objetiva',label:'Objetiva Instituto',src:'assets/capas/simulados/simulation-objetiva.webp'},{key:'legalle',label:'Legalle Concursos',src:'assets/capas/simulados/simulation-legalle.webp'},{key:'none',label:'Sem capa'}];const SIMULATION_BOARD_COVERS=Object.fromEntries(SIMULATION_COVER_OPTIONS.filter(o=>o.src).map(o=>[o.key,o.src]));
+
+/* V15.36.4 · SELECT DESKTOP HARMONIZADO */
+(()=>{
+  const finePointer=window.matchMedia?.('(hover:hover) and (pointer:fine)');
+  if(!finePointer?.matches||document.documentElement.classList.contains('is-ipad'))return;
+  let openState=null;
+  const syncMap=new WeakMap();
+  function closeSelect({restoreFocus=false}={}){
+    if(!openState)return;
+    const {trigger,popover}=openState;
+    trigger.setAttribute('aria-expanded','false');
+    popover.remove();
+    openState=null;
+    if(restoreFocus&&trigger.isConnected)trigger.focus({preventScroll:true});
+  }
+  function selectedOption(select){return select.options?.[select.selectedIndex]||select.options?.[0]||null}
+  function syncSelect(select){
+    const state=syncMap.get(select);if(!state)return;
+    const option=selectedOption(select);
+    state.value.textContent=option?.textContent?.trim()||'Selecionar';
+    state.trigger.disabled=!!select.disabled;
+    state.trigger.setAttribute('aria-disabled',select.disabled?'true':'false');
+    state.trigger.title=state.value.textContent;
+  }
+  function optionButton(select,option,popover,trigger){
+    const button=document.createElement('button');
+    button.type='button';button.className='ui-select-option';button.setAttribute('role','option');
+    button.dataset.value=option.value;button.textContent=option.textContent||option.value;
+    button.disabled=option.disabled;button.setAttribute('aria-selected',option.selected?'true':'false');
+    button.addEventListener('click',()=>{
+      if(option.disabled)return;
+      select.value=option.value;
+      select.dispatchEvent(new Event('input',{bubbles:true}));
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+      syncSelect(select);closeSelect({restoreFocus:true});
+    });
+    popover.appendChild(button);return button;
+  }
+  function openSelect(select,state){
+    if(openState?.trigger===state.trigger){closeSelect();return}
+    closeSelect();syncSelect(select);
+    const popover=document.createElement('div');popover.className='ui-select-popover';popover.setAttribute('role','listbox');
+    popover.id='ui-select-'+Math.random().toString(36).slice(2,9);state.trigger.setAttribute('aria-controls',popover.id);
+    for(const child of select.children){
+      if(child.tagName==='OPTGROUP'){
+        const label=document.createElement('div');label.className='ui-select-group';label.textContent=child.label;popover.appendChild(label);
+        for(const option of child.children)if(option.tagName==='OPTION')optionButton(select,option,popover,state.trigger);
+      }else if(child.tagName==='OPTION')optionButton(select,child,popover,state.trigger);
+    }
+    document.body.appendChild(popover);
+    const rect=state.trigger.getBoundingClientRect(),margin=8,minWidth=Math.max(220,rect.width),maxWidth=Math.min(420,window.innerWidth-margin*2);
+    popover.style.width=Math.min(Math.max(minWidth,220),maxWidth)+'px';
+    const left=Math.max(margin,Math.min(rect.left,window.innerWidth-popover.offsetWidth-margin));
+    const roomBelow=window.innerHeight-rect.bottom-margin,roomAbove=rect.top-margin;
+    const useAbove=roomBelow<Math.min(260,popover.scrollHeight)&&roomAbove>roomBelow;
+    popover.style.left=left+'px';
+    popover.style.top=(useAbove?Math.max(margin,rect.top-popover.offsetHeight-6):Math.min(window.innerHeight-popover.offsetHeight-margin,rect.bottom+6))+'px';
+    state.trigger.setAttribute('aria-expanded','true');openState={select,trigger:state.trigger,popover};
+    const selected=popover.querySelector('[aria-selected="true"]');selected?.scrollIntoView({block:'nearest'});
+  }
+  function enhanceSelect(select){
+    if(!(select instanceof HTMLSelectElement)||select.multiple||select.size>1||select.dataset.uiSelectEnhanced==='1')return;
+    select.dataset.uiSelectEnhanced='1';
+    const rect=select.getBoundingClientRect();
+    const shell=document.createElement('span');shell.className='ui-select-shell';if(rect.width)shell.style.setProperty('--ui-select-basis',Math.min(rect.width,360)+'px');
+    select.parentNode.insertBefore(shell,select);shell.appendChild(select);select.classList.add('ui-select-native');select.tabIndex=-1;select.setAttribute('aria-hidden','true');
+    const trigger=document.createElement('button');trigger.type='button';trigger.className='ui-select-trigger';trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');
+    const label=select.getAttribute('aria-label')||select.name||'Selecionar opção';trigger.setAttribute('aria-label',label);
+    const value=document.createElement('span');value.className='ui-select-value';const chevron=document.createElement('span');chevron.className='ui-select-chevron';chevron.setAttribute('aria-hidden','true');trigger.append(value,chevron);shell.appendChild(trigger);
+    const state={shell,trigger,value};syncMap.set(select,state);syncSelect(select);
+    trigger.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();if(!trigger.disabled)openSelect(select,state)});
+    trigger.addEventListener('keydown',event=>{
+      if(['ArrowDown','ArrowUp','Enter',' '].includes(event.key)){event.preventDefault();openSelect(select,state);requestAnimationFrame(()=>{const options=[...(openState?.popover?.querySelectorAll('.ui-select-option:not(:disabled)')||[])],selected=openState?.popover?.querySelector('[aria-selected="true"]:not(:disabled)');(selected||options[0])?.focus()})}
+      if(event.key==='Escape'){event.preventDefault();closeSelect({restoreFocus:true})}
+    });
+    new MutationObserver(()=>syncSelect(select)).observe(select,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','selected','label']});
+  }
+  document.querySelectorAll('select').forEach(enhanceSelect);
+  new MutationObserver(mutations=>{
+    for(const mutation of mutations){
+      for(const node of mutation.addedNodes){
+        if(node.nodeType!==1)continue;
+        if(node.matches?.('select'))enhanceSelect(node);
+        node.querySelectorAll?.('select').forEach(enhanceSelect);
+      }
+    }
+  }).observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('change',event=>{if(event.target instanceof HTMLSelectElement)syncSelect(event.target)},true);
+  document.addEventListener('input',event=>{if(event.target instanceof HTMLSelectElement)syncSelect(event.target)},true);
+  document.addEventListener('pointerdown',event=>{if(openState&&!openState.popover.contains(event.target)&&event.target!==openState.trigger)closeSelect()},true);
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&openState)closeSelect({restoreFocus:true})});
+  window.addEventListener('resize',()=>closeSelect(),{passive:true});
+  window.addEventListener('scroll',()=>closeSelect(),{passive:true,capture:true});
+})();
