@@ -457,9 +457,9 @@
   /* A ação continua semanticamente um botão, mas a linha inteira vira alvo. */
   html.is-phone-layout .progress-insight-card>.secondary{
     position:absolute!important;
-    grid-area:auto!important;
-    grid-column:auto!important;
-    grid-row:auto!important;
+    grid-area:1 / 1 / -1 / -1!important;
+    grid-column:1 / -1!important;
+    grid-row:1 / -1!important;
     justify-self:stretch!important;
     align-self:stretch!important;
     inset:-8px -32px -8px -9px!important;
