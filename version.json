@@ -1,14 +1,13 @@
 {
-  "version": "15.36.13",
-  "label": "V15.36.13-G",
-  "releasedAt": "2026-10-03T11:25:00.000Z",
-  "notes": "Plano final: Home com três cursos no desktop, iPad horizontal e vertical tratados separadamente, Retomar contido no card, busca única no topo e controles harmonizados.",
+  "version": "15.36.14",
+  "label": "V15.36.14-G",
+  "releasedAt": "2026-10-03T12:35:00.000Z",
+  "notes": "Restaura o acabamento de profundidade aprovado para botões e controles, incluindo simulados, sem alterar os layouts dos cards.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Home passa a usar três cursos por linha em telas largas",
-    "[T-H/T-V] iPad recebe regras independentes para paisagem e retrato",
-    "[G] Busca local duplicada é removida visualmente; permanece apenas a busca superior",
-    "[D+T] Retomar integra imagem, textos, estados e ação dentro do mesmo card",
-    "[G] Controles sobre capas adotam acabamento visual unificado"
+    "[G] Botões recuperam brilho superior, sombra externa e resposta de clique",
+    "[G] Controles ••• e favorito passam a usar exatamente o material visual aprovado",
+    "[G] Ações de cursos, mapas e simulados preservam a cor contextual com o mesmo relevo",
+    "[G] Simulados recuperam o acabamento colorido e profundo das ações"
   ]
 }
