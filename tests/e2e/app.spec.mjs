@@ -2366,7 +2366,7 @@ test('iPad não recebe tokens visuais exclusivos da etapa 4 do smartphone',async
 });
 
 
-test('etapa 1 [D] Meus Cursos aproveita a largura com dois concursos no desktop amplo',async({page},testInfo)=>{
+test('etapa 1 [D] Meus Cursos usa três colunas no desktop amplo',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
   await page.setViewportSize({width:1600,height:900});
   await page.goto('/#courses');
@@ -2392,10 +2392,11 @@ test('etapa 1 [D] Meus Cursos aproveita a largura com dois concursos no desktop 
       accents:all.map(el=>getComputedStyle(el).getPropertyValue('--course-accent').trim())
     };
   });
-  expect(data.columns).toBe(2);
+  expect(data.columns).toBe(3);
   expect(data.height).toBeGreaterThanOrEqual(300);
   expect(data.height).toBeLessThan(data.viewportHeight*.8);
-  expect(data.width).toBeGreaterThan(500);
+  expect(data.width).toBeGreaterThan(350);
+  expect(data.width).toBeLessThan(550);
   expect(data.titleOverflow).toBe('hidden');
   expect(String(data.titleLines)).toBe('2');
   expect(data.accents.every(Boolean)).toBe(true);
