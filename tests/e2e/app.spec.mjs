@@ -3057,7 +3057,14 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
 
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#home');
-  await page.waitForFunction(()=>document.querySelector('#continueBox .continue-card')&&document.querySelectorAll('#homeSimulations .simulation-recent-item').length>0);
+  await page.evaluate(()=>{
+    const map=combinedMaps()[0];
+    localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));
+    renderHome();
+    if(typeof renderHomeSimulations==='function')renderHomeSimulations();
+  });
+  await expect(page.locator('#continueBox .continue-card')).toBeVisible();
+  await expect(page.locator('#homeSimulations .simulation-recent-item').first()).toBeVisible();
 
   await expect(page.locator('#continueBox .continue-thumb')).toBeHidden();
   await expect(page.locator('#continueBox .continue-map-code')).toBeVisible();
