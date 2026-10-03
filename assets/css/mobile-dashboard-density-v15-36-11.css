@@ -69,7 +69,7 @@
     border:1px solid color-mix(in srgb,var(--continue-accent) 34%,rgba(255,255,255,.05))!important;
     border-radius:7px!important;
     background:color-mix(in srgb,var(--continue-accent) 6%,transparent)!important;
-    color:color-mix(in srgb,var(--continue-accent) 74%,#d7dbe0)!important;
+    color:var(--continue-accent)!important;
     font:800 7.5px/1 var(--mono)!important;
     letter-spacing:.045em!important;
     white-space:nowrap!important;
@@ -135,9 +135,10 @@
     height:100%!important;
     min-height:0!important;
     padding:0!important;
-    border:0!important;
+    border:1px solid var(--continue-accent)!important;
     border-radius:inherit!important;
     background:transparent!important;
+    color:var(--continue-accent)!important;
     opacity:0!important;
   }
 
