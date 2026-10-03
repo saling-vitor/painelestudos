@@ -494,10 +494,15 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
       const title=el.querySelector('h3');
       const progress=el.querySelector('.course-progress-mini');
       const enter=el.querySelector('.enter');
+      const total=el.querySelector('.course-progress-total');
+      const unit=el.querySelector('.course-progress-unit');
+      const track=el.querySelector('.progress-track');
+      const er=enter?.getBoundingClientRect(),pr=progress?.getBoundingClientRect(),tr=track?.getBoundingClientRect();
       return{
         ratio:c.width/c.height,
         maxSideInset:Math.max(c.left-card.left,card.right-c.right),
         cardOverflow:getComputedStyle(el).overflow,
+        horizontalOverflow:el.scrollWidth-el.clientWidth,
         columns:getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length,
         roleDisplay:role?getComputedStyle(role).display:'none',
         boardDisplay:board?getComputedStyle(board).display:'none',
@@ -506,7 +511,12 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
         examVisible:!!exam&&getComputedStyle(exam).display!=='none',
         titleVisible:!!title&&getComputedStyle(title).display!=='none',
         progressVisible:!!progress&&getComputedStyle(progress).display!=='none',
+        progressInside:!!pr&&pr.left>=card.left+12&&pr.right<=card.right-12,
+        trackInside:!!tr&&tr.left>=card.left+12&&tr.right<=card.right-12,
+        totalText:total?.textContent?.trim()||'',
+        unitDisplay:unit?getComputedStyle(unit).display:'none',
         enterVisible:!!enter&&getComputedStyle(enter).display!=='none',
+        enterInside:!!er&&er.left>=card.left+12&&er.right<=card.right-12&&er.bottom<=card.bottom-8,
         statusInside:s.left>=c.left+8&&s.top>=c.top+8&&s.right<=c.right-8&&s.bottom<=c.bottom-8,
         editInside:!e||(e.left>=c.left+8&&e.top>=c.top+8&&e.right<=c.right-8&&e.bottom<=c.bottom-8),
         controlsOverlap:!!e&&!(s.right<=e.left||e.right<=s.left||s.bottom<=e.top||e.bottom<=s.top)
@@ -524,10 +534,21 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
     expect.soft(visual.examVisible,scenario.name+' mantém data da prova').toBe(true);
     expect.soft(visual.titleVisible,scenario.name+' mantém nome do concurso').toBe(true);
     expect.soft(visual.progressVisible,scenario.name+' mantém progresso').toBe(true);
+    expect.soft(visual.horizontalOverflow,scenario.name+' card não cria overflow horizontal').toBeLessThanOrEqual(1);
+    expect.soft(visual.progressInside,scenario.name+' bloco de progresso fica dentro do card').toBe(true);
+    expect.soft(visual.trackInside,scenario.name+' barra de progresso respeita as margens').toBe(true);
+    expect.soft(visual.totalText,scenario.name+' total compacto não escreve tópicos').not.toMatch(/tópicos/i);
+    expect.soft(visual.unitDisplay,scenario.name+' unidade tópicos fica oculta na Home').toBe('none');
     expect.soft(visual.enterVisible,scenario.name+' mantém botão Entrar').toBe(true);
+    expect.soft(visual.enterInside,scenario.name+' botão Entrar fica totalmente dentro do card').toBe(true);
     expect.soft(visual.statusInside,scenario.name+' selo ATIVO fica dentro da capa').toBe(true);
     expect.soft(visual.editInside,scenario.name+' botão de configuração fica dentro da capa').toBe(true);
     expect.soft(visual.controlsOverlap,scenario.name+' controles não se sobrepõem').toBe(false);
+    const noExam=page.locator('#homeCourses .home-course-card.course-library-card').filter({hasNot:page.locator('.course-exam-info')}).first();
+    if(await noExam.count()){
+      const noExamMeta=await noExam.locator('.course-card-meta').evaluate(el=>getComputedStyle(el).display);
+      expect.soft(noExamMeta,scenario.name+' curso sem prova não reserva faixa vazia').toBe('none');
+    }
   }
 });
 
