@@ -48,7 +48,24 @@ test('importação detecta categoria individual pelo HTML',async({page})=>{
 });
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
-test('botão Abrir da tela Progresso abre mapa',async({page})=>{await page.goto('/#progress');const toggle=page.locator('#progressInfo [data-progress-course-toggle]').first();await expect(toggle).toBeVisible();await toggle.click();const button=page.locator('#progressInfo [data-progress-open]').first();await expect(button).toBeVisible();await button.click();await expect(page.locator('#reader')).toHaveClass(/open/);await page.locator('#readerClose').click();await expect(page.locator('#reader')).not.toHaveClass(/open/)});
+test('botão Abrir da tela Progresso abre mapa',async({page},testInfo)=>{
+  await page.goto('/#progress');
+  const toggle=page.locator('#progressInfo [data-progress-course-toggle]').first();
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  if(testInfo.project.name==='iphone-webkit'){
+    const row=page.locator('#progressInfo [data-progress-row-open]').first();
+    await expect(row).toBeVisible();
+    await row.click();
+  }else{
+    const button=page.locator('#progressInfo [data-progress-open]').first();
+    await expect(button).toBeVisible();
+    await button.click();
+  }
+  await expect(page.locator('#reader')).toHaveClass(/open/);
+  await page.locator('#readerClose').click();
+  await expect(page.locator('#reader')).not.toHaveClass(/open/);
+});
 test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#progress');const filters=page.locator('[data-progress-filter]'),count=await filters.count();for(let i=0;i<count;i++)await filters.nth(i).click()});
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
@@ -773,14 +790,24 @@ test('mapas não iniciados não repetem barras e estados zerados',async({page})=
   await expect(row.locator('.progress-map-states')).toHaveCount(0);
 });
 
-test('progresso integra filtros e ordenação no painel geral',async({page})=>{
+test('progresso integra filtros e ordenação no painel geral',async({page},testInfo)=>{
   await page.goto('/#progress');
   const panel=page.locator('#progressGlobalPanel');
   await expect(panel).toBeVisible();
   await expect(panel.locator('#progressFilters')).toBeVisible();
-  await expect(panel.locator('#progressSort')).toBeVisible();
   await expect(page.locator('.progress-filter-shell')).toHaveCount(0);
-  await panel.locator('#progressSort').selectOption('alpha');
+  if(testInfo.project.name==='iphone-webkit'){
+    await expect(panel.locator('#progressSort')).toBeHidden();
+    const trigger=panel.locator('#progressSortMobile');
+    await expect(trigger).toBeVisible();
+    await trigger.click();
+    await expect(page.locator('#progressSortSheet')).toBeVisible();
+    await page.locator('#progressSortSheet [data-progress-sort-option="alpha"]').click();
+    await expect(page.locator('#progressSortSheet')).toBeHidden();
+  }else{
+    await expect(panel.locator('#progressSort')).toBeVisible();
+    await panel.locator('#progressSort').selectOption('alpha');
+  }
   const stored=await page.evaluate(()=>localStorage.getItem('studyapp.progressSort'));
   expect(stored).toBe('alpha');
 });
@@ -2930,4 +2957,52 @@ test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',a
   expect(box.y+box.height).toBeLessThanOrEqual(845);
   await page.locator('#allMapsFilterDone').click();
   await expect(page.locator('#allMapsFilterPanel')).toBeHidden();
+});
+
+
+test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Validação visual exclusiva do smartphone.');
+  await page.goto('/#progress');
+  const course=page.locator('#progressInfo .progress-course').first();
+  await expect(course).toBeVisible();
+  if(await course.evaluate(el=>el.classList.contains('is-collapsed'))){
+    await course.locator('[data-progress-course-toggle]').click();
+  }
+  const rows=course.locator('.progress-map-row');
+  const count=await rows.count();
+  expect(count).toBeGreaterThan(0);
+  expect(count).toBeLessThanOrEqual(3);
+
+  const row=rows.first();
+  await expect(row.locator('.progress-map-thumb')).toBeHidden();
+  await expect(row.locator('.compact-code')).toBeVisible();
+  await expect(row.locator('.progress-open')).toBeHidden();
+  const layout=await row.evaluate(el=>{
+    const tag=el.querySelector('.compact-code');
+    const title=el.querySelector('.progress-map-copy>b');
+    const filter=document.querySelector('.progress-filter');
+    const view=document.querySelector('[data-view="progress"]');
+    return{
+      rowHeight:el.getBoundingClientRect().height,
+      tagWidth:tag?.getBoundingClientRect().width||0,
+      lineClamp:getComputedStyle(title).webkitLineClamp,
+      filterHeight:filter?.getBoundingClientRect().height||0,
+      progressPaddingBottom:parseFloat(getComputedStyle(view).paddingBottom)||0
+    };
+  });
+  expect(layout.rowHeight).toBeLessThan(100);
+  expect(layout.tagWidth).toBeGreaterThanOrEqual(50);
+  expect(layout.tagWidth).toBeLessThanOrEqual(70);
+  expect(layout.lineClamp).toBe('2');
+  expect(layout.filterHeight).toBeLessThanOrEqual(42);
+  expect(layout.progressPaddingBottom).toBeGreaterThanOrEqual(100);
+
+  await expect(page.locator('#progressSortMobile')).toBeVisible();
+  await page.locator('#progressSortMobile').click();
+  await expect(page.locator('#progressSortSheet')).toBeVisible();
+  const sheetBox=await page.locator('#progressSortSheet').boundingBox();
+  expect(sheetBox.y).toBeGreaterThanOrEqual(0);
+  expect(sheetBox.y+sheetBox.height).toBeLessThanOrEqual(845);
+  await page.locator('#progressSortClose').click();
+  await expect(page.locator('#progressSortSheet')).toBeHidden();
 });
