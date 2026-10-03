@@ -4,6 +4,8 @@
 @media (orientation:portrait){
   html.is-ipad:not(.is-phone-layout){
     --nav:0px;
+    scroll-padding-top:90px;
+    scroll-padding-bottom:104px;
   }
 
   html.is-ipad:not(.is-phone-layout) .app{
@@ -29,7 +31,19 @@
     margin-inline:auto!important;
     padding-left:16px!important;
     padding-right:16px!important;
-    padding-bottom:112px!important;
+    padding-bottom:132px!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) [data-view] :is(
+    button,
+    a,
+    input,
+    select,
+    textarea,
+    [tabindex]
+  ){
+    scroll-margin-top:90px;
+    scroll-margin-bottom:104px;
   }
 
   html.is-ipad:not(.is-phone-layout) .bottom-nav{
