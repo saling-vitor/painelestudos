@@ -2612,7 +2612,7 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page},t
   await expect(restoreEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-leitura-v15-22-0\.png/);
 
   await page.evaluate(()=>{nav('maps');state.globalQuery='__sem_resultado_estado_vazio__';renderAllMaps()});
-  const searchEmpty=page.locator('#allMaps .search-empty-state');
+  const searchEmpty=page.locator('#allMaps .empty-state');
   await expect(searchEmpty).toBeVisible();
   await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-pensando-v15-22-0\.png/);
 });
@@ -2963,6 +2963,9 @@ test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',a
 test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação visual exclusiva do smartphone.');
   await page.goto('/#progress');
+  const subjects=page.locator('[data-mobile-progress-group="subjects"]');
+  await expect(subjects).toBeVisible();
+  if(!(await subjects.evaluate(el=>el.open)))await subjects.locator(':scope > summary').click();
   const course=page.locator('#progressInfo .progress-course').first();
   await expect(course).toBeVisible();
   if(await course.evaluate(el=>el.classList.contains('is-collapsed'))){
