@@ -1,0 +1,18 @@
+/* V15.36.28-T · Home: capas 16:9 reais no iPad e controles contidos */
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover{
+  height:auto!important;
+  max-height:none!important;
+  aspect-ratio:16/9!important;
+  overflow:hidden!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:var(--course-cover-position,center center)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-cover-controls{
+  top:12px!important;
+  left:12px!important;
+  right:12px!important;
+}
