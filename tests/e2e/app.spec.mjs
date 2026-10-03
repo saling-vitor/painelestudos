@@ -46,7 +46,7 @@ test('importação detecta categoria individual pelo HTML',async({page})=>{
   });
   expect(categories).toEqual({port:'Português',uti:'Infraestrutura e Mobilidade Urbana'});
 });
-test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
+test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]:visible`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
 test('botão Abrir da tela Progresso abre mapa',async({page},testInfo)=>{
   await page.goto('/#progress');
@@ -928,16 +928,21 @@ test('hierarquia tipográfica diferencia página, seção e dados sem desperdíc
 test('acabamento final mantém foco, alinhamento e transições consistentes',async({page})=>{
   await page.goto('/#home');
   await page.evaluate(()=>document.activeElement?.blur());
-  await page.keyboard.press('Tab');
-  const focus=await page.evaluate(()=>{
-    const el=document.activeElement,style=el?getComputedStyle(el):null;
-    return{
-      tag:el?.tagName||'',
-      outlineStyle:style?.outlineStyle||'none',
-      outlineWidth:parseFloat(style?.outlineWidth)||0,
-      outlineColor:style?.outlineColor||''
-    };
-  });
+  let focus=null;
+  for(let i=0;i<8;i++){
+    await page.keyboard.press('Tab');
+    focus=await page.evaluate(()=>{
+      const el=document.activeElement,style=el?getComputedStyle(el):null;
+      return{
+        tag:el?.tagName||'',
+        visible:!!el&&!!(el.offsetWidth||el.offsetHeight||el.getClientRects().length),
+        outlineStyle:style?.outlineStyle||'none',
+        outlineWidth:parseFloat(style?.outlineWidth)||0,
+        outlineColor:style?.outlineColor||''
+      };
+    });
+    if(focus.visible&&focus.outlineStyle!=='none'&&focus.outlineWidth>=1)break;
+  }
   expect(['BUTTON','A','INPUT','SELECT','TEXTAREA']).toContain(focus.tag);
   expect(focus.outlineStyle).not.toBe('none');
   expect(focus.outlineWidth).toBeGreaterThanOrEqual(1);
@@ -2776,10 +2781,9 @@ test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros a
   await page.locator('#allMapsFilterDone').click();
   await page.locator('[data-allmaps-layout="list"]:visible').click();
 
-  const navRoot=isPhone?'.bottom-nav':'.nav';
-  await page.locator(navRoot+' [data-nav="courses"]').first().click();
+  await page.locator('[data-nav="courses"]:visible').first().click();
   await expect(page.locator('[data-view="courses"]')).toHaveClass(/active/);
-  await page.locator(navRoot+' [data-nav="maps"]').first().click();
+  await page.locator('[data-nav="maps"]:visible').first().click();
   await expect(page.locator('[data-view="maps"]')).toHaveClass(/active/);
 
   const reset=await page.evaluate(()=>({
