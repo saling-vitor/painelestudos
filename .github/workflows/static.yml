@@ -3,7 +3,7 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "fix/maps-cleanup-ci-v15-36-23"]
   workflow_dispatch:
 
 permissions:
@@ -164,6 +164,7 @@ jobs:
   deploy:
     name: Deploy Pages
     needs: [validate, e2e-desktop, e2e-ipad, e2e-iphone]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
