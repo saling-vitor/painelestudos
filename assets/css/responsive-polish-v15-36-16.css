@@ -27,8 +27,7 @@ html.is-ipad:not(.is-phone-layout) .side .nav-btn{
   padding-inline:0!important;
 }
 html.is-ipad:not(.is-phone-layout) .side .nav-btn .txt,
-html.is-ipad:not(.is-phone-layout) .side .nav-label,
-html.is-ipad:not(.is-phone-layout) .side .side-bottom{
+html.is-ipad:not(.is-phone-layout) .side .nav-label{
   display:none!important;
 }
 html.is-ipad:not(.is-phone-layout) .main{
