@@ -1492,7 +1492,7 @@ test('Home usa CTA Começar no card de prioridade',async({page})=>{
   await page.goto('/#home');
   const cta=page.locator('[data-priority-open]').first();
   await expect(cta).toBeVisible();
-  await expect(cta).toHaveText('Começar');
+  await expect(cta).toHaveText(/^Começar · \d+ min$/);
   await expect(page.locator('.priority-now-card')).toContainText('Prioridade agora');
   await expect(page.locator('.priority-now-card .priority-reason-chip').first()).toBeVisible();
 });
