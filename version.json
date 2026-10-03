@@ -1,14 +1,15 @@
 {
-  "version": "15.36.28",
-  "label": "V15.36.28-T",
-  "releasedAt": "2026-10-03T22:20:00.000Z",
-  "notes": "No iPad/tablet, as capas dos cursos na Home passam a respeitar a proporção 16:9 real, reduzindo cortes da arte. O selo ATIVO e o botão de configuração ficam contidos dentro da área da capa. Desktop e iPhone permanecem inalterados.",
+  "version": "15.36.29",
+  "label": "V15.36.29-T",
+  "releasedAt": "2026-10-03T23:22:00.000Z",
+  "notes": "No iPad/tablet, a Home passa a manter sempre dois cursos por linha, em retrato e paisagem. Os cards da Home ficam mais enxutos: permanecem capa, situação, nome do concurso, prova, progresso e botão Entrar. As informações completas continuam em Meus Cursos. Desktop e iPhone não mudam.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Capas dos cursos na Home usam proporção 16:9 real",
-    "[T] A arte deixa de ser achatada e perde menos conteúdo",
-    "[T] Selo ATIVO permanece dentro da capa",
-    "[T] Botão de configuração permanece dentro da capa",
+    "[T] Home mantém sempre 2 cursos por linha em retrato e paisagem",
+    "[T] Cards da Home ficam mais compactos e visuais",
+    "[T] Home mantém capa, situação, nome, prova, progresso e Entrar",
+    "[T] Cargo, banca, quantidade de mapas e última atividade saem da Home",
+    "[T] Meus Cursos preserva todas as informações completas",
     "[D+M] Desktop e iPhone permanecem sem alterações"
   ]
 }

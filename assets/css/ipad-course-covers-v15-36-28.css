@@ -19,3 +19,64 @@ html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library
   left:12px!important;
   right:12px!important;
 }
+/* V15.36.29-T · Home resumida e 2 colunas permanentes no iPad */
+html.is-ipad:not(.is-phone-layout) #homeCourses{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card{
+  min-width:0!important;
+  padding:0 0 12px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover{
+  width:calc(100% - 32px)!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:16px 16px 0!important;
+  aspect-ratio:16/9!important;
+  border:1px solid rgba(255,255,255,.065)!important;
+  border-radius:12px!important;
+  overflow:hidden!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-cover-controls{
+  top:28px!important;
+  left:28px!important;
+  right:28px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>
+:is(.course-card-kicker-row,.course-card-role,.course-card-institution){
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card .course-board-chip,
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card .course-map-count-chip,
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card .course-edital-btn,
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card .course-last-activity-card{
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>h3{
+  margin:12px 16px 0!important;
+  font-size:16px!important;
+  line-height:1.14!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-meta{
+  min-height:26px!important;
+  margin:8px 16px 0!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-meta:empty{
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card .course-exam-info{
+  padding-left:0!important;
+  border-right:0!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-progress-mini{
+  margin:10px 16px 0!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-footer{
+  justify-content:flex-end!important;
+  min-height:44px!important;
+  margin:8px 16px 0!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card .enter{
+  min-height:44px!important;
+}
