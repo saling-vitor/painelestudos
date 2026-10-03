@@ -3133,3 +3133,50 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
   expect(progressData.thumbWidth).toBeLessThanOrEqual(60);
   expect(Math.abs(progressData.actionWidth-progressData.insightWidth)).toBeLessThanOrEqual(2);
 });
+
+
+test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva do desktop.');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
+  await page.evaluate(()=>{
+    const map=combinedMaps()[0];
+    localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));
+    renderHome();
+  });
+  const card=page.locator('#continueBox .continue-card');
+  await expect(card).toBeVisible();
+  const data=await card.evaluate(el=>{
+    const thumb=el.querySelector('.continue-thumb');
+    const img=thumb?.querySelector('img');
+    const content=el.querySelector('.continue-content');
+    const action=el.querySelector(':scope>.primary');
+    const states=el.querySelector('.continue-states');
+    const cardBox=el.getBoundingClientRect();
+    const thumbBox=thumb?.getBoundingClientRect();
+    const contentBox=content?.getBoundingClientRect();
+    const actionBox=action?.getBoundingClientRect();
+    const statesBox=states?.getBoundingClientRect();
+    return{
+      cardHeight:cardBox.height,
+      cardWidth:cardBox.width,
+      thumbWidth:thumbBox?.width||0,
+      thumbHeight:thumbBox?.height||0,
+      objectFit:img?getComputedStyle(img).objectFit:'',
+      contentInside:!!contentBox&&contentBox.left>=cardBox.left-1&&contentBox.right<=cardBox.right+1&&contentBox.bottom<=cardBox.bottom+1,
+      actionInside:!!actionBox&&actionBox.left>=cardBox.left-1&&actionBox.right<=cardBox.right+1&&actionBox.bottom<=cardBox.bottom+1,
+      statesInside:!statesBox||(statesBox.left>=cardBox.left-1&&statesBox.right<=cardBox.right+1&&statesBox.bottom<=cardBox.bottom+1),
+      overflowX:document.documentElement.scrollWidth-innerWidth
+    };
+  });
+  expect(data.cardHeight).toBeGreaterThanOrEqual(150);
+  expect(data.thumbHeight).toBeGreaterThanOrEqual(110);
+  expect(data.thumbWidth/data.thumbHeight).toBeGreaterThan(1.72);
+  expect(data.thumbWidth/data.thumbHeight).toBeLessThan(1.83);
+  expect(data.objectFit).toBe('contain');
+  expect(data.contentInside).toBe(true);
+  expect(data.actionInside).toBe(true);
+  expect(data.statesInside).toBe(true);
+  expect(data.overflowX).toBeLessThanOrEqual(2);
+});
