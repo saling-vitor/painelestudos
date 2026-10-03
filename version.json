@@ -1,13 +1,14 @@
 {
-  "version": "15.36.19",
-  "label": "V15.36.19-D",
-  "releasedAt": "2026-10-03T14:52:00.000Z",
-  "notes": "Corrige exclusivamente no desktop o card Retomar onde parei, preservando a proporção completa da capa e evitando compressão/cortes do conteúdo.",
+  "version": "15.36.20",
+  "label": "V15.36.20-G",
+  "releasedAt": "2026-10-03T17:58:00.000Z",
+  "notes": "Restringe o glassmorphism aos controles flutuantes sobre capas e restaura o acabamento escuro normal dos demais botões.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Retomar onde parei passa a exibir a capa completa em proporção 16:9",
-    "[D] Card ganha altura e largura internas proporcionais sem cortar título, progresso ou estados",
-    "[D] Faixa com Simulados recentes continua lado a lado e se adapta melhor em monitores amplos",
-    "[T+M] iPad e smartphone permanecem inalterados"
+    "[G] Glass passa a existir somente em •••, favorito e controles flutuantes sobre capas",
+    "[G] Filtros, Abrir, Entrar, Novo concurso, Edital, Simulados e demais ações voltam ao acabamento escuro normal",
+    "[G] Hover dos controles de capa permanece fumê, sem branco, salto ou zoom",
+    "[D+T+M] Cor contextual continua disponível fora das capas sem efeito de vidro",
+    "[D+T+M] Botões comuns deixam de usar blur e backdrop-filter"
   ]
 }
