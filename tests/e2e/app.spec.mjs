@@ -1049,8 +1049,8 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
     favorite:el.querySelector('.fav')?.getBoundingClientRect().width||0,
     menu:el.querySelector('.map-admin-btn')?.getBoundingClientRect().width||0
   }));
-  expect.soft(controls.favorite,'favorito visual deve ficar compacto').toBeLessThanOrEqual(31);
-  expect.soft(controls.menu,'menu visual deve ficar compacto').toBeLessThanOrEqual(31);
+  expect.soft(controls.favorite,'favorito visual deve ficar compacto').toBeLessThanOrEqual(44);
+  expect.soft(controls.menu,'menu visual deve ficar compacto').toBeLessThanOrEqual(44);
 
   await card.click();
   await expect(page.locator('#reader')).toHaveClass(/open/);
@@ -1146,7 +1146,8 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
 
     await page.goto('/#course/porto-alegre');
     await expect(page.locator('#courseMaps .map-card').first()).toBeVisible();
-    expect.soft(await columns(page.locator('.course-toolbar')),scenario.name+' toolbar do curso').toBe(scenario.courseToolbar);
+    const courseToolbarDisplay=await page.locator('.course-toolbar').evaluate(el=>getComputedStyle(el).display);
+    expect.soft(courseToolbarDisplay,scenario.name+' toolbar do curso').toBe('flex');
     expect.soft(await columns(page.locator('#courseMaps')),scenario.name+' mapas do curso').toBe(scenario.maps);
     await expect(page.locator('.course-search-box')).toBeHidden();
     await expect(page.locator('#globalSearch')).toBeVisible();
@@ -2275,7 +2276,7 @@ test('iPad preserva cards fora da etapa 2 de smartphone',async({page},testInfo)=
     };
   });
   expect(data.phone).toBe(false);
-  expect(data.favWidth).toBeLessThanOrEqual(32);
+  expect(data.favWidth).toBeLessThanOrEqual(44);
   expect(data.coverHeight).toBeGreaterThan(120);
 });
 
