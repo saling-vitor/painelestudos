@@ -2877,6 +2877,7 @@ test('[G] refinamento visual mantém foco discreto, menus harmonizados e modal r
     await page.goto('/#progress');
     const sort=page.locator('#progressSort');
     await expect(sort).toBeVisible();
+    await expect(sort.locator('option')).toHaveCount(5);
     const trigger=sort.locator('xpath=following-sibling::*[contains(@class,"ui-select-trigger")]');
     await expect(trigger).toBeVisible();
     await trigger.click();
