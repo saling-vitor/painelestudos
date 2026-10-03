@@ -1,13 +1,13 @@
 {
-  "version": "15.36.21",
-  "label": "V15.36.21-G",
-  "releasedAt": "2026-10-03T18:24:00.000Z",
-  "notes": "Uniformiza o botão ••• sobre as capas de Meus Cursos com o mesmo material glass já usado em Mapas e Simulados.",
+  "version": "15.36.22",
+  "label": "V15.36.22-G",
+  "releasedAt": "2026-10-03T18:46:00.000Z",
+  "notes": "Ao favoritar um mapa, a estrela passa a ficar amarelo-dourada sem alterar o material glass do botão.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Menu ••• sobre capas de curso usa o mesmo vidro fumê de Mapas e Simulados",
-    "[G] Mantidos blur, borda, sombra e reflexo discretos sobre a capa",
-    "[D+T+M] Nenhum botão fora das capas recebe glass",
-    "[D+T] Hover do menu de curso permanece escuro, sem flash branco, salto ou zoom"
+    "[G] Estrela de favorito ativo em amarelo-dourado mais visível",
+    "[G] O botão mantém exatamente o mesmo vidro fumê antes e depois de favoritar",
+    "[D+T] Hover e foco preservam a estrela amarela",
+    "[D+T+M] Ao desfavoritar, a estrela volta imediatamente ao estado neutro"
   ]
 }
