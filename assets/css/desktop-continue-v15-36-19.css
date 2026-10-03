@@ -1,0 +1,86 @@
+/* V15.36.19-D · Retomar onde parei · desktop/PC
+   Escopo deliberadamente restrito ao desktop. iPad e smartphone permanecem intocados. */
+
+@media (min-width:1181px){
+  /* Dá um pouco mais de largura ao Retomar sem desmontar a faixa de Simulados. */
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"].active{
+    grid-template-columns:minmax(430px,.92fr) minmax(0,1.08fr)!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card{
+    grid-template-columns:clamp(205px,34%,242px) minmax(0,1fr) auto!important;
+    min-height:154px!important;
+    height:auto!important;
+    max-height:none!important;
+    gap:15px!important;
+    padding:13px!important;
+    align-items:center!important;
+    overflow:hidden!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb{
+    width:100%!important;
+    max-width:242px!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:16/9!important;
+    align-self:center!important;
+    overflow:hidden!important;
+    border-radius:10px!important;
+    background:#080a0d!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb img{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    object-position:center center!important;
+    background:#080a0d!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-content{
+    min-width:0!important;
+    align-self:center!important;
+    justify-content:center!important;
+    padding-block:0!important;
+    overflow:visible!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-content>b{
+    line-height:1.22!important;
+    overflow:visible!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-progress{
+    margin-top:8px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-states{
+    margin-top:9px!important;
+    row-gap:6px!important;
+    overflow:visible!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card>.primary{
+    min-width:92px!important;
+    min-height:42px!important;
+    align-self:center!important;
+  }
+}
+
+/* Em monitores amplos a capa pode respirar mais, mantendo a arte inteira. */
+@media (min-width:1500px){
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"].active{
+    grid-template-columns:minmax(520px,.98fr) minmax(0,1.02fr)!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card{
+    grid-template-columns:clamp(232px,36%,278px) minmax(0,1fr) auto!important;
+    min-height:174px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb{
+    max-width:278px!important;
+  }
+}
