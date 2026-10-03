@@ -1,0 +1,500 @@
+/* V15.36.9-M · Progresso compacto para smartphone
+   [M] reduz altura, remove miniaturas das capas, usa somente tag/sigla,
+   transforma linhas em alvos inteiros e leva a ordenação para bottom sheet.
+*/
+
+.progress-sort-mobile-trigger,
+.progress-sort-backdrop,
+.progress-sort-sheet,
+.progress-map-mobile-states{
+  display:none;
+}
+
+@media (max-width:700px){
+  html.is-phone-layout [data-view="progress"]{
+    padding-bottom:calc(118px + env(safe-area-inset-bottom))!important;
+  }
+
+  html.is-phone-layout .mobile-progress-group>#progressInfo{
+    padding:8px!important;
+  }
+
+  html.is-phone-layout .progress-main-section{
+    margin-top:0!important;
+  }
+
+  /* Visão geral: uma faixa curta, sem repetir estados já explicados abaixo. */
+  html.is-phone-layout .progress-global-panel{
+    padding:11px 12px!important;
+    border-color:rgba(255,255,255,.065)!important;
+    border-radius:12px!important;
+    background:rgba(8,10,13,.66)!important;
+    box-shadow:none!important;
+  }
+
+  html.is-phone-layout .progress-global-head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    gap:10px!important;
+  }
+
+  html.is-phone-layout .progress-global-head>div:first-child{
+    min-width:0;
+  }
+
+  html.is-phone-layout .progress-global-head .kicker{
+    font-size:7px!important;
+    letter-spacing:.13em!important;
+  }
+
+  html.is-phone-layout .progress-global-head h3{
+    margin-top:2px!important;
+    font-size:15px!important;
+    line-height:1.15!important;
+  }
+
+  html.is-phone-layout .progress-global-head p{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-global-score{
+    align-self:center!important;
+    justify-items:end!important;
+    gap:1px!important;
+  }
+
+  html.is-phone-layout .progress-global-score b{
+    font-size:25px!important;
+    line-height:1!important;
+  }
+
+  html.is-phone-layout .progress-global-score span{
+    font-size:7px!important;
+    letter-spacing:.04em!important;
+  }
+
+  html.is-phone-layout .progress-global-bar{
+    height:5px!important;
+    margin-top:9px!important;
+  }
+
+  html.is-phone-layout .progress-global-footer{
+    gap:8px!important;
+    margin-top:8px!important;
+    padding-top:8px!important;
+  }
+
+  html.is-phone-layout .progress-global-footer>.progress-states{
+    display:none!important;
+  }
+
+  /* Filtros em chips; ordenação vira uma ação compacta separada. */
+  html.is-phone-layout .progress-controls{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:7px!important;
+    width:100%!important;
+  }
+
+  html.is-phone-layout .progress-filter-row{
+    width:100%!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:6px!important;
+    overflow-x:auto!important;
+    padding:1px 0 2px!important;
+    scrollbar-width:none!important;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  html.is-phone-layout .progress-filter-row::-webkit-scrollbar{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-filter{
+    flex:0 0 auto!important;
+    min-height:38px!important;
+    padding:0 12px!important;
+    border-radius:999px!important;
+    font-size:9px!important;
+    white-space:nowrap!important;
+  }
+
+  html.is-phone-layout .progress-sort-wrap{
+    display:flex!important;
+    justify-content:flex-end!important;
+    width:100%!important;
+  }
+
+  html.is-phone-layout .progress-sort-control{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-sort-mobile-trigger{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:7px!important;
+    width:auto!important;
+    min-width:112px!important;
+    min-height:40px!important;
+    padding:0 12px!important;
+    border-radius:999px!important;
+    font:750 9px var(--mono)!important;
+    letter-spacing:.02em!important;
+  }
+
+  html.is-phone-layout .progress-sort-mobile-trigger>span:first-child{
+    color:#9298a0!important;
+    font-size:14px!important;
+    line-height:1!important;
+  }
+
+  /* Concurso: cabeçalho curto, score + chevron, sem botão Recolher largo. */
+  html.is-phone-layout .progress-course-stack{
+    gap:10px!important;
+    margin-top:12px!important;
+  }
+
+  html.is-phone-layout .progress-course.progress-course-compact{
+    margin-top:0!important;
+    border-color:rgba(255,255,255,.065)!important;
+    border-radius:12px!important;
+    background:rgba(7,9,12,.6)!important;
+    box-shadow:none!important;
+  }
+
+  html.is-phone-layout .progress-course-compact .progress-course-head{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    gap:9px!important;
+    padding:11px 12px 9px!important;
+  }
+
+  html.is-phone-layout .progress-course-title{
+    min-width:0!important;
+  }
+
+  html.is-phone-layout .progress-course-title .kicker{
+    font-size:7px!important;
+    letter-spacing:.13em!important;
+  }
+
+  html.is-phone-layout .progress-course-title h3{
+    margin-top:3px!important;
+    font-size:14px!important;
+    line-height:1.24!important;
+    display:-webkit-box!important;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden!important;
+  }
+
+  html.is-phone-layout .progress-course-title p{
+    margin-top:4px!important;
+    font-size:8.5px!important;
+    line-height:1.3!important;
+  }
+
+  html.is-phone-layout .progress-course-actions{
+    align-items:center!important;
+    justify-content:flex-end!important;
+    gap:7px!important;
+  }
+
+  html.is-phone-layout .progress-course-compact .progress-course-score{
+    min-width:42px!important;
+    justify-items:end!important;
+  }
+
+  html.is-phone-layout .progress-course-compact .progress-course-score b{
+    font-size:20px!important;
+    line-height:1!important;
+  }
+
+  html.is-phone-layout .progress-course-compact .progress-course-score span{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-course-toggle{
+    width:40px!important;
+    min-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    padding:0!important;
+    border-radius:10px!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  html.is-phone-layout .progress-course-toggle-label{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-course-toggle-icon{
+    font-size:15px!important;
+    line-height:1!important;
+  }
+
+  html.is-phone-layout .progress-course-summary{
+    padding:0 12px 9px!important;
+  }
+
+  html.is-phone-layout .progress-course-summary .course-summary-bar{
+    height:5px!important;
+  }
+
+  html.is-phone-layout .progress-course-states{
+    margin-top:6px!important;
+  }
+
+  html.is-phone-layout .progress-course-states .progress-state.pending{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-course-compact.is-expanded .progress-course-summary{
+    border-bottom-color:rgba(255,255,255,.04)!important;
+  }
+
+  /* Mapas: sem capa; a sigla colorida vira a identidade principal. */
+  html.is-phone-layout .progress-map-list{
+    gap:0!important;
+    margin-top:0!important;
+    padding:0 10px 5px!important;
+    border-top:0!important;
+  }
+
+  html.is-phone-layout .progress-map-row{
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 22px!important;
+    grid-template-rows:auto!important;
+    align-items:center!important;
+    gap:8px!important;
+    min-height:66px!important;
+    padding:9px 2px!important;
+    border:0!important;
+    border-bottom:1px solid rgba(255,255,255,.045)!important;
+    border-left:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    cursor:pointer!important;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  html.is-phone-layout .progress-map-row:last-child{
+    border-bottom:0!important;
+  }
+
+  html.is-phone-layout .progress-map-row:active{
+    background:rgba(255,255,255,.025)!important;
+  }
+
+  html.is-phone-layout .progress-map-row::after{
+    content:"›";
+    grid-column:2;
+    grid-row:1;
+    align-self:center;
+    justify-self:end;
+    color:#727983;
+    font:500 24px/1 var(--sans);
+  }
+
+  html.is-phone-layout .progress-map-thumb{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-map-main{
+    grid-column:1!important;
+    min-width:0!important;
+    display:block!important;
+  }
+
+  html.is-phone-layout .progress-map-copy{
+    min-width:0!important;
+    display:grid!important;
+    grid-template-columns:auto minmax(0,1fr)!important;
+    grid-template-areas:
+      "code title"
+      "meta meta"
+      "states states"!important;
+    align-items:center!important;
+    column-gap:8px!important;
+    row-gap:4px!important;
+  }
+
+  html.is-phone-layout .progress-map-copy .compact-code{
+    grid-area:code!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:auto!important;
+    min-width:52px!important;
+    max-width:66px!important;
+    height:30px!important;
+    margin:0!important;
+    padding:0 8px!important;
+    border:1px solid var(--accent,#78808a)!important;
+    border-radius:9px!important;
+    background:rgba(255,255,255,.022)!important;
+    color:var(--accent,#a8adb4)!important;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,#78808a) 14%,transparent)!important;
+    font-size:9px!important;
+    line-height:1!important;
+    letter-spacing:.045em!important;
+  }
+
+  html.is-phone-layout .progress-map-copy>b{
+    grid-area:title!important;
+    min-width:0!important;
+    display:-webkit-box!important;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden!important;
+    white-space:normal!important;
+    text-overflow:clip!important;
+    color:#dedfe2!important;
+    font-size:11.5px!important;
+    line-height:1.28!important;
+  }
+
+  html.is-phone-layout .progress-map-copy>.progress-map-meta{
+    grid-area:meta!important;
+    display:block!important;
+    min-width:0!important;
+    margin:0!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    color:#747b84!important;
+    font-size:8.5px!important;
+    line-height:1.3!important;
+  }
+
+  html.is-phone-layout .progress-map-mobile-states{
+    grid-area:states!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:4px!important;
+    margin:0!important;
+    min-height:0!important;
+  }
+
+  html.is-phone-layout .progress-map-mobile-states .progress-state{
+    display:inline-flex!important;
+    margin:0!important;
+    min-height:20px!important;
+    padding:0 6px!important;
+    font-size:7px!important;
+    line-height:18px!important;
+  }
+
+  html.is-phone-layout .progress-map-summary,
+  html.is-phone-layout .progress-open{
+    display:none!important;
+  }
+
+  html.is-phone-layout .progress-course-more{
+    padding:4px 10px 10px!important;
+  }
+
+  html.is-phone-layout .progress-course-more .secondary{
+    width:100%!important;
+    min-height:40px!important;
+    border-radius:10px!important;
+    font-size:9px!important;
+  }
+
+  /* Bottom sheet de ordenação, anexado ao body para evitar clipping no iOS. */
+  html.is-phone-layout .progress-sort-backdrop:not([hidden]){
+    display:block!important;
+    position:fixed!important;
+    inset:0!important;
+    z-index:1200!important;
+    background:rgba(0,0,0,.58)!important;
+    -webkit-backdrop-filter:blur(3px);
+    backdrop-filter:blur(3px);
+  }
+
+  html.is-phone-layout .progress-sort-sheet:not([hidden]){
+    display:block!important;
+    position:fixed!important;
+    left:10px!important;
+    right:10px!important;
+    bottom:max(10px,env(safe-area-inset-bottom))!important;
+    z-index:1201!important;
+    max-height:min(70dvh,520px)!important;
+    padding:12px!important;
+    border:1px solid rgba(255,255,255,.09)!important;
+    border-radius:18px!important;
+    background:rgba(10,12,16,.97)!important;
+    box-shadow:0 24px 72px rgba(0,0,0,.62)!important;
+    -webkit-backdrop-filter:blur(22px) saturate(112%);
+    backdrop-filter:blur(22px) saturate(112%);
+    overflow:auto!important;
+  }
+
+  html.is-phone-layout .progress-sort-sheet-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:12px!important;
+    padding:2px 2px 10px!important;
+  }
+
+  html.is-phone-layout .progress-sort-sheet-head h3{
+    margin-top:2px!important;
+    font-size:15px!important;
+  }
+
+  html.is-phone-layout .progress-sort-sheet-close{
+    width:40px!important;
+    height:40px!important;
+    border:1px solid rgba(255,255,255,.07)!important;
+    border-radius:12px!important;
+    background:rgba(255,255,255,.025)!important;
+    color:#aeb3ba!important;
+    font-size:20px!important;
+  }
+
+  html.is-phone-layout .progress-sort-sheet-options{
+    display:grid!important;
+    gap:6px!important;
+  }
+
+  html.is-phone-layout .progress-sort-option{
+    width:100%!important;
+    min-height:48px!important;
+    padding:0 12px!important;
+    border:1px solid rgba(255,255,255,.055)!important;
+    border-radius:11px!important;
+    background:rgba(255,255,255,.018)!important;
+    color:#c7cbd0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:12px!important;
+    text-align:left!important;
+    font-size:11px!important;
+  }
+
+  html.is-phone-layout .progress-sort-option i{
+    opacity:0;
+    color:#aeb3ba;
+    font-style:normal;
+  }
+
+  html.is-phone-layout .progress-sort-option.active{
+    border-color:rgba(255,255,255,.13)!important;
+    background:rgba(255,255,255,.04)!important;
+    color:#f0f1f2!important;
+  }
+
+  html.is-phone-layout .progress-sort-option.active i{
+    opacity:1;
+  }
+}
