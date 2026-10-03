@@ -1,15 +1,14 @@
 {
-  "version": "15.36.4",
-  "label": "V15.36.4-G",
-  "releasedAt": "2026-10-03T00:50:00.000Z",
-  "notes": "Matriz do edital redesenhada para leitura confortável, scrollbars mais discretas, menus/selects harmonizados e foco visual mais suave em toda a interface.",
+  "version": "15.36.5",
+  "label": "V15.36.5-G",
+  "releasedAt": "2026-10-03T01:20:00.000Z",
+  "notes": "Próximas ações redesenhadas para aproveitar melhor desktop, iPad e iPhone, sem carrossel no celular.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Matriz do edital com hierarquia maior, resumo legível, filtros compactos e cards responsivos em desktop, iPad e iPhone",
-    "[G] Desktop amplo usa duas colunas de mapas quando há espaço; telas menores preservam leitura sem comprimir os tópicos",
-    "[G] Scrollbars de desktop passam a 4 px e ficam praticamente invisíveis até a interação",
-    "[G] Selects de desktop recebem menu próprio escuro e consistente; iPad e iPhone mantêm o seletor nativo de toque",
-    "[G] Campos e controles usam foco discreto, sem a borda azul/dourada grossa",
-    "[G] Gerenciar mapa ganha mais largura útil e rolagem interna mais leve"
+    "[G] iPhone troca o carrossel de Próximas ações por três cards verticais completos, sem conteúdo cortado",
+    "[G] iPad usa duas ações no topo e a terceira em largura total, com capa, texto e botão sem sobreposição",
+    "[G] Desktop destaca a ação principal e organiza as demais em uma coluna compacta, reduzindo espaço vazio",
+    "[G] Código do mapa fica na capa e deixa de duplicar espaço junto ao título",
+    "[G] Tempo semanal passa a aparecer em horas e minutos na seção Onde focar agora"
   ]
 }
