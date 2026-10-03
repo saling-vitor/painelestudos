@@ -1,14 +1,14 @@
 {
-  "version": "15.36.10",
-  "label": "V15.36.10-M",
-  "releasedAt": "2026-10-03T08:55:00.000Z",
-  "notes": "Biblioteca de Mapas corrigida no smartphone com busca única e painéis funcionais de ordenação e filtros.",
+  "version": "15.36.11",
+  "label": "V15.36.11-M",
+  "releasedAt": "2026-10-03T09:24:00.000Z",
+  "notes": "Home e Progresso mais compactos no smartphone, com tags no lugar de capas e simulados recentes em lista vertical.",
   "showWhatsNew": true,
   "highlights": [
-    "[M] Todos os Mapas usa somente a busca superior",
-    "[M] Ordenar abre um bottom sheet com opções tocáveis",
-    "[M] Filtrar abre corretamente acima do conteúdo no iPhone",
-    "[M] Ordenar, Filtrar, Grade e Lista ficam em uma faixa compacta",
-    "[M] Filtros ativos aparecem como chips compactos"
+    "[M] Retomar onde parei usa tags e o card inteiro abre o mapa",
+    "[M] Simulados recentes vira lista vertical de até 3 itens, sem carrossel cortado",
+    "[M] Onde focar agora usa tags, linhas compactas e toque no card inteiro",
+    "[M] Resumo do Progresso fica 2×2 e ocupa menos altura",
+    "[M] Capas permanecem nas bibliotecas e telas em que são protagonistas"
   ]
 }
