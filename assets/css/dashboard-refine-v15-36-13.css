@@ -342,3 +342,20 @@ html:not(.is-phone-layout) #homeCourses .home-course-card .course-last-activity-
     gap:14px!important;
   }
 }
+
+
+/* Hotfix V15.36.13-G · força a composição sem busca local nas toolbars. */
+html:not(.is-phone-layout) body [data-view="course"] .course-toolbar.course-toolbar{
+  display:flex!important;
+  grid-template-columns:none!important;
+  justify-content:flex-end!important;
+}
+html:not(.is-phone-layout) body [data-view="simulations"] .simulation-toolbar.simulation-toolbar{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) body [data-view="simulations"] .simulation-toolbar.simulation-toolbar{
+    grid-template-columns:1fr!important;
+  }
+}
