@@ -911,7 +911,8 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
       const style=getComputedStyle(document.querySelector(selector));
       return{
         backdrop:style.backdropFilter||style.webkitBackdropFilter||'none',
-        background:style.backgroundImage,
+        borderWidth:parseFloat(style.borderTopWidth)||0,
+        shadow:style.boxShadow,
         transform:style.transform
       };
     };
@@ -921,7 +922,9 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
     };
   });
   expect(courseStyles.cover.backdrop).not.toBe('none');
-  expect(courseStyles.cover.background).toContain('radial-gradient');
+  expect(courseStyles.cover.borderWidth).toBeGreaterThanOrEqual(1);
+  expect(courseStyles.cover.shadow).not.toBe('none');
+  expect(courseStyles.cover.transform).toBe('none');
   expect(courseStyles.normal.backdrop).toBe('none');
 
   await page.goto('/#maps');
@@ -930,15 +933,23 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
   await expect(mapCoverControl).toBeVisible();
   await expect(filterButton).toBeVisible();
   const mapStyles=await page.evaluate(()=>{
-    const cover=getComputedStyle(document.querySelector('.map-card.has-cover>.map-admin-btn'));
-    const filter=getComputedStyle(document.querySelector('#allMapsFilterBtn'));
+    const styleOf=selector=>{
+      const style=getComputedStyle(document.querySelector(selector));
+      return{
+        backdrop:style.backdropFilter||style.webkitBackdropFilter||'none',
+        borderWidth:parseFloat(style.borderTopWidth)||0,
+        shadow:style.boxShadow
+      };
+    };
     return{
-      coverBackdrop:cover.backdropFilter||cover.webkitBackdropFilter||'none',
-      filterBackdrop:filter.backdropFilter||filter.webkitBackdropFilter||'none'
+      cover:styleOf('.map-card.has-cover>.map-admin-btn'),
+      filter:styleOf('#allMapsFilterBtn')
     };
   });
-  expect(mapStyles.coverBackdrop).not.toBe('none');
-  expect(mapStyles.filterBackdrop).toBe('none');
+  expect(mapStyles.cover.backdrop).not.toBe('none');
+  expect(mapStyles.cover.borderWidth).toBeGreaterThanOrEqual(1);
+  expect(mapStyles.cover.shadow).not.toBe('none');
+  expect(mapStyles.filter.backdrop).toBe('none');
 });
 
 test('hierarquia tipográfica diferencia página, seção e dados sem desperdício',async({page})=>{
