@@ -1,14 +1,13 @@
 {
-  "version": "15.36.20",
-  "label": "V15.36.20-G",
-  "releasedAt": "2026-10-03T17:58:00.000Z",
-  "notes": "Restringe o glassmorphism aos controles flutuantes sobre capas e restaura o acabamento escuro normal dos demais botões.",
+  "version": "15.36.21",
+  "label": "V15.36.21-G",
+  "releasedAt": "2026-10-03T18:24:00.000Z",
+  "notes": "Uniformiza o botão ••• sobre as capas de Meus Cursos com o mesmo material glass já usado em Mapas e Simulados.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Glass passa a existir somente em •••, favorito e controles flutuantes sobre capas",
-    "[G] Filtros, Abrir, Entrar, Novo concurso, Edital, Simulados e demais ações voltam ao acabamento escuro normal",
-    "[G] Hover dos controles de capa permanece fumê, sem branco, salto ou zoom",
-    "[D+T+M] Cor contextual continua disponível fora das capas sem efeito de vidro",
-    "[D+T+M] Botões comuns deixam de usar blur e backdrop-filter"
+    "[G] Menu ••• sobre capas de curso usa o mesmo vidro fumê de Mapas e Simulados",
+    "[G] Mantidos blur, borda, sombra e reflexo discretos sobre a capa",
+    "[D+T+M] Nenhum botão fora das capas recebe glass",
+    "[D+T] Hover do menu de curso permanece escuro, sem flash branco, salto ou zoom"
   ]
 }
