@@ -669,7 +669,8 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   await expect(page.locator('.home-continue-section')).toBeVisible();
   await expect(page.locator('.home-simulations-section')).toBeVisible();
   await expect(page.locator('#continueBox .continue-thumb img')).toBeVisible();
-  await expect(page.locator('.priority-now-card h3')).toContainText('Por que este estudo?');
+  await expect(page.locator('.priority-now-card .priority-now-main h3')).not.toHaveText('');
+  await expect(page.locator('.priority-now-card .priority-reason-chip').first()).toBeVisible();
   await expect(page.locator('.forecast-home-card h3')).toContainText(/tópicos restantes/);
   await expect(page.locator('.forecast-home-card')).toContainText('Planejamento até');
   const layout=await page.evaluate(()=>{
@@ -1325,8 +1326,8 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   await expect(page.locator('#studySettingsPanel')).toBeVisible();
   await page.waitForFunction(()=>typeof state==='undefined'||state.cloudLoading===false);
   const form=page.locator('#studyGoalsForm');
-  await form.locator('[name="dailyMinutes"]').fill('90');
-  await form.locator('[name="weeklyMinutes"]').fill('480');
+  await form.locator('[name="dailyMinutes"]').fill('1h 30min');
+  await form.locator('[name="weeklyMinutes"]').fill('8h');
   await form.locator('button[type="submit"]').click();
   const goals=await page.evaluate(()=>StudyDashboard.goals());
   expect(goals.dailyMinutes).toBe(90);
@@ -1492,7 +1493,8 @@ test('Home usa CTA Começar no card de prioridade',async({page})=>{
   const cta=page.locator('[data-priority-open]').first();
   await expect(cta).toBeVisible();
   await expect(cta).toHaveText('Começar');
-  await expect(page.locator('.priority-now-card')).toContainText('Por que este estudo?');
+  await expect(page.locator('.priority-now-card')).toContainText('Prioridade agora');
+  await expect(page.locator('.priority-now-card .priority-reason-chip').first()).toBeVisible();
 });
 
 test('Agenda prioriza modos e recolhe ações secundárias no menu',async({page})=>{
