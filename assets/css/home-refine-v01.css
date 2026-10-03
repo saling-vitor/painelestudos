@@ -744,7 +744,11 @@ html.is-phone-layout .continue-map-category{
 .continue-card{--continue-accent:#9aa1aa}
 .home-simulations-section .simulation-recent-item{
   --simulation-accent:#9aa1aa;
+  border-color:rgba(154,161,170,.18)!important;
+  border-left-color:var(--simulation-accent)!important;
+  box-shadow:inset 2px 0 var(--simulation-accent),inset 0 1px rgba(255,255,255,.012)!important;
   border-color:color-mix(in srgb,var(--simulation-accent) 24%,rgba(255,255,255,.07))!important;
+  border-left-color:color-mix(in srgb,var(--simulation-accent) 58%,rgba(255,255,255,.07))!important;
   box-shadow:inset 2px 0 color-mix(in srgb,var(--simulation-accent) 58%,transparent),inset 0 1px rgba(255,255,255,.012)!important;
 }
 .home-simulations-section .simulation-recent-status-progress{
