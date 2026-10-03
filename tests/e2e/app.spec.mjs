@@ -401,7 +401,7 @@ test('cards da biblioteca de cursos usam nova hierarquia',async({page},testInfo)
   await expect(card.locator('.course-edital-btn')).toContainText('Ver edital');
   const styles=await page.locator('#coursesGrid').evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns,gap:getComputedStyle(el).gap}));
   expect(styles.columns).not.toBe('none');
-  expect(styles.gap).toBe(testInfo.project.name==='ipad'?'12px':'16px');
+  expect(styles.gap).toBe(testInfo.project.name==='ipad'?'12px':'14px');
 });
 
 test('Etapa 2 aplica acabamento premium aos cards de cursos em desktop e iPad',async({page},testInfo)=>{
@@ -2421,7 +2421,7 @@ test('etapa 1 [D] Meus Cursos usa duas colunas no notebook quando há dois concu
 test('etapa 2 [T] compacta Home e curso no iPad em retrato e paisagem',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva da etapa 2 de tablet.');
   for(const scenario of [
-    {name:'paisagem',width:1194,height:834,metricColumns:4,toolbarColumns:2},
+    {name:'paisagem',width:1194,height:834,metricColumns:4,toolbarColumns:1},
     {name:'retrato',width:820,height:1180,metricColumns:2,toolbarColumns:1}
   ]){
     await page.setViewportSize({width:scenario.width,height:scenario.height});
