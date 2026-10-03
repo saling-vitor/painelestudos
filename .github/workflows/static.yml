@@ -4,6 +4,8 @@ name: Deploy static content to Pages
 on:
   push:
     branches: ["main"]
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -164,6 +166,7 @@ jobs:
   deploy:
     name: Deploy Pages
     needs: [validate, e2e-desktop, e2e-ipad, e2e-iphone]
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
