@@ -1,93 +1,85 @@
-/* V15.36.0 · [G] Refinamento de chrome da interface
-   Scrollbars discretas, menus/selects harmonizados e foco de formulário suave.
-   Mantém o comportamento nativo de toque no iPad/iPhone. */
+/* V15.36.4 · [G] Chrome visual refinado
+   Scrollbars minimalistas, foco discreto, menus consistentes e selects desktop customizados.
+   iPad/iPhone preservam os seletores nativos de toque. */
 
 :root{
-  --ui-scroll-thumb:rgba(188,193,202,.18);
-  --ui-scroll-thumb-hover:rgba(188,193,202,.30);
-  --ui-scroll-thumb-active:rgba(216,197,158,.34);
-  --ui-menu-surface:rgba(11,13,17,.985);
-  --ui-menu-border:rgba(255,255,255,.105);
-  --ui-focus-ring:rgba(198,203,212,.38);
-  --ui-focus-halo:rgba(216,197,158,.045);
+  --ui-scroll-thumb:rgba(181,187,197,.14);
+  --ui-scroll-thumb-hover:rgba(181,187,197,.25);
+  --ui-scroll-thumb-active:rgba(216,197,158,.30);
+  --ui-menu-surface:rgba(12,14,18,.985);
+  --ui-menu-surface-2:rgba(19,21,26,.985);
+  --ui-menu-border:rgba(255,255,255,.09);
+  --ui-focus-ring:rgba(177,185,196,.30);
+  --ui-focus-halo:rgba(177,185,196,.07);
 }
 
 @media (hover:hover) and (pointer:fine){
-  *{
+  html,body,*{
     scrollbar-width:thin;
     scrollbar-color:var(--ui-scroll-thumb) transparent;
   }
-  *::-webkit-scrollbar{
-    width:6px;
-    height:6px;
-  }
+  *::-webkit-scrollbar{width:4px;height:4px}
   *::-webkit-scrollbar-track,
-  *::-webkit-scrollbar-corner{
-    background:transparent;
-  }
+  *::-webkit-scrollbar-corner{background:transparent}
   *::-webkit-scrollbar-thumb{
     min-height:34px;
-    border:1px solid transparent;
+    border:0;
     border-radius:999px;
     background:var(--ui-scroll-thumb);
-    background-clip:padding-box;
   }
-  *::-webkit-scrollbar-thumb:hover{
-    background:var(--ui-scroll-thumb-hover);
-    background-clip:padding-box;
-  }
-  *::-webkit-scrollbar-thumb:active{
-    background:var(--ui-scroll-thumb-active);
-    background-clip:padding-box;
-  }
-  *::-webkit-scrollbar-button{
-    display:none;
-    width:0;
-    height:0;
-  }
-  .modal-card,
-  .maps-filter-panel{
-    scrollbar-gutter:stable;
-  }
+  *::-webkit-scrollbar-thumb:hover{background:var(--ui-scroll-thumb-hover)}
+  *::-webkit-scrollbar-thumb:active{background:var(--ui-scroll-thumb-active)}
+  *::-webkit-scrollbar-button{display:none;width:0;height:0}
   .modal-card::-webkit-scrollbar,
   .maps-filter-panel::-webkit-scrollbar,
   .sync-log::-webkit-scrollbar,
-  .version-list::-webkit-scrollbar{
-    width:5px;
-    height:5px;
-  }
+  .version-list::-webkit-scrollbar{width:3px;height:3px}
 }
 
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[contenteditable="true"]:focus-visible{
+:where(input,textarea,select,[contenteditable="true"]):focus-visible{
+  outline:0!important;
+  border-color:rgba(188,195,205,.24)!important;
+  box-shadow:0 0 0 2px var(--ui-focus-halo)!important;
+}
+:where(button,a,[role="button"],[tabindex]):focus-visible{
   outline:1px solid var(--ui-focus-ring)!important;
   outline-offset:1px!important;
+  box-shadow:0 0 0 2px rgba(177,185,196,.035)!important;
+}
+.search input:focus-visible{outline:0!important;box-shadow:none!important}
+.search:focus-within{
+  border-color:rgba(188,195,205,.16)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.04),0 0 0 2px rgba(177,185,196,.035)!important;
 }
 .field input:focus-visible,
-.field select:focus-visible,
 .field textarea:focus-visible,
 .course-toolbar input:focus-visible,
-.course-toolbar select:focus-visible,
-.simulation-toolbar input:focus-visible,
-.simulation-toolbar select:focus-visible,
-.maps-search-control input:focus-visible,
-.maps-select-control select:focus-visible,
-.maps-filter-field select:focus-visible{
-  border-color:rgba(198,203,212,.24);
-  box-shadow:0 0 0 3px var(--ui-focus-halo);
+.simulation-search input:focus-visible,
+.maps-search-control input:focus-visible{
+  border-color:rgba(188,195,205,.22)!important;
+  box-shadow:0 0 0 2px rgba(177,185,196,.055)!important;
 }
 
 .course-more-menu,
 .reader-more-menu,
 .map-actions-menu,
-.global-search-panel{
-  border-color:var(--ui-menu-border);
-  background:linear-gradient(180deg,rgba(20,22,27,.985),var(--ui-menu-surface));
-  box-shadow:0 18px 48px rgba(0,0,0,.52),inset 0 1px rgba(255,255,255,.035);
-  -webkit-backdrop-filter:blur(18px) saturate(105%);
-  backdrop-filter:blur(18px) saturate(105%);
+.global-search-panel,
+.ui-select-popover{
+  border:1px solid var(--ui-menu-border)!important;
+  border-radius:12px!important;
+  background:linear-gradient(180deg,var(--ui-menu-surface-2),var(--ui-menu-surface))!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.50),inset 0 1px rgba(255,255,255,.035)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(106%);
+  backdrop-filter:blur(18px) saturate(106%);
+}
+.course-more-menu,
+.reader-more-menu,
+.map-actions-menu{padding:6px!important}
+.course-more-menu button,
+.reader-more-menu button,
+.map-actions-menu button{
+  min-height:38px;
+  border-radius:8px!important;
 }
 .course-more-menu button:hover,
 .course-more-menu button:focus-visible,
@@ -96,76 +88,165 @@ textarea:focus-visible,
 .map-actions-menu button:hover,
 .map-actions-menu button:focus-visible,
 .global-search-panel [role="option"][aria-selected="true"]{
-  background:rgba(255,255,255,.055);
-  color:#eceef1;
+  background:rgba(255,255,255,.05)!important;
+  color:#eceef1!important;
 }
 
-select{
-  color-scheme:dark;
-}
+select{color-scheme:dark}
 select option,
-select optgroup{
-  background:#111318;
-  color:#d3d6db;
-}
-select option:checked{
-  background:#24272d;
-  color:#ead8b3;
-}
+select optgroup{background:#111318;color:#d3d6db}
+select option:checked{background:#24272d;color:#ead8b3}
 
-@supports (appearance:base-select){
-  @media (hover:hover) and (pointer:fine){
-    select:not([multiple]):not([size]){
-      appearance:base-select;
-      -webkit-appearance:base-select;
-    }
-    select:not([multiple]):not([size])::picker(select){
-      appearance:base-select;
-      margin-top:5px;
-      padding:6px;
-      border:1px solid var(--ui-menu-border);
-      border-radius:12px;
-      background:linear-gradient(180deg,rgba(20,22,27,.995),rgba(10,12,16,.995));
-      color:#d3d6db;
-      box-shadow:0 20px 54px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.04);
-    }
-    select:not([multiple]):not([size]) option{
-      display:flex;
-      align-items:center;
-      min-height:34px;
-      margin:1px 0;
-      padding:8px 10px;
-      border:0;
-      border-radius:8px;
-      background:transparent;
-      color:#cfd2d8;
-    }
-    select:not([multiple]):not([size]) option:hover,
-    select:not([multiple]):not([size]) option:focus{
-      background:rgba(255,255,255,.055);
-      color:#f0f1f3;
-    }
-    select:not([multiple]):not([size]) option:checked{
-      background:linear-gradient(90deg,rgba(216,197,158,.13),rgba(216,197,158,.055));
-      color:#ecd9b3;
-      font-weight:700;
-    }
-    select:not([multiple]):not([size]) option::checkmark{
-      display:none;
-    }
-    select:not([multiple]):not([size])::picker-icon{
-      color:#7d838c;
-      transition:transform .16s ease,color .16s ease;
-    }
-    select:not([multiple]):not([size]):open::picker-icon{
-      transform:rotate(180deg);
-      color:#b8bdc5;
-    }
+/* Select customizado somente no desktop com mouse/trackpad. O select real continua no DOM. */
+.ui-select-shell{
+  position:relative;
+  display:inline-grid;
+  grid-template-areas:"stack";
+  min-width:min(100%,var(--ui-select-basis,0px));
+  vertical-align:middle;
+}
+.ui-select-shell>.ui-select-native,
+.ui-select-shell>.ui-select-trigger{grid-area:stack}
+.ui-select-shell>.ui-select-native{
+  width:100%;
+  min-width:0;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.ui-select-trigger{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 18px;
+  align-items:center;
+  gap:9px;
+  width:100%;
+  min-width:0;
+  min-height:100%;
+  padding:0 10px;
+  border:1px solid rgba(255,255,255,.085);
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(19,21,26,.96),rgba(13,15,19,.96));
+  color:#d2d6dc;
+  text-align:left;
+  cursor:pointer;
+  box-shadow:inset 0 1px rgba(255,255,255,.025);
+}
+.ui-select-trigger:hover{
+  border-color:rgba(255,255,255,.14);
+  background:linear-gradient(180deg,rgba(23,25,30,.98),rgba(15,17,21,.98));
+}
+.ui-select-trigger:focus-visible{
+  outline:0!important;
+  border-color:rgba(188,195,205,.22)!important;
+  box-shadow:0 0 0 2px rgba(177,185,196,.055)!important;
+}
+.ui-select-trigger[disabled]{cursor:not-allowed;opacity:.48}
+.ui-select-value{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.ui-select-chevron{
+  width:7px;
+  height:7px;
+  justify-self:center;
+  border-right:1.5px solid #777e87;
+  border-bottom:1.5px solid #777e87;
+  transform:rotate(45deg) translateY(-2px);
+  transition:transform .16s ease,color .16s ease;
+}
+.ui-select-trigger[aria-expanded="true"] .ui-select-chevron{
+  transform:rotate(225deg) translate(-1px,-1px);
+  border-color:#adb3bc;
+}
+.ui-select-popover{
+  position:fixed;
+  z-index:5000;
+  display:grid;
+  gap:2px;
+  max-height:min(360px,calc(100dvh - 24px));
+  padding:6px;
+  overflow:auto;
+}
+.ui-select-group{
+  padding:8px 9px 4px;
+  color:#6f7680;
+  font:750 8px var(--mono);
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.ui-select-option{
+  display:grid;
+  grid-template-columns:10px minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+  width:100%;
+  min-height:36px;
+  padding:7px 9px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#c8ccd2;
+  text-align:left;
+  cursor:pointer;
+}
+.ui-select-option::before{
+  content:"";
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:transparent;
+}
+.ui-select-option:hover,
+.ui-select-option:focus-visible{
+  outline:0!important;
+  background:rgba(255,255,255,.05);
+  color:#f0f1f3;
+  box-shadow:none!important;
+}
+.ui-select-option[aria-selected="true"]{
+  background:linear-gradient(90deg,rgba(216,197,158,.10),rgba(216,197,158,.035));
+  color:#ead8b5;
+  font-weight:700;
+}
+.ui-select-option[aria-selected="true"]::before{background:#c8ae80}
+.ui-select-option[disabled]{opacity:.38;cursor:not-allowed}
+.field .ui-select-shell,
+.maps-select-control .ui-select-shell,
+.maps-filter-field .ui-select-shell,
+.study-agenda-form .ui-select-shell{width:100%}
+.planner-page-actions .ui-select-shell{min-width:190px}
+
+/* Gerenciar mapa: mais área útil e menos sensação de painel estreito. */
+#mapManageModal .modal-card{
+  width:min(900px,calc(100vw - 48px));
+  max-height:min(91dvh,920px);
+  padding:22px;
+  border-color:rgba(255,255,255,.085);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(13,15,19,.985),rgba(8,10,13,.992));
+  box-shadow:0 28px 86px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.035);
+}
+#mapManageModal .modal-head{margin-bottom:16px}
+#mapManageModal .cover-editor,
+#mapManageModal .map-current-file,
+#mapManageModal .form,
+#mapManageModal .version-panel{
+  border-color:rgba(255,255,255,.065);
+}
+#mapManageModal .admin-actions{gap:9px}
+#mapManageModal .version-list{scrollbar-gutter:auto}
+
+@media(max-width:760px){
+  #mapManageModal{padding:10px}
+  #mapManageModal .modal-card{
+    width:calc(100vw - 20px);
+    max-height:calc(100dvh - 20px);
+    padding:15px;
+    border-radius:14px;
   }
 }
-
-@media (prefers-reduced-motion:reduce){
-  select::picker-icon{
-    transition:none!important;
-  }
+@media(prefers-reduced-motion:reduce){
+  .ui-select-chevron{transition:none}
 }
