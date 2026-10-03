@@ -1,0 +1,334 @@
+/* V15.36.13-G · Plano final responsivo
+   Home / cursos / simulados / busca única / iPad H+V / controles.
+   Mantém a composição mobile aprovada e concentra os refinamentos em D + T. */
+
+/* =========================================================
+   BUSCA ÚNICA [G]
+   A busca global da topbar é a única barra de pesquisa visível.
+   Os inputs locais permanecem no DOM apenas para compatibilidade do runtime.
+   ========================================================= */
+.course-search-box,
+.maps-search-control,
+.simulation-search{
+  display:none!important;
+}
+
+html:not(.is-phone-layout) [data-view="course"] .course-toolbar{
+  display:flex!important;
+  grid-template-columns:none!important;
+  justify-content:flex-end!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+html:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+  margin-left:auto!important;
+}
+html:not(.is-phone-layout) [data-view="maps"] .maps-toolbar{
+  display:flex!important;
+  grid-template-columns:none!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+}
+html:not(.is-phone-layout) [data-view="maps"] .maps-sort-control{
+  margin-left:auto!important;
+}
+html:not(.is-phone-layout) [data-view="simulations"] .simulation-toolbar{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+
+/* =========================================================
+   CONTROLES SOBRE CAPAS [G]
+   Mesmo efeito visual aprovado: profundidade discreta, borda e vidro.
+   ========================================================= */
+:is(.course-card-edit,.map-admin-btn,.map-card>.fav,.simulation-card-menu-btn){
+  border:1px solid rgba(255,255,255,.12)!important;
+  border-radius:11px!important;
+  background:
+    linear-gradient(180deg,rgba(59,63,70,.88),rgba(31,34,39,.92))!important;
+  color:#d0d4da!important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.11),
+    inset 0 -1px rgba(0,0,0,.30),
+    0 8px 18px rgba(0,0,0,.28)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+  backdrop-filter:blur(10px)!important;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease,color .16s ease,box-shadow .16s ease!important;
+}
+:is(.course-card-edit,.map-admin-btn,.map-card>.fav,.simulation-card-menu-btn):hover,
+:is(.course-card-edit,.map-admin-btn,.map-card>.fav,.simulation-card-menu-btn):focus-visible{
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.22)!important;
+  background:
+    linear-gradient(180deg,rgba(72,77,85,.94),rgba(36,40,46,.96))!important;
+  color:#f0f2f5!important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.16),
+    0 10px 22px rgba(0,0,0,.34)!important;
+  outline:none!important;
+}
+html:not(.is-phone-layout) :is(.course-card-edit,.map-admin-btn,.map-card>.fav,.simulation-card-menu-btn){
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  min-height:38px!important;
+}
+html.is-ipad:not(.is-phone-layout) :is(.course-card-edit,.map-admin-btn,.map-card>.fav,.simulation-card-menu-btn){
+  width:42px!important;
+  min-width:42px!important;
+  height:42px!important;
+  min-height:42px!important;
+}
+
+/* Ações principais repetem a mesma sensação de botão sem perder a cor do conteúdo. */
+html:not(.is-phone-layout) :is(
+  .continue-card>.primary,
+  .home-simulations-section .simulation-recent-action,
+  .simulation-card .simulation-card-actions .primary,
+  #homeCourses .course-footer .enter,
+  #coursesGrid .course-footer .enter,
+  .map-card .map-open-label
+){
+  border:1px solid color-mix(in srgb,var(--accent,var(--course-accent,var(--continue-accent,#8d939c))) 34%,rgba(255,255,255,.10))!important;
+  border-radius:10px!important;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--accent,var(--course-accent,var(--continue-accent,#8d939c))) 14%,#171a1f),
+      color-mix(in srgb,var(--accent,var(--course-accent,var(--continue-accent,#8d939c))) 7%,#0d1014)
+    )!important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.08),
+    0 7px 16px rgba(0,0,0,.22)!important;
+}
+html:not(.is-phone-layout) :is(#homeCourses,#coursesGrid) .course-footer .enter,
+html:not(.is-phone-layout) .map-card .map-open-label{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  min-height:34px!important;
+  padding:7px 10px!important;
+}
+
+/* =========================================================
+   HOME · RETOMAR [D+T]
+   Tudo fica dentro do card e a miniatura acompanha sua altura útil.
+   ========================================================= */
+html:not(.is-phone-layout) .continue-card{
+  min-height:118px!important;
+  grid-template-columns:clamp(138px,24%,184px) minmax(0,1fr) auto!important;
+  align-items:stretch!important;
+  gap:14px!important;
+  padding:12px!important;
+  overflow:hidden!important;
+}
+html:not(.is-phone-layout) .continue-thumb{
+  align-self:stretch!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:94px!important;
+  border-radius:10px!important;
+}
+html:not(.is-phone-layout) .continue-thumb img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}
+html:not(.is-phone-layout) .continue-content{
+  display:flex!important;
+  min-width:0!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+html:not(.is-phone-layout) .continue-progress{
+  width:100%!important;
+  max-width:none!important;
+  margin-top:7px!important;
+}
+html:not(.is-phone-layout) .continue-states{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  width:auto!important;
+  max-width:100%!important;
+  margin:7px 0 0!important;
+  padding:0!important;
+  flex-wrap:wrap!important;
+  overflow:visible!important;
+}
+html:not(.is-phone-layout) .continue-card>.primary{
+  align-self:center!important;
+  min-height:42px!important;
+  padding-inline:14px!important;
+}
+
+/* =========================================================
+   HOME · CURSOS [D+T]
+   Cards intrínsecos: capa + conteúdo + progresso + rodapé no mesmo bloco.
+   ========================================================= */
+html:not(.is-phone-layout) #homeCourses{
+  align-items:stretch!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card{
+  display:flex!important;
+  flex-direction:column!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:0 14px 14px!important;
+  overflow:hidden!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-cover{
+  position:relative!important;
+  inset:auto!important;
+  flex:0 0 auto!important;
+  width:calc(100% + 28px)!important;
+  height:auto!important;
+  aspect-ratio:16/9!important;
+  margin:0 -14px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.055)!important;
+  border-radius:0!important;
+  opacity:1!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-cover::after{
+  background:linear-gradient(180deg,rgba(2,3,5,.02),rgba(2,3,5,.18))!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-cover-controls{
+  top:12px!important;
+  left:12px!important;
+  right:12px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-kicker-row{
+  margin:11px 0 0!important;
+  padding:0!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>h3{
+  min-height:0!important;
+  margin:5px 0 0!important;
+  padding:0!important;
+  font-size:16px!important;
+  line-height:1.14!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-role{
+  margin:4px 0 0!important;
+  font-size:7.5px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-institution{
+  margin:4px 0 0!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-meta{
+  min-width:0!important;
+  margin:9px 0 0!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  overflow:visible!important;
+  white-space:normal!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-progress-mini{
+  position:static!important;
+  inset:auto!important;
+  width:100%!important;
+  margin:auto 0 0!important;
+  padding-top:14px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer{
+  position:static!important;
+  inset:auto!important;
+  width:100%!important;
+  margin:11px 0 0!important;
+  padding-top:10px!important;
+  gap:10px!important;
+}
+html:not(.is-phone-layout) #homeCourses .home-course-card .course-last-activity-card{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+/* [D] Home + biblioteca de cursos em três colunas nas telas realmente largas. */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) #homeCourses,
+  html:not(.is-ipad):not(.is-phone-layout) #coursesGrid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:14px!important;
+  }
+}
+
+/* =========================================================
+   IPAD HORIZONTAL [T-H]
+   ========================================================= */
+@media (orientation:landscape){
+  html.is-ipad:not(.is-phone-layout) #homeCourses{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:11px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-list{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:8px!important;
+    overflow:visible!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .continue-card{
+    grid-template-columns:124px minmax(0,1fr) auto!important;
+    min-height:116px!important;
+  }
+}
+
+/* =========================================================
+   IPAD VERTICAL [T-V]
+   Mantém duas colunas enquanto a largura de tablet for segura.
+   ========================================================= */
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) #homeCourses{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:11px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-list{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:9px!important;
+    overflow:visible!important;
+    padding:0!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-item{
+    min-width:0!important;
+    width:auto!important;
+    flex:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .continue-card{
+    grid-template-columns:112px minmax(0,1fr) auto!important;
+    min-height:116px!important;
+  }
+}
+
+/* iPad muito estreito / split view: quebra antes de comprimir o conteúdo. */
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) #homeCourses{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-list{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-toolbar{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .continue-card{
+    grid-template-columns:96px minmax(0,1fr)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .continue-card>.primary{
+    grid-column:1/-1!important;
+    width:100%!important;
+  }
+}
+
+/* Topbar continua sendo a referência de busca em todas as páginas. */
+.global-search-shell{
+  min-width:0!important;
+}

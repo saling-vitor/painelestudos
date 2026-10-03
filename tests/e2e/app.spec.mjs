@@ -257,13 +257,14 @@ test('linguagem visual retangular remove pills dos controles',async({page})=>{
     return{
       situation:radius('.course-study-filter'),
       category:radius('.category-btn'),
-      search:radius('.course-search-box'),
       primary:radius('.course-primary-actions .secondary'),
       mapCard:radius('.map-card'),
       progressTrack:radius('.progress-track')
     };
   });
-  for(const control of ['situation','category','search','primary'])expect(radii[control],control+' não deve voltar ao formato pill').toBeLessThanOrEqual(10);
+  for(const control of ['situation','category','primary'])expect(radii[control],control+' não deve voltar ao formato pill').toBeLessThanOrEqual(10);
+  await expect(page.locator('.course-search-box')).toBeHidden();
+  await expect(page.locator('#globalSearch')).toBeVisible();
   expect(radii.mapCard).toBeLessThanOrEqual(18);
   expect(radii.progressTrack).toBeGreaterThanOrEqual(100);
 });
@@ -675,8 +676,10 @@ test('cursos da home ocupam a largura em grade responsiva',async({page})=>{
   await page.goto('/#home');
   const count=await page.locator('#homeCourses .home-course-card').count();
   expect(count).toBeGreaterThan(0);
-  const layout=await page.locator('#homeCourses').evaluate(el=>({width:innerWidth,columns:getComputedStyle(el).gridTemplateColumns}));
-  if(layout.width>980&&count>=2)expect(layout.columns.trim().split(/\s+/).length).toBe(2);
+  const layout=await page.locator('#homeCourses').evaluate(el=>({width:innerWidth,isIpad:document.documentElement.classList.contains('is-ipad'),columns:getComputedStyle(el).gridTemplateColumns}));
+  const columnCount=layout.columns.trim().split(/\s+/).filter(Boolean).length;
+  if(layout.isIpad&&layout.width>700&&count>=2)expect(columnCount).toBe(2);
+  else if(!layout.isIpad&&layout.width>1180&&count>=3)expect(columnCount).toBe(3);
   else expect(layout.columns).not.toBe('none');
 });
 
@@ -1066,7 +1069,7 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
 test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica da Home responsiva no iPad.');
   for(const scenario of [
-    {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:2,intelligenceColumns:3,courseColumns:2},
+    {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
     {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'grid',simulationColumns:2,intelligenceColumns:2,courseColumns:2}
   ]){
     await page.setViewportSize({width:scenario.width,height:scenario.height});
@@ -1118,9 +1121,9 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
 test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},testInfo)=>{
   test.skip(!['desktop-chromium','ipad'].includes(testInfo.project.name),'Validação de Desktop e iPad.');
   const scenarios=testInfo.project.name==='desktop-chromium'
-    ?[{name:'desktop',width:1600,height:900,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2}]
+    ?[{name:'desktop',width:1600,height:900,courses:3,maps:3,simulations:3,simulationToolbar:2,courseToolbar:1}]
     :[
-      {name:'ipad landscape',width:1194,height:834,courses:2,maps:3,simulations:3,simulationToolbar:3,courseToolbar:2},
+      {name:'ipad landscape',width:1194,height:834,courses:2,maps:3,simulations:3,simulationToolbar:2,courseToolbar:1},
       {name:'ipad portrait',width:820,height:1180,courses:2,maps:2,simulations:2,simulationToolbar:2,courseToolbar:1},
       {name:'ipad split',width:640,height:900,courses:1,maps:1,simulations:1,simulationToolbar:1,courseToolbar:1}
     ];
@@ -1145,10 +1148,8 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
     await expect(page.locator('#courseMaps .map-card').first()).toBeVisible();
     expect.soft(await columns(page.locator('.course-toolbar')),scenario.name+' toolbar do curso').toBe(scenario.courseToolbar);
     expect.soft(await columns(page.locator('#courseMaps')),scenario.name+' mapas do curso').toBe(scenario.maps);
-    if(testInfo.project.name==='ipad'){
-      const search=await page.locator('.course-search-box').evaluate(el=>el.getBoundingClientRect().height);
-      expect.soft(Math.round(search),scenario.name+' busca touch').toBeGreaterThanOrEqual(44);
-    }
+    await expect(page.locator('.course-search-box')).toBeHidden();
+    await expect(page.locator('#globalSearch')).toBeVisible();
     await assertNoOverflow(scenario.name+' Curso');
 
     await page.goto('/#maps');
@@ -1160,10 +1161,8 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
     await expect(page.locator('#simulationGrid .simulation-card').first()).toBeVisible();
     expect.soft(await columns(page.locator('#simulationGrid')),scenario.name+' Simulados').toBe(scenario.simulations);
     expect.soft(await columns(page.locator('.simulation-toolbar')),scenario.name+' toolbar Simulados').toBe(scenario.simulationToolbar);
-    if(testInfo.project.name==='ipad'){
-      const input=await page.locator('.simulation-search input').evaluate(el=>el.getBoundingClientRect().height);
-      expect.soft(Math.round(input),scenario.name+' busca de simulados touch').toBeGreaterThanOrEqual(44);
-    }
+    await expect(page.locator('.simulation-search')).toBeHidden();
+    await expect(page.locator('#globalSearch')).toBeVisible();
     await assertNoOverflow(scenario.name+' Simulados');
   }
 });
@@ -2818,10 +2817,10 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
     const categories=document.querySelector('#categoryRow'),maps=document.querySelector('#courseMaps');
     const heading=document.querySelector('[data-view="course"] .section-head[style]'),headingCopy=heading?.firstElementChild,layout=heading?.querySelector('.actions');
     const card=maps.querySelector('.map-card.has-cover'),cover=card?.querySelector('.map-cover'),foot=card?.querySelector('.foot');
-    const sr=search.getBoundingClientRect(),ar=actions.getBoundingClientRect(),hr=headingCopy.getBoundingClientRect(),lr=layout.getBoundingClientRect(),cr=card.getBoundingClientRect(),vr=cover.getBoundingClientRect(),fr=foot.getBoundingClientRect();
+    const ar=actions.getBoundingClientRect(),hr=headingCopy.getBoundingClientRect(),lr=layout.getBoundingClientRect(),cr=card.getBoundingClientRect(),vr=cover.getBoundingClientRect(),fr=foot.getBoundingClientRect();
     return{
-      toolbarColumns:getComputedStyle(toolbar).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
-      toolbarAligned:Math.abs(sr.top-ar.top)<=1&&Math.abs(sr.height-ar.height)<=1,
+      toolbarColumns:getComputedStyle(toolbar).display==='grid'?getComputedStyle(toolbar).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length:1,
+      searchHidden:getComputedStyle(search).display==='none',
       categoriesWrap:getComputedStyle(categories).flexWrap,
       mapColumns:getComputedStyle(maps).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
       layoutNearTitle:lr.left>=hr.right-1&&lr.left-hr.right<48,
@@ -2831,8 +2830,8 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
       viewportWidth:innerWidth
     };
   });
-  expect(data.toolbarColumns).toBe(2);
-  expect(data.toolbarAligned).toBe(true);
+  expect(data.toolbarColumns).toBe(1);
+  expect(data.searchHidden).toBe(true);
   expect(data.categoriesWrap).toBe('nowrap');
   expect(data.mapColumns).toBe(3);
   expect(data.layoutNearTitle).toBe(true);

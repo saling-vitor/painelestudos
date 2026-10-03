@@ -1,13 +1,14 @@
 {
-  "version": "15.36.12",
-  "label": "V15.36.12-G",
-  "releasedAt": "2026-10-03T10:40:00.000Z",
-  "notes": "Refina tags, capas de cursos, simulados no iPad e o Plano do Dia no desktop/tablet.",
+  "version": "15.36.13",
+  "label": "V15.36.13-G",
+  "releasedAt": "2026-10-03T11:25:00.000Z",
+  "notes": "Plano final: Home com três cursos no desktop, iPad horizontal e vertical tratados separadamente, Retomar contido no card, busca única no topo e controles harmonizados.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Tags do mapa ganham respiro e leitura mais limpa",
-    "[D+T] Capas dos cursos preservam melhor a composição e controles ficam mais internos",
-    "[T] Simulados recentes usam a cor do curso e cartões mais compactos",
-    "[D+T] Plano do Dia reduz caixas, alturas e espaços vazios"
+    "[D] Home passa a usar três cursos por linha em telas largas",
+    "[T-H/T-V] iPad recebe regras independentes para paisagem e retrato",
+    "[G] Busca local duplicada é removida visualmente; permanece apenas a busca superior",
+    "[D+T] Retomar integra imagem, textos, estados e ação dentro do mesmo card",
+    "[G] Controles sobre capas adotam acabamento visual unificado"
   ]
 }
