@@ -40,9 +40,10 @@
   isolation:isolate;
 }
 
-/* Favorito ativo: o vidro permanece idêntico; somente a estrela fica amarela. */
-.map-card > .fav.on{
+/* Favorito ativo: o vidro permanece idêntico; somente o ícone da estrela fica amarelo. */
+.map-card > .fav.on > .ui-icon{
   color:#f2c94c!important;
+  background-color:#f2c94c!important;
 }
 
 /* Menu de simulado aberto: mantém o botão de capa identificado sem clarear demais. */
@@ -99,11 +100,6 @@
     backdrop-filter:none!important;
   }
 
-  /* Hover/focus nunca apaga a indicação de favorito ativo. */
-  .map-card > .fav.on:hover,
-  .map-card > .fav.on:focus-visible{
-    color:#f2c94c!important;
-  }
 }
 
 /* Press/touch: vidro permanece vidro e não muda de tamanho. */
