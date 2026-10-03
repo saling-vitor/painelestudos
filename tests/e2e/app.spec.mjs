@@ -962,6 +962,43 @@ test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
   expect(courseStyles.cover.borderColor).toBe(mapStyles.cover.borderColor);
 });
 
+test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
+  await page.goto('/#maps');
+  const fav=page.locator('.map-card.has-cover>.fav').first();
+  await expect(fav).toBeVisible();
+
+  if((await fav.getAttribute('aria-pressed'))==='true')await fav.click();
+  await expect(fav).toHaveAttribute('aria-pressed','false');
+  const off=await fav.locator('.ui-icon').evaluate(el=>getComputedStyle(el).color);
+
+  await fav.click();
+  await expect(fav).toHaveAttribute('aria-pressed','true');
+  await expect(fav).toHaveClass(/\bon\b/);
+  const active=await fav.evaluate(el=>{
+    const icon=el.querySelector('.ui-icon');
+    const rgb=(getComputedStyle(icon).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
+    return{
+      iconColor:getComputedStyle(icon).color,
+      buttonBackdrop:getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter||'none',
+      rgb
+    };
+  });
+  expect(active.iconColor).not.toBe(off);
+  expect(active.rgb[0]).toBeGreaterThan(220);
+  expect(active.rgb[1]).toBeGreaterThan(170);
+  expect(active.rgb[2]).toBeLessThan(120);
+  expect(active.buttonBackdrop).not.toBe('none');
+
+  const canHover=await page.evaluate(()=>matchMedia('(hover:hover) and (pointer:fine)').matches);
+  if(canHover){
+    await fav.hover();
+    const hoverRgb=await fav.locator('.ui-icon').evaluate(el=>(getComputedStyle(el).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number));
+    expect(hoverRgb[0]).toBeGreaterThan(220);
+    expect(hoverRgb[1]).toBeGreaterThan(170);
+    expect(hoverRgb[2]).toBeLessThan(120);
+  }
+});
+
 test('hierarquia tipográfica diferencia página, seção e dados sem desperdício',async({page})=>{
   await page.goto('/#progress');
   const head=page.locator('[data-view="progress"]>.section-head h2');
