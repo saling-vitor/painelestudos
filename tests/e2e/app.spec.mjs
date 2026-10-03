@@ -2402,7 +2402,7 @@ test('etapa 1 [D] Meus Cursos usa três colunas no desktop amplo',async({page},t
   expect(data.accents.every(Boolean)).toBe(true);
 });
 
-test('etapa 1 [D] Meus Cursos usa duas colunas no notebook quando há dois concursos',async({page},testInfo)=>{
+test('etapa 1 [D] Meus Cursos mantém três colunas no notebook',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de desktop.');
   await page.setViewportSize({width:1280,height:800});
   await page.goto('/#courses');
@@ -2416,7 +2416,7 @@ test('etapa 1 [D] Meus Cursos usa duas colunas no notebook quando há dois concu
   const grid=page.locator('#coursesGrid');
   await expect(grid.locator('.course-card.course-library-card')).toHaveCount(2);
   const columns=await grid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
-  expect(columns).toBe(2);
+  expect(columns).toBe(3);
 });
 
 test('etapa 2 [T] compacta Home e curso no iPad em retrato e paisagem',async({page},testInfo)=>{
