@@ -1,0 +1,196 @@
+/* V15.36.15-G · Glassmorphism dos botões
+   Referência visual aprovada: botão ••• com vidro fumê translúcido,
+   reflexo branco, blur real e sombra curta. */
+
+:root{
+  --button-glass-border:rgba(255,255,255,.20);
+  --button-glass-border-soft:rgba(255,255,255,.14);
+  --button-glass-highlight:rgba(255,255,255,.18);
+  --button-glass-shadow:rgba(0,0,0,.30);
+}
+
+/* =========================================================
+   BASE GLASS · transparência real + blur do fundo
+   ========================================================= */
+:is(button.primary,a.primary,button.secondary,a.secondary,button.danger,a.danger,.icon-btn){
+  -webkit-backdrop-filter:blur(18px) saturate(126%)!important;
+  backdrop-filter:blur(18px) saturate(126%)!important;
+  background-clip:padding-box!important;
+  isolation:isolate;
+}
+
+/* Neutros: vidro fumê, com o branco aparecendo no topo. */
+:is(button.secondary,a.secondary,.icon-btn){
+  border:1px solid var(--button-glass-border)!important;
+  background:
+    radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.18) 0%,rgba(255,255,255,.07) 38%,transparent 66%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.145) 0%,
+      rgba(255,255,255,.085) 48%,
+      rgba(21,24,29,.28) 100%)!important;
+  color:#d7dae0!important;
+  box-shadow:
+    0 7px 18px var(--button-glass-shadow),
+    inset 0 1px 0 var(--button-glass-highlight),
+    inset 0 -1px 0 rgba(255,255,255,.035)!important;
+}
+
+/* Primários: vidro primeiro, cor contextual apenas como tingimento. */
+:is(button.primary,a.primary){
+  --button-glass-accent:var(--accent,var(--course-accent,var(--map-accent,var(--simulation-accent,#d8c59e))));
+  border:1px solid color-mix(in srgb,var(--button-glass-accent) 34%,rgba(255,255,255,.19))!important;
+  background:
+    radial-gradient(120% 95% at 18% 0%,
+      color-mix(in srgb,var(--button-glass-accent) 11%,rgba(255,255,255,.20)) 0%,
+      color-mix(in srgb,var(--button-glass-accent) 7%,rgba(255,255,255,.075)) 42%,
+      transparent 70%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--button-glass-accent) 13%,rgba(255,255,255,.12)) 0%,
+      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.065)) 48%,
+      color-mix(in srgb,var(--button-glass-accent) 8%,rgba(16,19,24,.27)) 100%)!important;
+  color:color-mix(in srgb,var(--button-glass-accent) 68%,white)!important;
+  box-shadow:
+    0 7px 18px var(--button-glass-shadow),
+    inset 0 1px 0 rgba(255,255,255,.19),
+    inset 0 -1px 0 rgba(255,255,255,.035),
+    0 0 0 1px color-mix(in srgb,var(--button-glass-accent) 5%,transparent)!important;
+}
+
+/* Danger também vira vidro tingido. */
+:is(button.danger,a.danger){
+  --button-glass-accent:#d96773;
+  border:1px solid rgba(217,103,115,.34)!important;
+  background:
+    radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.16),rgba(255,255,255,.055) 42%,transparent 68%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--button-glass-accent) 13%,rgba(255,255,255,.10)),
+      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(18,21,26,.27)))!important;
+  color:#edabb2!important;
+  box-shadow:
+    0 7px 18px var(--button-glass-shadow),
+    inset 0 1px 0 rgba(255,255,255,.17),
+    inset 0 -1px 0 rgba(255,255,255,.03)!important;
+}
+
+/* =========================================================
+   CONTROLES SOBRE CAPAS · referência exata do usuário
+   ========================================================= */
+:is(
+  .course-card-edit,
+  .map-admin-btn,
+  .map-card>.fav,
+  .simulation-card-menu-btn,
+  .compact-icon-btn
+){
+  border:1px solid rgba(255,255,255,.19)!important;
+  background:
+    radial-gradient(125% 105% at 16% -4%,rgba(255,255,255,.21) 0%,rgba(255,255,255,.08) 39%,transparent 67%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.14) 0%,
+      rgba(255,255,255,.075) 50%,
+      rgba(20,23,28,.30) 100%)!important;
+  color:#e0e3e7!important;
+  box-shadow:
+    0 7px 17px rgba(0,0,0,.31),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(255,255,255,.035)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(128%)!important;
+  backdrop-filter:blur(18px) saturate(128%)!important;
+  filter:none!important;
+}
+
+/* Favorito ativo: mantém o vidro e acrescenta só o tom quente. */
+.map-card>.fav.on{
+  border-color:rgba(234,215,175,.28)!important;
+  background:
+    radial-gradient(125% 105% at 16% -4%,rgba(255,255,255,.20),rgba(255,255,255,.07) 40%,transparent 68%),
+    linear-gradient(180deg,
+      color-mix(in srgb,#d8c59e 9%,rgba(255,255,255,.10)),
+      color-mix(in srgb,#d8c59e 7%,rgba(20,23,28,.28)))!important;
+  color:#f0dfb9!important;
+}
+
+/* =========================================================
+   TINGIMENTO CONTEXTUAL
+   ========================================================= */
+:is(#coursesGrid,#homeCourses) .course-card .primary{
+  --button-glass-accent:var(--course-accent,#9aa1aa);
+}
+.map-card .primary{
+  --button-glass-accent:var(--accent,var(--map-accent,#9aa1aa));
+}
+.continue-card>.primary{
+  --button-glass-accent:var(--continue-accent,var(--accent,#b88b68));
+}
+#homeReviewNowBtn{
+  --button-glass-accent:var(--plan-accent,#5eaaa6);
+}
+
+/* Simulados: recupera o efeito antigo, agora com vidro real. */
+[data-view="simulations"] .primary,
+.simulation-card .primary,
+.home-simulations-section .simulation-recent-action{
+  --button-glass-accent:var(--simulation-accent,var(--brand-coral,#d96773));
+}
+[data-view="simulations"] .primary,
+.simulation-card .primary,
+.home-simulations-section .simulation-recent-action{
+  border-color:color-mix(in srgb,var(--button-glass-accent) 38%,rgba(255,255,255,.18))!important;
+  background:
+    radial-gradient(120% 95% at 18% 0%,
+      color-mix(in srgb,var(--button-glass-accent) 10%,rgba(255,255,255,.19)) 0%,
+      color-mix(in srgb,var(--button-glass-accent) 7%,rgba(255,255,255,.07)) 43%,
+      transparent 70%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--button-glass-accent) 15%,rgba(255,255,255,.11)),
+      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(17,20,25,.28)))!important;
+  color:color-mix(in srgb,var(--button-glass-accent) 72%,white)!important;
+  box-shadow:
+    0 7px 18px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(255,255,255,.035)!important;
+}
+
+/* =========================================================
+   HOVER / PRESS · mantém o vidro, sem voltar a bloco sólido
+   ========================================================= */
+@media(hover:hover){
+  :is(
+    button.primary,a.primary,
+    button.secondary,a.secondary,
+    button.danger,a.danger,
+    .icon-btn,
+    .course-card-edit,
+    .map-admin-btn,
+    .map-card>.fav,
+    .simulation-card-menu-btn,
+    .compact-icon-btn
+  ):hover{
+    transform:translateY(-1px)!important;
+    filter:brightness(1.06)!important;
+    border-color:rgba(255,255,255,.25)!important;
+    box-shadow:
+      0 9px 21px rgba(0,0,0,.33),
+      inset 0 1px 0 rgba(255,255,255,.24),
+      inset 0 -1px 0 rgba(255,255,255,.045)!important;
+  }
+}
+
+:is(
+  button.primary,a.primary,
+  button.secondary,a.secondary,
+  button.danger,a.danger,
+  .icon-btn,
+  .course-card-edit,
+  .map-admin-btn,
+  .map-card>.fav,
+  .simulation-card-menu-btn,
+  .compact-icon-btn
+):active{
+  transform:translateY(1px)!important;
+  filter:brightness(.96)!important;
+  box-shadow:
+    0 3px 9px rgba(0,0,0,.27),
+    inset 0 1px 0 rgba(255,255,255,.10),
+    inset 0 2px 4px rgba(0,0,0,.16)!important;
+}
