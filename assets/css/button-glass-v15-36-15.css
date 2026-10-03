@@ -1,334 +1,135 @@
-/* V15.36.15-G · Glassmorphism dos botões
-   Refino V15.36.18-G · hover fumê uniforme e sem clareamento excessivo.
-   Referência visual aprovada: vidro escuro/translúcido, reflexo branco discreto,
-   blur real e resposta de interação sem flash branco ou elevação perceptível. */
+/* V15.36.20-G · Glass exclusivo dos controles sobre capas
+   Regra canônica:
+   - sobre capa/imagem: vidro fumê;
+   - fora da capa: estilo normal da interface.
+   Não aplicar este material por classes genéricas como .primary/.secondary/.icon-btn. */
 
 :root{
-  --button-glass-border:rgba(255,255,255,.20);
-  --button-glass-border-soft:rgba(255,255,255,.14);
-  --button-glass-highlight:rgba(255,255,255,.18);
-  --button-glass-shadow:rgba(0,0,0,.30);
+  --cover-button-glass-border:rgba(255,255,255,.18);
+  --cover-button-glass-highlight:rgba(255,255,255,.18);
+  --cover-button-glass-shadow:rgba(0,0,0,.32);
 }
 
-/* =========================================================
-   BASE GLASS · transparência real + blur do fundo
-   ========================================================= */
-:is(button.primary,a.primary,button.secondary,a.secondary,button.danger,a.danger,.icon-btn){
+/* Controles que realmente flutuam sobre a arte da capa. */
+:is(
+  .course-cover-controls .course-card-edit,
+  .map-card.has-cover > .map-admin-btn,
+  .map-card.has-cover > .fav,
+  .simulation-card.has-cover .simulation-card-menu-btn
+){
+  border:1px solid var(--cover-button-glass-border)!important;
+  background:
+    radial-gradient(125% 105% at 16% -4%,
+      rgba(255,255,255,.205) 0%,
+      rgba(255,255,255,.075) 39%,
+      transparent 67%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.13) 0%,
+      rgba(255,255,255,.068) 50%,
+      rgba(18,21,26,.31) 100%)!important;
+  color:#dfe2e7!important;
+  box-shadow:
+    0 7px 18px var(--cover-button-glass-shadow),
+    inset 0 1px 0 var(--cover-button-glass-highlight),
+    inset 0 -1px 0 rgba(255,255,255,.03)!important;
   -webkit-backdrop-filter:blur(18px) saturate(126%)!important;
   backdrop-filter:blur(18px) saturate(126%)!important;
   background-clip:padding-box!important;
+  transform:none!important;
+  filter:none!important;
   isolation:isolate;
 }
 
-/* Neutros: vidro fumê, com reflexo branco controlado. */
-:is(button.secondary,a.secondary,.icon-btn){
-  border:1px solid var(--button-glass-border)!important;
-  background:
-    radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.18) 0%,rgba(255,255,255,.07) 38%,transparent 66%),
-    linear-gradient(180deg,
-      rgba(255,255,255,.145) 0%,
-      rgba(255,255,255,.085) 48%,
-      rgba(21,24,29,.28) 100%)!important;
-  color:#d7dae0!important;
-  box-shadow:
-    0 7px 18px var(--button-glass-shadow),
-    inset 0 1px 0 var(--button-glass-highlight),
-    inset 0 -1px 0 rgba(255,255,255,.035)!important;
-}
-
-/* Primários: vidro primeiro, cor contextual apenas como tingimento. */
-:is(button.primary,a.primary){
-  --button-glass-accent:var(--accent,var(--course-accent,var(--map-accent,var(--simulation-accent,#d8c59e))));
-  border:1px solid color-mix(in srgb,var(--button-glass-accent) 34%,rgba(255,255,255,.19))!important;
-  background:
-    radial-gradient(120% 95% at 18% 0%,
-      color-mix(in srgb,var(--button-glass-accent) 11%,rgba(255,255,255,.20)) 0%,
-      color-mix(in srgb,var(--button-glass-accent) 7%,rgba(255,255,255,.075)) 42%,
-      transparent 70%),
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-glass-accent) 13%,rgba(255,255,255,.12)) 0%,
-      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.065)) 48%,
-      color-mix(in srgb,var(--button-glass-accent) 8%,rgba(16,19,24,.27)) 100%)!important;
-  color:color-mix(in srgb,var(--button-glass-accent) 68%,white)!important;
-  box-shadow:
-    0 7px 18px var(--button-glass-shadow),
-    inset 0 1px 0 rgba(255,255,255,.19),
-    inset 0 -1px 0 rgba(255,255,255,.035),
-    0 0 0 1px color-mix(in srgb,var(--button-glass-accent) 5%,transparent)!important;
-}
-
-/* Danger também vira vidro tingido. */
-:is(button.danger,a.danger){
-  --button-glass-accent:#d96773;
-  border:1px solid rgba(217,103,115,.34)!important;
-  background:
-    radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.16),rgba(255,255,255,.055) 42%,transparent 68%),
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-glass-accent) 13%,rgba(255,255,255,.10)),
-      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(18,21,26,.27)))!important;
-  color:#edabb2!important;
-  box-shadow:
-    0 7px 18px var(--button-glass-shadow),
-    inset 0 1px 0 rgba(255,255,255,.17),
-    inset 0 -1px 0 rgba(255,255,255,.03)!important;
-}
-
-/* =========================================================
-   CONTROLES SOBRE CAPAS · brilho um pouco mais presente
-   ========================================================= */
-:is(
-  .course-card-edit,
-  .map-admin-btn,
-  .map-card>.fav,
-  .simulation-card-menu-btn,
-  .compact-icon-btn
-){
-  border:1px solid rgba(255,255,255,.19)!important;
-  background:
-    radial-gradient(125% 105% at 16% -4%,rgba(255,255,255,.21) 0%,rgba(255,255,255,.08) 39%,transparent 67%),
-    linear-gradient(180deg,
-      rgba(255,255,255,.14) 0%,
-      rgba(255,255,255,.075) 50%,
-      rgba(20,23,28,.30) 100%)!important;
-  color:#e0e3e7!important;
-  box-shadow:
-    0 7px 17px rgba(0,0,0,.31),
-    inset 0 1px 0 rgba(255,255,255,.20),
-    inset 0 -1px 0 rgba(255,255,255,.035)!important;
-  -webkit-backdrop-filter:blur(18px) saturate(128%)!important;
-  backdrop-filter:blur(18px) saturate(128%)!important;
-  filter:none!important;
-}
-
-/* Favorito ativo: mantém o vidro e acrescenta só o tom quente. */
-.map-card>.fav.on{
+/* Favorito ativo continua vidro, apenas com indicação quente. */
+.map-card.has-cover > .fav.on{
   border-color:rgba(234,215,175,.28)!important;
   background:
-    radial-gradient(125% 105% at 16% -4%,rgba(255,255,255,.20),rgba(255,255,255,.07) 40%,transparent 68%),
+    radial-gradient(125% 105% at 16% -4%,
+      rgba(255,255,255,.20),
+      rgba(255,255,255,.07) 40%,
+      transparent 68%),
     linear-gradient(180deg,
       color-mix(in srgb,#d8c59e 9%,rgba(255,255,255,.10)),
-      color-mix(in srgb,#d8c59e 7%,rgba(20,23,28,.28)))!important;
+      color-mix(in srgb,#d8c59e 7%,rgba(18,21,26,.30)))!important;
   color:#f0dfb9!important;
 }
 
-/* =========================================================
-   AÇÕES QUE NÃO USAM .primary/.secondary
-   Recebem o mesmo material em vez de um hover isolado.
-   ========================================================= */
-:is(
-  #homeCourses .course-footer .enter,
-  #coursesGrid .course-footer .enter,
-  .map-card .map-open-label,
-  .home-simulations-section .simulation-recent-action
-){
-  --button-glass-accent:var(--accent,var(--course-accent,var(--map-accent,var(--simulation-accent,#9aa1aa))));
-  border:1px solid color-mix(in srgb,var(--button-glass-accent) 32%,rgba(255,255,255,.18))!important;
-  background:
-    radial-gradient(120% 95% at 18% 0%,
-      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.17)) 0%,
-      color-mix(in srgb,var(--button-glass-accent) 6%,rgba(255,255,255,.065)) 42%,
-      transparent 70%),
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-glass-accent) 12%,rgba(255,255,255,.105)) 0%,
-      color-mix(in srgb,var(--button-glass-accent) 8%,rgba(255,255,255,.055)) 48%,
-      color-mix(in srgb,var(--button-glass-accent) 7%,rgba(16,19,24,.28)) 100%)!important;
-  color:color-mix(in srgb,var(--button-glass-accent) 67%,white)!important;
-  box-shadow:
-    0 7px 18px rgba(0,0,0,.29),
-    inset 0 1px 0 rgba(255,255,255,.17),
-    inset 0 -1px 0 rgba(255,255,255,.03)!important;
-  -webkit-backdrop-filter:blur(18px) saturate(126%)!important;
-  backdrop-filter:blur(18px) saturate(126%)!important;
-}
-
-/* =========================================================
-   TINGIMENTO CONTEXTUAL
-   ========================================================= */
-:is(#coursesGrid,#homeCourses) .course-card .primary{
-  --button-glass-accent:var(--course-accent,#9aa1aa);
-}
-.map-card .primary{
-  --button-glass-accent:var(--accent,var(--map-accent,#9aa1aa));
-}
-.continue-card>.primary{
-  --button-glass-accent:var(--continue-accent,var(--accent,#b88b68));
-}
-#homeReviewNowBtn{
-  --button-glass-accent:var(--plan-accent,#5eaaa6);
-}
-
-/* Simulados: recupera o efeito antigo, agora com vidro real. */
-[data-view="simulations"] .primary,
-.simulation-card .primary,
-.home-simulations-section .simulation-recent-action{
-  --button-glass-accent:var(--simulation-accent,var(--brand-coral,#d96773));
-}
-[data-view="simulations"] .primary,
-.simulation-card .primary,
-.home-simulations-section .simulation-recent-action{
-  border-color:color-mix(in srgb,var(--button-glass-accent) 38%,rgba(255,255,255,.18))!important;
-  background:
-    radial-gradient(120% 95% at 18% 0%,
-      color-mix(in srgb,var(--button-glass-accent) 10%,rgba(255,255,255,.19)) 0%,
-      color-mix(in srgb,var(--button-glass-accent) 7%,rgba(255,255,255,.07)) 43%,
-      transparent 70%),
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--button-glass-accent) 15%,rgba(255,255,255,.11)),
-      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(17,20,25,.28)))!important;
-  color:color-mix(in srgb,var(--button-glass-accent) 72%,white)!important;
-  box-shadow:
-    0 7px 18px rgba(0,0,0,.30),
-    inset 0 1px 0 rgba(255,255,255,.18),
-    inset 0 -1px 0 rgba(255,255,255,.035)!important;
-}
-
-/* Estado ativo de controles: sinaliza seleção sem recuperar o dourado/branco sólido. */
-:is(.icon-btn.active,.icon-btn[aria-pressed="true"],.maps-layout-actions .icon-btn.active){
-  border-color:rgba(255,255,255,.24)!important;
-  background:
-    radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.20),rgba(255,255,255,.075) 40%,transparent 68%),
-    linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.08) 50%,rgba(21,24,29,.30))!important;
+/* Menu de simulado aberto: mantém o botão de capa identificado sem clarear demais. */
+.simulation-card.has-cover .simulation-card-menu-btn[aria-expanded="true"]{
+  border-color:rgba(255,255,255,.22)!important;
   color:#eef0f3!important;
 }
 
-/* =========================================================
-   HOVER · fumê continua fumê; sem branco, sem salto
-   ========================================================= */
+/* Lista não mostra a capa: portanto seus controles não usam vidro. */
+.map-list .map-card.has-cover > .map-admin-btn,
+.map-list .map-card.has-cover > .fav{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+}
+
+/* Hover só existe nos botões que continuam sobre a capa.
+   A resposta é luz sutil; sem branco, sem elevação e sem zoom. */
 @media(hover:hover) and (pointer:fine){
   :is(
-    button.secondary,a.secondary,
-    .icon-btn,
-    .course-card-edit,
-    .map-admin-btn,
-    .map-card>.fav,
-    .simulation-card-menu-btn,
-    .compact-icon-btn
+    .course-cover-controls .course-card-edit,
+    .map-card.has-cover > .map-admin-btn,
+    .map-card.has-cover > .fav,
+    .simulation-card.has-cover .simulation-card-menu-btn
   ):hover{
     transform:none!important;
     filter:none!important;
     border-color:rgba(255,255,255,.22)!important;
     background:
-      radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.19) 0%,rgba(255,255,255,.075) 40%,transparent 67%),
+      radial-gradient(125% 105% at 16% -4%,
+        rgba(255,255,255,.22) 0%,
+        rgba(255,255,255,.082) 39%,
+        transparent 67%),
       linear-gradient(180deg,
-        rgba(255,255,255,.14) 0%,
-        rgba(255,255,255,.082) 50%,
-        rgba(20,23,28,.30) 100%)!important;
-    color:#e2e5e9!important;
+        rgba(255,255,255,.138) 0%,
+        rgba(255,255,255,.073) 50%,
+        rgba(18,21,26,.32) 100%)!important;
+    color:#edf0f3!important;
     box-shadow:
-      0 8px 19px rgba(0,0,0,.31),
+      0 8px 19px rgba(0,0,0,.33),
       inset 0 1px 0 rgba(255,255,255,.205),
-      inset 0 -1px 0 rgba(255,255,255,.035)!important;
+      inset 0 -1px 0 rgba(255,255,255,.032)!important;
   }
 
-  :is(button.primary,a.primary):hover{
-    transform:none!important;
-    filter:none!important;
-    border-color:color-mix(in srgb,var(--button-glass-accent) 36%,rgba(255,255,255,.20))!important;
-    background:
-      radial-gradient(120% 95% at 18% 0%,
-        color-mix(in srgb,var(--button-glass-accent) 11%,rgba(255,255,255,.19)) 0%,
-        color-mix(in srgb,var(--button-glass-accent) 7%,rgba(255,255,255,.07)) 42%,
-        transparent 70%),
-      linear-gradient(180deg,
-        color-mix(in srgb,var(--button-glass-accent) 13%,rgba(255,255,255,.115)) 0%,
-        color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.062)) 48%,
-        color-mix(in srgb,var(--button-glass-accent) 8%,rgba(16,19,24,.29)) 100%)!important;
-    box-shadow:
-      0 8px 19px rgba(0,0,0,.31),
-      inset 0 1px 0 rgba(255,255,255,.20),
-      inset 0 -1px 0 rgba(255,255,255,.035),
-      0 0 0 1px color-mix(in srgb,var(--button-glass-accent) 5%,transparent)!important;
-  }
-
-  :is(button.danger,a.danger):hover{
-    transform:none!important;
-    filter:none!important;
-    border-color:rgba(217,103,115,.40)!important;
-    background:
-      radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.16),rgba(255,255,255,.055) 42%,transparent 68%),
-      linear-gradient(180deg,
-        color-mix(in srgb,#d96773 14%,rgba(255,255,255,.10)),
-        color-mix(in srgb,#d96773 9%,rgba(18,21,26,.29)))!important;
-    box-shadow:
-      0 8px 19px rgba(0,0,0,.31),
-      inset 0 1px 0 rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(255,255,255,.03)!important;
-  }
-
-  :is(
-    #homeCourses .course-footer .enter,
-    #coursesGrid .course-footer .enter,
-    .map-card .map-open-label,
-    .home-simulations-section .simulation-recent-action
-  ):hover{
-    transform:none!important;
-    filter:none!important;
-    border-color:color-mix(in srgb,var(--button-glass-accent) 36%,rgba(255,255,255,.19))!important;
-    background:
-      radial-gradient(120% 95% at 18% 0%,
-        color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.17)) 0%,
-        color-mix(in srgb,var(--button-glass-accent) 6%,rgba(255,255,255,.065)) 42%,
-        transparent 70%),
-      linear-gradient(180deg,
-        color-mix(in srgb,var(--button-glass-accent) 12%,rgba(255,255,255,.105)) 0%,
-        color-mix(in srgb,var(--button-glass-accent) 8%,rgba(255,255,255,.055)) 48%,
-        color-mix(in srgb,var(--button-glass-accent) 7%,rgba(16,19,24,.30)) 100%)!important;
-    box-shadow:
-      0 8px 19px rgba(0,0,0,.30),
-      inset 0 1px 0 rgba(255,255,255,.18),
-      inset 0 -1px 0 rgba(255,255,255,.03)!important;
-  }
-
-  /* Sobre imagem preta pode haver um reflexo ligeiramente mais visível. */
-  :is(.course-card-edit,.map-admin-btn,.map-card>.fav,.simulation-card-menu-btn):hover{
-    background:
-      radial-gradient(125% 105% at 16% -4%,rgba(255,255,255,.225) 0%,rgba(255,255,255,.085) 39%,transparent 67%),
-      linear-gradient(180deg,
-        rgba(255,255,255,.145) 0%,
-        rgba(255,255,255,.078) 50%,
-        rgba(18,21,26,.31) 100%)!important;
+  .map-list .map-card.has-cover > .map-admin-btn:hover,
+  .map-list .map-card.has-cover > .fav:hover{
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
   }
 }
 
-/* PRESS / TOUCH · resposta curta, sem hover preso e sem salto. */
+/* Press/touch: vidro permanece vidro e não muda de tamanho. */
 :is(
-  button.primary,a.primary,
-  button.secondary,a.secondary,
-  button.danger,a.danger,
-  .icon-btn,
-  .course-card-edit,
-  .map-admin-btn,
-  .map-card>.fav,
-  .simulation-card-menu-btn,
-  .compact-icon-btn,
-  #homeCourses .course-footer .enter,
-  #coursesGrid .course-footer .enter,
-  .map-card .map-open-label,
-  .home-simulations-section .simulation-recent-action
+  .course-cover-controls .course-card-edit,
+  .map-card.has-cover > .map-admin-btn,
+  .map-card.has-cover > .fav,
+  .simulation-card.has-cover .simulation-card-menu-btn
 ):active{
   transform:none!important;
   filter:none!important;
   box-shadow:
-    0 3px 9px rgba(0,0,0,.25),
+    0 3px 9px rgba(0,0,0,.27),
     inset 0 1px 0 rgba(255,255,255,.10),
     inset 0 2px 4px rgba(0,0,0,.16)!important;
 }
 
-/* Foco acessível e discreto; não reaplica fundo claro. */
+/* Foco acessível sem alterar o material. */
 :is(
-  button.primary,a.primary,
-  button.secondary,a.secondary,
-  button.danger,a.danger,
-  .icon-btn,
-  .course-card-edit,
-  .map-admin-btn,
-  .map-card>.fav,
-  .simulation-card-menu-btn,
-  .compact-icon-btn,
-  #homeCourses .course-footer .enter,
-  #coursesGrid .course-footer .enter,
-  .map-card .map-open-label,
-  .home-simulations-section .simulation-recent-action
+  .course-cover-controls .course-card-edit,
+  .map-card.has-cover > .map-admin-btn,
+  .map-card.has-cover > .fav,
+  .simulation-card.has-cover .simulation-card-menu-btn
 ):focus-visible{
   outline:1px solid rgba(255,255,255,.25)!important;
   outline-offset:2px!important;
