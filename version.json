@@ -1,13 +1,13 @@
 {
-  "version": "15.36.15",
-  "label": "V15.36.15-G",
-  "releasedAt": "2026-10-03T13:05:00.000Z",
-  "notes": "Refina os botões para glassmorphism real: vidro fumê translúcido, reflexo branco, blur do fundo e cor contextual preservada.",
+  "version": "15.36.16",
+  "label": "V15.36.16-G",
+  "releasedAt": "2026-10-03T13:20:00.000Z",
+  "notes": "Refina a Home no iPad, corrige o card Retomar no desktop/tablet e leva o mascote oficial aos estados vazios de revisões e caderno de erros.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Controles ••• e favorito ganham vidro translúcido com blur real",
-    "[G] Botões principais passam a usar vidro tingido pela cor do contexto",
-    "[G] Simulados recuperam o acabamento colorido sem perder a transparência",
-    "[G] Hover e clique mantêm o efeito de vidro em vez de voltar a blocos sólidos"
+    "[T] iPad vertical usa dock lateral e um curso por linha; horizontal mantém duas colunas compactas",
+    "[D+T] Retomar onde parei ganha capa maior, melhor enquadramento e conteúdo sem cortes",
+    "[G] Revisões por tópico e Caderno de erros passam a usar o mascote oficial nos estados vazios",
+    "[M] Layout de smartphone preservado"
   ]
 }

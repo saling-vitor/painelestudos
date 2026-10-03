@@ -1,0 +1,232 @@
+/* V15.36.16-G · refinamento responsivo aprovado
+   [T] iPad com composição própria · [D+T] Retomar sem cortes
+   [G] empty states com mascote · [M] smartphone preservado. */
+
+/* =========================================================
+   TABLET / IPAD [T]
+   O tablet mantém o dock lateral em qualquer orientação.
+   ========================================================= */
+html.is-ipad:not(.is-phone-layout){
+  --nav:82px;
+}
+html.is-ipad:not(.is-phone-layout) .app{
+  display:grid!important;
+  grid-template-columns:82px minmax(0,1fr)!important;
+}
+html.is-ipad:not(.is-phone-layout) .side{
+  display:block!important;
+  width:82px!important;
+  padding-inline:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) .side .brand{
+  justify-content:center!important;
+  padding-inline:3px!important;
+}
+html.is-ipad:not(.is-phone-layout) .side .nav-btn{
+  justify-content:center!important;
+  padding-inline:0!important;
+}
+html.is-ipad:not(.is-phone-layout) .side .nav-btn .txt,
+html.is-ipad:not(.is-phone-layout) .side .nav-label,
+html.is-ipad:not(.is-phone-layout) .side .side-bottom{
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) .main{
+  grid-column:2!important;
+  min-width:0!important;
+}
+html.is-ipad:not(.is-phone-layout) .bottom-nav{
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) .content{
+  width:min(1180px,100%)!important;
+  margin-inline:auto!important;
+  padding-left:18px!important;
+  padding-right:18px!important;
+  padding-bottom:52px!important;
+}
+html.is-ipad:not(.is-phone-layout) .home-courses-section>.section-head{
+  align-items:center!important;
+}
+html.is-ipad:not(.is-phone-layout) .home-courses-section #newCourseBtn{
+  flex:0 0 auto!important;
+}
+
+/* =========================================================
+   RETOMAR ONDE PAREI [D+T]
+   Altura intrínseca; status, chips e tempo nunca são cortados.
+   ========================================================= */
+html:not(.is-phone-layout) .continue-card{
+  height:auto!important;
+  max-height:none!important;
+  min-height:148px!important;
+  align-items:stretch!important;
+  overflow:hidden!important;
+}
+html:not(.is-phone-layout) .continue-thumb{
+  min-height:0!important;
+  height:auto!important;
+  aspect-ratio:16/9!important;
+  align-self:center!important;
+  overflow:hidden!important;
+}
+html:not(.is-phone-layout) .continue-thumb img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+html:not(.is-phone-layout) .continue-content{
+  min-width:0!important;
+  overflow:visible!important;
+  justify-content:center!important;
+  padding-block:2px!important;
+}
+html:not(.is-phone-layout) .continue-map-tags{
+  flex-wrap:wrap!important;
+  row-gap:5px!important;
+}
+html:not(.is-phone-layout) .continue-content>b,
+html:not(.is-phone-layout) .continue-content>p{
+  overflow:visible!important;
+}
+html:not(.is-phone-layout) .continue-progress{
+  flex:0 0 auto!important;
+}
+html:not(.is-phone-layout) .continue-states{
+  min-height:0!important;
+  row-gap:6px!important;
+  line-height:1.35!important;
+  overflow:visible!important;
+}
+html:not(.is-phone-layout) .continue-card>.primary{
+  align-self:center!important;
+  flex:0 0 auto!important;
+}
+
+/* Desktop: capa ganha presença e o card cresce conforme o conteúdo. */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) .continue-card{
+    grid-template-columns:clamp(210px,24%,270px) minmax(0,1fr) auto!important;
+    min-height:156px!important;
+    gap:15px!important;
+    padding:13px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .continue-thumb{
+    width:100%!important;
+    max-width:270px!important;
+  }
+}
+
+/* iPad paisagem: duas colunas e cards de curso mais baixos. */
+@media(orientation:landscape){
+  html.is-ipad:not(.is-phone-layout) #homeCourses{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-cover{
+    aspect-ratio:16/7.2!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .continue-card{
+    grid-template-columns:clamp(188px,25%,232px) minmax(0,1fr) auto!important;
+    min-height:146px!important;
+    gap:12px!important;
+  }
+}
+
+/* iPad retrato: uma coluna própria de tablet, sem virar smartphone ampliado. */
+@media(orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) #homeCourses{
+    grid-template-columns:1fr!important;
+    gap:12px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card{
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-cover{
+    aspect-ratio:16/5.8!important;
+    max-height:224px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .continue-card{
+    grid-template-columns:clamp(174px,26%,216px) minmax(0,1fr) auto!important;
+    min-height:146px!important;
+    gap:12px!important;
+  }
+}
+
+/* Cards Home de tablet: menos espaço morto, sem apertar os dados. */
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card{
+  padding-bottom:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-kicker-row{
+  margin-top:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>h3{
+  margin-top:4px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-meta{
+  margin-top:7px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-progress-mini{
+  padding-top:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer{
+  margin-top:8px!important;
+  padding-top:8px!important;
+}
+
+/* Split View estreito: mantém navegação de tablet e quebra o Retomar com segurança. */
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) .continue-card{
+    grid-template-columns:minmax(150px,34%) minmax(0,1fr)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .continue-card>.primary{
+    grid-column:1/-1!important;
+    width:100%!important;
+  }
+}
+
+/* =========================================================
+   EMPTY STATES [G]
+   Usa o componente oficial e o mascote já existente na identidade.
+   ========================================================= */
+.planner-topic-review-empty,
+.planner-errors-empty{
+  min-height:156px!important;
+  border-style:solid!important;
+  border-color:rgba(255,255,255,.08)!important;
+  background:linear-gradient(180deg,rgba(14,17,21,.72),rgba(7,9,12,.82))!important;
+}
+.planner-topic-review-empty .empty-state-graphic,
+.planner-errors-empty .empty-state-graphic{
+  width:clamp(72px,9vw,108px)!important;
+  max-height:108px!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 10px 24px rgba(0,0,0,.28));
+}
+.planner-topic-review-empty .empty-state-copy,
+.planner-errors-empty .empty-state-copy{
+  max-width:440px!important;
+}
+.planner-topic-review-empty .empty-state-copy h3,
+.planner-errors-empty .empty-state-copy h3{
+  font-size:13px!important;
+}
+.planner-topic-review-empty .empty-state-copy p,
+.planner-errors-empty .empty-state-copy p{
+  line-height:1.45!important;
+}
+
+@media(max-width:480px){
+  .planner-topic-review-empty,
+  .planner-errors-empty{
+    min-height:132px!important;
+  }
+  .planner-topic-review-empty .empty-state-graphic,
+  .planner-errors-empty .empty-state-graphic{
+    width:68px!important;
+    max-height:68px!important;
+  }
+}
