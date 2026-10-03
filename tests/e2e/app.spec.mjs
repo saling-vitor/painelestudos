@@ -2694,7 +2694,7 @@ test('[G] Etapa 3 Todos os Mapas ordena filtra agrupa e alterna layout',async({p
     await expect(page.locator('.maps-mobile-controls')).toBeVisible();
     await page.locator('#allMapsMobileSort').click();
     await expect(page.locator('#allMapsFilterPanel')).toBeVisible();
-    await page.locator('#allMapsSortSheet').selectOption('za');
+    await page.locator('#allMapsSortOptions [data-allmaps-sort-option="za"]').click();
   }else{
     await expect(page.locator('.maps-toolbar')).toBeVisible();
     await page.locator('#allMapsSort').selectOption('za');
@@ -2745,7 +2745,7 @@ test('[G] Etapa 3 Todos os Mapas persiste ordenação e layout e limpa filtros a
 
   if(isPhone){
     await page.locator('#allMapsMobileSort').click();
-    await page.locator('#allMapsSortSheet').selectOption('topics-desc');
+    await page.locator('#allMapsSortOptions [data-allmaps-sort-option="topics-desc"]').click();
     await page.locator('#allMapsMobileFilter').click();
   }else{
     await page.locator('#allMapsSort').selectOption('topics-desc');
