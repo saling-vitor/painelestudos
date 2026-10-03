@@ -64,7 +64,7 @@ const SIMULATION_COVER_OPTIONS=[{key:'auto',label:'Automática pela banca'},{key
     popover.style.left=left+'px';
     popover.style.top=(useAbove?Math.max(margin,rect.top-popover.offsetHeight-6):Math.min(window.innerHeight-popover.offsetHeight-margin,rect.bottom+6))+'px';
     state.trigger.setAttribute('aria-expanded','true');openState={select,trigger:state.trigger,popover};
-    const selected=popover.querySelector('[aria-selected="true"]');selected?.scrollIntoView({block:'nearest'});
+    const selected=popover.querySelector('[aria-selected="true"]');if(selected){const top=selected.offsetTop,bottom=top+selected.offsetHeight,viewTop=popover.scrollTop,viewBottom=viewTop+popover.clientHeight;if(top<viewTop)popover.scrollTop=top;else if(bottom>viewBottom)popover.scrollTop=Math.max(0,bottom-popover.clientHeight)}
   }
   function enhanceSelect(select){
     if(!(select instanceof HTMLSelectElement)||select.multiple||select.size>1||select.dataset.uiSelectEnhanced==='1')return;
@@ -98,5 +98,5 @@ const SIMULATION_COVER_OPTIONS=[{key:'auto',label:'Automática pela banca'},{key
   document.addEventListener('pointerdown',event=>{if(openState&&!openState.popover.contains(event.target)&&event.target!==openState.trigger)closeSelect()},true);
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&openState)closeSelect({restoreFocus:true})});
   window.addEventListener('resize',()=>closeSelect(),{passive:true});
-  window.addEventListener('scroll',()=>closeSelect(),{passive:true,capture:true});
+  window.addEventListener('scroll',event=>{if(!openState)return;const target=event.target;if(target&&target!==document&&target!==window&&openState.popover.contains(target))return;closeSelect()},{passive:true,capture:true});
 })();
