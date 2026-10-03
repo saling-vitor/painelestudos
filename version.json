@@ -1,13 +1,12 @@
 {
-  "version": "15.36.22",
-  "label": "V15.36.22-G",
-  "releasedAt": "2026-10-03T18:46:00.000Z",
-  "notes": "Ao favoritar um mapa, a estrela passa a ficar amarelo-dourada sem alterar o material glass do botão.",
+  "version": "15.36.23",
+  "label": "V15.36.23-G",
+  "releasedAt": "2026-10-03T19:02:00.000Z",
+  "notes": "Todos os Mapas passa a usar uma visualização única em cards; também foram removidas as linhas coloridas inferiores dos cards em Todos os Mapas e nos mapas do curso.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Estrela de favorito ativo em amarelo-dourado mais visível",
-    "[G] O botão mantém exatamente o mesmo vidro fumê antes e depois de favoritar",
-    "[D+T] Hover e foco preservam a estrela amarela",
-    "[D+T+M] Ao desfavoritar, a estrela volta imediatamente ao estado neutro"
+    "[G] Todos os Mapas: removidos os botões de alternância entre grade e lista.",
+    "[G] Todos os Mapas: Ordenar, Filtros e Agrupar foram reorganizados sem espaço residual.",
+    "[G] Cards de mapas: removida a linha fina colorida acima do rodapé em Todos os Mapas e nos mapas do curso."
   ]
 }
