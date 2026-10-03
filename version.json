@@ -1,14 +1,15 @@
 {
-  "version": "15.36.3",
-  "label": "V15.36.3-G",
-  "releasedAt": "2026-10-03T00:20:00.000Z",
-  "notes": "Configurações agora trabalham diretamente com horas e minutos, a verificação de atualizações usa um único feedback no painel e a prioridade da Home ficou mais direta e acionável.",
+  "version": "15.36.4",
+  "label": "V15.36.4-G",
+  "releasedAt": "2026-10-03T00:50:00.000Z",
+  "notes": "Matriz do edital redesenhada para leitura confortável, scrollbars mais discretas, menus/selects harmonizados e foco visual mais suave em toda a interface.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Metas diária, semanal, Pomodoro, pausa e carga máxima aceitam formatos como 7h, 1h 30min e 25min",
-    "[G] Verificação de atualização sem toast duplicado quando o usuário já está na versão atual",
-    "[G] Nova versão disponível aparece no próprio painel de Atualizações, com CTA único para instalar",
-    "[G] Prioridade agora mostra mapa, duração sugerida e os principais motivos antes de começar",
-    "[G] Diagnóstico e dispositivos mantém versão instalada/publicada, Service Worker, nuvem, conexão, pendências, sincronização, offline, PWA, dispositivo e rota"
+    "[G] Matriz do edital com hierarquia maior, resumo legível, filtros compactos e cards responsivos em desktop, iPad e iPhone",
+    "[G] Desktop amplo usa duas colunas de mapas quando há espaço; telas menores preservam leitura sem comprimir os tópicos",
+    "[G] Scrollbars de desktop passam a 4 px e ficam praticamente invisíveis até a interação",
+    "[G] Selects de desktop recebem menu próprio escuro e consistente; iPad e iPhone mantêm o seletor nativo de toque",
+    "[G] Campos e controles usam foco discreto, sem a borda azul/dourada grossa",
+    "[G] Gerenciar mapa ganha mais largura útil e rolagem interna mais leve"
   ]
 }

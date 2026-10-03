@@ -1398,6 +1398,9 @@ test('motor de prioridade e matriz do edital ficam disponíveis',async({page})=>
   await expect(page.locator('[data-view="matrix"]')).toHaveClass(/active/);
   await expect(page.locator('#matrixSummary')).toBeVisible();
   await expect(page.locator('.matrix-map')).toHaveCount(14);
+  await expect(page.locator('[data-matrix-back]')).toBeVisible();
+  await page.locator('[data-matrix-back]').click();
+  await expect(page.locator('[data-view="progress"]')).toHaveClass(/active/);
 });
 
 test('command palette oferece ações rápidas mesmo sem texto',async({page})=>{
@@ -2805,17 +2808,17 @@ test('V15.32 [G] accent respeita prioridade mapa categoria curso e neutro',async
 
 
 
-test('[G] refinamento visual mantém foco discreto, select funcional e modal rolável',async({page},testInfo)=>{
+test('[G] refinamento visual mantém foco discreto, menus harmonizados e modal rolável',async({page},testInfo)=>{
   await expect(page.locator('link[href*="ui-chrome-refine-v01.css"]')).toHaveCount(1);
   const search=page.locator('#globalSearch');
   await expect(search).toBeVisible();
   await search.focus();
   const searchFocus=await search.evaluate(el=>{
     const style=getComputedStyle(el),box=el.getBoundingClientRect();
-    return{outline:parseFloat(style.outlineWidth)||0,width:box.width,height:box.height};
+    return{outline:parseFloat(style.outlineWidth)||0,shadow:style.boxShadow,width:box.width,height:box.height};
   });
-  expect(searchFocus.outline).toBeGreaterThan(0);
-  expect(searchFocus.outline).toBeLessThanOrEqual(1.5);
+  expect(searchFocus.outline).toBeLessThanOrEqual(1);
+  expect(searchFocus.shadow).not.toContain('0px 0px 0px 3px');
   expect(searchFocus.width).toBeGreaterThan(0);
   expect(searchFocus.height).toBeGreaterThan(0);
 
@@ -2823,14 +2826,12 @@ test('[G] refinamento visual mantém foco discreto, select funcional e modal rol
     await page.goto('/#progress');
     const sort=page.locator('#progressSort');
     await expect(sort).toBeVisible();
-    const before=await sort.boundingBox();
-    await sort.focus();
-    const selectFocus=await sort.evaluate(el=>parseFloat(getComputedStyle(el).outlineWidth)||0);
-    expect(selectFocus).toBeGreaterThan(0);
-    expect(selectFocus).toBeLessThanOrEqual(1.5);
-    const after=await sort.boundingBox();
-    expect(Math.abs((after?.width||0)-(before?.width||0))).toBeLessThanOrEqual(.5);
-    expect(Math.abs((after?.height||0)-(before?.height||0))).toBeLessThanOrEqual(.5);
+    const trigger=sort.locator('xpath=following-sibling::*[contains(@class,"ui-select-trigger")]');
+    await expect(trigger).toBeVisible();
+    await trigger.click();
+    await expect(page.locator('.ui-select-popover')).toBeVisible();
+    await expect(page.locator('.ui-select-popover .ui-select-option').first()).toBeVisible();
+    await page.keyboard.press('Escape');
     await sort.selectOption('alpha');
     await expect(sort).toHaveValue('alpha');
   }
@@ -2838,16 +2839,15 @@ test('[G] refinamento visual mantém foco discreto, select funcional e modal rol
   await page.evaluate(()=>document.getElementById('mapManageModal')?.classList.add('open'));
   const modal=page.locator('#mapManageModal .modal-card');
   await expect(modal).toBeVisible();
-  const scrolling=await modal.evaluate(el=>{
-    const before=el.scrollTop;
-    el.scrollTop=Math.min(140,Math.max(0,el.scrollHeight-el.clientHeight));
-    return{before,after:el.scrollTop,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight};
-  });
-  if(scrolling.scrollHeight>scrolling.clientHeight)expect(scrolling.after).toBeGreaterThan(scrolling.before);
+  const geometry=await modal.evaluate(el=>({width:el.getBoundingClientRect().width,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight}));
+  expect(geometry.width).toBeGreaterThan(280);
+  if(geometry.scrollHeight>geometry.clientHeight){
+    const moved=await modal.evaluate(el=>{const before=el.scrollTop;el.scrollTop=Math.min(140,el.scrollHeight-el.clientHeight);return el.scrollTop>before});
+    expect(moved).toBe(true);
+  }
   const viewport=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth}));
   expect(viewport.scrollWidth).toBeLessThanOrEqual(viewport.width+2);
 });
-
 
 test('[G] V15.36 atualização forçada preserva dados do usuário',async({page})=>{
   await page.goto('/#settings');
