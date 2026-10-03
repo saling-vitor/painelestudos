@@ -899,6 +899,48 @@ test('sistema glass mantém cards e controles na mesma família visual',async({p
   expect(glass.panelShadow).not.toBe('none');
 });
 
+test('glass de botões fica restrito aos controles sobre capas',async({page})=>{
+  await page.goto('/#courses');
+  const coverControl=page.locator('#coursesGrid .course-card-edit').first();
+  const normalAction=page.locator('#newCourseBtn2');
+  await expect(coverControl).toBeVisible();
+  await expect(normalAction).toBeVisible();
+
+  const courseStyles=await page.evaluate(()=>{
+    const styleOf=selector=>{
+      const style=getComputedStyle(document.querySelector(selector));
+      return{
+        backdrop:style.backdropFilter||style.webkitBackdropFilter||'none',
+        background:style.backgroundImage,
+        transform:style.transform
+      };
+    };
+    return{
+      cover:styleOf('#coursesGrid .course-card-edit'),
+      normal:styleOf('#newCourseBtn2')
+    };
+  });
+  expect(courseStyles.cover.backdrop).not.toBe('none');
+  expect(courseStyles.cover.background).toContain('radial-gradient');
+  expect(courseStyles.normal.backdrop).toBe('none');
+
+  await page.goto('/#maps');
+  const mapCoverControl=page.locator('.map-card.has-cover>.map-admin-btn').first();
+  const filterButton=page.locator('#allMapsFilterBtn');
+  await expect(mapCoverControl).toBeVisible();
+  await expect(filterButton).toBeVisible();
+  const mapStyles=await page.evaluate(()=>{
+    const cover=getComputedStyle(document.querySelector('.map-card.has-cover>.map-admin-btn'));
+    const filter=getComputedStyle(document.querySelector('#allMapsFilterBtn'));
+    return{
+      coverBackdrop:cover.backdropFilter||cover.webkitBackdropFilter||'none',
+      filterBackdrop:filter.backdropFilter||filter.webkitBackdropFilter||'none'
+    };
+  });
+  expect(mapStyles.coverBackdrop).not.toBe('none');
+  expect(mapStyles.filterBackdrop).toBe('none');
+});
+
 test('hierarquia tipográfica diferencia página, seção e dados sem desperdício',async({page})=>{
   await page.goto('/#progress');
   const head=page.locator('[data-view="progress"]>.section-head h2');
