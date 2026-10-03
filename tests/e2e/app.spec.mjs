@@ -1070,7 +1070,7 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
   test.skip(testInfo.project.name!=='ipad','Validação específica da Home responsiva no iPad.');
   for(const scenario of [
     {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
-    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'grid',simulationColumns:2,intelligenceColumns:2,courseColumns:2}
+    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'grid',simulationColumns:2,intelligenceColumns:2,courseColumns:1}
   ]){
     await page.setViewportSize({width:scenario.width,height:scenario.height});
     await page.goto('/#home');
@@ -1259,14 +1259,16 @@ test('iPad usa dock lateral recolhível no leitor',async({page},testInfo)=>{
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('studyapp.ipadReaderDock.v1')||'{}').collapsed)).toBe(true);
 });
 
-test('iPad mostra Calendário na barra inferior e não mostra Estudar ocioso',async({page},testInfo)=>{
+test('iPad usa Calendário na dock lateral e não mostra Estudar ocioso',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica do app no iPad.');
   await page.setViewportSize({width:820,height:1180});
   await page.goto('/#home');
-  const calendar=page.locator('.bottom-nav [data-nav="agenda"]');
+  await expect(page.locator('.side')).toBeVisible();
+  await expect(page.locator('.bottom-nav')).toBeHidden();
+  const calendar=page.locator('.side [data-nav="agenda"]');
   await expect(calendar).toBeVisible();
-  await expect(calendar).toContainText('Calendário');
-  await expect(page.locator('.bottom-nav [data-nav]')).toHaveCount(7);
+  await expect(calendar).toHaveAttribute('aria-label','Calendário');
+  await expect(page.locator('.side [data-nav]')).toHaveCount(7);
   await expect(page.locator('#studyTimerFloat')).toBeHidden();
   await expect(page.locator('#studyTimerFloat')).not.toContainText('Estudar');
   await calendar.click();
@@ -1573,12 +1575,8 @@ test('iPad retrato paisagem e Split View permanecem sem overflow',async({page},t
     }));
     expect.soft(layout.isIpad).toBe(true);
     expect.soft(layout.scrollWidth,'layout não deve criar overflow horizontal').toBeLessThanOrEqual(layout.width+2);
-    if(scenario.width<=820){
-      await expect(page.locator('.bottom-nav')).toBeVisible();
-    }else{
-      await expect(page.locator('.side')).toBeVisible();
-      await expect(page.locator('.bottom-nav')).toBeHidden();
-    }
+    await expect(page.locator('.side')).toBeVisible();
+    await expect(page.locator('.bottom-nav')).toBeHidden();
   }
 });
 
