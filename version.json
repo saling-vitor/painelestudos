@@ -1,15 +1,14 @@
 {
-  "version": "15.36.27",
-  "label": "V15.36.27-G",
-  "releasedAt": "2026-10-03T21:18:00.000Z",
-  "notes": "No Progresso, Desktop e iPad deixam de usar miniaturas de capa e passam a priorizar a tag colorida, com mais espaço para o título, metadados sem repetição e botão Abrir mais compacto. O iPhone mantém o padrão compacto já aprovado.",
+  "version": "15.36.28",
+  "label": "V15.36.28-T",
+  "releasedAt": "2026-10-03T22:20:00.000Z",
+  "notes": "No iPad/tablet, as capas dos cursos na Home passam a respeitar a proporção 16:9 real, reduzindo cortes da arte. O selo ATIVO e o botão de configuração ficam contidos dentro da área da capa. Desktop e iPhone permanecem inalterados.",
   "showWhatsNew": true,
   "highlights": [
-    "[D+T] Miniaturas de capa removidas das linhas de mapas no Progresso",
-    "[D+T] Tag colorida passa a ser a identidade principal de cada mapa",
-    "[D+T] Títulos ganham mais espaço e podem ocupar até duas linhas",
-    "[D+T] Metadado duplicado à direita é removido nos mapas não iniciados",
-    "[D+T] Botão Abrir fica compacto e alinhado",
-    "[M] Smartphone mantém o layout por tags já aprovado"
+    "[T] Capas dos cursos na Home usam proporção 16:9 real",
+    "[T] A arte deixa de ser achatada e perde menos conteúdo",
+    "[T] Selo ATIVO permanece dentro da capa",
+    "[T] Botão de configuração permanece dentro da capa",
+    "[D+M] Desktop e iPhone permanecem sem alterações"
   ]
 }

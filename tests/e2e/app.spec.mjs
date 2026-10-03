@@ -467,6 +467,43 @@ test('cards de curso mantêm controles dentro da capa e enquadramento equilibrad
   expect(visual.controlsOverlap).toBe(false);
 });
 
+
+test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisagem',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva do iPad.');
+  const scenarios=[
+    {name:'retrato',width:820,height:1180},
+    {name:'paisagem',width:1194,height:834}
+  ];
+  for(const scenario of scenarios){
+    await page.setViewportSize({width:scenario.width,height:scenario.height});
+    await page.goto('/#home');
+    const card=page.locator('#homeCourses .home-course-card.course-library-card').first();
+    await expect(card).toBeVisible();
+    const visual=await card.evaluate(el=>{
+      const cover=el.querySelector('.course-card-cover');
+      const status=el.querySelector('.course-status-pill');
+      const edit=el.querySelector('.course-card-edit');
+      const c=cover.getBoundingClientRect(),s=status.getBoundingClientRect(),e=edit?.getBoundingClientRect();
+      const card=el.getBoundingClientRect();
+      return{
+        ratio:c.width/c.height,
+        maxSideInset:Math.max(c.left-card.left,card.right-c.right),
+        cardOverflow:getComputedStyle(el).overflow,
+        statusInside:s.left>=c.left+8&&s.top>=c.top+8&&s.right<=c.right-8&&s.bottom<=c.bottom-8,
+        editInside:!e||(e.left>=c.left+8&&e.top>=c.top+8&&e.right<=c.right-8&&e.bottom<=c.bottom-8),
+        controlsOverlap:!!e&&!(s.right<=e.left||e.right<=s.left||s.bottom<=e.top||e.bottom<=s.top)
+      };
+    });
+    expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeGreaterThanOrEqual(1.74);
+    expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeLessThanOrEqual(1.82);
+    expect.soft(visual.maxSideInset,scenario.name+' capa mantém apenas a margem editorial do card').toBeLessThanOrEqual(16);
+    expect.soft(visual.cardOverflow,scenario.name+' card recorta a capa nos cantos').toBe('hidden');
+    expect.soft(visual.statusInside,scenario.name+' selo ATIVO fica dentro da capa').toBe(true);
+    expect.soft(visual.editInside,scenario.name+' botão de configuração fica dentro da capa').toBe(true);
+    expect.soft(visual.controlsOverlap,scenario.name+' controles não se sobrepõem').toBe(false);
+  }
+});
+
 test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o smartphone',async({page},testInfo)=>{
   test.skip(!['desktop-chromium','ipad'].includes(testInfo.project.name),'Validação específica de desktop e iPad.');
   await page.setViewportSize(testInfo.project.name==='ipad'?{width:1194,height:834}:{width:1440,height:900});
