@@ -1,6 +1,7 @@
 /* V15.36.15-G · Glassmorphism dos botões
-   Referência visual aprovada: botão ••• com vidro fumê translúcido,
-   reflexo branco, blur real e sombra curta. */
+   Refino V15.36.18-G · hover fumê uniforme e sem clareamento excessivo.
+   Referência visual aprovada: vidro escuro/translúcido, reflexo branco discreto,
+   blur real e resposta de interação sem flash branco ou elevação perceptível. */
 
 :root{
   --button-glass-border:rgba(255,255,255,.20);
@@ -19,7 +20,7 @@
   isolation:isolate;
 }
 
-/* Neutros: vidro fumê, com o branco aparecendo no topo. */
+/* Neutros: vidro fumê, com reflexo branco controlado. */
 :is(button.secondary,a.secondary,.icon-btn){
   border:1px solid var(--button-glass-border)!important;
   background:
@@ -73,7 +74,7 @@
 }
 
 /* =========================================================
-   CONTROLES SOBRE CAPAS · referência exata do usuário
+   CONTROLES SOBRE CAPAS · brilho um pouco mais presente
    ========================================================= */
 :is(
   .course-card-edit,
@@ -108,6 +109,36 @@
       color-mix(in srgb,#d8c59e 9%,rgba(255,255,255,.10)),
       color-mix(in srgb,#d8c59e 7%,rgba(20,23,28,.28)))!important;
   color:#f0dfb9!important;
+}
+
+/* =========================================================
+   AÇÕES QUE NÃO USAM .primary/.secondary
+   Recebem o mesmo material em vez de um hover isolado.
+   ========================================================= */
+:is(
+  #homeCourses .course-footer .enter,
+  #coursesGrid .course-footer .enter,
+  .map-card .map-open-label,
+  .home-simulations-section .simulation-recent-action
+){
+  --button-glass-accent:var(--accent,var(--course-accent,var(--map-accent,var(--simulation-accent,#9aa1aa))));
+  border:1px solid color-mix(in srgb,var(--button-glass-accent) 32%,rgba(255,255,255,.18))!important;
+  background:
+    radial-gradient(120% 95% at 18% 0%,
+      color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.17)) 0%,
+      color-mix(in srgb,var(--button-glass-accent) 6%,rgba(255,255,255,.065)) 42%,
+      transparent 70%),
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--button-glass-accent) 12%,rgba(255,255,255,.105)) 0%,
+      color-mix(in srgb,var(--button-glass-accent) 8%,rgba(255,255,255,.055)) 48%,
+      color-mix(in srgb,var(--button-glass-accent) 7%,rgba(16,19,24,.28)) 100%)!important;
+  color:color-mix(in srgb,var(--button-glass-accent) 67%,white)!important;
+  box-shadow:
+    0 7px 18px rgba(0,0,0,.29),
+    inset 0 1px 0 rgba(255,255,255,.17),
+    inset 0 -1px 0 rgba(255,255,255,.03)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(126%)!important;
+  backdrop-filter:blur(18px) saturate(126%)!important;
 }
 
 /* =========================================================
@@ -151,14 +182,21 @@
     inset 0 -1px 0 rgba(255,255,255,.035)!important;
 }
 
+/* Estado ativo de controles: sinaliza seleção sem recuperar o dourado/branco sólido. */
+:is(.icon-btn.active,.icon-btn[aria-pressed="true"],.maps-layout-actions .icon-btn.active){
+  border-color:rgba(255,255,255,.24)!important;
+  background:
+    radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.20),rgba(255,255,255,.075) 40%,transparent 68%),
+    linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.08) 50%,rgba(21,24,29,.30))!important;
+  color:#eef0f3!important;
+}
+
 /* =========================================================
-   HOVER / PRESS · mantém o vidro, sem voltar a bloco sólido
+   HOVER · fumê continua fumê; sem branco, sem salto
    ========================================================= */
-@media(hover:hover){
+@media(hover:hover) and (pointer:fine){
   :is(
-    button.primary,a.primary,
     button.secondary,a.secondary,
-    button.danger,a.danger,
     .icon-btn,
     .course-card-edit,
     .map-admin-btn,
@@ -166,16 +204,93 @@
     .simulation-card-menu-btn,
     .compact-icon-btn
   ):hover{
-    transform:translateY(-1px)!important;
-    filter:brightness(1.06)!important;
-    border-color:rgba(255,255,255,.25)!important;
+    transform:none!important;
+    filter:none!important;
+    border-color:rgba(255,255,255,.22)!important;
+    background:
+      radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.19) 0%,rgba(255,255,255,.075) 40%,transparent 67%),
+      linear-gradient(180deg,
+        rgba(255,255,255,.14) 0%,
+        rgba(255,255,255,.082) 50%,
+        rgba(20,23,28,.30) 100%)!important;
+    color:#e2e5e9!important;
     box-shadow:
-      0 9px 21px rgba(0,0,0,.33),
-      inset 0 1px 0 rgba(255,255,255,.24),
-      inset 0 -1px 0 rgba(255,255,255,.045)!important;
+      0 8px 19px rgba(0,0,0,.31),
+      inset 0 1px 0 rgba(255,255,255,.205),
+      inset 0 -1px 0 rgba(255,255,255,.035)!important;
+  }
+
+  :is(button.primary,a.primary):hover{
+    transform:none!important;
+    filter:none!important;
+    border-color:color-mix(in srgb,var(--button-glass-accent) 36%,rgba(255,255,255,.20))!important;
+    background:
+      radial-gradient(120% 95% at 18% 0%,
+        color-mix(in srgb,var(--button-glass-accent) 11%,rgba(255,255,255,.19)) 0%,
+        color-mix(in srgb,var(--button-glass-accent) 7%,rgba(255,255,255,.07)) 42%,
+        transparent 70%),
+      linear-gradient(180deg,
+        color-mix(in srgb,var(--button-glass-accent) 13%,rgba(255,255,255,.115)) 0%,
+        color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.062)) 48%,
+        color-mix(in srgb,var(--button-glass-accent) 8%,rgba(16,19,24,.29)) 100%)!important;
+    box-shadow:
+      0 8px 19px rgba(0,0,0,.31),
+      inset 0 1px 0 rgba(255,255,255,.20),
+      inset 0 -1px 0 rgba(255,255,255,.035),
+      0 0 0 1px color-mix(in srgb,var(--button-glass-accent) 5%,transparent)!important;
+  }
+
+  :is(button.danger,a.danger):hover{
+    transform:none!important;
+    filter:none!important;
+    border-color:rgba(217,103,115,.40)!important;
+    background:
+      radial-gradient(120% 95% at 18% 0%,rgba(255,255,255,.16),rgba(255,255,255,.055) 42%,transparent 68%),
+      linear-gradient(180deg,
+        color-mix(in srgb,#d96773 14%,rgba(255,255,255,.10)),
+        color-mix(in srgb,#d96773 9%,rgba(18,21,26,.29)))!important;
+    box-shadow:
+      0 8px 19px rgba(0,0,0,.31),
+      inset 0 1px 0 rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(255,255,255,.03)!important;
+  }
+
+  :is(
+    #homeCourses .course-footer .enter,
+    #coursesGrid .course-footer .enter,
+    .map-card .map-open-label,
+    .home-simulations-section .simulation-recent-action
+  ):hover{
+    transform:none!important;
+    filter:none!important;
+    border-color:color-mix(in srgb,var(--button-glass-accent) 36%,rgba(255,255,255,.19))!important;
+    background:
+      radial-gradient(120% 95% at 18% 0%,
+        color-mix(in srgb,var(--button-glass-accent) 9%,rgba(255,255,255,.17)) 0%,
+        color-mix(in srgb,var(--button-glass-accent) 6%,rgba(255,255,255,.065)) 42%,
+        transparent 70%),
+      linear-gradient(180deg,
+        color-mix(in srgb,var(--button-glass-accent) 12%,rgba(255,255,255,.105)) 0%,
+        color-mix(in srgb,var(--button-glass-accent) 8%,rgba(255,255,255,.055)) 48%,
+        color-mix(in srgb,var(--button-glass-accent) 7%,rgba(16,19,24,.30)) 100%)!important;
+    box-shadow:
+      0 8px 19px rgba(0,0,0,.30),
+      inset 0 1px 0 rgba(255,255,255,.18),
+      inset 0 -1px 0 rgba(255,255,255,.03)!important;
+  }
+
+  /* Sobre imagem preta pode haver um reflexo ligeiramente mais visível. */
+  :is(.course-card-edit,.map-admin-btn,.map-card>.fav,.simulation-card-menu-btn):hover{
+    background:
+      radial-gradient(125% 105% at 16% -4%,rgba(255,255,255,.225) 0%,rgba(255,255,255,.085) 39%,transparent 67%),
+      linear-gradient(180deg,
+        rgba(255,255,255,.145) 0%,
+        rgba(255,255,255,.078) 50%,
+        rgba(18,21,26,.31) 100%)!important;
   }
 }
 
+/* PRESS / TOUCH · resposta curta, sem hover preso e sem salto. */
 :is(
   button.primary,a.primary,
   button.secondary,a.secondary,
@@ -185,12 +300,36 @@
   .map-admin-btn,
   .map-card>.fav,
   .simulation-card-menu-btn,
-  .compact-icon-btn
+  .compact-icon-btn,
+  #homeCourses .course-footer .enter,
+  #coursesGrid .course-footer .enter,
+  .map-card .map-open-label,
+  .home-simulations-section .simulation-recent-action
 ):active{
-  transform:translateY(1px)!important;
-  filter:brightness(.96)!important;
+  transform:none!important;
+  filter:none!important;
   box-shadow:
-    0 3px 9px rgba(0,0,0,.27),
+    0 3px 9px rgba(0,0,0,.25),
     inset 0 1px 0 rgba(255,255,255,.10),
     inset 0 2px 4px rgba(0,0,0,.16)!important;
+}
+
+/* Foco acessível e discreto; não reaplica fundo claro. */
+:is(
+  button.primary,a.primary,
+  button.secondary,a.secondary,
+  button.danger,a.danger,
+  .icon-btn,
+  .course-card-edit,
+  .map-admin-btn,
+  .map-card>.fav,
+  .simulation-card-menu-btn,
+  .compact-icon-btn,
+  #homeCourses .course-footer .enter,
+  #coursesGrid .course-footer .enter,
+  .map-card .map-open-label,
+  .home-simulations-section .simulation-recent-action
+):focus-visible{
+  outline:1px solid rgba(255,255,255,.25)!important;
+  outline-offset:2px!important;
 }
