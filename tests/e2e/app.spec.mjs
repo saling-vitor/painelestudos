@@ -2909,3 +2909,25 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   expect(layout.right).toBeLessThanOrEqual(layout.width+1);
   expect(layout.grid).not.toBe('none');
 });
+
+test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',async({page})=>{
+  await page.goto('/#maps');
+  await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
+  await expect(page.locator('#allMapsSearch')).toBeHidden();
+  const title=await page.locator('#allMaps .map-card h3').first().innerText();
+  await page.locator('#globalSearch').fill(title);
+  await expect(page.locator('#allMaps .map-card')).toHaveCount(1);
+  await expect(page.locator('#allMapsMobileSort')).toBeVisible();
+  await page.locator('#allMapsMobileSort').click();
+  await expect(page.locator('#allMapsFilterPanel')).toBeVisible();
+  await page.locator('#allMapsSortSheet').selectOption('za');
+  await expect(page.locator('#allMapsMobileSortLabel')).toHaveText('Z–A');
+  await page.locator('#globalSearch').fill('');
+  await page.locator('#allMapsMobileFilter').click();
+  await expect(page.locator('#allMapsFilterPanel')).toBeVisible();
+  const box=await page.locator('#allMapsFilterPanel').boundingBox();
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.y+box.height).toBeLessThanOrEqual(845);
+  await page.locator('#allMapsFilterDone').click();
+  await expect(page.locator('#allMapsFilterPanel')).toBeHidden();
+});

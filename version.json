@@ -1,14 +1,12 @@
 {
-  "version": "15.36.7",
-  "label": "V15.36.7-G",
-  "releasedAt": "2026-10-03T01:50:00.000Z",
-  "notes": "Plano do dia com fundo em camadas, mais profundidade no desktop e iPad e uma composição mais leve no iPhone.",
+  "version": "15.36.8",
+  "label": "V15.36.8-M",
+  "releasedAt": "2026-10-03T08:15:00.000Z",
+  "notes": "Busca única e controles compactos na biblioteca de mapas do smartphone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Fundo do Plano do dia passa a ter três níveis visuais: painel, sequência e progresso",
-    "[D] Desktop ganha profundidade sutil, glow controlado e superfícies mais bem separadas",
-    "[T] iPad recebe painel mais definido, divisórias suaves e leitura menos parecida com tabela",
-    "[M] iPhone fica mais leve, com menos massa preta e mais respiro entre os mini-cards",
-    "[G] A cor do primeiro mapa continua guiando o destaque sem voltar ao dourado genérico"
+    "[M] Busca superior filtra mapas sem duplicar o campo",
+    "[M] Filtros e ordenação abrem em painel inferior",
+    "[M] Ordenar, Filtrar e grade/lista ficam na mesma linha"
   ]
 }

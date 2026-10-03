@@ -115,3 +115,14 @@
 @media(prefers-reduced-motion:reduce){
   .maps-filter-panel,.maps-filter-backdrop{scroll-behavior:auto}
 }
+
+/* Smartphone: one search and a compact row of touch controls. */
+@media(max-width:700px){
+  .maps-library-view .maps-search-control{display:none!important}
+  .maps-library-view .maps-mobile-controls{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto!important;margin-top:0}
+  .maps-library-view .maps-mobile-controls .maps-layout-actions{grid-column:auto!important;justify-content:flex-end}
+  .maps-library-view .maps-mobile-controls>.secondary{height:44px;font-size:11px;border-radius:10px}
+  .maps-library-view .maps-mobile-controls .maps-layout-actions .icon-btn{width:44px;min-width:44px;height:44px}
+  body>.maps-filter-panel:not([hidden]){display:block!important;z-index:1001;max-height:80dvh}
+  body>.maps-filter-backdrop:not([hidden]){z-index:1000}
+}

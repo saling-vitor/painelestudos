@@ -79,7 +79,7 @@
     ],q);
   }
   function allMapsFilter(base){
-    const q=normalizeSearchText(state.allMapsQuery||'');
+    const q=normalizeSearchText(window.matchMedia('(max-width:700px)').matches?state.globalQuery||state.allMapsQuery||'':state.allMapsQuery||'');
     let items=[...base].filter(m=>allMapsMatchesQuery(m,q));
     if(state.allMapsCategory)items=items.filter(m=>safeLabel(m.category||'Outros')===state.allMapsCategory);
     if(state.allMapsCourse)items=items.filter(m=>safeLabel(m.courseId)===state.allMapsCourse);
@@ -204,6 +204,8 @@
   function openAllMapsPanel(mode='filter'){
     const panel=byId('allMapsFilterPanel'),backdrop=byId('allMapsFilterBackdrop');
     if(!panel)return;
+    // Keep fixed sheets outside clipped/transformed view containers on iOS.
+    document.body.append(backdrop,panel);
     panel.dataset.mode=mode;
     panel.setAttribute('aria-modal',String(window.matchMedia('(max-width:700px)').matches));
     panel.hidden=false;
@@ -237,7 +239,7 @@
 
   window.renderAllMaps=function renderAllMaps(options={}){
     const controls=byId('allMapsControls');
-    if(String(state.globalQuery||'').trim()&&typeof legacyRenderAllMaps==='function'){
+    if(!window.matchMedia('(max-width:700px)').matches&&String(state.globalQuery||'').trim()&&typeof legacyRenderAllMaps==='function'){
       if(controls)controls.hidden=true;
       return legacyRenderAllMaps();
     }
@@ -268,6 +270,15 @@
   };
 
   function bindControls(){
+    byId('globalSearch')?.addEventListener('input',e=>{
+      if(state.view!=='maps'||!window.matchMedia('(max-width:700px)').matches)return;
+      e.stopImmediatePropagation();
+      state.globalQuery=e.target.value;
+      state.allMapsQuery=e.target.value;
+      hideGlobalSearchPanel();
+      renderAllMaps();
+    },true);
+    window.addEventListener('studyapp:navigation',()=>{if(state.view!=='maps')closeAllMapsPanel()});
     const search=byId('allMapsSearch');
     if(search)search.oninput=e=>{state.allMapsQuery=e.target.value;renderAllMaps()};
     const sort=byId('allMapsSort'),sortSheet=byId('allMapsSortSheet');
@@ -304,7 +315,7 @@
     document.addEventListener('click',e=>{
       if(state.view!=='maps'||byId('allMapsFilterPanel')?.hidden)return;
       if(window.matchMedia('(max-width:700px)').matches)return;
-      if(!e.target.closest('#allMapsFilterPanel,#allMapsFilterBtn'))closeAllMapsPanel();
+      if(!e.target.closest('#allMapsFilterPanel,#allMapsFilterBtn,#allMapsMobileFilter,#allMapsMobileSort'))closeAllMapsPanel();
     });
     document.addEventListener('click',e=>{
       if(!e.target.closest('[data-fav]'))return;
