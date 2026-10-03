@@ -2940,23 +2940,50 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
 test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',async({page})=>{
   await page.goto('/#maps');
   await page.waitForFunction(()=>document.querySelectorAll('#allMaps .map-card').length>2);
+
+  const globalSearch=page.locator('#globalSearch');
+  await expect(globalSearch).toBeVisible();
+  await expect(globalSearch).toHaveAttribute('placeholder','Buscar mapas…');
   await expect(page.locator('#allMapsSearch')).toBeHidden();
+  expect(await page.locator('#allMapsSearch').isDisabled()).toBe(true);
+  await expect(page.locator('.maps-library-view .maps-toolbar')).toBeHidden();
+
   const title=await page.locator('#allMaps .map-card h3').first().innerText();
-  await page.locator('#globalSearch').fill(title);
+  await globalSearch.fill(title);
   await expect(page.locator('#allMaps .map-card')).toHaveCount(1);
-  await expect(page.locator('#allMapsMobileSort')).toBeVisible();
-  await page.locator('#allMapsMobileSort').click();
-  await expect(page.locator('#allMapsFilterPanel')).toBeVisible();
-  await page.locator('#allMapsSortSheet').selectOption('za');
+  await globalSearch.fill('');
+
+  const sort=page.locator('#allMapsMobileSort'),filter=page.locator('#allMapsMobileFilter');
+  await expect(sort).toBeVisible();
+  await expect(filter).toBeVisible();
+  await sort.click();
+  const panel=page.locator('#allMapsFilterPanel');
+  await expect(panel).toBeVisible();
+  await expect(panel).toHaveAttribute('data-mode','sort');
+  await expect(page.locator('#allMapsSortOptions .maps-sort-option')).toHaveCount(8);
+  await page.locator('#allMapsSortOptions [data-allmaps-sort-option="za"]').click();
+  await expect(panel).toBeHidden();
   await expect(page.locator('#allMapsMobileSortLabel')).toHaveText('Z–A');
-  await page.locator('#globalSearch').fill('');
-  await page.locator('#allMapsMobileFilter').click();
-  await expect(page.locator('#allMapsFilterPanel')).toBeVisible();
-  const box=await page.locator('#allMapsFilterPanel').boundingBox();
+
+  await filter.click();
+  await expect(panel).toBeVisible();
+  await expect(panel).toHaveAttribute('data-mode','filter');
+  const box=await panel.boundingBox();
   expect(box.y).toBeGreaterThanOrEqual(0);
   expect(box.y+box.height).toBeLessThanOrEqual(845);
+
+  const rowGeometry=await page.locator('.maps-mobile-controls').evaluate(el=>{
+    const sort=el.querySelector('#allMapsMobileSort').getBoundingClientRect();
+    const filter=el.querySelector('#allMapsMobileFilter').getBoundingClientRect();
+    const layout=el.querySelector('.maps-layout-actions').getBoundingClientRect();
+    return{sortTop:sort.top,filterTop:filter.top,layoutTop:layout.top,height:el.getBoundingClientRect().height};
+  });
+  expect(Math.abs(rowGeometry.sortTop-rowGeometry.filterTop)).toBeLessThan(2);
+  expect(Math.abs(rowGeometry.sortTop-rowGeometry.layoutTop)).toBeLessThan(4);
+  expect(rowGeometry.height).toBeLessThan(52);
+
   await page.locator('#allMapsFilterDone').click();
-  await expect(page.locator('#allMapsFilterPanel')).toBeHidden();
+  await expect(panel).toBeHidden();
 });
 
 

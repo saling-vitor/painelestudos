@@ -126,3 +126,144 @@
   body>.maps-filter-panel:not([hidden]){display:block!important;z-index:1001;max-height:80dvh}
   body>.maps-filter-backdrop:not([hidden]){z-index:1000}
 }
+
+
+/* V15.36.10-M · Todos os Mapas no smartphone */
+@media(max-width:700px){
+  .maps-library-view .maps-toolbar[hidden],
+  .maps-library-view .maps-search-control[hidden],
+  .maps-library-view #allMapsSearch[hidden]{
+    display:none!important;
+  }
+
+  .maps-library-view .maps-library-controls{
+    margin-top:0!important;
+    margin-bottom:10px!important;
+  }
+
+  .maps-library-view .maps-mobile-controls{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto!important;
+    align-items:center!important;
+    gap:6px!important;
+    margin-top:0!important;
+  }
+
+  .maps-library-view .maps-mobile-controls>.secondary{
+    min-width:0!important;
+    width:100%!important;
+    height:42px!important;
+    min-height:42px!important;
+    padding:0 10px!important;
+    border-radius:10px!important;
+    font-size:10px!important;
+  }
+
+  .maps-library-view .maps-mobile-controls>.secondary small{
+    font-size:9px!important;
+  }
+
+  .maps-library-view .maps-mobile-controls .maps-layout-actions{
+    grid-column:3!important;
+    display:grid!important;
+    grid-template-columns:40px 40px!important;
+    gap:5px!important;
+    justify-content:end!important;
+  }
+
+  .maps-library-view .maps-mobile-controls .maps-layout-actions .icon-btn{
+    width:40px!important;
+    min-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    border-radius:10px!important;
+  }
+
+  body>.maps-filter-backdrop:not([hidden]){
+    display:block!important;
+    position:fixed!important;
+    inset:0!important;
+    z-index:1400!important;
+    background:rgba(0,0,0,.62)!important;
+    -webkit-backdrop-filter:blur(5px);
+    backdrop-filter:blur(5px);
+  }
+
+  body>.maps-filter-panel:not([hidden]){
+    display:block!important;
+    position:fixed!important;
+    left:8px!important;
+    right:8px!important;
+    bottom:max(8px,env(safe-area-inset-bottom))!important;
+    top:auto!important;
+    z-index:1401!important;
+    width:auto!important;
+    max-height:min(76dvh,620px)!important;
+    padding:14px 14px calc(14px + env(safe-area-inset-bottom))!important;
+    border:1px solid rgba(255,255,255,.085)!important;
+    border-radius:18px!important;
+    background:rgba(10,12,16,.985)!important;
+    box-shadow:0 24px 78px rgba(0,0,0,.68)!important;
+    overflow:auto!important;
+    overscroll-behavior:contain;
+  }
+
+  body>.maps-filter-panel .maps-filter-panel-head{
+    top:-14px!important;
+    margin:-14px -14px 11px!important;
+    padding:13px 14px 10px!important;
+  }
+
+  body>.maps-filter-panel[data-mode="sort"] .maps-filter-sort-section{
+    display:block!important;
+  }
+
+  body>.maps-filter-panel[data-mode="sort"] .maps-filter-sort-section>.maps-filter-field{
+    display:none!important;
+  }
+
+  .maps-sort-option-list{
+    display:grid!important;
+    gap:6px!important;
+  }
+
+  .maps-sort-option{
+    width:100%!important;
+    min-height:48px!important;
+    padding:0 12px!important;
+    border:1px solid rgba(255,255,255,.06)!important;
+    border-radius:11px!important;
+    background:rgba(255,255,255,.018)!important;
+    color:#c8ccd1!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:12px!important;
+    text-align:left!important;
+    font-size:11px!important;
+  }
+
+  .maps-sort-option i{
+    opacity:0;
+    color:#d9dde2;
+    font-style:normal;
+  }
+
+  .maps-sort-option.active{
+    border-color:rgba(255,255,255,.14)!important;
+    background:rgba(255,255,255,.045)!important;
+    color:#f1f2f3!important;
+  }
+
+  .maps-sort-option.active i{
+    opacity:1;
+  }
+
+  body>.maps-filter-panel[data-mode="sort"] .maps-filter-panel-actions{
+    display:none!important;
+  }
+
+  body>.maps-filter-panel[data-mode="filter"] .maps-filter-filter-section{
+    display:block!important;
+  }
+}
