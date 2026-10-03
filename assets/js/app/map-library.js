@@ -20,6 +20,9 @@
     ['completed','Concluído']
   ]);
   const byId=id=>document.getElementById(id);
+  const MOBILE_MAPS_QUERY='(max-width:700px)';
+  const isPhoneMaps=()=>window.matchMedia(MOBILE_MAPS_QUERY).matches&&!document.documentElement.classList.contains('is-ipad');
+  const mobileMapsActive=()=>isPhoneMaps()&&state.view==='maps';
   const safeLabel=value=>String(value||'').trim();
   const mapKeyOf=m=>m?m._key||mapKey(m):'';
   const mapTitle=m=>safeLabel(m?.title||m?.shortTitle||m?.code||'Mapa');
@@ -46,6 +49,52 @@
     const html=items.map(([value,label])=>optionHtml(value,label,current)).join('');
     if(el.innerHTML!==html)el.innerHTML=html;
     el.value=current;
+  }
+  function syncMobileMapsSearch(){
+    const active=mobileMapsActive(),global=byId('globalSearch'),local=byId('allMapsSearch');
+    const localShell=local?.closest('.maps-search-control'),toolbar=byId('allMapsControls')?.querySelector('.maps-toolbar');
+    if(local){
+      local.hidden=active;
+      local.disabled=active;
+      local.setAttribute('aria-hidden',String(active));
+    }
+    if(localShell)localShell.hidden=active;
+    if(toolbar)toolbar.hidden=active;
+    if(!global)return;
+    if(!global.dataset.defaultPlaceholder)global.dataset.defaultPlaceholder=global.getAttribute('placeholder')||'Buscar cursos, mapas, disciplinas ou temas…';
+    if(!global.dataset.defaultAriaLabel)global.dataset.defaultAriaLabel=global.getAttribute('aria-label')||'Buscar cursos, mapas, disciplinas ou temas';
+    if(active){
+      global.dataset.mapsMode='1';
+      global.setAttribute('placeholder','Buscar mapas…');
+      global.setAttribute('aria-label','Buscar mapas');
+      if(document.activeElement!==global&&global.value!==state.allMapsQuery)global.value=state.allMapsQuery||'';
+      return;
+    }
+    if(global.dataset.mapsMode==='1'){
+      global.dataset.mapsMode='0';
+      global.value='';
+      state.globalQuery='';
+      if(typeof hideGlobalSearchPanel==='function')hideGlobalSearchPanel();
+    }
+    global.setAttribute('placeholder',global.dataset.defaultPlaceholder);
+    global.setAttribute('aria-label',global.dataset.defaultAriaLabel);
+  }
+  function renderMobileSortOptions(){
+    const section=byId('allMapsFilterPanel')?.querySelector('.maps-filter-sort-section');
+    if(!section)return;
+    let list=byId('allMapsSortOptions');
+    if(!list){
+      list=document.createElement('div');
+      list.id='allMapsSortOptions';
+      list.className='maps-sort-option-list';
+      section.appendChild(list);
+    }
+    list.innerHTML=SORTS.map(([id,label])=>'<button type="button" class="maps-sort-option '+(state.allMapsSort===id?'active':'')+'" data-allmaps-sort-option="'+ESC(id)+'" aria-pressed="'+String(state.allMapsSort===id)+'"><span>'+ESC(label)+'</span><i aria-hidden="true">✓</i></button>').join('');
+    list.querySelectorAll('[data-allmaps-sort-option]').forEach(button=>button.onclick=()=>{
+      persistAllMapsSort(button.dataset.allmapsSortOption);
+      closeAllMapsPanel();
+      renderAllMaps();
+    });
   }
   function allMapsFilterCount(){
     return [state.allMapsCategory,state.allMapsCourse,state.allMapsStatus,state.allMapsFavorites,state.allMapsOffline].filter(Boolean).length;
@@ -204,10 +253,12 @@
   function openAllMapsPanel(mode='filter'){
     const panel=byId('allMapsFilterPanel'),backdrop=byId('allMapsFilterBackdrop');
     if(!panel)return;
-    // Keep fixed sheets outside clipped/transformed view containers on iOS.
-    document.body.append(backdrop,panel);
+    // O painel vai para o body no iPhone para nunca ficar preso a overflow/transform da view.
+    if(backdrop)document.body.appendChild(backdrop);
+    document.body.appendChild(panel);
     panel.dataset.mode=mode;
-    panel.setAttribute('aria-modal',String(window.matchMedia('(max-width:700px)').matches));
+    panel.setAttribute('aria-modal',String(isPhoneMaps()));
+    if(mode==='sort')renderMobileSortOptions();
     panel.hidden=false;
     if(backdrop)backdrop.hidden=false;
     document.documentElement.classList.add('maps-filter-open');
@@ -217,7 +268,7 @@
     const title=byId('allMapsFilterPanelTitle');
     if(title)title.textContent=mode==='sort'?'Ordenar mapas':'Filtrar mapas';
     requestAnimationFrame(()=>{
-      const target=mode==='sort'?byId('allMapsSortSheet'):byId('allMapsCategory');
+      const target=mode==='sort'?byId('allMapsSortOptions')?.querySelector('.maps-sort-option.active,.maps-sort-option'):byId('allMapsCategory');
       target?.focus?.({preventScroll:true});
     });
   }
@@ -238,8 +289,9 @@
   window.closeAllMapsPanel=closeAllMapsPanel;
 
   window.renderAllMaps=function renderAllMaps(options={}){
+    syncMobileMapsSearch();
     const controls=byId('allMapsControls');
-    if(!window.matchMedia('(max-width:700px)').matches&&String(state.globalQuery||'').trim()&&typeof legacyRenderAllMaps==='function'){
+    if(!isPhoneMaps()&&String(state.globalQuery||'').trim()&&typeof legacyRenderAllMaps==='function'){
       if(controls)controls.hidden=true;
       return legacyRenderAllMaps();
     }
@@ -271,14 +323,18 @@
 
   function bindControls(){
     byId('globalSearch')?.addEventListener('input',e=>{
-      if(state.view!=='maps'||!window.matchMedia('(max-width:700px)').matches)return;
+      if(!mobileMapsActive())return;
       e.stopImmediatePropagation();
       state.globalQuery=e.target.value;
       state.allMapsQuery=e.target.value;
-      hideGlobalSearchPanel();
+      if(typeof hideGlobalSearchPanel==='function')hideGlobalSearchPanel();
       renderAllMaps();
     },true);
-    window.addEventListener('studyapp:navigation',()=>{if(state.view!=='maps')closeAllMapsPanel()});
+    window.addEventListener('studyapp:navigation',()=>{
+      if(state.view!=='maps')closeAllMapsPanel();
+      syncMobileMapsSearch();
+    });
+    window.addEventListener('resize',syncMobileMapsSearch,{passive:true});
     const search=byId('allMapsSearch');
     if(search)search.oninput=e=>{state.allMapsQuery=e.target.value;renderAllMaps()};
     const sort=byId('allMapsSort'),sortSheet=byId('allMapsSortSheet');
@@ -303,9 +359,22 @@
     const groupChange=e=>{state.allMapsGroup=e.target.value;renderAllMaps()};
     if(group)group.onchange=groupChange;
     if(groupSheet)groupSheet.onchange=groupChange;
-    byId('allMapsFilterBtn')?.addEventListener('click',()=>openAllMapsPanel('filter'));
-    byId('allMapsMobileFilter')?.addEventListener('click',()=>openAllMapsPanel('filter'));
-    byId('allMapsMobileSort')?.addEventListener('click',()=>openAllMapsPanel('sort'));
+    // Delegação em capture: os gatilhos continuam funcionais mesmo após reflow/relocação do sheet no iOS.
+    document.addEventListener('click',e=>{
+      const sortTrigger=e.target.closest('#allMapsMobileSort');
+      if(sortTrigger&&mobileMapsActive()){
+        e.preventDefault();
+        e.stopPropagation();
+        openAllMapsPanel('sort');
+        return;
+      }
+      const filterTrigger=e.target.closest('#allMapsMobileFilter,#allMapsFilterBtn');
+      if(filterTrigger&&state.view==='maps'){
+        e.preventDefault();
+        e.stopPropagation();
+        openAllMapsPanel('filter');
+      }
+    },true);
     byId('allMapsFilterClose')?.addEventListener('click',closeAllMapsPanel);
     byId('allMapsFilterDone')?.addEventListener('click',closeAllMapsPanel);
     byId('allMapsFilterBackdrop')?.addEventListener('click',closeAllMapsPanel);
@@ -314,13 +383,14 @@
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!byId('allMapsFilterPanel')?.hidden)closeAllMapsPanel()});
     document.addEventListener('click',e=>{
       if(state.view!=='maps'||byId('allMapsFilterPanel')?.hidden)return;
-      if(window.matchMedia('(max-width:700px)').matches)return;
+      if(isPhoneMaps())return;
       if(!e.target.closest('#allMapsFilterPanel,#allMapsFilterBtn,#allMapsMobileFilter,#allMapsMobileSort'))closeAllMapsPanel();
     });
     document.addEventListener('click',e=>{
       if(!e.target.closest('[data-fav]'))return;
       if(state.view==='maps'&&state.allMapsFavorites)queueMicrotask(()=>renderAllMaps());
     });
+    syncMobileMapsSearch();
   }
   bindControls();
 })();
