@@ -1,15 +1,14 @@
 {
-  "version": "15.36.6",
-  "label": "V15.36.6-G",
-  "releasedAt": "2026-10-03T01:44:00.000Z",
-  "notes": "Plano do dia redesenhado com hierarquia mais clara e layout próprio para desktop, iPad e iPhone.",
+  "version": "15.36.7",
+  "label": "V15.36.7-G",
+  "releasedAt": "2026-10-03T01:50:00.000Z",
+  "notes": "Plano do dia com fundo em camadas, mais profundidade no desktop e iPad e uma composição mais leve no iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Seu estudo de hoje passa a mostrar duração planejada, quantidade de blocos e blocos concluídos",
-    "[D] Desktop ganha sequência mais compacta, alinhada e com a próxima atividade destacada pela cor do mapa",
-    "[T] iPad preserva a leitura em linha com botões touch de 44 px e espaçamento próprio",
-    "[M] iPhone transforma cada atividade em mini-card vertical, sem comprimir título, tempo e ação",
-    "[G] Começar estudo inicia a primeira sessão planejada; quando já existe uma sessão ativa, a ação vira Continuar",
-    "[G] Rodapé do plano passa a exibir horas/minutos, tempo restante e progresso do dia"
+    "[G] Fundo do Plano do dia passa a ter três níveis visuais: painel, sequência e progresso",
+    "[D] Desktop ganha profundidade sutil, glow controlado e superfícies mais bem separadas",
+    "[T] iPad recebe painel mais definido, divisórias suaves e leitura menos parecida com tabela",
+    "[M] iPhone fica mais leve, com menos massa preta e mais respiro entre os mini-cards",
+    "[G] A cor do primeiro mapa continua guiando o destaque sem voltar ao dourado genérico"
   ]
 }
