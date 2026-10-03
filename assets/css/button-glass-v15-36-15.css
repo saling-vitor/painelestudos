@@ -1,4 +1,4 @@
-/* V15.36.21-G · Glass exclusivo dos controles sobre capas
+/* V15.36.22-G · Glass exclusivo dos controles sobre capas
    Regra canônica:
    - sobre capa/imagem: vidro fumê;
    - fora da capa: estilo normal da interface.
@@ -40,18 +40,9 @@
   isolation:isolate;
 }
 
-/* Favorito ativo continua vidro, apenas com indicação quente. */
-.map-card.has-cover > .fav.on{
-  border-color:rgba(234,215,175,.28)!important;
-  background:
-    radial-gradient(125% 105% at 16% -4%,
-      rgba(255,255,255,.20),
-      rgba(255,255,255,.07) 40%,
-      transparent 68%),
-    linear-gradient(180deg,
-      color-mix(in srgb,#d8c59e 9%,rgba(255,255,255,.10)),
-      color-mix(in srgb,#d8c59e 7%,rgba(18,21,26,.30)))!important;
-  color:#f0dfb9!important;
+/* Favorito ativo: o vidro permanece idêntico; somente a estrela fica amarela. */
+.map-card > .fav.on{
+  color:#f2c94c!important;
 }
 
 /* Menu de simulado aberto: mantém o botão de capa identificado sem clarear demais. */
@@ -106,6 +97,12 @@
     box-shadow:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
+  }
+
+  /* Hover/focus nunca apaga a indicação de favorito ativo. */
+  .map-card > .fav.on:hover,
+  .map-card > .fav.on:focus-visible{
+    color:#f2c94c!important;
   }
 }
 
