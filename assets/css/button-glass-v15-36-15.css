@@ -1,4 +1,4 @@
-/* V15.36.22-G · Glass exclusivo dos controles sobre capas
+/* V15.36.24-G · Glass exclusivo dos controles sobre capas
    Regra canônica:
    - sobre capa/imagem: vidro fumê;
    - fora da capa: estilo normal da interface.
@@ -8,6 +8,21 @@
   --cover-button-glass-border:rgba(255,255,255,.18);
   --cover-button-glass-highlight:rgba(255,255,255,.18);
   --cover-button-glass-shadow:rgba(0,0,0,.32);
+}
+
+/* V15.36.24-G · dimensão visual canônica dos controles sobre capas.
+   A referência é o botão ••• compacto aprovado; apenas a geometria externa é uniformizada. */
+:is(
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+  .map-card.has-cover > .map-admin-btn,
+  .map-card.has-cover > .fav,
+  .simulation-card.has-cover .simulation-card-menu-btn
+){
+  box-sizing:border-box!important;
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  min-height:38px!important;
 }
 
 /* Controles que realmente flutuam sobre a arte da capa. */
