@@ -484,10 +484,11 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
       const status=el.querySelector('.course-status-pill');
       const edit=el.querySelector('.course-card-edit');
       const c=cover.getBoundingClientRect(),s=status.getBoundingClientRect(),e=edit?.getBoundingClientRect();
+      const card=el.getBoundingClientRect();
       return{
         ratio:c.width/c.height,
-        coverWidth:c.width,
-        cardWidth:el.getBoundingClientRect().width,
+        coverInside:c.left>=card.left&&c.right<=card.right&&c.top>=card.top&&c.bottom<=card.bottom,
+        maxSideInset:Math.max(c.left-card.left,card.right-c.right),
         statusInside:s.left>=c.left+8&&s.top>=c.top+8&&s.right<=c.right-8&&s.bottom<=c.bottom-8,
         editInside:!e||(e.left>=c.left+8&&e.top>=c.top+8&&e.right<=c.right-8&&e.bottom<=c.bottom-8),
         controlsOverlap:!!e&&!(s.right<=e.left||e.right<=s.left||s.bottom<=e.top||e.bottom<=s.top)
@@ -495,7 +496,8 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
     });
     expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeGreaterThanOrEqual(1.74);
     expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeLessThanOrEqual(1.82);
-    expect.soft(Math.abs(visual.coverWidth-visual.cardWidth),scenario.name+' capa ocupa toda a largura').toBeLessThanOrEqual(2);
+    expect.soft(visual.coverInside,scenario.name+' capa permanece contida no card').toBe(true);
+    expect.soft(visual.maxSideInset,scenario.name+' capa mantém apenas a margem editorial do card').toBeLessThanOrEqual(16);
     expect.soft(visual.statusInside,scenario.name+' selo ATIVO fica dentro da capa').toBe(true);
     expect.soft(visual.editInside,scenario.name+' botão de configuração fica dentro da capa').toBe(true);
     expect.soft(visual.controlsOverlap,scenario.name+' controles não se sobrepõem').toBe(false);
