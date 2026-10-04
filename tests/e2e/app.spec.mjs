@@ -335,9 +335,13 @@ test('V15.37.0 [G] recuperação pós-simulado cria revisão direcionada quando 
   expect(result.afterAgenda>=result.beforeAgenda||result.afterReviews>result.beforeReviews).toBe(true);
 });
 
-test('V15.38.0 [G] automação oferece modos, histórico e desfazer',async({page})=>{
+test('V15.38.0 [G] automação oferece modos, histórico e desfazer',async({page},testInfo)=>{
   await page.goto('/#settings');
   await page.waitForFunction(()=>window.StudyAutomation&&window.SettingsControlCenter);
+  if(testInfo.project.name==='iphone-webkit'){
+    const panel=page.locator('.settings-area-automation');
+    if(await panel.evaluate(el=>el.classList.contains('is-mobile-collapsed')))await panel.locator(':scope > .settings-mobile-toggle').click();
+  }
   const mode=page.locator('[data-automation-mode]');
   await expect(mode).toBeVisible();
   await mode.selectOption('intensive');
@@ -358,8 +362,14 @@ test('V15.38.0 [G] automação oferece modos, histórico e desfazer',async({page
   expect(undone.count).toBe(0);
 });
 
-test('V15.38.0 [G] aparência e metas eliminam redundância e mostram recomendação',async({page})=>{
+test('V15.38.0 [G] aparência e metas eliminam redundância e mostram recomendação',async({page},testInfo)=>{
   await page.goto('/#settings');
+  if(testInfo.project.name==='iphone-webkit'){
+    for(const selector of ['.settings-area-study','.settings-area-appearance','.settings-area-admin']){
+      const panel=page.locator(selector);
+      if(await panel.evaluate(el=>el.classList.contains('is-mobile-collapsed')))await panel.locator(':scope > .settings-mobile-toggle').click();
+    }
+  }
   await expect(page.locator('.study-goal-recommendation')).toBeVisible();
   await expect(page.locator('.study-goal-recommendation')).toContainText('Carga recomendada');
   await expect(page.locator('.settings-redundant-preview')).toBeHidden();
@@ -864,8 +874,14 @@ test('V15.38.0 [G] pontos de restauração mantêm dez e mostram três antes de 
   await expect(page.locator('[data-toggle-restore-points]')).toContainText('Mostrar menos');
 });
 
-test('V15.38.0 [G] saúde técnica fica separada dos dispositivos e do diagnóstico de estudo',async({page})=>{
+test('V15.38.0 [G] saúde técnica fica separada dos dispositivos e do diagnóstico de estudo',async({page},testInfo)=>{
   await page.goto('/#settings');
+  if(testInfo.project.name==='iphone-webkit'){
+    for(const selector of ['.settings-area-update','.settings-area-diagnostic','.settings-area-backup']){
+      const panel=page.locator(selector);
+      if(await panel.evaluate(el=>el.classList.contains('is-mobile-collapsed')))await panel.locator(':scope > .settings-mobile-toggle').click();
+    }
+  }
   await expect(page.locator('.app-update-summary')).toContainText(E2E_APP_VERSION_LABEL);
   await expect(page.locator('#appDiagnosticPanel.settings-area-diagnostic')).toBeVisible();
   await expect(page.locator('#appDiagnosticPanel')).toContainText('Saúde técnica');
