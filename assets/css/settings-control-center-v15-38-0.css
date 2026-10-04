@@ -268,8 +268,20 @@
 /* Aparência: remove prévia redundante e mantém a própria opção selecionada como feedback. */
 .settings-redundant-preview{display:none!important}
 .settings-area-appearance .app-icon-choice-grid{gap:6px;margin-top:10px}
-.settings-area-appearance .app-icon-choice{min-height:108px;padding:9px 6px}
-.settings-area-appearance .app-icon-choice-preview{transform:scale(.88);transform-origin:center}
+.settings-area-appearance .app-icon-choice{
+  position:relative;
+  z-index:0;
+  min-height:108px;
+  padding:9px 6px;
+  overflow:hidden;
+  scroll-margin-top:84px;
+}
+.settings-area-appearance .app-icon-choice:focus,
+.settings-area-appearance .app-icon-choice:hover,
+.settings-area-appearance .app-icon-choice.is-selected{z-index:1}
+.settings-area-appearance .app-icon-choice-preview{transform:none}
+.settings-area-appearance .app-icon-choice-preview,
+.settings-area-appearance .app-icon-choice-preview *{pointer-events:none}
 .settings-area-appearance .app-icon-install-note{margin-top:9px;font-size:7.7px}
 
 /* Backup compacto em lista. */
@@ -444,8 +456,11 @@
 /* =========================================================
    TABLET / IPAD
    ========================================================= */
-@media(min-width:701px) and (max-width:1180px){
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;grid-template-areas:none!important}
+@media(min-width:701px){
+  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid{
+    grid-template-columns:repeat(12,minmax(0,1fr))!important;
+    grid-template-areas:none!important;
+  }
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-sync,
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-automation,
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-study,
@@ -454,6 +469,9 @@
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-admin,
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-appearance,
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-diagnostic{grid-column:span 5!important}
+  html.is-ipad:not(.is-phone-layout) .settings-area-update .admin-actions button{
+    min-height:44px!important;
+  }
 }
 @media(max-width:900px), (orientation:portrait) and (max-width:1180px){
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid{grid-template-columns:1fr!important;grid-template-areas:none!important}
