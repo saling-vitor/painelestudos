@@ -1,0 +1,42 @@
+/* V15.36.31-G · Capas full-bleed em Cursos [D+T] + Home [T] */
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
+  padding:0!important;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-card-cover{
+  width:100%!important;
+  margin:0!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.065)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course-cover-controls{
+  top:12px!important;
+  left:12px!important;
+  right:12px!important;
+}
+
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card{
+  padding:0 0 12px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover{
+  width:100%!important;
+  margin:0!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.055)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-cover-controls{
+  top:12px!important;
+  left:12px!important;
+  right:12px!important;
+}
+
+/* [D] Home já estava full-bleed: remove apenas a sombra/brilho superior da capa. */
+html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover{
+  box-shadow:none!important;
+}
+html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover::after{
+  background:linear-gradient(180deg,transparent 0%,transparent 48%,rgba(2,3,5,.18) 100%)!important;
+}
