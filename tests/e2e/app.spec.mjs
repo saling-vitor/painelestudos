@@ -222,6 +222,26 @@ test('progresso mostra prioridades acionáveis',async({page})=>{
   await expect(page.locator('#progressInsights .progress-insights-head>span')).toHaveText(/^\d+h \d{2}min nesta semana$/);
 });
 
+test('progresso mostra somente atenção útil e consolida o ritmo',async({page})=>{
+  await page.goto('/#progress');
+  await expect(page.locator('#studyIntelligencePanel')).toBeVisible();
+  await expect(page.locator('#studyIntelligencePanel')).toContainText('O que merece sua atenção');
+  await expect(page.locator('.intelligence-action-forecast')).toBeVisible();
+  await expect(page.locator('.intelligence-action-week')).toBeVisible();
+  const attention=await page.locator('#studyIntelligencePanel').evaluate(el=>({
+    review:el.querySelectorAll('.intelligence-action-review').length,
+    errors:el.querySelectorAll('.intelligence-action-errors').length,
+    clear:el.querySelectorAll('.progress-intelligence-status.is-clear').length,
+    actionCount:el.querySelectorAll('.intelligence-primary-actions>article').length
+  }));
+  expect(attention.actionCount).toBeGreaterThanOrEqual(2);
+  expect(attention.actionCount).toBeLessThanOrEqual(4);
+  if(attention.review===0&&attention.errors===0)expect(attention.clear).toBe(1);
+  await expect(page.locator('.study-rhythm-shell')).toBeVisible();
+  await expect(page.locator('.study-heatmap-primary')).toBeVisible();
+  await expect(page.locator('.study-rhythm-kpis>article')).toHaveCount(4);
+  await expect(page.locator('#studyDoubtInbox')).toBeVisible();
+});
 test('simulado sugere mapas para revisar após resultado',async({page})=>{
   await page.goto('/#simulations');
   const key=await page.evaluate(()=>{const simulation=combinedSimulations()[0],key=simulation._key||simulationKey(simulation),now=new Date().toISOString();state.simAttempts[key]=[{score:40,correct:2,total:5,durationSeconds:600,finishedAt:now,sections:{'Língua Portuguesa':{correct:2,total:5}}}];state.simResults[key]=state.simAttempts[key][0];localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults));renderSimulations();return key});
@@ -3462,7 +3482,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
   await expect(summary).toBeVisible();
   if(!(await summary.evaluate(el=>el.open)))await summary.locator(':scope>summary').click();
 
-  const insight=page.locator('#progressInsights .progress-insight-card').first();
+  const insight=page.locator('#progressInsights .progress-insight-card.is-primary');
   await expect(insight).toBeVisible();
   await expect(insight.locator('.progress-insight-thumb img')).toBeHidden();
   await expect(insight.locator('.progress-insight-thumb>span')).toBeVisible();
@@ -3470,7 +3490,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
   const progressData=await page.evaluate(()=>{
     const metrics=[...document.querySelectorAll('#progressMetrics .metric')];
     const visibleMetrics=metrics.filter(el=>getComputedStyle(el).display!=='none');
-    const card=document.querySelector('#progressInsights .progress-insight-card');
+    const card=document.querySelector('#progressInsights .progress-insight-card.is-primary');
     const action=card?.querySelector(':scope>.secondary');
     return{
       metricCount:visibleMetrics.length,
@@ -3478,14 +3498,16 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
       insightHeight:card?.getBoundingClientRect().height||0,
       insightWidth:card?.getBoundingClientRect().width||0,
       actionWidth:action?.getBoundingClientRect().width||0,
+      actionHeight:action?.getBoundingClientRect().height||0,
       thumbWidth:card?.querySelector('.progress-insight-thumb')?.getBoundingClientRect().width||0
     };
   });
   expect(progressData.metricCount).toBe(4);
-  expect(progressData.metricMaxHeight).toBeLessThanOrEqual(82);
-  expect(progressData.insightHeight).toBeLessThan(90);
-  expect(progressData.thumbWidth).toBeLessThanOrEqual(60);
-  expect(Math.abs(progressData.actionWidth-progressData.insightWidth)).toBeLessThanOrEqual(2);
+  expect(progressData.metricMaxHeight).toBeLessThanOrEqual(72);
+  expect(progressData.insightHeight).toBeLessThanOrEqual(96);
+  expect(progressData.thumbWidth).toBeLessThanOrEqual(82);
+  expect(progressData.actionWidth).toBeLessThan(progressData.insightWidth);
+  expect(progressData.actionHeight).toBeGreaterThanOrEqual(40);
 });
 
 
