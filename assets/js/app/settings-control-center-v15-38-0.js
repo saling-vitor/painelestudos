@@ -104,25 +104,8 @@
     if(disclosure)disclosure.textContent='Dispositivos e testes';
   }
 
-  function mobileToggleLabel(panel,defaultLabel){
-    return defaultLabel||panel.querySelector('h2 span:last-child')?.textContent||panel.querySelector('h2')?.textContent||'Configuração';
-  }
   function applyMobileCollapsibles(){
-    const mobile=matchMedia('(max-width:700px)').matches;
-    for(const [selector,,label,collapseDefault] of PANEL_META){
-      const panel=document.querySelector(selector);if(!panel)continue;
-      let toggle=panel.querySelector(':scope>.settings-mobile-toggle');
-      if(!toggle){
-        toggle=document.createElement('button');toggle.type='button';toggle.className='settings-mobile-toggle';toggle.innerHTML='<span>'+esc(mobileToggleLabel(panel,label))+'</span><b aria-hidden="true">⌄</b>';panel.prepend(toggle);
-        toggle.onclick=()=>{panel.classList.toggle('is-mobile-collapsed');toggle.setAttribute('aria-expanded',String(!panel.classList.contains('is-mobile-collapsed')))};
-      }
-      if(mobile){
-        if(!panel.dataset.mobileCollapseInitialized){panel.dataset.mobileCollapseInitialized='1';panel.classList.toggle('is-mobile-collapsed',!!collapseDefault)}
-        toggle.setAttribute('aria-expanded',String(!panel.classList.contains('is-mobile-collapsed')));
-      }else{
-        panel.classList.remove('is-mobile-collapsed');toggle.setAttribute('aria-expanded','true');
-      }
-    }
+    if(matchMedia('(max-width:480px)').matches)window.MobileUX?.schedule?.();
   }
 
   function renderControlCenter(){
