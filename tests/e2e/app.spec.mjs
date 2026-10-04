@@ -340,7 +340,7 @@ test('V15.38.0 [G] automação oferece modos, histórico e desfazer',async({page
   await page.waitForFunction(()=>window.StudyAutomation&&window.SettingsControlCenter);
   if(testInfo.project.name==='iphone-webkit'){
     const panel=page.locator('.settings-area-automation');
-    if(await panel.evaluate(el=>el.classList.contains('is-mobile-collapsed')))await panel.locator(':scope > .settings-mobile-toggle').click();
+    if(await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await panel.locator(':scope > .mobile-settings-toggle').click();
   }
   const mode=page.locator('[data-automation-mode]');
   await expect(mode).toBeVisible();
@@ -367,7 +367,7 @@ test('V15.38.0 [G] aparência e metas eliminam redundância e mostram recomenda�
   if(testInfo.project.name==='iphone-webkit'){
     for(const selector of ['.settings-area-study','.settings-area-appearance','.settings-area-admin']){
       const panel=page.locator(selector);
-      if(await panel.evaluate(el=>el.classList.contains('is-mobile-collapsed')))await panel.locator(':scope > .settings-mobile-toggle').click();
+      if(await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await panel.locator(':scope > .mobile-settings-toggle').click();
     }
   }
   await expect(page.locator('.study-goal-recommendation')).toBeVisible();
@@ -853,13 +853,17 @@ test('V15.38.0 [G] configurações usa centro de controle responsivo',async({pag
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.width+2);
   if(testInfo.project.name==='desktop-chromium')expect(metrics.columns.trim().split(/\s+/).length).toBe(12);
   if(testInfo.project.name==='iphone-webkit'){
-    await expect(page.locator('.settings-mobile-toggle').first()).toBeVisible();
-    await expect(page.locator('.settings-area-automation')).toHaveClass(/is-mobile-collapsed/);
+    await expect(page.locator('.mobile-settings-toggle').first()).toBeVisible();
+    await expect(page.locator('.settings-area-automation')).toHaveClass(/mobile-settings-collapsed/);
   }
 });
 
-test('V15.38.0 [G] pontos de restauração mantêm dez e mostram três antes de expandir',async({page})=>{
+test('V15.38.0 [G] pontos de restauração mantêm dez e mostram três antes de expandir',async({page},testInfo)=>{
   await page.goto('/#settings');
+  if(testInfo.project.name==='iphone-webkit'){
+    const panel=page.locator('.settings-area-backup');
+    if(await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await panel.locator(':scope > .mobile-settings-toggle').click();
+  }
   const stored=await page.evaluate(async()=>{
     for(let i=0;i<12;i++)await createRestorePoint('e2e-settings','Ponto visual '+i);
     restorePointsExpanded=false;
@@ -879,7 +883,7 @@ test('V15.38.0 [G] saúde técnica fica separada dos dispositivos e do diagnóst
   if(testInfo.project.name==='iphone-webkit'){
     for(const selector of ['.settings-area-update','.settings-area-diagnostic','.settings-area-backup']){
       const panel=page.locator(selector);
-      if(await panel.evaluate(el=>el.classList.contains('is-mobile-collapsed')))await panel.locator(':scope > .settings-mobile-toggle').click();
+      if(await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await panel.locator(':scope > .mobile-settings-toggle').click();
     }
   }
   await expect(page.locator('.app-update-summary')).toContainText(E2E_APP_VERSION_LABEL);
