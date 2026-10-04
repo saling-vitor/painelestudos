@@ -836,8 +836,10 @@ test('refinamento de Progresso, Simulados e Configurações mantém densidade e 
     await expect(course).toBeVisible();
     const courseHeight=await course.evaluate(el=>el.getBoundingClientRect().height);
     expect(courseHeight).toBeLessThan(125);
-    const analyticsColumns=await page.locator('.study-analytics-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
-    expect(analyticsColumns).toBe(4);
+    const rhythmColumns=await page.locator('.study-rhythm-shell').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+    expect(rhythmColumns).toBe(2);
+    await expect(page.locator('.study-heatmap-primary')).toBeVisible();
+    await expect(page.locator('.study-rhythm-kpis>article')).toHaveCount(4);
 
     await page.goto('/#simulations');
     const sim=page.locator('#simulationGrid .simulation-card.has-cover').first();
@@ -1435,9 +1437,9 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
 test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   const scenarios=[
-    {name:'landscape',width:1194,height:834,metrics:3,insights:2,analytics:4,agenda:2,agendaSide:null,settings:2},
-    {name:'portrait',width:820,height:1180,metrics:3,insights:2,analytics:2,agenda:1,agendaSide:2,settings:1},
-    {name:'split',width:640,height:900,metrics:2,insights:1,analytics:1,agenda:1,agendaSide:1,settings:1}
+    {name:'landscape',width:1194,height:834,metrics:4,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:2},
+    {name:'portrait',width:820,height:1180,metrics:2,insights:2,rhythm:1,agenda:1,agendaSide:2,settings:1},
+    {name:'split',width:640,height:900,metrics:2,insights:1,rhythm:1,agenda:1,agendaSide:1,settings:1}
   ];
   const columns=async locator=>locator.evaluate(el=>{
     const value=getComputedStyle(el).gridTemplateColumns.trim();
@@ -1454,11 +1456,11 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
     await page.goto('/#progress');
     await expect(page.locator('#progressMetrics .metric').first()).toBeVisible();
     await expect(page.locator('.progress-insights-grid')).toBeVisible();
-    await expect(page.locator('.study-analytics-grid')).toBeVisible();
+    await expect(page.locator('.study-rhythm-shell')).toBeVisible();
     expect.soft(await columns(page.locator('#progressMetrics')),s.name+' métricas').toBe(s.metrics);
     expect.soft(await columns(page.locator('.progress-insights-grid')),s.name+' próximas ações').toBe(s.insights);
-    expect.soft(await columns(page.locator('.study-analytics-grid')),s.name+' análises').toBe(s.analytics);
-    const progressTouch=await page.locator('.progress-course-toggle').first().evaluate(el=>el.getBoundingClientRect().height);
+    expect.soft(await columns(page.locator('.study-rhythm-shell')),s.name+' ritmo').toBe(s.rhythm);
+    const progressTouch=await page.locator('[data-progress-course-toggle]').first().evaluate(el=>el.getBoundingClientRect().height);
     expect.soft(Math.round(progressTouch),s.name+' ação de progresso touch').toBeGreaterThanOrEqual(44);
     await noOverflow(s.name+' Progresso');
 
