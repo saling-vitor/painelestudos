@@ -1143,8 +1143,13 @@ test('refinamento de Progresso, Simulados e Configurações mantém densidade e 
     expect(Math.abs(simData.statusTop-simData.codeTop)).toBeLessThan(10);
 
     await page.goto('/#settings');
-    const layout=await page.locator('.settings-layout-v3').evaluate(el=>({cols:getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length}));
-    expect(layout.cols).toBe(12);
+    const layout=await page.locator('.settings-layout-v3').evaluate(el=>{
+      const box=el.getBoundingClientRect(),sync=el.querySelector('.settings-area-sync')?.getBoundingClientRect(),update=el.querySelector('.settings-area-update')?.getBoundingClientRect();
+      return{cols:getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length,width:box.width,syncWidth:sync?.width||0,updateWidth:update?.width||0};
+    });
+    expect(layout.cols).toBe(2);
+    expect(layout.syncWidth).toBeGreaterThan(layout.width*.58);
+    expect(layout.updateWidth).toBeGreaterThan(layout.width*.25);
     await expect(page.locator('.study-goal-human').first()).toContainText(/h/);
     const toggle=page.locator('.study-settings-toggle input[type="checkbox"]');
     const appearance=await toggle.evaluate(el=>getComputedStyle(el).appearance);
