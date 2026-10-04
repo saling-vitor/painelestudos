@@ -1,0 +1,160 @@
+/* V15.36.35-T · Próximas ações / Onde focar agora no iPad
+   [T] Paisagem: duas ações equivalentes + terceira compacta em largura total.
+   [T] Retrato: três linhas horizontais compactas em largura total.
+   Desktop e smartphone permanecem inalterados. */
+
+html.is-ipad:not(.is-phone-layout) .progress-insights{
+  padding:13px!important;
+  overflow:hidden!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insights-head{
+  min-height:36px!important;
+  margin-bottom:10px!important;
+  align-items:flex-end!important;
+  gap:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insights-head h3{
+  margin-top:3px!important;
+  font-size:15px!important;
+  line-height:1.15!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insights-head>span{
+  align-self:flex-end!important;
+  padding-bottom:1px!important;
+  color:#7f858d!important;
+  font-size:8.5px!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+}
+
+html.is-ipad:not(.is-phone-layout) .progress-insights-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:auto!important;
+  gap:9px!important;
+  align-items:stretch!important;
+  overflow:visible!important;
+  scroll-snap-type:none!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-card,
+html.is-ipad:not(.is-phone-layout) .progress-insight-card.is-primary,
+html.is-ipad:not(.is-phone-layout) .progress-insight-card:not(.is-primary){
+  grid-column:auto!important;
+  grid-row:auto!important;
+  display:grid!important;
+  grid-template-columns:92px minmax(0,1fr) 108px!important;
+  grid-template-areas:"thumb copy action"!important;
+  align-items:center!important;
+  min-width:0!important;
+  min-height:104px!important;
+  padding:10px 11px!important;
+  gap:11px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-card:nth-child(3):last-child{
+  grid-column:1 / -1!important;
+  min-height:90px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-card:only-child{
+  grid-column:1 / -1!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-thumb,
+html.is-ipad:not(.is-phone-layout) .progress-insight-card.is-primary .progress-insight-thumb,
+html.is-ipad:not(.is-phone-layout) .progress-insight-card:not(.is-primary) .progress-insight-thumb{
+  grid-area:thumb!important;
+  width:92px!important;
+  height:52px!important;
+  min-width:92px!important;
+  align-self:center!important;
+  border-radius:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-copy{
+  grid-area:copy!important;
+  min-width:0!important;
+  align-self:center!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-kicker{
+  margin-bottom:4px!important;
+  font-size:8px!important;
+  line-height:1.1!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-title b{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  overflow:hidden!important;
+  white-space:normal!important;
+  font-size:14px!important;
+  line-height:1.2!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-card p{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  overflow:hidden!important;
+  min-height:0!important;
+  margin:4px 0 0!important;
+  color:#90969f!important;
+  font-size:9.5px!important;
+  line-height:1.35!important;
+  white-space:normal!important;
+}
+html.is-ipad:not(.is-phone-layout) .progress-insight-card>.secondary{
+  grid-area:action!important;
+  justify-self:end!important;
+  align-self:center!important;
+  width:108px!important;
+  min-width:108px!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:0 11px!important;
+  font-size:9.5px!important;
+}
+
+/* Paisagem: Retomar e Próximo mapa têm o mesmo peso; o terceiro card vira uma faixa compacta. */
+@media (orientation:landscape){
+  html.is-ipad:not(.is-phone-layout) .progress-insights-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card:nth-child(3):last-child{
+    grid-template-columns:92px minmax(0,1fr) 124px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card:nth-child(3):last-child>.secondary{
+    width:124px!important;
+    min-width:124px!important;
+  }
+}
+
+/* Retrato: nenhuma ação fica espremida em meia coluna. */
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) .progress-insights{
+    padding:12px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insights-grid{
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card,
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card.is-primary,
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card:not(.is-primary),
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card:nth-child(3):last-child{
+    grid-column:1!important;
+    grid-row:auto!important;
+    grid-template-columns:88px minmax(0,1fr) 112px!important;
+    grid-template-areas:"thumb copy action"!important;
+    min-height:92px!important;
+    padding:9px 10px!important;
+    gap:10px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insight-thumb,
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card.is-primary .progress-insight-thumb,
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card:not(.is-primary) .progress-insight-thumb{
+    width:88px!important;
+    height:50px!important;
+    min-width:88px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card>.secondary,
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card:nth-child(3):last-child>.secondary{
+    width:112px!important;
+    min-width:112px!important;
+  }
+}
