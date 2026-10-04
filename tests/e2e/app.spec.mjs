@@ -235,6 +235,26 @@ test('progresso mostra prioridades acionáveis',async({page})=>{
   await expect(page.locator('#progressInsights .progress-insights-head>span')).toHaveText(/^\d+h \d{2}min nesta semana$/);
 });
 
+test('V15.36.35 [T] próximas ações equilibram paisagem e empilham no retrato',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva do iPad.');
+  await page.setViewportSize({width:1180,height:820});
+  await page.goto('/#progress');
+  await expect(page.locator('#progressInsights')).toBeVisible();
+  const cards=page.locator('#progressInsights .progress-insight-card');
+  const count=await cards.count();
+  expect(count).toBeGreaterThan(0);
+  const landscape=await cards.evaluateAll(nodes=>nodes.slice(0,3).map(node=>{const r=node.getBoundingClientRect(),thumb=node.querySelector('.progress-insight-thumb')?.getBoundingClientRect(),button=node.querySelector('.secondary')?.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,width:r.width,height:r.height,thumbWidth:thumb?.width||0,buttonHeight:button?.height||0}}));
+  for(const row of landscape){expect(row.thumbWidth).toBeGreaterThanOrEqual(88);expect(row.buttonHeight).toBeGreaterThanOrEqual(44)}
+  if(landscape.length>=2){expect(Math.abs(landscape[0].top-landscape[1].top)).toBeLessThanOrEqual(2);expect(Math.abs(landscape[0].width-landscape[1].width)).toBeLessThanOrEqual(3);expect(Math.abs(landscape[0].height-landscape[1].height)).toBeLessThanOrEqual(3)}
+  if(landscape.length>=3){expect(Math.abs(landscape[2].left-landscape[0].left)).toBeLessThanOrEqual(2);expect(Math.abs(landscape[2].right-landscape[1].right)).toBeLessThanOrEqual(2);expect(landscape[2].height).toBeLessThanOrEqual(landscape[0].height)}
+
+  await page.setViewportSize({width:820,height:1180});
+  await page.waitForTimeout(80);
+  const portrait=await cards.evaluateAll(nodes=>nodes.slice(0,3).map(node=>{const r=node.getBoundingClientRect(),button=node.querySelector('.secondary')?.getBoundingClientRect();return{left:r.left,top:r.top,width:r.width,height:r.height,buttonHeight:button?.height||0}}));
+  for(let i=1;i<portrait.length;i++){expect(Math.abs(portrait[i].left-portrait[0].left)).toBeLessThanOrEqual(2);expect(Math.abs(portrait[i].width-portrait[0].width)).toBeLessThanOrEqual(2);expect(portrait[i].top).toBeGreaterThan(portrait[i-1].top)}
+  for(const row of portrait)expect(row.buttonHeight).toBeGreaterThanOrEqual(44);
+});
+
 test('progresso mostra somente atenção útil e consolida o ritmo',async({page})=>{
   await page.goto('/#progress');
   await expect(page.locator('#studyIntelligencePanel')).toBeVisible();
