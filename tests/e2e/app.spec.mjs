@@ -216,6 +216,42 @@ test('home monta plano inteligente de estudo',async({page})=>{
   await expect(page.locator('#homeReviewNowBtn')).toContainText('Começar');
 });
 
+test('V15.36.36 [D] Home equilibra Retomar e Simulados recentes',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva do desktop.');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()});
+  const resume=page.locator('.home-continue-section .continue-card');
+  const simulations=page.locator('.home-simulations-section .simulation-recent-item');
+  await expect(resume).toBeVisible();
+  await expect(simulations.first()).toBeVisible();
+  const visibleSimCount=await simulations.evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
+  expect(visibleSimCount).toBe(Math.min(2,await simulations.count()));
+  const data=await page.evaluate(()=>{
+    const home=document.querySelector('[data-view="home"]'),resumeSection=document.querySelector('.home-continue-section'),simSection=document.querySelector('.home-simulations-section');
+    const resume=document.querySelector('.home-continue-section .continue-card'),sim=document.querySelector('.home-simulations-section .simulation-recent-item:not([style*="display: none"])')||document.querySelector('.home-simulations-section .simulation-recent-item');
+    const courses=document.querySelector('.home-courses-section');
+    const hr=home.getBoundingClientRect(),rr=resumeSection.getBoundingClientRect(),sr=simSection.getBoundingClientRect(),cr=resume.getBoundingClientRect(),xr=sim.getBoundingClientRect(),br=courses.getBoundingClientRect();
+    return{
+      resumeShare:rr.width/(rr.width+sr.width),
+      rowAligned:Math.abs(rr.top-sr.top),
+      cardHeightDiff:Math.abs(cr.height-xr.height),
+      resumeHeight:cr.height,
+      simHeight:xr.height,
+      coursesGap:br.top-Math.max(cr.bottom,xr.bottom),
+      overflow:document.documentElement.scrollWidth-innerWidth
+    };
+  });
+  expect(data.resumeShare).toBeGreaterThan(.54);
+  expect(data.resumeShare).toBeLessThan(.62);
+  expect(data.rowAligned).toBeLessThanOrEqual(2);
+  expect(data.cardHeightDiff).toBeLessThanOrEqual(2);
+  expect(data.resumeHeight).toBeLessThanOrEqual(156);
+  expect(data.simHeight).toBeLessThanOrEqual(156);
+  expect(data.coursesGap).toBeLessThan(52);
+  expect(data.overflow).toBeLessThanOrEqual(2);
+});
+
 test('home fica mais compacta depois que existe atividade',async({page})=>{
   await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()});
   await expect(page.locator('[data-view="home"]')).toHaveClass(/home-returning/);
@@ -874,7 +910,8 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.intelligenceHeight).toBeLessThan(150);
   expect(layout.resumeShare).toBeGreaterThan(.54);
   expect(layout.resumeShare).toBeLessThan(.62);
-  expect(layout.simulationItemHeight).toBeLessThanOrEqual(82);
+  expect(layout.simulationItemHeight).toBeGreaterThanOrEqual(148);
+  expect(layout.simulationItemHeight).toBeLessThanOrEqual(156);
   expect(layout.courseHeight).toBeGreaterThanOrEqual(235);
   expect(layout.courseHeight).toBeLessThanOrEqual(620);
 });
@@ -1586,25 +1623,22 @@ test('iPad usa dock lateral recolhível no leitor',async({page},testInfo)=>{
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('studyapp.ipadReaderDock.v1')||'{}').collapsed)).toBe(true);
 });
 
-test('iPad vertical usa cinco destinos e concentra Agenda e Simulados em Mais',async({page},testInfo)=>{
+test('iPad vertical restaura sete destinos diretos no dock',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica do app no iPad vertical.');
   await page.setViewportSize({width:820,height:1180});
   await page.goto('/#home');
   await expect(page.locator('.side')).toBeHidden();
   await expect(page.locator('.bottom-nav')).toBeVisible();
   const visibleNav=await page.locator('.bottom-nav>button').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').map(el=>el.dataset.nav||el.id));
-  expect(visibleNav).toEqual(['home','courses','maps','progress','settings']);
-  await expect(page.locator('.bottom-nav [data-nav="agenda"]')).toBeHidden();
-  await expect(page.locator('.bottom-nav [data-nav="simulations"]')).toBeHidden();
-  const more=page.locator('.bottom-nav [data-nav="settings"]');
-  await expect(more).toContainText('Mais');
-  await expect(page.locator('#studyTimerFloat')).toBeHidden();
-  await more.click();
-  await expect(page.locator('[data-view="settings"]')).toHaveClass(/active/);
-  await expect(page.locator('#tabletMoreShortcuts')).toBeVisible();
-  await expect(page.locator('#tabletMoreShortcuts [data-tablet-more-nav="agenda"]')).toContainText('Agenda');
-  await expect(page.locator('#tabletMoreShortcuts [data-tablet-more-nav="simulations"]')).toContainText('Simulados');
-  await page.locator('#tabletMoreShortcuts [data-tablet-more-nav="agenda"]').click();
+  expect(visibleNav).toEqual(['home','courses','maps','simulations','agenda','progress','settings']);
+  await expect(page.locator('.bottom-nav [data-nav="simulations"]')).toBeVisible();
+  await expect(page.locator('.bottom-nav [data-nav="agenda"]')).toBeVisible();
+  await expect(page.locator('.bottom-nav [data-nav="agenda"] .bottom-nav-label')).toHaveText('Calendário');
+  await expect(page.locator('.bottom-nav [data-nav="settings"]')).toContainText('Mais');
+  await expect(page.locator('#tabletMoreShortcuts')).toHaveCount(0);
+  await page.locator('.bottom-nav [data-nav="simulations"]').click();
+  await expect(page.locator('[data-view="simulations"]')).toHaveClass(/active/);
+  await page.locator('.bottom-nav [data-nav="agenda"]').click();
   await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
 });
 test('iPad nunca recebe o Menu exclusivo de smartphone',async({page},testInfo)=>{

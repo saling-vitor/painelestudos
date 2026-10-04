@@ -1,0 +1,230 @@
+/* V15.36.36-DT · Home desktop + dock iPad retrato
+   [D] Equilibra Retomar e Simulados recentes, reduz vazios e melhora leitura.
+   [T] Restaura o dock inferior de sete destinos no iPad em retrato.
+   Smartphone permanece inalterado. */
+
+/* =========================================================
+   [D] HOME · RETOMAR + SIMULADOS
+   ========================================================= */
+@media (min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"].active{
+    grid-template-columns:minmax(0,1.16fr) minmax(420px,.84fr)!important;
+    column-gap:16px!important;
+    row-gap:12px!important;
+    align-items:start!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.home-continue-section,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.home-simulations-section{
+    min-width:0!important;
+    margin-top:0!important;
+    align-self:start!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .section-head,
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .section-head{
+    min-height:42px!important;
+    margin-bottom:8px!important;
+    align-items:flex-end!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .section-head h2,
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .section-head h2{
+    margin-top:3px!important;
+    line-height:1.12!important;
+  }
+
+  /* Retomar: mais compacto, capa 16:9 valorizada e CTA sem alongar o card. */
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card{
+    grid-template-columns:clamp(218px,30%,242px) minmax(0,1fr) 104px!important;
+    min-height:152px!important;
+    height:152px!important;
+    max-height:152px!important;
+    gap:12px!important;
+    padding:11px!important;
+    align-items:center!important;
+    overflow:hidden!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb{
+    width:100%!important;
+    max-width:242px!important;
+    min-height:0!important;
+    height:auto!important;
+    aspect-ratio:16/9!important;
+    align-self:center!important;
+    border-radius:10px!important;
+    overflow:hidden!important;
+    background:#080a0d!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb img{
+    width:100%!important;
+    height:100%!important;
+    display:block!important;
+    object-fit:contain!important;
+    object-position:center!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-content{
+    min-width:0!important;
+    align-self:center!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-map-tags{
+    margin-bottom:5px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-content>b{
+    display:-webkit-box!important;
+    -webkit-box-orient:vertical!important;
+    -webkit-line-clamp:2!important;
+    overflow:hidden!important;
+    font-size:14px!important;
+    line-height:1.2!important;
+    white-space:normal!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-content>p{
+    margin-top:4px!important;
+    overflow:hidden!important;
+    font-size:9px!important;
+    line-height:1.25!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-progress{
+    margin-top:7px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-states{
+    margin-top:7px!important;
+    row-gap:4px!important;
+    column-gap:5px!important;
+    overflow:hidden!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card>.primary{
+    width:104px!important;
+    min-width:104px!important;
+    min-height:42px!important;
+    padding-inline:10px!important;
+    align-self:center!important;
+    justify-self:end!important;
+  }
+
+  /* Simulados: duas opções legíveis em vez de três mini-cards comprimidos. */
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-list{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+    align-items:stretch!important;
+    overflow:visible!important;
+    padding:0!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item,
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item:nth-child(2){
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    align-content:center!important;
+    min-width:0!important;
+    min-height:152px!important;
+    height:152px!important;
+    max-height:152px!important;
+    padding:13px 12px 13px 14px!important;
+    gap:10px!important;
+    overflow:hidden!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item:nth-child(n+3){
+    display:none!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-copy{
+    min-width:0!important;
+    display:grid!important;
+    align-content:center!important;
+    gap:7px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-title-row{
+    min-width:0!important;
+    gap:6px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-title-row b{
+    min-width:0!important;
+    font-size:11px!important;
+    line-height:1.22!important;
+    letter-spacing:.015em!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-meta{
+    margin:0!important;
+    font-size:8.5px!important;
+    line-height:1.3!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-state-row{
+    min-height:20px!important;
+    gap:6px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-status{
+    min-height:20px!important;
+    padding-inline:6px!important;
+    font-size:7px!important;
+  }
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-action{
+    min-width:82px!important;
+    min-height:42px!important;
+    padding-inline:9px!important;
+    font-size:9px!important;
+  }
+}
+
+/* Monitores muito amplos: mantém a faixa densa em vez de crescer indefinidamente. */
+@media (min-width:1500px){
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card{
+    grid-template-columns:242px minmax(0,1fr) 108px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card>.primary{
+    width:108px!important;
+    min-width:108px!important;
+  }
+}
+
+/* =========================================================
+   [T] IPAD RETRATO · DOCK DE SETE DESTINOS
+   ========================================================= */
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) .bottom-nav{
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    gap:2px!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-simulations,
+  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-agenda{
+    display:grid!important;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts{
+    display:none!important;
+  }
+}
+
+
+/* Estabiliza o painel Ritmo no iPad retrato/split após a troca do dock.
+   Mantém o contrato responsivo já aprovado: uma única coluna útil. */
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) .study-rhythm-shell{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}

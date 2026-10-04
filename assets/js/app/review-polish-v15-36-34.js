@@ -24,28 +24,12 @@
   function ensureTabletMoreShortcuts(){
     const view=q('[data-view="settings"]');
     if(!view)return;
-    let block=q('#tabletMoreShortcuts',view);
-    if(!isIPadPortrait()){
-      block?.remove();
-      return;
-    }
-    if(block)return;
-    block=document.createElement('div');
-    block.id='tabletMoreShortcuts';
-    block.className='tablet-more-shortcuts';
-    block.setAttribute('aria-label','Acesso rápido');
-    block.innerHTML=
-      '<button type="button" data-tablet-more-nav="agenda"><span class="ui-icon icon-calendar ui-icon-md" aria-hidden="true"></span><span><b>Agenda</b><small>Dia, semana e planejamento</small></span></button>'+
-      '<button type="button" data-tablet-more-nav="simulations"><span class="ui-icon icon-simulations ui-icon-md" aria-hidden="true"></span><span><b>Simulados</b><small>Provas, tentativas e desempenho</small></span></button>';
-    const layout=q('.settings-layout',view);
-    if(layout)layout.insertAdjacentElement('beforebegin',block);else view.prepend(block);
-    block.querySelectorAll('[data-tablet-more-nav]').forEach(button=>button.addEventListener('click',()=>{
-      if(typeof nav==='function')nav(button.dataset.tabletMoreNav);
-    }));
+    q('#tabletMoreShortcuts',view)?.remove();
   }
 
   function normalizeNavigationLabels(){
-    document.querySelectorAll('.bottom-nav [data-nav="agenda"] .bottom-nav-label').forEach(el=>el.textContent='Agenda');
+    const bottomAgendaLabel=isIPadPortrait()?'Calendário':'Agenda';
+    document.querySelectorAll('.bottom-nav [data-nav="agenda"] .bottom-nav-label').forEach(el=>el.textContent=bottomAgendaLabel);
     document.querySelectorAll('.side [data-nav="agenda"]').forEach(el=>el.setAttribute('aria-label','Agenda'));
     const trigger=q('#mobileMenuBtn .bottom-nav-label');if(trigger)trigger.textContent='Mais';
     const title=q('#mobileMenuTitle');if(title)title.textContent='Mais';
