@@ -1,16 +1,14 @@
 {
-  "version": "15.36.30",
-  "label": "V15.36.30-T",
-  "releasedAt": "2026-10-03T23:58:00.000Z",
-  "notes": "Refinamento final da Home no iPad/tablet: cards continuam em duas colunas, mas passam a respeitar melhor as margens internas, reduzir espaços vazios, compactar a contagem de tópicos e manter progresso e botão Entrar totalmente contidos. Cursos sem prova deixam de reservar uma faixa vazia. Meus Cursos permanece completo e inalterado.",
+  "version": "15.36.31",
+  "label": "V15.36.31-G",
+  "releasedAt": "2026-10-04T01:28:00.000Z",
+  "notes": "Refinamento visual dos cards de cursos: no iPad/tablet e no Desktop da página Meus Cursos, as capas passam a encostar diretamente nas bordas superiores e laterais do card, sem moldura interna. No iPad, a Home adota o mesmo encaixe full-bleed; no Desktop da Home, a geometria é preservada e apenas a sombra/brilho superior da capa é removida.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Contagem de progresso da Home fica compacta, sem a palavra tópicos",
-    "[T] Barra de progresso e botão Entrar respeitam as margens internas",
-    "[T] Cards ficam com altura automática e menos espaço vazio",
-    "[T] Cursos sem data de prova não reservam faixa vazia",
-    "[T] Capas, selo ATIVO, botão de configuração e grade de 2 colunas são preservados",
-    "[T] Meus Cursos permanece com todas as informações completas",
-    "[D+M] Desktop e iPhone permanecem sem alterações"
+    "[D+T] Meus Cursos usa capas full-bleed, sem espaço interno nas laterais e no topo",
+    "[T] Home usa o mesmo encaixe full-bleed das capas",
+    "[D] Home mantém o layout atual e remove apenas a sombra/brilho superior da capa",
+    "[D+T] Selo ATIVO e botão de configuração permanecem dentro da capa",
+    "[M] Smartphone permanece inalterado"
   ]
 }
