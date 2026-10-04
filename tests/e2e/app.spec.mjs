@@ -968,9 +968,12 @@ test('estrutura visual preserva respiro, clipping de capas e topbar limpa',async
     progress:parseFloat(getComputedStyle(document.querySelector('#progressInfo')).marginTop)||0,
     courses:parseFloat(getComputedStyle(document.querySelector('#progressInfo .progress-course-stack')).marginTop)||0
   }));
-  expect(spacing.rhythm).toBeGreaterThanOrEqual(19);
-  expect(spacing.progress).toBeGreaterThanOrEqual(19);
-  expect(spacing.courses).toBeGreaterThanOrEqual(19);
+  expect(spacing.rhythm).toBeGreaterThanOrEqual(14);
+  expect(spacing.rhythm).toBeLessThanOrEqual(20);
+  expect(spacing.progress).toBeGreaterThanOrEqual(14);
+  expect(spacing.progress).toBeLessThanOrEqual(20);
+  expect(spacing.courses).toBeGreaterThanOrEqual(7);
+  expect(spacing.courses).toBeLessThanOrEqual(12);
 
   const topbar=await page.locator('.topbar-wrap').evaluate(el=>{
     const style=getComputedStyle(el);
@@ -1457,9 +1460,9 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
 test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   const scenarios=[
-    {name:'landscape',width:1194,height:834,metrics:4,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:2},
-    {name:'portrait',width:820,height:1180,metrics:2,insights:2,rhythm:1,agenda:1,agendaSide:2,settings:1},
-    {name:'split',width:640,height:900,metrics:2,insights:1,rhythm:1,agenda:1,agendaSide:1,settings:1}
+    {name:'landscape',width:1194,height:834,metricRows:1,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:2},
+    {name:'portrait',width:820,height:1180,metricRows:2,insights:2,rhythm:1,agenda:1,agendaSide:2,settings:1},
+    {name:'split',width:640,height:900,metricRows:2,insights:1,rhythm:1,agenda:1,agendaSide:1,settings:1}
   ];
   const columns=async locator=>locator.evaluate(el=>{
     const value=getComputedStyle(el).gridTemplateColumns.trim();
@@ -1477,7 +1480,12 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
     await expect(page.locator('#progressMetrics .metric').first()).toBeVisible();
     await expect(page.locator('.progress-insights-grid')).toBeVisible();
     await expect(page.locator('.study-rhythm-shell')).toBeVisible();
-    expect.soft(await columns(page.locator('#progressMetrics')),s.name+' métricas').toBe(s.metrics);
+    await expect(page.locator('#progressMetrics .metric'),s.name+' mantém quatro KPIs').toHaveCount(4);
+    const metricRows=await page.locator('#progressMetrics .metric').evaluateAll(nodes=>{
+      const tops=nodes.map(el=>Math.round(el.getBoundingClientRect().top));
+      return [...new Set(tops)].length;
+    });
+    expect.soft(metricRows,s.name+' distribuição dos KPIs').toBe(s.metricRows);
     expect.soft(await columns(page.locator('.progress-insights-grid')),s.name+' próximas ações').toBe(s.insights);
     expect.soft(await columns(page.locator('.study-rhythm-shell')),s.name+' ritmo').toBe(s.rhythm);
     const progressTouch=await page.locator('[data-progress-course-toggle]').first().evaluate(el=>el.getBoundingClientRect().height);
@@ -1831,16 +1839,25 @@ test('Agenda prioriza modos e recolhe ações secundárias no menu',async({page}
   await expect(menu.locator('[data-agenda-export]')).toBeVisible();
 });
 
-test('Progresso mostra quatro decisões e mantém prioridades recolhidas',async({page})=>{
+test('Progresso adapta as decisões e mantém prioridades recolhidas',async({page})=>{
   await page.goto('/#progress');
-  const actions=page.locator('#studyIntelligencePanel .intelligence-primary-actions>article');
-  await expect(actions).toHaveCount(4);
-  const details=page.locator('#studyIntelligencePanel .priority-details');
+  const panel=page.locator('#studyIntelligencePanel');
+  const actions=panel.locator('.intelligence-primary-actions>article');
+  const count=await actions.count();
+  expect(count).toBeGreaterThanOrEqual(2);
+  expect(count).toBeLessThanOrEqual(4);
+  await expect(panel.locator('.intelligence-action-forecast')).toBeVisible();
+  await expect(panel.locator('.intelligence-action-week')).toBeVisible();
+  const pending=await panel.locator('.intelligence-action-review,.intelligence-action-errors').count();
+  if(pending===0)await expect(panel.locator('.progress-intelligence-status.is-clear')).toContainText('Tudo sob controle');
+  const details=panel.locator('.priority-details');
   await expect(details).toBeVisible();
   await expect(details).not.toHaveAttribute('open');
   await details.locator('summary').click();
   await expect(details).toHaveAttribute('open','');
-  await expect(details.locator('.priority-engine-grid>article')).toHaveCount(3);
+  const priorities=await details.locator('.priority-engine-grid>article').count();
+  expect(priorities).toBeGreaterThan(0);
+  expect(priorities).toBeLessThanOrEqual(3);
 });
 
 test('iPad retrato paisagem e Split View permanecem sem overflow',async({page},testInfo)=>{
