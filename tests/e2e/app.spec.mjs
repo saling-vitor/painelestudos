@@ -878,7 +878,13 @@ test('V15.38.0 [G] pontos de restauração mantêm dez e mostram três antes de 
     return (await listRestorePoints()).length;
   });
   expect(stored).toBe(10);
+  if(testInfo.project.name==='iphone-webkit'){
+    const panel=page.locator('.settings-area-backup');
+    if(await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await panel.locator(':scope > .mobile-settings-toggle').click();
+    await expect(panel).not.toHaveClass(/mobile-settings-collapsed/);
+  }
   await expect(page.locator('#restorePointsList .restore-point-item')).toHaveCount(3);
+  await expect(page.locator('[data-toggle-restore-points]')).toBeVisible();
   await expect(page.locator('[data-toggle-restore-points]')).toContainText('Ver todos');
   await page.locator('[data-toggle-restore-points]').click();
   await expect(page.locator('#restorePointsList .restore-point-item')).toHaveCount(10);
