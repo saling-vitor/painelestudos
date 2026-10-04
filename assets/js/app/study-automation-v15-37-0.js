@@ -151,7 +151,7 @@
     return base;
   }
   function agendaData(){return window.StudyDashboard?.exportData?.()||{agenda:[],goals:{dailyMinutes:120}}}
-  function replaceAgendaData(data){return window.StudyDashboard?.importData?.(data,{merge:false,silent:true})}
+  function replaceAgendaData(data){const result=window.StudyDashboard?.importData?.(data,{merge:false,silent:true});if(typeof touchPreferences==='function')touchPreferences();return result}
   function manualMinutes(data,day){
     return(data.agenda||[]).filter(row=>!row.deleted&&!row.completedAt&&row.date===day&&row.automationSource!=='smart-plan').reduce((sum,row)=>sum+Math.max(0,Number(row.minutes)||0),0);
   }
