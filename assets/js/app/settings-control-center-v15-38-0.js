@@ -79,7 +79,8 @@
     if(!root){root=document.createElement('div');root.className='settings-backup-retention';const note=panel.querySelector('.settings-security-note');note?.insertAdjacentElement('afterend',root)}
     let count='';
     try{if(typeof listRestorePoints==='function'){const points=await listRestorePoints();count=points.length+' salvo'+(points.length===1?'':'s')+' agora'}}catch{}
-    const last=localStorage.getItem('studyapp.lastBackupAt')||'',lastLabel=last?new Date(last).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'nenhum backup baixado';\n    root.innerHTML='<span><b>Retenção automática</b><small>Último backup: '+esc(lastLabel)+' · o sistema mantém os últimos 10 pontos de restauração neste dispositivo.</small></span><strong>'+esc(count||'até 10 pontos')+'</strong>';
+    const last=localStorage.getItem('studyapp.lastBackupAt')||'',lastLabel=last?new Date(last).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'nenhum backup baixado';
+    root.innerHTML='<span><b>Retenção automática</b><small>Último backup: '+esc(lastLabel)+' · o sistema mantém os últimos 10 pontos de restauração neste dispositivo.</small></span><strong>'+esc(count||'até 10 pontos')+'</strong>';
   }
 
   function renderGoalRecommendation(){
