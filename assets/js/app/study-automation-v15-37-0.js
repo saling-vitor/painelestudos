@@ -202,6 +202,7 @@
   function syncAutoAgenda({force=false}={}){
     const cfg=automationSettings();
     if(!cfg.autoAgenda||agendaSyncBusy||!window.StudyPlanner?.priorityRows||!window.StudyDashboard?.exportData)return{changed:false,created:0,updated:0,removed:0};
+    if(typeof combinedMaps==='function'&&!combinedMaps().length)return{changed:false,waiting:true,created:0,updated:0,removed:0};
     const stamp=Date.now();
     if(!force&&stamp-lastMaintenanceAt<4*60*1000)return{changed:false,throttled:true};
     agendaSyncBusy=true;
