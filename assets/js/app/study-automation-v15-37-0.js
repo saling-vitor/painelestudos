@@ -220,7 +220,7 @@
       }
       for(const row of desiredBy.values()){
         const prior=(data.agenda||[]).find(item=>item.id===row.id);
-        if(prior?.deleted)continue;
+        if(prior)continue;
         data.agenda=data.agenda||[];data.agenda.push(row);changed=true;created++;
       }
       if(changed)replaceAgendaData(data);
