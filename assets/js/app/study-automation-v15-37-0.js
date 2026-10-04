@@ -10,7 +10,8 @@
     simRecovery:true,
     archiveSuggestions:true,
     importInference:true,
-    healthSignals:true
+    healthSignals:true,
+    mode:'balanced'
   };
   let agendaSyncBusy=false;
   let maintenanceTimer=0;
@@ -42,6 +43,70 @@
     renderAutomationSettings();
     scheduleMaintenance(true);
     return next;
+  }
+
+  const AUTOMATION_UNDO_KEY='studyapp.automation.undo.v1';
+  function automationLogRows(){
+    const rows=plannerSettings().automationLog;
+    return Array.isArray(rows)?rows.filter(row=>row&&typeof row==='object').slice(0,40):[];
+  }
+  function writeAutomationLog(rows){
+    window.StudyPlanner?.saveSettings?.({automationLog:(rows||[]).slice(0,40)});
+  }
+  function addAutomationLog(type,label,details={}){
+    const row={id:'auto-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),at:nowIso(),type:String(type||'automation'),label:String(label||'Automação atualizada'),details:{...details}};
+    writeAutomationLog([row,...automationLogRows()].slice(0,40));
+    return row;
+  }
+  function snapshotAutomationState(label='Antes da automação'){
+    return{label,at:nowIso(),dashboard:window.StudyDashboard?.exportData?.()||null,planner:window.StudyPlanner?.exportData?.()||null};
+  }
+  function saveUndoSnapshot(snapshot){
+    if(!snapshot?.dashboard&&!snapshot?.planner)return false;
+    try{localStorage.setItem(AUTOMATION_UNDO_KEY,JSON.stringify(snapshot));return true}catch{return false}
+  }
+  function readUndoSnapshot(){
+    try{const value=JSON.parse(localStorage.getItem(AUTOMATION_UNDO_KEY)||'null');return value&&typeof value==='object'?value:null}catch{return null}
+  }
+  function clearUndoSnapshot(){try{localStorage.removeItem(AUTOMATION_UNDO_KEY)}catch{}}
+  function undoLastAutomation(){
+    const snapshot=readUndoSnapshot();if(!snapshot)return false;
+    try{
+      if(snapshot.dashboard&&window.StudyDashboard?.importData)window.StudyDashboard.importData(snapshot.dashboard,{merge:false,silent:true});
+      if(snapshot.planner&&window.StudyPlanner?.importData)window.StudyPlanner.importData(snapshot.planner,{mergeData:false,silent:true});
+      clearUndoSnapshot();
+      addAutomationLog('undo','Última automação desfeita',{source:snapshot.label||'Automação anterior'});
+      renderAllAutomation();
+      if(typeof toast==='function')toast('Última automação desfeita.');
+      return true;
+    }catch(error){
+      console.warn('Não foi possível desfazer a automação.',error);
+      if(typeof toast==='function')toast('Não foi possível desfazer a última automação.');
+      return false;
+    }
+  }
+  function automationModeMeta(mode=automationSettings().mode){
+    if(mode==='conservative')return{key:'conservative',label:'Conservador',factor:.8,maxItems:2,minuteDelta:-3};
+    if(mode==='intensive')return{key:'intensive',label:'Intensivo',factor:1.15,maxItems:4,minuteDelta:5};
+    return{key:'balanced',label:'Equilibrado',factor:1,maxItems:3,minuteDelta:0};
+  }
+  function automationTodaySummary(){
+    const today=dateKey(),rows=automationLogRows().filter(row=>dateKey(row.at)===today),totals={planned:0,moved:0,reviews:0,actions:rows.length};
+    for(const row of rows){
+      const d=row.details||{};
+      if(row.type==='plan'){totals.planned+=Math.max(0,Number(d.created)||0);totals.moved+=Math.max(0,Number(d.updated)||0)+Math.max(0,Number(d.removed)||0)}
+      if(row.type==='simulation')totals.reviews+=Math.max(0,Number(d.topics)||0)+Math.max(0,Number(d.maps)||0);
+    }
+    return{rows,totals};
+  }
+  function recommendedDailyMinutes(){
+    const current=Math.max(15,Number(window.StudyDashboard?.goals?.().dailyMinutes)||120),values=[];
+    for(const {course,health} of courseHealthAll()){
+      if(course.status==='archived'||health.status==='finished'||health.daysUntilExam===null||health.daysUntilExam<=0)continue;
+      const remaining=Math.max(0,Number(health.forecast?.remainingSeconds)||0);
+      if(remaining)values.push(Math.ceil(remaining/60/Math.max(1,health.daysUntilExam)));
+    }
+    return clamp(values.length?Math.max(...values):current,15,720);
   }
 
   function activeCourses(){
@@ -156,7 +221,7 @@
     return(data.agenda||[]).filter(row=>!row.deleted&&!row.completedAt&&row.date===day&&row.automationSource!=='smart-plan').reduce((sum,row)=>sum+Math.max(0,Number(row.minutes)||0),0);
   }
   function desiredSmartAgenda(horizonDays=8){
-    const settings=plannerSettings(),maxDaily=Math.max(30,Number(settings.maxDailyMinutes)||Number(window.StudyDashboard?.goals?.().dailyMinutes)||120),daysAllowed=availableDays();
+    const settings=plannerSettings(),mode=automationModeMeta(),baseDaily=Math.max(30,Number(settings.maxDailyMinutes)||Number(window.StudyDashboard?.goals?.().dailyMinutes)||120),maxDaily=Math.max(30,Math.round(baseDaily*mode.factor)),daysAllowed=availableDays();
     const rows=(window.StudyPlanner?.priorityRows?.()||[]).filter(row=>{
       const course=typeof courseById==='function'?courseById(row.map?.courseId):null;
       const health=row.courseHealth||courseHealth(course);
@@ -172,10 +237,10 @@
       if(budget<12)continue;
       const rotated=[...rows.slice(di%Math.max(1,rows.length)),...rows.slice(0,di%Math.max(1,rows.length))];
       for(const row of rotated){
-        if(count>=3||budget<12)break;
+        if(count>=mode.maxItems||budget<12)break;
         const lastDay=lastScheduled.get(row.key);
         if(lastDay!==undefined&&di-lastDay<2&&!row.dueTopics)continue;
-        let mins=clamp(row.minutes||20,12,35);
+        let mins=clamp((row.minutes||20)+mode.minuteDelta,12,40);
         if(mins>budget&&budget>=12)mins=budget;
         if(mins<12)continue;
         const code=row.map?.code||'MAP',title=row.dueTopics?'Revisão · '+code:(Number(row.progress?.marked)>0?'Continuar · '+code:'Iniciar · '+code);
@@ -207,7 +272,7 @@
     if(!force&&stamp-lastMaintenanceAt<4*60*1000)return{changed:false,throttled:true};
     agendaSyncBusy=true;
     try{
-      const data=agendaData(),desired=desiredSmartAgenda(),desiredBy=new Map(desired.map(row=>[row.id,row])),today=dateKey(),end=dateKey(addDays(new Date(),8)),now=nowIso();
+      const before=snapshotAutomationState('Plano automático'),data=agendaData(),desired=desiredSmartAgenda(),desiredBy=new Map(desired.map(row=>[row.id,row])),today=dateKey(),end=dateKey(addDays(new Date(),8)),now=nowIso();
       let changed=false,created=0,updated=0,removed=0;
       if(cfg.autoReplan&&cleanupOverdueAutoRows(data)){changed=true;removed++}
       for(const row of data.agenda||[]){
@@ -226,7 +291,11 @@
         }
         data.agenda=data.agenda||[];data.agenda.push(row);changed=true;created++;
       }
-      if(changed)replaceAgendaData(data);
+      if(changed){
+        replaceAgendaData(data);
+        saveUndoSnapshot(before);
+        addAutomationLog('plan','Plano automático atualizado',{created,updated,removed,mode:automationModeMeta().key});
+      }
       lastMaintenanceAt=stamp;
       try{localStorage.setItem('studyapp.automation.lastPlan',new Date(stamp).toISOString())}catch{}
       return{changed,created,updated,removed};
@@ -240,6 +309,7 @@
   }
   function scheduleSimulationRecovery(simulationKey,payload={}){
     const cfg=automationSettings();if(!cfg.simRecovery||!simulationKey)return{topics:0,maps:0};
+    const before=snapshotAutomationState('Recuperação pós-simulado');
     const simulation=typeof simulationByKey==='function'?simulationByKey(simulationKey):null;
     const score=Math.max(0,Math.min(100,Number(payload.score)||0));
     const mistakes=Array.isArray(payload.mistakes)?payload.mistakes:[];
@@ -296,6 +366,10 @@
         usedDates.add(day);mapCount++;
       }
       if(mapCount)replaceAgendaData(data);
+    }
+    if(topicCount||mapCount){
+      saveUndoSnapshot(before);
+      addAutomationLog('simulation','Recuperação pós-simulado criada',{topics:topicCount,maps:mapCount,simulationKey});
     }
     scheduleMaintenance(true);
     return{topics:topicCount,maps:mapCount};
