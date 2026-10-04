@@ -74,12 +74,18 @@
     hero.classList.add('mobile-course-compact');
     if(!q('.mobile-course-actions',hero)){
       const actions=document.createElement('div');actions.className='mobile-course-actions';
-      actions.innerHTML='<button type="button" data-mobile-course-search><span class="ui-icon icon-search ui-icon-sm" aria-hidden="true"></span><b>Buscar</b></button><button type="button" data-mobile-course-details><span class="ui-icon icon-more ui-icon-sm" aria-hidden="true"></span><b>Detalhes</b></button>';
+      actions.innerHTML='<button type="button" data-mobile-course-search><span class="ui-icon icon-search ui-icon-sm" aria-hidden="true"></span><b>Buscar</b></button><button type="button" data-mobile-course-filters><span class="ui-icon icon-settings ui-icon-sm" aria-hidden="true"></span><b>Filtros</b></button><button type="button" data-mobile-course-details><span class="ui-icon icon-more ui-icon-sm" aria-hidden="true"></span><b>Detalhes</b></button>';
       const summary=q('#courseProgressSummary',hero);
       (summary||q('#courseDesc',hero)||q('#courseTitle',hero))?.insertAdjacentElement('afterend',actions);
       actions.querySelector('[data-mobile-course-search]').onclick=()=>{
         const open=hero.classList.toggle('mobile-course-search-open');
         if(open)setTimeout(()=>q('#courseSearch',hero)?.focus(),40);
+      };
+      actions.querySelector('[data-mobile-course-filters]').onclick=e=>{
+        const open=hero.classList.toggle('mobile-course-filters-open');
+        e.currentTarget.classList.toggle('active',open);
+        e.currentTarget.setAttribute('aria-expanded',open?'true':'false');
+        e.currentTarget.querySelector('b').textContent=open?'Fechar filtros':'Filtros';
       };
       actions.querySelector('[data-mobile-course-details]').onclick=e=>{
         const open=hero.classList.toggle('mobile-course-expanded');
@@ -177,7 +183,7 @@
     const block=document.createElement('section');
     block.id='mobileMoreShortcuts';
     block.className='mobile-more-shortcuts';
-    block.innerHTML='<div class="mobile-more-shortcuts-head"><span class="kicker">Acesso rápido</span><b>Mais</b></div><div class="mobile-more-shortcuts-grid"><button type="button" data-mobile-more-nav="agenda"><span class="ui-icon icon-calendar ui-icon-md" aria-hidden="true"></span><b>Calendário</b><small>Agenda de estudos</small></button><button type="button" data-mobile-more-nav="simulations"><span class="ui-icon icon-simulations ui-icon-md" aria-hidden="true"></span><b>Simulados</b><small>Treino de prova</small></button></div>';
+    block.innerHTML='<div class="mobile-more-shortcuts-head"><span class="kicker">Acesso rápido</span><b>Mais</b></div><div class="mobile-more-shortcuts-grid"><button type="button" data-mobile-more-nav="agenda"><span class="ui-icon icon-calendar ui-icon-md" aria-hidden="true"></span><b>Agenda</b><small>Planejamento de estudos</small></button><button type="button" data-mobile-more-nav="simulations"><span class="ui-icon icon-simulations ui-icon-md" aria-hidden="true"></span><b>Simulados</b><small>Treino de prova</small></button></div>';
     const layout=q('.settings-layout',view);if(layout)layout.insertAdjacentElement('beforebegin',block);else view.appendChild(block);
     qa('[data-mobile-more-nav]',block).forEach(button=>button.onclick=()=>nav(button.dataset.mobileMoreNav));
   }
@@ -393,10 +399,10 @@
       trigger.type='button';
       trigger.className='mobile-menu-trigger';
       trigger.dataset.mobileMenu='menu';
-      trigger.setAttribute('aria-label','Abrir menu');
+      trigger.setAttribute('aria-label','Abrir Mais');
       trigger.setAttribute('aria-haspopup','dialog');
       trigger.setAttribute('aria-expanded','false');
-      trigger.innerHTML='<span class="ui-icon icon-more ui-icon-lg" aria-hidden="true"></span><span class="bottom-nav-label">Menu</span>';
+      trigger.innerHTML='<span class="ui-icon icon-more ui-icon-lg" aria-hidden="true"></span><span class="bottom-nav-label">Mais</span>';
       trigger.addEventListener('click',()=>{
         const layer=ensureMobileMenu();
         if(!layer)return;
@@ -411,7 +417,7 @@
       layer.id='mobileMenuLayer';
       layer.className='mobile-menu-layer';
       layer.hidden=true;
-      layer.innerHTML='<button type="button" class="mobile-menu-backdrop" aria-label="Fechar menu"></button><section class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle"><div class="mobile-menu-handle" aria-hidden="true"></div><div class="mobile-menu-head"><b id="mobileMenuTitle">Menu</b><button type="button" class="mobile-menu-close" aria-label="Fechar">×</button></div><nav class="mobile-menu-options"><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="agenda"><span class="ui-icon icon-calendar" aria-hidden="true"></span><span><b>Agenda</b><small>Hoje, semana e planejamento</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="simulations"><span class="ui-icon icon-simulations" aria-hidden="true"></span><span><b>Simulados</b><small>Provas, tentativas e desempenho</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="settings"><span class="ui-icon icon-settings" aria-hidden="true"></span><span><b>Configurações</b><small>Metas, nuvem, backup e aplicativo</small></span><i aria-hidden="true">›</i></button></nav></section>';
+      layer.innerHTML='<button type="button" class="mobile-menu-backdrop" aria-label="Fechar menu"></button><section class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle"><div class="mobile-menu-handle" aria-hidden="true"></div><div class="mobile-menu-head"><b id="mobileMenuTitle">Mais</b><button type="button" class="mobile-menu-close" aria-label="Fechar">×</button></div><nav class="mobile-menu-options"><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="agenda"><span class="ui-icon icon-calendar" aria-hidden="true"></span><span><b>Agenda</b><small>Hoje, semana e planejamento</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="simulations"><span class="ui-icon icon-simulations" aria-hidden="true"></span><span><b>Simulados</b><small>Provas, tentativas e desempenho</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="settings"><span class="ui-icon icon-settings" aria-hidden="true"></span><span><b>Configurações</b><small>Metas, nuvem, backup e aplicativo</small></span><i aria-hidden="true">›</i></button></nav></section>';
       document.body.appendChild(layer);
       q('.mobile-menu-backdrop',layer)?.addEventListener('click',()=>closeMobileMenu({restoreFocus:true}));
       q('.mobile-menu-close',layer)?.addEventListener('click',()=>closeMobileMenu({restoreFocus:true}));
