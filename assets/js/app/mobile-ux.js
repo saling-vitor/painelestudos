@@ -259,7 +259,7 @@
       const head=q(':scope > .section-head',view);
       if(head)head.insertAdjacentElement('afterend',stack);else view.prepend(stack);
     }
-    const order=['summary','priority','performance','subjects'];
+    const order=['summary','attention','rhythm','subjects','notes'];
     const groups=order.map(key=>q('[data-mobile-progress-group="'+key+'"]',view)).filter(Boolean);
     groups.forEach(group=>{if(group.parentElement!==stack)stack.appendChild(group)});
     const current=[...stack.children].filter(node=>node.matches?.('.mobile-progress-group')).map(node=>node.dataset.mobileProgressGroup);
@@ -271,15 +271,14 @@
     const view=q('[data-view="progress"]');if(!view)return;
     if(!isPhone()){qa('.mobile-progress-group',view).forEach(group=>group.open=true);return}
     if(!view.classList.contains('active'))return;
-    wrapProgressNode(q('#progressMetrics',view),'summary','Resumo','Progresso, tópicos e tempo',true);
+    wrapProgressNode(q('#progressMetrics',view),'summary','Resumo','Progresso, tópicos e foco',true);
     const insights=q('#progressInsights',view);
     const summaryGroup=q('[data-mobile-progress-group="summary"]',view);
     if(insights&&summaryGroup&&!insights.closest('.mobile-progress-group'))summaryGroup.appendChild(insights);
-    wrapProgressNode(q('#studyIntelligencePanel',view),'priority','Prioridades','Revisões, erros e próximos passos',true);
-    wrapProgressNode(q('#studyAnalyticsPanel',view),'performance','Desempenho','Ritmo, consistência e analytics',false);
-    const doubts=q('#studyDoubtInbox',view),performance=q('[data-mobile-progress-group="performance"]',view);
-    if(doubts&&performance&&!doubts.closest('.mobile-progress-group'))performance.appendChild(doubts);
-    wrapProgressNode(q('#progressInfo',view),'subjects','Disciplinas','Mapas, estados e cobertura',false);
+    wrapProgressNode(q('#studyIntelligencePanel',view),'attention','Atenção','Somente pendências e próximos passos',true);
+    wrapProgressNode(q('#studyAnalyticsPanel',view),'rhythm','Ritmo','Semana e consistência',true);
+    wrapProgressNode(q('#progressInfo',view),'subjects','Progresso por concurso','Mapas, estados e cobertura',false);
+    wrapProgressNode(q('#studyDoubtInbox',view),'notes','Minhas dúvidas','Anotações salvas durante o estudo',false);
     normalizeProgressGroups(view);
   }
 

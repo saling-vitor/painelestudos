@@ -48,20 +48,14 @@ test('importação detecta categoria individual pelo HTML',async({page})=>{
 });
 test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]:visible`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
-test('botão Abrir da tela Progresso abre mapa',async({page},testInfo)=>{
+test('linha da tela Progresso abre mapa',async({page})=>{
   await page.goto('/#progress');
   const toggle=page.locator('#progressInfo [data-progress-course-toggle]').first();
   await expect(toggle).toBeVisible();
   await toggle.click();
-  if(testInfo.project.name==='iphone-webkit'){
-    const row=page.locator('#progressInfo [data-progress-row-open]').first();
-    await expect(row).toBeVisible();
-    await row.click();
-  }else{
-    const button=page.locator('#progressInfo [data-progress-open]').first();
-    await expect(button).toBeVisible();
-    await button.click();
-  }
+  const row=page.locator('#progressInfo [data-progress-row-open]').first();
+  await expect(row).toBeVisible();
+  await row.click();
   await expect(page.locator('#reader')).toHaveClass(/open/);
   await page.locator('#readerClose').click();
   await expect(page.locator('#reader')).not.toHaveClass(/open/);
@@ -228,6 +222,26 @@ test('progresso mostra prioridades acionáveis',async({page})=>{
   await expect(page.locator('#progressInsights .progress-insights-head>span')).toHaveText(/^\d+h \d{2}min nesta semana$/);
 });
 
+test('progresso mostra somente atenção útil e consolida o ritmo',async({page})=>{
+  await page.goto('/#progress');
+  await expect(page.locator('#studyIntelligencePanel')).toBeVisible();
+  await expect(page.locator('#studyIntelligencePanel')).toContainText('O que merece sua atenção');
+  await expect(page.locator('.intelligence-action-forecast')).toBeVisible();
+  await expect(page.locator('.intelligence-action-week')).toBeVisible();
+  const attention=await page.locator('#studyIntelligencePanel').evaluate(el=>({
+    review:el.querySelectorAll('.intelligence-action-review').length,
+    errors:el.querySelectorAll('.intelligence-action-errors').length,
+    clear:el.querySelectorAll('.progress-intelligence-status.is-clear').length,
+    actionCount:el.querySelectorAll('.intelligence-primary-actions>article').length
+  }));
+  expect(attention.actionCount).toBeGreaterThanOrEqual(2);
+  expect(attention.actionCount).toBeLessThanOrEqual(4);
+  if(attention.review===0&&attention.errors===0)expect(attention.clear).toBe(1);
+  await expect(page.locator('.study-rhythm-shell')).toBeVisible();
+  await expect(page.locator('.study-heatmap-primary')).toBeVisible();
+  await expect(page.locator('.study-rhythm-kpis>article')).toHaveCount(4);
+  await expect(page.locator('#studyDoubtInbox')).toBeVisible();
+});
 test('simulado sugere mapas para revisar após resultado',async({page})=>{
   await page.goto('/#simulations');
   const key=await page.evaluate(()=>{const simulation=combinedSimulations()[0],key=simulation._key||simulationKey(simulation),now=new Date().toISOString();state.simAttempts[key]=[{score:40,correct:2,total:5,durationSeconds:600,finishedAt:now,sections:{'Língua Portuguesa':{correct:2,total:5}}}];state.simResults[key]=state.simAttempts[key][0];localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults));renderSimulations();return key});
@@ -842,8 +856,10 @@ test('refinamento de Progresso, Simulados e Configurações mantém densidade e 
     await expect(course).toBeVisible();
     const courseHeight=await course.evaluate(el=>el.getBoundingClientRect().height);
     expect(courseHeight).toBeLessThan(125);
-    const analyticsColumns=await page.locator('.study-analytics-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
-    expect(analyticsColumns).toBe(4);
+    const rhythmColumns=await page.locator('.study-rhythm-shell').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
+    expect(rhythmColumns).toBe(2);
+    await expect(page.locator('.study-heatmap-primary')).toBeVisible();
+    await expect(page.locator('.study-rhythm-kpis>article')).toHaveCount(4);
 
     await page.goto('/#simulations');
     const sim=page.locator('#simulationGrid .simulation-card.has-cover').first();
@@ -929,16 +945,19 @@ test('progresso integra filtros e ordenação no painel geral',async({page},test
   expect(stored).toBe('alpha');
 });
 
-test('indicadores de progresso formam uma faixa compacta no desktop',async({page})=>{
+test('indicadores de progresso formam uma faixa de quatro KPIs',async({page})=>{
   await page.goto('/#progress');
-  await expect(page.locator('#progressMetrics .metric')).toHaveCount(6);
+  await expect(page.locator('#progressMetrics .metric')).toHaveCount(4);
+  await expect(page.locator('#progressMetrics')).toContainText('Progresso geral');
+  await expect(page.locator('#progressMetrics')).toContainText('Tópicos estudados');
+  await expect(page.locator('#progressMetrics')).toContainText('Revisões');
+  await expect(page.locator('#progressMetrics')).toContainText('Tempo esta semana');
   const layout=await page.locator('#progressMetrics').evaluate(el=>({width:innerWidth,columns:getComputedStyle(el).gridTemplateColumns,height:el.getBoundingClientRect().height}));
   if(layout.width>=1180){
-    expect(layout.columns.trim().split(/\s+/).length).toBe(6);
+    expect(layout.columns.trim().split(/\s+/).length).toBe(4);
     expect(layout.height).toBeLessThan(100);
   }
 });
-
 test('estrutura visual preserva respiro, clipping de capas e topbar limpa',async({page})=>{
   await page.goto('/#progress');
   await expect(page.locator('#studyAnalyticsPanel')).toBeVisible();
@@ -949,9 +968,12 @@ test('estrutura visual preserva respiro, clipping de capas e topbar limpa',async
     progress:parseFloat(getComputedStyle(document.querySelector('#progressInfo')).marginTop)||0,
     courses:parseFloat(getComputedStyle(document.querySelector('#progressInfo .progress-course-stack')).marginTop)||0
   }));
-  expect(spacing.rhythm).toBeGreaterThanOrEqual(19);
-  expect(spacing.progress).toBeGreaterThanOrEqual(19);
-  expect(spacing.courses).toBeGreaterThanOrEqual(19);
+  expect(spacing.rhythm).toBeGreaterThanOrEqual(14);
+  expect(spacing.rhythm).toBeLessThanOrEqual(20);
+  expect(spacing.progress).toBeGreaterThanOrEqual(14);
+  expect(spacing.progress).toBeLessThanOrEqual(20);
+  expect(spacing.courses).toBeGreaterThanOrEqual(7);
+  expect(spacing.courses).toBeLessThanOrEqual(12);
 
   const topbar=await page.locator('.topbar-wrap').evaluate(el=>{
     const style=getComputedStyle(el);
@@ -1438,9 +1460,9 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
 test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   const scenarios=[
-    {name:'landscape',width:1194,height:834,metrics:3,insights:2,analytics:4,agenda:2,agendaSide:null,settings:2},
-    {name:'portrait',width:820,height:1180,metrics:3,insights:2,analytics:2,agenda:1,agendaSide:2,settings:1},
-    {name:'split',width:640,height:900,metrics:2,insights:1,analytics:1,agenda:1,agendaSide:1,settings:1}
+    {name:'landscape',width:1194,height:834,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:2},
+    {name:'portrait',width:820,height:1180,insights:2,rhythm:1,agenda:1,agendaSide:2,settings:1},
+    {name:'split',width:640,height:900,insights:1,rhythm:1,agenda:1,agendaSide:1,settings:1}
   ];
   const columns=async locator=>locator.evaluate(el=>{
     const value=getComputedStyle(el).gridTemplateColumns.trim();
@@ -1457,11 +1479,16 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
     await page.goto('/#progress');
     await expect(page.locator('#progressMetrics .metric').first()).toBeVisible();
     await expect(page.locator('.progress-insights-grid')).toBeVisible();
-    await expect(page.locator('.study-analytics-grid')).toBeVisible();
-    expect.soft(await columns(page.locator('#progressMetrics')),s.name+' métricas').toBe(s.metrics);
+    await expect(page.locator('.study-rhythm-shell')).toBeVisible();
+    await expect(page.locator('#progressMetrics .metric'),s.name+' mantém quatro KPIs').toHaveCount(4);
+    const metricRows=await page.locator('#progressMetrics .metric').evaluateAll(nodes=>{
+      const tops=nodes.map(el=>Math.round(el.getBoundingClientRect().top));
+      return [...new Set(tops)].length;
+    });
+    expect.soft(metricRows,s.name+' mantém os quatro KPIs em no máximo duas linhas').toBeLessThanOrEqual(2);
     expect.soft(await columns(page.locator('.progress-insights-grid')),s.name+' próximas ações').toBe(s.insights);
-    expect.soft(await columns(page.locator('.study-analytics-grid')),s.name+' análises').toBe(s.analytics);
-    const progressTouch=await page.locator('.progress-course-toggle').first().evaluate(el=>el.getBoundingClientRect().height);
+    expect.soft(await columns(page.locator('.study-rhythm-shell')),s.name+' ritmo').toBe(s.rhythm);
+    const progressTouch=await page.locator('[data-progress-course-toggle]').first().evaluate(el=>el.getBoundingClientRect().height);
     expect.soft(Math.round(progressTouch),s.name+' ação de progresso touch').toBeGreaterThanOrEqual(44);
     await noOverflow(s.name+' Progresso');
 
@@ -1812,16 +1839,25 @@ test('Agenda prioriza modos e recolhe ações secundárias no menu',async({page}
   await expect(menu.locator('[data-agenda-export]')).toBeVisible();
 });
 
-test('Progresso mostra quatro decisões e mantém prioridades recolhidas',async({page})=>{
+test('Progresso adapta as decisões e mantém prioridades recolhidas',async({page})=>{
   await page.goto('/#progress');
-  const actions=page.locator('#studyIntelligencePanel .intelligence-primary-actions>article');
-  await expect(actions).toHaveCount(4);
-  const details=page.locator('#studyIntelligencePanel .priority-details');
+  const panel=page.locator('#studyIntelligencePanel');
+  const actions=panel.locator('.intelligence-primary-actions>article');
+  const count=await actions.count();
+  expect(count).toBeGreaterThanOrEqual(2);
+  expect(count).toBeLessThanOrEqual(4);
+  await expect(panel.locator('.intelligence-action-forecast')).toBeVisible();
+  await expect(panel.locator('.intelligence-action-week')).toBeVisible();
+  const pending=await panel.locator('.intelligence-action-review,.intelligence-action-errors').count();
+  if(pending===0)await expect(panel.locator('.progress-intelligence-status.is-clear')).toContainText('Tudo sob controle');
+  const details=panel.locator('.priority-details');
   await expect(details).toBeVisible();
   await expect(details).not.toHaveAttribute('open');
   await details.locator('summary').click();
   await expect(details).toHaveAttribute('open','');
-  await expect(details.locator('.priority-engine-grid>article')).toHaveCount(3);
+  const priorities=await details.locator('.priority-engine-grid>article').count();
+  expect(priorities).toBeGreaterThan(0);
+  expect(priorities).toBeLessThanOrEqual(3);
 });
 
 test('iPad retrato paisagem e Split View permanecem sem overflow',async({page},testInfo)=>{
@@ -1938,21 +1974,22 @@ test('smartphone compacta cards de mapas e preserva alvos touch',async({page},te
   expect.soft(size.favBefore).not.toBe('none');
 });
 
-test('smartphone reorganiza Progresso em quatro blocos expansíveis',async({page},testInfo)=>{
+test('smartphone reorganiza Progresso na ordem de decisão',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#progress');
   await page.waitForTimeout(100);
   const groups=page.locator('[data-view="progress"] .mobile-progress-group');
-  await expect(groups).toHaveCount(4);
+  await expect(groups).toHaveCount(5);
+  const order=await groups.evaluateAll(nodes=>nodes.map(node=>node.dataset.mobileProgressGroup));
+  expect(order).toEqual(['summary','attention','rhythm','subjects','notes']);
   await expect(page.locator('[data-mobile-progress-group="summary"]')).toHaveAttribute('open','');
-  await expect(page.locator('[data-mobile-progress-group="priority"]')).toHaveAttribute('open','');
-  await expect(page.locator('[data-mobile-progress-group="performance"]')).not.toHaveAttribute('open');
+  await expect(page.locator('[data-mobile-progress-group="attention"]')).toHaveAttribute('open','');
+  await expect(page.locator('[data-mobile-progress-group="rhythm"]')).toHaveAttribute('open','');
   await expect(page.locator('[data-mobile-progress-group="subjects"]')).not.toHaveAttribute('open');
-  await page.locator('[data-mobile-progress-group="performance"]>summary').click();
+  await expect(page.locator('[data-mobile-progress-group="notes"]')).not.toHaveAttribute('open');
   await expect(page.locator('#studyAnalyticsPanel')).toBeVisible();
 });
-
 test('smartphone Agenda abre em Hoje sem calendário redundante e mantém Semana e Mês',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
@@ -2266,7 +2303,7 @@ test('iPhone real UX2 mantém somente quatro KPIs no resumo de Progresso',async(
   expect(insightLayout.scrollWidth).toBeLessThanOrEqual(insightLayout.width+2);
   expect(insightLayout.cards.length).toBeGreaterThan(0);
   expect(insightLayout.cards.every(card=>card.width<=insightLayout.width+2&&card.left>=0&&card.right<=390+1)).toBe(true);
-  await expect(page.locator('[data-mobile-progress-group="priority"]>summary')).toBeVisible();
+  await expect(page.locator('[data-mobile-progress-group="attention"]>summary')).toBeVisible();
 });
 
 
@@ -3300,46 +3337,40 @@ test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',a
 });
 
 
-test('[D+T] Progresso prioriza tags e remove miniaturas de capa',async({page},testInfo)=>{
+test('[D+T] Progresso usa linhas compactas acionáveis sem miniaturas',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='iphone-webkit','Validação exclusiva de Desktop e iPad.');
   await page.goto('/#progress');
   const course=page.locator('#progressInfo .progress-course').first();
   await expect(course).toBeVisible();
-  if(await course.evaluate(el=>el.classList.contains('is-collapsed'))){
-    await course.locator('[data-progress-course-toggle]').click();
-  }
-  const row=course.locator('.progress-map-unstarted').first();
+  if(await course.evaluate(el=>el.classList.contains('is-collapsed')))await course.locator('[data-progress-course-toggle]').click();
+  const row=course.locator('.progress-map-row').first();
   await expect(row).toBeVisible();
-  await expect(row.locator('.progress-map-thumb')).toBeHidden();
   await expect(row.locator('.compact-code')).toBeVisible();
-  await expect(row.locator('.progress-open')).toBeVisible();
+  await expect(row.locator('.progress-map-trailing')).toBeVisible();
+  await expect(row.locator('.progress-map-thumb')).toHaveCount(0);
+  await expect(row.locator('.progress-open')).toHaveCount(0);
   const layout=await row.evaluate(el=>{
-    const thumb=el.querySelector('.progress-map-thumb');
     const tag=el.querySelector('.compact-code');
     const title=el.querySelector('.progress-map-copy>b');
-    const summary=el.querySelector('.progress-map-summary');
-    const open=el.querySelector('.progress-open');
+    const trailing=el.querySelector('.progress-map-trailing');
     return{
-      thumbDisplay:thumb?getComputedStyle(thumb).display:'',
+      role:el.getAttribute('role'),
+      tabIndex:el.tabIndex,
       tagWidth:tag?.getBoundingClientRect().width||0,
       titleWidth:title?.getBoundingClientRect().width||0,
-      summaryDisplay:summary?getComputedStyle(summary).display:'',
-      openWidth:open?.getBoundingClientRect().width||0,
+      trailingWidth:trailing?.getBoundingClientRect().width||0,
       rowHeight:el.getBoundingClientRect().height
     };
   });
-  expect(layout.thumbDisplay).toBe('none');
-  expect(layout.tagWidth).toBeGreaterThanOrEqual(50);
-  expect(layout.tagWidth).toBeLessThanOrEqual(74);
+  expect(layout.role).toBe('button');
+  expect(layout.tabIndex).toBe(0);
+  expect(layout.tagWidth).toBeGreaterThanOrEqual(48);
+  expect(layout.tagWidth).toBeLessThanOrEqual(56);
   expect(layout.titleWidth).toBeGreaterThan(layout.tagWidth);
-  expect(layout.summaryDisplay).toBe('none');
-  expect(layout.openWidth).toBeGreaterThanOrEqual(90);
-  expect(layout.openWidth).toBeLessThanOrEqual(112);
+  expect(layout.trailingWidth).toBeGreaterThan(20);
   expect(layout.rowHeight).toBeLessThan(90);
 });
-
-
-test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async({page},testInfo)=>{
+test('[M] smartphone Progresso usa linhas compactas acionáveis',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação visual exclusiva do smartphone.');
   await page.goto('/#progress');
   await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
@@ -3348,19 +3379,17 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   if(!(await subjects.evaluate(el=>el.open)))await subjects.locator(':scope > summary').click();
   const course=page.locator('#progressInfo .progress-course').first();
   await expect(course).toBeVisible();
-  if(await course.evaluate(el=>el.classList.contains('is-collapsed'))){
-    await course.locator('[data-progress-course-toggle]').click();
-  }
+  if(await course.evaluate(el=>el.classList.contains('is-collapsed')))await course.locator('[data-progress-course-toggle]').click();
   const rows=course.locator('.progress-map-row');
   const count=await rows.count();
   expect(count).toBeGreaterThan(0);
   expect(count).toBeLessThanOrEqual(3);
 
   const row=rows.first();
-  await expect(row.locator('.progress-map-thumb')).toBeHidden();
   await expect(row.locator('.compact-code')).toBeVisible();
-  await expect(row.locator('.progress-open')).toBeHidden();
-  await expect.poll(async()=>row.locator('.compact-code').evaluate(el=>el.getBoundingClientRect().width),{timeout:5000}).toBeLessThanOrEqual(70);
+  await expect(row.locator('.progress-map-thumb')).toHaveCount(0);
+  await expect(row.locator('.progress-open')).toHaveCount(0);
+  await expect(row.locator('.progress-map-trailing')).toBeVisible();
   const layout=await row.evaluate(el=>{
     const tag=el.querySelector('.compact-code');
     const title=el.querySelector('.progress-map-copy>b');
@@ -3371,15 +3400,19 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
       tagWidth:tag?.getBoundingClientRect().width||0,
       lineClamp:getComputedStyle(title).webkitLineClamp,
       filterHeight:filter?.getBoundingClientRect().height||0,
-      progressPaddingBottom:parseFloat(getComputedStyle(view).paddingBottom)||0
+      progressPaddingBottom:parseFloat(getComputedStyle(view).paddingBottom)||0,
+      role:el.getAttribute('role'),
+      tabIndex:el.tabIndex
     };
   });
-  expect(layout.rowHeight).toBeLessThan(100);
-  expect(layout.tagWidth).toBeGreaterThanOrEqual(50);
-  expect(layout.tagWidth).toBeLessThanOrEqual(70);
+  expect(layout.rowHeight).toBeLessThan(90);
+  expect(layout.tagWidth).toBeGreaterThanOrEqual(46);
+  expect(layout.tagWidth).toBeLessThanOrEqual(54);
   expect(layout.lineClamp).toBe('2');
   expect(layout.filterHeight).toBeLessThanOrEqual(42);
   expect(layout.progressPaddingBottom).toBeGreaterThanOrEqual(100);
+  expect(layout.role).toBe('button');
+  expect(layout.tabIndex).toBe(0);
 
   await expect(page.locator('#progressSortMobile')).toBeVisible();
   await page.locator('#progressSortMobile').click();
@@ -3390,8 +3423,6 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   await page.locator('#progressSortClose').click();
   await expect(page.locator('#progressSortSheet')).toBeHidden();
 });
-
-
 test('[M] Home compacta Prioridade, Ritmo e Plano do dia em linhas acionáveis',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva do iPhone.');
   await page.setViewportSize({width:390,height:844});
@@ -3468,7 +3499,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
   await expect(summary).toBeVisible();
   if(!(await summary.evaluate(el=>el.open)))await summary.locator(':scope>summary').click();
 
-  const insight=page.locator('#progressInsights .progress-insight-card').first();
+  const insight=page.locator('#progressInsights .progress-insight-card.is-primary');
   await expect(insight).toBeVisible();
   await expect(insight.locator('.progress-insight-thumb img')).toBeHidden();
   await expect(insight.locator('.progress-insight-thumb>span')).toBeVisible();
@@ -3476,7 +3507,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
   const progressData=await page.evaluate(()=>{
     const metrics=[...document.querySelectorAll('#progressMetrics .metric')];
     const visibleMetrics=metrics.filter(el=>getComputedStyle(el).display!=='none');
-    const card=document.querySelector('#progressInsights .progress-insight-card');
+    const card=document.querySelector('#progressInsights .progress-insight-card.is-primary');
     const action=card?.querySelector(':scope>.secondary');
     return{
       metricCount:visibleMetrics.length,
@@ -3484,14 +3515,16 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
       insightHeight:card?.getBoundingClientRect().height||0,
       insightWidth:card?.getBoundingClientRect().width||0,
       actionWidth:action?.getBoundingClientRect().width||0,
+      actionHeight:action?.getBoundingClientRect().height||0,
       thumbWidth:card?.querySelector('.progress-insight-thumb')?.getBoundingClientRect().width||0
     };
   });
   expect(progressData.metricCount).toBe(4);
-  expect(progressData.metricMaxHeight).toBeLessThanOrEqual(82);
-  expect(progressData.insightHeight).toBeLessThan(90);
-  expect(progressData.thumbWidth).toBeLessThanOrEqual(60);
-  expect(Math.abs(progressData.actionWidth-progressData.insightWidth)).toBeLessThanOrEqual(2);
+  expect(progressData.metricMaxHeight).toBeLessThanOrEqual(72);
+  expect(progressData.insightHeight).toBeLessThanOrEqual(96);
+  expect(progressData.thumbWidth).toBeLessThanOrEqual(82);
+  expect(progressData.actionWidth).toBeLessThan(progressData.insightWidth);
+  expect(progressData.actionHeight).toBeGreaterThanOrEqual(40);
 });
 
 

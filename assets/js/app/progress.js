@@ -14,35 +14,34 @@ function progressPriorityRank(p){if(p.difficult>0||p.review>0)return 0;if(p.mark
 function sortProgressMaps(maps){const rows=(maps||[]).map(map=>({map,progress:mapProgress(map)}));rows.sort((a,b)=>{const ap=a.progress,bp=b.progress;if(progressSort==='recent')return activityTimestamp(bp.lastActivity)-activityTimestamp(ap.lastActivity)||String(a.map.title||'').localeCompare(String(b.map.title||''),'pt-BR');if(progressSort==='progress-asc')return progressPercentValue(ap)-progressPercentValue(bp)||String(a.map.title||'').localeCompare(String(b.map.title||''),'pt-BR');if(progressSort==='progress-desc')return progressPercentValue(bp)-progressPercentValue(ap)||String(a.map.title||'').localeCompare(String(b.map.title||''),'pt-BR');if(progressSort==='alpha')return String(a.map.title||a.map.shortTitle||'').localeCompare(String(b.map.title||b.map.shortTitle||''),'pt-BR');const rank=progressPriorityRank(ap)-progressPriorityRank(bp);if(rank)return rank;if(bp.difficult!==ap.difficult)return bp.difficult-ap.difficult;if(bp.review!==ap.review)return bp.review-ap.review;return activityTimestamp(bp.lastActivity)-activityTimestamp(ap.lastActivity)});return rows}
 function progressStateBadges(p,includePending=true){const items=[];if(p.done>0)items.push('<span class="progress-state ok">OK '+p.done+'</span>');if(p.review>0)items.push('<span class="progress-state review">REV '+p.review+'</span>');if(p.difficult>0)items.push('<span class="progress-state difficult">DIF '+p.difficult+'</span>');if(includePending&&p.pending>0)items.push('<span class="progress-state pending">PEND '+p.pending+'</span>');return items.join('')}
 function progressMapMeta(p){if(p.total<=0)return'Sem tópicos catalogados';if(p.marked===0){const opened=activityTimestamp(p.lastActivity)>0?'Aberto '+activityLabel(p.lastActivity,''):'Não iniciado';return opened+' · '+p.total+' tópico'+(p.total===1?'':'s')}if(p.marked>=p.total)return'Concluído · '+p.total+' tópico'+(p.total===1?'':'s');return formatProgressPercent(p)+' · '+p.marked+'/'+p.total+' estudados'}
-function renderProgressMetrics(p){const inProgress=combinedMaps().filter(map=>{const mp=mapProgress(map);return mp.marked>0&&mp.marked<mp.total}).length;$('#progressMetrics').innerHTML=[
- [formatProgressPercent(p),'Progresso geral'],
- [String(p.marked),'Tópicos estudados'],
- [String(p.review),'Em revisão'],
- [String(p.difficult),'Difíceis'],
- [ESC(formatStudyDuration(studyTimeTodaySeconds())),'Tempo hoje'],
- [ESC(formatStudyDuration(studyTimeWeekSeconds())),'Esta semana']
-].map(([value,label])=>'<div class="metric"><b>'+value+'</b><span>'+label+'</span></div>').join('');const root=$('#progressMetrics');if(root)root.dataset.activeMaps=String(inProgress)}
+function renderProgressMetrics(p){
+  const inProgress=combinedMaps().filter(map=>{const mp=mapProgress(map);return mp.marked>0&&mp.marked<mp.total}).length;
+  $('#progressMetrics').innerHTML=[
+    [formatProgressPercent(p),'Progresso geral'],
+    [String(p.marked),'Tópicos estudados'],
+    [String(p.review),'Revisões'],
+    [ESC(formatStudyDuration(studyTimeWeekSeconds())),'Tempo esta semana']
+  ].map(([value,label])=>'<div class="metric"><b>'+value+'</b><span>'+label+'</span></div>').join('');
+  const root=$('#progressMetrics');if(root)root.dataset.activeMaps=String(inProgress)
+}
 function renderProgressMapRow(item){
-  const m=item.map,p=item.progress,key=m._key||mapKey(m),started=p.marked>0,states=started?progressStateBadges(p,true):'',cover=mapCover(m);
-  const thumb=cover?'<div class="progress-map-thumb" aria-hidden="true"><img src="'+ESC(cover)+'" alt="" loading="lazy" decoding="async"><span>'+ESC(m.code||'MAP')+'</span></div>':'<div class="progress-map-thumb progress-map-thumb--code" aria-hidden="true"><span>'+ESC(m.code||'MAP')+'</span></div>';
-  const mobileStates=states?'<div class="progress-map-mobile-states progress-states">'+states+'</div>':'';
-  return'<div class="progress-map-row '+(started?'progress-map-active':'progress-map-unstarted')+'" data-progress-map="'+ESC(key)+'" data-progress-row-open="'+ESC(key)+'" style="'+ESC(mapAccentVars(m))+'"><div class="progress-map-main">'+thumb+'<div class="progress-map-copy"><span class="map-code compact-code">'+ESC(m.code||'MAP')+'</span><b>'+ESC(m.title||m.shortTitle)+'</b><span class="progress-map-meta">'+ESC(m.version||'')+(m.version?' · ':'')+ESC(progressMapMeta(p))+'</span>'+mobileStates+'</div></div><div class="progress-map-summary"><div class="progress-map-summary-line"><span>'+ESC(progressMapMeta(p))+'</span>'+(started?'<b>'+formatProgressPercent(p)+'</b>':'')+'</div>'+(started?progressBarHtml(p,'progress-map-bar'):'')+(states?'<div class="progress-states progress-map-states">'+states+'</div>':'')+'</div><button class="secondary progress-open" type="button" data-progress-open="'+ESC(key)+'">Abrir</button></div>'
+  const m=item.map,p=item.progress,key=m._key||mapKey(m),started=p.marked>0,states=started?progressStateBadges(p,false):'';
+  return'<div class="progress-map-row '+(started?'progress-map-active':'progress-map-unstarted')+'" data-progress-map="'+ESC(key)+'" data-progress-row-open="'+ESC(key)+'" role="button" tabindex="0" aria-label="'+ESC('Abrir '+(m.title||m.shortTitle||m.code||'mapa'))+'" style="'+ESC(mapAccentVars(m))+'"><div class="progress-map-main"><span class="map-code compact-code">'+ESC(m.code||'MAP')+'</span><div class="progress-map-copy"><b>'+ESC(m.title||m.shortTitle)+'</b><span class="progress-map-meta">'+ESC(progressMapMeta(p))+'</span>'+(states?'<div class="progress-map-mobile-states progress-states">'+states+'</div>':'')+'</div></div><div class="progress-map-trailing"><b>'+formatProgressPercent(p)+'</b><span aria-hidden="true">›</span></div></div>'
 }
 function renderProgressCourse(c,allMaps){
   const maps=allMaps.filter(m=>m.courseId===c.id),cp=aggregateProgress(maps),visible=sortProgressMaps(maps.filter(matchesProgressFilter));
   if(state.progressFilter!=='all'&&!visible.length)return'';
   const expanded=progressExpandedCourses.has(c.id),showAll=progressShowAllCourses.has(c.id);
   const isPhone=document.documentElement.classList.contains('is-phone-layout')||window.matchMedia('(max-width:700px)').matches;
-  const limit=isPhone?3:6,shown=showAll?visible:visible.slice(0,limit),hiddenCount=Math.max(0,visible.length-shown.length);
-  const summary=[cp.marked+'/'+cp.total+' tópicos',maps.length+' mapas'];
-  if(cp.pending>0&&!isPhone)summary.push('PEND '+cp.pending);
-  const stateBadges=progressStateBadges(cp,true);
+  const limit=isPhone?3:6,shown=showAll?visible:visible.slice(0,limit);
+  const summary=[cp.total+' tópico'+(cp.total===1?'':'s'),maps.length+' mapa'+(maps.length===1?'':'s')];
+  if(cp.pending>0)summary.push('PEND '+cp.pending);
   let body='';
   if(expanded){
     body='<div class="progress-map-list">'+(shown.length?shown.map(renderProgressMapRow).join(''):emptyStateHtml({title:'Nada neste filtro',text:'Nenhum mapa corresponde ao filtro selecionado.',mascot:'progress',compact:true,className:'progress-filter-empty'}))+'</div>'+(visible.length>limit?'<div class="progress-course-more"><button type="button" class="secondary" data-progress-show-all="'+ESC(c.id)+'">'+(showAll?'Mostrar menos':'Mostrar todos os '+visible.length)+'</button></div>':'')
   }
   const toggleLabel=expanded?'Recolher':'Expandir';
-  return'<section class="progress-course progress-course-compact '+(expanded?'is-expanded':'is-collapsed')+'" data-progress-course-section="'+ESC(c.id)+'"><div class="progress-course-head"><button type="button" class="progress-course-title" data-progress-course-open="'+ESC(c.id)+'"><span class="kicker">Concurso</span><h3>'+ESC(c.title)+'</h3><p>'+ESC(summary.join(' · '))+'</p></button><div class="progress-course-actions"><div class="progress-course-score"><b>'+formatProgressPercent(cp)+'</b><span>'+maps.length+' mapas</span></div><button type="button" class="secondary progress-course-toggle" data-progress-course-toggle="'+ESC(c.id)+'" aria-expanded="'+String(expanded)+'" aria-label="'+ESC(toggleLabel+' '+c.title)+'"><span class="progress-course-toggle-label">'+toggleLabel+'</span><span class="progress-course-toggle-icon" aria-hidden="true">'+(expanded?'↑':'↓')+'</span></button></div></div><div class="progress-course-summary">'+progressBarHtml(cp,'course-summary-bar')+(stateBadges?'<div class="progress-states progress-course-states">'+stateBadges+'</div>':'')+'</div>'+body+'</section>'
+  return'<section class="progress-course progress-course-compact '+(expanded?'is-expanded':'is-collapsed')+'" data-progress-course-section="'+ESC(c.id)+'"><button type="button" class="progress-course-head progress-course-head-button" data-progress-course-toggle="'+ESC(c.id)+'" aria-expanded="'+String(expanded)+'" aria-label="'+ESC(toggleLabel+' '+c.title)+'"><div class="progress-course-title"><span class="kicker">Concurso</span><h3>'+ESC(c.title)+'</h3><p>'+ESC(summary.join(' · '))+'</p></div><div class="progress-course-score"><b>'+formatProgressPercent(cp)+'</b><span>'+cp.marked+' / '+cp.total+'</span></div><span class="progress-course-chevron" aria-hidden="true">'+(expanded?'⌃':'⌄')+'</span></button><div class="progress-course-summary">'+progressBarHtml(cp,'course-summary-bar')+'</div>'+body+'</section>'
 }
 function renderProgress(){
   document.querySelectorAll('body>#progressSortBackdrop,body>#progressSortSheet').forEach(el=>el.remove());
@@ -73,8 +72,6 @@ function renderProgress(){
     if(trigger)trigger.setAttribute('aria-expanded','true');
     document.documentElement.classList.add('progress-sort-open');
   };
-  const isPhone=()=>document.documentElement.classList.contains('is-phone-layout')||window.matchMedia('(max-width:700px)').matches;
-
   const filters=$('#progressFilters');
   filters?.querySelectorAll('[data-progress-filter]').forEach(button=>button.onclick=()=>{state.progressFilter=button.dataset.progressFilter;renderProgress()});
   const sort=$('#progressSort');
@@ -103,19 +100,10 @@ function renderProgress(){
     saveProgressSet('studyapp.progressShowAllCourses',progressShowAllCourses);
     renderProgress()
   });
-  $$('#progressInfo [data-progress-open]').forEach(button=>button.onclick=e=>{e.stopPropagation();openMap(button.dataset.progressOpen)});
   $$('#progressInfo [data-progress-row-open]').forEach(row=>{
-    row.onclick=e=>{
-      if(!isPhone()||e.target.closest('button,a,input,select,label'))return;
-      openMap(row.dataset.progressRowOpen)
-    };
-    row.onkeydown=e=>{
-      if(!isPhone()||(e.key!=='Enter'&&e.key!==' '))return;
-      e.preventDefault();
-      openMap(row.dataset.progressRowOpen)
-    }
+    row.onclick=e=>{if(e.target.closest('button,a,input,select,label'))return;openMap(row.dataset.progressRowOpen)};
+    row.onkeydown=e=>{if(e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();openMap(row.dataset.progressRowOpen)}
   });
-  $$('#progressInfo [data-progress-course-open]').forEach(button=>button.onclick=()=>openCourse(button.dataset.progressCourseOpen));
   if(typeof applyMapCoverAccents==='function')applyMapCoverAccents($('#progressInfo'))
 }
 
