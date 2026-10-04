@@ -1,14 +1,14 @@
 {
-  "version": "15.36.31",
-  "label": "V15.36.31-G",
-  "releasedAt": "2026-10-04T01:28:00.000Z",
-  "notes": "Refinamento visual dos cards de cursos: no iPad/tablet e no Desktop da página Meus Cursos, as capas passam a encostar diretamente nas bordas superiores e laterais do card, sem moldura interna. No iPad, a Home adota o mesmo encaixe full-bleed; no Desktop da Home, a geometria é preservada e apenas a sombra/brilho superior da capa é removida.",
+  "version": "15.36.32",
+  "label": "V15.36.32-G",
+  "releasedAt": "2026-10-04T02:28:00.000Z",
+  "notes": "Refinamento de densidade da Home em Desktop, iPad e smartphone: Hoje, Prioridade, Ritmo e Plano do dia ficam mais compactos; Retomar ganha mais largura no Desktop e passa a dividir a linha com Simulados no iPad; simulados recentes ficam menores; e os cards de cursos da Home exibem apenas as informações essenciais, mantendo Meus Cursos como visão completa.",
   "showWhatsNew": true,
   "highlights": [
-    "[D+T] Meus Cursos usa capas full-bleed, sem espaço interno nas laterais e no topo",
-    "[T] Home usa o mesmo encaixe full-bleed das capas",
-    "[D] Home mantém o layout atual e remove apenas a sombra/brilho superior da capa",
-    "[D+T] Selo ATIVO e botão de configuração permanecem dentro da capa",
-    "[M] Smartphone permanece inalterado"
+    "[D] Retomar ocupa cerca de 55–60% da faixa e Simulados recentes fica mais compacto",
+    "[D+T] Hoje, Prioridade, Ritmo e Plano do dia usam menos altura sem perder ações",
+    "[T] Retomar e Simulados ficam lado a lado, com composição adaptada para paisagem e retrato",
+    "[M] Prioridade, Ritmo e Plano do dia ficam mais densos; Plano vira linhas acionáveis",
+    "[G] Meus cursos na Home mostra somente o essencial; a página Meus Cursos preserva todas as informações"
   ]
 }
