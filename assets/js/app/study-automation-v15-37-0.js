@@ -548,6 +548,7 @@
   function renderAutomationSettings(){
     const view=document.querySelector('[data-view="settings"]');if(!view)return;
     let root=document.getElementById('studyAutomationPanel');
+    const mobileWasOpen=!!root&&root.classList.contains('mobile-settings-panel')&&!root.classList.contains('mobile-settings-collapsed');
     if(!root){
       root=document.createElement('section');root.id='studyAutomationPanel';root.className='panel study-automation-panel';
       const host=view.querySelector('.settings-column-secondary')||view.querySelector('.settings-layout-v3')||view;
@@ -575,6 +576,11 @@
     root.querySelector('[data-automation-undo]')?.addEventListener('click',()=>undoLastAutomation());
     root.querySelectorAll('[data-diagnostic-action]').forEach(button=>button.onclick=()=>handleDiagnosticAction(diag.issues[Number(button.dataset.diagnosticAction)]));
     root.querySelector('[data-automation-refresh]')?.addEventListener('click',()=>{const result=syncAutoAgenda({force:true});renderAutomationSettings();toast(result.changed?'Plano e diagnóstico atualizados.':'Diagnóstico atualizado; o plano já estava em dia.')});
+    if(mobileWasOpen&&document.documentElement.classList.contains('is-phone-layout')){
+      window.MobileUX?.refresh?.();
+      root.classList.remove('mobile-settings-collapsed');
+      root.querySelector(':scope > .mobile-settings-toggle')?.setAttribute('aria-expanded','true');
+    }
     setTimeout(()=>window.SettingsControlCenter?.render?.(),0);
   }
 
