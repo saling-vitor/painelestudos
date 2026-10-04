@@ -3168,13 +3168,13 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
     const categories=document.querySelector('#categoryRow'),maps=document.querySelector('#courseMaps');
     const heading=document.querySelector('[data-view="course"] .section-head[style]'),headingCopy=heading?.firstElementChild,layout=heading?.querySelector('.actions');
     const card=maps.querySelector('.map-card.has-cover'),cover=card?.querySelector('.map-cover'),foot=card?.querySelector('.foot');
-    const ar=actions.getBoundingClientRect(),hr=headingCopy.getBoundingClientRect(),lr=layout.getBoundingClientRect(),cr=card.getBoundingClientRect(),vr=cover.getBoundingClientRect(),fr=foot.getBoundingClientRect();
+    const ar=actions.getBoundingClientRect(),cr=card.getBoundingClientRect(),vr=cover.getBoundingClientRect(),fr=foot.getBoundingClientRect();
     return{
       toolbarColumns:getComputedStyle(toolbar).display==='grid'?getComputedStyle(toolbar).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length:1,
       searchHidden:getComputedStyle(search).display==='none',
       categoriesWrap:getComputedStyle(categories).flexWrap,
       mapColumns:getComputedStyle(maps).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
-      layoutNearTitle:lr.left>=hr.right-1&&lr.left-hr.right<48,
+      layoutHidden:!layout||getComputedStyle(layout).display==='none'||layout.getBoundingClientRect().width===0,
       coverRatio:vr.width/vr.height,
       footerInside:fr.left>=cr.left-1&&fr.right<=cr.right+1&&fr.bottom<=cr.bottom+1,
       footerBorderTop:parseFloat(getComputedStyle(foot).borderTopWidth)||0,
@@ -3186,7 +3186,7 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
   expect(data.searchHidden).toBe(true);
   expect(data.categoriesWrap).toBe('nowrap');
   expect(data.mapColumns).toBe(3);
-  expect(data.layoutNearTitle).toBe(true);
+  expect(data.layoutHidden).toBe(true);
   expect(data.coverRatio).toBeGreaterThan(1.74);
   expect(data.coverRatio).toBeLessThan(1.82);
   expect(data.footerInside).toBe(true);
