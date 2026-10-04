@@ -462,9 +462,9 @@
       if(String(map.category||'Outros')==='Outros')issues.push({type:'map-category',severity:'info',mapKey,label:(map.code||map.title||'Mapa')+' ainda em Outros',detail:'Classificar o mapa melhora filtros, prioridades e leitura do conteúdo.'});
     }
     for(const sim of sims){
-      const simulationKey=sim._key||((typeof simulationKey==='function')?simulationKey(sim):sim.id||'');
-      if(!sim.courseId||!courses.some(course=>course.id===sim.courseId))issues.push({type:'simulation-course',severity:'info',simulationKey,label:(sim.title||sim.code||'Simulado')+' sem curso vinculado',detail:'Vincular o curso melhora a recuperação pós-simulado.'});
-      if((Number(sim.questions)||0)<=0)issues.push({type:'simulation-questions',severity:'info',simulationKey,label:(sim.title||sim.code||'Simulado')+' sem quantidade de questões',detail:'A quantidade de questões melhora o histórico e as comparações de desempenho.'});
+      const simKey=sim._key||((typeof window.simulationKey==='function')?window.simulationKey(sim):sim.id||'');
+      if(!sim.courseId||!courses.some(course=>course.id===sim.courseId))issues.push({type:'simulation-course',severity:'info',simulationKey:simKey,label:(sim.title||sim.code||'Simulado')+' sem curso vinculado',detail:'Vincular o curso melhora a recuperação pós-simulado.'});
+      if((Number(sim.questions)||0)<=0)issues.push({type:'simulation-questions',severity:'info',simulationKey:simKey,label:(sim.title||sim.code||'Simulado')+' sem quantidade de questões',detail:'A quantidade de questões melhora o histórico e as comparações de desempenho.'});
     }
     const due=window.StudyPlanner?.dueTopics?.()||[];
     if(due.length>=12)issues.push({type:'review-backlog',severity:'warn',label:due.length+' revisões por tópico acumuladas',detail:'Há revisões vencidas suficientes para impactar o plano dos próximos dias.'});
