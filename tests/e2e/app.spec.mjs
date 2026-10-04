@@ -1733,7 +1733,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
 test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   const scenarios=[
-    {name:'landscape',width:1194,height:834,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:12},
+    {name:'landscape',width:1194,height:834,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:2},
     {name:'portrait',width:820,height:1180,insights:1,rhythm:1,agenda:1,agendaSide:2,settings:1},
     {name:'split',width:640,height:900,insights:1,rhythm:1,agenda:1,agendaSide:1,settings:1}
   ];
