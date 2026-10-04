@@ -1,0 +1,288 @@
+/* V15.36.34-G · revisão responsiva completa [D/T/M]
+   Ajustes derivados da revisão em vídeo: densidade, hierarquia, navegação e legibilidade. */
+
+/* =========================================================
+   [G] Topbar sticky: separa a barra do conteúdo sem alterar o vidro.
+   ========================================================= */
+.topbar-wrap{isolation:isolate}
+.topbar-wrap::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-12px;
+  height:18px;
+  pointer-events:none;
+  opacity:0;
+  background:linear-gradient(180deg,rgba(3,4,6,.72),rgba(3,4,6,.18) 58%,transparent);
+  transition:opacity .16s ease;
+}
+html.topbar-scrolled:not(.is-phone-layout) .topbar-wrap::after{opacity:1}
+html.topbar-scrolled:not(.is-phone-layout) .topbar{
+  transform:translateZ(0);
+  box-shadow:0 12px 32px rgba(0,0,0,.42),0 2px 8px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.055)!important;
+}
+
+/* =========================================================
+   [G] Curso: não reintroduzir alternância grade/lista.
+   ========================================================= */
+[data-view="course"] #layoutGrid,
+[data-view="course"] #layoutList{display:none!important}
+[data-view="course"] .section-head[style]>.actions:has(#layoutGrid){display:none!important}
+
+/* Filtros horizontais deixam claro que há mais conteúdo à direita. */
+[data-view="course"] .course-study-filters,
+[data-view="course"] .category-row{
+  -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 24px),transparent 100%);
+  mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 24px),transparent 100%);
+}
+[data-view="course"] .course-study-filters:focus-within,
+[data-view="course"] .category-row:focus-within{
+  -webkit-mask-image:none;
+  mask-image:none;
+}
+
+/* =========================================================
+   [T] iPad retrato: dock inferior de cinco destinos.
+   Simulados e Agenda vivem em Mais; paisagem continua com sidebar.
+   ========================================================= */
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) .bottom-nav{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-simulations,
+  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-agenda{
+    display:none!important;
+  }
+}
+html.is-ipad.keyboard-open .bottom-nav{
+  opacity:0!important;
+  transform:translateY(calc(100% + 28px))!important;
+  pointer-events:none!important;
+}
+.tablet-more-shortcuts{
+  display:none;
+}
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin:0 0 12px;
+  }
+  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts>button{
+    min-height:58px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border:1px solid rgba(255,255,255,.065);
+    border-radius:11px;
+    background:rgba(255,255,255,.015);
+    color:#c5c9cf;
+    text-align:left;
+  }
+  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts>button>span:last-child{
+    display:grid;
+    gap:2px;
+  }
+  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts b{font-size:11px}
+  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts small{color:#777e87;font-size:9px}
+}
+
+/* Meus Cursos usa melhor a largura em paisagem. */
+@media (orientation:landscape) and (min-width:900px){
+  html.is-ipad:not(.is-phone-layout) [data-view="courses"] #coursesGrid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+}
+
+/* =========================================================
+   [M] Curso: uma toolbar de decisão e filtros sob demanda.
+   ========================================================= */
+@media(max-width:480px){
+  html.is-phone-layout [data-view="course"] .mobile-course-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr 1fr!important;
+    gap:6px!important;
+  }
+  html.is-phone-layout [data-view="course"] .mobile-course-actions>button{
+    min-width:0!important;
+    min-height:42px!important;
+    padding:6px 5px!important;
+  }
+  html.is-phone-layout [data-view="course"] .mobile-course-actions>button b{
+    font-size:8.5px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-study-filter-wrap,
+  html.is-phone-layout [data-view="course"] .course-category-wrap{
+    display:none!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-filters-open .course-study-filter-wrap,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-filters-open .course-category-wrap{
+    display:block!important;
+    margin-top:8px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-filters-open .course-study-filters,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-filters-open .category-row{
+    display:flex!important;
+    overflow-x:auto!important;
+    gap:5px!important;
+    padding-bottom:2px!important;
+  }
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-filters-open .course-study-filter,
+  html.is-phone-layout [data-view="course"] .course-hero.mobile-course-filters-open .category-btn{
+    flex:0 0 auto!important;
+    min-height:40px!important;
+    padding-inline:8px!important;
+  }
+  html.is-phone-layout [data-view="course"] #courseStickyBar{
+    display:none!important;
+  }
+
+  /* Biblioteca de cursos: mesma capa, menos rodapé e menos rolagem. */
+  html.is-phone-layout [data-view="courses"] .course-card.course-library-card{
+    min-height:0!important;
+    padding-bottom:48px!important;
+  }
+  html.is-phone-layout [data-view="courses"] .course-card-cover{
+    height:142px!important;
+  }
+  html.is-phone-layout [data-view="courses"] .course-card-role,
+  html.is-phone-layout [data-view="courses"] .course-card-institution,
+  html.is-phone-layout [data-view="courses"] .course-board-chip,
+  html.is-phone-layout [data-view="courses"] .course-map-count-chip,
+  html.is-phone-layout [data-view="courses"] .course-edital-btn,
+  html.is-phone-layout [data-view="courses"] .course-progress-states,
+  html.is-phone-layout [data-view="courses"] .course-progress-empty{
+    display:none!important;
+  }
+  html.is-phone-layout [data-view="courses"] .course-progress-mini{
+    margin-top:8px!important;
+    padding-top:7px!important;
+  }
+  html.is-phone-layout [data-view="courses"] .course-footer{
+    margin-top:7px!important;
+    padding-top:7px!important;
+  }
+
+  /* Mapas: preservar capa e touch, compactar apenas a cauda textual. */
+  html.is-phone-layout .map-card.has-cover{
+    min-height:246px!important;
+    padding-bottom:43px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .map-cover{
+    height:104px!important;
+  }
+  html.is-phone-layout .map-card.has-cover h3{
+    min-height:32px!important;
+    margin-top:7px!important;
+    font-size:14px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .map-progress-mini{
+    margin-top:6px!important;
+    padding:6px 7px!important;
+  }
+  html.is-phone-layout .map-card.has-cover .foot{
+    min-height:30px!important;
+    bottom:8px!important;
+    padding-top:5px!important;
+  }
+
+  /* Simulados: os dois filtros cabem na mesma faixa. */
+  html.is-phone-layout [data-view="simulations"] .simulation-toolbar{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+  }
+  html.is-phone-layout [data-view="simulations"] .simulation-toolbar .simulation-search{
+    grid-column:1/-1!important;
+  }
+  html.is-phone-layout [data-view="simulations"] .simulation-toolbar select{
+    min-width:0!important;
+    width:100%!important;
+    min-height:42px!important;
+    font-size:10px!important;
+  }
+
+  /* Progresso: o grupo já se chama Atenção; evita o kicker repetido. */
+  html.is-phone-layout #studyIntelligencePanel .progress-intelligence-head .kicker{
+    display:none!important;
+  }
+
+  /* Metas: linhas densas e unidades específicas já vêm do markup. */
+  html.is-phone-layout #studyGoalsForm{
+    gap:6px!important;
+  }
+  html.is-phone-layout #studyGoalsForm>label:not(.study-settings-toggle){
+    min-height:50px!important;
+    padding:7px 8px!important;
+  }
+  html.is-phone-layout #studyGoalsForm .study-duration-field{
+    min-height:38px!important;
+  }
+  html.is-phone-layout #studyGoalsForm .study-duration-input{
+    min-height:38px!important;
+    height:38px!important;
+  }
+  html.is-phone-layout #studyGoalsForm .study-goal-human{
+    font-size:9px!important;
+  }
+}
+
+/* =========================================================
+   [G] Agenda: semana/dia vazios terminam onde o conteúdo termina.
+   ========================================================= */
+.study-agenda-view[data-agenda-display-mode="week"] .study-agenda-calendar,
+.study-agenda-view[data-agenda-display-mode="today"] .study-agenda-calendar{
+  min-height:0!important;
+  align-self:start;
+}
+.study-agenda-view.agenda-mode-empty .study-agenda-calendar{
+  height:auto!important;
+}
+.study-agenda-view.agenda-mode-empty #agendaCalendarGrid{
+  min-height:0!important;
+}
+
+/* =========================================================
+   [D+T] Configurações: reduzir espaços mortos.
+   ========================================================= */
+html:not(.is-phone-layout) #studySettingsPanel{
+  padding:16px!important;
+}
+html:not(.is-phone-layout) #studyGoalsForm{
+  gap:8px!important;
+}
+html:not(.is-phone-layout) #studyGoalsForm>label:not(.study-settings-toggle){
+  min-height:68px!important;
+  padding:9px 10px!important;
+}
+html:not(.is-phone-layout) .study-time-manage-head{
+  align-items:center!important;
+}
+html:not(.is-phone-layout) .study-time-manage-total{
+  min-width:150px;
+}
+
+/* =========================================================
+   [G] Legibilidade: secundários úteis não devem virar microtexto.
+   ========================================================= */
+html.is-ipad:not(.is-phone-layout) .course-card-role,
+html.is-ipad:not(.is-phone-layout) .course-card-institution,
+html.is-ipad:not(.is-phone-layout) .simulation-subtitle,
+html.is-ipad:not(.is-phone-layout) .study-agenda-day-list small{
+  font-size:10px!important;
+}
+@media(max-width:480px){
+  html.is-phone-layout .simulation-subtitle,
+  html.is-phone-layout .course-exam-info small,
+  html.is-phone-layout .study-agenda-day-list small{
+    font-size:10px!important;
+  }
+}
+
+/* Sincronização continua acionável, mas o estado sincronizado perde peso visual. */
+#syncTop[data-sync-state="synced"]{
+  border-color:rgba(98,169,120,.14)!important;
+  background:rgba(98,169,120,.025)!important;
+}

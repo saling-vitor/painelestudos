@@ -1,15 +1,17 @@
 {
-  "version": "15.36.33",
-  "label": "V15.36.33-G",
-  "releasedAt": "2026-10-04T03:20:00.000Z",
-  "notes": "Reestruturação da tela Progresso para leitura rápida: quatro KPIs principais, foco imediato mais hierárquico, pendências adaptativas, ritmo consolidado, concursos e mapas em linhas compactas e dúvidas vazias proporcionais.",
+  "version": "15.36.34",
+  "label": "V15.36.34-G",
+  "releasedAt": "2026-10-04T05:05:00.000Z",
+  "notes": "Revisão responsiva completa após validação em vídeo de Desktop, iPad e iPhone: navegação mais simples, curso menos congestionado, simulados sem códigos técnicos, ritmo consistente, Agenda mais clara e configurações mais densas.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Progresso agora prioriza evolução, atenção e próxima ação",
-    "[D+T] Retomar domina Onde focar agora e ações secundárias ocupam menos espaço",
-    "[G] Revisões e erros só aparecem quando há pendências; zero vira Tudo sob controle",
-    "[G] Ritmo de estudo usa um gráfico principal e KPIs compactos",
-    "[M] Concursos e mapas viram linhas compactas; a linha inteira é acionável",
-    "[M] Dúvidas vazias e grupos do Progresso ocupam menos espaço"
+    "[G] Topbar sticky ganha separação visual e deixa de parecer sobrepor o conteúdo",
+    "[T] iPad retrato usa cinco destinos no dock; Agenda e Simulados ficam em Mais",
+    "[M] Curso reúne Buscar, Filtros e Detalhes sem duplicar controles",
+    "[G] Alternância grade/lista do curso é removida novamente",
+    "[G] Simulados deixam de exibir códigos técnicos internos",
+    "[G] Ritmo de estudo reconcilia o tempo total com a distribuição por mapas",
+    "[G] Agenda usa Dia / Semana / Mês e reduz áreas vazias",
+    "[M] Metas e timer ficam mais densos com unidades h e min explícitas"
   ]
 }

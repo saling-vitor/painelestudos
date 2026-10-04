@@ -1412,7 +1412,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
   const scenarios=testInfo.project.name==='desktop-chromium'
     ?[{name:'desktop',width:1600,height:900,courses:3,maps:3,simulations:3,simulationToolbar:2,courseToolbar:1}]
     :[
-      {name:'ipad landscape',width:1194,height:834,courses:2,maps:3,simulations:3,simulationToolbar:2,courseToolbar:1},
+      {name:'ipad landscape',width:1194,height:834,courses:3,maps:3,simulations:3,simulationToolbar:2,courseToolbar:1},
       {name:'ipad portrait',width:820,height:1180,courses:2,maps:2,simulations:2,simulationToolbar:2,courseToolbar:1},
       {name:'ipad split',width:640,height:900,courses:1,maps:1,simulations:1,simulationToolbar:1,courseToolbar:1}
     ];
@@ -1553,23 +1553,27 @@ test('iPad usa dock lateral recolhível no leitor',async({page},testInfo)=>{
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('studyapp.ipadReaderDock.v1')||'{}').collapsed)).toBe(true);
 });
 
-test('iPad vertical usa Calendário na barra inferior e não mostra Estudar ocioso',async({page},testInfo)=>{
+test('iPad vertical usa cinco destinos e concentra Agenda e Simulados em Mais',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica do app no iPad vertical.');
   await page.setViewportSize({width:820,height:1180});
   await page.goto('/#home');
   await expect(page.locator('.side')).toBeHidden();
   await expect(page.locator('.bottom-nav')).toBeVisible();
-  const calendar=page.locator('.bottom-nav [data-nav="agenda"]');
-  await expect(calendar).toBeVisible();
-  await expect(calendar).toContainText('Calendário');
-  await expect(page.locator('.bottom-nav [data-nav]')).toHaveCount(7);
+  const visibleNav=await page.locator('.bottom-nav>button').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').map(el=>el.dataset.nav||el.id));
+  expect(visibleNav).toEqual(['home','courses','maps','progress','settings']);
+  await expect(page.locator('.bottom-nav [data-nav="agenda"]')).toBeHidden();
+  await expect(page.locator('.bottom-nav [data-nav="simulations"]')).toBeHidden();
+  const more=page.locator('.bottom-nav [data-nav="settings"]');
+  await expect(more).toContainText('Mais');
   await expect(page.locator('#studyTimerFloat')).toBeHidden();
-  await expect(page.locator('#studyTimerFloat')).not.toContainText('Estudar');
-  await calendar.click();
+  await more.click();
+  await expect(page.locator('[data-view="settings"]')).toHaveClass(/active/);
+  await expect(page.locator('#tabletMoreShortcuts')).toBeVisible();
+  await expect(page.locator('#tabletMoreShortcuts [data-tablet-more-nav="agenda"]')).toContainText('Agenda');
+  await expect(page.locator('#tabletMoreShortcuts [data-tablet-more-nav="simulations"]')).toContainText('Simulados');
+  await page.locator('#tabletMoreShortcuts [data-tablet-more-nav="agenda"]').click();
   await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
-  await expect(calendar).toHaveClass(/active/);
 });
-
 test('iPad nunca recebe o Menu exclusivo de smartphone',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   for(const size of [{width:820,height:1180},{width:640,height:900},{width:430,height:760}]){
@@ -1594,6 +1598,15 @@ test('agenda de estudos renderiza calendário e troca de modos',async({page})=>{
   await expect(page.locator('.agenda-today-card')).toBeVisible();
 });
 
+test('Agenda distingue Dia do comando Hoje e reduz modo semanal vazio',async({page})=>{
+  await page.goto('/#agenda');
+  await expect(page.locator('[data-agenda-mode="today"]')).toHaveText('Dia');
+  await expect(page.locator('[data-agenda-today]')).toHaveText('Hoje');
+  await page.locator('[data-agenda-mode="week"]').click();
+  await expect(page.locator('[data-view="agenda"]')).toHaveAttribute('data-agenda-display-mode','week');
+  const h=await page.locator('.study-agenda-calendar').evaluate(el=>el.getBoundingClientRect().height);
+  expect(h).toBeLessThan(520);
+});
 test('agenda permite remover eventos manuais com confirmação',async({page})=>{
   await page.goto('/#agenda');
   const id=await page.evaluate(()=>{const d=new Date(),pad=n=>String(n).padStart(2,'0'),date=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),row=StudyDashboard.addAgenda({date,title:'Evento E2E removível',kind:'study',minutes:25});StudyDashboard.renderAgenda();return row.id});
@@ -2014,16 +2027,17 @@ test('smartphone Agenda abre em Hoje sem calendário redundante e mantém Semana
   await expect(page.locator('.agenda-day')).toHaveCount(42);
 });
 
-test('smartphone Menu abre Agenda Simulados e Configurações em bottom sheet',async({page},testInfo)=>{
+test('smartphone Mais abre Agenda Simulados e Configurações em bottom sheet',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#home');
   const trigger=page.locator('#mobileMenuBtn');
   await expect(trigger).toBeVisible();
-  await expect(trigger).toContainText('Menu');
+  await expect(trigger).toContainText('Mais');
   await trigger.click();
   const layer=page.locator('#mobileMenuLayer');
   await expect(layer).toBeVisible();
+  await expect(layer.locator('#mobileMenuTitle')).toHaveText('Mais');
   await expect(layer.locator('[data-mobile-sheet-nav="agenda"]')).toContainText('Agenda');
   await expect(layer.locator('[data-mobile-sheet-nav="simulations"]')).toContainText('Simulados');
   await expect(layer.locator('[data-mobile-sheet-nav="settings"]')).toContainText('Configurações');
@@ -2031,7 +2045,6 @@ test('smartphone Menu abre Agenda Simulados e Configurações em bottom sheet',a
   await expect(page.locator('[data-view="agenda"]')).toHaveClass(/active/);
   await expect(layer).toBeHidden();
 });
-
 test('smartphone Menu permanece responsivo após navegação repetida',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
@@ -2166,6 +2179,29 @@ test('A Home responsiva preserva a composição aprovada no iPhone',async({page}
   expect(data.courseColumns).toBe(1);
 });
 
+test('revisão de vídeo remove IDs técnicos e mantém controles essenciais',async({page})=>{
+  await page.goto('/#course/porto-alegre');
+  await expect(page.locator('#layoutGrid')).toBeHidden();
+  await expect(page.locator('#layoutList')).toBeHidden();
+
+  await page.goto('/#simulations');
+  const code=page.locator('#simulationGrid .simulation-code').first();
+  await expect(code).toBeVisible();
+  const label=(await code.innerText()).trim();
+  expect(label.length).toBeLessThanOrEqual(12);
+  expect(label).not.toMatch(/::|_[A-Z0-9]{3,}_/);
+
+  await page.goto('/#progress');
+  const mapLabels=await page.locator('.study-rhythm-distribution .study-ranking-row>span').allInnerTexts().catch(()=>[]);
+  for(const text of mapLabels)expect(text).not.toMatch(/^[a-z0-9-]+::/);
+
+  await page.goto('/#settings');
+  await expect(page.locator('#studyGoalsForm [name="dailyMinutes"]+small')).toHaveText('h');
+  await expect(page.locator('#studyGoalsForm [name="weeklyMinutes"]+small')).toHaveText('h');
+  await expect(page.locator('#studyGoalsForm [name="pomodoroWork"]+small')).toHaveText('min');
+  await expect(page.locator('#studyGoalsForm [name="pomodoroBreak"]+small')).toHaveText('min');
+});
+
 test('B Biblioteca e treino preserva o mobile-first no iPhone',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação específica do iPhone WebKit.');
   await page.setViewportSize({width:390,height:844});
@@ -2196,7 +2232,7 @@ test('B Biblioteca e treino preserva o mobile-first no iPhone',async({page},test
   await page.goto('/#simulations');
   await expect(page.locator('#simulationGrid .simulation-card').first()).toBeVisible();
   expect(await columns(page.locator('#simulationGrid'))).toBe(1);
-  expect(await columns(page.locator('.simulation-toolbar'))).toBe(1);
+  expect(await columns(page.locator('.simulation-toolbar'))).toBe(2);
   const action=await page.locator('#importSimulationBtn').evaluate(el=>el.getBoundingClientRect().height);
   expect(action).toBeGreaterThanOrEqual(40);
   await assertPhone('Simulados');
@@ -2809,7 +2845,7 @@ test('etapa 2 [T] compacta Home e curso no iPad em retrato e paisagem',async({pa
     expect.soft(course.continueAccent,scenario.name+' Retomar herda accent do mapa').not.toBe('');
     expect.soft(course.continueButtonInside,scenario.name+' CTA Retomar fica dentro do card').toBe(true);
     expect.soft(Math.round(course.continueButtonHeight),scenario.name+' CTA Retomar mantém touch').toBeGreaterThanOrEqual(44);
-    expect.soft(course.layoutActionsVisible,scenario.name+' seletor grade/lista permanece acessível').toBe(true);
+    expect.soft(course.layoutActionsVisible,scenario.name+' seletor grade/lista permanece removido').toBe(false);
     expect.soft(course.scrollWidth,scenario.name+' Curso sem overflow horizontal').toBeLessThanOrEqual(course.width+2);
   }
 });
@@ -3132,13 +3168,13 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
     const categories=document.querySelector('#categoryRow'),maps=document.querySelector('#courseMaps');
     const heading=document.querySelector('[data-view="course"] .section-head[style]'),headingCopy=heading?.firstElementChild,layout=heading?.querySelector('.actions');
     const card=maps.querySelector('.map-card.has-cover'),cover=card?.querySelector('.map-cover'),foot=card?.querySelector('.foot');
-    const ar=actions.getBoundingClientRect(),hr=headingCopy.getBoundingClientRect(),lr=layout.getBoundingClientRect(),cr=card.getBoundingClientRect(),vr=cover.getBoundingClientRect(),fr=foot.getBoundingClientRect();
+    const ar=actions.getBoundingClientRect(),cr=card.getBoundingClientRect(),vr=cover.getBoundingClientRect(),fr=foot.getBoundingClientRect();
     return{
       toolbarColumns:getComputedStyle(toolbar).display==='grid'?getComputedStyle(toolbar).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length:1,
       searchHidden:getComputedStyle(search).display==='none',
       categoriesWrap:getComputedStyle(categories).flexWrap,
       mapColumns:getComputedStyle(maps).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
-      layoutNearTitle:lr.left>=hr.right-1&&lr.left-hr.right<48,
+      layoutHidden:!layout||getComputedStyle(layout).display==='none'||layout.getBoundingClientRect().width===0,
       coverRatio:vr.width/vr.height,
       footerInside:fr.left>=cr.left-1&&fr.right<=cr.right+1&&fr.bottom<=cr.bottom+1,
       footerBorderTop:parseFloat(getComputedStyle(foot).borderTopWidth)||0,
@@ -3150,7 +3186,7 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
   expect(data.searchHidden).toBe(true);
   expect(data.categoriesWrap).toBe('nowrap');
   expect(data.mapColumns).toBe(3);
-  expect(data.layoutNearTitle).toBe(true);
+  expect(data.layoutHidden).toBe(true);
   expect(data.coverRatio).toBeGreaterThan(1.74);
   expect(data.coverRatio).toBeLessThan(1.82);
   expect(data.footerInside).toBe(true);
