@@ -271,7 +271,7 @@ html.is-ipad:not(.is-phone-layout) .course-card-role,
 html.is-ipad:not(.is-phone-layout) .course-card-institution,
 html.is-ipad:not(.is-phone-layout) .simulation-subtitle,
 html.is-ipad:not(.is-phone-layout) .study-agenda-day-list small{
-  font-size:max(10px,inherit)!important;
+  font-size:10px!important;
 }
 @media(max-width:480px){
   html.is-phone-layout .simulation-subtitle,
