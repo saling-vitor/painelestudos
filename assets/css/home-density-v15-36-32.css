@@ -1,0 +1,198 @@
+/* V15.36.32-G · Home mais densa e hierárquica [D/T/M]
+   A Home vira painel de decisão rápida; a página Meus Cursos continua completa. */
+
+[data-view="home"] #homeCourses .course-card-role,
+[data-view="home"] #homeCourses .course-card-institution,
+[data-view="home"] #homeCourses .course-board-chip,
+[data-view="home"] #homeCourses .course-map-count-chip,
+[data-view="home"] #homeCourses .course-edital-btn,
+[data-view="home"] #homeCourses .course-progress-states,
+[data-view="home"] #homeCourses .course-progress-empty,
+[data-view="home"] #homeCourses .course-last-activity-card{display:none!important}
+
+/* Desktop/PC */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"].active{
+    grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr)!important;
+    column-gap:14px!important;row-gap:15px!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.home-continue-section,
+  html:not(.is-ipad):not(.is-phone-layout) [data-view="home"]>.home-simulations-section{margin-top:0!important}
+
+  html:not(.is-ipad):not(.is-phone-layout) .study-command-card{padding:12px 14px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-command-head h2{font-size:15.5px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-command-head p{font-size:9px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-command-metrics{margin-top:8px!important;gap:6px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-command-metrics>button{min-height:50px!important;padding:7px 9px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-command-metrics b{font-size:13px!important}
+
+  html:not(.is-ipad):not(.is-phone-layout) .study-intelligence-row{gap:8px!important;margin-top:8px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-intelligence-row>article{min-height:100px!important;padding:10px 11px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-intelligence-row h3{margin:3px 0 4px!important;font-size:12px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-intelligence-row p{margin-bottom:6px!important;font-size:8px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-now-buttons{gap:4px!important;margin-top:7px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-now-buttons button{height:29px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .priority-now-card button,
+  html:not(.is-ipad):not(.is-phone-layout) .forecast-home-card button{min-height:29px!important}
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-review-section{padding:10px 12px 8px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-review-section .section-head{margin-bottom:5px!important;padding:8px 9px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-review-section .study-plan-grid{padding:2px 5px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-review-section .study-plan-item{min-height:42px!important;padding:5px 4px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-review-section .study-plan-order{width:24px!important;height:24px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-review-section .study-plan-code{min-height:27px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-review-section .study-plan-item>button{min-height:32px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .study-plan-footer{padding-top:7px!important}
+
+  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .section-head,
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .section-head{min-height:40px!important;margin-bottom:7px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-list{gap:6px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item{min-height:74px!important;padding:7px 8px 7px 10px!important;gap:7px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-copy{gap:3px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-title-row b{font-size:9.5px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-meta{font-size:7.5px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-action{min-width:64px!important;min-height:31px!important;padding-inline:7px!important}
+
+  html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card{min-height:0!important}
+  html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card>.course-card-kicker-row{margin-top:9px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card>h3{margin-top:4px!important;font-size:15px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card>.course-card-meta{margin-top:6px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card>.course-progress-mini{margin-top:9px!important;padding-top:9px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card>.course-footer{margin-top:8px!important;padding-top:7px!important}
+}
+
+/* iPad/tablet */
+html.is-ipad:not(.is-phone-layout) [data-view="home"].active{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.03fr) minmax(0,.97fr)!important;
+  column-gap:12px!important;row-gap:14px!important;align-items:start!important;
+}
+html.is-ipad:not(.is-phone-layout) [data-view="home"]>.hero,
+html.is-ipad:not(.is-phone-layout) [data-view="home"]>#homeStudyDashboard,
+html.is-ipad:not(.is-phone-layout) [data-view="home"]>#homeReviewSection,
+html.is-ipad:not(.is-phone-layout) [data-view="home"]>.home-courses-section{grid-column:1/-1!important}
+html.is-ipad:not(.is-phone-layout) [data-view="home"]>.home-continue-section{grid-column:1!important;margin-top:0!important}
+html.is-ipad:not(.is-phone-layout) [data-view="home"]>.home-simulations-section{grid-column:2!important;margin-top:0!important}
+
+html.is-ipad:not(.is-phone-layout) .study-command-card{padding:11px 12px!important}
+html.is-ipad:not(.is-phone-layout) .study-command-metrics{margin-top:7px!important;gap:6px!important}
+html.is-ipad:not(.is-phone-layout) .study-command-metrics>button{min-height:50px!important;padding:7px 8px!important}
+html.is-ipad:not(.is-phone-layout) .study-intelligence-row{gap:7px!important;margin-top:7px!important}
+html.is-ipad:not(.is-phone-layout) .study-intelligence-row>article{min-height:98px!important;padding:10px!important}
+html.is-ipad:not(.is-phone-layout) .study-intelligence-row h3{margin:3px 0 4px!important;font-size:12px!important}
+html.is-ipad:not(.is-phone-layout) .study-intelligence-row p{margin-bottom:6px!important}
+
+html.is-ipad:not(.is-phone-layout) .home-review-section{padding:10px 11px 8px!important}
+html.is-ipad:not(.is-phone-layout) .home-review-section .study-plan-item{min-height:52px!important;padding-block:6px!important}
+html.is-ipad:not(.is-phone-layout) .home-continue-section .section-head,
+html.is-ipad:not(.is-phone-layout) .home-simulations-section .section-head{min-height:42px!important;margin-bottom:7px!important}
+
+html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-list{
+  display:grid!important;grid-template-columns:1fr!important;gap:6px!important;overflow:visible!important;padding:0!important;
+}
+html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-item,
+html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-item:nth-child(3){
+  display:grid!important;flex:none!important;width:auto!important;min-width:0!important;min-height:70px!important;
+  padding:7px 8px 7px 10px!important;scroll-snap-align:none!important;
+}
+html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-title-row b{font-size:9.5px!important}
+html.is-ipad:not(.is-phone-layout) .home-simulations-section .simulation-recent-meta{font-size:7.5px!important}
+
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card{min-height:0!important}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-kicker-row,
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>h3,
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-meta,
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-progress-mini,
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer{margin-inline:12px!important}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>h3{margin-top:4px!important;font-size:15px!important}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-progress-mini{margin-top:8px!important;padding-top:8px!important}
+html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer{margin-top:8px!important;padding-top:7px!important}
+
+@media(min-width:900px){
+  html.is-ipad:not(.is-phone-layout) .study-intelligence-row{grid-template-columns:.82fr 1.09fr 1.09fr!important}
+  html.is-ipad:not(.is-phone-layout) .study-intelligence-row .forecast-home-card{grid-column:auto!important}
+  html.is-ipad:not(.is-phone-layout) .continue-card{grid-template-columns:100px minmax(0,1fr) auto!important;min-height:118px!important;gap:10px!important;padding:10px!important}
+  html.is-ipad:not(.is-phone-layout) .continue-thumb{width:100px!important;height:auto!important;aspect-ratio:16/9!important}
+}
+@media(min-width:701px) and (max-width:899px){
+  html.is-ipad:not(.is-phone-layout) .study-command-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  html.is-ipad:not(.is-phone-layout) .study-intelligence-row{grid-template-columns:1fr 1fr!important}
+  html.is-ipad:not(.is-phone-layout) .study-intelligence-row .forecast-home-card{grid-column:1/-1!important}
+  html.is-ipad:not(.is-phone-layout) .continue-card{grid-template-columns:82px minmax(0,1fr)!important;min-height:0!important;gap:8px!important;padding:9px!important}
+  html.is-ipad:not(.is-phone-layout) .continue-thumb{width:82px!important;height:auto!important;aspect-ratio:16/9!important}
+  html.is-ipad:not(.is-phone-layout) .continue-card>.primary{grid-column:1/-1!important;width:100%!important;min-height:44px!important}
+}
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].active{display:block!important}
+  html.is-ipad:not(.is-phone-layout) [data-view="home"]>.home-continue-section,
+  html.is-ipad:not(.is-phone-layout) [data-view="home"]>.home-simulations-section{margin-top:16px!important}
+}
+
+/* Smartphone */
+@media(max-width:480px){
+  html.is-phone-layout [data-view="home"] .section{margin-top:16px!important}
+  html.is-phone-layout .home-study-dashboard{margin-top:8px!important}
+  html.is-phone-layout .study-command-card{padding:10px!important}
+  html.is-phone-layout .study-command-head{gap:8px!important}
+  html.is-phone-layout .study-command-head h2{font-size:14px!important}
+  html.is-phone-layout .study-command-head p{font-size:8.5px!important}
+  html.is-phone-layout .study-command-metrics{gap:5px!important;margin-top:8px!important}
+  html.is-phone-layout .study-command-metrics>button{min-height:50px!important;padding:7px 8px!important}
+
+  html.is-phone-layout .study-intelligence-row{gap:6px!important;margin-top:6px!important}
+  html.is-phone-layout .study-intelligence-row>article{min-height:0!important;padding:9px 10px!important;border-radius:10px!important}
+  html.is-phone-layout .study-intelligence-row h3{margin:3px 0 4px!important;font-size:11px!important}
+  html.is-phone-layout .study-intelligence-row p{margin:0!important;font-size:8px!important;line-height:1.3!important}
+  html.is-phone-layout .study-now-buttons{gap:4px!important;margin-top:7px!important}
+  html.is-phone-layout .study-now-buttons button{min-height:40px!important;height:40px!important}
+  html.is-phone-layout .priority-now-card .priority-now-main{align-items:center!important;gap:7px!important}
+  html.is-phone-layout .priority-now-card .priority-reason-list{margin-top:6px!important;gap:4px!important}
+  html.is-phone-layout .priority-now-card .priority-reason-chip:nth-child(n+2){display:none!important}
+  html.is-phone-layout .priority-now-card .priority-now-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important;margin-top:7px!important}
+  html.is-phone-layout .priority-now-card .priority-now-actions button,
+  html.is-phone-layout .forecast-home-card>div>button{min-height:40px!important}
+  html.is-phone-layout .forecast-home-card>div{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important;margin-top:7px!important}
+
+  html.is-phone-layout .home-review-section{padding:9px!important}
+  html.is-phone-layout .home-review-section .section-head{gap:7px!important;padding:8px!important;margin-bottom:6px!important}
+  html.is-phone-layout #homeReviewNowBtn{min-height:42px!important}
+  html.is-phone-layout .home-review-section .study-plan-grid{gap:5px!important;padding:0!important}
+  html.is-phone-layout .home-review-section .study-plan-item,
+  html.is-phone-layout .home-review-section .study-plan-item.is-next{
+    position:relative!important;display:grid!important;
+    grid-template-columns:28px 46px minmax(0,1fr) auto!important;
+    grid-template-rows:auto!important;grid-template-areas:"order code copy time"!important;
+    align-items:center!important;gap:7px!important;min-height:62px!important;margin:0!important;
+    padding:8px 30px 8px 8px!important;border:1px solid rgba(255,255,255,.06)!important;border-radius:10px!important;
+    background:rgba(255,255,255,.01)!important;
+    box-shadow:inset 2px 0 color-mix(in srgb,var(--map-accent,var(--plan-accent)) 46%,transparent)!important;
+  }
+  html.is-phone-layout .home-review-section .study-plan-item::after{
+    content:"›";position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    color:color-mix(in srgb,var(--map-accent,var(--plan-accent)) 64%,#8e949d);font:500 21px/1 var(--sans);pointer-events:none;
+  }
+  html.is-phone-layout .home-review-section .study-plan-order{grid-area:order!important;width:26px!important;height:26px!important;align-self:center!important}
+  html.is-phone-layout .home-review-section .study-plan-code{grid-area:code!important;min-width:44px!important;min-height:26px!important;padding-inline:6px!important}
+  html.is-phone-layout .home-review-section .study-plan-copy{grid-area:copy!important;min-width:0!important;padding:0!important}
+  html.is-phone-layout .home-review-section .study-plan-copy b{display:block!important;overflow:hidden!important;font-size:10.5px!important;line-height:1.2!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  html.is-phone-layout .home-review-section .study-plan-copy span{display:block!important;margin-top:3px!important;overflow:hidden!important;font-size:7.8px!important;line-height:1.2!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  html.is-phone-layout .home-review-section .study-plan-time{grid-area:time!important;align-self:center!important;font-size:8px!important}
+  html.is-phone-layout .home-review-section .study-plan-item>button{
+    position:absolute!important;inset:0!important;z-index:3!important;width:100%!important;height:100%!important;
+    min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;opacity:0!important;
+  }
+  html.is-phone-layout .study-plan-footer{margin-top:0!important;padding-top:7px!important}
+
+  html.is-phone-layout .home-simulations-section .simulation-recent-item{min-height:70px!important;padding:8px 32px 8px 10px!important}
+  html.is-phone-layout .home-simulations-section .simulation-recent-title-row b{font-size:10px!important}
+  html.is-phone-layout .home-simulations-section .simulation-recent-meta{font-size:8px!important}
+
+  html.is-phone-layout #homeCourses{gap:7px!important}
+  html.is-phone-layout #homeCourses .home-course-card.course-library-card{min-height:0!important;padding:10px 10px 42px!important}
+  html.is-phone-layout #homeCourses .home-course-card>h3{margin-top:6px!important;font-size:14px!important}
+  html.is-phone-layout #homeCourses .home-course-card>.course-card-meta{margin-top:5px!important}
+  html.is-phone-layout #homeCourses .home-course-card>.course-progress-mini{left:10px!important;right:10px!important;bottom:42px!important;gap:3px!important}
+  html.is-phone-layout #homeCourses .home-course-card>.course-progress-mini .progress-track{height:4px!important}
+  html.is-phone-layout #homeCourses .home-course-card>.course-footer{left:10px!important;right:10px!important;bottom:6px!important;min-height:30px!important;padding-top:4px!important}
+  html.is-phone-layout #homeCourses .home-course-card .enter{min-height:38px!important}
+}
