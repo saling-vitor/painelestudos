@@ -1,17 +1,14 @@
 {
-  "version": "15.36.34",
-  "label": "V15.36.34-G",
-  "releasedAt": "2026-10-04T05:05:00.000Z",
-  "notes": "Revisão responsiva completa após validação em vídeo de Desktop, iPad e iPhone: navegação mais simples, curso menos congestionado, simulados sem códigos técnicos, ritmo consistente, Agenda mais clara e configurações mais densas.",
+  "version": "15.36.35",
+  "label": "V15.36.35-T",
+  "releasedAt": "2026-10-04T15:31:00.000Z",
+  "notes": "Refino exclusivo do iPad em Próximas ações: cards mais compactos, capas consistentes, botões alinhados e composição diferente para paisagem e retrato.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Topbar sticky ganha separação visual e deixa de parecer sobrepor o conteúdo",
-    "[T] iPad retrato usa cinco destinos no dock; Agenda e Simulados ficam em Mais",
-    "[M] Curso reúne Buscar, Filtros e Detalhes sem duplicar controles",
-    "[G] Alternância grade/lista do curso é removida novamente",
-    "[G] Simulados deixam de exibir códigos técnicos internos",
-    "[G] Ritmo de estudo reconcilia o tempo total com a distribuição por mapas",
-    "[G] Agenda usa Dia / Semana / Mês e reduz áreas vazias",
-    "[M] Metas e timer ficam mais densos com unidades h e min explícitas"
+    "[T] iPad paisagem: Retomar e Próximo mapa ficam em duas colunas 50/50 com a mesma altura",
+    "[T] O terceiro card ocupa a largura total em uma faixa mais compacta",
+    "[T] iPad retrato: as três ações ficam empilhadas como linhas horizontais de largura total",
+    "[T] Capas, textos e CTAs ganham dimensões e alinhamentos consistentes",
+    "[T] Desktop e smartphone permanecem inalterados"
   ]
 }
