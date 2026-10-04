@@ -299,7 +299,7 @@ test('V15.37.0 [G] automação aparece em Cursos, curso e Configurações',async
   await page.goto('/#settings');
   await expect(page.locator('#studyAutomationPanel')).toBeVisible();
   await expect(page.locator('#studyAutomationPanel [data-automation-setting]')).toHaveCount(5);
-  await expect(page.locator('#studyAutomationPanel')).toContainText('Diagnóstico de conteúdo');
+  await expect(page.locator('#studyAutomationPanel')).toContainText('Saúde do estudo');
 });
 
 test('V15.37.0 [G] importador consegue inferir curso e diagnóstico detecta inconsistências sem quebrar',async({page})=>{
@@ -333,6 +333,38 @@ test('V15.37.0 [G] recuperação pós-simulado cria revisão direcionada quando 
   });
   expect(result.output.topics+result.output.maps).toBeGreaterThan(0);
   expect(result.afterAgenda>=result.beforeAgenda||result.afterReviews>result.beforeReviews).toBe(true);
+});
+
+test('V15.38.0 [G] automação oferece modos, histórico e desfazer',async({page})=>{
+  await page.goto('/#settings');
+  await page.waitForFunction(()=>window.StudyAutomation&&window.SettingsControlCenter);
+  const mode=page.locator('[data-automation-mode]');
+  await expect(mode).toBeVisible();
+  await mode.selectOption('intensive');
+  await expect.poll(async()=>page.evaluate(()=>StudyAutomation.settings().mode)).toBe('intensive');
+  const result=await page.evaluate(()=>{
+    const data=StudyDashboard.exportData();
+    data.agenda=(data.agenda||[]).filter(row=>row.automationSource!=='smart-plan');
+    StudyDashboard.importData(data,{merge:false,silent:true});
+    const sync=StudyAutomation.syncAgenda({force:true});
+    const after=StudyDashboard.exportData().agenda.filter(row=>!row.deleted&&row.automationSource==='smart-plan').length;
+    return{sync,after,history:StudyAutomation.history().length,canUndo:StudyAutomation.canUndo()};
+  });
+  expect(result.after).toBeGreaterThan(0);
+  expect(result.history).toBeGreaterThan(0);
+  expect(result.canUndo).toBe(true);
+  const undone=await page.evaluate(()=>{const ok=StudyAutomation.undo();return{ok,count:StudyDashboard.exportData().agenda.filter(row=>!row.deleted&&row.automationSource==='smart-plan').length}});
+  expect(undone.ok).toBe(true);
+  expect(undone.count).toBe(0);
+});
+
+test('V15.38.0 [G] aparência e metas eliminam redundância e mostram recomendação',async({page})=>{
+  await page.goto('/#settings');
+  await expect(page.locator('.study-goal-recommendation')).toBeVisible();
+  await expect(page.locator('.study-goal-recommendation')).toContainText('Carga recomendada');
+  await expect(page.locator('.settings-redundant-preview')).toBeHidden();
+  await expect(page.locator('[data-app-icon-mode="auto"] small')).toContainText(/Segue o sistema/);
+  await expect(page.locator('.settings-admin-summary')).toBeVisible();
 });
 
 test('home fica mais compacta depois que existe atividade',async({page})=>{
@@ -793,45 +825,80 @@ test('rodapé dos concursos usa somente atividade e ação de entrada',async({pa
   await expect(card.locator('.course-footer .enter')).toContainText('Entrar');
 });
 
-test('configurações usa novo layout compacto',async({page})=>{
+test('V15.38.0 [G] configurações usa centro de controle responsivo',async({page},testInfo)=>{
   await page.goto('/#settings');
-  await expect(page.locator('.settings-layout-v3')).toBeVisible();
-  await expect(page.locator('.simulations-shortcut')).toHaveCount(0);
-  await expect(page.locator('.settings-full-panel')).toBeVisible();
-  await expect(page.locator('.settings-diagnostic-disclosure')).toContainText('Diagnóstico e dispositivos');
-  await page.locator('.settings-diagnostic-disclosure').evaluate(el=>el.open=true);
-  await expect(page.locator('#cloudHealthBtn')).toBeVisible();
-  await expect(page.locator('#deviceProbeCreate')).toBeVisible();
-  const layout=await page.locator('.settings-layout-v3').evaluate(el=>({display:getComputedStyle(el).display,columns:getComputedStyle(el).gridTemplateColumns,width:innerWidth}));
-  expect(layout.display).toBe('grid');
-  if(layout.width>1180)expect(layout.columns.split(' ').length).toBeGreaterThanOrEqual(2);
-  else expect(layout.columns).not.toBe('none');
+  await expect(page.locator('#settingsControlSummary')).toBeVisible();
+  const layout=page.locator('.settings-layout-v3.settings-control-grid');
+  await expect(layout).toBeVisible();
+  await expect(layout.locator(':scope > .settings-area-sync')).toHaveCount(1);
+  await expect(layout.locator(':scope > .settings-area-update')).toHaveCount(1);
+  await expect(layout.locator(':scope > .settings-area-automation')).toHaveCount(1);
+  await expect(layout.locator(':scope > .settings-area-admin')).toHaveCount(1);
+  await expect(layout.locator(':scope > .settings-area-study')).toHaveCount(1);
+  await expect(layout.locator(':scope > .settings-area-appearance')).toHaveCount(1);
+  await expect(layout.locator(':scope > .settings-area-backup')).toHaveCount(1);
+  await expect(layout.locator(':scope > .settings-area-diagnostic')).toHaveCount(1);
+  await expect(page.locator('.settings-diagnostic-disclosure')).toContainText('Dispositivos e testes');
+  const metrics=await layout.evaluate(el=>({width:innerWidth,columns:getComputedStyle(el).gridTemplateColumns,scrollWidth:document.documentElement.scrollWidth}));
+  expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.width+2);
+  if(testInfo.project.name==='desktop-chromium')expect(metrics.columns.trim().split(/\s+/).length).toBe(12);
+  if(testInfo.project.name==='iphone-webkit'){
+    await expect(page.locator('.settings-mobile-toggle').first()).toBeVisible();
+    await expect(page.locator('.settings-area-automation')).toHaveClass(/is-mobile-collapsed/);
+  }
 });
 
-test('pontos de restauração mostram três itens antes de expandir',async({page})=>{
+test('V15.38.0 [G] pontos de restauração mantêm dez e mostram três antes de expandir',async({page})=>{
   await page.goto('/#settings');
-  await page.evaluate(async()=>{
-    for(let i=0;i<5;i++)await createRestorePoint('e2e-settings','Ponto visual '+i);
+  const stored=await page.evaluate(async()=>{
+    for(let i=0;i<12;i++)await createRestorePoint('e2e-settings','Ponto visual '+i);
     restorePointsExpanded=false;
     await renderRestorePoints();
+    return (await listRestorePoints()).length;
   });
+  expect(stored).toBe(10);
   await expect(page.locator('#restorePointsList .restore-point-item')).toHaveCount(3);
   await expect(page.locator('[data-toggle-restore-points]')).toContainText('Ver todos');
   await page.locator('[data-toggle-restore-points]').click();
-  await expect(page.locator('#restorePointsList .restore-point-item')).toHaveCount(5);
+  await expect(page.locator('#restorePointsList .restore-point-item')).toHaveCount(10);
   await expect(page.locator('[data-toggle-restore-points]')).toContainText('Mostrar menos');
 });
 
-test('atualizações e diagnóstico ficam compactos e unificados',async({page})=>{
+test('V15.38.0 [G] saúde técnica fica separada dos dispositivos e do diagnóstico de estudo',async({page})=>{
   await page.goto('/#settings');
   await expect(page.locator('.app-update-summary')).toContainText(E2E_APP_VERSION_LABEL);
+  await expect(page.locator('#appDiagnosticPanel.settings-area-diagnostic')).toBeVisible();
+  await expect(page.locator('#appDiagnosticPanel')).toContainText('Saúde técnica');
+  await expect(page.locator('.settings-device-summary')).toBeVisible();
   const details=page.locator('.settings-diagnostic-disclosure');
+  await expect(details).toContainText('Dispositivos e testes');
   await details.evaluate(el=>el.open=true);
-  await expect(page.locator('#appDiagnosticPanel')).toHaveClass(/settings-diagnostic-embedded/);
-  await expect(page.locator('#appDiagnosticGrid')).toBeVisible();
-  const columns=await page.locator('#appDiagnosticGrid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
-  expect(columns).not.toBe('none');
-  await expect(page.locator('.settings-backup-head')).toBeVisible();
+  await expect(page.locator('#cloudHealthBtn')).toBeVisible();
+  await expect(page.locator('#deviceProbeCreate')).toBeVisible();
+  await expect(page.locator('#studyAutomationPanel')).toContainText('Saúde do estudo');
+  await expect(page.locator('.settings-backup-retention')).toBeVisible();
+});
+
+test('V15.38.0 [G] Por que este mapa explica a prioridade sem tooltip curto',async({page},testInfo)=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.StudyPlanner&&typeof StudyPlanner.priorityExplanationRows==='function'&&typeof combinedMaps==='function'&&combinedMaps().length>0);
+  const why=page.locator('[data-priority-why]');
+  await expect(why).toBeVisible();
+  await expect(why).toHaveText('Por que este mapa?');
+  await why.click();
+  const modal=page.locator('#priorityWhyModal');
+  await expect(modal).toBeVisible();
+  await expect(modal).toContainText('Por que este mapa agora?');
+  const reasons=modal.locator('.priority-why-reasons article');
+  expect(await reasons.count()).toBeGreaterThanOrEqual(2);
+  const geometry=await modal.locator('.priority-why-card').evaluate(el=>{const r=el.getBoundingClientRect();return{left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:innerWidth,height:innerHeight}});
+  expect(geometry.left).toBeGreaterThanOrEqual(-1);
+  expect(geometry.right).toBeLessThanOrEqual(geometry.width+1);
+  expect(geometry.top).toBeGreaterThanOrEqual(-1);
+  expect(geometry.bottom).toBeLessThanOrEqual(geometry.height+1);
+  if(testInfo.project.name==='iphone-webkit')expect(geometry.bottom).toBeGreaterThan(geometry.height*.7);
+  await modal.locator('[data-priority-why-close]').click();
+  await expect(modal).toBeHidden();
 });
 
 test('home consolidada prioriza o estudo diário',async({page})=>{
