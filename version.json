@@ -1,15 +1,17 @@
 {
-  "version": "15.36.36",
-  "label": "V15.36.36-G",
-  "releasedAt": "2026-10-04T17:20:00.000Z",
-  "notes": "Refino da faixa Retomar/Simulados na Home do desktop e restauração do dock de sete destinos no iPad em retrato.",
+  "version": "15.37.0",
+  "label": "V15.37.0-G",
+  "releasedAt": "2026-10-04T18:45:00.000Z",
+  "notes": "Automação inteligente integrada a Cursos, Mapas, Simulados, Agenda e Configurações.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Retomar e Simulados recentes passam a formar uma faixa equilibrada e compacta",
-    "[D] Simulados recentes mostra dois cards maiores e legíveis; o terceiro continua em Ver todos",
-    "[D] Retomar reduz altura e preserva a capa 16:9, progresso e ação Continuar",
-    "[T] iPad retrato restaura Início, Cursos, Mapas, Simulados, Calendário, Progresso e Mais",
-    "[T] Agenda e Simulados deixam de ficar escondidos dentro de Mais",
-    "[M] Smartphone permanece inalterado"
+    "Plano diário e agenda autogerados com prioridades reais, prazo da prova e limite de carga",
+    "Atrasos automáticos são redistribuídos sem concentrar tudo no dia seguinte",
+    "Erros de simulados geram revisões direcionadas por tópico ou mapa",
+    "Cursos recebem leitura de saúde, ritmo necessário, previsão e próximo estudo inteligente",
+    "Mapas parados ganham prioridade automática sem alterar manualmente seu estado",
+    "Importador detecta automaticamente o curso de destino quando há confiança suficiente",
+    "Configurações passa a mostrar diagnóstico de inconsistências em cursos, mapas, simulados e agenda",
+    "Após a prova, o sistema sugere arquivamento sem apagar histórico ou arquivar sozinho"
   ]
 }
