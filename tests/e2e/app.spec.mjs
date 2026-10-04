@@ -3204,8 +3204,13 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   };
   await ensurePanelOpen();
 
-  const light=panel.locator('[data-app-icon-mode="light"]');
-  await light.click();
+  const chooseMode=async(mode)=>{
+    const choice=panel.locator('[data-app-icon-mode="'+mode+'"]');
+    if(testInfo.project.name==='iphone-webkit')await page.evaluate(value=>window.AppIconSettings?.choose?.(value),mode);
+    else await choice.click();
+    return choice;
+  };
+  const light=await chooseMode('light');
   await expect(light).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('light');
   await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-light-rounded-192/);
@@ -3214,8 +3219,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-light-v15.36.2.webmanifest');
 
   await ensurePanelOpen();
-  const dark=panel.locator('[data-app-icon-mode="dark"]');
-  await dark.click();
+  const dark=await chooseMode('dark');
   await expect(dark).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('dark');
   await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-dark-rounded-192/);
@@ -3223,8 +3227,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-v15.23.6.webmanifest');
 
   await ensurePanelOpen();
-  const automatic=panel.locator('[data-app-icon-mode="auto"]');
-  await automatic.click();
+  const automatic=await chooseMode('auto');
   await expect(automatic).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('auto');
   expect(await page.locator('#appIconExplicitFavicon').getAttribute('media')).toBe('not all');
@@ -3349,6 +3352,7 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   await expect(row.locator('.progress-map-thumb')).toBeHidden();
   await expect(row.locator('.compact-code')).toBeVisible();
   await expect(row.locator('.progress-open')).toBeHidden();
+  await expect.poll(async()=>row.locator('.compact-code').evaluate(el=>el.getBoundingClientRect().width),{timeout:5000}).toBeLessThanOrEqual(70);
   const layout=await row.evaluate(el=>{
     const tag=el.querySelector('.compact-code');
     const title=el.querySelector('.progress-map-copy>b');
