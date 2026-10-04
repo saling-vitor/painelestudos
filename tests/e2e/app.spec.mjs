@@ -842,7 +842,7 @@ test('rodapé dos concursos usa somente atividade e ação de entrada',async({pa
   await expect(card.locator('.course-footer .enter')).toContainText('Entrar');
 });
 
-test('V15.38.0 [G] configurações usa centro de controle responsivo',async({page},testInfo)=>{
+test('V15.38.1 [D] configurações usa centro de controle sem colunas estreitas',async({page},testInfo)=>{
   await page.goto('/#settings');
   await expect(page.locator('#settingsControlSummary')).toBeVisible();
   const layout=page.locator('.settings-layout-v3.settings-control-grid');
@@ -856,9 +856,18 @@ test('V15.38.0 [G] configurações usa centro de controle responsivo',async({pag
   await expect(layout.locator(':scope > .settings-area-backup')).toHaveCount(1);
   await expect(layout.locator(':scope > .settings-area-diagnostic')).toHaveCount(1);
   await expect(page.locator('.settings-diagnostic-disclosure')).toContainText('Dispositivos e testes');
-  const metrics=await layout.evaluate(el=>({width:innerWidth,columns:getComputedStyle(el).gridTemplateColumns,scrollWidth:document.documentElement.scrollWidth}));
+  const metrics=await layout.evaluate(el=>{
+    const box=el.getBoundingClientRect(),sync=el.querySelector('.settings-area-sync')?.getBoundingClientRect(),update=el.querySelector('.settings-area-update')?.getBoundingClientRect();
+    return{width:innerWidth,layoutWidth:box.width,columns:getComputedStyle(el).gridTemplateColumns,scrollWidth:document.documentElement.scrollWidth,syncWidth:sync?.width||0,updateWidth:update?.width||0,syncTop:sync?.top||0,updateTop:update?.top||0};
+  });
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.width+2);
-  if(testInfo.project.name==='desktop-chromium')expect(metrics.columns.trim().split(/\s+/).length).toBe(12);
+  if(testInfo.project.name==='desktop-chromium'){
+    expect(metrics.columns.trim().split(/\s+/).length).toBe(2);
+    expect(metrics.layoutWidth).toBeGreaterThan(metrics.width*.68);
+    expect(metrics.syncWidth).toBeGreaterThan(metrics.layoutWidth*.58);
+    expect(metrics.updateWidth).toBeGreaterThan(metrics.layoutWidth*.25);
+    expect(Math.abs(metrics.syncTop-metrics.updateTop)).toBeLessThanOrEqual(2);
+  }
   if(testInfo.project.name==='iphone-webkit'){
     await expect(page.locator('.mobile-settings-toggle').first()).toBeVisible();
     await expect(page.locator('.settings-area-automation')).toHaveClass(/mobile-settings-collapsed/);
