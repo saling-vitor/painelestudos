@@ -212,7 +212,7 @@
       if(cfg.autoReplan&&cleanupOverdueAutoRows(data)){changed=true;removed++}
       for(const row of data.agenda||[]){
         if(row.automationSource!=='smart-plan'||row.deleted||row.completedAt||row.date<today||row.date>end)continue;
-        if(!desiredBy.has(row.id)){row.deleted=true;row.updatedAt=now;changed=true;removed++;continue}
+        if(!desiredBy.has(row.id)){row.deleted=true;row.automationSuperseded=true;row.updatedAt=now;changed=true;removed++;continue}
         const target=desiredBy.get(row.id);desiredBy.delete(row.id);
         if(row.minutes!==target.minutes||row.title!==target.title||row.automationReason!==target.automationReason||row.date!==target.date){
           Object.assign(row,target,{createdAt:row.createdAt||target.createdAt,updatedAt:now});changed=true;updated++;
@@ -220,7 +220,10 @@
       }
       for(const row of desiredBy.values()){
         const prior=(data.agenda||[]).find(item=>item.id===row.id);
-        if(prior)continue;
+        if(prior){
+          if(prior.deleted&&prior.automationSuperseded){Object.assign(prior,row,{deleted:false,automationSuperseded:false,updatedAt:now});changed=true;updated++}
+          continue;
+        }
         data.agenda=data.agenda||[];data.agenda.push(row);changed=true;created++;
       }
       if(changed)replaceAgendaData(data);
