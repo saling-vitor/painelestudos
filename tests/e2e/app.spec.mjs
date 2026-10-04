@@ -252,6 +252,89 @@ test('V15.36.36 [D] Home equilibra Retomar e Simulados recentes',async({page},te
   expect(data.overflow).toBeLessThanOrEqual(2);
 });
 
+test('V15.37.0 [G] automação calcula saúde e gera agenda inteligente sem duplicar',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.StudyAutomation&&window.StudyPlanner&&window.StudyDashboard);
+  const result=await page.evaluate(()=>{
+    const before=StudyDashboard.exportData();
+    before.agenda=(before.agenda||[]).filter(row=>row.automationSource!=='smart-plan');
+    StudyDashboard.importData(before,{merge:false,silent:true});
+    const course=combinedCourses().find(c=>c.status!=='archived')||combinedCourses()[0];
+    const health=StudyAutomation.courseHealth(course);
+    const first=StudyAutomation.syncAgenda({force:true});
+    const afterFirst=StudyDashboard.exportData().agenda.filter(row=>!row.deleted&&row.automationSource==='smart-plan');
+    const second=StudyAutomation.syncAgenda({force:true});
+    const afterSecond=StudyDashboard.exportData().agenda.filter(row=>!row.deleted&&row.automationSource==='smart-plan');
+    return{
+      settings:StudyAutomation.settings(),
+      health:{status:health.status,required:health.requiredTopicsPerDay,actual:health.actualTopicsPerDay,remaining:health.remainingTopics},
+      first,second,
+      firstCount:afterFirst.length,
+      secondCount:afterSecond.length,
+      unique:new Set(afterSecond.map(row=>row.id)).size,
+      maxPerDay:Object.values(afterSecond.reduce((acc,row)=>{acc[row.date]=(acc[row.date]||0)+1;return acc},{})).reduce((m,n)=>Math.max(m,n),0)
+    };
+  });
+  expect(result.settings.autoAgenda).toBe(true);
+  expect(result.settings.autoReplan).toBe(true);
+  expect(result.settings.simRecovery).toBe(true);
+  expect(['healthy','attention','risk','finished','neutral','archived']).toContain(result.health.status);
+  expect(result.health.required).toBeGreaterThanOrEqual(0);
+  expect(result.health.actual).toBeGreaterThanOrEqual(0);
+  expect(result.firstCount).toBeGreaterThan(0);
+  expect(result.secondCount).toBe(result.firstCount);
+  expect(result.unique).toBe(result.secondCount);
+  expect(result.maxPerDay).toBeLessThanOrEqual(3);
+});
+
+test('V15.37.0 [G] automação aparece em Cursos, curso e Configurações',async({page})=>{
+  await page.goto('/#courses');
+  await page.waitForFunction(()=>window.StudyAutomation);
+  await expect(page.locator('#courseAutomationOverview')).toBeVisible();
+  await expect(page.locator('#coursesGrid .course-health-badge').first()).toBeVisible();
+  const firstCourse=page.locator('#coursesGrid [data-course]').first();
+  await firstCourse.click();
+  await expect(page.locator('#courseAutomationPanel')).toBeVisible();
+  await expect(page.locator('#courseAutomationPanel')).toContainText(/Ritmo necessário|Previsão|Revisões/);
+  await page.goto('/#settings');
+  await expect(page.locator('#studyAutomationPanel')).toBeVisible();
+  await expect(page.locator('#studyAutomationPanel [data-automation-setting]')).toHaveCount(5);
+  await expect(page.locator('#studyAutomationPanel')).toContainText('Diagnóstico de conteúdo');
+});
+
+test('V15.37.0 [G] importador consegue inferir curso e diagnóstico detecta inconsistências sem quebrar',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.StudyAutomation);
+  const result=await page.evaluate(()=>{
+    const course=combinedCourses().find(c=>c.status!=='archived')||combinedCourses()[0];
+    const map=combinedMaps().find(m=>m.courseId===course.id)||combinedMaps()[0];
+    const match=StudyAutomation.inferCourse([{declaredCode:map.code,code:map.code,title:map.title,shortTitle:map.shortTitle,board:course.board,contest:course.title}]);
+    const diagnostic=StudyAutomation.diagnostics();
+    return{courseId:course.id,matchId:match?.course?.id||'',score:match?.score||0,total:diagnostic.total,warnings:diagnostic.warnings,healthy:diagnostic.healthy};
+  });
+  expect(result.matchId).toBe(result.courseId);
+  expect(result.score).toBeGreaterThanOrEqual(6);
+  expect(result.total).toBeGreaterThanOrEqual(0);
+  expect(result.warnings).toBeGreaterThanOrEqual(0);
+  expect(typeof result.healthy).toBe('boolean');
+});
+
+test('V15.37.0 [G] recuperação pós-simulado cria revisão direcionada quando há fraqueza',async({page})=>{
+  await page.goto('/#simulations');
+  await page.waitForFunction(()=>window.StudyAutomation&&typeof combinedSimulations==='function'&&combinedSimulations().length>0);
+  const result=await page.evaluate(()=>{
+    const sim=combinedSimulations()[0],key=sim._key||simulationKey(sim);
+    const beforeAgenda=StudyDashboard.exportData().agenda.filter(row=>!row.deleted&&row.automationSource==='simulation-recovery').length;
+    const beforeReviews=Object.keys(StudyPlanner.exportData().topicReviews||{}).length;
+    const output=StudyAutomation.recoverSimulation(key,{score:35,wrong:5,total:10,finishedAt:'2026-10-04T12:00:00.000Z',sections:{'Acessibilidade e Segurança':{correct:0,total:3}},mistakes:[{section:'Acessibilidade e Segurança',topic:'Acessibilidade',number:1}]});
+    const afterAgenda=StudyDashboard.exportData().agenda.filter(row=>!row.deleted&&row.automationSource==='simulation-recovery').length;
+    const afterReviews=Object.keys(StudyPlanner.exportData().topicReviews||{}).length;
+    return{output,beforeAgenda,afterAgenda,beforeReviews,afterReviews};
+  });
+  expect(result.output.topics+result.output.maps).toBeGreaterThan(0);
+  expect(result.afterAgenda>=result.beforeAgenda||result.afterReviews>result.beforeReviews).toBe(true);
+});
+
 test('home fica mais compacta depois que existe atividade',async({page})=>{
   await page.evaluate(()=>{const map=combinedMaps()[0];localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()});
   await expect(page.locator('[data-view="home"]')).toHaveClass(/home-returning/);
