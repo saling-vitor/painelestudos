@@ -100,7 +100,7 @@ function renderProgress(){
     saveProgressSet('studyapp.progressShowAllCourses',progressShowAllCourses);
     renderProgress()
   });
-  $('#progressInfo [data-progress-row-open]').forEach(row=>{
+  $$('#progressInfo [data-progress-row-open]').forEach(row=>{
     row.onclick=e=>{if(e.target.closest('button,a,input,select,label'))return;openMap(row.dataset.progressRowOpen)};
     row.onkeydown=e=>{if(e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();openMap(row.dataset.progressRowOpen)}
   });
