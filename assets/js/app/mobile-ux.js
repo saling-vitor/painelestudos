@@ -191,15 +191,24 @@
   function enhanceSettings(){
     if(!isPhone())return;
     const view=q('[data-view="settings"]');if(!view)return;
+    const panelKey=panel=>{
+      if(!panel)return'';
+      if(panel.id)return'#'+panel.id;
+      const cls=['settings-area-sync','settings-area-update','settings-area-automation','settings-area-admin','settings-area-study','settings-area-appearance','settings-area-backup','settings-area-diagnostic','sync-panel','admin-panel','app-update-panel','backup-panel','diagnostic-panel'].find(name=>panel.classList.contains(name));
+      return cls?'.'+cls:'';
+    };
+    const activeKey=view.dataset.mobileSettingsActive||'';
     qa('.panel',view).forEach(panel=>{
       if(panel.closest('.modal'))return;
       if(panel.querySelector(':scope > .mobile-settings-toggle'))return;
       panel.dataset.mobileAccordion='1';
       panel.classList.add('mobile-settings-panel');
+      const key=panelKey(panel);
+      if(key)panel.dataset.mobileSettingsKey=key;
       const label=panelLabel(panel),button=document.createElement('button');
       button.type='button';button.className='mobile-settings-toggle';
       button.innerHTML='<span>'+label+'</span><i aria-hidden="true">⌄</i>';
-      const open=panel.classList.contains('sync-panel')||panel.id==='studySettingsPanel';
+      const open=activeKey?key===activeKey:(panel.classList.contains('sync-panel')||panel.id==='studySettingsPanel');
       panel.classList.toggle('mobile-settings-collapsed',!open);
       button.setAttribute('aria-expanded',open?'true':'false');
       button.onclick=()=>{
@@ -210,22 +219,26 @@
             other.classList.add('mobile-settings-collapsed');
             other.querySelector(':scope > .mobile-settings-toggle')?.setAttribute('aria-expanded','false');
           });
+          if(key)view.dataset.mobileSettingsActive=key;
+        }else if(view.dataset.mobileSettingsActive===key){
+          delete view.dataset.mobileSettingsActive;
         }
         panel.classList.toggle('mobile-settings-collapsed',!next);
         button.setAttribute('aria-expanded',next?'true':'false');
       };
       panel.prepend(button);
     });
+    const remembered=view.dataset.mobileSettingsActive||'',rememberedPanel=remembered?q(remembered,view):null;
     const expanded=qa('.mobile-settings-panel',view).filter(panel=>!panel.classList.contains('mobile-settings-collapsed'));
     if(expanded.length>1){
-      const keep=expanded.includes(q('#studySettingsPanel',view))?q('#studySettingsPanel',view):expanded[0];
+      const keep=rememberedPanel&&expanded.includes(rememberedPanel)?rememberedPanel:(expanded.includes(q('#studySettingsPanel',view))?q('#studySettingsPanel',view):expanded[0]);
       expanded.forEach(panel=>{
         const open=panel===keep;
         panel.classList.toggle('mobile-settings-collapsed',!open);
         panel.querySelector(':scope > .mobile-settings-toggle')?.setAttribute('aria-expanded',open?'true':'false');
       });
     }else if(expanded.length===0){
-      const preferred=q('#studySettingsPanel',view)||q('.sync-panel',view)||q('.mobile-settings-panel',view);
+      const preferred=rememberedPanel||q('#studySettingsPanel',view)||q('.sync-panel',view)||q('.mobile-settings-panel',view);
       if(preferred){
         preferred.classList.remove('mobile-settings-collapsed');
         preferred.querySelector(':scope > .mobile-settings-toggle')?.setAttribute('aria-expanded','true');

@@ -414,7 +414,7 @@
   window.StudyPlanner={
     exportData:()=>read(),importData,mergeData:merge,hasData,
     topicReviews:topicReviewRows,dueTopics:dueTopicRows,rateTopic,showTopicReview,
-    priorityRows,nextPriority,buildTimePlan,showTimePlan,forecast,
+    priorityRows,nextPriority,buildTimePlan,showTimePlan,forecast,priorityExplanationRows,showPriorityExplanation,
     mistakes:mistakeItems,errorGroups,
     weeklySnapshot,showWeeklyReview,
     replanWeek,showReplanModal,rescheduleAgendaItem,completeAgendaItem,startAgendaItem,addRecurringAgenda,exportAgendaIcs,
@@ -487,14 +487,56 @@
     view.querySelectorAll('[data-error-sim]').forEach(button=>button.onclick=()=>openSimulation(button.dataset.errorSim));
   }
 
+  function priorityExplanationRows(row){
+    if(!row)return[];
+    const p=row.progress||{},rows=[],push=(title,text,key)=>{if(text&&!rows.some(item=>item.key===key))rows.push({title,text,key})};
+    if(row.daysUntilExam!==null&&row.daysUntilExam!==undefined&&row.daysUntilExam>=0){
+      push('Prazo da prova',row.daysUntilExam===0?'A prova é hoje; este curso recebe prioridade máxima.':row.daysUntilExam===1?'A prova é amanhã; este conteúdo ganhou peso extra.':'A prova é em '+row.daysUntilExam+' dias; o prazo aumenta o peso deste mapa.','exam');
+    }
+    if(Number(row.dueTopics)>0)push('Revisão vencida',row.dueTopics+' tópico'+(row.dueTopics===1?' precisa':'s precisam')+' de revisão agora.','due');
+    if(Number(p.difficult)>0)push('Tópicos difíceis',p.difficult+' tópico'+(p.difficult===1?' está marcado':'s estão marcados')+' como DIF.','dif');
+    if(Number(p.review)>0)push('Revisão pendente',p.review+' tópico'+(p.review===1?' está marcado':'s estão marcados')+' para revisão.','rev');
+    if(Number(row.weakness?.score)>0)push('Erros em simulados','Seu desempenho recente indica conteúdo relacionado que merece reforço.','simulation');
+    if(Number(p.pending)>0)push('Conteúdo ainda aberto',p.pending+' tópico'+(p.pending===1?' ainda está':'s ainda estão')+' pendente'+(p.pending===1?'':'s')+' neste mapa.','pending');
+    const last=typeof activityTimestamp==='function'?activityTimestamp(p.lastActivity):Date.parse(p.lastActivity||0)||0,ageDays=last?Math.floor((Date.now()-last)/86400000):0;
+    if(ageDays>=5&&Number(p.marked)>0&&Number(p.pending)>0)push('Mapa parado','Você não trabalha este mapa há '+ageDays+' dias; ele voltou para a fila para evitar abandono.','stale');
+    if((row.reasons||[]).some(reason=>String(reason).includes('peso alto')))push('Peso no conteúdo','Este assunto representa uma parcela relevante do conteúdo do curso.','weight');
+    if(!rows.length){
+      for(const reason of row.reasons||[])push('Prioridade calculada',String(reason),'reason-'+rows.length);
+    }
+    if(rows.length===1&&Number(p.pending)>0&&!rows.some(item=>item.key==='pending'))push('Conteúdo ainda aberto',p.pending+' tópico'+(p.pending===1?' ainda está':'s ainda estão')+' pendente'+(p.pending===1?'':'s')+' neste mapa.','pending');
+    return rows.slice(0,5);
+  }
+  function showPriorityExplanation(row,anchor){
+    if(!row)return false;
+    const reasons=priorityExplanationRows(row),modal=makeModal('priorityWhyModal','priority-why-modal'),map=row.map||{},course=typeof courseById==='function'?courseById(map.courseId):null;
+    modal.innerHTML='<div class="priority-why-card" role="dialog" aria-modal="true" aria-labelledby="priorityWhyTitle"><div class="priority-why-head"><div><span class="kicker">Prioridade do momento</span><h2 id="priorityWhyTitle">Por que este mapa agora?</h2><p>'+esc(map.code||'MAP')+' · '+esc(map.shortTitle||map.title||'Mapa')+(course?.title?' · '+esc(course.title):'')+'</p></div><button type="button" class="priority-why-close" data-priority-why-close aria-label="Fechar">×</button></div><div class="priority-why-intro">O sistema combinou prazo, progresso, revisões, dificuldade e desempenho para escolher a próxima ação.</div><div class="priority-why-reasons">'+reasons.map((item,index)=>'<article><span>'+(index+1)+'</span><div><b>'+esc(item.title)+'</b><p>'+esc(item.text)+'</p></div></article>').join('')+'</div><div class="priority-why-footer"><span>'+Math.round(Number(row.minutes)||20)+' min sugeridos · prioridade relativa '+Math.max(1,Math.round(Number(row.score)||1))+'</span><div><button type="button" class="secondary" data-priority-why-next>Ver próxima da fila</button><button type="button" class="primary" data-priority-why-open>Estudar este mapa</button></div></div></div>';
+    modal.hidden=false;
+    const html=document.documentElement,isAnchored=!html.classList.contains('is-ipad')&&!html.classList.contains('is-phone-layout')&&innerWidth>=1181,card=modal.querySelector('.priority-why-card');
+    modal.classList.toggle('is-anchored',isAnchored);
+    if(isAnchored&&anchor&&card){
+      requestAnimationFrame(()=>{
+        const rect=anchor.getBoundingClientRect(),box=card.getBoundingClientRect(),left=Math.max(12,Math.min(innerWidth-box.width-12,rect.left)),below=rect.bottom+8,top=below+box.height<=innerHeight-12?below:Math.max(12,rect.top-box.height-8);
+        card.style.left=left+'px';card.style.top=top+'px';
+      });
+    }else if(card){card.style.removeProperty('left');card.style.removeProperty('top')}
+    const close=()=>{modal.hidden=true;modal.classList.remove('is-anchored')};
+    modal.querySelectorAll('[data-priority-why-close]').forEach(button=>button.onclick=close);
+    modal.onclick=e=>{if(e.target===modal)close()};
+    modal.querySelector('[data-priority-why-open]')?.addEventListener('click',()=>{close();openMap(row.key)});
+    modal.querySelector('[data-priority-why-next]')?.addEventListener('click',()=>{const next=priorityRows().find(item=>item.key!==row.key);close();if(next)showPriorityExplanation(next,anchor);else toast('Não há outra prioridade na fila agora.')});
+    return true;
+  }
+
   function renderHomeIntelligence(){
     const root=document.getElementById('homeStudyDashboard');if(!root)return;
     let panel=root.querySelector('.study-intelligence-row');if(!panel){panel=document.createElement('div');panel.className='study-intelligence-row';root.appendChild(panel)}
     const top=priorityRows()[0],courseId=top?.map?.courseId||combinedCourses()[0]?.id||'',fc=forecast(courseId),due=dueTopicRows().length;
-    const priorityTitle=top?.map?.shortTitle||top?.map?.title||'Seu próximo estudo',priorityReasons=top?.reasons?.slice(0,2)||['conteúdo pendente'],priorityCode=top?.map?.code||'',priorityMinutes=top?.minutes||20,priorityAccent=top?.map&&typeof mapAccentValue==='function'?mapAccentValue(top.map):'',priorityStyle=priorityAccent?' style="'+esc('--map-accent:'+priorityAccent)+'" data-map-accent="true"':'',priorityReasonHtml=priorityReasons.map(reason=>'<span class="priority-reason-chip">'+esc(reason)+'</span>').join(''),finishLabel=fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});panel.innerHTML='<article class="study-now-card"><span class="kicker">Tenho tempo agora</span><h3>Montar sessão rápida</h3><div class="study-now-buttons">'+[15,30,60,120].map(min=>'<button type="button" data-time-now="'+min+'">'+(min<60?min+' min':min/60+'h')+'</button>').join('')+'</div></article><article class="priority-now-card"'+priorityStyle+'><span class="kicker">Prioridade agora</span><div class="priority-now-main">'+(priorityCode?'<span class="priority-now-code">'+esc(priorityCode)+'</span>':'')+'<div><h3>'+esc(priorityTitle)+'</h3><small>'+priorityMinutes+' min sugeridos</small></div></div><div class="priority-reason-list">'+priorityReasonHtml+'</div><div class="priority-now-actions"><button type="button" class="secondary" data-priority-why>Por que agora?</button>'+(top?'<button type="button" class="primary" data-priority-open="'+esc(top.key)+'">Começar · '+priorityMinutes+' min</button>':'')+'</div></article><article class="forecast-home-card"><span class="kicker">Ritmo atual</span><h3>'+fc.remainingTopics+' tópicos restantes</h3><p><span class="forecast-home-date">Planejamento até '+esc(finishLabel)+'</span> · '+esc(fmtSeconds(fc.remainingSeconds))+' estimadas'+(fc.marginDays!==null?' · '+(fc.marginDays>=0?fc.marginDays+' dias antes da prova':Math.abs(fc.marginDays)+' dias após a prova'):'')+'</p><div><button type="button" class="secondary" data-home-matrix>Abrir matriz</button>'+(due?'<button type="button" class="secondary" data-home-topic-review>'+due+' revisar</button>':'')+'</div></article>';
+    const priorityTitle=top?.map?.shortTitle||top?.map?.title||'Seu próximo estudo',priorityReasons=top?.reasons?.slice(0,2)||['conteúdo pendente'],priorityCode=top?.map?.code||'',priorityMinutes=top?.minutes||20,priorityAccent=top?.map&&typeof mapAccentValue==='function'?mapAccentValue(top.map):'',priorityStyle=priorityAccent?' style="'+esc('--map-accent:'+priorityAccent)+'" data-map-accent="true"':'',priorityReasonHtml=priorityReasons.map(reason=>'<span class="priority-reason-chip">'+esc(reason)+'</span>').join(''),finishLabel=fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}),explanationCount=priorityExplanationRows(top).length;
+    panel.innerHTML='<article class="study-now-card"><span class="kicker">Tenho tempo agora</span><h3>Montar sessão rápida</h3><div class="study-now-buttons">'+[15,30,60,120].map(min=>'<button type="button" data-time-now="'+min+'">'+(min<60?min+' min':min/60+'h')+'</button>').join('')+'</div></article><article class="priority-now-card"'+priorityStyle+'><span class="kicker">Prioridade agora</span><div class="priority-now-main">'+(priorityCode?'<span class="priority-now-code">'+esc(priorityCode)+'</span>':'')+'<div><h3>'+esc(priorityTitle)+'</h3><small>'+priorityMinutes+' min sugeridos</small></div></div><div class="priority-reason-list">'+priorityReasonHtml+'</div><div class="priority-now-actions">'+(top&&explanationCount>=2?'<button type="button" class="secondary" data-priority-why>Por que este mapa?</button>':'')+(top?'<button type="button" class="primary" data-priority-open="'+esc(top.key)+'">Começar · '+priorityMinutes+' min</button>':'')+'</div></article><article class="forecast-home-card"><span class="kicker">Ritmo atual</span><h3>'+fc.remainingTopics+' tópicos restantes</h3><p><span class="forecast-home-date">Planejamento até '+esc(finishLabel)+'</span> · '+esc(fmtSeconds(fc.remainingSeconds))+' estimadas'+(fc.marginDays!==null?' · '+(fc.marginDays>=0?fc.marginDays+' dias antes da prova':Math.abs(fc.marginDays)+' dias após a prova'):'')+'</p><div><button type="button" class="secondary" data-home-matrix>Abrir matriz</button>'+(due?'<button type="button" class="secondary" data-home-topic-review>'+due+' revisar</button>':'')+'</div></article>';
     panel.querySelectorAll('[data-time-now]').forEach(button=>button.onclick=()=>showTimePlan(Number(button.dataset.timeNow)));
     panel.querySelector('[data-priority-open]')?.addEventListener('click',e=>openMap(e.currentTarget.dataset.priorityOpen));
-    panel.querySelector('[data-priority-why]')?.addEventListener('click',()=>{if(!top)return;toast((top.map.code||'Mapa')+' · '+top.reasons.join(' · '))});
+    panel.querySelector('[data-priority-why]')?.addEventListener('click',e=>showPriorityExplanation(top,e.currentTarget));
     panel.querySelector('[data-home-matrix]').onclick=()=>nav('matrix');panel.querySelector('[data-home-topic-review]')?.addEventListener('click',showTopicReview);
   }
 

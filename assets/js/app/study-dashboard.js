@@ -486,6 +486,7 @@ function ensureAgendaView(){
     root.querySelector('[data-settings-pomodoro]').onclick=()=>startPomodoro(g.pomodoroWork);
     root.querySelectorAll('[data-study-time-reset]').forEach(button=>button.onclick=()=>requestResetStudyTime(button.dataset.studyTimeReset));
     if(window.StudyPlanner?.render)setTimeout(()=>StudyPlanner.render(),0);
+    setTimeout(()=>window.SettingsControlCenter?.render?.(),0);
   }
   function enhanceStudyPlan(){
     const grid=document.getElementById('homeStudyPlan'),section=document.getElementById('homeReviewSection');
