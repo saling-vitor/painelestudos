@@ -452,9 +452,12 @@ test('cards de curso mantêm controles dentro da capa e enquadramento equilibrad
   await expect(card).toBeVisible();
   const visual=await card.evaluate(el=>{
     const cover=el.querySelector('.course-card-cover'),status=el.querySelector('.course-status-pill'),edit=el.querySelector('.course-card-edit');
-    const c=cover.getBoundingClientRect(),s=status.getBoundingClientRect(),e=edit.getBoundingClientRect();
+    const card=el.getBoundingClientRect(),c=cover.getBoundingClientRect(),s=status.getBoundingClientRect(),e=edit.getBoundingClientRect();
     return{
       ratio:c.width/c.height,
+      topInset:c.top-card.top,
+      leftInset:c.left-card.left,
+      rightInset:card.right-c.right,
       statusInside:s.left>=c.left+8&&s.top>=c.top+8&&s.right<=c.right-8&&s.bottom<=c.bottom-8,
       editInside:e.left>=c.left+8&&e.top>=c.top+8&&e.right<=c.right-8&&e.bottom<=c.bottom-8,
       controlsOverlap:!(s.right<=e.left||e.right<=s.left||s.bottom<=e.top||e.bottom<=s.top)
@@ -462,6 +465,9 @@ test('cards de curso mantêm controles dentro da capa e enquadramento equilibrad
   });
   expect(visual.ratio).toBeGreaterThanOrEqual(1.74);
   expect(visual.ratio).toBeLessThanOrEqual(1.82);
+  expect(Math.abs(visual.topInset)).toBeLessThanOrEqual(2);
+  expect(Math.abs(visual.leftInset)).toBeLessThanOrEqual(2);
+  expect(Math.abs(visual.rightInset)).toBeLessThanOrEqual(2);
   expect(visual.statusInside).toBe(true);
   expect(visual.editInside).toBe(true);
   expect(visual.controlsOverlap).toBe(false);
@@ -500,6 +506,7 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
       const er=enter?.getBoundingClientRect(),pr=progress?.getBoundingClientRect(),tr=track?.getBoundingClientRect();
       return{
         ratio:c.width/c.height,
+        topInset:c.top-card.top,
         maxSideInset:Math.max(c.left-card.left,card.right-c.right),
         cardOverflow:getComputedStyle(el).overflow,
         horizontalOverflow:el.scrollWidth-el.clientWidth,
@@ -524,7 +531,8 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
     });
     expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeGreaterThanOrEqual(1.74);
     expect.soft(visual.ratio,scenario.name+' usa proporção 16:9').toBeLessThanOrEqual(1.82);
-    expect.soft(visual.maxSideInset,scenario.name+' capa mantém apenas a margem editorial do card').toBeLessThanOrEqual(17);
+    expect.soft(Math.abs(visual.topInset),scenario.name+' capa encosta no topo do card').toBeLessThanOrEqual(2);
+    expect.soft(Math.abs(visual.maxSideInset),scenario.name+' capa encosta nas laterais do card').toBeLessThanOrEqual(2);
     expect.soft(visual.cardOverflow,scenario.name+' card recorta a capa nos cantos').toBe('hidden');
     expect.soft(visual.columns,scenario.name+' mantém dois cursos por linha').toBe(2);
     expect.soft(visual.roleDisplay,scenario.name+' remove cargo da Home').toBe('none');
@@ -550,6 +558,21 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
       expect.soft(noExamMeta,scenario.name+' curso sem prova não reserva faixa vazia').toBe('none');
     }
   }
+});
+
+
+test('[D] Home remove sombra superior da capa sem alterar sua geometria',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva de Desktop.');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  const cover=page.locator('#homeCourses .home-course-card.course-library-card>.course-card-cover').first();
+  await expect(cover).toBeVisible();
+  const visual=await cover.evaluate(el=>({
+    boxShadow:getComputedStyle(el).boxShadow,
+    overlay:getComputedStyle(el,'::after').backgroundImage
+  }));
+  expect(['none','']).toContain(visual.boxShadow);
+  expect(visual.overlay).toContain('linear-gradient');
 });
 
 test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o smartphone',async({page},testInfo)=>{
@@ -3161,6 +3184,7 @@ test('[G] V15.36 atualização forçada preserva dados do usuário',async({page}
 
 test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',async({page},testInfo)=>{
   await page.goto('/#settings');
+  if(testInfo.project.name==='iphone-webkit')await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
   const panel=page.locator('#appAppearancePanel');
   await expect(panel).toBeVisible();
   const choices=panel.locator('[data-app-icon-mode]');
@@ -3180,8 +3204,13 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   };
   await ensurePanelOpen();
 
-  const light=panel.locator('[data-app-icon-mode="light"]');
-  await light.click();
+  const chooseMode=async(mode)=>{
+    const choice=panel.locator('[data-app-icon-mode="'+mode+'"]');
+    if(testInfo.project.name==='iphone-webkit')await page.evaluate(value=>window.AppIconSettings?.choose?.(value),mode);
+    else await choice.click();
+    return choice;
+  };
+  const light=await chooseMode('light');
   await expect(light).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('light');
   await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-light-rounded-192/);
@@ -3190,8 +3219,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-light-v15.36.2.webmanifest');
 
   await ensurePanelOpen();
-  const dark=panel.locator('[data-app-icon-mode="dark"]');
-  await dark.click();
+  const dark=await chooseMode('dark');
   await expect(dark).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('dark');
   await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-dark-rounded-192/);
@@ -3199,8 +3227,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-v15.23.6.webmanifest');
 
   await ensurePanelOpen();
-  const automatic=panel.locator('[data-app-icon-mode="auto"]');
-  await automatic.click();
+  const automatic=await chooseMode('auto');
   await expect(automatic).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('auto');
   expect(await page.locator('#appIconExplicitFavicon').getAttribute('media')).toBe('not all');
@@ -3307,6 +3334,7 @@ test('[D+T] Progresso prioriza tags e remove miniaturas de capa',async({page},te
 test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação visual exclusiva do smartphone.');
   await page.goto('/#progress');
+  await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
   const subjects=page.locator('[data-mobile-progress-group="subjects"]');
   await expect(subjects).toBeVisible();
   if(!(await subjects.evaluate(el=>el.open)))await subjects.locator(':scope > summary').click();
@@ -3324,6 +3352,7 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   await expect(row.locator('.progress-map-thumb')).toBeHidden();
   await expect(row.locator('.compact-code')).toBeVisible();
   await expect(row.locator('.progress-open')).toBeHidden();
+  await expect.poll(async()=>row.locator('.compact-code').evaluate(el=>el.getBoundingClientRect().width),{timeout:5000}).toBeLessThanOrEqual(70);
   const layout=await row.evaluate(el=>{
     const tag=el.querySelector('.compact-code');
     const title=el.querySelector('.progress-map-copy>b');
