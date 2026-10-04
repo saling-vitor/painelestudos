@@ -727,3 +727,23 @@ html.is-ipad:not(.is-phone-layout) .progress-map-row{min-height:60px!important}
   content-visibility:visible!important;
   contain-intrinsic-size:none!important;
 }
+
+/* Smartphone: cada mapa é uma linha de leitura, sem duplicar badges/chevrons legados. */
+@media(max-width:480px){
+  html.is-phone-layout [data-view="progress"] .progress-map-row::after{display:none!important}
+  html.is-phone-layout [data-view="progress"] .progress-map-copy{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-areas:none!important;
+    gap:2px!important;
+    align-content:center!important;
+  }
+  html.is-phone-layout [data-view="progress"] .progress-map-copy>b,
+  html.is-phone-layout [data-view="progress"] .progress-map-meta{
+    grid-area:auto!important;
+    margin:0!important;
+  }
+  html.is-phone-layout [data-view="progress"] .progress-map-mobile-states{
+    display:none!important;
+  }
+}
