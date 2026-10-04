@@ -575,6 +575,7 @@
     root.querySelector('[data-automation-undo]')?.addEventListener('click',()=>undoLastAutomation());
     root.querySelectorAll('[data-diagnostic-action]').forEach(button=>button.onclick=()=>handleDiagnosticAction(diag.issues[Number(button.dataset.diagnosticAction)]));
     root.querySelector('[data-automation-refresh]')?.addEventListener('click',()=>{const result=syncAutoAgenda({force:true});renderAutomationSettings();toast(result.changed?'Plano e diagnóstico atualizados.':'Diagnóstico atualizado; o plano já estava em dia.')});
+    setTimeout(()=>window.SettingsControlCenter?.render?.(),0);
   }
 
   function renderAllAutomation(){
