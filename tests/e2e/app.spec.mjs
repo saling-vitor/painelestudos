@@ -910,7 +910,8 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.intelligenceHeight).toBeLessThan(150);
   expect(layout.resumeShare).toBeGreaterThan(.54);
   expect(layout.resumeShare).toBeLessThan(.62);
-  expect(layout.simulationItemHeight).toBeLessThanOrEqual(82);
+  expect(layout.simulationItemHeight).toBeGreaterThanOrEqual(148);
+  expect(layout.simulationItemHeight).toBeLessThanOrEqual(156);
   expect(layout.courseHeight).toBeGreaterThanOrEqual(235);
   expect(layout.courseHeight).toBeLessThanOrEqual(620);
 });
