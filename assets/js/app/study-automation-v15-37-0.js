@@ -248,9 +248,22 @@
     if(!hasWeakness)return{topics:0,maps:0};
 
     const recommendations=window.StudyCoach?.recommendations?.(simulationKey)||[];
-    const maps=recommendations.map(rec=>({rec,map:typeof mapById==='function'?mapById(rec.key):null})).filter(row=>row.map).slice(0,3);
+    let maps=recommendations.map(rec=>({rec,map:typeof mapById==='function'?mapById(rec.key):null})).filter(row=>row.map).slice(0,3);
     const labels=[...mistakes.map(item=>item?.topic||item?.section).filter(Boolean),...Object.entries(sections).filter(([,v])=>(Number(v?.total)||0)>(Number(v?.correct)||0)).map(([name])=>name)];
     const uniqueLabels=[...new Set(labels)].slice(0,12);
+    if(!maps.length){
+      const candidates=(typeof combinedMaps==='function'?combinedMaps():[]).filter(map=>!simulation?.courseId||map.courseId===simulation.courseId);
+      const scored=candidates.map(map=>{
+        const target=tokenSet([map.code,map.title,map.shortTitle,map.category].filter(Boolean).join(' '));
+        let match=0;
+        for(const label of uniqueLabels)for(const word of tokenSet(label))if(target.has(word))match+=word.length>=8?4:2;
+        return{map,score:match};
+      }).sort((a,b)=>b.score-a.score);
+      maps=scored.filter(row=>row.score>0).slice(0,3).map(row=>({map:row.map,rec:{key:mapKeyOf(row.map),reason:'Erros recentes relacionados a '+(uniqueLabels[0]||'este conteúdo')}}));
+      if(!maps.length){
+        maps=(window.StudyPlanner?.priorityRows?.(candidates)||[]).slice(0,2).map(row=>({map:row.map,rec:{key:row.key,reason:'Reforço após desempenho baixo no simulado'}}));
+      }
+    }
     let topicCount=0,mapCount=0;
 
     if(uniqueLabels.length&&window.StudyPlanner?.exportData&&window.StudyPlanner?.importData){
@@ -403,7 +416,9 @@
     const view=document.querySelector('[data-view="course"]'),course=state?.courseId&&typeof courseById==='function'?courseById(state.courseId):null;
     if(!view||!course)return;
     let root=document.getElementById('courseAutomationPanel');
-    if(!root){root=document.createElement('section');root.id='courseAutomationPanel';root.className='course-automation-panel';document.getElementById('courseProgressSummary')?.insertAdjacentElement('afterend',root)}
+    if(!root){root=document.createElement('section');root.id='courseAutomationPanel';root.className='course-automation-panel'}
+    const phone=document.documentElement.classList.contains('is-phone-layout'),anchor=phone?document.getElementById('courseMapsWrap'):document.getElementById('courseProgressSummary');
+    if(anchor&&root.previousElementSibling!==anchor)anchor.insertAdjacentElement('afterend',root);
     const health=courseHealth(course),rows=(window.StudyPlanner?.priorityRows?.(mapsForCourse(course.id))||[]).filter(row=>row.map?.courseId===course.id&&row.courseHealth?.status!=='finished'),next=rows[0]||null,due=(window.StudyPlanner?.dueTopics?.(course.id)||[]).length,finish=health.forecast?.finishDate instanceof Date?health.forecast.finishDate:null;
     const finishLabel=finish?finish.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}):'—';
     const margin=health.marginDays===null?'sem prazo':(health.marginDays>=0?health.marginDays+'d de margem':Math.abs(health.marginDays)+'d após a prova');
