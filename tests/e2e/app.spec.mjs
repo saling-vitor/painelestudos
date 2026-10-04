@@ -814,7 +814,9 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
       inside:rr.left>=hr.left&&sr.right<=hr.right+1,
       commandHeight:command?.getBoundingClientRect().height||0,
       intelligenceHeight:intel?.getBoundingClientRect().height||0,
-      courseHeight:course?.getBoundingClientRect().height||0
+      courseHeight:course?.getBoundingClientRect().height||0,
+      resumeShare:rr.width/hr.width,
+      simulationItemHeight:document.querySelector('#homeSimulations .simulation-recent-item')?.getBoundingClientRect().height||0
     };
   });
   expect(layout.display).toBe('grid');
@@ -822,7 +824,10 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.resumeBeforeSims).toBe(true);
   expect(layout.inside).toBe(true);
   expect(layout.commandHeight).toBeLessThan(180);
-  expect(layout.intelligenceHeight).toBeLessThan(160);
+  expect(layout.intelligenceHeight).toBeLessThan(150);
+  expect(layout.resumeShare).toBeGreaterThan(.54);
+  expect(layout.resumeShare).toBeLessThan(.62);
+  expect(layout.simulationItemHeight).toBeLessThanOrEqual(82);
   expect(layout.courseHeight).toBeGreaterThanOrEqual(235);
   expect(layout.courseHeight).toBeLessThanOrEqual(620);
 });
@@ -1325,11 +1330,11 @@ test('iPad paisagem usa densidade otimizada da home e do leitor',async({page},te
 
 
 
-test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({page},testInfo)=>{
+test('A Home responsiva mantém Retomar e Simulados lado a lado no iPad',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação específica da Home responsiva no iPad.');
   for(const scenario of [
-    {name:'landscape',width:1194,height:834,maxHeroHeight:270,simulationMode:'grid',simulationColumns:3,intelligenceColumns:3,courseColumns:2},
-    {name:'portrait',width:820,height:1180,maxHeroHeight:315,simulationMode:'grid',simulationColumns:2,intelligenceColumns:2,courseColumns:2}
+    {name:'landscape',width:1194,height:834,maxHeroHeight:270,intelligenceColumns:3},
+    {name:'portrait',width:820,height:1180,maxHeroHeight:315,intelligenceColumns:2}
   ]){
     await page.setViewportSize({width:scenario.width,height:scenario.height});
     await page.goto('/#home');
@@ -1338,7 +1343,8 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
     await expect(page.locator('.home-continue-section')).toBeVisible();
     await expect(page.locator('.home-simulations-section')).toBeVisible();
     await expect(page.locator('#homeSimulations .simulation-recent-item')).toHaveCount(3);
-    const data=await page.evaluate(()=> {
+    const data=await page.evaluate(()=>{
+      const home=document.querySelector('[data-view="home"]');
       const sims=document.querySelector('.simulation-recent-list');
       const intel=document.querySelector('.study-intelligence-row');
       const courses=document.querySelector('#homeCourses');
@@ -1347,15 +1353,16 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
       const simSection=document.querySelector('.home-simulations-section');
       const third=document.querySelector('#homeSimulations .simulation-recent-item:nth-child(3)');
       const action=document.querySelector('#continueBox .continue-card>.primary');
+      const hr=home.getBoundingClientRect(),rr=resume.getBoundingClientRect(),sr=simSection.getBoundingClientRect();
       const cols=el=>getComputedStyle(el).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length;
       return{
         width:innerWidth,
         scrollWidth:document.documentElement.scrollWidth,
         heroHeight:hero.getBoundingClientRect().height,
-        resumeWidth:resume.getBoundingClientRect().width,
-        simSectionWidth:simSection.getBoundingClientRect().width,
+        sameRow:Math.abs(rr.top-sr.top)<2,
+        resumeShare:rr.width/hr.width,
+        simShare:sr.width/hr.width,
         simDisplay:getComputedStyle(sims).display,
-        simOverflow:getComputedStyle(sims).overflowX,
         simColumns:getComputedStyle(sims).display==='grid'?cols(sims):0,
         intelligenceColumns:cols(intel),
         courseColumns:cols(courses),
@@ -1365,18 +1372,19 @@ test('A Home responsiva mantém hierarquia no iPad paisagem e retrato',async({pa
     });
     expect.soft(data.scrollWidth,scenario.name+' sem overflow horizontal').toBeLessThanOrEqual(data.width+2);
     expect.soft(data.heroHeight,scenario.name+' hero compacto').toBeLessThanOrEqual(scenario.maxHeroHeight);
-    expect.soft(data.resumeWidth,scenario.name+' Retomar ocupa largura disponível').toBeGreaterThan(data.width*.55);
-    expect.soft(data.simSectionWidth,scenario.name+' Simulados ocupa largura disponível').toBeGreaterThan(data.width*.55);
-    expect.soft(data.thirdDisplay,scenario.name+' terceiro simulado nunca é ocultado').not.toBe('none');
+    expect.soft(data.sameRow,scenario.name+' Retomar e Simulados ficam na mesma linha').toBe(true);
+    expect.soft(data.resumeShare,scenario.name+' Retomar ocupa uma coluna útil').toBeGreaterThan(.40);
+    expect.soft(data.resumeShare,scenario.name+' Retomar não domina a linha').toBeLessThan(.58);
+    expect.soft(data.simShare,scenario.name+' Simulados ocupa uma coluna útil').toBeGreaterThan(.38);
+    expect.soft(data.simShare,scenario.name+' Simulados não domina a linha').toBeLessThan(.56);
+    expect.soft(data.thirdDisplay,scenario.name+' terceiro simulado permanece visível').not.toBe('none');
     expect.soft(Math.round(data.continueActionHeight),scenario.name+' ação Retomar preserva alvo touch').toBeGreaterThanOrEqual(44);
-    expect.soft(data.courseColumns,scenario.name+' cursos').toBe(scenario.courseColumns);
+    expect.soft(data.courseColumns,scenario.name+' cursos').toBe(2);
     expect.soft(data.intelligenceColumns,scenario.name+' inteligência').toBe(scenario.intelligenceColumns);
-    expect.soft(data.simDisplay,scenario.name+' simulados').toBe(scenario.simulationMode);
-    if(scenario.simulationMode==='grid')expect.soft(data.simColumns,scenario.name+' colunas de simulados').toBe(scenario.simulationColumns);
-    else expect.soft(['auto','scroll'],scenario.name+' faixa rolável').toContain(data.simOverflow);
+    expect.soft(data.simDisplay,scenario.name+' simulados em lista compacta').toBe('grid');
+    expect.soft(data.simColumns,scenario.name+' simulados usam uma coluna dentro da faixa').toBe(1);
   }
 });
-
 test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},testInfo)=>{
   test.skip(!['desktop-chromium','ipad'].includes(testInfo.project.name),'Validação de Desktop e iPad.');
   const scenarios=testInfo.project.name==='desktop-chromium'
@@ -3383,6 +3391,35 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   await expect(page.locator('#progressSortSheet')).toBeHidden();
 });
 
+
+test('[M] Home compacta Prioridade, Ritmo e Plano do dia em linhas acionáveis',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva do iPhone.');
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/#home');
+  await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
+  await expect(page.locator('#homeStudyPlan .study-plan-item').first()).toBeVisible();
+  const data=await page.evaluate(()=>{
+    const plan=[...document.querySelectorAll('#homeStudyPlan .study-plan-item')];
+    const intel=[...document.querySelectorAll('.study-intelligence-row>article')];
+    const first=plan[0],action=first?.querySelector('button');
+    const fr=first?.getBoundingClientRect(),ar=action?.getBoundingClientRect();
+    return{
+      planMax:Math.max(0,...plan.map(el=>el.getBoundingClientRect().height)),
+      intelMax:Math.max(0,...intel.map(el=>el.getBoundingClientRect().height)),
+      actionCovers:!!fr&&!!ar&&Math.abs(fr.width-ar.width)<=2&&Math.abs(fr.height-ar.height)<=2,
+      roleVisible:[...document.querySelectorAll('#homeCourses .course-card-role')].some(el=>getComputedStyle(el).display!=='none'),
+      activityVisible:[...document.querySelectorAll('#homeCourses .course-last-activity-card')].some(el=>getComputedStyle(el).display!=='none'),
+      scrollWidth:document.documentElement.scrollWidth,
+      width:innerWidth
+    };
+  });
+  expect(data.planMax).toBeLessThanOrEqual(72);
+  expect(data.intelMax).toBeLessThanOrEqual(150);
+  expect(data.actionCovers).toBe(true);
+  expect(data.roleVisible).toBe(false);
+  expect(data.activityVisible).toBe(false);
+  expect(data.scrollWidth).toBeLessThanOrEqual(data.width+2);
+});
 
 test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva do iPhone.');
