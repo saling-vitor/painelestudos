@@ -3165,11 +3165,14 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(panel).toBeVisible();
   const choices=panel.locator('[data-app-icon-mode]');
   await expect(choices).toHaveCount(3);
-  const mobileToggle=panel.locator('.mobile-settings-toggle');
-  if(await mobileToggle.count()){
-    await mobileToggle.click();
-    await expect(panel).not.toHaveClass(/mobile-settings-collapsed/);
-  }
+  const ensurePanelOpen=async()=>{
+    const mobileToggle=panel.locator('.mobile-settings-toggle');
+    if(await mobileToggle.count()&&await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed'))){
+      await mobileToggle.click();
+      await expect(panel).not.toHaveClass(/mobile-settings-collapsed/);
+    }
+  };
+  await ensurePanelOpen();
 
   const light=panel.locator('[data-app-icon-mode="light"]');
   await light.click();
@@ -3180,6 +3183,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-light-rounded-192/);
   await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-light-v15.36.2.webmanifest');
 
+  await ensurePanelOpen();
   const dark=panel.locator('[data-app-icon-mode="dark"]');
   await dark.click();
   await expect(dark).toHaveAttribute('aria-pressed','true');
@@ -3188,6 +3192,7 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-dark-rounded-180/);
   await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-v15.23.6.webmanifest');
 
+  await ensurePanelOpen();
   const automatic=panel.locator('[data-app-icon-mode="auto"]');
   await automatic.click();
   await expect(automatic).toHaveAttribute('aria-pressed','true');
