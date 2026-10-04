@@ -1129,7 +1129,7 @@ test('refinamento de Progresso, Simulados e Configurações mantém densidade e 
 
     await page.goto('/#settings');
     const layout=await page.locator('.settings-layout-v3').evaluate(el=>({cols:getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length}));
-    expect(layout.cols).toBe(2);
+    expect(layout.cols).toBe(12);
     await expect(page.locator('.study-goal-human').first()).toContainText(/h/);
     const toggle=page.locator('.study-settings-toggle input[type="checkbox"]');
     const appearance=await toggle.evaluate(el=>getComputedStyle(el).appearance);
