@@ -1,17 +1,17 @@
 {
-  "version": "15.37.0",
-  "label": "V15.37.0-G",
-  "releasedAt": "2026-10-04T18:45:00.000Z",
-  "notes": "Automação inteligente integrada a Cursos, Mapas, Simulados, Agenda e Configurações.",
+  "version": "15.38.0",
+  "label": "V15.38.0-G",
+  "releasedAt": "2026-10-04T19:55:00.000Z",
+  "notes": "Configurações viram um centro de controle responsivo e a prioridade do estudo passa a explicar suas decisões.",
   "showWhatsNew": true,
   "highlights": [
-    "Plano diário e agenda autogerados com prioridades reais, prazo da prova e limite de carga",
-    "Atrasos automáticos são redistribuídos sem concentrar tudo no dia seguinte",
-    "Erros de simulados geram revisões direcionadas por tópico ou mapa",
-    "Cursos recebem leitura de saúde, ritmo necessário, previsão e próximo estudo inteligente",
-    "Mapas parados ganham prioridade automática sem alterar manualmente seu estado",
-    "Importador detecta automaticamente o curso de destino quando há confiança suficiente",
-    "Configurações passa a mostrar diagnóstico de inconsistências em cursos, mapas, simulados e agenda",
-    "Após a prova, o sistema sugere arquivamento sem apagar histórico ou arquivar sozinho"
+    "Por que este mapa? agora explica a prioridade com razões reais em Desktop, iPad e iPhone",
+    "Configurações vira um Centro de controle responsivo e elimina grandes espaços vazios no Desktop",
+    "Automação ganha modos Conservador, Equilibrado e Intensivo, histórico de atividade e desfazer",
+    "Diagnóstico de estudo passa a oferecer ações diretas para risco, data da prova, revisões e vínculos",
+    "Metas mostram a carga diária recomendada pelas provas atuais e comparam com sua meta",
+    "Backup exibe o último download e mantém até 10 pontos de restauração",
+    "Aparência remove a prévia redundante e integra o estado Claro/Escuro à opção Automático",
+    "Smartphone usa grupos colapsáveis e iPad reorganiza Configurações para paisagem e retrato"
   ]
 }
