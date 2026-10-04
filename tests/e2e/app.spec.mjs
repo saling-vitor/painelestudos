@@ -3159,7 +3159,7 @@ test('[G] V15.36 atualização forçada preserva dados do usuário',async({page}
 });
 
 
-test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',async({page})=>{
+test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',async({page},testInfo)=>{
   await page.goto('/#settings');
   const panel=page.locator('#appAppearancePanel');
   await expect(panel).toBeVisible();
@@ -3167,9 +3167,15 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   await expect(choices).toHaveCount(3);
   const ensurePanelOpen=async()=>{
     const mobileToggle=panel.locator('.mobile-settings-toggle');
+    if(testInfo.project.name==='iphone-webkit'){
+      await expect(mobileToggle).toHaveCount(1);
+    }
     if(await mobileToggle.count()&&await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed'))){
       await mobileToggle.click();
       await expect(panel).not.toHaveClass(/mobile-settings-collapsed/);
+    }
+    if(testInfo.project.name==='iphone-webkit'){
+      await expect(panel.locator('[data-app-icon-mode="light"]')).toBeVisible();
     }
   };
   await ensurePanelOpen();
