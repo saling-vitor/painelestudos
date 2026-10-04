@@ -1,14 +1,15 @@
 {
-  "version": "15.36.32",
-  "label": "V15.36.32-G",
-  "releasedAt": "2026-10-04T02:28:00.000Z",
-  "notes": "Refinamento de densidade da Home em Desktop, iPad e smartphone: Hoje, Prioridade, Ritmo e Plano do dia ficam mais compactos; Retomar ganha mais largura no Desktop e passa a dividir a linha com Simulados no iPad; simulados recentes ficam menores; e os cards de cursos da Home exibem apenas as informações essenciais, mantendo Meus Cursos como visão completa.",
+  "version": "15.36.33",
+  "label": "V15.36.33-G",
+  "releasedAt": "2026-10-04T03:20:00.000Z",
+  "notes": "Reestruturação da tela Progresso para leitura rápida: quatro KPIs principais, foco imediato mais hierárquico, pendências adaptativas, ritmo consolidado, concursos e mapas em linhas compactas e dúvidas vazias proporcionais.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Retomar ocupa cerca de 55–60% da faixa e Simulados recentes fica mais compacto",
-    "[D+T] Hoje, Prioridade, Ritmo e Plano do dia usam menos altura sem perder ações",
-    "[T] Retomar e Simulados ficam lado a lado, com composição adaptada para paisagem e retrato",
-    "[M] Prioridade, Ritmo e Plano do dia ficam mais densos; Plano vira linhas acionáveis",
-    "[G] Meus cursos na Home mostra somente o essencial; a página Meus Cursos preserva todas as informações"
+    "[G] Progresso agora prioriza evolução, atenção e próxima ação",
+    "[D+T] Retomar domina Onde focar agora e ações secundárias ocupam menos espaço",
+    "[G] Revisões e erros só aparecem quando há pendências; zero vira Tudo sob controle",
+    "[G] Ritmo de estudo usa um gráfico principal e KPIs compactos",
+    "[M] Concursos e mapas viram linhas compactas; a linha inteira é acionável",
+    "[M] Dúvidas vazias e grupos do Progresso ocupam menos espaço"
   ]
 }
