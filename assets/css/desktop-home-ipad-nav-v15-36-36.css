@@ -218,3 +218,13 @@
     display:none!important;
   }
 }
+
+
+/* Estabiliza o painel Ritmo no iPad retrato/split após a troca do dock.
+   Mantém o contrato responsivo já aprovado: uma única coluna útil. */
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) .study-rhythm-shell{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
