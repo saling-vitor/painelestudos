@@ -182,45 +182,58 @@
 
 .settings-layout-v3.settings-control-grid{
   display:grid!important;
-  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:
+    "sync"
+    "update"
+    "automation"
+    "admin"
+    "study"
+    "appearance"
+    "backup"
+    "diagnostic"!important;
   gap:12px!important;
   align-items:start!important;
-}
-@media(min-width:1101px){
-  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3.settings-control-grid{
-    display:grid!important;
-    grid-template-columns:repeat(12,minmax(0,1fr))!important;
-    grid-template-areas:none!important;
-    gap:12px!important;
-    align-items:start!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-column{
-    display:none!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-control-panel{
-    grid-area:auto!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-backup{
-    grid-column:span 8!important;
-  }
+  width:100%!important;
+  min-width:0!important;
 }
 .settings-control-grid>.settings-column{display:none!important}
 .settings-control-grid>.settings-control-panel{
   min-width:0;
+  width:auto!important;
+  max-width:none!important;
   margin:0!important;
   padding:14px!important;
   border-radius:12px!important;
   background:linear-gradient(145deg,rgba(13,16,20,.80),rgba(7,9,12,.92))!important;
   box-shadow:none!important;
 }
-.settings-area-sync{grid-column:span 8}
-.settings-area-update{grid-column:span 4}
-.settings-area-automation{grid-column:span 8}
-.settings-area-admin{grid-column:span 4}
-.settings-area-study{grid-column:span 8}
-.settings-area-appearance{grid-column:span 4}
-.settings-area-backup{grid-column:span 8!important}
-.settings-area-diagnostic{grid-column:span 4}
+.settings-control-grid>.settings-area-sync{grid-area:sync!important}
+.settings-control-grid>.settings-area-update{grid-area:update!important}
+.settings-control-grid>.settings-area-automation{grid-area:automation!important}
+.settings-control-grid>.settings-area-admin{grid-area:admin!important}
+.settings-control-grid>.settings-area-study{grid-area:study!important}
+.settings-control-grid>.settings-area-appearance{grid-area:appearance!important}
+.settings-control-grid>.settings-area-backup{grid-area:backup!important}
+.settings-control-grid>.settings-area-diagnostic{grid-area:diagnostic!important}
+
+@media(min-width:1101px){
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3.settings-control-grid{
+    grid-template-columns:minmax(0,2fr) minmax(300px,1fr)!important;
+    grid-template-areas:
+      "sync update"
+      "automation admin"
+      "study appearance"
+      "backup diagnostic"!important;
+    gap:12px!important;
+    align-items:start!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-control-panel{
+    min-width:0!important;
+    width:auto!important;
+    max-width:none!important;
+  }
+}
 
 /* Conta: menos "card dentro de card". */
 .settings-area-sync .form{margin-top:9px!important}
@@ -456,26 +469,33 @@
 /* =========================================================
    TABLET / IPAD
    ========================================================= */
-@media(min-width:701px){
+@media(min-width:901px){
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid{
-    grid-template-columns:repeat(12,minmax(0,1fr))!important;
-    grid-template-areas:none!important;
+    grid-template-columns:minmax(0,7fr) minmax(260px,5fr)!important;
+    grid-template-areas:
+      "sync update"
+      "automation admin"
+      "study appearance"
+      "backup diagnostic"!important;
   }
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-sync,
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-automation,
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-study,
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-backup{grid-column:span 7!important}
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-update,
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-admin,
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-appearance,
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-diagnostic{grid-column:span 5!important}
 }
 html.is-ipad:not(.is-phone-layout) .settings-area-update .admin-actions button{
   min-height:44px!important;
 }
 @media(max-width:900px), (orientation:portrait) and (max-width:1180px){
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid{grid-template-columns:1fr!important;grid-template-areas:none!important}
-  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-control-panel{grid-column:1/-1!important}
+  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:
+      "sync"
+      "update"
+      "automation"
+      "admin"
+      "study"
+      "appearance"
+      "backup"
+      "diagnostic"!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-control-panel{min-width:0!important;width:auto!important;max-width:none!important}
   html.is-ipad:not(.is-phone-layout) .automation-toggle-grid>label{min-height:52px!important}
   html.is-ipad:not(.is-phone-layout) .automation-mode-row select{min-height:44px}
 }
