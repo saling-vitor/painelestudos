@@ -513,7 +513,7 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
         progressVisible:!!progress&&getComputedStyle(progress).display!=='none',
         progressInside:!!pr&&pr.left>=card.left+12&&pr.right<=card.right-12,
         trackInside:!!tr&&tr.left>=card.left+12&&tr.right<=card.right-12,
-        totalText:total?.textContent?.trim()||'',
+        countText:el.querySelector('.course-progress-count')?.textContent?.trim()||'',
         unitDisplay:unit?getComputedStyle(unit).display:'none',
         enterVisible:!!enter&&getComputedStyle(enter).display!=='none',
         enterInside:!!er&&er.left>=card.left+12&&er.right<=card.right-12&&er.bottom<=card.bottom-8,
@@ -537,7 +537,7 @@ test('[T] Home mantém capas 16:9 e controles dentro da capa em retrato e paisag
     expect.soft(visual.horizontalOverflow,scenario.name+' card não cria overflow horizontal').toBeLessThanOrEqual(1);
     expect.soft(visual.progressInside,scenario.name+' bloco de progresso fica dentro do card').toBe(true);
     expect.soft(visual.trackInside,scenario.name+' barra de progresso respeita as margens').toBe(true);
-    expect.soft(visual.totalText,scenario.name+' total compacto não escreve tópicos').not.toMatch(/tópicos/i);
+    expect.soft(visual.countText,scenario.name+' total compacto usa somente contagem').toMatch(/^\d+\s*\/\s*\d+$/);
     expect.soft(visual.unitDisplay,scenario.name+' unidade tópicos fica oculta na Home').toBe('none');
     expect.soft(visual.enterVisible,scenario.name+' mantém botão Entrar').toBe(true);
     expect.soft(visual.enterInside,scenario.name+' botão Entrar fica totalmente dentro do card').toBe(true);
