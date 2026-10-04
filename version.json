@@ -1,15 +1,16 @@
 {
-  "version": "15.36.29",
-  "label": "V15.36.29-T",
-  "releasedAt": "2026-10-03T23:22:00.000Z",
-  "notes": "No iPad/tablet, a Home passa a manter sempre dois cursos por linha, em retrato e paisagem. Os cards da Home ficam mais enxutos: permanecem capa, situação, nome do concurso, prova, progresso e botão Entrar. As informações completas continuam em Meus Cursos. Desktop e iPhone não mudam.",
+  "version": "15.36.30",
+  "label": "V15.36.30-T",
+  "releasedAt": "2026-10-03T23:58:00.000Z",
+  "notes": "Refinamento final da Home no iPad/tablet: cards continuam em duas colunas, mas passam a respeitar melhor as margens internas, reduzir espaços vazios, compactar a contagem de tópicos e manter progresso e botão Entrar totalmente contidos. Cursos sem prova deixam de reservar uma faixa vazia. Meus Cursos permanece completo e inalterado.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Home mantém sempre 2 cursos por linha em retrato e paisagem",
-    "[T] Cards da Home ficam mais compactos e visuais",
-    "[T] Home mantém capa, situação, nome, prova, progresso e Entrar",
-    "[T] Cargo, banca, quantidade de mapas e última atividade saem da Home",
-    "[T] Meus Cursos preserva todas as informações completas",
+    "[T] Contagem de progresso da Home fica compacta, sem a palavra tópicos",
+    "[T] Barra de progresso e botão Entrar respeitam as margens internas",
+    "[T] Cards ficam com altura automática e menos espaço vazio",
+    "[T] Cursos sem data de prova não reservam faixa vazia",
+    "[T] Capas, selo ATIVO, botão de configuração e grade de 2 colunas são preservados",
+    "[T] Meus Cursos permanece com todas as informações completas",
     "[D+M] Desktop e iPhone permanecem sem alterações"
   ]
 }
