@@ -74,7 +74,7 @@
     hero.classList.add('mobile-course-compact');
     if(!q('.mobile-course-actions',hero)){
       const actions=document.createElement('div');actions.className='mobile-course-actions';
-      actions.innerHTML='<button type="button" data-mobile-course-search><span class="ui-icon icon-search ui-icon-sm" aria-hidden="true"></span><b>Buscar</b></button><button type="button" data-mobile-course-filters><span class="ui-icon icon-filter ui-icon-sm" aria-hidden="true"></span><b>Filtros</b></button><button type="button" data-mobile-course-details><span class="ui-icon icon-more ui-icon-sm" aria-hidden="true"></span><b>Detalhes</b></button>';
+      actions.innerHTML='<button type="button" data-mobile-course-search><span class="ui-icon icon-search ui-icon-sm" aria-hidden="true"></span><b>Buscar</b></button><button type="button" data-mobile-course-filters><span class="ui-icon icon-settings ui-icon-sm" aria-hidden="true"></span><b>Filtros</b></button><button type="button" data-mobile-course-details><span class="ui-icon icon-more ui-icon-sm" aria-hidden="true"></span><b>Detalhes</b></button>';
       const summary=q('#courseProgressSummary',hero);
       (summary||q('#courseDesc',hero)||q('#courseTitle',hero))?.insertAdjacentElement('afterend',actions);
       actions.querySelector('[data-mobile-course-search]').onclick=()=>{
