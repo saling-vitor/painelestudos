@@ -423,9 +423,6 @@
 .automation-issues article small{color:#747c85;font-size:7.5px;line-height:1.35}
 .automation-issues article button{min-height:32px!important;padding-inline:8px!important;font-size:7.5px!important}
 
-/* Toggle mobile só existe visualmente no smartphone. */
-.settings-mobile-toggle{display:none!important}
-
 /* =========================================================
    TABLET / IPAD
    ========================================================= */
@@ -460,33 +457,6 @@
     padding:0!important;
     overflow:hidden;
   }
-  .settings-mobile-toggle{
-    width:100%;
-    min-height:54px;
-    display:flex!important;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:0 13px;
-    border:0;
-    background:transparent;
-    color:#d6d9de;
-    text-align:left;
-    cursor:pointer;
-    font-size:11px;
-    font-weight:750;
-  }
-  .settings-mobile-toggle b{
-    color:#737b85;
-    font-size:16px;
-    font-weight:500;
-    transition:transform .18s ease;
-  }
-  .settings-control-panel:not(.is-mobile-collapsed)>.settings-mobile-toggle b{transform:rotate(180deg)}
-  .settings-control-panel.is-mobile-collapsed>:not(.settings-mobile-toggle){display:none!important}
-  .settings-control-panel:not(.is-mobile-collapsed)>:not(.settings-mobile-toggle){margin-left:11px;margin-right:11px}
-  .settings-control-panel:not(.is-mobile-collapsed)>:last-child{margin-bottom:11px}
-  .settings-control-panel:not(.is-mobile-collapsed)>.panel-kicker{margin-top:2px}
   .automation-mode-row,
   .automation-today,
   .study-goal-recommendation{grid-template-columns:1fr;align-items:stretch}
