@@ -94,6 +94,7 @@
 
   function renderTechnicalSummary(){
     const panel=document.getElementById('appDiagnosticPanel');if(!panel)return;
+    panel.classList.remove('settings-diagnostic-embedded');
     const title=panel.querySelector('h2 span:last-child');if(title)title.textContent='Saúde técnica';
     const description=panel.querySelector(':scope>p');if(description)description.textContent='Versão, nuvem, offline, cache e dispositivos desta instalação.';
     let root=panel.querySelector('.settings-device-summary');
