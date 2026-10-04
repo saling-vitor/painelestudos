@@ -448,27 +448,28 @@
     const issues=[],courses=typeof combinedCourses==='function'?combinedCourses():[],maps=typeof combinedMaps==='function'?combinedMaps():[],sims=typeof combinedSimulations==='function'?combinedSimulations():[];
     for(const course of courses){
       if(course.status==='archived')continue;
-      const health=courseHealth(course);
-      if(!parseDate(course.examDate||course.exam_date))issues.push({type:'course-date',severity:'info',label:(course.title||course.id)+' sem data da prova'});
-      if(health.status==='finished')issues.push({type:'past-exam',severity:'action',label:(course.title||course.id)+' com prova já realizada'});
-      if(health.status==='risk')issues.push({type:'course-risk',severity:'warn',label:(course.title||course.id)+' com ritmo em risco'});
+      const health=courseHealth(course),courseId=course.id;
+      if(!parseDate(course.examDate||course.exam_date))issues.push({type:'course-date',severity:'info',courseId,label:(course.title||course.id)+' sem data da prova',detail:'Sem a data da prova, o sistema não consegue calcular pressão, ritmo necessário e margem de conclusão.'});
+      if(health.status==='finished')issues.push({type:'past-exam',severity:'action',courseId,label:(course.title||course.id)+' com prova já realizada',detail:'O histórico pode ser mantido e o curso retirado das prioridades quando você quiser.'});
+      if(health.status==='risk')issues.push({type:'course-risk',severity:'warn',courseId,label:(course.title||course.id)+' com ritmo em risco',detail:health.message});
     }
     const seen=new Map();
     for(const map of maps){
-      const key=String(map.courseId||'')+'::'+String(map.code||'').toLowerCase();
-      if(map.code){if(seen.has(key))issues.push({type:'duplicate-map',severity:'warn',label:'Mapa duplicado: '+(map.code||map.title)});else seen.set(key,true)}
-      if(!map.version)issues.push({type:'map-version',severity:'info',label:(map.code||map.title||'Mapa')+' sem versão identificada'});
-      if((Number(map.topics)||0)<=0)issues.push({type:'map-topics',severity:'warn',label:(map.code||map.title||'Mapa')+' sem tópicos identificados'});
-      if(String(map.category||'Outros')==='Outros')issues.push({type:'map-category',severity:'info',label:(map.code||map.title||'Mapa')+' ainda em Outros'});
+      const mapKey=mapKeyOf(map),key=String(map.courseId||'')+'::'+String(map.code||'').toLowerCase();
+      if(map.code){if(seen.has(key))issues.push({type:'duplicate-map',severity:'warn',mapKey,label:'Mapa duplicado: '+(map.code||map.title),detail:'Há mais de um mapa com a mesma sigla dentro do curso.'});else seen.set(key,true)}
+      if(!map.version)issues.push({type:'map-version',severity:'info',mapKey,label:(map.code||map.title||'Mapa')+' sem versão identificada',detail:'A versão ajuda o sistema a reconhecer atualizações do mesmo mapa.'});
+      if((Number(map.topics)||0)<=0)issues.push({type:'map-topics',severity:'warn',mapKey,label:(map.code||map.title||'Mapa')+' sem tópicos identificados',detail:'O HTML não informou tópicos suficientes para progresso e planejamento.'});
+      if(String(map.category||'Outros')==='Outros')issues.push({type:'map-category',severity:'info',mapKey,label:(map.code||map.title||'Mapa')+' ainda em Outros',detail:'Classificar o mapa melhora filtros, prioridades e leitura do conteúdo.'});
     }
     for(const sim of sims){
-      if(!sim.courseId||!courses.some(course=>course.id===sim.courseId))issues.push({type:'simulation-course',severity:'info',label:(sim.title||sim.code||'Simulado')+' sem curso vinculado'});
-      if((Number(sim.questions)||0)<=0)issues.push({type:'simulation-questions',severity:'info',label:(sim.title||sim.code||'Simulado')+' sem quantidade de questões'});
+      const simulationKey=sim._key||((typeof simulationKey==='function')?simulationKey(sim):sim.id||'');
+      if(!sim.courseId||!courses.some(course=>course.id===sim.courseId))issues.push({type:'simulation-course',severity:'info',simulationKey,label:(sim.title||sim.code||'Simulado')+' sem curso vinculado',detail:'Vincular o curso melhora a recuperação pós-simulado.'});
+      if((Number(sim.questions)||0)<=0)issues.push({type:'simulation-questions',severity:'info',simulationKey,label:(sim.title||sim.code||'Simulado')+' sem quantidade de questões',detail:'A quantidade de questões melhora o histórico e as comparações de desempenho.'});
     }
     const due=window.StudyPlanner?.dueTopics?.()||[];
-    if(due.length>=12)issues.push({type:'review-backlog',severity:'warn',label:due.length+' revisões por tópico acumuladas'});
+    if(due.length>=12)issues.push({type:'review-backlog',severity:'warn',label:due.length+' revisões por tópico acumuladas',detail:'Há revisões vencidas suficientes para impactar o plano dos próximos dias.'});
     const overdue=(agendaData().agenda||[]).filter(row=>!row.deleted&&!row.completedAt&&row.date&&row.date<dateKey()&&row.automationSource!=='smart-plan').length;
-    if(overdue)issues.push({type:'agenda-overdue',severity:'info',label:overdue+' item'+(overdue===1?'':'s')+' manual'+(overdue===1?'':'is')+' atrasado'+(overdue===1?'':'s')+' na agenda'});
+    if(overdue)issues.push({type:'agenda-overdue',severity:'info',label:overdue+' item'+(overdue===1?'':'s')+' manual'+(overdue===1?'':'is')+' atrasado'+(overdue===1?'':'s')+' na agenda',detail:'Itens manuais não são movidos sem sua decisão.'});
     return{issues,healthy:issues.filter(item=>item.severity==='warn'||item.severity==='action').length===0,total:issues.length,warnings:issues.filter(item=>item.severity==='warn'||item.severity==='action').length};
   }
 
@@ -523,6 +524,27 @@
     root.querySelectorAll('[data-post-exam]').forEach(button=>button.onclick=()=>typeof openCourseAdminFor==='function'&&openCourseAdminFor(button.dataset.postExam));
   }
 
+  function diagnosticActionLabel(issue){
+    if(issue.type==='course-date')return'Adicionar data';
+    if(issue.type==='course-risk')return'Ajustar plano';
+    if(issue.type==='past-exam')return'Revisar / arquivar';
+    if(issue.type==='review-backlog')return'Revisar agora';
+    if(issue.type==='agenda-overdue')return'Replanejar';
+    if(issue.type.startsWith('map-')||issue.type==='duplicate-map')return'Abrir mapa';
+    if(issue.type.startsWith('simulation-'))return'Abrir simulados';
+    return'Corrigir';
+  }
+  function handleDiagnosticAction(issue){
+    if(!issue)return;
+    if((issue.type==='course-date'||issue.type==='past-exam')&&issue.courseId&&typeof openCourseAdminFor==='function')return openCourseAdminFor(issue.courseId);
+    if(issue.type==='course-risk'){
+      const result=syncAutoAgenda({force:true});if(typeof nav==='function')nav('agenda');if(typeof toast==='function')toast(result.changed?'Plano recalculado para o prazo atual.':'O plano já estava atualizado.');return;
+    }
+    if(issue.type==='review-backlog')return window.StudyPlanner?.showTopicReview?.();
+    if(issue.type==='agenda-overdue'){if(typeof nav==='function')nav('agenda');setTimeout(()=>window.StudyPlanner?.showReplanModal?.(),80);return}
+    if((issue.type.startsWith('map-')||issue.type==='duplicate-map')&&issue.mapKey){if(typeof openMapAdmin==='function')return openMapAdmin(issue.mapKey);return openMap(issue.mapKey)}
+    if(issue.type.startsWith('simulation-')){if(typeof nav==='function')nav('simulations');return}
+  }
   function renderAutomationSettings(){
     const view=document.querySelector('[data-view="settings"]');if(!view)return;
     let root=document.getElementById('studyAutomationPanel');
@@ -531,7 +553,7 @@
       const host=view.querySelector('.settings-column-secondary')||view.querySelector('.settings-layout-v3')||view;
       host.appendChild(root);
     }
-    const cfg=automationSettings(),diag=diagnostics(),last=localStorage.getItem('studyapp.automation.lastPlan')||'';
+    const cfg=automationSettings(),diag=diagnostics(),last=localStorage.getItem('studyapp.automation.lastPlan')||'',today=automationTodaySummary(),mode=automationModeMeta(cfg.mode),undo=readUndoSnapshot();
     const lastLabel=last?new Date(last).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'ainda não gerado';
     const toggles=[
       ['autoAgenda','Plano diário automático','Distribui estudo nos próximos dias usando prova, progresso, DIF/REV e simulados.'],
@@ -540,10 +562,18 @@
       ['archiveSuggestions','Pós-prova inteligente','Sugere arquivar cursos encerrados sem apagar histórico.'],
       ['importInference','Importação inteligente','Tenta detectar automaticamente o curso de destino dos HTMLs.']
     ];
+    const activitySummary=[today.totals.planned?today.totals.planned+' sessão'+(today.totals.planned===1?'':'ões')+' planejada'+(today.totals.planned===1?'':'s'):'',today.totals.moved?today.totals.moved+' ajuste'+(today.totals.moved===1?'':'s')+' no plano':'',today.totals.reviews?today.totals.reviews+' revisão'+(today.totals.reviews===1?'':'ões')+' pós-simulado':''].filter(Boolean);
     root.innerHTML='<div class="study-automation-head"><div><span class="panel-kicker">Automação</span><h2>Meus Mapas trabalha por você</h2><p>As decisões repetitivas são recalculadas com os dados reais da sua preparação.</p></div><span class="automation-health '+(diag.healthy?'is-ok':'is-attention')+'">'+(diag.healthy?'Sistema saudável':diag.warnings+' ponto'+(diag.warnings===1?'':'s')+' de atenção')+'</span></div>'+
+      '<div class="automation-mode-row"><div><b>Modo da automação</b><small>Define quanto o sistema pode distribuir e intensificar sua carga automática.</small></div><select data-automation-mode aria-label="Modo da automação"><option value="conservative"'+(mode.key==='conservative'?' selected':'')+'>Conservador</option><option value="balanced"'+(mode.key==='balanced'?' selected':'')+'>Equilibrado</option><option value="intensive"'+(mode.key==='intensive'?' selected':'')+'>Intensivo</option></select></div>'+
+      '<div class="automation-today"><div><span>O que o sistema fez hoje</span><b>'+(activitySummary.length?esc(activitySummary.join(' · ')):'Nenhuma alteração automática necessária')+'</b><small>Último planejamento: '+esc(lastLabel)+'</small></div><div><button type="button" class="secondary" data-automation-history>Ver atividade</button><button type="button" class="secondary" data-automation-undo '+(!undo?'disabled':'')+'>Desfazer última automação</button></div></div>'+
       '<div class="automation-toggle-grid">'+toggles.map(([key,title,desc])=>'<label><span><b>'+esc(title)+'</b><small>'+esc(desc)+'</small></span><input type="checkbox" data-automation-setting="'+key+'" '+(cfg[key]?'checked':'')+'></label>').join('')+'</div>'+
-      '<div class="automation-diagnostic"><div><b>Diagnóstico de conteúdo</b><small>Plano atualizado: '+esc(lastLabel)+'</small></div>'+(diag.issues.length?'<div class="automation-issues">'+diag.issues.slice(0,8).map(item=>'<span class="is-'+esc(item.severity)+'">'+esc(item.label)+'</span>').join('')+'</div>':'<p>Nenhuma inconsistência relevante detectada em cursos, mapas, simulados ou agenda.</p>')+'<button type="button" class="secondary" data-automation-refresh>Atualizar plano e diagnóstico</button></div>';
+      '<div class="automation-activity-log" hidden><div class="automation-section-head"><b>Atividade recente</b><small>Decisões automáticas registradas neste perfil.</small></div>'+(automationLogRows().length?automationLogRows().slice(0,10).map(row=>'<article><span>'+esc(new Date(row.at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}))+'</span><b>'+esc(row.label)+'</b></article>').join(''):'<p>Nenhuma automação registrada ainda.</p>')+'</div>'+
+      '<div class="automation-diagnostic"><div class="automation-section-head"><div><b>Saúde do estudo</b><small>Prazo, conteúdo, revisões e vínculos que afetam o planejamento.</small></div><small>Plano atualizado: '+esc(lastLabel)+'</small></div>'+(diag.issues.length?'<div class="automation-issues">'+diag.issues.slice(0,8).map((item,index)=>'<article class="is-'+esc(item.severity)+'"><div><b>'+esc(item.label)+'</b><small>'+esc(item.detail||'')+'</small></div><button type="button" class="secondary" data-diagnostic-action="'+index+'">'+esc(diagnosticActionLabel(item))+'</button></article>').join('')+'</div>':'<p>Nenhuma inconsistência relevante detectada em cursos, mapas, simulados ou agenda.</p>')+'<button type="button" class="secondary" data-automation-refresh>Atualizar plano e diagnóstico</button></div>';
     root.querySelectorAll('[data-automation-setting]').forEach(input=>input.onchange=()=>saveAutomationSettings({[input.dataset.automationSetting]:input.checked}));
+    root.querySelector('[data-automation-mode]')?.addEventListener('change',e=>saveAutomationSettings({mode:e.target.value}));
+    root.querySelector('[data-automation-history]')?.addEventListener('click',button=>{const log=root.querySelector('.automation-activity-log');log.hidden=!log.hidden;button.currentTarget.textContent=log.hidden?'Ver atividade':'Ocultar atividade'});
+    root.querySelector('[data-automation-undo]')?.addEventListener('click',()=>undoLastAutomation());
+    root.querySelectorAll('[data-diagnostic-action]').forEach(button=>button.onclick=()=>handleDiagnosticAction(diag.issues[Number(button.dataset.diagnosticAction)]));
     root.querySelector('[data-automation-refresh]')?.addEventListener('click',()=>{const result=syncAutoAgenda({force:true});renderAutomationSettings();toast(result.changed?'Plano e diagnóstico atualizados.':'Diagnóstico atualizado; o plano já estava em dia.')});
   }
 
@@ -603,6 +633,11 @@
     courseHealth,
     courses:courseHealthAll,
     diagnostics,
+    history:automationLogRows,
+    today:automationTodaySummary,
+    undo:undoLastAutomation,
+    canUndo:()=>!!readUndoSnapshot(),
+    recommendedDailyMinutes,
     inferCourse:inferCourseForCandidates,
     syncAgenda:options=>syncAutoAgenda(options||{}),
     recoverSimulation:scheduleSimulationRecovery,
