@@ -469,9 +469,9 @@
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-admin,
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-appearance,
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid>.settings-area-diagnostic{grid-column:span 5!important}
-  html.is-ipad:not(.is-phone-layout) .settings-area-update .admin-actions button{
-    min-height:44px!important;
-  }
+}
+html.is-ipad:not(.is-phone-layout) .settings-area-update .admin-actions button{
+  min-height:44px!important;
 }
 @media(max-width:900px), (orientation:portrait) and (max-width:1180px){
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3.settings-control-grid{grid-template-columns:1fr!important;grid-template-areas:none!important}
