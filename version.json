@@ -1,14 +1,15 @@
 {
-  "version": "15.36.35",
-  "label": "V15.36.35-T",
-  "releasedAt": "2026-10-04T15:31:00.000Z",
-  "notes": "Refino exclusivo do iPad em Próximas ações: cards mais compactos, capas consistentes, botões alinhados e composição diferente para paisagem e retrato.",
+  "version": "15.36.36",
+  "label": "V15.36.36-DT",
+  "releasedAt": "2026-10-04T17:20:00.000Z",
+  "notes": "Refino da faixa Retomar/Simulados na Home do desktop e restauração do dock de sete destinos no iPad em retrato.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] iPad paisagem: Retomar e Próximo mapa ficam em duas colunas 50/50 com a mesma altura",
-    "[T] O terceiro card ocupa a largura total em uma faixa mais compacta",
-    "[T] iPad retrato: as três ações ficam empilhadas como linhas horizontais de largura total",
-    "[T] Capas, textos e CTAs ganham dimensões e alinhamentos consistentes",
-    "[T] Desktop e smartphone permanecem inalterados"
+    "[D] Retomar e Simulados recentes passam a formar uma faixa equilibrada e compacta",
+    "[D] Simulados recentes mostra dois cards maiores e legíveis; o terceiro continua em Ver todos",
+    "[D] Retomar reduz altura e preserva a capa 16:9, progresso e ação Continuar",
+    "[T] iPad retrato restaura Início, Cursos, Mapas, Simulados, Calendário, Progresso e Mais",
+    "[T] Agenda e Simulados deixam de ficar escondidos dentro de Mais",
+    "[M] Smartphone permanece inalterado"
   ]
 }
