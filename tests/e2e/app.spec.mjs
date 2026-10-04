@@ -3184,6 +3184,7 @@ test('[G] V15.36 atualização forçada preserva dados do usuário',async({page}
 
 test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',async({page},testInfo)=>{
   await page.goto('/#settings');
+  if(testInfo.project.name==='iphone-webkit')await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
   const panel=page.locator('#appAppearancePanel');
   await expect(panel).toBeVisible();
   const choices=panel.locator('[data-app-icon-mode]');
@@ -3330,6 +3331,7 @@ test('[D+T] Progresso prioriza tags e remove miniaturas de capa',async({page},te
 test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação visual exclusiva do smartphone.');
   await page.goto('/#progress');
+  await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
   const subjects=page.locator('[data-mobile-progress-group="subjects"]');
   await expect(subjects).toBeVisible();
   if(!(await subjects.evaluate(el=>el.open)))await subjects.locator(':scope > summary').click();
