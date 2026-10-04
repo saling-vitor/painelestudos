@@ -196,3 +196,20 @@ html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer
   html.is-phone-layout #homeCourses .home-course-card>.course-footer{left:10px!important;right:10px!important;bottom:6px!important;min-height:30px!important;padding-top:4px!important}
   html.is-phone-layout #homeCourses .home-course-card .enter{min-height:38px!important}
 }
+
+/* QA V15.36.32 · correções de densidade observadas nos navegadores */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item{
+    height:82px!important;
+    min-height:82px!important;
+    max-height:82px!important;
+    overflow:hidden!important;
+  }
+}
+@media(max-width:480px){
+  html.is-phone-layout .study-intelligence-row>article{padding:8px 9px!important}
+  html.is-phone-layout .study-intelligence-row h3{margin:2px 0 3px!important}
+  html.is-phone-layout .priority-now-card .priority-reason-list{margin-top:5px!important}
+  html.is-phone-layout .priority-now-card .priority-now-actions{margin-top:6px!important}
+  html.is-phone-layout .forecast-home-card>div{margin-top:6px!important}
+}
