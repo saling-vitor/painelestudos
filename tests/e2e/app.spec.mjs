@@ -3300,46 +3300,40 @@ test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',a
 });
 
 
-test('[D+T] Progresso prioriza tags e remove miniaturas de capa',async({page},testInfo)=>{
+test('[D+T] Progresso usa linhas compactas acionáveis sem miniaturas',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='iphone-webkit','Validação exclusiva de Desktop e iPad.');
   await page.goto('/#progress');
   const course=page.locator('#progressInfo .progress-course').first();
   await expect(course).toBeVisible();
-  if(await course.evaluate(el=>el.classList.contains('is-collapsed'))){
-    await course.locator('[data-progress-course-toggle]').click();
-  }
-  const row=course.locator('.progress-map-unstarted').first();
+  if(await course.evaluate(el=>el.classList.contains('is-collapsed')))await course.locator('[data-progress-course-toggle]').click();
+  const row=course.locator('.progress-map-row').first();
   await expect(row).toBeVisible();
-  await expect(row.locator('.progress-map-thumb')).toBeHidden();
   await expect(row.locator('.compact-code')).toBeVisible();
-  await expect(row.locator('.progress-open')).toBeVisible();
+  await expect(row.locator('.progress-map-trailing')).toBeVisible();
+  await expect(row.locator('.progress-map-thumb')).toHaveCount(0);
+  await expect(row.locator('.progress-open')).toHaveCount(0);
   const layout=await row.evaluate(el=>{
-    const thumb=el.querySelector('.progress-map-thumb');
     const tag=el.querySelector('.compact-code');
     const title=el.querySelector('.progress-map-copy>b');
-    const summary=el.querySelector('.progress-map-summary');
-    const open=el.querySelector('.progress-open');
+    const trailing=el.querySelector('.progress-map-trailing');
     return{
-      thumbDisplay:thumb?getComputedStyle(thumb).display:'',
+      role:el.getAttribute('role'),
+      tabIndex:el.tabIndex,
       tagWidth:tag?.getBoundingClientRect().width||0,
       titleWidth:title?.getBoundingClientRect().width||0,
-      summaryDisplay:summary?getComputedStyle(summary).display:'',
-      openWidth:open?.getBoundingClientRect().width||0,
+      trailingWidth:trailing?.getBoundingClientRect().width||0,
       rowHeight:el.getBoundingClientRect().height
     };
   });
-  expect(layout.thumbDisplay).toBe('none');
-  expect(layout.tagWidth).toBeGreaterThanOrEqual(50);
-  expect(layout.tagWidth).toBeLessThanOrEqual(74);
+  expect(layout.role).toBe('button');
+  expect(layout.tabIndex).toBe(0);
+  expect(layout.tagWidth).toBeGreaterThanOrEqual(48);
+  expect(layout.tagWidth).toBeLessThanOrEqual(56);
   expect(layout.titleWidth).toBeGreaterThan(layout.tagWidth);
-  expect(layout.summaryDisplay).toBe('none');
-  expect(layout.openWidth).toBeGreaterThanOrEqual(90);
-  expect(layout.openWidth).toBeLessThanOrEqual(112);
+  expect(layout.trailingWidth).toBeGreaterThan(20);
   expect(layout.rowHeight).toBeLessThan(90);
 });
-
-
-test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async({page},testInfo)=>{
+test('[M] smartphone Progresso usa linhas compactas acionáveis',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação visual exclusiva do smartphone.');
   await page.goto('/#progress');
   await expect(page.locator('html')).toHaveClass(/is-phone-layout/);
@@ -3348,19 +3342,17 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   if(!(await subjects.evaluate(el=>el.open)))await subjects.locator(':scope > summary').click();
   const course=page.locator('#progressInfo .progress-course').first();
   await expect(course).toBeVisible();
-  if(await course.evaluate(el=>el.classList.contains('is-collapsed'))){
-    await course.locator('[data-progress-course-toggle]').click();
-  }
+  if(await course.evaluate(el=>el.classList.contains('is-collapsed')))await course.locator('[data-progress-course-toggle]').click();
   const rows=course.locator('.progress-map-row');
   const count=await rows.count();
   expect(count).toBeGreaterThan(0);
   expect(count).toBeLessThanOrEqual(3);
 
   const row=rows.first();
-  await expect(row.locator('.progress-map-thumb')).toBeHidden();
   await expect(row.locator('.compact-code')).toBeVisible();
-  await expect(row.locator('.progress-open')).toBeHidden();
-  await expect.poll(async()=>row.locator('.compact-code').evaluate(el=>el.getBoundingClientRect().width),{timeout:5000}).toBeLessThanOrEqual(70);
+  await expect(row.locator('.progress-map-thumb')).toHaveCount(0);
+  await expect(row.locator('.progress-open')).toHaveCount(0);
+  await expect(row.locator('.progress-map-trailing')).toBeVisible();
   const layout=await row.evaluate(el=>{
     const tag=el.querySelector('.compact-code');
     const title=el.querySelector('.progress-map-copy>b');
@@ -3371,15 +3363,19 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
       tagWidth:tag?.getBoundingClientRect().width||0,
       lineClamp:getComputedStyle(title).webkitLineClamp,
       filterHeight:filter?.getBoundingClientRect().height||0,
-      progressPaddingBottom:parseFloat(getComputedStyle(view).paddingBottom)||0
+      progressPaddingBottom:parseFloat(getComputedStyle(view).paddingBottom)||0,
+      role:el.getAttribute('role'),
+      tabIndex:el.tabIndex
     };
   });
-  expect(layout.rowHeight).toBeLessThan(100);
-  expect(layout.tagWidth).toBeGreaterThanOrEqual(50);
-  expect(layout.tagWidth).toBeLessThanOrEqual(70);
+  expect(layout.rowHeight).toBeLessThan(90);
+  expect(layout.tagWidth).toBeGreaterThanOrEqual(46);
+  expect(layout.tagWidth).toBeLessThanOrEqual(54);
   expect(layout.lineClamp).toBe('2');
   expect(layout.filterHeight).toBeLessThanOrEqual(42);
   expect(layout.progressPaddingBottom).toBeGreaterThanOrEqual(100);
+  expect(layout.role).toBe('button');
+  expect(layout.tabIndex).toBe(0);
 
   await expect(page.locator('#progressSortMobile')).toBeVisible();
   await page.locator('#progressSortMobile').click();
@@ -3390,8 +3386,6 @@ test('[M] smartphone Progresso usa tags compactas sem miniaturas de capa',async(
   await page.locator('#progressSortClose').click();
   await expect(page.locator('#progressSortSheet')).toBeHidden();
 });
-
-
 test('[M] Home compacta Prioridade, Ritmo e Plano do dia em linhas acionáveis',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva do iPhone.');
   await page.setViewportSize({width:390,height:844});
