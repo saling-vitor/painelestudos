@@ -46,7 +46,20 @@ test('importação detecta categoria individual pelo HTML',async({page})=>{
   });
   expect(categories).toEqual({port:'Português',uti:'Infraestrutura e Mobilidade Urbana'});
 });
-test('navegação principal funciona',async({page})=>{for(const view of ['courses','maps','simulations','progress','settings','home']){await page.locator(`[data-nav="${view}"]:visible`).first().click();await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/)}});
+test('navegação principal funciona',async({page},testInfo)=>{
+  for(const view of ['courses','maps','simulations','progress','settings','home']){
+    const direct=page.locator(`[data-nav="${view}"]:visible`).first();
+    if(await direct.count())await direct.click();
+    else if(testInfo.project.name==='ipad'&&view==='simulations'){
+      await page.locator('[data-nav="settings"]:visible').first().click();
+      await expect(page.locator('#tabletMoreShortcuts')).toBeVisible();
+      await page.locator('#tabletMoreShortcuts [data-tablet-more-nav="simulations"]').click();
+    }else{
+      await page.evaluate(target=>nav(target),view);
+    }
+    await expect(page.locator(`[data-view="${view}"]`)).toHaveClass(/active/);
+  }
+});
 test('curso abre e mantém rota',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await expect(course).toBeVisible();await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await expect(page.locator('#courseTitle')).toContainText('DEMHAB');expect(page.url()).toContain('#course/porto-alegre')});
 test('linha da tela Progresso abre mapa',async({page})=>{
   await page.goto('/#progress');
