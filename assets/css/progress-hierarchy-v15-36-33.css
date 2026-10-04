@@ -666,3 +666,36 @@ html.is-ipad:not(.is-phone-layout) .progress-map-row{min-height:60px!important}
   html.is-phone-layout .study-doubt-inbox .study-doubt-list{margin:0!important}
   html.is-phone-layout .study-doubt-empty{min-height:50px!important;padding:8px!important;border:0!important}
 }
+
+/* iPad em largura reduzida / Split View */
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) #progressMetrics{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insights-grid{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card.is-primary,
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card:not(.is-primary){
+    grid-column:auto!important;
+    grid-row:auto!important;
+    grid-template-columns:68px minmax(0,1fr) auto!important;
+    grid-template-areas:"thumb copy action"!important;
+    min-height:82px!important;
+    padding:8px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-insight-card .progress-insight-thumb{
+    width:68px!important;
+    height:42px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-rhythm-shell{
+    grid-template-columns:1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .study-rhythm-kpis{
+    grid-template-columns:1fr 1fr!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .progress-priority-inline .priority-engine-grid{
+    grid-template-columns:1fr!important;
+  }
+}
