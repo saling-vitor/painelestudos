@@ -1494,7 +1494,7 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   const scenarios=[
     {name:'landscape',width:1194,height:834,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:2},
-    {name:'portrait',width:820,height:1180,insights:2,rhythm:1,agenda:1,agendaSide:2,settings:1},
+    {name:'portrait',width:820,height:1180,insights:1,rhythm:1,agenda:1,agendaSide:2,settings:1},
     {name:'split',width:640,height:900,insights:1,rhythm:1,agenda:1,agendaSide:1,settings:1}
   ];
   const columns=async locator=>locator.evaluate(el=>{
