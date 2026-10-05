@@ -1,13 +1,13 @@
 {
-  "version": "15.38.1",
-  "label": "V15.38.1-D",
-  "releasedAt": "2026-10-04T21:25:00.000Z",
-  "notes": "Correção do layout de Configurações no modo Desktop: cards voltam a ocupar duas colunas proporcionais e toda a largura útil.",
+  "version": "15.38.2",
+  "label": "V15.38.2-T",
+  "releasedAt": "2026-10-05T17:50:00.000Z",
+  "notes": "Reader do iPad refinado: barra superior em uma única linha e sessão de estudo independente do modo foco.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Corrige cards estreitos e comprimidos em Configurações",
-    "[D] Restaura composição 2/3 + 1/3 com Conta/Atualizações, Automação/Administração, Metas/Aparência e Backup/Diagnóstico",
-    "[D] Remove conflito entre grid-area e grid-column que fazia cada painel ocupar apenas uma célula",
-    "[T+M] Mantém os layouts responsivos aprovados sem alteração funcional"
+    "[T] Mantém Biblioteca, título, tempo, nuvem, Salvar agora e Mais na mesma linha do Reader",
+    "[T] Impede o botão Mais de cair para uma segunda faixa no iPad",
+    "[G] Iniciar ou retomar uma sessão de estudo não ativa mais o modo foco automaticamente",
+    "[G] Modo foco permanece disponível somente por ação explícita no menu do Reader"
   ]
 }
