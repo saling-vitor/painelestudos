@@ -4183,3 +4183,101 @@ html:not(.is-phone-layout) [data-view="progress"] .progress-open{
     max-width:96px!important;
   }
 }
+
+/* ========================================
+   V15.38.2-T · READER IPAD · TOPBAR EM UMA LINHA
+   ======================================== */
+html.is-ipad:not(.is-phone-layout) #reader.open{
+  grid-template-rows:auto minmax(0,1fr);
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  min-height:54px!important;
+  height:54px!important;
+  max-height:54px!important;
+  gap:7px!important;
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+  overflow:visible!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.title{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  width:auto!important;
+  overflow:hidden!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.title b,
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.title small{
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>#readerClose,
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-study-time,
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save-status,
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save,
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-more-wrap{
+  flex:0 0 auto!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>#readerClose,
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save{
+  min-height:44px!important;
+  height:44px!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>#readerClose{
+  padding-inline:10px!important;
+  white-space:nowrap!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-study-time{
+  padding-inline:7px!important;
+  font-size:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save-status{
+  box-sizing:border-box!important;
+  width:44px!important;
+  min-width:44px!important;
+  height:44px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save{
+  padding-inline:12px!important;
+  font-size:9.5px!important;
+  white-space:nowrap!important;
+}
+html.is-ipad:not(.is-phone-layout) #reader .reader-more-wrap>#readerMoreBtn{
+  box-sizing:border-box!important;
+  width:34px!important;
+  min-width:34px!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:0!important;
+}
+@media(max-width:700px){
+  html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-study-time{
+    display:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #reader .readerbar .title small{
+    display:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #reader .readerbar>#readerClose span:last-child{
+    display:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #reader .readerbar>#readerClose{
+    width:44px!important;
+    min-width:44px!important;
+    padding:0!important;
+    justify-content:center!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save{
+    padding-inline:9px!important;
+  }
+}
+
