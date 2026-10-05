@@ -153,26 +153,16 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter sma
   border-radius:6px!important;
   font-size:8px!important;
 }
-html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap).has-overflow::after,
-html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap).can-scroll-left::before{
+html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap)::after{
   content:"";
   position:absolute;
   z-index:4;
+  right:0;
   top:20px;
   bottom:2px;
   width:28px;
   pointer-events:none;
-}
-html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap).has-overflow:not(.at-end)::after{
-  right:0;
   background:linear-gradient(90deg,rgba(3,4,6,0),rgba(3,4,6,.96));
-}
-html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap).can-scroll-left::before{
-  left:0;
-  background:linear-gradient(90deg,rgba(3,4,6,.96),rgba(3,4,6,0));
-}
-html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap).at-end::after{
-  display:none;
 }
 
 /* P1 · cabeçalho mais baixo e métricas em uma única linha no tablet. */
@@ -199,6 +189,11 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-progress-summary
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metrics{
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
   gap:6px!important;
+}
+@media (orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metrics{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric{
   min-height:49px!important;
@@ -346,7 +341,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue>.primar
 }
 
 /* P1 · grade realmente adaptativa ao tablet. */
-@media (orientation:portrait){
+@media (orientation:portrait) and (min-width:768px){
   html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseMapsWrap:not(.map-list) #courseMaps{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
     gap:12px!important;
@@ -375,6 +370,32 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .map-card.has-cover .fav
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .map-card.has-cover .map-admin-btn{
   right:58px!important;
   top:8px!important;
+}
+
+/* P2 · a barra de busca começa completa e se compacta conforme a rolagem do iPad. */
+@supports (animation-timeline:scroll()){
+  html.is-ipad:not(.is-phone-layout) .topbar-wrap,
+  html.is-ipad:not(.is-phone-layout) .topbar{
+    animation-duration:1ms;
+    animation-timing-function:linear;
+    animation-fill-mode:both;
+    animation-timeline:scroll(block nearest);
+    animation-range:72px 132px;
+  }
+  html.is-ipad:not(.is-phone-layout) .topbar-wrap{
+    animation-name:ipad-topbar-wrap-compact;
+  }
+  html.is-ipad:not(.is-phone-layout) .topbar{
+    animation-name:ipad-topbar-inner-compact;
+  }
+  @keyframes ipad-topbar-wrap-compact{
+    from{padding-top:6px;padding-bottom:7px;background-color:rgba(3,4,6,0)}
+    to{padding-top:3px;padding-bottom:5px;background-color:rgba(3,4,6,.985)}
+  }
+  @keyframes ipad-topbar-inner-compact{
+    from{padding-top:5px;padding-bottom:5px;border-radius:14px}
+    to{padding-top:3px;padding-bottom:3px;border-radius:12px}
+  }
 }
 
 @media (prefers-reduced-motion:reduce){
