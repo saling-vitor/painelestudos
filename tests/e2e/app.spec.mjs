@@ -1113,7 +1113,7 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.courseHeight).toBeLessThanOrEqual(620);
 });
 
-test('refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
+test('V15.38.1 [D] refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
   if(testInfo.project.name==='desktop-chromium'){
     await page.setViewportSize({width:1600,height:900});
     await page.goto('/#progress');
@@ -1150,6 +1150,7 @@ test('refinamento de Progresso, Simulados e Configurações mantém densidade e 
     expect(layout.cols).toBe(2);
     expect(layout.syncWidth).toBeGreaterThan(layout.width*.58);
     expect(layout.updateWidth).toBeGreaterThan(layout.width*.25);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(1602);
     await expect(page.locator('.study-goal-human').first()).toContainText(/h/);
     const toggle=page.locator('.study-settings-toggle input[type="checkbox"]');
     const appearance=await toggle.evaluate(el=>getComputedStyle(el).appearance);
