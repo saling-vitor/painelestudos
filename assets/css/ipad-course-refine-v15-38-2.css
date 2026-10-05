@@ -10,8 +10,9 @@ html.is-ipad:not(.is-phone-layout){
 html.is-ipad:not(.is-phone-layout) .topbar-wrap{
   z-index:110!important;
   transition:padding .18s ease,background-color .18s ease,box-shadow .18s ease;
-  background:linear-gradient(180deg,rgba(3,4,6,.985) 0%,rgba(3,4,6,.94) 78%,rgba(3,4,6,0) 100%)!important;
-  box-shadow:0 -24px 0 #030406,0 14px 26px rgba(0,0,0,.20)!important;
+  background-image:none!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
 }
 html.is-ipad:not(.is-phone-layout) .topbar{
   transition:padding .18s ease,border-radius .18s ease,background .18s ease,box-shadow .18s ease;
