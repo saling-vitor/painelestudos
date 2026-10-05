@@ -1152,9 +1152,8 @@ test('V15.38.1 [D] refinamento de Progresso, Simulados e Configurações mantém
     expect(layout.updateWidth).toBeGreaterThan(layout.width*.25);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(1602);
     await expect(page.locator('.study-goal-human').first()).toContainText(/h/);
-    const toggle=page.locator('.study-settings-toggle input[type="checkbox"]');
-    const appearance=await toggle.evaluate(el=>getComputedStyle(el).appearance);
-    expect(['none','']).toContain(appearance);
+    await expect(page.locator('.study-settings-toggle')).toHaveCount(0);
+    await expect(page.locator('#studyGoalsForm input[name="autoFocus"]')).toHaveCount(0);
   }
 });
 
@@ -1801,6 +1800,52 @@ test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',as
     expect.soft(Math.round(modal.close),s.name+' fechar modal touch').toBeGreaterThanOrEqual(44);
     await page.evaluate(()=>document.getElementById('confirmModal')?.classList.remove('open'));
     await noOverflow(s.name+' Configurações');
+  }
+});
+
+test('[T] Reader mantém topbar em uma linha e iniciar estudo não ativa foco',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Validação exclusiva do Reader no iPad.');
+  for(const scenario of [{name:'retrato',width:820,height:1180},{name:'paisagem',width:1194,height:834}]){
+    await page.setViewportSize({width:scenario.width,height:scenario.height});
+    await page.goto('/#course/porto-alegre');
+    const card=page.locator('#courseMaps [data-map]').first();
+    await expect(card).toBeVisible();
+    await card.click();
+    const reader=page.locator('#reader'),bar=page.locator('#reader .readerbar');
+    await expect(reader).toHaveClass(/open/);
+    const geometry=await bar.evaluate(el=>{
+      const barBox=el.getBoundingClientRect();
+      const visible=[...el.children].filter(node=>getComputedStyle(node).display!=='none'&&!node.hidden);
+      const more=el.querySelector('#readerMoreBtn')?.getBoundingClientRect();
+      return{
+        height:barBox.height,
+        allInside:visible.every(node=>{const r=node.getBoundingClientRect();return r.top>=barBox.top-1&&r.bottom<=barBox.bottom+1}),
+        moreInside:!!more&&more.top>=barBox.top-1&&more.bottom<=barBox.bottom+1,
+        titleMinWidth:getComputedStyle(el.querySelector('.title')).minWidth
+      };
+    });
+    expect.soft(geometry.height,scenario.name+' topbar compacta').toBeLessThanOrEqual(60);
+    expect.soft(geometry.allInside,scenario.name+' todos os controles ficam na mesma linha').toBe(true);
+    expect.soft(geometry.moreInside,scenario.name+' botão Mais não cai para segunda linha').toBe(true);
+    expect.soft(geometry.titleMinWidth,scenario.name+' título pode encolher').toBe('0px');
+
+    await page.evaluate(()=>{
+      const key='studyapp.studyDashboard.v1';
+      const raw=JSON.parse(localStorage.getItem(key)||'{}');
+      raw.goals={...(raw.goals||{}),autoFocus:true};
+      localStorage.setItem(key,JSON.stringify(raw));
+    });
+    const handle=page.locator('#ipadReaderRailHandle');
+    if(await handle.count()&&await reader.evaluate(el=>el.classList.contains('ipad-reader-rail-collapsed')))await handle.click();
+    const start=page.locator('[data-rail-session]');
+    await expect(start).toBeVisible();
+    await expect(start).toContainText('Iniciar estudo');
+    await start.click();
+    await expect(reader).not.toHaveClass(/focus-mode/);
+    expect(await page.evaluate(()=>StudyDashboard.active()?.running===true)).toBe(true);
+    expect(await page.evaluate(()=>StudyDashboard.goals().autoFocus)).toBe(false);
+    await page.evaluate(()=>StudyDashboard.finish({silent:true,suppressSummary:true}));
+    await page.locator('#readerClose').click();
   }
 });
 
