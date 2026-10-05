@@ -1,13 +1,13 @@
 {
-  "version": "15.38.1",
-  "label": "V15.38.1-D",
-  "releasedAt": "2026-10-04T21:25:00.000Z",
-  "notes": "Correção do layout de Configurações no modo Desktop: cards voltam a ocupar duas colunas proporcionais e toda a largura útil.",
+  "version": "15.38.2",
+  "label": "V15.38.2-T",
+  "releasedAt": "2026-10-05T16:42:00.000Z",
+  "notes": "Refinamento exclusivo do iPad na tela de curso: sobreposições corrigidas, filtros táteis, automação compacta, cabeçalho mais denso e grade adaptativa.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Corrige cards estreitos e comprimidos em Configurações",
-    "[D] Restaura composição 2/3 + 1/3 com Conta/Atualizações, Automação/Administração, Metas/Aparência e Backup/Diagnóstico",
-    "[D] Remove conflito entre grid-area e grid-column que fazia cada painel ocupar apenas uma célula",
-    "[T+M] Mantém os layouts responsivos aprovados sem alteração funcional"
+    "[T] Corrige sobreposição da busca e da navegação inferior sobre o conteúdo",
+    "[T] Reorganiza Situação e Conteúdo em faixas horizontais roláveis com alvos de toque de 44 px",
+    "[T] Compacta automação, cabeçalho e Retomar sem remover informações",
+    "[T] Usa 2 colunas em retrato e 3 em paisagem para os mapas do curso"
   ]
 }
