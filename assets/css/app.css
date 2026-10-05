@@ -4225,8 +4225,7 @@ html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-more-wrap{
   grid-row:auto!important;
 }
 html.is-ipad:not(.is-phone-layout) #reader .readerbar>#readerClose,
-html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save,
-html.is-ipad:not(.is-phone-layout) #reader .reader-more-wrap>#readerMoreBtn{
+html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save{
   min-height:44px!important;
   height:44px!important;
 }
@@ -4255,8 +4254,10 @@ html.is-ipad:not(.is-phone-layout) #reader .readerbar>.reader-save{
 }
 html.is-ipad:not(.is-phone-layout) #reader .reader-more-wrap>#readerMoreBtn{
   box-sizing:border-box!important;
-  width:44px!important;
-  min-width:44px!important;
+  width:34px!important;
+  min-width:34px!important;
+  height:34px!important;
+  min-height:34px!important;
   padding:0!important;
 }
 @media(max-width:700px){
