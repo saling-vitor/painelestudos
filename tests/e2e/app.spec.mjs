@@ -842,7 +842,7 @@ test('rodapé dos concursos usa somente atividade e ação de entrada',async({pa
   await expect(card.locator('.course-footer .enter')).toContainText('Entrar');
 });
 
-test('V15.38.0 [G] configurações usa centro de controle responsivo',async({page},testInfo)=>{
+test('V15.38.1 [D] configurações usa centro de controle sem colunas estreitas',async({page},testInfo)=>{
   await page.goto('/#settings');
   await expect(page.locator('#settingsControlSummary')).toBeVisible();
   const layout=page.locator('.settings-layout-v3.settings-control-grid');
@@ -856,9 +856,18 @@ test('V15.38.0 [G] configurações usa centro de controle responsivo',async({pag
   await expect(layout.locator(':scope > .settings-area-backup')).toHaveCount(1);
   await expect(layout.locator(':scope > .settings-area-diagnostic')).toHaveCount(1);
   await expect(page.locator('.settings-diagnostic-disclosure')).toContainText('Dispositivos e testes');
-  const metrics=await layout.evaluate(el=>({width:innerWidth,columns:getComputedStyle(el).gridTemplateColumns,scrollWidth:document.documentElement.scrollWidth}));
+  const metrics=await layout.evaluate(el=>{
+    const box=el.getBoundingClientRect(),sync=el.querySelector('.settings-area-sync')?.getBoundingClientRect(),update=el.querySelector('.settings-area-update')?.getBoundingClientRect();
+    return{width:innerWidth,layoutWidth:box.width,columns:getComputedStyle(el).gridTemplateColumns,scrollWidth:document.documentElement.scrollWidth,syncWidth:sync?.width||0,updateWidth:update?.width||0,syncTop:sync?.top||0,updateTop:update?.top||0};
+  });
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.width+2);
-  if(testInfo.project.name==='desktop-chromium')expect(metrics.columns.trim().split(/\s+/).length).toBe(12);
+  if(testInfo.project.name==='desktop-chromium'){
+    expect(metrics.columns.trim().split(/\s+/).length).toBe(2);
+    expect(metrics.layoutWidth).toBeGreaterThan(metrics.width*.68);
+    expect(metrics.syncWidth).toBeGreaterThan(metrics.layoutWidth*.58);
+    expect(metrics.updateWidth).toBeGreaterThan(metrics.layoutWidth*.25);
+    expect(Math.abs(metrics.syncTop-metrics.updateTop)).toBeLessThanOrEqual(2);
+  }
   if(testInfo.project.name==='iphone-webkit'){
     await expect(page.locator('.mobile-settings-toggle').first()).toBeVisible();
     await expect(page.locator('.settings-area-automation')).toHaveClass(/mobile-settings-collapsed/);
@@ -1104,7 +1113,7 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.courseHeight).toBeLessThanOrEqual(620);
 });
 
-test('refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
+test('V15.38.1 [D] refinamento de Progresso, Simulados e Configurações mantém densidade e hierarquia',async({page},testInfo)=>{
   if(testInfo.project.name==='desktop-chromium'){
     await page.setViewportSize({width:1600,height:900});
     await page.goto('/#progress');
@@ -1134,8 +1143,14 @@ test('refinamento de Progresso, Simulados e Configurações mantém densidade e 
     expect(Math.abs(simData.statusTop-simData.codeTop)).toBeLessThan(10);
 
     await page.goto('/#settings');
-    const layout=await page.locator('.settings-layout-v3').evaluate(el=>({cols:getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length}));
-    expect(layout.cols).toBe(12);
+    const layout=await page.locator('.settings-layout-v3').evaluate(el=>{
+      const box=el.getBoundingClientRect(),sync=el.querySelector('.settings-area-sync')?.getBoundingClientRect(),update=el.querySelector('.settings-area-update')?.getBoundingClientRect();
+      return{cols:getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length,width:box.width,syncWidth:sync?.width||0,updateWidth:update?.width||0};
+    });
+    expect(layout.cols).toBe(2);
+    expect(layout.syncWidth).toBeGreaterThan(layout.width*.58);
+    expect(layout.updateWidth).toBeGreaterThan(layout.width*.25);
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(1602);
     await expect(page.locator('.study-goal-human').first()).toContainText(/h/);
     const toggle=page.locator('.study-settings-toggle input[type="checkbox"]');
     const appearance=await toggle.evaluate(el=>getComputedStyle(el).appearance);
@@ -1719,7 +1734,7 @@ test('B Biblioteca e treino adapta Desktop e iPad sem overflow',async({page},tes
 test('C Ferramentas adapta Progresso Agenda Configurações e modais no iPad',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='ipad','Validação exclusiva de tablet.');
   const scenarios=[
-    {name:'landscape',width:1194,height:834,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:12},
+    {name:'landscape',width:1194,height:834,insights:2,rhythm:2,agenda:2,agendaSide:null,settings:2},
     {name:'portrait',width:820,height:1180,insights:1,rhythm:1,agenda:1,agendaSide:2,settings:1},
     {name:'split',width:640,height:900,insights:1,rhythm:1,agenda:1,agendaSide:1,settings:1}
   ];
