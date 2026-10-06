@@ -88,12 +88,12 @@ function inferEditalProfession(text){
 }
 
 function inferCargoLocality(text,profession,stateUf){
-  const lines=editalLines(text),key=editalAscii(profession.rawProfession||profession.value).replace(/\s+e\s+urbanista$/,'');
+  const lines=editalLines(text),key=editalAscii(profession.rawProfession||profession.value);
   if(!key)return'';
   for(let i=0;i<lines.length;i++){
     if(!editalAscii(lines[i]).includes(key))continue;
-    const ctx=lines.slice(i,Math.min(lines.length,i+8)).join(' ');
-    const after=ctx.slice(Math.max(0,editalAscii(ctx).indexOf(key)+key.length));
+    const ctx=lines.slice(i,Math.min(lines.length,i+8)).join(' '),ctxAscii=editalAscii(ctx),at=ctxAscii.indexOf(key);
+    const after=ctx.slice(Math.max(0,at+key.length));
     const matches=[...after.matchAll(/\b([A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ][a-záàâãéêíóôõúüç]+(?:\s+(?:do|da|de|dos|das)?\s*[A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ][a-záàâãéêíóôõúüç]+){0,3})\b/g)];
     for(const m of matches){
       const value=m[1].replace(/\s+/g,' ').trim(),a=editalAscii(value);
