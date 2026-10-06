@@ -2461,8 +2461,7 @@ test('iPhone real UX2 compacta Home e mostra simulados em lista vertical',async(
   expect(Math.abs(data.firstSimWidth-data.simWidth)).toBeLessThanOrEqual(2);
   expect(data.navHeight).toBeLessThanOrEqual(60);
   await page.locator('.mobile-study-plan-toggle').click();
-  const expanded=await page.locator('.study-command-metrics>button').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length);
-  expect(expanded).toBeGreaterThanOrEqual(4);
+  await expect.poll(()=>page.locator('.study-command-metrics>button').evaluateAll(nodes=>nodes.filter(el=>getComputedStyle(el).display!=='none').length),{timeout:2500}).toBeGreaterThanOrEqual(4);
 });
 
 test('A Home responsiva preserva a composição aprovada no iPhone',async({page},testInfo)=>{

@@ -19,6 +19,12 @@ test('[G] edital preenche dados principais do novo concurso sem criar automatica
   expect(result.examDate.value).toBe('2026-11-22');
   expect(result.institution.value).toContain('CASAN');
 
+  const whatsNew=page.locator('#whatsNewModal');
+  if(await whatsNew.count()&&await whatsNew.evaluate(el=>el.classList.contains('open'))){
+    const dismiss=page.locator('#whatsNewClose');
+    if(await dismiss.count())await dismiss.click();
+    else await page.evaluate(()=>closeModal('whatsNewModal'));
+  }
   await page.locator('#newCourseBtn2').click();
   await expect(page.locator('#courseModal')).toHaveClass(/open/);
   await expect(page.locator('#coursePdfAutofill')).toBeHidden();
