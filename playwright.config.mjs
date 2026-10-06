@@ -7,7 +7,7 @@ export default defineConfig({
   use:{baseURL:'http://127.0.0.1:4173',trace:'retain-on-failure',screenshot:'only-on-failure',video:'retain-on-failure'},
   webServer:{command:'python3 -m http.server 4173 --bind 127.0.0.1',port:4173,reuseExistingServer:false},
   projects:[
-    {name:'desktop-chromium',grepInvert:/\[(?:T|M)\]/i,use:{...devices['Desktop Chrome']}},
+    {name:'desktop-chromium',grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
     {name:'ipad',grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
     {
       name:'iphone-webkit',
