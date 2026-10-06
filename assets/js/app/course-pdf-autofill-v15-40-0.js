@@ -12,7 +12,7 @@ function editalClean(value){return String(value||'').replace(/\u00ad/g,'').repla
 function editalPretty(value){const raw=String(value||'').replace(/\s+/g,' ').replace(/^[\s:;,.\-–—]+|[\s:;,.\-–—]+$/g,'').trim();if(!raw)return'';if(raw!==raw.toUpperCase())return raw;const small=new Set(['DA','DE','DO','DAS','DOS','E']);return raw.toLocaleLowerCase('pt-BR').split(' ').map((word,index)=>index&&small.has(word.toUpperCase())?word:word?word.charAt(0).toLocaleUpperCase('pt-BR')+word.slice(1):word).join(' ').replace(/\(([a-z]{2,10})\)/g,(_,x)=>'('+x.toUpperCase()+')')}
 function editalField(value='',confidence='none',evidence='',meta={}){return{value:String(value||'').trim(),confidence,evidence:String(evidence||'').trim(),...meta}}
 function editalLines(text){return editalClean(text).split('\n').map(line=>line.trim()).filter(Boolean)}
-function cleanPlace(value){return editalPretty(String(value||'').replace(/\s+(?:[-–—]\s*)?(?:edital|concurso público|concurso publico|estado do|rev\.?).*$/i,'').replace(/\s*\/\s*(?:'+BRAZIL_UF+')\b/i,'').trim())}
+function cleanPlace(value){return editalPretty(String(value||'').replace(/\s+(?:[-–—]\s*)?(?:edital|concurso público|concurso publico|estado do|rev\.?).*$/i,'').replace(new RegExp('\\s*\\/\\s*(?:'+BRAZIL_UF+')\\b','i'),'').trim())}
 function inferStateUf(text){const ascii=editalAscii(text);for(const [state,uf] of Object.entries(STATE_UF))if(ascii.includes(state))return uf;if(/\bcatarinense\b/.test(ascii))return'SC';const m=String(text||'').match(new RegExp('\\b('+BRAZIL_UF+')\\b'));return m?m[1].toUpperCase():''}
 
 function inferEditalBoard(text){
@@ -116,7 +116,7 @@ function inferEditalCity(text,institution,profession){
   const candidates=[];
   for(let i=0;i<Math.min(lines.length,500);i++){
     const line=lines[i];if(line.length>130)continue;
-    const re=new RegExp('([A-ZÀ-Ü][A-Za-zÀ-ÿ .’\\'\\-]{2,48})\\s*[/,\\-]\\s*('+BRAZIL_UF+')\\b','i'),match=line.match(re);
+    const re=new RegExp("([A-ZÀ-Ü][A-Za-zÀ-ÿ .’'\\-]{2,48})\\s*[/,\\-]\\s*("+BRAZIL_UF+")\\b","i"),match=line.match(re);
     if(!match)continue;
     let city=match[1].replace(/^(cidade|municipio|município|comarca|estado)\s+(de\s+)?/i,'').trim();
     const a=editalAscii(line);let score=2;
