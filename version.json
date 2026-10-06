@@ -1,13 +1,13 @@
 {
-  "version": "15.38.2",
-  "label": "V15.38.2-T",
-  "releasedAt": "2026-10-05T17:50:00.000Z",
-  "notes": "Reader do iPad refinado: barra superior em uma única linha e sessão de estudo independente do modo foco.",
+  "version": "15.39.0",
+  "label": "V15.39.0-G",
+  "releasedAt": "2026-10-06T13:37:00.000Z",
+  "notes": "Novo concurso agora lê o edital PDF no navegador e sugere automaticamente os dados principais antes da confirmação.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Mantém Biblioteca, título, tempo, nuvem, Salvar agora e Mais na mesma linha do Reader",
-    "[T] Impede o botão Mais de cair para uma segunda faixa no iPad",
-    "[G] Iniciar ou retomar uma sessão de estudo não ativa mais o modo foco automaticamente",
-    "[G] Modo foco permanece disponível somente por ação explícita no menu do Reader"
+    "[G] Ao selecionar o edital, sugere nome do curso, cargo, banca, cidade, data da prova e órgão/instituição",
+    "[G] Campos digitados manualmente não são sobrescritos pela leitura automática",
+    "[G] A data da prova é escolhida pelo contexto do cronograma, evitando inscrições, gabaritos e resultados",
+    "[G] PDFs sem texto pesquisável recebem aviso e continuam com preenchimento manual; o concurso só é criado após confirmação"
   ]
 }

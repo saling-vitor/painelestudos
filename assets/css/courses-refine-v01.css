@@ -206,3 +206,27 @@ html.is-phone-layout :is(#coursesGrid,#homeCourses) .enter{
 @media(prefers-reduced-motion:reduce){
   html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card:hover{transform:none}
 }
+
+/* V15.39.0-G · Novo concurso · preenchimento automático pelo edital */
+.course-pdf-autofill{margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025)}
+.course-pdf-autofill[hidden]{display:none!important}
+.course-pdf-autofill.is-loading{border-color:rgba(125,155,190,.22);background:rgba(91,121,154,.07)}
+.course-pdf-autofill.is-done{border-color:rgba(91,158,125,.24);background:rgba(59,115,86,.07)}
+.course-pdf-autofill.is-error{border-color:rgba(184,104,104,.28);background:rgba(130,64,64,.08)}
+.course-pdf-autofill-head{display:flex;align-items:center;gap:8px}
+.course-pdf-autofill-dot{width:8px;height:8px;border-radius:999px;background:#858b94;box-shadow:0 0 0 3px rgba(255,255,255,.035);flex:0 0 auto}
+.course-pdf-autofill.is-loading .course-pdf-autofill-dot{background:#8ea8c2;animation:coursePdfPulse 1.2s ease-in-out infinite}
+.course-pdf-autofill.is-done .course-pdf-autofill-dot{background:#6fb78c}
+.course-pdf-autofill.is-error .course-pdf-autofill-dot{background:#c77c7c}
+.course-pdf-autofill-head b{font-size:12px;letter-spacing:.01em}
+.course-pdf-autofill>p{margin:6px 0 0;color:#8b919a;font-size:10.5px;line-height:1.45}
+.course-pdf-autofill-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+.course-pdf-field{display:flex;min-width:0;flex-direction:column;gap:2px;padding:8px 9px;border-radius:9px;border:1px solid rgba(255,255,255,.07);background:rgba(0,0,0,.16)}
+.course-pdf-field b{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#777e88}
+.course-pdf-field small{font-size:10.5px;color:#d7d9dc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.course-pdf-field.is-missing small{color:#747982}
+#courseForm input[data-course-autofilled="1"]{border-color:rgba(111,183,140,.34);box-shadow:0 0 0 1px rgba(111,183,140,.08) inset}
+@keyframes coursePdfPulse{0%,100%{opacity:.48;transform:scale(.88)}50%{opacity:1;transform:scale(1.12)}}
+@media(max-width:620px){.course-pdf-autofill-fields{grid-template-columns:1fr}.course-pdf-autofill{padding:10px}}
+@media(prefers-reduced-motion:reduce){.course-pdf-autofill.is-loading .course-pdf-autofill-dot{animation:none}}
+
