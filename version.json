@@ -1,13 +1,13 @@
 {
-  "version": "15.39.0",
-  "label": "V15.39.0-G",
-  "releasedAt": "2026-10-06T13:37:00.000Z",
-  "notes": "Novo concurso agora lê o edital PDF no navegador e sugere automaticamente os dados principais antes da confirmação.",
+  "version": "15.40.0",
+  "label": "V15.40.0-G",
+  "releasedAt": "2026-10-06T14:55:00.000Z",
+  "notes": "A criação de concursos por edital agora entende layouts diferentes de banca e usa OCR local quando o PDF é digitalizado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Ao selecionar o edital, sugere nome do curso, cargo, banca, cidade, data da prova e órgão/instituição",
-    "[G] Campos digitados manualmente não são sobrescritos pela leitura automática",
-    "[G] A data da prova é escolhida pelo contexto do cronograma, evitando inscrições, gabaritos e resultados",
-    "[G] PDFs sem texto pesquisável recebem aviso e continuam com preenchimento manual; o concurso só é criado após confirmação"
+    "[G] Parser por múltiplas estratégias para Objetiva, FUNDATEC, Instituto AOCP e demais layouts",
+    "[G] Cidade e órgão priorizam o cabeçalho do ente público, evitando confundir o endereço da banca",
+    "[G] Data da prova é associada ao evento e ao grupo/código do cargo quando o edital possui datas diferentes",
+    "[G] PDFs digitalizados recebem OCR local como fallback, sem criar o concurso automaticamente"
   ]
 }
