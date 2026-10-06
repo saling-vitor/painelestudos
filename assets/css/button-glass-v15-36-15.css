@@ -59,7 +59,6 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   .map-card.has-cover > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ){
-  position:relative;
   isolation:isolate;
   overflow:hidden;
   border:1px solid var(--cover-liquid-border)!important;
