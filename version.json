@@ -1,13 +1,13 @@
 {
-  "version": "15.40.0",
-  "label": "V15.40.0-G",
-  "releasedAt": "2026-10-06T14:55:00.000Z",
-  "notes": "A criação de concursos por edital agora entende layouts diferentes de banca e usa OCR local quando o PDF é digitalizado.",
+  "version": "15.40.1",
+  "label": "V15.40.1-G",
+  "releasedAt": "2026-10-06T15:20:00.000Z",
+  "notes": "Os controles flutuantes sobre as capas agora usam um material Liquid Glass inspirado na Apple, mantendo o restante da interface inalterado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Parser por múltiplas estratégias para Objetiva, FUNDATEC, Instituto AOCP e demais layouts",
-    "[G] Cidade e órgão priorizam o cabeçalho do ente público, evitando confundir o endereço da banca",
-    "[G] Data da prova é associada ao evento e ao grupo/código do cargo quando o edital possui datas diferentes",
-    "[G] PDFs digitalizados recebem OCR local como fallback, sem criar o concurso automaticamente"
+    "[G] Liquid Glass aplicado somente aos botões flutuantes sobre capas de cursos, mapas e simulados",
+    "[G] Material mais transparente com lente óptica, brilho especular, profundidade e resposta de hover/toque",
+    "[G] Mantidos tamanho canônico de 38 × 38 px, posição dos controles e estrela favorita amarela",
+    "[G] Fallbacks para transparência reduzida, alto contraste, movimento reduzido e browsers sem backdrop-filter"
   ]
 }
