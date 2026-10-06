@@ -1,17 +1,22 @@
-/* V15.36.25-G · Glass exclusivo dos controles sobre capas
-   Regra canônica:
-   - sobre capa/imagem: vidro fumê;
-   - fora da capa: estilo normal da interface.
-   Não aplicar este material por classes genéricas como .primary/.secondary/.icon-btn. */
+/* V15.40.1-G · Liquid Glass web para controles flutuantes sobre capas
+   Diretriz:
+   - somente controles sobre imagem/capa recebem este material;
+   - botões comuns da interface continuam sem glass;
+   - mantém geometria canônica 38 × 38 px;
+   - efeito inspirado no Liquid Glass da Apple, adaptado para Web/PWA;
+   - inclui fallbacks para transparência reduzida, contraste e browsers sem backdrop-filter. */
 
 :root{
-  --cover-button-glass-border:rgba(255,255,255,.18);
-  --cover-button-glass-highlight:rgba(255,255,255,.18);
-  --cover-button-glass-shadow:rgba(0,0,0,.32);
+  --cover-liquid-border:rgba(255,255,255,.24);
+  --cover-liquid-border-hover:rgba(255,255,255,.34);
+  --cover-liquid-highlight:rgba(255,255,255,.30);
+  --cover-liquid-highlight-soft:rgba(255,255,255,.12);
+  --cover-liquid-shadow:rgba(0,0,0,.28);
+  --cover-liquid-shadow-close:rgba(0,0,0,.20);
+  --cover-liquid-icon:#f0f3f7;
 }
 
-/* V15.36.25-G · dimensão visual canônica dos controles sobre capas.
-   A referência é o botão ••• compacto aprovado; apenas a geometria externa é uniformizada. */
+/* Geometria canônica dos controles sobre capas. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
@@ -23,10 +28,10 @@
   min-width:38px!important;
   height:38px!important;
   min-height:38px!important;
+  border-radius:12px!important;
 }
 
-/* Overrides responsivos anteriores usam !important com maior especificidade.
-   Reafirma 38px por dispositivo para garantir o mesmo tamanho visual em D/T/M. */
+/* Reafirma 38 px nos overrides específicos de dispositivo. */
 html.is-ipad:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
 html.is-ipad:not(.is-phone-layout) .map-card.has-cover > .map-admin-btn,
 html.is-ipad:not(.is-phone-layout) .map-card.has-cover > .fav,
@@ -45,49 +50,90 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   min-height:38px!important;
 }
 
-/* Controles que realmente flutuam sobre a arte da capa. */
+/* Liquid Glass: mais transparente que o frosted glass anterior.
+   As camadas radiais simulam lente, brilho especular e profundidade óptica,
+   enquanto backdrop-filter deixa a própria capa participar do material. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
   .map-card.has-cover > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ){
-  border:1px solid var(--cover-button-glass-border)!important;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid var(--cover-liquid-border)!important;
   background:
-    radial-gradient(125% 105% at 16% -4%,
-      rgba(255,255,255,.205) 0%,
-      rgba(255,255,255,.075) 39%,
-      transparent 67%),
+    radial-gradient(145% 105% at 16% -10%,
+      rgba(255,255,255,.30) 0%,
+      rgba(255,255,255,.13) 24%,
+      rgba(255,255,255,.045) 47%,
+      transparent 68%),
+    radial-gradient(110% 82% at 84% 112%,
+      rgba(0,0,0,.18) 0%,
+      rgba(0,0,0,.055) 42%,
+      transparent 70%),
     linear-gradient(180deg,
-      rgba(255,255,255,.13) 0%,
-      rgba(255,255,255,.068) 50%,
-      rgba(18,21,26,.31) 100%)!important;
-  color:#dfe2e7!important;
-  box-shadow:
-    0 7px 18px var(--cover-button-glass-shadow),
-    inset 0 1px 0 var(--cover-button-glass-highlight),
-    inset 0 -1px 0 rgba(255,255,255,.03)!important;
-  -webkit-backdrop-filter:blur(18px) saturate(126%)!important;
-  backdrop-filter:blur(18px) saturate(126%)!important;
+      rgba(255,255,255,.105) 0%,
+      rgba(255,255,255,.052) 48%,
+      rgba(15,18,23,.145) 100%)!important;
+  color:var(--cover-liquid-icon)!important;
+  -webkit-backdrop-filter:
+    blur(11px)
+    saturate(168%)
+    contrast(108%)
+    brightness(102%)!important;
+  backdrop-filter:
+    blur(11px)
+    saturate(168%)
+    contrast(108%)
+    brightness(102%)!important;
   background-clip:padding-box!important;
+  box-shadow:
+    0 9px 23px var(--cover-liquid-shadow),
+    0 1px 2px rgba(0,0,0,.16),
+    inset 0 1px 0 var(--cover-liquid-highlight),
+    inset 1px 0 0 var(--cover-liquid-highlight-soft),
+    inset 0 -1px 0 rgba(0,0,0,.12)!important;
   transform:none!important;
   filter:none!important;
-  isolation:isolate;
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    box-shadow .18s ease,
+    color .18s ease,
+    -webkit-backdrop-filter .18s ease,
+    backdrop-filter .18s ease!important;
 }
 
-/* Favorito ativo: o vidro permanece idêntico; somente o ícone da estrela fica amarelo. */
+/* Mantém os pictogramas acima do material óptico. */
+:is(
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+  .map-card.has-cover > .map-admin-btn,
+  .map-card.has-cover > .fav,
+  .simulation-card.has-cover .simulation-card-menu-btn
+) > *{
+  position:relative;
+  z-index:1;
+}
+
+/* Favorito ativo: muda somente a estrela, nunca o material do botão. */
 .map-card > .fav.on > .ui-icon{
   color:#f2c94c!important;
   background-color:#f2c94c!important;
 }
 
-/* Menu de simulado aberto: mantém o botão de capa identificado sem clarear demais. */
+/* Menu aberto: preserva o vidro e reforça apenas leitura/estado. */
 .simulation-card.has-cover .simulation-card-menu-btn[aria-expanded="true"]{
-  border-color:rgba(255,255,255,.22)!important;
-  color:#eef0f3!important;
+  border-color:rgba(255,255,255,.36)!important;
+  color:#fff!important;
+  box-shadow:
+    0 9px 23px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 0 0 1px rgba(255,255,255,.035)!important;
 }
 
-/* Lista não mostra a capa: portanto seus controles não usam vidro. */
+/* Lista não exibe a capa: portanto esses controles permanecem sem vidro. */
 .map-list .map-card.has-cover > .map-admin-btn,
 .map-list .map-card.has-cover > .fav{
   border:0!important;
@@ -98,8 +144,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   filter:none!important;
 }
 
-/* Hover só existe nos botões que continuam sobre a capa.
-   A resposta é luz sutil; sem branco, sem elevação e sem zoom. */
+/* Mouse/trackpad: a superfície ganha luz e definição sem zoom ou salto. */
 @media(hover:hover) and (pointer:fine){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
@@ -109,21 +154,38 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   ):hover{
     transform:none!important;
     filter:none!important;
-    border-color:rgba(255,255,255,.22)!important;
+    border-color:var(--cover-liquid-border-hover)!important;
     background:
-      radial-gradient(125% 105% at 16% -4%,
-        rgba(255,255,255,.22) 0%,
-        rgba(255,255,255,.082) 39%,
-        transparent 67%),
+      radial-gradient(150% 112% at 14% -12%,
+        rgba(255,255,255,.36) 0%,
+        rgba(255,255,255,.16) 25%,
+        rgba(255,255,255,.055) 49%,
+        transparent 69%),
+      radial-gradient(112% 85% at 84% 112%,
+        rgba(0,0,0,.16) 0%,
+        rgba(0,0,0,.045) 43%,
+        transparent 70%),
       linear-gradient(180deg,
-        rgba(255,255,255,.138) 0%,
-        rgba(255,255,255,.073) 50%,
-        rgba(18,21,26,.32) 100%)!important;
-    color:#edf0f3!important;
+        rgba(255,255,255,.125) 0%,
+        rgba(255,255,255,.062) 48%,
+        rgba(15,18,23,.13) 100%)!important;
+    color:#fff!important;
+    -webkit-backdrop-filter:
+      blur(12px)
+      saturate(178%)
+      contrast(110%)
+      brightness(104%)!important;
+    backdrop-filter:
+      blur(12px)
+      saturate(178%)
+      contrast(110%)
+      brightness(104%)!important;
     box-shadow:
-      0 8px 19px rgba(0,0,0,.33),
-      inset 0 1px 0 rgba(255,255,255,.205),
-      inset 0 -1px 0 rgba(255,255,255,.032)!important;
+      0 11px 26px rgba(0,0,0,.30),
+      0 1px 2px rgba(0,0,0,.15),
+      inset 0 1px 0 rgba(255,255,255,.38),
+      inset 1px 0 0 rgba(255,255,255,.15),
+      inset 0 -1px 0 rgba(0,0,0,.10)!important;
   }
 
   .map-list .map-card.has-cover > .map-admin-btn:hover,
@@ -134,10 +196,9 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
-
 }
 
-/* Press/touch: vidro permanece vidro e não muda de tamanho. */
+/* Touch/press: resposta óptica curta sem mudar tamanho ou posição. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
@@ -146,19 +207,114 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 ):active{
   transform:none!important;
   filter:none!important;
+  border-color:rgba(255,255,255,.29)!important;
+  background:
+    radial-gradient(140% 102% at 18% -8%,
+      rgba(255,255,255,.24) 0%,
+      rgba(255,255,255,.10) 28%,
+      transparent 65%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.085) 0%,
+      rgba(255,255,255,.04) 48%,
+      rgba(10,12,16,.18) 100%)!important;
+  -webkit-backdrop-filter:
+    blur(10px)
+    saturate(160%)
+    contrast(109%)
+    brightness(99%)!important;
+  backdrop-filter:
+    blur(10px)
+    saturate(160%)
+    contrast(109%)
+    brightness(99%)!important;
   box-shadow:
-    0 3px 9px rgba(0,0,0,.27),
-    inset 0 1px 0 rgba(255,255,255,.10),
-    inset 0 2px 4px rgba(0,0,0,.16)!important;
+    0 4px 11px var(--cover-liquid-shadow-close),
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 2px 5px rgba(0,0,0,.12)!important;
 }
 
-/* Foco acessível sem alterar o material. */
+/* Foco acessível sem trocar o material. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
   .map-card.has-cover > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ):focus-visible{
-  outline:1px solid rgba(255,255,255,.25)!important;
+  outline:1px solid rgba(255,255,255,.42)!important;
   outline-offset:2px!important;
+}
+
+/* Fallback: browsers sem backdrop-filter recebem vidro translúcido mais opaco. */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :is(
+    :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+    .map-card.has-cover > .map-admin-btn,
+    .map-card.has-cover > .fav,
+    .simulation-card.has-cover .simulation-card-menu-btn
+  ){
+    background:
+      radial-gradient(140% 100% at 16% -8%,
+        rgba(255,255,255,.24),
+        rgba(255,255,255,.07) 48%,
+        transparent 70%),
+      rgba(35,39,46,.78)!important;
+  }
+}
+
+/* Acessibilidade: reduz transparência quando o sistema solicitar. */
+@media(prefers-reduced-transparency:reduce){
+  :is(
+    :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+    .map-card.has-cover > .map-admin-btn,
+    .map-card.has-cover > .fav,
+    .simulation-card.has-cover .simulation-card-menu-btn
+  ){
+    background:rgba(34,38,45,.91)!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    border-color:rgba(255,255,255,.28)!important;
+  }
+}
+
+/* Alto contraste: prioriza símbolo e contorno, sem aumentar o botão. */
+@media(prefers-contrast:more){
+  :is(
+    :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+    .map-card.has-cover > .map-admin-btn,
+    .map-card.has-cover > .fav,
+    .simulation-card.has-cover .simulation-card-menu-btn
+  ){
+    color:#fff!important;
+    border-color:rgba(255,255,255,.48)!important;
+    background-color:rgba(15,18,23,.54)!important;
+  }
+}
+
+/* Movimento reduzido: material continua ativo, transições deixam de animar. */
+@media(prefers-reduced-motion:reduce){
+  :is(
+    :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+    .map-card.has-cover > .map-admin-btn,
+    .map-card.has-cover > .fav,
+    .simulation-card.has-cover .simulation-card-menu-btn
+  ){
+    transition:none!important;
+  }
+}
+
+/* Forced colors: deixa o SO assumir contraste e legibilidade. */
+@media(forced-colors:active){
+  :is(
+    :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+    .map-card.has-cover > .map-admin-btn,
+    .map-card.has-cover > .fav,
+    .simulation-card.has-cover .simulation-card-menu-btn
+  ){
+    border:1px solid ButtonText!important;
+    background:ButtonFace!important;
+    color:ButtonText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
 }
