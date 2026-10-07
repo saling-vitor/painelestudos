@@ -300,3 +300,93 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter sma
     width:44px!important;
   }
 }
+
+
+/* CONSOLIDADO V15.47 · STATUS DA NUVEM NO iPAD
+   Incorporado de ipad-cloud-compact-v15-36-1.css. */
+.ipad-cloud-icon{display:none}
+@keyframes ipadCloudSyncPulse{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.04)}}
+
+@media (orientation:landscape){
+  html.is-ipad:not(.is-phone-layout) .side-bottom{
+    display:flex;
+    left:0;
+    right:0;
+    bottom:calc(12px + var(--safe-bottom));
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card{
+    width:44px;
+    height:44px;
+    min-width:44px;
+    padding:0;
+    display:grid;
+    place-items:center;
+    border:0;
+    border-radius:12px;
+    background:transparent;
+    box-shadow:none;
+    pointer-events:auto;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-line{
+    position:relative;
+    width:44px;
+    height:44px;
+    display:grid;
+    place-items:center;
+    gap:0;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .ipad-cloud-icon{
+    display:block;
+    --icon-size:20px;
+    color:#68707b;
+    opacity:.8;
+    transition:color .18s ease,filter .18s ease,opacity .18s ease;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.online) .ipad-cloud-icon{
+    color:#71c589;
+    opacity:1;
+    filter:drop-shadow(0 0 7px rgba(113,197,137,.22));
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.warn) .ipad-cloud-icon{
+    color:#d9a958;
+    opacity:1;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.syncing) .ipad-cloud-icon{
+    color:#71c589;
+    opacity:1;
+    animation:ipadCloudSyncPulse 1.1s ease-in-out infinite;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.offline) .ipad-cloud-icon{
+    color:#68707b;
+    opacity:.55;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-card:has(.cloud-dot.error) .ipad-cloud-icon{
+    color:#d76b76;
+    opacity:1;
+  }
+
+  html.is-ipad:not(.is-phone-layout) .cloud-dot,
+  html.is-ipad:not(.is-phone-layout) .cloud-label,
+  html.is-ipad:not(.is-phone-layout) .cloud-side-meta{
+    position:absolute!important;
+    width:1px!important;
+    height:1px!important;
+    padding:0!important;
+    margin:-1px!important;
+    overflow:hidden!important;
+    clip-path:inset(50%)!important;
+    white-space:nowrap!important;
+    border:0!important;
+  }
+}
