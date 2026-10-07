@@ -77,6 +77,28 @@ test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#p
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
+test('[G] V15.42 aplica ambiente topográfico sem transformar conteúdo em vidro',async({page})=>{
+  await expect(page.locator('link[href*="topographic-environment-v15-42.css"]')).toHaveCount(1);
+  await expect(page.locator('link[href*="design-system-v15-42.css"]')).toHaveCount(1);
+  const visual=await page.evaluate(()=>{
+    const bodyBefore=getComputedStyle(document.body,'::before');
+    const map=document.querySelector('.map-card');
+    const mapStyle=map?getComputedStyle(map):null;
+    const side=document.querySelector('.side');
+    const sideStyle=side?getComputedStyle(side):null;
+    return{
+      topoImage:bodyBefore.backgroundImage,
+      topoOpacity:parseFloat(bodyBefore.opacity)||0,
+      mapBackdrop:mapStyle?(mapStyle.backdropFilter||mapStyle.webkitBackdropFilter||'none'):'none',
+      sideBackdrop:sideStyle?(sideStyle.backdropFilter||sideStyle.webkitBackdropFilter||'none'):'none'
+    };
+  });
+  expect(visual.topoImage).toContain('topographic-map-v15-42.svg');
+  expect(visual.topoOpacity).toBeGreaterThan(0);
+  expect(visual.mapBackdrop).toBe('none');
+  if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).not.toBe('none');
+});
+
 test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({page},testInfo)=>{
   await expect(page.locator('link[href*="liquid-glass-surfaces-v15-40.css"]')).toHaveCount(1);
 
@@ -116,11 +138,16 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     expect(activeLens.backdrop).toBe('none');
     expect(activeLens.filled).toBe(true);
   }else{
+    const side=page.locator('.side');
     const activeNav=page.locator('.side .nav-btn.active').first();
     await expect(activeNav).toBeVisible();
-    const navGlass=await glass(activeNav);
-    expect(navGlass.backdrop).not.toBe('none');
-    expect(navGlass.filled).toBe(true);
+    const sideGlass=await glass(side);
+    const navLens=await glass(activeNav);
+    expect(sideGlass.backdrop).not.toBe('none');
+    expect(sideGlass.filled).toBe(true);
+    // V15.42: sidebar é o material; item ativo é apenas uma lente interna.
+    expect(navLens.backdrop).toBe('none');
+    expect(navLens.filled).toBe(true);
   }
 
   if(testInfo.project.name==='desktop-chromium'){

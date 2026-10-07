@@ -1,21 +1,21 @@
 {
-  "version": "15.41.0",
-  "label": "V15.41.0-G",
-  "releasedAt": "2026-10-07T15:06:15.000Z",
-  "notes": "Liquid Glass revalidado conforme a documentação oficial da Apple: uma camada funcional acima do conteúdo, agrupamento de controles e menos vidro empilhado.",
+  "version": "15.42.0",
+  "label": "V15.42.0-G",
+  "releasedAt": "2026-10-07T17:45:00.000Z",
+  "notes": "V15.42 unifica o Meus Mapas com a Template V211: Design System V2, ambiente topografico global, hierarquia editorial, cards e paineis escuros por tema, mantendo Liquid Glass apenas na camada funcional.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Item ativo da sidebar e dock de iPhone/iPad usam Liquid Glass sem transformar o conteúdo em vidro",
-    "[G] Busca, menus, popovers e modais foram revalidados como superfícies funcionais Regular",
-    "[G] Edital, Simulados e Mais agora formam um único grupo de vidro com controles internos integrados",
-    "[G] Filtros ativos e selects principais de Simulados recebem vidro leve; estados inativos permanecem discretos",
-    "[G] Topbar mantém um único blur: Buscar e Sincronizar usam lente interna sem glass-on-glass",
-    "[G] Redução de transparência, alto contraste, movimento reduzido e fallback sem backdrop-filter foram reforçados"
+    "[G] Ambiente global ganha linhas topograficas minimalistas e malha cartografica discreta",
+    "[G] Design System V2 unifica sidebar, topbar, docks, menus, filtros e overlays sem glass-on-glass",
+    "[G] A Template V211 passa a orientar hero, tipografia, kickers, cards, paineis e formularios do sistema",
+    "[G] Cards de mapa passam a seguir a linguagem dos topic-card V211: superficie escura, borda fina e assinatura lateral por tema",
+    "[G] Home, Cursos, Mapas, Simulados, Progresso, Agenda, Configuracoes e Reader compartilham o mesmo vocabulario visual",
+    "[G] Desktop, iPad e iPhone preservam suas densidades e navegacoes aprovadas com fallbacks de acessibilidade"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.41",
+    "series": "15.42",
     "channel": "G",
-    "runBase": 660
+    "runBase": 667
   }
 }

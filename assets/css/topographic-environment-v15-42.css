@@ -1,0 +1,62 @@
+/* V15.42 · Ambiente cartográfico global · MEUS MAPAS
+   O padrão topográfico pertence ao fundo, nunca à camada de conteúdo. */
+:root{
+  --mm-topo-opacity:.105;
+  --mm-topo-size:760px;
+  --mm-bg-0:#020304;
+  --mm-bg-1:#040609;
+  --mm-bg-2:#070a0e;
+}
+
+html{background:var(--mm-bg-0)!important}
+body{
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(1100px 760px at 4% -8%,rgba(28,43,59,.28),transparent 64%),
+    radial-gradient(900px 620px at 98% 16%,rgba(216,197,158,.035),transparent 68%),
+    linear-gradient(180deg,var(--mm-bg-1),var(--mm-bg-0) 48%,#010203)!important;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image:url("../ui/topographic-map-v15-42.svg");
+  background-repeat:repeat;
+  background-position:center top;
+  background-size:var(--mm-topo-size) var(--mm-topo-size);
+  opacity:var(--mm-topo-opacity);
+  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.88),#000 24%,#000 76%,rgba(0,0,0,.82));
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.88),#000 24%,#000 76%,rgba(0,0,0,.82));
+}
+body>.app{position:relative;z-index:1}
+
+/* O leitor precisa continuar sendo uma superfície de leitura, sem textura. */
+:is(#reader,.simulation-reader,.reader-frame-shell,.simulation-frame-shell){
+  --mm-topo-opacity:0;
+}
+
+/* iPad: desenho um pouco mais aberto e discreto. */
+@media(max-width:1180px){
+  :root{--mm-topo-opacity:.072;--mm-topo-size:680px}
+}
+
+/* Smartphone: a textura vira assinatura quase subliminar. */
+@media(max-width:480px){
+  :root{--mm-topo-opacity:.043;--mm-topo-size:560px}
+  body{
+    background:
+      radial-gradient(720px 500px at 5% -8%,rgba(24,38,52,.22),transparent 66%),
+      linear-gradient(180deg,#040609,#020304 52%,#010203)!important;
+  }
+}
+
+/* Respeita preferências de contraste/transparência: menos ruído atrás dos controles. */
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  body::before{opacity:.032}
+}
+@media(forced-colors:active){
+  body::before{display:none}
+}
