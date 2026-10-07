@@ -424,7 +424,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
     .course-primary-actions,
     html:not(.is-phone-layout) .nav-btn.active
   ){
-    background:rgba(22,26,33,.94)!important;
+    background:rgba(26,26,27,.94)!important;
   }
 }
 
@@ -449,7 +449,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
     .simulation-toolbar .ui-select-trigger,
     html:not(.is-phone-layout) .nav-btn.active
   ){
-    background:#0c0f14!important;
+    background:#0d0d0e!important;
     background-image:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
@@ -473,7 +473,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
     html:not(.is-phone-layout) .nav-btn.active
   ){
     border-color:rgba(255,255,255,.48)!important;
-    background-color:rgba(6,8,11,.90)!important;
+    background-color:rgba(6,6,7,.90)!important;
   }
 }
 
