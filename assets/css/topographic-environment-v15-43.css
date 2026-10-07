@@ -1,0 +1,174 @@
+/* V15.45 · TOPOGRAPHIC RASTER ENVIRONMENT · MEUS MAPAS
+   PASSO 4 · composição raster orgânica, contínua e não repetitiva.
+   O ambiente pertence ao fundo global; conteúdo, leitores e superfícies matte permanecem limpos. */
+
+:root{
+  --mm-topo-opacity:.46;
+
+  --mm-bg-0:#020304;
+  --mm-bg-1:#040506;
+  --mm-bg-2:#070809;
+
+  --mm-topo-image:url("../ui/topographic-lines-v15-43.webp");
+}
+
+html{
+  background:var(--mm-bg-0)!important;
+}
+
+body{
+  position:relative;
+  isolation:isolate;
+
+  background:
+    radial-gradient(
+      1200px 820px at 4% -8%,
+      rgba(48,52,56,.15),
+      transparent 66%
+    ),
+    radial-gradient(
+      980px 700px at 98% 14%,
+      rgba(216,197,158,.022),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      var(--mm-bg-1),
+      var(--mm-bg-0) 48%,
+      #010202
+    )!important;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+
+  background-image:var(--mm-topo-image);
+  background-repeat:no-repeat;
+  background-position:center center;
+  background-size:cover;
+
+  opacity:var(--mm-topo-opacity);
+
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse at 50% 45%,
+      rgba(0,0,0,.40) 0%,
+      rgba(0,0,0,.48) 28%,
+      rgba(0,0,0,.72) 58%,
+      #000 88%
+    );
+
+  mask-image:
+    radial-gradient(
+      ellipse at 50% 45%,
+      rgba(0,0,0,.40) 0%,
+      rgba(0,0,0,.48) 28%,
+      rgba(0,0,0,.72) 58%,
+      #000 88%
+    );
+
+  transform:translateZ(0);
+}
+
+body>.app{
+  position:relative;
+  z-index:1;
+}
+
+/* O raster nunca entra nos leitores/iframes. Ao abrir um leitor, o ambiente global
+   é ocultado atrás da superfície de leitura e restaurado ao fechar. */
+:is(
+  #reader,
+  #simulationReader,
+  .simulation-reader,
+  .reader-frame-shell,
+  .simulation-frame-shell
+){
+  --mm-topo-opacity:0;
+}
+
+body:has(#reader.open)::before,
+body:has(#simulationReader.open)::before,
+body:has(.simulation-reader.open)::before{
+  opacity:0!important;
+}
+
+/* Tablet / iPad: presença menor, mantendo o material glass conectado ao ambiente. */
+@media(max-width:1180px){
+  :root{
+    --mm-topo-opacity:.38;
+  }
+
+  body::before{
+    background-size:cover;
+    background-position:center center;
+  }
+}
+
+/* Smartphone: assinatura cartográfica, sem competir com o conteúdo. */
+@media(max-width:600px){
+  :root{
+    --mm-topo-opacity:.27;
+  }
+
+  body{
+    background:
+      radial-gradient(
+        720px 520px at 8% -8%,
+        rgba(42,46,50,.11),
+        transparent 68%
+      ),
+      linear-gradient(
+        180deg,
+        #040506,
+        #020304 52%,
+        #010202
+      )!important;
+  }
+
+  body::before{
+    background-size:auto 112vh;
+    background-position:center top;
+
+    -webkit-mask-image:
+      linear-gradient(
+        180deg,
+        rgba(0,0,0,.72),
+        #000 18%,
+        #000 82%,
+        rgba(0,0,0,.68)
+      );
+
+    mask-image:
+      linear-gradient(
+        180deg,
+        rgba(0,0,0,.72),
+        #000 18%,
+        #000 82%,
+        rgba(0,0,0,.68)
+      );
+  }
+}
+
+/* Acessibilidade: textura praticamente some quando transparência/contraste pedem menos ruído. */
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  body::before{
+    opacity:.025!important;
+  }
+
+  body:has(#reader.open)::before,
+  body:has(#simulationReader.open)::before,
+  body:has(.simulation-reader.open)::before{
+    opacity:0!important;
+  }
+}
+
+@media(forced-colors:active){
+  body::before{
+    display:none!important;
+  }
+}
