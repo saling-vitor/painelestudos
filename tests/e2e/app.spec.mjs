@@ -805,6 +805,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
     sync.dataset.syncState='syncing';
     const syncing={animation:getComputedStyle(icon).animationName};
     const activeBefore=getComputedStyle(active,'::before');
+    const topbarStyle=getComputedStyle(topbar),searchStyle=getComputedStyle(search),syncStyle=getComputedStyle(sync);
     return{
       synced,
       syncing,
@@ -814,7 +815,13 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
       searchHeight:search.getBoundingClientRect().height,
       syncHeight:sync.getBoundingClientRect().height,
       newCourseHeight:newCourse.getBoundingClientRect().height,
-      topbarHeight:topbar.getBoundingClientRect().height
+      topbarHeight:topbar.getBoundingClientRect().height,
+      topbarBackdrop:topbarStyle.backdropFilter||topbarStyle.webkitBackdropFilter||'none',
+      searchBackdrop:searchStyle.backdropFilter||searchStyle.webkitBackdropFilter||'none',
+      syncBackdrop:syncStyle.backdropFilter||syncStyle.webkitBackdropFilter||'none',
+      topbarBackground:topbarStyle.backgroundImage,
+      searchBackground:searchStyle.backgroundImage,
+      syncBackground:syncStyle.backgroundImage
     };
   });
   expect(visual.synced.icon).not.toBe(visual.synced.text);
@@ -823,6 +830,12 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.activeBackground).not.toBe('none');
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
+  expect(visual.topbarBackdrop).not.toBe('none');
+  expect(visual.searchBackdrop).not.toBe('none');
+  expect(visual.syncBackdrop).not.toBe('none');
+  expect(visual.topbarBackground).toContain('gradient');
+  expect(visual.searchBackground).toContain('gradient');
+  expect(visual.syncBackground).toContain('gradient');
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
   if(testInfo.project.name==='ipad'){
     expect(Math.round(visual.syncHeight)).toBeGreaterThanOrEqual(44);
@@ -1416,6 +1429,49 @@ test('controles sobre capas usam o tamanho compacto uniforme de 38px',async({pag
   }
 });
 
+test('ícones das capas usam preenchimento e contorno preto em camadas separadas',async({page})=>{
+  const assertStack=async selector=>{
+    const control=page.locator(selector).first();
+    await expect(control).toBeVisible();
+    await expect(control.locator('.cover-icon-stack')).toHaveCount(1);
+    await expect(control.locator('.cover-icon-fill')).toHaveCount(1);
+    await expect(control.locator('.cover-icon-stroke')).toHaveCount(1);
+    return control.evaluate(el=>{
+      const stack=el.querySelector('.cover-icon-stack');
+      const fill=el.querySelector('.cover-icon-fill');
+      const stroke=el.querySelector('.cover-icon-stroke');
+      const sr=stack.getBoundingClientRect(),fr=fill.getBoundingClientRect(),rr=stroke.getBoundingClientRect();
+      return{
+        stackWidth:sr.width,stackHeight:sr.height,
+        fillWidth:fr.width,fillHeight:fr.height,
+        strokeWidth:rr.width,strokeHeight:rr.height,
+        fillColor:getComputedStyle(fill).backgroundColor,
+        strokeColor:getComputedStyle(stroke).backgroundColor,
+        strokeFilter:getComputedStyle(stroke).filter||getComputedStyle(stroke).webkitFilter||'none'
+      };
+    });
+  };
+
+  await page.goto('/#courses');
+  const course=await assertStack('#coursesGrid .course-card-edit');
+
+  await page.goto('/#maps');
+  const menu=await assertStack('.map-card.has-cover>.map-admin-btn');
+  const favorite=await assertStack('.map-card.has-cover>.fav');
+
+  await page.goto('/#simulations');
+  const simulation=await assertStack('.simulation-card.has-cover .simulation-card-menu-btn');
+
+  for(const [name,icon] of Object.entries({course,menu,favorite,simulation})){
+    expect.soft(Math.abs(icon.stackWidth-16),name+' wrapper 16px').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(icon.fillWidth-16),name+' preenchimento 16px').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(icon.strokeWidth-16),name+' base do contorno 16px').toBeLessThanOrEqual(.5);
+    expect.soft(icon.strokeFilter,name+' contorno usa filtro expansor').not.toBe('none');
+    const strokeRgb=(icon.strokeColor.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
+    expect.soft(Math.max(...strokeRgb),name+' contorno permanece preto').toBeLessThanOrEqual(20);
+  }
+});
+
 test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
   await page.goto('/#maps');
   const fav=page.locator('.map-card.has-cover>.fav').first();
@@ -1423,13 +1479,13 @@ test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
 
   if((await fav.getAttribute('aria-pressed'))==='true')await fav.click();
   await expect(fav).toHaveAttribute('aria-pressed','false');
-  const off=await fav.locator('.ui-icon').evaluate(el=>getComputedStyle(el).color);
+  const off=await fav.locator('.cover-icon-fill').evaluate(el=>getComputedStyle(el).color);
 
   await fav.click();
   await expect(fav).toHaveAttribute('aria-pressed','true');
   await expect(fav).toHaveClass(/\bon\b/);
   const active=await fav.evaluate(el=>{
-    const icon=el.querySelector('.ui-icon');
+    const icon=el.querySelector('.cover-icon-fill');
     const rgb=(getComputedStyle(icon).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
     return{
       iconColor:getComputedStyle(icon).color,
@@ -1446,7 +1502,7 @@ test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
   const canHover=await page.evaluate(()=>matchMedia('(hover:hover) and (pointer:fine)').matches);
   if(canHover){
     await fav.hover();
-    const hoverRgb=await fav.locator('.ui-icon').evaluate(el=>(getComputedStyle(el).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number));
+    const hoverRgb=await fav.locator('.cover-icon-fill').evaluate(el=>(getComputedStyle(el).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number));
     expect(hoverRgb[0]).toBeGreaterThan(220);
     expect(hoverRgb[1]).toBeGreaterThan(170);
     expect(hoverRgb[2]).toBeLessThan(120);
