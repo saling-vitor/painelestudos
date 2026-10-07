@@ -1,4 +1,4 @@
-/* V15.40.0-G · Liquid Glass shell V3 + true layered icon outline
+/* V15.40.0-G · Liquid Glass shell V4 + true layered icon outline
    - topbar [D+T] recebe o mesmo material óptico dos controles sobre capas;
    - smartphone mantém a topbar compacta existente;
    - ••• e estrela usam duas camadas reais: preenchimento + base preta contornada;
@@ -77,41 +77,41 @@
   background-color:var(--lg-shell-icon-stroke)!important;
 }
 
-/* ---------- Topbar Liquid Glass [D+T] ---------- */
+/* ---------- Topbar Liquid Glass fumê [D+T] ---------- */
 html:not(.is-phone-layout) .topbar{
-  border-color:var(--lg-shell-border)!important;
+  border-color:rgba(255,255,255,.22)!important;
   background:
-    radial-gradient(125% 170% at 8% -80%,
-      rgba(255,255,255,.30) 0%,
-      rgba(255,255,255,.085) 34%,
-      transparent 61%),
-    radial-gradient(95% 145% at 100% 125%,
-      rgba(185,220,255,.095) 0%,
-      transparent 58%),
+    radial-gradient(128% 175% at 8% -82%,
+      rgba(255,255,255,.13) 0%,
+      rgba(255,255,255,.036) 33%,
+      transparent 60%),
+    radial-gradient(96% 148% at 100% 126%,
+      rgba(172,205,234,.060) 0%,
+      transparent 57%),
     linear-gradient(145deg,
-      rgba(255,255,255,.080) 0%,
-      rgba(255,255,255,.022) 38%,
-      rgba(9,12,17,.055) 69%,
-      rgba(215,236,255,.045) 100%),
-    rgba(8,11,15,.20)!important;
+      rgba(255,255,255,.038) 0%,
+      rgba(255,255,255,.010) 38%,
+      rgba(5,8,12,.075) 69%,
+      rgba(190,214,236,.024) 100%),
+    rgba(7,10,14,.34)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   -webkit-backdrop-filter:
-    blur(12px)
-    saturate(182%)
-    contrast(111%)
-    brightness(105%)!important;
+    blur(13px)
+    saturate(165%)
+    contrast(108%)
+    brightness(102%)!important;
   backdrop-filter:
-    blur(12px)
-    saturate(182%)
-    contrast(111%)
-    brightness(105%)!important;
+    blur(13px)
+    saturate(165%)
+    contrast(108%)
+    brightness(102%)!important;
   box-shadow:
-    0 16px 42px var(--lg-shell-shadow),
-    0 2px 8px rgba(0,0,0,.16),
-    inset 0 1px 1px rgba(255,255,255,.42),
-    inset 1px 0 1px rgba(255,255,255,.13),
-    inset -1px 0 1px rgba(255,255,255,.07),
-    inset 0 -1px 1px rgba(0,0,0,.22)!important;
+    0 14px 34px rgba(0,0,0,.26),
+    0 2px 7px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 1px 0 0 rgba(255,255,255,.055),
+    inset -1px 0 0 rgba(255,255,255,.028),
+    inset 0 -1px 0 rgba(0,0,0,.28)!important;
 }
 
 html:not(.is-phone-layout) .topbar::before{
@@ -119,9 +119,9 @@ html:not(.is-phone-layout) .topbar::before{
   border-radius:inherit!important;
   background:
     linear-gradient(112deg,
-      rgba(255,255,255,.22) 0%,
-      rgba(255,255,255,.065) 17%,
-      transparent 37%,
+      rgba(255,255,255,.085) 0%,
+      rgba(255,255,255,.024) 17%,
+      transparent 34%,
       transparent 100%)!important;
   opacity:.82!important;
   filter:none!important;
@@ -136,13 +136,13 @@ html:not(.is-phone-layout) .topbar::after{
   border-radius:inherit!important;
   background:
     radial-gradient(70% 180% at 16% 0%,
-      rgba(255,255,255,.12) 0%,
-      transparent 48%),
+      rgba(255,255,255,.050) 0%,
+      transparent 46%),
     radial-gradient(60% 160% at 88% 100%,
-      rgba(185,220,255,.07) 0%,
-      transparent 55%)!important;
+      rgba(172,205,234,.040) 0%,
+      transparent 54%)!important;
   filter:none!important;
-  opacity:1!important;
+  opacity:.92!important;
 }
 
 /* Campo da busca: Liquid Glass fumê.
