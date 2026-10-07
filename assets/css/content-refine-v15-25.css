@@ -5,7 +5,7 @@
   overflow:hidden;
   border:1px solid rgba(255,255,255,.065);
   border-radius:10px;
-  background:#0a0c0f;
+  background:#0a0a0b;
   box-shadow:inset 0 1px rgba(255,255,255,.025)
 }
 .course-card-cover img{
@@ -621,7 +621,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseMapCount{
     background-size:auto 72%!important;
   }
   html.is-phone-layout [data-view="home"] .hero:before{
-    background:linear-gradient(180deg,#06080b 0%,rgba(6,6,7,.985) 42%,rgba(6,6,7,.80) 62%,rgba(6,6,7,.33) 82%,rgba(6,6,7,.12) 100%)!important;
+    background:linear-gradient(180deg,#060607 0%,rgba(6,6,7,.985) 42%,rgba(6,6,7,.80) 62%,rgba(6,6,7,.33) 82%,rgba(6,6,7,.12) 100%)!important;
   }
   html.is-phone-layout [data-view="home"] .hero-copy{
     height:100%!important;
@@ -734,7 +734,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn{
   padding:0 8px!important;
   border:1px solid rgba(255,255,255,.11)!important;
   border-radius:8px!important;
-  background:rgba(7,10,12,.76)!important;
+  background:rgba(8,8,9,.76)!important;
   box-shadow:0 6px 18px rgba(0,0,0,.28)!important;
   -webkit-backdrop-filter:blur(12px)!important;
   backdrop-filter:blur(12px)!important;
@@ -1076,6 +1076,6 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-search-box{
 .simulation-card .simulation-code{color:color-mix(in srgb,var(--simulation-accent) 78%,white)!important}
 .simulation-card .simulation-card-actions .primary{
   border-color:color-mix(in srgb,var(--simulation-accent) 30%,transparent)!important;
-  background:color-mix(in srgb,var(--simulation-accent) 8%,#0a0c0f)!important;
+  background:color-mix(in srgb,var(--simulation-accent) 8%,#0a0a0b)!important;
   color:color-mix(in srgb,var(--simulation-accent) 72%,white)!important;
 }
