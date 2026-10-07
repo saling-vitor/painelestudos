@@ -349,3 +349,9 @@
   .hero{min-height:315px!important}
   .hero-copy{padding:32px 42px 28px!important}
 }
+
+/* iPad estreito/Split View: mantém o hero dentro da densidade aprovada. */
+@media(min-width:481px) and (max-width:899px){
+  html.is-ipad:not(.is-phone-layout) .hero{min-height:285px!important}
+  html.is-ipad:not(.is-phone-layout) .hero-copy{padding:20px 28px!important}
+}
