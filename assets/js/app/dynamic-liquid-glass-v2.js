@@ -65,6 +65,7 @@
   function markSurface(el,scale,{specular=false,press=true}={}){
     if(!el)return;
     addClasses(el,'mm-optical-surface','mm-glass-'+scale);
+    if(getComputedStyle(el).position==='static')el.classList.add('mm-position-anchor');
     if(specular&&fineQuery.matches&&!motionQuery.matches)addClasses(el,'mm-specular');
     else el.classList.remove('mm-specular');
     if(press)addClasses(el,'mm-pressable');
