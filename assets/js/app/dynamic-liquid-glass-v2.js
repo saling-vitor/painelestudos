@@ -435,6 +435,7 @@
       pointerFrames:stats.pointerFrames,
       pointerRectReads:stats.pointerRectReads,
       rectReads:stats.rectReads,
+      pointerRectReads:stats.pointerRectReads,
       enhancePasses:stats.enhancePasses,
       lensMoves:stats.lensMoves
     })
