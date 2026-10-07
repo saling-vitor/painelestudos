@@ -53,14 +53,34 @@ function renderProgress(){
   const intro=p.marked?'Qualquer estado OK, REV ou DIF conta como tópico estudado.':'Comece por um mapa para gerar seu progresso; revisões e prioridades aparecerão automaticamente.';
   const sortLabel=(PROGRESS_SORTS.find(([id])=>id===progressSort)||PROGRESS_SORTS[0])[1];
   const sortSheet='<div class="progress-sort-backdrop" id="progressSortBackdrop" hidden></div><section class="progress-sort-sheet" id="progressSortSheet" role="dialog" aria-modal="true" aria-labelledby="progressSortSheetTitle" hidden><div class="progress-sort-sheet-head"><div><span class="kicker">Ordenação</span><h3 id="progressSortSheetTitle">Ordenar mapas</h3></div><button type="button" class="progress-sort-sheet-close" id="progressSortClose" aria-label="Fechar">×</button></div><div class="progress-sort-sheet-options">'+PROGRESS_SORTS.map(([id,label])=>'<button type="button" class="progress-sort-option '+(progressSort===id?'active':'')+'" data-progress-sort-option="'+id+'" aria-pressed="'+String(progressSort===id)+'"><span>'+ESC(label)+'</span><i aria-hidden="true">✓</i></button>').join('')+'</div></section>';
-  $('#progressInfo').innerHTML='<section class="progress-global-panel" id="progressGlobalPanel"><div class="progress-global-head"><div><span class="kicker">Visão geral</span><h3>Progresso geral</h3><p>'+ESC(intro)+'</p></div><div class="progress-global-score"><b>'+formatProgressPercent(p)+'</b><span>'+p.marked+' / '+p.total+' tópicos</span></div></div>'+progressBarHtml(p,'progress-global-bar')+'<div class="progress-global-footer"><div class="progress-states">'+progressStateBadges(p,true)+'</div><div class="progress-controls"><div class="progress-filter-row" id="progressFilters">'+PROGRESS_FILTERS.map(([id,label])=>'<button type="button" class="progress-filter '+(state.progressFilter===id?'active':'')+'" data-progress-filter="'+id+'">'+ESC(label)+'</button>').join('')+'</div><div class="progress-sort-wrap"><label class="progress-sort-control"><span>Ordenar</span><select id="progressSort">'+PROGRESS_SORTS.map(([id,label])=>'<option value="'+id+'"'+(progressSort===id?' selected':'')+'>'+ESC(label)+'</option>').join('')+'</select></label><button type="button" class="secondary progress-sort-mobile-trigger" id="progressSortMobile" aria-expanded="false" aria-controls="progressSortSheet"><span aria-hidden="true">↕</span><span id="progressSortMobileLabel">'+ESC(sortLabel)+'</span></button></div></div></div></section>'+sortSheet+'<div class="progress-course-stack">'+(blocks||emptyStateHtml({title:'Nenhum progresso para mostrar',text:'Quando houver mapas compatíveis com este filtro, eles aparecerão aqui.',mascot:'progress',className:'progress-empty-guidance'}))+'</div>';
+  $('#progressInfo').innerHTML='<section class="progress-global-panel" id="progressGlobalPanel"><div class="progress-global-head"><div><span class="kicker">Visão geral</span><h3>Progresso geral</h3><p>'+ESC(intro)+'</p></div><div class="progress-global-score"><b>'+formatProgressPercent(p)+'</b><span>'+p.marked+' / '+p.total+' tópicos</span></div></div>'+progressBarHtml(p,'progress-global-bar')+'<div class="progress-global-footer"><div class="progress-states">'+progressStateBadges(p,true)+'</div><div class="progress-controls"><div class="progress-filter-row" id="progressFilters">'+PROGRESS_FILTERS.map(([id,label])=>'<button type="button" class="progress-filter '+(state.progressFilter===id?'active':'')+'" data-progress-filter="'+id+'">'+ESC(label)+'</button>').join('')+'</div><div class="progress-sort-wrap"><button type="button" class="secondary progress-sort-trigger" id="progressSortTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="progressSortSheet"><span aria-hidden="true">↕</span><span id="progressSortLabel">'+ESC(sortLabel)+'</span></button></div></div></div></section>'+sortSheet+'<div class="progress-course-stack">'+(blocks||emptyStateHtml({title:'Nenhum progresso para mostrar',text:'Quando houver mapas compatíveis com este filtro, eles aparecerão aqui.',mascot:'progress',className:'progress-empty-guidance'}))+'</div>';
   const sortBackdrop=$('#progressSortBackdrop'),sortSheetEl=$('#progressSortSheet');
   if(sortBackdrop&&sortSheetEl)document.body.append(sortBackdrop,sortSheetEl);
 
+  const positionSortSheet=()=>{
+    const trigger=$('#progressSortTrigger');
+    if(!trigger||!sortSheetEl||sortSheetEl.hidden)return;
+    const phone=document.documentElement.classList.contains('is-phone-layout');
+    if(phone){
+      sortSheetEl.style.removeProperty('left');
+      sortSheetEl.style.removeProperty('right');
+      sortSheetEl.style.removeProperty('top');
+      sortSheetEl.style.removeProperty('bottom');
+      sortSheetEl.style.removeProperty('width');
+      return;
+    }
+    const rect=trigger.getBoundingClientRect(),margin=8,gap=7,viewportWidth=document.documentElement.clientWidth||window.innerWidth,viewportHeight=window.innerHeight;
+    const width=Math.min(240,Math.max(190,viewportWidth-margin*2));
+    sortSheetEl.style.width=width+'px';
+    sortSheetEl.style.left=Math.max(margin,Math.min(rect.right-width,viewportWidth-width-margin))+'px';
+    sortSheetEl.style.right='auto';
+    sortSheetEl.style.bottom='auto';
+    sortSheetEl.style.top=Math.min(rect.bottom+gap,Math.max(margin,viewportHeight-sortSheetEl.offsetHeight-margin))+'px';
+  };
   const closeSortSheet=()=>{
     if(sortBackdrop)sortBackdrop.hidden=true;
     if(sortSheetEl)sortSheetEl.hidden=true;
-    const trigger=$('#progressSortMobile');
+    const trigger=$('#progressSortTrigger');
     if(trigger)trigger.setAttribute('aria-expanded','false');
     document.documentElement.classList.remove('progress-sort-open');
   };
@@ -68,15 +88,14 @@ function renderProgress(){
     if(!sortBackdrop||!sortSheetEl)return;
     sortBackdrop.hidden=false;
     sortSheetEl.hidden=false;
-    const trigger=$('#progressSortMobile');
+    const trigger=$('#progressSortTrigger');
     if(trigger)trigger.setAttribute('aria-expanded','true');
     document.documentElement.classList.add('progress-sort-open');
+    requestAnimationFrame(positionSortSheet);
   };
   const filters=$('#progressFilters');
   filters?.querySelectorAll('[data-progress-filter]').forEach(button=>button.onclick=()=>{state.progressFilter=button.dataset.progressFilter;renderProgress()});
-  const sort=$('#progressSort');
-  if(sort)sort.onchange=()=>{progressSort=sort.value;try{localStorage.setItem('studyapp.progressSort',progressSort)}catch{}renderProgress()};
-  $('#progressSortMobile')?.addEventListener('click',openSortSheet);
+  $('#progressSortTrigger')?.addEventListener('click',openSortSheet);
   $('#progressSortBackdrop')?.addEventListener('click',closeSortSheet);
   $('#progressSortClose')?.addEventListener('click',closeSortSheet);
   $$('#progressSortSheet [data-progress-sort-option]').forEach(button=>button.onclick=()=>{
