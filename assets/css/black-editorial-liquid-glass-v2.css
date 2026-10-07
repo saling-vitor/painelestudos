@@ -9,16 +9,16 @@
   color-scheme:dark;
 
   /* Ambiente */
-  --mm-bg-deep:#020304;
-  --mm-bg:#040506;
-  --mm-bg-raised:#070809;
-  --mm-bg-soft:#0A0B0C;
+  --mm-bg-deep:#020202;
+  --mm-bg:#040404;
+  --mm-bg-raised:#070707;
+  --mm-bg-soft:#0A0A0A;
 
   /* Superfícies permanentes */
-  --mm-surface-0:#08090A;
-  --mm-surface-1:#0B0C0E;
-  --mm-surface-2:#0E0F11;
-  --mm-surface-3:#111214;
+  --mm-surface-0:#080808;
+  --mm-surface-1:#0B0B0C;
+  --mm-surface-2:#0E0E0F;
+  --mm-surface-3:#111112;
 
   /* Texto */
   --mm-text-strong:#F4F2ED;
@@ -38,11 +38,11 @@
   --mm-shadow-float:0 28px 78px rgba(0,0,0,.62);
 
   /* Liquid Glass — uma superfície funcional = um backdrop-filter */
-  --mm-glass-regular-bg:rgba(9,10,11,.60);
+  --mm-glass-regular-bg:rgba(9,9,10,.60);
   --mm-glass-regular-filter:blur(20px) saturate(128%) contrast(104%);
-  --mm-glass-dense-bg:rgba(8,9,10,.82);
+  --mm-glass-dense-bg:rgba(8,8,9,.82);
   --mm-glass-dense-filter:blur(24px) saturate(122%) contrast(105%);
-  --mm-glass-clear-bg:rgba(12,12,13,.24);
+  --mm-glass-clear-bg:rgba(12,12,12,.24);
   --mm-glass-clear-filter:blur(11px) saturate(135%);
   --mm-glass-border:rgba(255,255,255,.16);
   --mm-glass-border-strong:rgba(255,255,255,.22);
@@ -428,7 +428,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 }
 .app :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
   border-color:rgba(255,255,255,.10)!important;
-  background-color:#0A0B0C!important;
+  background:#0A0A0B!important;
   box-shadow:none!important;
 }
 .app :is(input,select,textarea):focus-visible{
