@@ -62,7 +62,7 @@ check(blackEditorialCss.includes('--mm-glass-regular-bg:rgba(9,10,11,.60)'),'Liq
 check(blackEditorialCss.includes('--mm-glass-dense-bg:rgba(8,9,10,.82)'),'Liquid Glass Dense neutro');
 check(blackEditorialCss.includes('--mm-glass-clear-bg:rgba(12,12,13,.24)'),'Liquid Glass Clear neutro');
 check(!(new RegExp('\\b(?:blue|navy|cyan|teal)\\b','i')).test(blackEditorialCss),'tema final sem nomes estruturais blue/navy/cyan/teal');
-const mmSaturates=[...blackEditorialCss.matchAll(new RegExp('saturate\\\\((\\\\d+(?:\\\\.\\\\d+)?)%\\\\)','g'))].map(match=>Number(match[1]));
+const mmSaturates=[...blackEditorialCss.matchAll(/saturate\((\d+(?:\.\d+)?)%\)/g)].map(match=>Number(match[1]));
 check(mmSaturates.length>0&&Math.max(...mmSaturates)<=135,'Liquid Glass saturate principal <= 135%');
 check(blackEditorialCss.includes('@media(prefers-reduced-transparency:reduce)'),'fallback prefers-reduced-transparency');
 check(blackEditorialCss.includes('@media(prefers-contrast:more)'),'fallback prefers-contrast');
