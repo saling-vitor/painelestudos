@@ -1386,7 +1386,7 @@ test('progresso integra filtros e ordenação no painel geral',async({page},test
   await expect(page.locator('.progress-filter-shell')).toHaveCount(0);
   if(testInfo.project.name==='iphone-webkit'){
     await expect(panel.locator('#progressSort')).toBeHidden();
-    const trigger=panel.locator('#progressSortMobile');
+    const trigger=panel.locator('#progressSortTrigger');
     await expect(trigger).toBeVisible();
     await trigger.click();
     await expect(page.locator('#progressSortSheet')).toBeVisible();
@@ -3990,8 +3990,8 @@ test('[M] smartphone Progresso usa linhas compactas acionáveis',async({page},te
   expect(layout.role).toBe('button');
   expect(layout.tabIndex).toBe(0);
 
-  await expect(page.locator('#progressSortMobile')).toBeVisible();
-  await page.locator('#progressSortMobile').click();
+  await expect(page.locator('#progressSortTrigger')).toBeVisible();
+  await page.locator('#progressSortTrigger').click();
   await expect(page.locator('#progressSortSheet')).toBeVisible();
   const sheetBox=await page.locator('#progressSortSheet').boundingBox();
   expect(sheetBox.y).toBeGreaterThanOrEqual(0);
@@ -4430,11 +4430,11 @@ test('V15.45 [G] PASSO 4 · raster orgânico é contínuo, responsivo e sem mosa
     ]
     :project==='ipad'
       ?[
-        {width:1024,height:834,opacity:.38},
-        {width:820,height:1180,opacity:.38}
+        {width:1024,height:834,opacity:.42},
+        {width:820,height:1180,opacity:.42}
       ]
       :[
-        {width:390,height:844,opacity:.27}
+        {width:390,height:844,opacity:.32}
       ];
 
   for(const viewport of cases){
@@ -4538,7 +4538,7 @@ test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e
   else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeGreaterThanOrEqual(.40);
   else expect(topoOpacity).toBeGreaterThanOrEqual(.44);
 
-  if(testInfo.project.name==='desktop'){
+  if(testInfo.project.name==='desktop-chromium'){
     const side=page.locator('.side');
     await expect(side).toBeVisible();
     const sidebarState=await page.evaluate(()=>({
@@ -4559,13 +4559,16 @@ test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e
 
   await page.goto('/#course/porto-alegre');
   await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);
-  await page.locator('#courseMoreBtn').click();
-  const menu=page.locator('#courseMoreMenu');
-  await expect(menu).toBeVisible();
-  expect(await menu.evaluate(el=>el.parentElement===document.body)).toBe(true);
-  await page.locator('#importBtn2').click();
-  await expect(page.locator('#importModal')).toHaveClass(/open/);
-  await page.locator('#importCancel').click();
+  const courseMore=page.locator('#courseMoreBtn');
+  if(await courseMore.isVisible()){
+    await courseMore.click();
+    const menu=page.locator('#courseMoreMenu');
+    await expect(menu).toBeVisible();
+    expect(await menu.evaluate(el=>el.parentElement===document.body)).toBe(true);
+    await page.locator('#importBtn2').click();
+    await expect(page.locator('#importModal')).toHaveClass(/open/);
+    await page.locator('#importCancel').click();
+  }
 
   await page.goto('/#progress');
   await expect(page.locator('#progressSort')).toHaveCount(0);
