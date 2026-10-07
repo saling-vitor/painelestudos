@@ -1,4 +1,4 @@
-/* V15.40.0-G · Liquid Glass shell V2 + true layered icon outline
+/* V15.40.0-G · Liquid Glass shell V3 + true layered icon outline
    - topbar [D+T] recebe o mesmo material óptico dos controles sobre capas;
    - smartphone mantém a topbar compacta existente;
    - ••• e estrela usam duas camadas reais: preenchimento + base preta contornada;
@@ -145,43 +145,43 @@ html:not(.is-phone-layout) .topbar::after{
   opacity:1!important;
 }
 
-/* Campo da busca: lâmina interna de Liquid Glass mais evidente.
-   A base é mais translúcida que a topbar, com highlight especular próprio. */
+/* Campo da busca: Liquid Glass fumê.
+   Menos branco leitoso, mais grafite translúcido e highlight apenas nas bordas. */
 html:not(.is-phone-layout) .topbar .search{
-  border-color:rgba(255,255,255,.42)!important;
+  border-color:rgba(255,255,255,.26)!important;
   background:
-    radial-gradient(145% 190% at 5% -95%,
-      rgba(255,255,255,.40) 0%,
-      rgba(255,255,255,.13) 31%,
-      rgba(255,255,255,.035) 49%,
-      transparent 68%),
-    radial-gradient(90% 150% at 100% 125%,
-      rgba(190,226,255,.13) 0%,
-      rgba(190,226,255,.035) 43%,
+    radial-gradient(150% 185% at 5% -92%,
+      rgba(255,255,255,.14) 0%,
+      rgba(255,255,255,.045) 30%,
+      rgba(255,255,255,.012) 47%,
       transparent 66%),
+    radial-gradient(94% 145% at 100% 122%,
+      rgba(176,210,240,.08) 0%,
+      rgba(176,210,240,.022) 42%,
+      transparent 64%),
     linear-gradient(145deg,
-      rgba(255,255,255,.090) 0%,
-      rgba(255,255,255,.025) 43%,
-      rgba(5,8,12,.055) 70%,
-      rgba(210,234,255,.060) 100%),
-    rgba(12,16,22,.12)!important;
+      rgba(255,255,255,.038) 0%,
+      rgba(255,255,255,.010) 42%,
+      rgba(4,7,11,.070) 70%,
+      rgba(190,214,236,.025) 100%),
+    rgba(10,13,18,.30)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   -webkit-backdrop-filter:
-    blur(9px)
-    saturate(205%)
-    contrast(115%)
-    brightness(108%)!important;
+    blur(10px)
+    saturate(165%)
+    contrast(108%)
+    brightness(102%)!important;
   backdrop-filter:
-    blur(9px)
-    saturate(205%)
-    contrast(115%)
-    brightness(108%)!important;
+    blur(10px)
+    saturate(165%)
+    contrast(108%)
+    brightness(102%)!important;
   box-shadow:
-    0 4px 14px rgba(0,0,0,.16),
-    inset 0 1px 1px rgba(255,255,255,.48),
-    inset 1px 0 1px rgba(255,255,255,.12),
-    inset -1px 0 1px rgba(255,255,255,.06),
-    inset 0 -1px 1px rgba(0,0,0,.18)!important;
+    0 3px 11px rgba(0,0,0,.17),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 1px 0 0 rgba(255,255,255,.055),
+    inset -1px 0 0 rgba(255,255,255,.025),
+    inset 0 -1px 0 rgba(0,0,0,.22)!important;
 }
 
 html:not(.is-phone-layout) .topbar .search::before{
@@ -193,14 +193,14 @@ html:not(.is-phone-layout) .topbar .search::before{
   border-radius:inherit;
   background:
     linear-gradient(112deg,
-      rgba(255,255,255,.24) 0%,
-      rgba(255,255,255,.075) 18%,
-      transparent 38%,
+      rgba(255,255,255,.105) 0%,
+      rgba(255,255,255,.030) 17%,
+      transparent 34%,
       transparent 100%),
-    radial-gradient(80% 150% at 88% 110%,
-      rgba(185,220,255,.075) 0%,
-      transparent 58%);
-  opacity:.95;
+    radial-gradient(72% 145% at 90% 110%,
+      rgba(174,207,236,.038) 0%,
+      transparent 56%);
+  opacity:.85;
 }
 
 html:not(.is-phone-layout) .topbar .search input{
@@ -213,57 +213,57 @@ html:not(.is-phone-layout) .topbar .search input{
 
 html:not(.is-phone-layout) .topbar .search .search-icon{
   z-index:2;
-  color:rgba(226,233,242,.72)!important;
-  filter:drop-shadow(0 1px 1px rgba(0,0,0,.28));
+  color:rgba(214,221,230,.62)!important;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.32));
 }
 
 html:not(.is-phone-layout) .topbar .search input::placeholder{
-  color:rgba(226,230,236,.72)!important;
+  color:rgba(211,216,223,.60)!important;
 }
 
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill,
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:hover,
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:focus,
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:active{
-  -webkit-text-fill-color:#eef1f5!important;
-  caret-color:#eef1f5!important;
-  -webkit-box-shadow:0 0 0 1000px rgba(255,255,255,.025) inset!important;
-  box-shadow:0 0 0 1000px rgba(255,255,255,.025) inset!important;
+  -webkit-text-fill-color:#e8ebef!important;
+  caret-color:#e8ebef!important;
+  -webkit-box-shadow:0 0 0 1000px rgba(11,14,19,.34) inset!important;
+  box-shadow:0 0 0 1000px rgba(11,14,19,.34) inset!important;
 }
 
 html:not(.is-phone-layout) .topbar .search:focus-within{
-  border-color:rgba(255,255,255,.68)!important;
+  border-color:rgba(255,255,255,.46)!important;
   background:
-    radial-gradient(150% 195% at 5% -95%,
-      rgba(255,255,255,.50) 0%,
-      rgba(255,255,255,.17) 31%,
-      rgba(255,255,255,.045) 50%,
-      transparent 69%),
-    radial-gradient(92% 155% at 100% 125%,
-      rgba(190,226,255,.17) 0%,
-      rgba(190,226,255,.045) 44%,
+    radial-gradient(150% 188% at 5% -92%,
+      rgba(255,255,255,.19) 0%,
+      rgba(255,255,255,.060) 30%,
+      rgba(255,255,255,.016) 48%,
       transparent 67%),
+    radial-gradient(94% 150% at 100% 122%,
+      rgba(176,210,240,.10) 0%,
+      rgba(176,210,240,.028) 43%,
+      transparent 65%),
     linear-gradient(145deg,
-      rgba(255,255,255,.11) 0%,
-      rgba(255,255,255,.032) 43%,
-      rgba(5,8,12,.045) 70%,
-      rgba(210,234,255,.075) 100%),
-    rgba(12,16,22,.10)!important;
+      rgba(255,255,255,.048) 0%,
+      rgba(255,255,255,.013) 42%,
+      rgba(4,7,11,.060) 70%,
+      rgba(190,214,236,.032) 100%),
+    rgba(10,13,18,.27)!important;
   -webkit-backdrop-filter:
     blur(10px)
-    saturate(215%)
-    contrast(116%)
-    brightness(111%)!important;
+    saturate(175%)
+    contrast(109%)
+    brightness(104%)!important;
   backdrop-filter:
     blur(10px)
-    saturate(215%)
-    contrast(116%)
-    brightness(111%)!important;
+    saturate(175%)
+    contrast(109%)
+    brightness(104%)!important;
   box-shadow:
-    0 0 0 2px rgba(255,255,255,.045),
-    0 6px 18px rgba(0,0,0,.18),
-    inset 0 1px 1px rgba(255,255,255,.58),
-    inset 0 -1px 1px rgba(0,0,0,.15)!important;
+    0 0 0 1px rgba(255,255,255,.028),
+    0 4px 14px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -1px 0 rgba(0,0,0,.20)!important;
 }
 
 /* Sincronizar integra-se à mesma família do vidro das capas. */
