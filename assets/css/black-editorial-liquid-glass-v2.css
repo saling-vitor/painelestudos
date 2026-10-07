@@ -191,7 +191,8 @@ html:not(.is-phone-layout) .side .nav-btn{
   box-shadow:none!important;
 }
 html:not(.is-phone-layout) .side .nav-btn:hover{
-  background:rgba(255,255,255,.030)!important;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 html:not(.is-phone-layout) .side .nav-btn.active{
   border-color:rgba(255,255,255,.090)!important;
