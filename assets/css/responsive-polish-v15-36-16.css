@@ -117,37 +117,17 @@ html:not(.is-phone-layout) .continue-card>.primary{
   }
 }
 
-/* iPad paisagem: duas colunas e cards de curso mais baixos. */
+/* V15.47 · iPad: o grid e as capas da Home são canônicos em
+   ipad-course-covers-v15-36-28.css. Aqui permanece somente a composição
+   responsiva do card "Continuar", evitando regras históricas contraditórias. */
 @media(orientation:landscape){
-  html.is-ipad:not(.is-phone-layout) #homeCourses{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:12px!important;
-  }
-  html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-cover{
-    aspect-ratio:16/7.2!important;
-  }
   html.is-ipad:not(.is-phone-layout) .continue-card{
     grid-template-columns:clamp(188px,25%,232px) minmax(0,1fr) auto!important;
     min-height:146px!important;
     gap:12px!important;
   }
 }
-
-/* iPad retrato: uma coluna própria de tablet, sem virar smartphone ampliado. */
 @media(orientation:portrait){
-  html.is-ipad:not(.is-phone-layout) #homeCourses{
-    grid-template-columns:1fr!important;
-    gap:12px!important;
-  }
-  html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card{
-    width:100%!important;
-    min-height:0!important;
-    height:auto!important;
-  }
-  html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-card-cover{
-    aspect-ratio:16/5.8!important;
-    max-height:224px!important;
-  }
   html.is-ipad:not(.is-phone-layout) .continue-card{
     grid-template-columns:clamp(174px,26%,216px) minmax(0,1fr) auto!important;
     min-height:146px!important;
