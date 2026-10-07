@@ -1,0 +1,243 @@
+/* V15.40.0-G · Liquid Glass surfaces V1
+   Escopo: navegação, overlays, menus, filtros ativos e superfícies flutuantes.
+   Princípio: conteúdo permanece sólido; vidro fica reservado à interface de controle. */
+
+:root{
+  --lg-surface-bg:rgba(8,11,15,.56);
+  --lg-surface-bg-strong:rgba(8,11,15,.72);
+  --lg-surface-border:rgba(255,255,255,.17);
+  --lg-surface-border-strong:rgba(255,255,255,.26);
+  --lg-surface-highlight:rgba(255,255,255,.16);
+  --lg-surface-shadow:0 22px 58px rgba(0,0,0,.48);
+  --lg-surface-blur:blur(18px) saturate(155%) contrast(106%);
+}
+
+/* 1. Resultado da busca: continuação óptica da topbar. */
+.global-search-panel{
+  border-color:var(--lg-surface-border-strong)!important;
+  background:
+    radial-gradient(120% 90% at 8% -20%,
+      rgba(255,255,255,.13) 0%,
+      rgba(255,255,255,.035) 30%,
+      transparent 58%),
+    radial-gradient(80% 100% at 100% 110%,
+      rgba(174,207,236,.065) 0%,
+      transparent 60%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.030),
+      rgba(255,255,255,.006) 48%,
+      rgba(3,6,10,.10) 100%),
+    var(--lg-surface-bg-strong)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(165%) contrast(108%)!important;
+  backdrop-filter:blur(22px) saturate(165%) contrast(108%)!important;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(0,0,0,.24)!important;
+}
+.global-search-option:hover,
+.global-search-option[aria-selected="true"]{
+  border-color:rgba(255,255,255,.13)!important;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),
+    rgba(216,197,158,.025)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+
+/* 2. Sidebar: vidro só no item ativo, não na lateral inteira. */
+html:not(.is-phone-layout) .nav-btn.active{
+  border-color:color-mix(in srgb,var(--nav-accent) 22%,rgba(255,255,255,.10))!important;
+  background:
+    radial-gradient(115% 130% at 5% -35%,
+      rgba(255,255,255,.09) 0%,
+      transparent 52%),
+    linear-gradient(90deg,
+      color-mix(in srgb,var(--nav-accent) 9%,rgba(255,255,255,.018)),
+      color-mix(in srgb,var(--nav-accent) 3%,rgba(7,10,14,.44)) 72%,
+      rgba(7,10,14,.20))!important;
+  -webkit-backdrop-filter:blur(12px) saturate(145%)!important;
+  backdrop-filter:blur(12px) saturate(145%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 7px 20px rgba(0,0,0,.16)!important;
+}
+
+/* 3. Bottom navigation: dock Liquid Glass + lente ativa. */
+@media(max-width:820px){
+  .bottom-nav{
+    border-color:rgba(255,255,255,.18)!important;
+    background:
+      radial-gradient(120% 150% at 10% -65%,
+        rgba(255,255,255,.14) 0%,
+        rgba(255,255,255,.035) 38%,
+        transparent 62%),
+      linear-gradient(145deg,
+        rgba(255,255,255,.030),
+        rgba(4,7,11,.065) 64%,
+        rgba(174,207,236,.022)),
+      rgba(7,10,14,.62)!important;
+    -webkit-backdrop-filter:blur(22px) saturate(165%) contrast(106%)!important;
+    backdrop-filter:blur(22px) saturate(165%) contrast(106%)!important;
+    box-shadow:
+      0 22px 58px rgba(0,0,0,.56),
+      inset 0 1px 0 rgba(255,255,255,.16),
+      inset 0 -1px 0 rgba(0,0,0,.24)!important;
+  }
+  .bottom-nav button.active{
+    border-color:color-mix(in srgb,var(--nav-accent) 28%,rgba(255,255,255,.13))!important;
+    background:
+      radial-gradient(125% 140% at 15% -35%,
+        rgba(255,255,255,.11),
+        transparent 55%),
+      linear-gradient(180deg,
+        color-mix(in srgb,var(--nav-accent) 10%,rgba(255,255,255,.025)),
+        color-mix(in srgb,var(--nav-accent) 5%,rgba(7,9,12,.42)))!important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.12),
+      0 7px 20px color-mix(in srgb,var(--nav-accent) 8%,transparent)!important;
+    -webkit-backdrop-filter:blur(10px) saturate(145%)!important;
+    backdrop-filter:blur(10px) saturate(145%)!important;
+  }
+}
+
+/* 4. Popovers e menus contextuais. */
+:is(
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .maps-filter-panel
+){
+  border-color:var(--lg-surface-border-strong)!important;
+  background:
+    radial-gradient(125% 110% at 8% -25%,
+      rgba(255,255,255,.12),
+      rgba(255,255,255,.025) 36%,
+      transparent 60%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.026),
+      rgba(3,6,10,.085) 72%),
+    var(--lg-surface-bg-strong)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(160%) contrast(107%)!important;
+  backdrop-filter:blur(22px) saturate(160%) contrast(107%)!important;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(0,0,0,.22)!important;
+}
+:is(
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu
+) button:hover{
+  background:rgba(255,255,255,.055)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+
+/* 5. Modais e toasts: vidro mais denso para preservar legibilidade. */
+.modal-card{
+  border-color:rgba(255,255,255,.18)!important;
+  background:
+    radial-gradient(110% 70% at 5% -10%,
+      rgba(255,255,255,.10),
+      transparent 50%),
+    linear-gradient(160deg,
+      rgba(255,255,255,.025),
+      rgba(3,6,10,.10) 70%),
+    rgba(7,10,14,.80)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(145%) contrast(106%)!important;
+  backdrop-filter:blur(24px) saturate(145%) contrast(106%)!important;
+  box-shadow:
+    0 34px 100px rgba(0,0,0,.70),
+    inset 0 1px 0 rgba(255,255,255,.15)!important;
+}
+.toast{
+  border-color:rgba(255,255,255,.20)!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.045),rgba(3,6,10,.08)),
+    rgba(8,11,15,.74)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%)!important;
+  backdrop-filter:blur(18px) saturate(150%)!important;
+  box-shadow:
+    0 18px 48px rgba(0,0,0,.56),
+    inset 0 1px 0 rgba(255,255,255,.11)!important;
+}
+
+/* 6. Superfícies flutuantes e filtros selecionados. */
+.course-sticky-bar{
+  border-color:rgba(255,255,255,.17)!important;
+  background:
+    radial-gradient(120% 120% at 7% -45%,
+      rgba(255,255,255,.09),
+      transparent 54%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.020),
+      rgba(3,6,10,.075)),
+    rgba(7,10,14,.68)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(150%)!important;
+  backdrop-filter:blur(20px) saturate(150%)!important;
+  box-shadow:
+    0 18px 46px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+
+.course-study-filter.active,
+.category-btn.active{
+  border-color:rgba(216,197,158,.30)!important;
+  background:
+    radial-gradient(130% 130% at 12% -35%,
+      rgba(255,255,255,.10),
+      transparent 53%),
+    linear-gradient(145deg,
+      rgba(216,197,158,.080),
+      rgba(216,197,158,.025)),
+    rgba(8,11,15,.42)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(145%)!important;
+  backdrop-filter:blur(10px) saturate(145%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.09),
+    0 5px 14px rgba(0,0,0,.14)!important;
+}
+
+.simulation-toolbar select{
+  border-color:rgba(255,255,255,.15)!important;
+  background-color:rgba(10,13,18,.58)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(145%)!important;
+  backdrop-filter:blur(12px) saturate(145%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+
+/* Acessibilidade / fallbacks. */
+@media(prefers-reduced-transparency:reduce){
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .maps-filter-panel,
+  .modal-card,
+  .toast,
+  .course-sticky-bar,
+  .bottom-nav{
+    background:#0b0e12!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+@media(forced-colors:active){
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .maps-filter-panel,
+  .modal-card,
+  .toast,
+  .course-sticky-bar,
+  .bottom-nav,
+  html:not(.is-phone-layout) .nav-btn.active{
+    background:Canvas!important;
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
