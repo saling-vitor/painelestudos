@@ -1,0 +1,642 @@
+/* ==========================================================================
+   MEUS MAPAS · BLACK EDITORIAL + LIQUID GLASS REFINADO · PASSO 2
+   Camada final de tema. Carregada por último para neutralizar o chrome cromático
+   legado sem apagar cores semânticas de cursos, tags, mapas e estados.
+   Regra: conteúdo permanente = matte; camada funcional = Liquid Glass.
+   ========================================================================== */
+
+:root{
+  color-scheme:dark;
+
+  /* Ambiente */
+  --mm-bg-deep:#020304;
+  --mm-bg:#040506;
+  --mm-bg-raised:#070809;
+  --mm-bg-soft:#0A0B0C;
+
+  /* Superfícies permanentes */
+  --mm-surface-0:#08090A;
+  --mm-surface-1:#0B0C0E;
+  --mm-surface-2:#0E0F11;
+  --mm-surface-3:#111214;
+
+  /* Texto */
+  --mm-text-strong:#F4F2ED;
+  --mm-text:#D5D3CE;
+  --mm-text-secondary:#A19F9A;
+  --mm-text-muted:#74736F;
+
+  /* Marca */
+  --mm-cream:#E8D7B1;
+  --mm-coral:#EF745F;
+
+  /* Linhas e sombras neutras */
+  --mm-line:rgba(255,255,255,.090);
+  --mm-line-soft:rgba(255,255,255,.055);
+  --mm-line-strong:rgba(255,255,255,.16);
+  --mm-shadow-surface:0 14px 34px rgba(0,0,0,.34);
+  --mm-shadow-float:0 28px 78px rgba(0,0,0,.62);
+
+  /* Liquid Glass — uma superfície funcional = um backdrop-filter */
+  --mm-glass-regular-bg:rgba(9,10,11,.60);
+  --mm-glass-regular-filter:blur(20px) saturate(128%) contrast(104%);
+  --mm-glass-dense-bg:rgba(8,9,10,.82);
+  --mm-glass-dense-filter:blur(24px) saturate(122%) contrast(105%);
+  --mm-glass-clear-bg:rgba(12,12,13,.24);
+  --mm-glass-clear-filter:blur(11px) saturate(135%);
+  --mm-glass-border:rgba(255,255,255,.16);
+  --mm-glass-border-strong:rgba(255,255,255,.22);
+  --mm-glass-highlight:rgba(255,255,255,.14);
+  --mm-glass-outer:rgba(0,0,0,.82);
+
+  /* Compatibilidade com tokens legados */
+  --mm-bg-0:var(--mm-bg-deep);
+  --mm-bg-1:var(--mm-bg);
+  --mm-bg-2:var(--mm-bg-raised);
+  --mm-surface-border:var(--mm-line);
+  --mm-surface-border-soft:var(--mm-line-soft);
+  --mm-glass-bg:var(--mm-glass-regular-bg);
+  --mm-glass-dense:var(--mm-glass-dense-bg);
+  --mm-glass-filter:var(--mm-glass-regular-filter);
+  --lg-regular-bg:var(--mm-glass-regular-bg);
+  --lg-dense-bg:var(--mm-glass-dense-bg);
+  --lg-regular-border:var(--mm-glass-border);
+  --lg-separator:rgba(255,255,255,.075);
+  --lg-inner-fill-hover:rgba(255,255,255,.045);
+
+  --mm-topo-opacity:.085;
+  --mm-topo-size:900px;
+}
+
+/* ==========================================================================
+   1 · AMBIENTE BLACK EDITORIAL
+   ========================================================================== */
+html{
+  background:var(--mm-bg-deep)!important;
+  color:var(--mm-text)!important;
+}
+body{
+  position:relative;
+  isolation:isolate;
+  color:var(--mm-text)!important;
+  background:
+    radial-gradient(1200px 720px at 8% -16%,rgba(255,255,255,.032),transparent 66%),
+    radial-gradient(980px 700px at 100% 18%,rgba(255,255,255,.018),transparent 70%),
+    linear-gradient(180deg,var(--mm-bg),var(--mm-bg-deep) 52%,#010203)!important;
+}
+body::before{
+  background-image:url("../ui/topographic-map-v15-42.svg")!important;
+  background-repeat:repeat!important;
+  background-position:center top!important;
+  background-size:var(--mm-topo-size) var(--mm-topo-size)!important;
+  opacity:var(--mm-topo-opacity)!important;
+  -webkit-mask-image:radial-gradient(ellipse 70% 66% at 50% 42%,rgba(0,0,0,.16) 0 28%,rgba(0,0,0,.40) 52%,rgba(0,0,0,.78) 76%,#000 100%)!important;
+  mask-image:radial-gradient(ellipse 70% 66% at 50% 42%,rgba(0,0,0,.16) 0 28%,rgba(0,0,0,.40) 52%,rgba(0,0,0,.78) 76%,#000 100%)!important;
+}
+body>.app{position:relative;z-index:1}
+
+.content,
+.main,
+.view{background:transparent!important}
+
+/* Leitores e superfícies densas nunca recebem a topografia internamente. */
+:is(#reader,.simulation-reader,.reader-frame-shell,.simulation-frame-shell,.reader-shell,.map-reader){
+  background-color:var(--mm-bg)!important;
+  background-image:none!important;
+}
+
+/* ==========================================================================
+   2 · TIPOGRAFIA / CROMA ESTRUTURAL NEUTRO
+   ========================================================================== */
+:is(.section-head h2,.study-agenda-head h2,.planner-page-head h2,.settings-control-center .section-head h2){
+  color:var(--mm-text-strong)!important;
+}
+:is(.section-head p,.modal-description,.map-card p,.course-card p,.simulation-card p){
+  color:var(--mm-text-secondary)!important;
+}
+:is(.kicker,.panel-kicker,.section-kicker,.simulation-manage-section-head>div>span){
+  color:var(--mm-cream)!important;
+}
+.hero h1,.course-hero h1{color:var(--mm-cream)!important}
+.hero h1 span{color:var(--mm-coral)!important}
+
+/* ==========================================================================
+   3 · REGULAR GLASS — SHELL FUNCIONAL
+   ========================================================================== */
+html:not(.is-phone-layout) .topbar,
+html:not(.is-phone-layout) .side,
+.bottom-nav,
+.course-primary-actions,
+.course-sticky-bar{
+  border:1px solid var(--mm-glass-border)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.008) 34%,transparent 58%),
+    var(--mm-glass-regular-bg)!important;
+  -webkit-backdrop-filter:var(--mm-glass-regular-filter)!important;
+  backdrop-filter:var(--mm-glass-regular-filter)!important;
+  box-shadow:
+    0 0 0 1px var(--mm-glass-outer),
+    0 18px 48px rgba(0,0,0,.42),
+    inset 0 1px 0 var(--mm-glass-highlight),
+    inset 0 -1px 0 rgba(0,0,0,.32)!important;
+}
+
+/* Topbar: preto translúcido, sem leitura cromática fria. */
+html:not(.is-phone-layout) .topbar{
+  background:
+    radial-gradient(115% 150% at 9% -72%,rgba(255,255,255,.10),transparent 58%),
+    linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.006) 40%,transparent 66%),
+    var(--mm-glass-regular-bg)!important;
+}
+
+/* Sidebar: fumê quase preto; a topografia é percebida apenas através do vidro. */
+html:not(.is-phone-layout) .side{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.022),transparent 38%),
+    rgba(7,8,9,.70)!important;
+}
+
+/* ==========================================================================
+   4 · PROIBIDO GLASS-ON-GLASS
+   Controles internos usam fill/tint/border; nenhum novo blur.
+   ========================================================================== */
+html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn,.icon-btn,button,input),
+html:not(.is-phone-layout) .side .nav-btn,
+.bottom-nav>button,
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn),
+.course-sticky-bar :is(button,label,select,input),
+.course-sticky-bar label :is(select,input){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Busca e Sincronizar = lentes internas, não superfícies de vidro independentes. */
+html:not(.is-phone-layout) .topbar .search{
+  border:1px solid rgba(255,255,255,.10)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012)),
+    rgba(255,255,255,.020)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),inset 0 -1px 0 rgba(0,0,0,.18)!important;
+}
+html:not(.is-phone-layout) .topbar .search:focus-within{
+  border-color:rgba(255,255,255,.22)!important;
+  background:rgba(255,255,255,.036)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 0 0 2px rgba(232,215,177,.10)!important;
+}
+html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn){
+  border-color:rgba(255,255,255,.10)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.040),rgba(255,255,255,.014)),
+    rgba(255,255,255,.020)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn):is(:hover,:focus-visible){
+  border-color:rgba(255,255,255,.18)!important;
+  background:rgba(255,255,255,.050)!important;
+}
+
+/* Sidebar: itens transparentes, hover discreto, ativo = lente interna. */
+html:not(.is-phone-layout) .side .nav-btn{
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) .side .nav-btn:hover{
+  background:rgba(255,255,255,.030)!important;
+}
+html:not(.is-phone-layout) .side .nav-btn.active{
+  border-color:rgba(255,255,255,.090)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,.016)),
+    rgba(255,255,255,.012)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.075)!important;
+}
+
+/* Bottom dock: uma superfície; item ativo = lente sem blur. */
+.bottom-nav>button{
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.bottom-nav>button:is(:hover,:focus-visible){background:rgba(255,255,255,.030)!important}
+.bottom-nav>button.active{
+  border-color:rgba(255,255,255,.095)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,.016)),
+    rgba(255,255,255,.012)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.075)!important;
+}
+
+/* Grupo de ações do curso: vidro apenas no invólucro. */
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn){
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn):is(:hover,:focus-visible){
+  background:rgba(255,255,255,.045)!important;
+}
+
+/* Filtros e selects dentro de barras funcionais: fill, nunca glass aninhado. */
+:is(.course-study-filter.active,.category-btn.active,.simulation-toolbar select,.simulation-toolbar .ui-select-trigger){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border-color:rgba(255,255,255,.11)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012)),
+    var(--mm-surface-1)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
+}
+
+/* ==========================================================================
+   5 · CONTEÚDO PERMANENTE = MATTE BLACK
+   ========================================================================== */
+.app .content :is(
+  .map-card,
+  .course-card,
+  .course-library-card,
+  .simulation-card,
+  .continue-card,
+  .study-command-card,
+  .study-intelligence-row>article,
+  .study-intelligence-panel,
+  .priority-now-card,
+  .forecast-home-card,
+  .home-review-section,
+  .progress-insights,
+  .progress-insight-card,
+  .progress-attention,
+  .progress-global-panel,
+  .progress-course,
+  .study-agenda-calendar,
+  .study-agenda-side,
+  .agenda-day,
+  .study-analytics-grid>.panel,
+  .study-heatmap-card,
+  .settings-control-panel,
+  .settings-control-summary,
+  .study-time-manage,
+  .study-automation-panel,
+  .account-connected-card,
+  .app-update-compact,
+  .diagnostic-row,
+  .restore-point-item,
+  .simulation-manage-section,
+  .map-file-panel,
+  .cover-editor,
+  .version-panel,
+  .panel
+){
+  border-color:var(--mm-line)!important;
+  background:linear-gradient(180deg,var(--mm-surface-2),var(--mm-surface-1))!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:var(--mm-shadow-surface)!important;
+}
+
+/* Cards principais um pouco mais sólidos/escuros. */
+.app .content :is(.map-card,.course-card,.course-library-card,.simulation-card){
+  background:linear-gradient(180deg,#0D0E10,#090A0C)!important;
+}
+.app .content .map-card:hover{
+  box-shadow:0 17px 38px rgba(0,0,0,.42)!important;
+}
+
+/* Curso/hero: editorial sólido; sem glow azul. */
+.app .content .course-hero{
+  border-color:rgba(255,255,255,.085)!important;
+  background:
+    radial-gradient(580px 290px at 0% 0%,rgba(232,215,177,.045),transparent 70%),
+    linear-gradient(110deg,#0E0F11,#08090A 62%,#060708)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:0 22px 54px rgba(0,0,0,.38)!important;
+}
+.app .content .hero{
+  background-color:#050607!important;
+  box-shadow:0 34px 110px rgba(0,0,0,.66),inset 0 1px rgba(255,255,255,.04)!important;
+}
+
+/* KPIs internos e pequenos agrupamentos permanecem sólidos. */
+.app .content :is(.hero-stats,.study-command-metrics){
+  border-color:var(--mm-line)!important;
+  background:var(--mm-surface-0)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.app .content .study-command-metrics>button{
+  background:var(--mm-surface-1)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* ==========================================================================
+   6 · CLEAR GLASS — SOMENTE CONTROLES SOBRE CAPAS
+   ========================================================================== */
+:is(
+  .map-card.has-cover>.fav,
+  .map-card.has-cover>.map-admin-btn,
+  .course-card-edit,
+  .course-library-card .course-card-edit,
+  .simulation-card.has-cover .simulation-card-menu-btn
+){
+  border:1px solid rgba(255,255,255,.24)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.090),rgba(255,255,255,.018) 56%,transparent),
+    var(--mm-glass-clear-bg)!important;
+  -webkit-backdrop-filter:var(--mm-glass-clear-filter)!important;
+  backdrop-filter:var(--mm-glass-clear-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.58),
+    0 7px 20px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.20)!important;
+}
+
+/* ==========================================================================
+   7 · DENSE GLASS — MENUS / POPOVERS / SEARCH RESULTS
+   ========================================================================== */
+:is(
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet,
+  .popover,
+  .context-menu
+){
+  border:1px solid var(--mm-glass-border-strong)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.036),rgba(255,255,255,.006) 42%,transparent 68%),
+    var(--mm-glass-dense-bg)!important;
+  -webkit-backdrop-filter:var(--mm-glass-dense-filter)!important;
+  backdrop-filter:var(--mm-glass-dense-filter)!important;
+  box-shadow:
+    0 0 0 1px var(--mm-glass-outer),
+    var(--mm-shadow-float),
+    inset 0 1px 0 var(--mm-glass-highlight)!important;
+}
+
+/* Itens internos de popover não empilham blur. */
+:is(
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet,
+  .popover,
+  .context-menu
+) :is(button,a,input,select,.ui-select-option,[role="option"],[role="menuitem"]){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* ==========================================================================
+   8 · MODAIS
+   ========================================================================== */
+:is(.modal,.modal-backdrop,.dialog-backdrop,.maps-filter-backdrop){
+  background-color:rgba(0,0,0,.58)!important;
+}
+:is(.modal-card,.planner-modal-card,.study-doubt-card,[role="dialog"].modal-card){
+  border:1px solid rgba(255,255,255,.18)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.030),rgba(255,255,255,.005) 45%,transparent 70%),
+    rgba(7,8,9,.88)!important;
+  -webkit-backdrop-filter:var(--mm-glass-dense-filter)!important;
+  backdrop-filter:var(--mm-glass-dense-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.86),
+    0 36px 100px rgba(0,0,0,.72),
+    inset 0 1px 0 rgba(255,255,255,.13)!important;
+}
+:is(.modal-card,.planner-modal-card,.study-doubt-card) :is(button,input,select,textarea){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Toasts usam Dense Glass porque são overlays transitórios. */
+.toast{
+  border-color:rgba(255,255,255,.16)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.030),transparent 64%),
+    rgba(8,9,10,.82)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
+  backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
+  box-shadow:0 22px 58px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.11)!important;
+}
+
+/* ==========================================================================
+   9 · FORMULÁRIOS / CONTROLES GERAIS — SEM TINT ESTRUTURAL FRIA
+   ========================================================================== */
+.app :is(input,select,textarea,.ui-select-trigger){
+  color:var(--mm-text)!important;
+}
+.app :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
+  border-color:rgba(255,255,255,.10)!important;
+  background-color:#0A0B0C!important;
+  box-shadow:none!important;
+}
+.app :is(input,select,textarea):focus-visible{
+  border-color:rgba(232,215,177,.38)!important;
+  outline:1px solid rgba(232,215,177,.42)!important;
+  outline-offset:2px!important;
+}
+
+/* Focus keyboard visível também em botões e links. */
+.app :is(button,a,[role="button"],[tabindex]):focus-visible{
+  outline:2px solid rgba(232,215,177,.62)!important;
+  outline-offset:2px!important;
+}
+
+/* Rótulos auxiliares de 7.5–8px: contraste AA sobre surface-1. */
+.app .content .study-command-metrics small{
+  color:#7F7E79!important;
+}
+
+/* ==========================================================================
+   10 · IPAD / BREAKPOINTS POR LARGURA
+   ========================================================================== */
+@media(max-width:1180px){
+  :root{
+    --mm-topo-opacity:.060;
+    --mm-topo-size:820px;
+  }
+}
+@media(min-width:900px){
+  html.is-ipad:not(.is-phone-layout) .side{
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.020),transparent 40%),
+      rgba(7,8,9,.73)!important;
+  }
+}
+@media(max-width:899px){
+  html.is-ipad:not(.is-phone-layout) .bottom-nav{
+    -webkit-backdrop-filter:var(--mm-glass-regular-filter)!important;
+    backdrop-filter:var(--mm-glass-regular-filter)!important;
+  }
+}
+
+/* ==========================================================================
+   11 · SMARTPHONE
+   ========================================================================== */
+@media(max-width:480px){
+  :root{
+    --mm-topo-opacity:.036;
+    --mm-topo-size:680px;
+  }
+  body{
+    background:
+      radial-gradient(720px 500px at 5% -8%,rgba(255,255,255,.022),transparent 66%),
+      linear-gradient(180deg,var(--mm-bg),var(--mm-bg-deep) 54%,#010203)!important;
+  }
+
+  html.is-phone-layout .topbar{
+    border-color:rgba(255,255,255,.13)!important;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.025),transparent 62%),
+      rgba(8,9,10,.72)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(124%) contrast(104%)!important;
+    backdrop-filter:blur(18px) saturate(124%) contrast(104%)!important;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.78),
+      0 14px 38px rgba(0,0,0,.42),
+      inset 0 1px 0 rgba(255,255,255,.10)!important;
+  }
+  html.is-phone-layout .topbar :is(.search,#syncTop,#installBtn,.icon-btn,button,input){
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+
+  html.is-phone-layout .bottom-nav{
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.030),transparent 62%),
+      rgba(9,10,11,.68)!important;
+    -webkit-backdrop-filter:blur(20px) saturate(128%) contrast(104%)!important;
+    backdrop-filter:blur(20px) saturate(128%) contrast(104%)!important;
+  }
+
+  /* Mantém cinco destinos e as safe areas definidas pelas folhas responsivas. */
+  html.is-phone-layout .bottom-nav{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+  html.is-phone-layout .bottom-nav :is(.bottom-nav-simulations,.bottom-nav-agenda){
+    display:none!important;
+  }
+
+  /* Sheets/popovers móveis usam Dense Glass, sem azul. */
+  html.is-phone-layout :is(.mobile-menu-sheet,.maps-filter-panel,.ui-select-popover,.course-more-menu){
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.030),transparent 60%),
+      rgba(8,9,10,.88)!important;
+    -webkit-backdrop-filter:blur(21px) saturate(122%) contrast(104%)!important;
+    backdrop-filter:blur(21px) saturate(122%) contrast(104%)!important;
+  }
+}
+
+/* ==========================================================================
+   12 · ACESSIBILIDADE / FALLBACKS
+   ========================================================================== */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast
+  ){
+    background:#0B0C0E!important;
+    background-image:none!important;
+  }
+}
+
+@media(prefers-reduced-transparency:reduce){
+  :root{--mm-topo-opacity:.028}
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast,
+    .map-card.has-cover>.fav,.map-card.has-cover>.map-admin-btn,
+    .course-card-edit,.simulation-card.has-cover .simulation-card-menu-btn
+  ){
+    background:#0B0C0E!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+
+@media(prefers-contrast:more){
+  :root{--mm-topo-opacity:.025}
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card
+  ){
+    border-color:rgba(255,255,255,.48)!important;
+    background-color:#070809!important;
+  }
+  .app :is(input,select,textarea,button,a,[role="button"]):focus-visible{
+    outline-color:#fff!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    scroll-behavior:auto!important;
+  }
+  :is(
+    .nav-btn,.bottom-nav button,.course-primary-actions button,
+    .ui-select-trigger,.ui-select-option,.course-study-filter,.category-btn,
+    .map-card,.course-card,.simulation-card
+  ){
+    transition:none!important;
+    animation:none!important;
+  }
+}
+
+@media(forced-colors:active){
+  body::before{display:none!important}
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast
+  ){
+    background:Canvas!important;
+    background-image:none!important;
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .app :is(button,a,input,select,textarea,[role="button"]):focus-visible{
+    outline:2px solid Highlight!important;
+  }
+}
+
+/* ==========================================================================
+   13 · HARD GUARD: CONTEÚDO NUNCA HERDA GLASS
+   ========================================================================== */
+.app .content :is(
+  .course-card,.course-library-card,.map-card,.simulation-card,
+  .progress-insight-card,.study-plan-item,.agenda-day,.panel,
+  .study-command-card,.continue-card,.home-review-section
+){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}

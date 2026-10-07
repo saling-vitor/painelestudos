@@ -2,15 +2,15 @@
   "version": "15.42.0",
   "label": "V15.42.0-G",
   "releasedAt": "2026-10-07T17:45:00.000Z",
-  "notes": "V15.42 unifica o Meus Mapas com a Template V211: Design System V2, ambiente topografico global, hierarquia editorial, cards e paineis escuros por tema, mantendo Liquid Glass apenas na camada funcional.",
+  "notes": "Passo 2 refina o sistema para Black Editorial: shell graphite neutro, topografia mais silenciosa e Liquid Glass restrito à camada funcional, sem glass-on-glass.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Ambiente global ganha linhas topograficas minimalistas e malha cartografica discreta",
-    "[G] Design System V2 unifica sidebar, topbar, docks, menus, filtros e overlays sem glass-on-glass",
-    "[G] A Template V211 passa a orientar hero, tipografia, kickers, cards, paineis e formularios do sistema",
-    "[G] Cards de mapa passam a seguir a linguagem dos topic-card V211: superficie escura, borda fina e assinatura lateral por tema",
-    "[G] Home, Cursos, Mapas, Simulados, Progresso, Agenda, Configuracoes e Reader compartilham o mesmo vocabulario visual",
-    "[G] Desktop, iPad e iPhone preservam suas densidades e navegacoes aprovadas com fallbacks de acessibilidade"
+    "[G] Paleta estrutural migra de navy tecnológico para black/graphite neutro com creme e coral da marca",
+    "[G] Topografia ganha escala maior, menor densidade e máscara radial para liberar o centro do conteúdo",
+    "[G] Topbar, sidebar, dock e barras funcionais usam Liquid Glass neutro; controles internos usam lentes sem backdrop-filter",
+    "[G] Cards, painéis, progresso, agenda e simulados permanecem matte black e preservam cores semânticas de curso/tag",
+    "[G] Menus, popovers, resultados de busca e modais compartilham Dense Glass; controles sobre capas usam Clear Glass",
+    "[G] Reduced transparency, contraste aumentado, reduced motion e forced colors recebem fallbacks dedicados"
   ],
   "automation": {
     "enabled": true,
