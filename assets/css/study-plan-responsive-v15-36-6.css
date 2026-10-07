@@ -30,7 +30,7 @@
   min-width:118px;
   min-height:38px;
   border-color:color-mix(in srgb,var(--plan-accent) 36%,rgba(255,255,255,.10))!important;
-  background:color-mix(in srgb,var(--plan-accent) 8%,#0d1013)!important;
+  background:color-mix(in srgb,var(--plan-accent) 8%,#0d0d0e)!important;
   color:color-mix(in srgb,var(--plan-accent) 72%,#f2f3f5)!important;
   box-shadow:none!important;
 }
@@ -112,7 +112,7 @@
 }
 .home-review-section .study-plan-item.is-next>button{
   border-color:color-mix(in srgb,var(--map-accent,var(--plan-accent)) 38%,rgba(255,255,255,.08))!important;
-  background:color-mix(in srgb,var(--map-accent,var(--plan-accent)) 8%,#0c0f12)!important;
+  background:color-mix(in srgb,var(--map-accent,var(--plan-accent)) 8%,#0c0c0d)!important;
   color:color-mix(in srgb,var(--map-accent,var(--plan-accent)) 70%,#f0f2f4)!important;
 }
 .study-plan-footer{
