@@ -134,7 +134,7 @@ select option:checked{background:#242424;color:#ead8b3}
 }
 .ui-select-trigger:hover{
   border-color:rgba(255,255,255,.14);
-  background:linear-gradient(180deg,rgba(23,23,24,.98),rgba(15,17,21,.98));
+  background:linear-gradient(180deg,rgba(23,23,24,.98),rgba(16,16,17,.98));
 }
 .ui-select-trigger:focus-visible{
   outline:0!important;
