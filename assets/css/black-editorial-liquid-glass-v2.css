@@ -64,8 +64,6 @@
   --lg-separator:rgba(255,255,255,.075);
   --lg-inner-fill-hover:rgba(255,255,255,.045);
 
-  --mm-topo-opacity:.085;
-  --mm-topo-size:900px;
 }
 
 /* ==========================================================================
@@ -79,20 +77,9 @@ body{
   position:relative;
   isolation:isolate;
   color:var(--mm-text)!important;
-  background:
-    radial-gradient(1200px 720px at 8% -16%,rgba(255,255,255,.032),transparent 66%),
-    radial-gradient(980px 700px at 100% 18%,rgba(255,255,255,.018),transparent 70%),
-    linear-gradient(180deg,var(--mm-bg),var(--mm-bg-deep) 52%,#010203)!important;
 }
-body::before{
-  background-image:url("../ui/topographic-map-v15-42.svg")!important;
-  background-repeat:repeat!important;
-  background-position:center top!important;
-  background-size:var(--mm-topo-size) var(--mm-topo-size)!important;
-  opacity:var(--mm-topo-opacity)!important;
-  -webkit-mask-image:radial-gradient(ellipse 70% 66% at 50% 42%,rgba(0,0,0,.16) 0 28%,rgba(0,0,0,.40) 52%,rgba(0,0,0,.78) 76%,#000 100%)!important;
-  mask-image:radial-gradient(ellipse 70% 66% at 50% 42%,rgba(0,0,0,.16) 0 28%,rgba(0,0,0,.40) 52%,rgba(0,0,0,.78) 76%,#000 100%)!important;
-}
+/* O ambiente topográfico global é responsabilidade exclusiva
+   de topographic-environment-v15-43.css. */
 body>.app{position:relative;z-index:1}
 
 .content,
@@ -463,12 +450,6 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 /* ==========================================================================
    10 · IPAD / BREAKPOINTS POR LARGURA
    ========================================================================== */
-@media(max-width:1180px){
-  :root{
-    --mm-topo-opacity:.060;
-    --mm-topo-size:820px;
-  }
-}
 @media(min-width:900px){
   html.is-ipad:not(.is-phone-layout) .side{
     background:
@@ -487,16 +468,6 @@ html:not(.is-phone-layout) .side .nav-btn.active{
    11 · SMARTPHONE
    ========================================================================== */
 @media(max-width:480px){
-  :root{
-    --mm-topo-opacity:.036;
-    --mm-topo-size:680px;
-  }
-  body{
-    background:
-      radial-gradient(720px 500px at 5% -8%,rgba(255,255,255,.022),transparent 66%),
-      linear-gradient(180deg,var(--mm-bg),var(--mm-bg-deep) 54%,#010203)!important;
-  }
-
   html.is-phone-layout .topbar{
     border-color:rgba(255,255,255,.13)!important;
     background:
@@ -557,7 +528,6 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 }
 
 @media(prefers-reduced-transparency:reduce){
-  :root{--mm-topo-opacity:.028}
   :is(
     .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
     .global-search-panel,.course-more-menu,.reader-more-menu,
@@ -575,7 +545,6 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 }
 
 @media(prefers-contrast:more){
-  :root{--mm-topo-opacity:.025}
   :is(
     .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
     .global-search-panel,.course-more-menu,.reader-more-menu,

@@ -1,23 +1,18 @@
 {
-  "version": "15.44.0",
-  "label": "V15.44.0-G",
+  "version": "15.45.0",
+  "label": "V15.45.0-G",
   "releasedAt": "2026-10-07T17:45:00.000Z",
-  "notes": "Dynamic Liquid Glass V2 transforma o vidro funcional em um sistema óptico responsivo: escala por contexto, rim refrativo, specular tracking, active lens compartilhada, morph de busca/popovers, press optics e densidade por scroll, mantendo o conteúdo matte.",
+  "notes": "Novo ambiente topográfico raster orgânico substitui o padrão SVG repetitivo, preservando o Black Editorial e a integração com o Dynamic Liquid Glass V2.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Inter passa a ser a fonte principal oficial da interface, com fontes de sistema apenas como fallback",
-    "[G] Liquid Glass ganha escalas Micro, Controls, Bar e Large sem reintroduzir tint estrutural azul",
-    "[G] Refractive rim, specular tracking e sombra dinâmica respondem ao ponteiro fino via requestAnimationFrame",
-    "[G] Sidebar e bottom dock recebem active lens compartilhada com movimento por transform e fallback instantâneo em Reduce Motion",
-    "[G] Busca e popovers ganham morph de origem conectado sem glass-on-glass",
-    "[G] Topbar adapta discretamente sua densidade ao scroll e barras ganham scroll edge sem backdrop extra",
-    "[G] Touch usa press optics sem executar tracking desktop; micro glass fora da viewport desativa blur",
-    "[G] Reduce Transparency, Reduce Motion, contraste aumentado e forced-colors mantêm estados funcionais"
+    "[G] Topografia global passa a usar composição raster orgânica e contínua, sem mosaico ou emendas visíveis",
+    "[G] O WebP transparente preserva os gradientes graphite e permanece mais discreto no centro, tablet e smartphone",
+    "[G] Leitores continuam limpos, enquanto o raster aparece naturalmente através das superfícies Liquid Glass existentes"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.44",
+    "series": "15.45",
     "channel": "G",
-    "runBase": 686
+    "runBase": 694
   }
 }
