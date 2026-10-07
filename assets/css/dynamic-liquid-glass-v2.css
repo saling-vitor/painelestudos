@@ -69,9 +69,7 @@ textarea{
   --glass-intensity:0;
   --glass-highlight-alpha:.045;
   --glass-shadow-x:0px;
-  position:relative;
   isolation:isolate;
-  overflow:visible;
 }
 .mm-optical-surface::before{
   content:"";
@@ -290,8 +288,12 @@ textarea{
    5 · ACTIVE LENS COMPARTILHADA
    ========================================================================== */
 .mm-lens-host{
-  position:relative!important;
   isolation:isolate;
+}
+.mm-position-anchor,
+.course-study-filters.mm-lens-host,
+.category-row.mm-lens-host{
+  position:relative!important;
 }
 .mm-active-lens{
   position:absolute!important;
@@ -406,9 +408,6 @@ textarea{
 /* ==========================================================================
    8 · SCROLL EDGE + TOPBAR DENSITY
    ========================================================================== */
-:is(.topbar,.bottom-nav,.course-sticky-bar){
-  position:relative;
-}
 .mm-scroll-edge{
   position:absolute!important;
   left:2px;
@@ -585,4 +584,36 @@ html.mm-scrolled .topbar.mm-scroll-density{
   }
   .mm-optical-surface::before,
   .mm-optical-surface::after{display:none!important}
+}
+
+
+/* ==========================================================================
+   FINAL ACCESSIBILITY OVERRIDE
+   Deve vencer inclusive as regras mm-optics-supported de maior especificidade.
+   ========================================================================== */
+html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface,
+html.mm-optics-supported.mm-reduced-transparency .toast{
+  background:#0B0C0E!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  --mm-context-tint:transparent!important;
+}
+html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface::before,
+html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface::after{
+  display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+  html.mm-optics-supported .mm-optical-surface,
+  html.mm-optics-supported .toast{
+    background:#0B0C0E!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    --mm-context-tint:transparent!important;
+  }
+  html.mm-optics-supported .mm-optical-surface::before,
+  html.mm-optics-supported .mm-optical-surface::after{
+    display:none!important;
+  }
 }
