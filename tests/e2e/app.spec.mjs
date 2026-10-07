@@ -1378,24 +1378,20 @@ test('mapas não iniciados não repetem barras e estados zerados',async({page})=
   await expect(row.locator('.progress-map-states')).toHaveCount(0);
 });
 
-test('progresso integra filtros e ordenação no painel geral',async({page},testInfo)=>{
+test('progresso integra filtros e ordenação no painel geral',async({page})=>{
   await page.goto('/#progress');
   const panel=page.locator('#progressGlobalPanel');
   await expect(panel).toBeVisible();
   await expect(panel.locator('#progressFilters')).toBeVisible();
   await expect(page.locator('.progress-filter-shell')).toHaveCount(0);
-  if(testInfo.project.name==='iphone-webkit'){
-    await expect(panel.locator('#progressSort')).toBeHidden();
-    const trigger=panel.locator('#progressSortMobile');
-    await expect(trigger).toBeVisible();
-    await trigger.click();
-    await expect(page.locator('#progressSortSheet')).toBeVisible();
-    await page.locator('#progressSortSheet [data-progress-sort-option="alpha"]').click();
-    await expect(page.locator('#progressSortSheet')).toBeHidden();
-  }else{
-    await expect(panel.locator('#progressSort')).toBeVisible();
-    await panel.locator('#progressSort').selectOption('alpha');
-  }
+  await expect(panel.locator('#progressSort')).toHaveCount(0);
+  const trigger=panel.locator('#progressSortTrigger');
+  await expect(trigger).toBeVisible();
+  await trigger.click();
+  await expect(page.locator('#progressSortSheet')).toBeVisible();
+  await page.locator('#progressSortSheet [data-progress-sort-option="alpha"]').click();
+  await expect(page.locator('#progressSortSheet')).toBeHidden();
+  await expect(panel.locator('#progressSortLabel')).toHaveText('A–Z');
   const stored=await page.evaluate(()=>localStorage.getItem('studyapp.progressSort'));
   expect(stored).toBe('alpha');
 });
@@ -3766,17 +3762,15 @@ test('[G] refinamento visual mantém foco discreto, menus harmonizados e modal r
 
   if(testInfo.project.name==='desktop-chromium'){
     await page.goto('/#progress');
-    const sort=page.locator('#progressSort');
-    await expect(sort).toBeVisible();
-    await expect(sort.locator('option')).toHaveCount(5);
-    const trigger=sort.locator('xpath=following-sibling::*[contains(@class,"ui-select-trigger")]');
+    await expect(page.locator('#progressSort')).toHaveCount(0);
+    const trigger=page.locator('#progressSortTrigger');
     await expect(trigger).toBeVisible();
     await trigger.click();
-    await expect(page.locator('.ui-select-popover')).toBeVisible();
+    await expect(page.locator('#progressSortSheet')).toBeVisible();
+    await expect(page.locator('#progressSortSheet [data-progress-sort-option]')).toHaveCount(5);
     await expect(trigger).toHaveAttribute('aria-expanded','true');
-    await page.keyboard.press('Escape');
-    await sort.selectOption('alpha');
-    await expect(sort).toHaveValue('alpha');
+    await page.locator('#progressSortSheet [data-progress-sort-option="alpha"]').click();
+    await expect(page.locator('#progressSortLabel')).toHaveText('A–Z');
   }
 
   await page.evaluate(()=>document.getElementById('mapManageModal')?.classList.add('open'));
@@ -3990,8 +3984,8 @@ test('[M] smartphone Progresso usa linhas compactas acionáveis',async({page},te
   expect(layout.role).toBe('button');
   expect(layout.tabIndex).toBe(0);
 
-  await expect(page.locator('#progressSortMobile')).toBeVisible();
-  await page.locator('#progressSortMobile').click();
+  await expect(page.locator('#progressSortTrigger')).toBeVisible();
+  await page.locator('#progressSortTrigger').click();
   await expect(page.locator('#progressSortSheet')).toBeVisible();
   const sheetBox=await page.locator('#progressSortSheet').boundingBox();
   expect(sheetBox.y).toBeGreaterThanOrEqual(0);
@@ -4430,11 +4424,11 @@ test('V15.45 [G] PASSO 4 · raster orgânico é contínuo, responsivo e sem mosa
     ]
     :project==='ipad'
       ?[
-        {width:1024,height:834,opacity:.38},
-        {width:820,height:1180,opacity:.38}
+        {width:1024,height:834,opacity:.42},
+        {width:820,height:1180,opacity:.42}
       ]
       :[
-        {width:390,height:844,opacity:.27}
+        {width:390,height:844,opacity:.32}
       ];
 
   for(const viewport of cases){
@@ -4529,4 +4523,65 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
   expect(data.topbarFilter).not.toBe('none');
   if(await page.locator('.side').isVisible())expect(data.sideFilter).not.toBe('none');
   expect(data.dynamic.opticalSurfaces).toBeGreaterThan(0);
+});
+
+
+test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e ordenação canônicos',async({page},testInfo)=>{
+  const topoOpacity=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
+  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeGreaterThanOrEqual(.30);
+  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeGreaterThanOrEqual(.40);
+  else expect(topoOpacity).toBeGreaterThanOrEqual(.44);
+
+  if(testInfo.project.name==='desktop-chromium'){
+    const side=page.locator('.side');
+    await expect(side).toBeVisible();
+    const sidebarState=await page.evaluate(()=>({
+      bottomPosition:getComputedStyle(document.querySelector('.side-bottom')).position,
+      bottomOffset:parseFloat(getComputedStyle(document.querySelector('.side-bottom')).bottom)||0,
+      specular:document.querySelector('.side').classList.contains('mm-specular')
+    }));
+    expect(sidebarState.bottomPosition).toBe('absolute');
+    expect(sidebarState.bottomOffset).toBeGreaterThan(0);
+    expect(sidebarState.specular).toBe(false);
+
+    const inactive=page.locator('.side .nav-btn[data-nav="courses"]');
+    await inactive.hover();
+    const hover=await inactive.evaluate(el=>({background:getComputedStyle(el).backgroundImage,backgroundColor:getComputedStyle(el).backgroundColor}));
+    expect(hover.background).toBe('none');
+    expect(hover.backgroundColor).toBe('rgba(0, 0, 0, 0)');
+  }
+
+  await page.goto('/#course/porto-alegre');
+  await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);
+  const courseMore=page.locator('#courseMoreBtn');
+  if(await courseMore.isVisible()){
+    await courseMore.click();
+    const menu=page.locator('#courseMoreMenu');
+    await expect(menu).toBeVisible();
+    expect(await menu.evaluate(el=>el.parentElement===document.body)).toBe(true);
+    await page.locator('#importBtn2').click();
+    await expect(page.locator('#importModal')).toHaveClass(/open/);
+    await page.locator('#importCancel').click();
+  }
+
+  await page.goto('/#progress');
+  await expect(page.locator('#progressSort')).toHaveCount(0);
+  if(testInfo.project.name==='iphone-webkit'){
+    const subjects=page.locator('[data-mobile-progress-group="subjects"]');
+    await expect(subjects).toBeVisible();
+    if(!(await subjects.evaluate(el=>el.open)))await subjects.locator(':scope > summary').click();
+  }
+  const sortTrigger=page.locator('#progressSortTrigger');
+  await expect(sortTrigger).toBeVisible();
+  await sortTrigger.click();
+  await expect(page.locator('#progressSortSheet')).toBeVisible();
+  await page.locator('[data-progress-sort-option="alpha"]').click();
+  await expect(page.locator('#progressSortLabel')).toHaveText('A–Z');
+
+  const merge=await page.evaluate(()=>{
+    const local={coverOverrides:{'course::porto-alegre':{path:'local.webp',updatedAt:'2026-10-07T10:00:00.000Z'}}};
+    const cloud={coverOverrides:{'course::porto-alegre':{path:'cloud.webp',updatedAt:'2026-10-07T11:00:00.000Z'}}};
+    return mergePreferencePayloads(local,cloud,Date.parse('2026-10-07T12:00:00.000Z'),Date.parse('2026-10-07T09:00:00.000Z')).coverOverrides['course::porto-alegre'];
+  });
+  expect(merge.path).toBe('cloud.webp');
 });

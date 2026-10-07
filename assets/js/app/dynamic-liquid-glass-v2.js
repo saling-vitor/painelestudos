@@ -215,7 +215,7 @@
 
     const side=q('.side');
     if(side){
-      markSurface(side,'large',{specular:true,press:false});
+      markSurface(side,'large',{specular:false,press:false});
       ensureLens(side);
     }
 

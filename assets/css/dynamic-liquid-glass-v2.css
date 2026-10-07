@@ -108,8 +108,11 @@ textarea{
   opacity:.72;
   transition:opacity var(--mm-motion-fast) ease;
 }
-.mm-optical-surface>*{
+.mm-optical-surface>:not(.side-bottom){
   position:relative;
+  z-index:1;
+}
+.side.mm-optical-surface>.side-bottom{
   z-index:1;
 }
 
@@ -323,7 +326,16 @@ textarea{
   will-change:transform,width,height;
 }
 .mm-lens-host>.mm-active-lens{z-index:0!important}
-.side.mm-lens-host>:not(.mm-active-lens),
+.side.mm-lens-host>.brand,
+.side.mm-lens-host>.nav-label,
+.side.mm-lens-host>.nav{
+  position:relative;
+  z-index:1;
+}
+.side.mm-lens-host>.side-bottom{
+  z-index:1;
+}
+.side.mm-lens-host .nav-btn,
 .bottom-nav.mm-lens-host>button,
 .course-study-filters.mm-lens-host>button,
 .category-row.mm-lens-host>button{

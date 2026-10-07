@@ -11,7 +11,7 @@
   --cover-liquid-border-hover:rgba(255,255,255,.72);
   --cover-liquid-highlight:rgba(255,255,255,.72);
   --cover-liquid-highlight-soft:rgba(255,255,255,.24);
-  --cover-liquid-rim-cool:rgba(205,232,255,.13);
+  --cover-liquid-rim-cool:rgba(255,255,255,.11);
   --cover-liquid-shadow:rgba(0,0,0,.24);
   --cover-liquid-shadow-close:rgba(0,0,0,.20);
   --cover-liquid-icon:#fff;
@@ -71,14 +71,14 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
       rgba(255,255,255,.025) 41%,
       transparent 64%),
     radial-gradient(116% 96% at 108% 110%,
-      rgba(190,224,255,.11) 0%,
-      rgba(190,224,255,.035) 36%,
+      rgba(255,255,255,.09) 0%,
+      rgba(255,255,255,.028) 36%,
       transparent 64%),
     linear-gradient(145deg,
       rgba(255,255,255,.10) 0%,
       rgba(255,255,255,.035) 31%,
       rgba(255,255,255,.008) 56%,
-      rgba(210,232,255,.050) 79%,
+      rgba(255,255,255,.040) 79%,
       rgba(255,255,255,.075) 100%),
     rgba(245,250,255,.010)!important;
   background-blend-mode:screen,screen,normal,normal!important;
@@ -166,7 +166,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     0 9px 22px rgba(0,0,0,.29),
     inset 0 1px 1px rgba(255,255,255,.64),
     inset 0 0 0 1px rgba(255,255,255,.11),
-    inset 0 0 13px rgba(205,232,255,.20)!important;
+    inset 0 0 13px rgba(255,255,255,.16)!important;
 }
 
 /* Lista não exibe a capa: portanto seus controles permanecem sem vidro. */
@@ -201,14 +201,14 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
         rgba(255,255,255,.035) 42%,
         transparent 65%),
       radial-gradient(120% 98% at 108% 112%,
-        rgba(190,224,255,.15) 0%,
-        rgba(190,224,255,.045) 37%,
+        rgba(255,255,255,.12) 0%,
+        rgba(255,255,255,.035) 37%,
         transparent 65%),
       linear-gradient(145deg,
         rgba(255,255,255,.085) 0%,
         rgba(255,255,255,.042) 32%,
         rgba(255,255,255,.010) 56%,
-        rgba(210,232,255,.060) 79%,
+        rgba(255,255,255,.048) 79%,
         rgba(255,255,255,.095) 100%),
       rgba(248,252,255,.012)!important;
     color:#fff!important;
@@ -229,7 +229,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
       inset 1px 0 1px rgba(255,255,255,.28),
       inset -1px 0 1px rgba(255,255,255,.11),
       inset 0 -1px 1px rgba(5,10,16,.21),
-      inset 0 0 9px rgba(205,232,255,.16)!important;
+      inset 0 0 9px rgba(255,255,255,.13)!important;
   }
 
   .map-list .map-card.has-cover > .map-admin-btn:hover,
@@ -279,7 +279,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     0 4px 11px var(--cover-liquid-shadow-close),
     inset 0 1px 1px rgba(255,255,255,.45),
     inset 0 2px 5px rgba(0,0,0,.09),
-    inset 0 0 10px rgba(205,232,255,.13)!important;
+    inset 0 0 10px rgba(255,255,255,.11)!important;
 }
 
 /* Foco acessível sem substituir o material. */

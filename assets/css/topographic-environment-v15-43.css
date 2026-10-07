@@ -97,10 +97,23 @@ body:has(.simulation-reader.open)::before{
   opacity:0!important;
 }
 
+/* Classes de layout têm prioridade sobre largura física: split view/PWA não deve apagar o ambiente. */
+html.is-ipad:not(.is-phone-layout){
+  --mm-topo-opacity:.42;
+}
+html.is-phone-layout{
+  --mm-topo-opacity:.32;
+}
+html.is-ipad:not(.is-phone-layout) body::before,
+html.is-phone-layout body::before{
+  display:block;
+  visibility:visible;
+}
+
 /* Tablet / iPad: presença menor, mantendo o material glass conectado ao ambiente. */
 @media(max-width:1180px){
   :root{
-    --mm-topo-opacity:.38;
+    --mm-topo-opacity:.42;
   }
 
   body::before{
@@ -112,7 +125,7 @@ body:has(.simulation-reader.open)::before{
 /* Smartphone: assinatura cartográfica, sem competir com o conteúdo. */
 @media(max-width:600px){
   :root{
-    --mm-topo-opacity:.27;
+    --mm-topo-opacity:.32;
   }
 
   body{
