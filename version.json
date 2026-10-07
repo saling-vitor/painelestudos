@@ -1,21 +1,21 @@
 {
-  "version": "15.46.0",
-  "label": "V15.46.0-G",
-  "releasedAt": "2026-10-07T21:45:00.000Z",
-  "notes": "Consolidação estrutural do Black Editorial: topografia consistente em todas as plataformas, sidebar estabilizada, popovers acima do conteúdo, capas com sincronização mais estrita e ordenação unificada.",
+  "version": "15.47.0",
+  "label": "V15.47.0-G",
+  "releasedAt": "2026-10-07T23:20:00.000Z",
+  "notes": "Auditoria profunda e consolidação legacy: reduz camadas ativas, remove arquivos substituídos e duplicatas, neutraliza resíduos estruturais antigos e estabelece a V15.47 como nova base limpa.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Sidebar preserva a nuvem no rodapé e remove o glow de hover sem perder a lente ativa",
-    "[D/T/M] Topografia raster permanece visível no Desktop, iPad e iPhone com cromia graphite neutra",
-    "[G] Menu de ações do curso passa para a camada superior e deixa de ficar bloqueado pelos filtros",
-    "[G] Capas de curso exigem confirmação canônica na nuvem e a aplicação atualiza preferências ao voltar ao primeiro plano",
-    "[D/T/M] Progresso usa um único botão de ordenação, com popover no Desktop/iPad e bottom sheet no iPhone",
-    "[G] Resíduos estruturais azulados foram neutralizados sem remover cores semânticas de estados e mapas"
+    "[G] Build ativo consolidado de 46 para 43 CSS e de 31 para 30 scripts JS diretos",
+    "[G] Patches de botões, nuvem do iPad, map-card e review polish incorporados aos módulos canônicos",
+    "[G] Topografia SVG V15.42, autofill V15.39 e hero antigo removidos após substituição",
+    "[G] Duplicatas binárias V13 da identidade removidas sem alterar os assets atuais",
+    "[D/T/M] Regras antigas contraditórias de Home/iPad retiradas da cascata em vez de sobrescritas",
+    "[G] Tokens e superfícies estruturais aproximados do Black Editorial neutro, preservando cores semânticas"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.46",
+    "series": "15.47",
     "channel": "G",
-    "runBase": 695
+    "runBase": 703
   }
 }
