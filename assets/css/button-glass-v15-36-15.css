@@ -1,18 +1,18 @@
-/* V15.40.0-G · Liquid Glass V2 para controles flutuantes sobre capas
+/* V15.40.0-G · Liquid Glass V3 para controles flutuantes sobre capas
    Diretriz:
-   - mais próximo do Liquid Glass da Apple: transparente, brilhante e com leitura de lente;
+   - refino óptico: menos névoa leitosa, mais transmissão da capa e borda especular;
    - preserva o conteúdo da capa sob o controle em vez de criar uma placa cinza;
    - somente controles sobre capa recebem o material;
    - mantém a geometria canônica de 38 × 38 px e o posicionamento original;
    - sem pseudo-elementos posicionados para não interferir no layout dos cards. */
 
 :root{
-  --cover-liquid-border:rgba(255,255,255,.46);
-  --cover-liquid-border-hover:rgba(255,255,255,.60);
-  --cover-liquid-highlight:rgba(255,255,255,.56);
-  --cover-liquid-highlight-soft:rgba(255,255,255,.22);
-  --cover-liquid-rim-cool:rgba(205,232,255,.18);
-  --cover-liquid-shadow:rgba(0,0,0,.27);
+  --cover-liquid-border:rgba(255,255,255,.56);
+  --cover-liquid-border-hover:rgba(255,255,255,.72);
+  --cover-liquid-highlight:rgba(255,255,255,.72);
+  --cover-liquid-highlight-soft:rgba(255,255,255,.24);
+  --cover-liquid-rim-cool:rgba(205,232,255,.13);
+  --cover-liquid-shadow:rgba(0,0,0,.24);
   --cover-liquid-shadow-close:rgba(0,0,0,.20);
   --cover-liquid-icon:#fff;
 }
@@ -29,7 +29,7 @@
   min-width:38px!important;
   height:38px!important;
   min-height:38px!important;
-  border-radius:13px!important;
+  border-radius:14px!important;
 }
 
 /* Reafirma 38 px nos overrides específicos de dispositivo. */
@@ -66,28 +66,28 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   border:1px solid var(--cover-liquid-border)!important;
   background:
     radial-gradient(150% 112% at 10% -18%,
-      rgba(255,255,255,.50) 0%,
-      rgba(255,255,255,.20) 20%,
-      rgba(255,255,255,.060) 41%,
+      rgba(255,255,255,.36) 0%,
+      rgba(255,255,255,.11) 20%,
+      rgba(255,255,255,.025) 41%,
       transparent 64%),
     radial-gradient(116% 96% at 108% 110%,
-      rgba(190,224,255,.15) 0%,
-      rgba(190,224,255,.055) 36%,
+      rgba(190,224,255,.11) 0%,
+      rgba(190,224,255,.035) 36%,
       transparent 64%),
     linear-gradient(145deg,
-      rgba(255,255,255,.16) 0%,
-      rgba(255,255,255,.060) 31%,
-      rgba(255,255,255,.020) 56%,
-      rgba(210,232,255,.075) 79%,
-      rgba(255,255,255,.13) 100%),
-    rgba(245,250,255,.025)!important;
+      rgba(255,255,255,.10) 0%,
+      rgba(255,255,255,.035) 31%,
+      rgba(255,255,255,.008) 56%,
+      rgba(210,232,255,.050) 79%,
+      rgba(255,255,255,.075) 100%),
+    rgba(245,250,255,.010)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   color:var(--cover-liquid-icon)!important;
   -webkit-backdrop-filter:
-    blur(8px)
-    saturate(190%)
-    contrast(112%)
-    brightness(112%)!important;
+    blur(5px)
+    saturate(205%)
+    contrast(116%)
+    brightness(110%)!important;
   backdrop-filter:
     blur(8px)
     saturate(190%)
@@ -95,14 +95,14 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     brightness(112%)!important;
   background-clip:padding-box!important;
   box-shadow:
-    0 8px 20px var(--cover-liquid-shadow),
+    0 7px 18px var(--cover-liquid-shadow),
     0 1px 2px rgba(0,0,0,.15),
     inset 0 1px 1px var(--cover-liquid-highlight),
     inset 1px 0 1px var(--cover-liquid-highlight-soft),
-    inset -1px 0 1px rgba(255,255,255,.12),
-    inset 0 -1px 1px rgba(5,10,16,.25),
-    inset 0 0 12px var(--cover-liquid-rim-cool)!important;
-  text-shadow:0 1px 2px rgba(0,0,0,.34)!important;
+    inset -1px 0 1px rgba(255,255,255,.09),
+    inset 0 -1px 1px rgba(5,10,16,.28),
+    inset 0 0 8px var(--cover-liquid-rim-cool)!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
   transform:none!important;
   filter:none!important;
   transition:
@@ -170,27 +170,27 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     border-color:var(--cover-liquid-border-hover)!important;
     background:
       radial-gradient(152% 114% at 9% -18%,
-        rgba(255,255,255,.60) 0%,
-        rgba(255,255,255,.25) 21%,
-        rgba(255,255,255,.075) 42%,
+        rgba(255,255,255,.46) 0%,
+        rgba(255,255,255,.15) 21%,
+        rgba(255,255,255,.035) 42%,
         transparent 65%),
       radial-gradient(120% 98% at 108% 112%,
-        rgba(190,224,255,.20) 0%,
-        rgba(190,224,255,.070) 37%,
+        rgba(190,224,255,.15) 0%,
+        rgba(190,224,255,.045) 37%,
         transparent 65%),
       linear-gradient(145deg,
-        rgba(255,255,255,.19) 0%,
-        rgba(255,255,255,.072) 32%,
-        rgba(255,255,255,.024) 56%,
-        rgba(210,232,255,.090) 79%,
-        rgba(255,255,255,.16) 100%),
-      rgba(248,252,255,.030)!important;
+        rgba(255,255,255,.085) 0%,
+        rgba(255,255,255,.042) 32%,
+        rgba(255,255,255,.010) 56%,
+        rgba(210,232,255,.060) 79%,
+        rgba(255,255,255,.095) 100%),
+      rgba(248,252,255,.012)!important;
     color:#fff!important;
     -webkit-backdrop-filter:
-      blur(7px)
-      saturate(205%)
-      contrast(114%)
-      brightness(116%)!important;
+      blur(5px)
+      saturate(215%)
+      contrast(118%)
+      brightness(113%)!important;
     backdrop-filter:
       blur(7px)
       saturate(205%)
@@ -199,11 +199,11 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     box-shadow:
       0 10px 24px rgba(0,0,0,.29),
       0 1px 2px rgba(0,0,0,.14),
-      inset 0 1px 1px rgba(255,255,255,.68),
-      inset 1px 0 1px rgba(255,255,255,.27),
-      inset -1px 0 1px rgba(255,255,255,.15),
+      inset 0 1px 1px rgba(255,255,255,.78),
+      inset 1px 0 1px rgba(255,255,255,.28),
+      inset -1px 0 1px rgba(255,255,255,.11),
       inset 0 -1px 1px rgba(5,10,16,.21),
-      inset 0 0 14px rgba(205,232,255,.22)!important;
+      inset 0 0 9px rgba(205,232,255,.16)!important;
   }
 
   .map-list .map-card.has-cover > .map-admin-btn:hover,
@@ -229,21 +229,21 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   border-color:rgba(255,255,255,.49)!important;
   background:
     radial-gradient(145% 108% at 12% -14%,
-      rgba(255,255,255,.40) 0%,
-      rgba(255,255,255,.15) 23%,
-      rgba(255,255,255,.045) 44%,
+      rgba(255,255,255,.30) 0%,
+      rgba(255,255,255,.10) 23%,
+      rgba(255,255,255,.022) 44%,
       transparent 65%),
     linear-gradient(145deg,
       rgba(255,255,255,.12) 0%,
-      rgba(255,255,255,.042) 42%,
+      rgba(255,255,255,.026) 42%,
       rgba(8,14,22,.055) 72%,
-      rgba(255,255,255,.09) 100%),
-    rgba(244,249,255,.022)!important;
+      rgba(255,255,255,.060) 100%),
+    rgba(244,249,255,.010)!important;
   -webkit-backdrop-filter:
-    blur(9px)
-    saturate(180%)
-    contrast(113%)
-    brightness(106%)!important;
+    blur(6px)
+    saturate(195%)
+    contrast(115%)
+    brightness(107%)!important;
   backdrop-filter:
     blur(9px)
     saturate(180%)
