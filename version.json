@@ -1,21 +1,23 @@
 {
-  "version": "15.42.0",
-  "label": "V15.42.0-G",
+  "version": "15.44.0",
+  "label": "V15.44.0-G",
   "releasedAt": "2026-10-07T17:45:00.000Z",
-  "notes": "Passo 2 refina o sistema para Black Editorial: shell graphite neutro, topografia mais silenciosa e Liquid Glass restrito à camada funcional, sem glass-on-glass.",
+  "notes": "Dynamic Liquid Glass V2 transforma o vidro funcional em um sistema óptico responsivo: escala por contexto, rim refrativo, specular tracking, active lens compartilhada, morph de busca/popovers, press optics e densidade por scroll, mantendo o conteúdo matte.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Paleta estrutural migra de navy tecnológico para black/graphite neutro com creme e coral da marca",
-    "[G] Topografia ganha escala maior, menor densidade e máscara radial para liberar o centro do conteúdo",
-    "[G] Topbar, sidebar, dock e barras funcionais usam Liquid Glass neutro; controles internos usam lentes sem backdrop-filter",
-    "[G] Cards, painéis, progresso, agenda e simulados permanecem matte black e preservam cores semânticas de curso/tag",
-    "[G] Menus, popovers, resultados de busca e modais compartilham Dense Glass; controles sobre capas usam Clear Glass",
-    "[G] Reduced transparency, contraste aumentado, reduced motion e forced colors recebem fallbacks dedicados"
+    "[G] Inter passa a ser a fonte principal oficial da interface, com fontes de sistema apenas como fallback",
+    "[G] Liquid Glass ganha escalas Micro, Controls, Bar e Large sem reintroduzir tint estrutural azul",
+    "[G] Refractive rim, specular tracking e sombra dinâmica respondem ao ponteiro fino via requestAnimationFrame",
+    "[G] Sidebar e bottom dock recebem active lens compartilhada com movimento por transform e fallback instantâneo em Reduce Motion",
+    "[G] Busca e popovers ganham morph de origem conectado sem glass-on-glass",
+    "[G] Topbar adapta discretamente sua densidade ao scroll e barras ganham scroll edge sem backdrop extra",
+    "[G] Touch usa press optics sem executar tracking desktop; micro glass fora da viewport desativa blur",
+    "[G] Reduce Transparency, Reduce Motion, contraste aumentado e forced-colors mantêm estados funcionais"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.42",
+    "series": "15.44",
     "channel": "G",
-    "runBase": 667
+    "runBase": 686
   }
 }

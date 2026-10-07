@@ -4189,9 +4189,9 @@ test('V15.42 [G] PASSO 2 · Black Editorial aplica tokens e evita glass-on-glass
 test('V15.42 [G] PASSO 2 · breakpoints e overflow permanecem íntegros',async({page},testInfo)=>{
   const project=testInfo.project.name;
   const cases=project==='desktop-chromium'
-    ?[{width:1920,height:1080},{width:1440,height:900},{width:1000,height:760}]
+    ?[{width:1920,height:1080},{width:1440,height:900},{width:1280,height:720},{width:1000,height:760}]
     :project==='ipad'
-      ?[{width:1024,height:834},{width:820,height:1180}]
+      ?[{width:1024,height:834},{width:900,height:1000},{width:820,height:1180}]
       :[{width:390,height:844}];
 
   for(const viewport of cases){
@@ -4245,4 +4245,172 @@ test('V15.42 [G] PASSO 2 · conteúdo é matte e fallbacks de acessibilidade exi
   expect(data.reducedMotion).toBe(true);
   expect(data.forcedColors).toBe(true);
   expect(data.hasFocusRule).toBe(true);
+});
+
+
+/* PASSO 3 · Dynamic Liquid Glass V2 · Optical Interaction */
+test('V15.44 [G] PASSO 3 · runtime óptico, Inter e orçamento de glass estão ativos',async({page},testInfo)=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.MMDynamicGlass&&typeof window.MMDynamicGlass.snapshot==='function');
+  await expect(page.locator('link[href*="dynamic-liquid-glass-v2.css"]')).toHaveCount(1);
+  await expect(page.locator('script[src*="dynamic-liquid-glass-v2.js"]')).toHaveCount(1);
+
+  const data=await page.evaluate(()=>{
+    const snap=MMDynamicGlass.snapshot();
+    const topbar=document.querySelector('.topbar');
+    const search=document.querySelector('.topbar .search');
+    const card=document.querySelector('.course-card,.map-card,.simulation-card');
+    const filter=el=>el?(getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter||'none'):'missing';
+    return{
+      ...snap,
+      font:getComputedStyle(document.body).fontFamily,
+      topbarFilter:filter(topbar),
+      searchFilter:filter(search),
+      cardFilter:filter(card),
+      flags:[...document.documentElement.classList].filter(x=>x.startsWith('mm-'))
+    };
+  });
+
+  expect(data.font).toContain('Inter');
+  expect(data.opticalSurfaces).toBeGreaterThan(0);
+  expect(data.opticalSurfaces).toBeLessThan(120);
+  expect(data.topbarFilter).not.toBe('none');
+  expect(data.searchFilter).toBe('none');
+  if(data.cardFilter!=='missing')expect(data.cardFilter).toBe('none');
+  expect(data.flags).toContain('mm-optics-supported');
+  if(testInfo.project.name==='desktop-chromium')expect(data.flags).toContain('mm-pointer-fine');
+  if(testInfo.project.name==='iphone-webkit')expect(data.flags).toContain('mm-touch');
+});
+
+test('V15.44 [G] PASSO 3 · active lens compartilhada existe e se move',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.MMDynamicGlass);
+  const side=page.locator('.side');
+  const useSide=await side.isVisible();
+  const host=useSide?side:page.locator('.bottom-nav');
+  await expect(host).toBeVisible();
+  await expect(host.locator(':scope > .mm-active-lens')).toHaveCount(1);
+
+  const before=await host.evaluate(el=>({
+    x:getComputedStyle(el).getPropertyValue('--mm-lens-x').trim(),
+    y:getComputedStyle(el).getPropertyValue('--mm-lens-y').trim(),
+    opacity:getComputedStyle(el).getPropertyValue('--mm-lens-opacity').trim()
+  }));
+  const target=useSide?host.locator('.nav-btn[data-nav="maps"]'):host.locator(':scope > button[data-nav="maps"]');
+  await target.click();
+  await expect(page.locator('[data-view="maps"]')).toHaveClass(/active/);
+  await page.waitForTimeout(80);
+  const after=await host.evaluate(el=>({
+    x:getComputedStyle(el).getPropertyValue('--mm-lens-x').trim(),
+    y:getComputedStyle(el).getPropertyValue('--mm-lens-y').trim(),
+    opacity:getComputedStyle(el).getPropertyValue('--mm-lens-opacity').trim()
+  }));
+  expect(after.opacity).toBe('1');
+  expect(after.x+'|'+after.y).not.toBe(before.x+'|'+before.y);
+});
+
+test('V15.44 [G] PASSO 3 · busca e popover mantêm geometria conectada sem glass-on-glass',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.MMDynamicGlass);
+  const input=page.locator('#globalSearch');
+  const shell=page.locator('.global-search-shell');
+  const panel=page.locator('#globalSearchPanel');
+
+  await input.fill('demhab');
+  await expect(panel).toBeVisible();
+  await expect(shell).toHaveClass(/mm-search-open/);
+  await expect(panel).toHaveAttribute('data-mm-open','true');
+
+  const optics=await page.evaluate(()=>{
+    const inputShell=document.querySelector('.topbar .search');
+    const panel=document.querySelector('#globalSearchPanel');
+    const filter=el=>getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter||'none';
+    return{
+      searchFilter:filter(inputShell),
+      panelFilter:filter(panel),
+      sourceX:getComputedStyle(panel).getPropertyValue('--mm-source-x').trim(),
+      sourceY:getComputedStyle(panel).getPropertyValue('--mm-source-y').trim()
+    };
+  });
+  expect(optics.searchFilter).toBe('none');
+  expect(optics.panelFilter).not.toBe('none');
+  expect(optics.sourceX).not.toBe('');
+  expect(optics.sourceY).not.toBe('');
+  await input.press('Escape');
+  await expect(panel).toBeHidden();
+});
+
+test('V15.44 [G] PASSO 3 · Reduce Motion e Reduce Transparency preservam estado final',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.MMDynamicGlass);
+  await page.evaluate(()=>document.documentElement.classList.add('mm-reduced-motion'));
+  const motion=await page.locator('.mm-active-lens').first().evaluate(el=>({
+    transition:getComputedStyle(el).transitionDuration,
+    animation:getComputedStyle(el).animationName
+  }));
+  expect(['0s','0s, 0s, 0s, 0s, 0s']).toContain(motion.transition);
+  expect(['none','']).toContain(motion.animation);
+
+  await page.evaluate(()=>document.documentElement.classList.add('mm-reduced-transparency'));
+  const transparency=await page.locator('.topbar').evaluate(el=>({
+    filter:getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter||'none',
+    background:getComputedStyle(el).backgroundColor
+  }));
+  expect(transparency.filter).toBe('none');
+  expect(transparency.background).not.toBe('rgba(0, 0, 0, 0)');
+});
+
+test('V15.44 [G] PASSO 3 · pointer tracking é coalescido e touch não depende de hover',async({page},testInfo)=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.MMDynamicGlass);
+  const before=await page.evaluate(()=>MMDynamicGlass.snapshot());
+
+  if(testInfo.project.name==='desktop-chromium'){
+    const box=await page.locator('.topbar').boundingBox();
+    expect(box).not.toBeNull();
+    await page.mouse.move(box.x+box.width*.25,box.y+box.height*.5);
+    await page.mouse.move(box.x+box.width*.75,box.y+box.height*.5);
+    await page.waitForTimeout(40);
+    const after=await page.evaluate(()=>MMDynamicGlass.snapshot());
+    expect(after.pointerFrames).toBeGreaterThan(before.pointerFrames);
+    expect(after.pointerRectReads-before.pointerRectReads).toBeLessThanOrEqual(2);
+  }else{
+    await page.locator('.bottom-nav [data-nav="maps"]:visible').first().tap();
+    await page.waitForTimeout(40);
+    const after=await page.evaluate(()=>MMDynamicGlass.snapshot());
+    expect(after.pointerFrames).toBe(before.pointerFrames);
+  }
+});
+
+test('V15.44 [G] PASSO 3 · 1280 desktop e iPad por largura não geram overflow',async({page},testInfo)=>{
+  const cases=testInfo.project.name==='desktop-chromium'
+    ?[{width:1280,height:720}]
+    :testInfo.project.name==='ipad'
+      ?[{width:1024,height:834},{width:900,height:1000},{width:820,height:1180}]
+      :[{width:390,height:844}];
+
+  for(const viewport of cases){
+    await page.setViewportSize(viewport);
+    await page.goto('/#home');
+    await page.waitForFunction(()=>window.MMDynamicGlass);
+    const state=await page.evaluate(()=>({
+      overflow:document.documentElement.scrollWidth-innerWidth,
+      side:getComputedStyle(document.querySelector('.side')).display,
+      dock:getComputedStyle(document.querySelector('.bottom-nav')).display,
+      dockItems:[...document.querySelectorAll('.bottom-nav>button')].filter(el=>getComputedStyle(el).display!=='none').length
+    }));
+    expect(state.overflow).toBeLessThanOrEqual(2);
+    if(testInfo.project.name==='ipad'&&viewport.width>=900){
+      expect(state.side).not.toBe('none');
+      expect(state.dock).toBe('none');
+    }
+    if(testInfo.project.name==='ipad'&&viewport.width<900){
+      expect(state.side).toBe('none');
+      expect(state.dock).not.toBe('none');
+    }
+    if(testInfo.project.name==='iphone-webkit'){
+      expect(state.dock).not.toBe('none');
+      expect(state.dockItems).toBe(5);
+    }
+  }
 });
