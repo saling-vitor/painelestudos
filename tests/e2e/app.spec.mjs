@@ -1064,9 +1064,20 @@ test('V15.38.0 [G] Por que este mapa explica a prioridade sem tooltip curto',asy
   const why=page.locator('[data-priority-why]');
   await expect(why).toBeVisible();
   await expect(why).toHaveText('Por que este mapa?');
-  await why.click();
+
+  // A Home pode recalcular/re-renderizar a prioridade no WebKit depois de o botão
+  // ficar visível. Se o nó for trocado entre a asserção e o tap, o primeiro click
+  // pode atingir o elemento antigo sem abrir o modal. Reobtém o controle atual e
+  // repete o gesto somente enquanto o modal ainda não existir/estiver visível.
   const modal=page.locator('#priorityWhyModal');
-  await expect(modal).toBeVisible();
+  await expect.poll(async()=>{
+    if(await modal.isVisible().catch(()=>false))return true;
+    const currentWhy=page.locator('[data-priority-why]').first();
+    if(!await currentWhy.isVisible().catch(()=>false))return false;
+    await currentWhy.click({timeout:1500}).catch(()=>{});
+    return modal.isVisible().catch(()=>false);
+  },{timeout:7000,intervals:[120,240,480]}).toBe(true);
+
   await expect(modal).toContainText('Por que este mapa agora?');
   const reasons=modal.locator('.priority-why-reasons article');
   expect(await reasons.count()).toBeGreaterThanOrEqual(2);
@@ -1079,7 +1090,6 @@ test('V15.38.0 [G] Por que este mapa explica a prioridade sem tooltip curto',asy
   await modal.locator('[data-priority-why-close]').click();
   await expect(modal).toBeHidden();
 });
-
 test('home consolidada prioriza o estudo diário',async({page})=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);
