@@ -805,6 +805,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
     sync.dataset.syncState='syncing';
     const syncing={animation:getComputedStyle(icon).animationName};
     const activeBefore=getComputedStyle(active,'::before');
+    const topbarStyle=getComputedStyle(topbar),searchStyle=getComputedStyle(search),syncStyle=getComputedStyle(sync);
     return{
       synced,
       syncing,
@@ -814,7 +815,13 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
       searchHeight:search.getBoundingClientRect().height,
       syncHeight:sync.getBoundingClientRect().height,
       newCourseHeight:newCourse.getBoundingClientRect().height,
-      topbarHeight:topbar.getBoundingClientRect().height
+      topbarHeight:topbar.getBoundingClientRect().height,
+      topbarBackdrop:topbarStyle.backdropFilter||topbarStyle.webkitBackdropFilter||'none',
+      searchBackdrop:searchStyle.backdropFilter||searchStyle.webkitBackdropFilter||'none',
+      syncBackdrop:syncStyle.backdropFilter||syncStyle.webkitBackdropFilter||'none',
+      topbarBackground:topbarStyle.backgroundImage,
+      searchBackground:searchStyle.backgroundImage,
+      syncBackground:syncStyle.backgroundImage
     };
   });
   expect(visual.synced.icon).not.toBe(visual.synced.text);
@@ -823,6 +830,12 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.activeBackground).not.toBe('none');
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
+  expect(visual.topbarBackdrop).not.toBe('none');
+  expect(visual.searchBackdrop).not.toBe('none');
+  expect(visual.syncBackdrop).not.toBe('none');
+  expect(visual.topbarBackground).toContain('gradient');
+  expect(visual.searchBackground).toContain('gradient');
+  expect(visual.syncBackground).toContain('gradient');
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
   if(testInfo.project.name==='ipad'){
     expect(Math.round(visual.syncHeight)).toBeGreaterThanOrEqual(44);
@@ -1413,6 +1426,49 @@ test('controles sobre capas usam o tamanho compacto uniforme de 38px',async({pag
     expect.soft(Math.abs(menu.iconHeight-favorite.iconHeight),'iPad: ícones com mesma altura').toBeLessThanOrEqual(.5);
     expect.soft(Math.abs(menu.iconWidth-16),'iPad: ícone ••• em 16px').toBeLessThanOrEqual(.5);
     expect.soft(Math.abs(favorite.iconWidth-16),'iPad: estrela em 16px').toBeLessThanOrEqual(.5);
+  }
+});
+
+test('ícones das capas usam preenchimento e contorno preto em camadas separadas',async({page})=>{
+  const assertStack=async selector=>{
+    const control=page.locator(selector).first();
+    await expect(control).toBeVisible();
+    await expect(control.locator('.cover-icon-stack')).toHaveCount(1);
+    await expect(control.locator('.cover-icon-fill')).toHaveCount(1);
+    await expect(control.locator('.cover-icon-stroke')).toHaveCount(1);
+    return control.evaluate(el=>{
+      const stack=el.querySelector('.cover-icon-stack');
+      const fill=el.querySelector('.cover-icon-fill');
+      const stroke=el.querySelector('.cover-icon-stroke');
+      const sr=stack.getBoundingClientRect(),fr=fill.getBoundingClientRect(),rr=stroke.getBoundingClientRect();
+      return{
+        stackWidth:sr.width,stackHeight:sr.height,
+        fillWidth:fr.width,fillHeight:fr.height,
+        strokeWidth:rr.width,strokeHeight:rr.height,
+        fillColor:getComputedStyle(fill).backgroundColor,
+        strokeColor:getComputedStyle(stroke).backgroundColor,
+        strokeFilter:getComputedStyle(stroke).filter||getComputedStyle(stroke).webkitFilter||'none'
+      };
+    });
+  };
+
+  await page.goto('/#courses');
+  const course=await assertStack('#coursesGrid .course-card-edit');
+
+  await page.goto('/#maps');
+  const menu=await assertStack('.map-card.has-cover>.map-admin-btn');
+  const favorite=await assertStack('.map-card.has-cover>.fav');
+
+  await page.goto('/#simulations');
+  const simulation=await assertStack('.simulation-card.has-cover .simulation-card-menu-btn');
+
+  for(const [name,icon] of Object.entries({course,menu,favorite,simulation})){
+    expect.soft(Math.abs(icon.stackWidth-16),name+' wrapper 16px').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(icon.fillWidth-16),name+' preenchimento 16px').toBeLessThanOrEqual(.5);
+    expect.soft(Math.abs(icon.strokeWidth-16),name+' base do contorno 16px').toBeLessThanOrEqual(.5);
+    expect.soft(icon.strokeFilter,name+' contorno usa filtro expansor').not.toBe('none');
+    const strokeRgb=(icon.strokeColor.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
+    expect.soft(Math.max(...strokeRgb),name+' contorno permanece preto').toBeLessThanOrEqual(20);
   }
 });
 
