@@ -171,7 +171,7 @@ html:not(.is-phone-layout) .continue-content>p{
 html:not(.is-phone-layout) .continue-progress{margin-top:8px}
 html:not(.is-phone-layout) .continue-card>.primary{
   border-color:color-mix(in srgb,var(--continue-accent) 36%,rgba(255,255,255,.08));
-  background:color-mix(in srgb,var(--continue-accent) 9%,#0d1013);
+  background:color-mix(in srgb,var(--continue-accent) 9%,#0d0d0e);
   color:color-mix(in srgb,var(--continue-accent) 70%,white);
 }
 
