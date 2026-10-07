@@ -1,7 +1,7 @@
 /* V15.1.0 · Central de estudo */
 .study-timer-float{position:fixed;right:22px;bottom:22px;z-index:1200;font:inherit;color:#f4f4f5}
 .study-timer-float button{font:inherit}
-.study-timer-launch{min-width:118px;height:46px;padding:0 15px;border:1px solid rgba(195,170,132,.35);border-radius:10px;background:rgba(15,16,19,.96);color:#ead9bd;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 16px 44px rgba(0,0,0,.36);cursor:pointer}
+.study-timer-launch{min-width:118px;height:46px;padding:0 15px;border:1px solid rgba(195,170,132,.35);border-radius:10px;background:rgba(16,16,17,.96);color:#ead9bd;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 16px 44px rgba(0,0,0,.36);cursor:pointer}
 .study-timer-launch span{font-size:12px}.study-timer-launch b{font-size:11px}
 .study-timer-idle-menu{position:absolute;right:0;bottom:54px;width:166px;padding:7px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#101011;box-shadow:0 18px 48px rgba(0,0,0,.44);display:none;gap:4px}
 .study-timer-float.is-open .study-timer-idle-menu{display:grid}
@@ -12,7 +12,7 @@
 .study-timer-pulse{width:7px;height:7px;border-radius:50%;background:#62a978;box-shadow:0 0 0 5px rgba(98,169,120,.08)}
 .study-timer-float.is-paused .study-timer-pulse{background:#c3aa84;box-shadow:none}
 .study-timer-copy{min-width:0;display:grid;gap:2px}.study-timer-copy small{font-size:9px;color:#8f949d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.study-timer-copy b{font-size:22px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:.03em}.study-timer-copy span{font-size:8px;color:#777d86}
-.study-timer-actions{display:flex;gap:5px}.study-timer-actions button{width:34px;height:34px;border:1px solid rgba(255,255,255,.09);border-radius:8px;background:#17191e;color:#d8d9dd;cursor:pointer}.study-timer-actions button:hover{border-color:rgba(195,170,132,.4);color:#f1dfc0}
+.study-timer-actions{display:flex;gap:5px}.study-timer-actions button{width:34px;height:34px;border:1px solid rgba(255,255,255,.09);border-radius:8px;background:#181819;color:#d8d9dd;cursor:pointer}.study-timer-actions button:hover{border-color:rgba(195,170,132,.4);color:#f1dfc0}
 .study-timer-progress{height:3px;background:rgba(255,255,255,.05)}.study-timer-progress i{height:100%;display:block;background:#c3aa84;transition:width .25s ease}
 
 .home-study-dashboard{margin:22px 0 10px}
