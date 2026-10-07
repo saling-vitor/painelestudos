@@ -217,7 +217,9 @@
 .category-btn,
 .maps-filter-chip,
 .progress-filter{
-  border-radius:999px!important;
+  /* Mantém a linguagem retangular aprovada do sistema; V211 entra na hierarquia,
+     não transforma filtros em pills. */
+  border-radius:var(--v211-control-radius)!important;
   border-color:var(--v211-line)!important;
   color:#92969e!important;
 }
