@@ -277,7 +277,62 @@
 .progress-global-bar{height:5px!important;margin-top:8px!important}
 .progress-global-footer{margin-top:8px!important;padding-top:8px!important;gap:7px!important}
 .progress-filter{min-height:34px!important;padding-inline:9px!important;font-size:8px!important}
-.progress-sort-control select{min-height:34px!important;height:34px!important}
+.progress-sort-trigger{min-height:34px!important;height:34px!important}
+.progress-sort-wrap{display:flex;justify-content:flex-end}
+.progress-sort-trigger{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-width:112px;
+  padding:0 11px;
+  border-radius:9px!important;
+  font:750 8px var(--mono)!important;
+  white-space:nowrap;
+}
+.progress-sort-trigger>span:first-child{font-size:12px;line-height:1;color:#8e8c87}
+.progress-sort-backdrop:not([hidden]){
+  display:block;
+  position:fixed;
+  inset:0;
+  z-index:1290;
+  background:transparent;
+}
+.progress-sort-sheet:not([hidden]){
+  display:block;
+  position:fixed;
+  z-index:1291;
+  width:min(240px,calc(100vw - 16px));
+  padding:7px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:13px;
+  background:rgba(8,9,10,.94);
+  box-shadow:0 22px 60px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(20px) saturate(118%);
+  backdrop-filter:blur(20px) saturate(118%);
+}
+.progress-sort-sheet-head{display:none}
+.progress-sort-sheet-options{display:grid;gap:4px}
+.progress-sort-option{
+  width:100%;
+  min-height:38px;
+  padding:0 10px;
+  border:1px solid transparent;
+  border-radius:8px;
+  background:transparent;
+  color:#aaa9a5;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  text-align:left;
+  font-size:9px;
+  cursor:pointer;
+}
+.progress-sort-option:hover{background:rgba(255,255,255,.028);color:#efede8}
+.progress-sort-option i{opacity:0;color:#e8d7b1;font-style:normal}
+.progress-sort-option.active{border-color:rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#f1efe9}
+.progress-sort-option.active i{opacity:1}
 .progress-course-stack{display:grid;gap:7px!important;margin-top:9px!important}
 .progress-course.progress-course-compact{
   margin:0!important;
