@@ -48,6 +48,58 @@ for(const file of moduleFiles)check(index.includes(file+`?v=${expected}`),'index
 check(index.includes(`app.css?v=${expected}`),'index.html app.css query');
 check(index.includes(`study-planner.css?v=${expected}`),'index.html study-planner.css query');
 check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.css query');
+
+/* AUDITORIA V15.47 · nova base limpa */
+const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
+const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
+check(activeCssFiles.length===43,'auditoria: build ativo usa 43 CSS após consolidação');
+check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
+const deadLegacyFiles=[
+  'assets/css/ipad-cloud-compact-v15-36-1.css',
+  'assets/css/button-depth-v15-36-14.css',
+  'assets/css/map-card-cleanup-v15-36-23.css',
+  'assets/js/app/review-polish-v15-36-34.js',
+  'assets/css/topographic-environment-v15-42.css',
+  'assets/ui/topographic-map-v15-42.svg',
+  'assets/js/app/course-pdf-autofill-v15-39-0.js',
+  'assets/home-hero-panel.webp'
+];
+for(const file of deadLegacyFiles)check(!exists(file),'auditoria: legado removido '+file);
+for(const file of deadLegacyFiles)check(!index.includes(file),'auditoria: index não referencia '+file);
+for(const file of deadLegacyFiles)check(!sw.includes(file),'auditoria: service worker não referencia '+file);
+const v13BrandLegacy=[
+  'assets/brand/app-icons/apple-touch-icon-v13-1-7.png',
+  'assets/brand/app-icons/icon-192-v13-1-7.png',
+  'assets/brand/app-icons/icon-512-v13-1-7.png',
+  'assets/brand/app-icons/icon-maskable-192-v13-1-7.png',
+  'assets/brand/app-icons/icon-maskable-512-v13-1-7.png',
+  'assets/brand/favicon/favicon-16x16-v13-1-7.png',
+  'assets/brand/favicon/favicon-32x32-v13-1-7.png',
+  'assets/brand/favicon/favicon-48x48-v13-1-7.png',
+  'assets/brand/favicon/favicon-96x96-v13-1-7.png',
+  'assets/brand/favicon/favicon-v13-1-7.ico',
+  'assets/brand/logo/logo-horizontal-v13-1-7.png',
+  'assets/brand/logo/marca-simplificada-v13-1-7.png',
+  'assets/brand/social/og-image-v13-1-7.png',
+  'assets/brand/splash/splash-ipad-2048x2732-v13-1-7.png',
+  'assets/brand/splash/splash-iphone-1290x2796-v13-1-7.png'
+];
+for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 removida '+file);
+const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
+const importantCount=(activeCssText.match(/!important/g)||[]).length;
+const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
+check(importantCount<=6694,'auditoria: !important não regrediu ('+importantCount+')');
+check(legacyBlueCount<=19,'auditoria: azul legacy ficou restrito a semântica ('+legacyBlueCount+')');
+const automationCss=read('assets/css/study-automation-v15-37-0.css');
+const settingsControlCss=read('assets/css/settings-control-center-v15-38-0.css');
+const v211Css=read('assets/css/v211-parity-v15-42.css');
+check(!settingsControlCss.includes('rgba(109,130,152'),'auditoria: configurações sem azul estrutural legacy');
+check(!v211Css.includes('--v211-blue'),'auditoria: token V211 azul não utilizado removido');
+check(automationCss.includes('.automation-issues span.is-info{border-left-color:rgba(109,130,152,.52)}'),'auditoria: azul semântico de informação preservado');
+check(read('assets/css/button-glass-v15-36-15.css').includes('CONSOLIDADO V15.47 · NORMALIZAÇÃO DE BOTÕES'),'auditoria: button-depth consolidado');
+check(read('assets/css/ipad-stage2-v01.css').includes('CONSOLIDADO V15.47 · STATUS DA NUVEM NO iPAD'),'auditoria: nuvem iPad consolidada');
+check(read('assets/css/course-covers-fullbleed-v15-36-31.css').includes('CONSOLIDADO V15.47 · MAP CARD FOOT'),'auditoria: cleanup de map card consolidado');
+check(read('assets/js/app/mobile-ux.js').includes('CONSOLIDADO V15.47 · REVIEW POLISH RESPONSIVO'),'auditoria: patch responsivo JS consolidado');
 check(index.includes(`home-refine-v01.css?v=${expected}`),'index.html home-refine query');
 check(index.includes(`map-accent-v01.css?v=${expected}`),'index.html map-accent query');
 check(index.includes(`ui-chrome-refine-v01.css?v=${expected}`),'index.html ui-chrome query');

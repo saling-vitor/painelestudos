@@ -109,9 +109,9 @@
   gap:10px;
   margin-top:8px;
   padding:9px 10px;
-  border:1px solid rgba(109,130,152,.13);
+  border:1px solid rgba(255,255,255,.075);
   border-radius:10px;
-  background:linear-gradient(100deg,rgba(109,130,152,.035),rgba(255,255,255,.008));
+  background:linear-gradient(100deg,rgba(255,255,255,.022),rgba(255,255,255,.008));
 }
 .course-automation-next>div{display:grid;gap:2px;min-width:0}
 .course-automation-next span{color:#73808d;font:800 7px var(--mono);letter-spacing:.08em;text-transform:uppercase}
@@ -197,11 +197,11 @@
   column-gap:8px;
   margin-bottom:8px;
   padding:8px 10px;
-  border:1px solid rgba(109,130,152,.15);
+  border:1px solid rgba(255,255,255,.08);
   border-radius:9px;
-  background:rgba(109,130,152,.028);
+  background:rgba(255,255,255,.018);
 }
-.automation-import-note>span{grid-area:tag;color:#8aa0b5;font:800 7px var(--mono);letter-spacing:.07em;text-transform:uppercase}
+.automation-import-note>span{grid-area:tag;color:#9b9994;font:800 7px var(--mono);letter-spacing:.07em;text-transform:uppercase}
 .automation-import-note>b{grid-area:title;color:#dce0e4;font-size:9.5px}
 .automation-import-note>small{grid-area:note;color:#737b84;font-size:8px}
 

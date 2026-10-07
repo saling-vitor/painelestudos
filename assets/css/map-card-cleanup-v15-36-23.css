@@ -1,5 +1,0 @@
-/* V15.36.23-G · remover separador colorido inferior dos cards de mapas */
-[data-view="maps"] .map-card .foot,
-[data-view="course"] .map-card .foot{
-  border-top:0!important;
-}
