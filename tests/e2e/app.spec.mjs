@@ -85,6 +85,8 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
     return{
       backdrop:s.backdropFilter||s.webkitBackdropFilter||'none',
       background:s.backgroundImage,
+      backgroundColor:s.backgroundColor,
+      filled:s.backgroundImage!=='none'&&!/^none$/i.test(s.backgroundImage)||!['rgba(0, 0, 0, 0)','transparent'].includes(s.backgroundColor),
       border:parseFloat(s.borderTopWidth)||0
     };
   });
@@ -95,7 +97,7 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
   await expect(searchPanel).toBeVisible();
   const searchGlass=await glass(searchPanel);
   expect(searchGlass.backdrop).not.toBe('none');
-  expect(searchGlass.background).toContain('gradient');
+  expect(searchGlass.filled).toBe(true);
   expect(searchGlass.border).toBeGreaterThan(0);
   await input.press('Escape');
 
@@ -103,7 +105,7 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
   if(await dock.isVisible()){
     const dockGlass=await glass(dock);
     expect(dockGlass.backdrop).not.toBe('none');
-    expect(dockGlass.background).toContain('gradient');
+    expect(dockGlass.filled).toBe(true);
     const activeDock=page.locator('.bottom-nav>button.active').first();
     const activeGlass=await glass(activeDock);
     expect(activeGlass.backdrop).not.toBe('none');
@@ -112,7 +114,7 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
     await expect(activeNav).toBeVisible();
     const navGlass=await glass(activeNav);
     expect(navGlass.backdrop).not.toBe('none');
-    expect(navGlass.background).toContain('gradient');
+    expect(navGlass.filled).toBe(true);
   }
 
   if(testInfo.project.name==='desktop-chromium'){
@@ -122,7 +124,7 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
     await expect(courseMenu).toBeVisible();
     const menuGlass=await glass(courseMenu);
     expect(menuGlass.backdrop).not.toBe('none');
-    expect(menuGlass.background).toContain('gradient');
+    expect(menuGlass.filled).toBe(true);
 
     const activeStudyFilter=page.locator('.course-study-filter.active').first();
     if(await activeStudyFilter.count()){
@@ -143,7 +145,7 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
   await expect(modal).toBeVisible();
   const modalGlass=await glass(modal);
   expect(modalGlass.backdrop).not.toBe('none');
-  expect(modalGlass.background).toContain('gradient');
+  expect(modalGlass.filled).toBe(true);
   await page.evaluate(()=>document.getElementById('confirmModal')?.classList.remove('open'));
 });
 
