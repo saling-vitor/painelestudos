@@ -1,6 +1,6 @@
 /* ==========================================================================
    MEUS MAPAS · BLACK EDITORIAL + LIQUID GLASS REFINADO · PASSO 2
-   Camada final de tema. Carregada por último para neutralizar o chrome navy
+   Camada final de tema. Carregada por último para neutralizar o chrome cromático
    legado sem apagar cores semânticas de cursos, tags, mapas e estados.
    Regra: conteúdo permanente = matte; camada funcional = Liquid Glass.
    ========================================================================== */
@@ -141,7 +141,7 @@ html:not(.is-phone-layout) .side,
     inset 0 -1px 0 rgba(0,0,0,.32)!important;
 }
 
-/* Topbar: preto translúcido, sem leitura azul/cyan. */
+/* Topbar: preto translúcido, sem leitura cromática fria. */
 html:not(.is-phone-layout) .topbar{
   background:
     radial-gradient(115% 150% at 9% -72%,rgba(255,255,255,.10),transparent 58%),
