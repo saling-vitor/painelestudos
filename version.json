@@ -1,18 +1,21 @@
 {
-  "version": "15.45.0",
-  "label": "V15.45.0-G",
-  "releasedAt": "2026-10-07T17:45:00.000Z",
-  "notes": "Novo ambiente topográfico raster orgânico substitui o padrão SVG repetitivo, preservando o Black Editorial e a integração com o Dynamic Liquid Glass V2.",
+  "version": "15.46.0",
+  "label": "V15.46.0-G",
+  "releasedAt": "2026-10-07T21:45:00.000Z",
+  "notes": "Consolidação estrutural do Black Editorial: topografia consistente em todas as plataformas, sidebar estabilizada, popovers acima do conteúdo, capas com sincronização mais estrita e ordenação unificada.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Topografia global passa a usar composição raster orgânica e contínua, sem mosaico ou emendas visíveis",
-    "[G] O WebP transparente preserva os gradientes graphite e permanece mais discreto no centro, tablet e smartphone",
-    "[G] Leitores continuam limpos, enquanto o raster aparece naturalmente através das superfícies Liquid Glass existentes"
+    "[G] Sidebar preserva a nuvem no rodapé e remove o glow de hover sem perder a lente ativa",
+    "[D/T/M] Topografia raster permanece visível no Desktop, iPad e iPhone com cromia graphite neutra",
+    "[G] Menu de ações do curso passa para a camada superior e deixa de ficar bloqueado pelos filtros",
+    "[G] Capas de curso exigem confirmação canônica na nuvem e a aplicação atualiza preferências ao voltar ao primeiro plano",
+    "[D/T/M] Progresso usa um único botão de ordenação, com popover no Desktop/iPad e bottom sheet no iPhone",
+    "[G] Resíduos estruturais azulados foram neutralizados sem remover cores semânticas de estados e mapas"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.45",
+    "series": "15.46",
     "channel": "G",
-    "runBase": 694
+    "runBase": 695
   }
 }
