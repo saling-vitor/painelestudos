@@ -25,7 +25,7 @@
   let scrollFrame=0;
   let pendingPointer=null;
   let pressed=null;
-  const stats={pointerFrames:0,rectReads:0,enhancePasses:0,lensMoves:0};
+  const stats={pointerFrames:0,pointerRectReads:0,rectReads:0,enhancePasses:0,lensMoves:0};
 
   function syncFlags(){
     root.classList.toggle('mm-optics-supported',supportsBackdrop);
@@ -288,6 +288,7 @@
       activeRect=surface.getBoundingClientRect();
       geometry.set(surface,activeRect);
       stats.rectReads++;
+      stats.pointerRectReads++;
     }
     return activeRect;
   }
@@ -323,6 +324,7 @@
     activeRect=surface.getBoundingClientRect();
     geometry.set(surface,activeRect);
     stats.rectReads++;
+    stats.pointerRectReads++;
     surface.classList.add('is-mm-hovered');
   },{passive:true});
 
@@ -431,6 +433,7 @@
       microSurfaces:qa('.mm-glass-micro').length,
       visibleMicroSurfaces:qa('.mm-glass-micro.mm-visible-glass').length,
       pointerFrames:stats.pointerFrames,
+      pointerRectReads:stats.pointerRectReads,
       rectReads:stats.rectReads,
       enhancePasses:stats.enhancePasses,
       lensMoves:stats.lensMoves
