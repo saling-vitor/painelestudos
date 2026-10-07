@@ -1378,24 +1378,20 @@ test('mapas não iniciados não repetem barras e estados zerados',async({page})=
   await expect(row.locator('.progress-map-states')).toHaveCount(0);
 });
 
-test('progresso integra filtros e ordenação no painel geral',async({page},testInfo)=>{
+test('progresso integra filtros e ordenação no painel geral',async({page})=>{
   await page.goto('/#progress');
   const panel=page.locator('#progressGlobalPanel');
   await expect(panel).toBeVisible();
   await expect(panel.locator('#progressFilters')).toBeVisible();
   await expect(page.locator('.progress-filter-shell')).toHaveCount(0);
-  if(testInfo.project.name==='iphone-webkit'){
-    await expect(panel.locator('#progressSort')).toBeHidden();
-    const trigger=panel.locator('#progressSortTrigger');
-    await expect(trigger).toBeVisible();
-    await trigger.click();
-    await expect(page.locator('#progressSortSheet')).toBeVisible();
-    await page.locator('#progressSortSheet [data-progress-sort-option="alpha"]').click();
-    await expect(page.locator('#progressSortSheet')).toBeHidden();
-  }else{
-    await expect(panel.locator('#progressSort')).toBeVisible();
-    await panel.locator('#progressSort').selectOption('alpha');
-  }
+  await expect(panel.locator('#progressSort')).toHaveCount(0);
+  const trigger=panel.locator('#progressSortTrigger');
+  await expect(trigger).toBeVisible();
+  await trigger.click();
+  await expect(page.locator('#progressSortSheet')).toBeVisible();
+  await page.locator('#progressSortSheet [data-progress-sort-option="alpha"]').click();
+  await expect(page.locator('#progressSortSheet')).toBeHidden();
+  await expect(panel.locator('#progressSortLabel')).toHaveText('A–Z');
   const stored=await page.evaluate(()=>localStorage.getItem('studyapp.progressSort'));
   expect(stored).toBe('alpha');
 });
@@ -3766,17 +3762,15 @@ test('[G] refinamento visual mantém foco discreto, menus harmonizados e modal r
 
   if(testInfo.project.name==='desktop-chromium'){
     await page.goto('/#progress');
-    const sort=page.locator('#progressSort');
-    await expect(sort).toBeVisible();
-    await expect(sort.locator('option')).toHaveCount(5);
-    const trigger=sort.locator('xpath=following-sibling::*[contains(@class,"ui-select-trigger")]');
+    await expect(page.locator('#progressSort')).toHaveCount(0);
+    const trigger=page.locator('#progressSortTrigger');
     await expect(trigger).toBeVisible();
     await trigger.click();
-    await expect(page.locator('.ui-select-popover')).toBeVisible();
+    await expect(page.locator('#progressSortSheet')).toBeVisible();
+    await expect(page.locator('#progressSortSheet [data-progress-sort-option]')).toHaveCount(5);
     await expect(trigger).toHaveAttribute('aria-expanded','true');
-    await page.keyboard.press('Escape');
-    await sort.selectOption('alpha');
-    await expect(sort).toHaveValue('alpha');
+    await page.locator('#progressSortSheet [data-progress-sort-option="alpha"]').click();
+    await expect(page.locator('#progressSortLabel')).toHaveText('A–Z');
   }
 
   await page.evaluate(()=>document.getElementById('mapManageModal')?.classList.add('open'));
