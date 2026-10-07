@@ -352,7 +352,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     .map-card.has-cover > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:rgba(34,39,48,.92)!important;
+    background:rgba(38,38,39,.92)!important;
     background-blend-mode:normal!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
@@ -370,7 +370,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   ){
     color:#fff!important;
     border-color:rgba(255,255,255,.68)!important;
-    background-color:rgba(15,18,23,.54)!important;
+    background-color:rgba(16,16,17,.54)!important;
   }
 }
 
