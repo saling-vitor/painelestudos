@@ -20,6 +20,7 @@ const searchIndex=parseJson('data/search-index.json');
 if(!version||!catalog||!simulations||!searchIndex)process.exit(1);
 const expected=String(version.version||'');
 const expectedLabel=String(version.label||'');
+const automation=version.automation||{};
 const moduleFiles=["assets/js/app/state.js","assets/js/app/core.js","assets/js/app/study-time.js","assets/js/app/router.js","assets/js/app/maps.js","assets/js/app/review-schedule.js","assets/js/app/courses.js","assets/js/app/search.js","assets/js/app/map-library.js","assets/js/app/progress.js","assets/js/app/reader.js","assets/js/app/sync.js","assets/js/app/diagnostics.js","assets/js/app/backup.js","assets/js/app/restore-points.js","assets/js/app/ui.js","assets/js/app/simulations.js","assets/js/app/study-coach.js","assets/js/app/study-dashboard.js","assets/js/app/study-planner.js","assets/js/app/mobile-ux.js","assets/js/app/updates.js"];
 for(const file of moduleFiles)check(exists(file),file+' existe');
 const stateModule=read('assets/js/app/state.js');
@@ -28,10 +29,21 @@ const index=read('index.html');
 const sw=read('sw.js');
 check(stateModule.includes(`APP_VERSION='${expected}'`)||stateModule.includes(`APP_VERSION = '${expected}'`),'APP_VERSION = '+expected);
 check(expectedLabel===`V${expected}-G`||expectedLabel===`V${expected}-D`||expectedLabel===`V${expected}-T`||expectedLabel===`V${expected}-M`,'version.json label coerente com '+expected);
+check(automation.enabled===true,'versionamento automático habilitado');
+check(/^\d+\.\d+$/.test(String(automation.series||'')),'série automática X.Y configurada');
+check(Number.isInteger(Number(automation.runBase))&&Number(automation.runBase)>=0,'runBase automático configurado');
+if(process.env.GITHUB_RUN_NUMBER){
+  check(Number(version.build?.runNumber)===Number(process.env.GITHUB_RUN_NUMBER),'build usa GITHUB_RUN_NUMBER atual');
+  check(version.build?.automatic===true,'build automático registrado em version.json');
+  check(String(version.build?.commit||'').length>=7,'build registra commit');
+}
 check(stateModule.includes(`APP_VERSION_LABEL='${expectedLabel}'`)||stateModule.includes(`APP_VERSION_LABEL = '${expectedLabel}'`),'APP_VERSION_LABEL = '+expectedLabel);
 check(index.includes(`id="appInstalledVersion">${expectedLabel}</strong>`),'index versão instalada = '+expectedLabel);
 check(index.includes(`id="whatsNewVersion">${expectedLabel}</h2>`),'index novidades = '+expectedLabel);
 check(index.includes(`app.js?v=${expected}`),'index.html app.js query');
+const indexVersionRefs=[...index.matchAll(/[?&]v=(\d+\.\d+\.\d+)/g)].map(match=>match[1]);
+const staleIndexRefs=indexVersionRefs.filter(value=>value!==expected);
+check(staleIndexRefs.length===0,'index.html sem versões antigas em query strings');
 for(const file of moduleFiles)check(index.includes(file+`?v=${expected}`),'index module '+file);
 check(index.includes(`app.css?v=${expected}`),'index.html app.css query');
 check(index.includes(`study-planner.css?v=${expected}`),'index.html study-planner.css query');
@@ -41,6 +53,9 @@ check(index.includes(`map-accent-v01.css?v=${expected}`),'index.html map-accent 
 check(index.includes(`ui-chrome-refine-v01.css?v=${expected}`),'index.html ui-chrome query');
 check(index.includes('id="forceAppRefreshBtn"'),'index botão atualização forçada');
 check(allJs.includes(`sw.js?v=${expected}`),'registro sw.js query');
+const swVersionRefs=[...sw.matchAll(/[?&]v=(\d+\.\d+\.\d+)/g)].map(match=>match[1]);
+const staleSwRefs=swVersionRefs.filter(value=>value!==expected);
+check(staleSwRefs.length===0,'service worker sem versões antigas em query strings');
 
 const unsafeDollarForEach=/(?<!\$)\$\([^)]*\)\s*\.forEach\s*\(/g;
 const unsafeDollarMatches=[...allJs.matchAll(unsafeDollarForEach)].map(match=>match[0]);
