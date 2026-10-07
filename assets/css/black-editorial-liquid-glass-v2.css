@@ -187,7 +187,9 @@ html:not(.is-phone-layout) .topbar .search:focus-within{
 }
 html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn){
   border-color:rgba(255,255,255,.10)!important;
-  background:rgba(255,255,255,.026)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.040),rgba(255,255,255,.014)),
+    rgba(255,255,255,.020)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
 }
 html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn):is(:hover,:focus-visible){
