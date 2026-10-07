@@ -1521,7 +1521,7 @@
     z-index:5;
     inset:52px 0 0;
     padding:18px 15px;
-    background:#05070a;
+    background:#050505;
     pointer-events:none;
   }
   html.is-phone-layout .mobile-reader-skeleton[hidden]{display:none!important}
