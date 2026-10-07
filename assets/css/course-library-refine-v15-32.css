@@ -3,7 +3,7 @@
 
 .map-card{
   --map-accent:var(--accent,#9aa1aa);
-  border-top-color:color-mix(in srgb,var(--map-accent) 34%,#262b31)!important;
+  border-top-color:color-mix(in srgb,var(--map-accent) 34%,#292929)!important;
 }
 .map-card::before{background:var(--map-accent)!important}
 .map-card .map-code,
@@ -12,15 +12,15 @@
 .map-card .map-open-label{color:var(--map-accent)!important}
 .map-card .map-code,
 .map-card .map-category-chip{
-  border-color:color-mix(in srgb,var(--map-accent) 50%,#30343a)!important;
+  border-color:color-mix(in srgb,var(--map-accent) 50%,#343434)!important;
   background:color-mix(in srgb,var(--map-accent) 9%,transparent)!important;
 }
 .map-card .progress-track>span{background:var(--map-accent)!important}
-.map-card .foot{border-top-color:color-mix(in srgb,var(--map-accent) 22%,#1f2329)!important}
+.map-card .foot{border-top-color:color-mix(in srgb,var(--map-accent) 22%,#232323)!important}
 .map-card .map-open-label .ui-icon{color:inherit}
 @media(hover:hover){
   .map-card:hover{
-    border-color:color-mix(in srgb,var(--map-accent) 46%,#2b3037)!important;
+    border-color:color-mix(in srgb,var(--map-accent) 46%,#303030)!important;
     box-shadow:0 16px 34px rgba(0,0,0,.30),0 0 0 1px color-mix(in srgb,var(--map-accent) 10%,transparent)!important;
   }
 }
@@ -49,7 +49,7 @@ html.is-phone-layout .map-card{
   html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-search-box{
     padding-inline:12px!important;
     border-color:rgba(255,255,255,.075)!important;
-    background:rgba(12,15,19,.88)!important;
+    background:rgba(13,13,14,.88)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-primary-actions{gap:6px!important}
   html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-study-filter-wrap,
@@ -172,7 +172,7 @@ html.is-phone-layout .map-card{
 
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill{
   border:1px solid rgba(255,255,255,.12)!important;
-  background:linear-gradient(180deg,rgba(54,59,66,.86),rgba(29,33,39,.84))!important;
+  background:linear-gradient(180deg,rgba(54,59,66,.86),rgba(33,33,34,.84))!important;
   box-shadow:0 8px 22px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.055)!important;
   -webkit-backdrop-filter:blur(14px)!important;
   backdrop-filter:blur(14px)!important;
