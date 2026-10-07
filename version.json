@@ -2,15 +2,15 @@
   "version": "15.41.0",
   "label": "V15.41.0-G",
   "releasedAt": "2026-10-07T15:06:15.000Z",
-  "notes": "Liquid Glass revalidado conforme a documentação oficial da Apple: uma camada funcional acima do conteúdo, agrupamento de controles e menos vidro empilhado.",
+  "notes": "Sistema visual Meus Mapas unificado com a Template V211: fundo tecnico/topografico, hierarquia editorial, cards escuros por tema e Liquid Glass preservado na camada funcional.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Item ativo da sidebar e dock de iPhone/iPad usam Liquid Glass sem transformar o conteúdo em vidro",
-    "[G] Busca, menus, popovers e modais foram revalidados como superfícies funcionais Regular",
-    "[G] Edital, Simulados e Mais agora formam um único grupo de vidro com controles internos integrados",
-    "[G] Filtros ativos e selects principais de Simulados recebem vidro leve; estados inativos permanecem discretos",
-    "[G] Topbar mantém um único blur: Buscar e Sincronizar usam lente interna sem glass-on-glass",
-    "[G] Redução de transparência, alto contraste, movimento reduzido e fallback sem backdrop-filter foram reforçados"
+    "[G] Fundo global passa a usar a linguagem V211 com malha tecnica e linhas topograficas minimalistas",
+    "[G] Home, Cursos, Mapas, Simulados, Progresso, Agenda e Configuracoes compartilham as mesmas superficies editoriais",
+    "[G] Cards de mapa adotam a logica visual dos topic-card da V211: fundo escuro, borda fina e assinatura lateral por tema",
+    "[G] Hero, titulos, kickers e controles foram harmonizados com a tipografia e hierarquia da colecao Meus Mapas",
+    "[G] Reader e modais agora parecem parte do mesmo produto visual dos mapas V211",
+    "[G] Liquid Glass recente foi preservado para navegacao, busca, menus e overlays, sem vidro sobre o conteudo"
   ],
   "automation": {
     "enabled": true,
