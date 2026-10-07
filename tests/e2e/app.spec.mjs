@@ -1479,13 +1479,13 @@ test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
 
   if((await fav.getAttribute('aria-pressed'))==='true')await fav.click();
   await expect(fav).toHaveAttribute('aria-pressed','false');
-  const off=await fav.locator('.ui-icon').evaluate(el=>getComputedStyle(el).color);
+  const off=await fav.locator('.cover-icon-fill').evaluate(el=>getComputedStyle(el).color);
 
   await fav.click();
   await expect(fav).toHaveAttribute('aria-pressed','true');
   await expect(fav).toHaveClass(/\bon\b/);
   const active=await fav.evaluate(el=>{
-    const icon=el.querySelector('.ui-icon');
+    const icon=el.querySelector('.cover-icon-fill');
     const rgb=(getComputedStyle(icon).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number);
     return{
       iconColor:getComputedStyle(icon).color,
@@ -1502,7 +1502,7 @@ test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
   const canHover=await page.evaluate(()=>matchMedia('(hover:hover) and (pointer:fine)').matches);
   if(canHover){
     await fav.hover();
-    const hoverRgb=await fav.locator('.ui-icon').evaluate(el=>(getComputedStyle(el).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number));
+    const hoverRgb=await fav.locator('.cover-icon-fill').evaluate(el=>(getComputedStyle(el).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number));
     expect(hoverRgb[0]).toBeGreaterThan(220);
     expect(hoverRgb[1]).toBeGreaterThan(170);
     expect(hoverRgb[2]).toBeLessThan(120);
