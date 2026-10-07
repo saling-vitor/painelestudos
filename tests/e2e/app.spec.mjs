@@ -99,13 +99,23 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
   expect(searchGlass.border).toBeGreaterThan(0);
   await input.press('Escape');
 
-  if(testInfo.project.name==='desktop-chromium'){
+  const dock=page.locator('.bottom-nav');
+  if(await dock.isVisible()){
+    const dockGlass=await glass(dock);
+    expect(dockGlass.backdrop).not.toBe('none');
+    expect(dockGlass.background).toContain('gradient');
+    const activeDock=page.locator('.bottom-nav>button.active').first();
+    const activeGlass=await glass(activeDock);
+    expect(activeGlass.backdrop).not.toBe('none');
+  }else{
     const activeNav=page.locator('.side .nav-btn.active').first();
     await expect(activeNav).toBeVisible();
     const navGlass=await glass(activeNav);
     expect(navGlass.backdrop).not.toBe('none');
     expect(navGlass.background).toContain('gradient');
+  }
 
+  if(testInfo.project.name==='desktop-chromium'){
     await page.goto('/#course/porto-alegre');
     await page.locator('#courseMoreBtn').click();
     const courseMenu=page.locator('#courseMoreMenu');
@@ -125,15 +135,6 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
     await expect(simSelect).toBeVisible();
     const selectGlass=await glass(simSelect);
     expect(selectGlass.backdrop).not.toBe('none');
-  }else{
-    const dock=page.locator('.bottom-nav');
-    await expect(dock).toBeVisible();
-    const dockGlass=await glass(dock);
-    expect(dockGlass.backdrop).not.toBe('none');
-    expect(dockGlass.background).toContain('gradient');
-    const activeDock=page.locator('.bottom-nav>button.active').first();
-    const activeGlass=await glass(activeDock);
-    expect(activeGlass.backdrop).not.toBe('none');
   }
 
   await page.goto('/#settings');
