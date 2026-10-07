@@ -4530,3 +4530,56 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
   if(await page.locator('.side').isVisible())expect(data.sideFilter).not.toBe('none');
   expect(data.dynamic.opticalSurfaces).toBeGreaterThan(0);
 });
+
+
+test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e ordenação canônicos',async({page},testInfo)=>{
+  const topoOpacity=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
+  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeGreaterThanOrEqual(.30);
+  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeGreaterThanOrEqual(.40);
+  else expect(topoOpacity).toBeGreaterThanOrEqual(.44);
+
+  if(testInfo.project.name==='desktop'){
+    const side=page.locator('.side');
+    await expect(side).toBeVisible();
+    const sidebarState=await page.evaluate(()=>({
+      bottomPosition:getComputedStyle(document.querySelector('.side-bottom')).position,
+      bottomOffset:parseFloat(getComputedStyle(document.querySelector('.side-bottom')).bottom)||0,
+      specular:document.querySelector('.side').classList.contains('mm-specular')
+    }));
+    expect(sidebarState.bottomPosition).toBe('absolute');
+    expect(sidebarState.bottomOffset).toBeGreaterThan(0);
+    expect(sidebarState.specular).toBe(false);
+
+    const inactive=page.locator('.side .nav-btn[data-nav="courses"]');
+    await inactive.hover();
+    const hover=await inactive.evaluate(el=>({background:getComputedStyle(el).backgroundImage,backgroundColor:getComputedStyle(el).backgroundColor}));
+    expect(hover.background).toBe('none');
+    expect(hover.backgroundColor).toBe('rgba(0, 0, 0, 0)');
+  }
+
+  await page.goto('/#course/porto-alegre');
+  await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);
+  await page.locator('#courseMoreBtn').click();
+  const menu=page.locator('#courseMoreMenu');
+  await expect(menu).toBeVisible();
+  expect(await menu.evaluate(el=>el.parentElement===document.body)).toBe(true);
+  await page.locator('#importBtn2').click();
+  await expect(page.locator('#importModal')).toHaveClass(/open/);
+  await page.locator('#importCancel').click();
+
+  await page.goto('/#progress');
+  await expect(page.locator('#progressSort')).toHaveCount(0);
+  const sortTrigger=page.locator('#progressSortTrigger');
+  await expect(sortTrigger).toBeVisible();
+  await sortTrigger.click();
+  await expect(page.locator('#progressSortSheet')).toBeVisible();
+  await page.locator('[data-progress-sort-option="alpha"]').click();
+  await expect(page.locator('#progressSortLabel')).toHaveText('A–Z');
+
+  const merge=await page.evaluate(()=>{
+    const local={coverOverrides:{'course::porto-alegre':{path:'local.webp',updatedAt:'2026-10-07T10:00:00.000Z'}}};
+    const cloud={coverOverrides:{'course::porto-alegre':{path:'cloud.webp',updatedAt:'2026-10-07T11:00:00.000Z'}}};
+    return mergePreferencePayloads(local,cloud,Date.parse('2026-10-07T12:00:00.000Z'),Date.parse('2026-10-07T09:00:00.000Z')).coverOverrides['course::porto-alegre'];
+  });
+  expect(merge.path).toBe('cloud.webp');
+});
