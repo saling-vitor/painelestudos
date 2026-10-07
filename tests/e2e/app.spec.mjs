@@ -4143,3 +4143,104 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
   expect(data.statesInside).toBe(true);
   expect(data.overflowX).toBeLessThanOrEqual(2);
 });
+
+
+/* PASSO 2 · Black Editorial + Liquid Glass refinado */
+test('V15.42 [G] PASSO 2 · Black Editorial aplica tokens e evita glass-on-glass',async({page},testInfo)=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const data=await page.evaluate(()=>{
+    const root=getComputedStyle(document.documentElement);
+    const topbar=document.querySelector('.topbar');
+    const search=document.querySelector('.topbar .search');
+    const sync=document.querySelector('#syncTop');
+    const activeSide=document.querySelector('.side .nav-btn.active');
+    const activeDock=document.querySelector('.bottom-nav>button.active');
+    const readFilter=el=>el?(getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter||'none'):'missing';
+    return{
+      bg:root.getPropertyValue('--mm-bg').trim().toUpperCase(),
+      bgDeep:root.getPropertyValue('--mm-bg-deep').trim().toUpperCase(),
+      surface1:root.getPropertyValue('--mm-surface-1').trim().toUpperCase(),
+      regular:root.getPropertyValue('--mm-glass-regular-bg').trim(),
+      dense:root.getPropertyValue('--mm-glass-dense-bg').trim(),
+      clear:root.getPropertyValue('--mm-glass-clear-bg').trim(),
+      topbarFilter:readFilter(topbar),
+      searchFilter:readFilter(search),
+      syncFilter:readFilter(sync),
+      sideActiveFilter:readFilter(activeSide),
+      dockActiveFilter:readFilter(activeDock)
+    };
+  });
+  expect(data.bg).toBe('#040506');
+  expect(data.bgDeep).toBe('#020304');
+  expect(data.surface1).toBe('#0B0C0E');
+  expect(data.regular).toBe('rgba(9,10,11,.60)');
+  expect(data.dense).toBe('rgba(8,9,10,.82)');
+  expect(data.clear).toBe('rgba(12,12,13,.24)');
+  expect(data.searchFilter).toBe('none');
+  expect(data.syncFilter).toBe('none');
+  if(testInfo.project.name!=='iphone-webkit')expect(data.sideActiveFilter).toBe('none');
+  if(data.dockActiveFilter!=='missing')expect(data.dockActiveFilter).toBe('none');
+  expect(data.topbarFilter).not.toBe('none');
+});
+
+test('V15.42 [G] PASSO 2 · breakpoints e overflow permanecem íntegros',async({page},testInfo)=>{
+  const project=testInfo.project.name;
+  const cases=project==='desktop-chromium'
+    ?[{width:1920,height:1080},{width:1440,height:900},{width:1000,height:760}]
+    :project==='ipad'
+      ?[{width:1024,height:834},{width:820,height:1180}]
+      :[{width:390,height:844}];
+
+  for(const viewport of cases){
+    await page.setViewportSize(viewport);
+    await page.goto('/#home');
+    await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+    const state=await page.evaluate(()=>({
+      overflow:document.documentElement.scrollWidth-innerWidth,
+      side:document.querySelector('.side')?getComputedStyle(document.querySelector('.side')).display:'none',
+      dock:document.querySelector('.bottom-nav')?getComputedStyle(document.querySelector('.bottom-nav')).display:'none',
+      dockVisibleItems:[...document.querySelectorAll('.bottom-nav>button')].filter(el=>getComputedStyle(el).display!=='none').length
+    }));
+    expect(state.overflow).toBeLessThanOrEqual(2);
+    if(project==='ipad'&&viewport.width>=900){
+      expect(state.side).not.toBe('none');
+      expect(state.dock).toBe('none');
+    }
+    if(project==='ipad'&&viewport.width<900){
+      expect(state.side).toBe('none');
+      expect(state.dock).not.toBe('none');
+    }
+    if(project==='iphone-webkit'){
+      expect(state.dock).not.toBe('none');
+      expect(state.dockVisibleItems).toBe(5);
+    }
+  }
+});
+
+test('V15.42 [G] PASSO 2 · conteúdo é matte e fallbacks de acessibilidade existem',async({page})=>{
+  await page.goto('/#maps');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const data=await page.evaluate(()=>{
+    const card=document.querySelector('.map-card');
+    const cardStyle=card?getComputedStyle(card):null;
+    const sheet=[...document.styleSheets].find(s=>String(s.href||'').includes('black-editorial-liquid-glass-v2.css'));
+    let css='';
+    try{css=[...(sheet?.cssRules||[])].map(rule=>rule.cssText).join('\n')}catch{}
+    const filter=cardStyle?(cardStyle.backdropFilter||cardStyle.webkitBackdropFilter||'none'):'missing';
+    return{
+      cardFilter:filter,
+      reducedTransparency:css.includes('prefers-reduced-transparency'),
+      moreContrast:css.includes('prefers-contrast'),
+      reducedMotion:css.includes('prefers-reduced-motion'),
+      forcedColors:css.includes('forced-colors'),
+      hasFocusRule:css.includes(':focus-visible')
+    };
+  });
+  if(data.cardFilter!=='missing')expect(data.cardFilter).toBe('none');
+  expect(data.reducedTransparency).toBe(true);
+  expect(data.moreContrast).toBe(true);
+  expect(data.reducedMotion).toBe(true);
+  expect(data.forcedColors).toBe(true);
+  expect(data.hasFocusRule).toBe(true);
+});
