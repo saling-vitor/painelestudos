@@ -94,8 +94,8 @@ check(/background-repeat\s*:\s*no-repeat/i.test(topoRasterCss),'topografia raste
 check(!/background-repeat\s*:\s*repeat(?:\s|;|!)/i.test(topoRasterCss),'topografia raster não usa mosaico repeat');
 check(!/(?:^|[;{])\s*(?:-webkit-)?filter\s*:\s*blur\s*\(/im.test(topoRasterCss),'background raster não aplica blur');
 check(topoRasterCss.includes('--mm-topo-opacity:.46'),'topografia desktop usa opacidade .46');
-check(topoRasterCss.includes('--mm-topo-opacity:.38'),'topografia tablet usa opacidade .38');
-check(topoRasterCss.includes('--mm-topo-opacity:.27'),'topografia smartphone usa opacidade .27');
+check(topoRasterCss.includes('--mm-topo-opacity:.42'),'topografia tablet usa opacidade .42');
+check(topoRasterCss.includes('--mm-topo-opacity:.32'),'topografia smartphone usa opacidade .32');
 check(topoRasterCss.includes('opacity:.025!important'),'topografia reduz ruído em transparência/contraste');
 check(topoRasterCss.includes('body:has(#reader.open)::before'),'leitor oculta o ambiente topográfico global');
 check(!blackEditorialCss.includes('topographic-map-v15-42.svg'),'Black Editorial não reativa o SVG topográfico legado');
