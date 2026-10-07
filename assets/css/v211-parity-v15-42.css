@@ -355,3 +355,29 @@
   html.is-ipad:not(.is-phone-layout) .hero{min-height:285px!important}
   html.is-ipad:not(.is-phone-layout) .hero-copy{padding:20px 28px!important}
 }
+
+
+/* iPad estreito/retrato: mantém o hero editorial dentro da densidade aprovada. */
+@media(max-width:899px){
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero{
+    height:304px!important;
+    min-height:304px!important;
+    max-height:304px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero-copy{
+    width:min(68%,560px)!important;
+    max-width:560px!important;
+    padding:20px 24px 18px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero p{
+    display:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero h1{
+    margin-top:10px!important;
+    font-size:clamp(34px,5vw,43px)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning .hero-actions,
+  html.is-ipad:not(.is-phone-layout) [data-view="home"].home-returning #homeStats{
+    margin-top:11px!important;
+  }
+}
