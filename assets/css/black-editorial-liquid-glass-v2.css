@@ -455,6 +455,11 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   outline-offset:2px!important;
 }
 
+/* Rótulos auxiliares de 7.5–8px: contraste AA sobre surface-1. */
+.app .content .study-command-metrics small{
+  color:#7F7E79!important;
+}
+
 /* ==========================================================================
    10 · IPAD / BREAKPOINTS POR LARGURA
    ========================================================================== */
