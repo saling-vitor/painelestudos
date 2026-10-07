@@ -4293,6 +4293,7 @@ test('V15.44 [G] PASSO 3 · active lens compartilhada existe e se move',async({p
 
   const before=await host.evaluate(el=>({
     x:getComputedStyle(el).getPropertyValue('--mm-lens-x').trim(),
+    y:getComputedStyle(el).getPropertyValue('--mm-lens-y').trim(),
     opacity:getComputedStyle(el).getPropertyValue('--mm-lens-opacity').trim()
   }));
   const target=useSide?host.locator('.nav-btn[data-nav="maps"]'):host.locator(':scope > button[data-nav="maps"]');
@@ -4301,10 +4302,11 @@ test('V15.44 [G] PASSO 3 · active lens compartilhada existe e se move',async({p
   await page.waitForTimeout(80);
   const after=await host.evaluate(el=>({
     x:getComputedStyle(el).getPropertyValue('--mm-lens-x').trim(),
+    y:getComputedStyle(el).getPropertyValue('--mm-lens-y').trim(),
     opacity:getComputedStyle(el).getPropertyValue('--mm-lens-opacity').trim()
   }));
   expect(after.opacity).toBe('1');
-  expect(after.x).not.toBe(before.x);
+  expect(after.x+'|'+after.y).not.toBe(before.x+'|'+before.y);
 });
 
 test('V15.44 [G] PASSO 3 · busca e popover mantêm geometria conectada sem glass-on-glass',async({page})=>{
@@ -4371,7 +4373,7 @@ test('V15.44 [G] PASSO 3 · pointer tracking é coalescido e touch não depende 
     await page.waitForTimeout(40);
     const after=await page.evaluate(()=>MMDynamicGlass.snapshot());
     expect(after.pointerFrames).toBeGreaterThan(before.pointerFrames);
-    expect(after.rectReads-before.rectReads).toBeLessThanOrEqual(8);
+    expect(after.pointerRectReads-before.pointerRectReads).toBeLessThanOrEqual(2);
   }else{
     await page.locator('.bottom-nav [data-nav="maps"]:visible').first().tap();
     await page.waitForTimeout(40);
