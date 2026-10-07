@@ -3,7 +3,6 @@
    transforma linhas em alvos inteiros e leva a ordenação para bottom sheet.
 */
 
-.progress-sort-mobile-trigger,
 .progress-sort-backdrop,
 .progress-sort-sheet,
 .progress-map-mobile-states{
@@ -131,7 +130,7 @@
     display:none!important;
   }
 
-  html.is-phone-layout .progress-sort-mobile-trigger{
+  html.is-phone-layout .progress-sort-trigger{
     display:inline-flex!important;
     align-items:center!important;
     justify-content:center!important;
@@ -145,7 +144,7 @@
     letter-spacing:.02em!important;
   }
 
-  html.is-phone-layout .progress-sort-mobile-trigger>span:first-child{
+  html.is-phone-layout .progress-sort-trigger>span:first-child{
     color:#9298a0!important;
     font-size:14px!important;
     line-height:1!important;
