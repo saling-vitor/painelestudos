@@ -53,7 +53,7 @@ check(index.includes(`map-accent-v01.css?v=${expected}`),'index.html map-accent 
 check(index.includes(`ui-chrome-refine-v01.css?v=${expected}`),'index.html ui-chrome query');
 check(index.includes(`topographic-environment-v15-42.css?v=${expected}`),'index.html ambiente topográfico V15.42');
 check(index.includes(`design-system-v15-42.css?v=${expected}`),'index.html Design System V15.42');
-check(index.includes(`v211-parity-v15-42.css?v=${expected}`),'index.html paridade visual V211');
+check(index.includes(`v211-parity-v15-42.css?v=${expected}`),'index.html paridade visual V211');\ncheck(index.includes(`black-editorial-liquid-glass-v2.css?v=${expected}`),'index.html Black Editorial + Liquid Glass V2');\ncheck(exists('assets/css/black-editorial-liquid-glass-v2.css'),'CSS Black Editorial + Liquid Glass V2 existe');
 check(exists('assets/ui/topographic-map-v15-42.svg'),'SVG topográfico V15.42 existe');
 check(index.includes('id="forceAppRefreshBtn"'),'index botão atualização forçada');
 check(allJs.includes(`sw.js?v=${expected}`),'registro sw.js query');
