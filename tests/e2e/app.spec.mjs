@@ -77,6 +77,75 @@ test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#p
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
+test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',async({page},testInfo)=>{
+  await expect(page.locator('link[href*="liquid-glass-surfaces-v15-40.css"]')).toHaveCount(1);
+
+  const glass=async locator=>locator.evaluate(el=>{
+    const s=getComputedStyle(el);
+    return{
+      backdrop:s.backdropFilter||s.webkitBackdropFilter||'none',
+      background:s.backgroundImage,
+      border:parseFloat(s.borderTopWidth)||0
+    };
+  });
+
+  const input=page.locator('#globalSearch');
+  const searchPanel=page.locator('#globalSearchPanel');
+  await input.fill('demhab');
+  await expect(searchPanel).toBeVisible();
+  const searchGlass=await glass(searchPanel);
+  expect(searchGlass.backdrop).not.toBe('none');
+  expect(searchGlass.background).toContain('gradient');
+  expect(searchGlass.border).toBeGreaterThan(0);
+  await input.press('Escape');
+
+  if(testInfo.project.name==='desktop-chromium'){
+    const activeNav=page.locator('.side .nav-btn.active').first();
+    await expect(activeNav).toBeVisible();
+    const navGlass=await glass(activeNav);
+    expect(navGlass.backdrop).not.toBe('none');
+    expect(navGlass.background).toContain('gradient');
+
+    await page.goto('/#course/porto-alegre');
+    await page.locator('#courseMoreBtn').click();
+    const courseMenu=page.locator('#courseMoreMenu');
+    await expect(courseMenu).toBeVisible();
+    const menuGlass=await glass(courseMenu);
+    expect(menuGlass.backdrop).not.toBe('none');
+    expect(menuGlass.background).toContain('gradient');
+
+    const activeStudyFilter=page.locator('.course-study-filter.active').first();
+    if(await activeStudyFilter.count()){
+      const filterGlass=await glass(activeStudyFilter);
+      expect(filterGlass.backdrop).not.toBe('none');
+    }
+
+    await page.goto('/#simulations');
+    const simSelect=page.locator('#simulationCourseFilter');
+    await expect(simSelect).toBeVisible();
+    const selectGlass=await glass(simSelect);
+    expect(selectGlass.backdrop).not.toBe('none');
+  }else{
+    const dock=page.locator('.bottom-nav');
+    await expect(dock).toBeVisible();
+    const dockGlass=await glass(dock);
+    expect(dockGlass.backdrop).not.toBe('none');
+    expect(dockGlass.background).toContain('gradient');
+    const activeDock=page.locator('.bottom-nav>button.active').first();
+    const activeGlass=await glass(activeDock);
+    expect(activeGlass.backdrop).not.toBe('none');
+  }
+
+  await page.goto('/#settings');
+  await page.evaluate(()=>document.getElementById('confirmModal')?.classList.add('open'));
+  const modal=page.locator('#confirmModal .modal-card');
+  await expect(modal).toBeVisible();
+  const modalGlass=await glass(modal);
+  expect(modalGlass.backdrop).not.toBe('none');
+  expect(modalGlass.background).toContain('gradient');
+  await page.evaluate(()=>document.getElementById('confirmModal')?.classList.remove('open'));
+});
+
 test('barra sticky do curso aparece após toolbar sair pelo topo',async({page})=>{const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();await expect(page.locator('[data-view="course"]')).toHaveClass(/active/);await page.locator('#courseMaps').evaluate(el=>el.scrollIntoView({block:'start'}));await page.waitForTimeout(150);await expect(page.locator('#courseStickyBar')).toBeVisible();await expect(page.locator('#courseStickyTitle')).toContainText('DEMHAB')});
 test('tempo de estudo só conta após iniciar sessão manualmente',async({page},testInfo)=>{test.skip(testInfo.project.name==='ipad','Cobertura funcional única; UI iPad permanece coberta pelos demais testes.');const course=page.locator('#homeCourses [data-course="porto-alegre"]');await course.click();const card=page.locator('#courseMaps [data-map]').first();await card.click();await expect(page.locator('#reader')).toHaveClass(/open/);const passive=await page.evaluate(()=>{const key=StudyTime.currentKey(),base=Date.now(),before=StudyTime.mapSeconds(key);StudyTime.activity(base);StudyTime.tick(base+45000);return{key,before,after:StudyTime.mapSeconds(key)}});expect(passive.after).toBe(passive.before);const start=page.locator('[data-rail-session]');await expect(start).toBeVisible();await expect(start).toContainText('Iniciar estudo');await start.click();await page.waitForTimeout(1100);const manual=await page.evaluate(key=>{StudyDashboard.pause();const after=StudyTime.mapSeconds(key),active=StudyDashboard.active();StudyDashboard.finish({silent:true,suppressSummary:true});return{after,active}},passive.key);expect(manual.after).toBeGreaterThan(passive.after);expect(manual.active?.running).toBe(false)});
 
