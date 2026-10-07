@@ -27,7 +27,7 @@
     align-self:center!important;
     overflow:hidden!important;
     border-radius:10px!important;
-    background:#080a0d!important;
+    background:#080809!important;
   }
 
   html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb img{
@@ -36,7 +36,7 @@
     height:100%!important;
     object-fit:contain!important;
     object-position:center center!important;
-    background:#080a0d!important;
+    background:#080809!important;
   }
 
   html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-content{
