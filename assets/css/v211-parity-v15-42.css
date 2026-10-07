@@ -343,3 +343,9 @@
     box-shadow:none!important;
   }
 }
+
+/* Desktop: preserva a densidade aprovada da Home enquanto mantém a linguagem V211. */
+@media(min-width:900px){
+  .hero{min-height:315px!important}
+  .hero-copy{padding:32px 42px 28px!important}
+}
