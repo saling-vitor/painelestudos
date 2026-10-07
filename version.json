@@ -2,13 +2,15 @@
   "version": "15.41.0",
   "label": "V15.41.0-G",
   "releasedAt": "2026-10-07T15:06:15.000Z",
-  "notes": "O versionamento do Meus Mapas agora é sincronizado automaticamente pelo sistema em cada publicação.",
+  "notes": "Liquid Glass revalidado conforme a documentação oficial da Apple: uma camada funcional acima do conteúdo, agrupamento de controles e menos vidro empilhado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cada publicação recebe uma versão automática e única",
-    "[G] Versão, cache, Service Worker e arquivos do app são sincronizados no mesmo build",
-    "[G] Configurações passa a mostrar a versão realmente publicada, sem ficar presa em uma versão antiga",
-    "[G] GitHub Pages valida a mesma versão que foi entregue ao navegador"
+    "[G] Item ativo da sidebar e dock de iPhone/iPad usam Liquid Glass sem transformar o conteúdo em vidro",
+    "[G] Busca, menus, popovers e modais foram revalidados como superfícies funcionais Regular",
+    "[G] Edital, Simulados e Mais agora formam um único grupo de vidro com controles internos integrados",
+    "[G] Filtros ativos e selects principais de Simulados recebem vidro leve; estados inativos permanecem discretos",
+    "[G] Topbar mantém um único blur: Buscar e Sincronizar usam lente interna sem glass-on-glass",
+    "[G] Redução de transparência, alto contraste, movimento reduzido e fallback sem backdrop-filter foram reforçados"
   ],
   "automation": {
     "enabled": true,

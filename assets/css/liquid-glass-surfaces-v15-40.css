@@ -1,35 +1,45 @@
-/* V15.40.0-G · Liquid Glass surfaces V1
-   Escopo: navegação, overlays, menus, filtros ativos e superfícies flutuantes.
-   Princípio: conteúdo permanece sólido; vidro fica reservado à interface de controle. */
+/* V15.41.x-G · Liquid Glass surfaces V2 · Apple HIG audit
+   Escopo: camada funcional acima do conteúdo — navegação, busca, menus,
+   popovers, modais, grupos de ações e filtros selecionados.
+   Princípios aplicados:
+   - vidro Regular nas superfícies funcionais e overlays;
+   - uma única camada de blur por grupo (evita glass-on-glass);
+   - cor apenas como indicação de seleção/estado, nunca como massa de fundo;
+   - conteúdo permanente continua sendo conteúdo, não Liquid Glass;
+   - fallbacks para transparência, contraste, movimento e forced colors. */
 
 :root{
-  --lg-surface-bg:rgba(8,11,15,.56);
-  --lg-surface-bg-strong:rgba(8,11,15,.72);
-  --lg-surface-border:rgba(255,255,255,.17);
-  --lg-surface-border-strong:rgba(255,255,255,.26);
-  --lg-surface-highlight:rgba(255,255,255,.16);
-  --lg-surface-shadow:0 22px 58px rgba(0,0,0,.48);
-  --lg-surface-blur:blur(18px) saturate(155%) contrast(106%);
+  --lg-regular-bg:rgba(9,12,16,.64);
+  --lg-regular-bg-dense:rgba(9,12,16,.78);
+  --lg-regular-border:rgba(255,255,255,.20);
+  --lg-regular-border-strong:rgba(255,255,255,.30);
+  --lg-regular-highlight:rgba(255,255,255,.16);
+  --lg-regular-shadow:0 22px 58px rgba(0,0,0,.48);
+  --lg-regular-filter:blur(20px) saturate(148%) contrast(106%) brightness(101%);
+  --lg-inner-fill:rgba(255,255,255,.036);
+  --lg-inner-fill-hover:rgba(255,255,255,.060);
+  --lg-separator:rgba(255,255,255,.105);
 }
 
-/* 1. Resultado da busca: continuação óptica da topbar. */
+/* ---------------------------------------------------------
+   1 · RESULTADOS DA BUSCA
+   Popover Regular ligado visualmente à busca, sem virar card.
+   --------------------------------------------------------- */
 .global-search-panel{
-  border-color:var(--lg-surface-border-strong)!important;
+  isolation:isolate;
+  border-color:var(--lg-regular-border-strong)!important;
   background:
-    radial-gradient(120% 90% at 8% -20%,
-      rgba(255,255,255,.13) 0%,
+    radial-gradient(125% 90% at 8% -24%,
+      rgba(255,255,255,.135) 0%,
       rgba(255,255,255,.035) 30%,
       transparent 58%),
-    radial-gradient(80% 100% at 100% 110%,
-      rgba(174,207,236,.065) 0%,
-      transparent 60%),
     linear-gradient(145deg,
-      rgba(255,255,255,.030),
-      rgba(255,255,255,.006) 48%,
-      rgba(3,6,10,.10) 100%),
-    var(--lg-surface-bg-strong)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(165%) contrast(108%)!important;
-  backdrop-filter:blur(22px) saturate(165%) contrast(108%)!important;
+      rgba(255,255,255,.034) 0%,
+      rgba(255,255,255,.008) 48%,
+      rgba(2,4,7,.11) 100%),
+    var(--lg-regular-bg-dense)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
+  backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
   box-shadow:
     0 24px 64px rgba(0,0,0,.58),
     inset 0 1px 0 rgba(255,255,255,.18),
@@ -38,162 +48,168 @@
 .global-search-option:hover,
 .global-search-option[aria-selected="true"]{
   border-color:rgba(255,255,255,.13)!important;
-  background:
-    linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),
-    rgba(216,197,158,.025)!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.060),rgba(255,255,255,.016))!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
 }
 
-/* 2. Sidebar: vidro só no item ativo, não na lateral inteira. */
+/* ---------------------------------------------------------
+   2 · SIDEBAR
+   A lateral permanece sólida; somente o item ativo vira lâmina.
+   A cor do destino fica no símbolo/marcador, não na placa.
+   --------------------------------------------------------- */
 html:not(.is-phone-layout) .nav-btn.active{
-  border-color:color-mix(in srgb,var(--nav-accent) 22%,rgba(255,255,255,.10))!important;
+  border-color:rgba(255,255,255,.15)!important;
   background:
-    radial-gradient(115% 130% at 5% -35%,
-      rgba(255,255,255,.09) 0%,
-      transparent 52%),
-    linear-gradient(90deg,
-      color-mix(in srgb,var(--nav-accent) 9%,rgba(255,255,255,.018)),
-      color-mix(in srgb,var(--nav-accent) 3%,rgba(7,10,14,.44)) 72%,
-      rgba(7,10,14,.20))!important;
-  -webkit-backdrop-filter:blur(12px) saturate(145%)!important;
-  backdrop-filter:blur(12px) saturate(145%)!important;
+    radial-gradient(115% 140% at 6% -42%,
+      rgba(255,255,255,.105) 0%,
+      rgba(255,255,255,.025) 38%,
+      transparent 58%),
+    linear-gradient(92deg,
+      rgba(255,255,255,.040) 0%,
+      rgba(255,255,255,.016) 55%,
+      rgba(3,5,8,.12) 100%),
+    rgba(11,14,18,.40)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(142%) contrast(104%)!important;
+  backdrop-filter:blur(12px) saturate(142%) contrast(104%)!important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.075),
+    inset 0 1px 0 rgba(255,255,255,.085),
+    inset 0 -1px 0 rgba(0,0,0,.18),
     0 7px 20px rgba(0,0,0,.16)!important;
 }
+html:not(.is-phone-layout) .nav-btn.active::before{
+  width:2px!important;
+  opacity:.82!important;
+  box-shadow:none!important;
+}
 
-/* 3. Bottom navigation: dock Liquid Glass + lente ativa. */
+/* ---------------------------------------------------------
+   3 · BOTTOM NAV iPHONE / iPAD
+   O dock é a única superfície de vidro. O item ativo é uma lente
+   interna feita com fill/vibrancy, sem um segundo backdrop-filter.
+   --------------------------------------------------------- */
 @media(max-width:820px){
   .bottom-nav{
-    border-color:rgba(255,255,255,.18)!important;
+    isolation:isolate;
+    border-color:var(--lg-regular-border)!important;
     background:
-      radial-gradient(120% 150% at 10% -65%,
-        rgba(255,255,255,.14) 0%,
+      radial-gradient(125% 155% at 10% -68%,
+        rgba(255,255,255,.145) 0%,
         rgba(255,255,255,.035) 38%,
         transparent 62%),
       linear-gradient(145deg,
-        rgba(255,255,255,.030),
-        rgba(4,7,11,.065) 64%,
-        rgba(174,207,236,.022)),
-      rgba(7,10,14,.62)!important;
-    -webkit-backdrop-filter:blur(22px) saturate(165%) contrast(106%)!important;
-    backdrop-filter:blur(22px) saturate(165%) contrast(106%)!important;
+        rgba(255,255,255,.030) 0%,
+        rgba(255,255,255,.008) 54%,
+        rgba(3,5,8,.10) 100%),
+      rgba(8,11,15,.66)!important;
+    -webkit-backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
+    backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
     box-shadow:
       0 22px 58px rgba(0,0,0,.56),
       inset 0 1px 0 rgba(255,255,255,.16),
       inset 0 -1px 0 rgba(0,0,0,.24)!important;
   }
   .bottom-nav button.active{
-    border-color:color-mix(in srgb,var(--nav-accent) 28%,rgba(255,255,255,.13))!important;
+    border-color:rgba(255,255,255,.13)!important;
     background:
-      radial-gradient(125% 140% at 15% -35%,
-        rgba(255,255,255,.11),
+      radial-gradient(125% 145% at 15% -38%,
+        rgba(255,255,255,.10) 0%,
         transparent 55%),
-      linear-gradient(180deg,
-        color-mix(in srgb,var(--nav-accent) 10%,rgba(255,255,255,.025)),
-        color-mix(in srgb,var(--nav-accent) 5%,rgba(7,9,12,.42)))!important;
+      linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.020))!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.12),
-      0 7px 20px color-mix(in srgb,var(--nav-accent) 8%,transparent)!important;
-    -webkit-backdrop-filter:blur(10px) saturate(145%)!important;
-    backdrop-filter:blur(10px) saturate(145%)!important;
+      inset 0 1px 0 rgba(255,255,255,.11),
+      0 6px 16px rgba(0,0,0,.10)!important;
   }
 }
 
-/* iPad pode manter a bottom-nav acima de 820px; aplica o mesmo material sem alterar geometria. */
 html.is-ipad:not(.is-phone-layout) .bottom-nav{
-  border-color:rgba(255,255,255,.18)!important;
+  isolation:isolate;
+  border-color:var(--lg-regular-border)!important;
   background:
-    radial-gradient(120% 150% at 10% -65%,
-      rgba(255,255,255,.14) 0%,
+    radial-gradient(125% 155% at 10% -68%,
+      rgba(255,255,255,.145) 0%,
       rgba(255,255,255,.035) 38%,
       transparent 62%),
     linear-gradient(145deg,
-      rgba(255,255,255,.030),
-      rgba(4,7,11,.065) 64%,
-      rgba(174,207,236,.022)),
-    rgba(7,10,14,.62)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(165%) contrast(106%)!important;
-  backdrop-filter:blur(22px) saturate(165%) contrast(106%)!important;
+      rgba(255,255,255,.030) 0%,
+      rgba(255,255,255,.008) 54%,
+      rgba(3,5,8,.10) 100%),
+    rgba(8,11,15,.66)!important;
+  -webkit-backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
+  backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
   box-shadow:
     0 22px 58px rgba(0,0,0,.56),
     inset 0 1px 0 rgba(255,255,255,.16),
     inset 0 -1px 0 rgba(0,0,0,.24)!important;
 }
 html.is-ipad:not(.is-phone-layout) .bottom-nav button.active{
-  border-color:color-mix(in srgb,var(--nav-accent) 28%,rgba(255,255,255,.13))!important;
+  border-color:rgba(255,255,255,.13)!important;
   background:
-    radial-gradient(125% 140% at 15% -35%,
-      rgba(255,255,255,.11),
-      transparent 55%),
-    linear-gradient(180deg,
-      color-mix(in srgb,var(--nav-accent) 10%,rgba(255,255,255,.025)),
-      color-mix(in srgb,var(--nav-accent) 5%,rgba(7,9,12,.42)))!important;
-  -webkit-backdrop-filter:blur(10px) saturate(145%)!important;
-  backdrop-filter:blur(10px) saturate(145%)!important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.12),
-    0 7px 20px color-mix(in srgb,var(--nav-accent) 8%,transparent)!important;
+    radial-gradient(125% 145% at 15% -38%,rgba(255,255,255,.10),transparent 55%),
+    linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.020))!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 6px 16px rgba(0,0,0,.10)!important;
 }
 
-/* Smartphone: mobile-first desativa blur por padrão; esta camada reativa o dock
-   com seletor equivalente e densidade menor para preservar desempenho no WebKit. */
+/* mobile-first desliga blur tarde na cascata; esta folha é carregada por último. */
 @media(max-width:480px){
   html.is-phone-layout .bottom-nav{
-    border-color:rgba(255,255,255,.16)!important;
+    border-color:rgba(255,255,255,.17)!important;
     background:
-      radial-gradient(120% 150% at 10% -65%,
-        rgba(255,255,255,.11) 0%,
-        rgba(255,255,255,.028) 38%,
+      radial-gradient(125% 150% at 10% -66%,
+        rgba(255,255,255,.115) 0%,
+        rgba(255,255,255,.026) 38%,
         transparent 62%),
-      linear-gradient(145deg,
-        rgba(255,255,255,.024),
-        rgba(4,7,11,.075) 64%,
-        rgba(174,207,236,.018)),
-      rgba(7,10,14,.72)!important;
-    -webkit-backdrop-filter:blur(18px) saturate(155%) contrast(105%)!important;
-    backdrop-filter:blur(18px) saturate(155%) contrast(105%)!important;
+      linear-gradient(145deg,rgba(255,255,255,.025),rgba(3,5,8,.10)),
+      rgba(8,11,15,.72)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(150%) contrast(105%)!important;
+    backdrop-filter:blur(18px) saturate(150%) contrast(105%)!important;
     box-shadow:
       0 18px 48px rgba(0,0,0,.58),
       inset 0 1px 0 rgba(255,255,255,.13),
       inset 0 -1px 0 rgba(0,0,0,.26)!important;
   }
   html.is-phone-layout .bottom-nav button.active{
-    border-color:color-mix(in srgb,var(--nav-accent) 26%,rgba(255,255,255,.12))!important;
+    border-color:rgba(255,255,255,.12)!important;
     background:
-      radial-gradient(120% 130% at 15% -30%,
-        rgba(255,255,255,.085),
-        transparent 55%),
-      linear-gradient(180deg,
-        color-mix(in srgb,var(--nav-accent) 9%,rgba(255,255,255,.020)),
-        color-mix(in srgb,var(--nav-accent) 5%,rgba(7,9,12,.48)))!important;
-    -webkit-backdrop-filter:blur(8px) saturate(140%)!important;
-    backdrop-filter:blur(8px) saturate(140%)!important;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.10),
-      0 6px 16px color-mix(in srgb,var(--nav-accent) 7%,transparent)!important;
+      radial-gradient(120% 130% at 15% -30%,rgba(255,255,255,.085),transparent 55%),
+      linear-gradient(180deg,rgba(255,255,255,.046),rgba(255,255,255,.018))!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.095),0 5px 14px rgba(0,0,0,.10)!important;
   }
 }
 
-/* 4. Popovers e menus contextuais. */
+/* ---------------------------------------------------------
+   4 · MENUS, POPOVERS E SHEETS
+   Regular é a variante padrão para texto e comandos.
+   Inclui os menus de mapas e o select customizado do desktop.
+   --------------------------------------------------------- */
 :is(
   .course-more-menu,
   .reader-more-menu,
   .simulation-card-action-menu,
-  .maps-filter-panel
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet
 ){
-  border-color:var(--lg-surface-border-strong)!important;
+  isolation:isolate;
+  border-color:var(--lg-regular-border-strong)!important;
   background:
-    radial-gradient(125% 110% at 8% -25%,
-      rgba(255,255,255,.12),
-      rgba(255,255,255,.025) 36%,
+    radial-gradient(125% 112% at 8% -27%,
+      rgba(255,255,255,.12) 0%,
+      rgba(255,255,255,.026) 37%,
       transparent 60%),
     linear-gradient(145deg,
-      rgba(255,255,255,.026),
-      rgba(3,6,10,.085) 72%),
-    var(--lg-surface-bg-strong)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(160%) contrast(107%)!important;
-  backdrop-filter:blur(22px) saturate(160%) contrast(107%)!important;
+      rgba(255,255,255,.028) 0%,
+      rgba(255,255,255,.006) 48%,
+      rgba(3,5,8,.095) 100%),
+    var(--lg-regular-bg-dense)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
+  backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
   box-shadow:
     0 24px 64px rgba(0,0,0,.58),
     inset 0 1px 0 rgba(255,255,255,.16),
@@ -202,140 +218,312 @@ html.is-ipad:not(.is-phone-layout) .bottom-nav button.active{
 :is(
   .course-more-menu,
   .reader-more-menu,
-  .simulation-card-action-menu
-) button:hover{
-  background:rgba(255,255,255,.055)!important;
+  .simulation-card-action-menu,
+  .map-actions-menu
+) button:hover,
+:is(
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu
+) button:focus-visible{
+  background:var(--lg-inner-fill-hover)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
 }
+.ui-select-popover .ui-select-option:hover,
+.ui-select-popover .ui-select-option:focus-visible,
+.ui-select-popover .ui-select-option[aria-selected="true"]{
+  background:linear-gradient(180deg,rgba(255,255,255,.060),rgba(255,255,255,.025))!important;
+}
+@media(max-width:480px){
+  html.is-phone-layout .mobile-menu-sheet{
+    border-color:rgba(255,255,255,.18)!important;
+    background:
+      radial-gradient(120% 100% at 12% -20%,rgba(255,255,255,.09),transparent 52%),
+      linear-gradient(155deg,rgba(255,255,255,.020),rgba(3,5,8,.10)),
+      rgba(8,11,15,.86)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(145%) contrast(105%)!important;
+    backdrop-filter:blur(18px) saturate(145%) contrast(105%)!important;
+  }
+}
 
-/* 5. Modais e toasts: vidro mais denso para preservar legibilidade. */
-.modal-card{
-  border-color:rgba(255,255,255,.18)!important;
+/* ---------------------------------------------------------
+   5 · GRUPO DE AÇÕES DO CURSO
+   Edital | Simulados | ••• = UMA superfície de vidro.
+   Os três controles internos são fills transparentes, evitando glass-on-glass.
+   --------------------------------------------------------- */
+.course-primary-actions{
+  isolation:isolate;
+  gap:0!important;
+  border:1px solid var(--lg-regular-border)!important;
+  border-radius:10px!important;
   background:
-    radial-gradient(110% 70% at 5% -10%,
-      rgba(255,255,255,.10),
-      transparent 50%),
-    linear-gradient(160deg,
-      rgba(255,255,255,.025),
-      rgba(3,6,10,.10) 70%),
-    rgba(7,10,14,.80)!important;
-  -webkit-backdrop-filter:blur(24px) saturate(145%) contrast(106%)!important;
-  backdrop-filter:blur(24px) saturate(145%) contrast(106%)!important;
+    radial-gradient(130% 150% at 8% -60%,
+      rgba(255,255,255,.13) 0%,
+      rgba(255,255,255,.030) 40%,
+      transparent 64%),
+    linear-gradient(145deg,rgba(255,255,255,.030),rgba(3,5,8,.095)),
+    rgba(9,12,16,.55)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(148%) contrast(105%)!important;
+  backdrop-filter:blur(15px) saturate(148%) contrast(105%)!important;
+  box-shadow:
+    0 11px 28px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 0 -1px 0 rgba(0,0,0,.20)!important;
+}
+/* Neutraliza gaps legados de maior especificidade: o grupo precisa ser uma peça contínua. */
+html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-primary-actions,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+  gap:0!important;
+}
+
+.course-primary-actions>#openEdital,
+.course-primary-actions>#courseSimulationsBtn,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn{
+  border:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+.course-primary-actions>#openEdital{
+  border-radius:9px 0 0 9px!important;
+}
+.course-primary-actions>#courseSimulationsBtn{
+  border-left:1px solid var(--lg-separator)!important;
+  border-radius:0!important;
+}
+.course-primary-actions>.course-more-wrap{
+  align-self:stretch;
+  display:flex;
+  border-left:1px solid var(--lg-separator)!important;
+}
+.course-primary-actions>.course-more-wrap>#courseMoreBtn{
+  height:100%!important;
+  min-height:41px;
+  border-radius:0 9px 9px 0!important;
+}
+.course-primary-actions>#openEdital:hover,
+.course-primary-actions>#courseSimulationsBtn:hover,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn:hover,
+.course-primary-actions>#openEdital:focus-visible,
+.course-primary-actions>#courseSimulationsBtn:focus-visible,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn:focus-visible{
+  background:var(--lg-inner-fill-hover)!important;
+}
+.course-primary-actions>#openEdital:active,
+.course-primary-actions>#courseSimulationsBtn:active,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn:active{
+  background:rgba(255,255,255,.075)!important;
+}
+
+/* ---------------------------------------------------------
+   6 · MODAIS / TOASTS
+   Regular mais denso para legibilidade de texto e tarefas focadas.
+   --------------------------------------------------------- */
+.modal-card{
+  isolation:isolate;
+  border-color:rgba(255,255,255,.19)!important;
+  background:
+    radial-gradient(112% 72% at 6% -12%,rgba(255,255,255,.10),transparent 50%),
+    linear-gradient(160deg,rgba(255,255,255,.026),rgba(3,5,8,.105) 70%),
+    rgba(8,11,15,.82)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
+  backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
   box-shadow:
     0 34px 100px rgba(0,0,0,.70),
     inset 0 1px 0 rgba(255,255,255,.15)!important;
 }
 .toast{
   border-color:rgba(255,255,255,.20)!important;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.045),rgba(3,6,10,.08)),
-    rgba(8,11,15,.74)!important;
-  -webkit-backdrop-filter:blur(18px) saturate(150%)!important;
-  backdrop-filter:blur(18px) saturate(150%)!important;
-  box-shadow:
-    0 18px 48px rgba(0,0,0,.56),
-    inset 0 1px 0 rgba(255,255,255,.11)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(3,5,8,.085)),rgba(8,11,15,.76)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(145%)!important;
+  backdrop-filter:blur(18px) saturate(145%)!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.56),inset 0 1px 0 rgba(255,255,255,.11)!important;
 }
-
-/* Smartphone: mobile-first mantém modais sólidos por desempenho.
-   Reativamos Liquid Glass apenas nos diálogos/folhas flutuantes. */
 @media(max-width:480px){
-  html.is-phone-layout .modal-card,
-  html.is-phone-layout .planner-modal-card,
-  html.is-phone-layout .study-doubt-card{
-    border-color:rgba(255,255,255,.17)!important;
+  html.is-phone-layout :is(.modal-card,.planner-modal-card,.study-doubt-card){
+    border-color:rgba(255,255,255,.18)!important;
     background:
-      radial-gradient(115% 80% at 8% -15%,
-        rgba(255,255,255,.085),
-        transparent 50%),
-      linear-gradient(155deg,
-        rgba(255,255,255,.022),
-        rgba(3,6,10,.105) 72%),
-      rgba(8,11,15,.86)!important;
-    -webkit-backdrop-filter:blur(16px) saturate(145%) contrast(104%)!important;
-    backdrop-filter:blur(16px) saturate(145%) contrast(104%)!important;
-    box-shadow:
-      0 28px 82px rgba(0,0,0,.68),
-      inset 0 1px 0 rgba(255,255,255,.12)!important;
+      radial-gradient(115% 80% at 8% -15%,rgba(255,255,255,.085),transparent 50%),
+      linear-gradient(155deg,rgba(255,255,255,.022),rgba(3,5,8,.105) 72%),
+      rgba(8,11,15,.88)!important;
+    -webkit-backdrop-filter:blur(17px) saturate(142%) contrast(104%)!important;
+    backdrop-filter:blur(17px) saturate(142%) contrast(104%)!important;
+    box-shadow:0 28px 82px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,255,255,.12)!important;
   }
 }
 
-/* 6. Superfícies flutuantes e filtros selecionados. */
+/* ---------------------------------------------------------
+   7 · BARRAS FLUTUANTES E FILTROS
+   Glass apenas no estado ativo. Selects principais recebem vidro leve.
+   --------------------------------------------------------- */
 .course-sticky-bar{
+  isolation:isolate;
   border-color:rgba(255,255,255,.17)!important;
   background:
-    radial-gradient(120% 120% at 7% -45%,
-      rgba(255,255,255,.09),
-      transparent 54%),
-    linear-gradient(145deg,
-      rgba(255,255,255,.020),
-      rgba(3,6,10,.075)),
-    rgba(7,10,14,.68)!important;
-  -webkit-backdrop-filter:blur(20px) saturate(150%)!important;
-  backdrop-filter:blur(20px) saturate(150%)!important;
-  box-shadow:
-    0 18px 46px rgba(0,0,0,.45),
-    inset 0 1px 0 rgba(255,255,255,.10)!important;
+    radial-gradient(120% 120% at 7% -45%,rgba(255,255,255,.09),transparent 54%),
+    linear-gradient(145deg,rgba(255,255,255,.022),rgba(3,5,8,.078)),
+    rgba(8,11,15,.70)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(145%)!important;
+  backdrop-filter:blur(20px) saturate(145%)!important;
+  box-shadow:0 18px 46px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.10)!important;
 }
 
 .course-study-filter.active,
 .category-btn.active{
-  border-color:rgba(216,197,158,.30)!important;
+  border-color:rgba(255,255,255,.17)!important;
   background:
-    radial-gradient(130% 130% at 12% -35%,
-      rgba(255,255,255,.10),
-      transparent 53%),
-    linear-gradient(145deg,
-      rgba(216,197,158,.080),
-      rgba(216,197,158,.025)),
-    rgba(8,11,15,.42)!important;
-  -webkit-backdrop-filter:blur(10px) saturate(145%)!important;
-  backdrop-filter:blur(10px) saturate(145%)!important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.09),
-    0 5px 14px rgba(0,0,0,.14)!important;
+    radial-gradient(130% 135% at 12% -38%,rgba(255,255,255,.105),transparent 53%),
+    linear-gradient(145deg,rgba(255,255,255,.047),rgba(255,255,255,.018)),
+    rgba(9,12,16,.42)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(140%)!important;
+  backdrop-filter:blur(10px) saturate(140%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 5px 14px rgba(0,0,0,.14)!important;
 }
 
-.simulation-toolbar select{
-  border-color:rgba(255,255,255,.15)!important;
-  background-color:rgba(10,13,18,.58)!important;
-  -webkit-backdrop-filter:blur(12px) saturate(145%)!important;
-  backdrop-filter:blur(12px) saturate(145%)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+/* O select nativo continua funcional em touch; no desktop o JS mostra .ui-select-trigger. */
+.simulation-toolbar select,
+.simulation-toolbar .ui-select-trigger{
+  border-color:rgba(255,255,255,.16)!important;
+  background:
+    radial-gradient(135% 145% at 10% -50%,rgba(255,255,255,.085),transparent 56%),
+    linear-gradient(145deg,rgba(255,255,255,.030),rgba(3,5,8,.075)),
+    rgba(10,13,18,.58)!important;
+  -webkit-backdrop-filter:blur(11px) saturate(142%)!important;
+  backdrop-filter:blur(11px) saturate(142%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;
+}
+.simulation-toolbar .ui-select-trigger:hover,
+.simulation-toolbar .ui-select-trigger[aria-expanded="true"]{
+  border-color:rgba(255,255,255,.24)!important;
+  background:
+    radial-gradient(135% 145% at 10% -50%,rgba(255,255,255,.11),transparent 56%),
+    linear-gradient(145deg,rgba(255,255,255,.045),rgba(3,5,8,.070)),
+    rgba(10,13,18,.55)!important;
 }
 
-/* Acessibilidade / fallbacks. */
+/* ---------------------------------------------------------
+   ACESSIBILIDADE E FALLBACKS
+   --------------------------------------------------------- */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :is(
+    .global-search-panel,
+    .bottom-nav,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .toast,
+    .course-sticky-bar,
+    .course-primary-actions,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
+    background:rgba(22,26,33,.94)!important;
+  }
+}
+
 @media(prefers-reduced-transparency:reduce){
-  .global-search-panel,
-  .course-more-menu,
-  .reader-more-menu,
-  .simulation-card-action-menu,
-  .maps-filter-panel,
-  .modal-card,
-  .toast,
-  .course-sticky-bar,
-  .bottom-nav{
-    background:#0b0e12!important;
+  :is(
+    .global-search-panel,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .toast,
+    .course-sticky-bar,
+    .bottom-nav,
+    .course-primary-actions,
+    .course-study-filter.active,
+    .category-btn.active,
+    .simulation-toolbar select,
+    .simulation-toolbar .ui-select-trigger,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
+    background:#0c0f14!important;
+    background-image:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
 }
+
+@media(prefers-contrast:more){
+  :is(
+    .global-search-panel,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .course-sticky-bar,
+    .bottom-nav,
+    .course-primary-actions,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
+    border-color:rgba(255,255,255,.48)!important;
+    background-color:rgba(6,8,11,.90)!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  :is(
+    .nav-btn,
+    .bottom-nav button,
+    .course-primary-actions button,
+    .course-more-menu button,
+    .reader-more-menu button,
+    .simulation-card-action-menu button,
+    .map-actions-menu button,
+    .ui-select-trigger,
+    .ui-select-option
+  ){
+    transition:none!important;
+  }
+}
+
 @media(forced-colors:active){
-  .global-search-panel,
-  .course-more-menu,
-  .reader-more-menu,
-  .simulation-card-action-menu,
-  .maps-filter-panel,
-  .modal-card,
-  .toast,
-  .course-sticky-bar,
-  .bottom-nav,
-  html:not(.is-phone-layout) .nav-btn.active{
+  :is(
+    .global-search-panel,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .toast,
+    .course-sticky-bar,
+    .bottom-nav,
+    .course-primary-actions,
+    .course-study-filter.active,
+    .category-btn.active,
+    .simulation-toolbar select,
+    .simulation-toolbar .ui-select-trigger,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
     background:Canvas!important;
+    background-image:none!important;
     color:CanvasText!important;
     border-color:CanvasText!important;
     box-shadow:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
+  }
+  .course-primary-actions>.course-more-wrap,
+  .course-primary-actions>#courseSimulationsBtn{
+    border-color:CanvasText!important;
   }
 }
