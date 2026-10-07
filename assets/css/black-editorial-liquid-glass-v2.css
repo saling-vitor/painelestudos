@@ -431,7 +431,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 }
 
 /* ==========================================================================
-   9 · FORMULÁRIOS / CONTROLES GERAIS — SEM CIANO/NAVY
+   9 · FORMULÁRIOS / CONTROLES GERAIS — SEM TINT ESTRUTURAL FRIA
    ========================================================================== */
 .app :is(input,select,textarea,.ui-select-trigger){
   color:var(--mm-text)!important;
