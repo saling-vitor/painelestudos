@@ -114,7 +114,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main .m
   height:30px!important;
   color:var(--map-accent,#c3aa84)!important;
   border-color:color-mix(in srgb,var(--map-accent,#c3aa84) 50%,rgba(255,255,255,.08))!important;
-  background:color-mix(in srgb,var(--map-accent,#c3aa84) 8%,#0a0b0e)!important;
+  background:color-mix(in srgb,var(--map-accent,#c3aa84) 8%,#0a0a0b)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main b{
   font-size:12px!important;
