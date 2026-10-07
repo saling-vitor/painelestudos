@@ -2,16 +2,15 @@
   "version": "15.42.0",
   "label": "V15.42.0-G",
   "releasedAt": "2026-10-07T17:45:00.000Z",
-  "notes": "Design System V2: ambiente topográfico global, shell Liquid Glass unificado, navegação adaptativa e hierarquia de conteúdo mais limpa.",
+  "notes": "V15.42 unifica o Meus Mapas com a Template V211: Design System V2, ambiente topografico global, hierarquia editorial, cards e paineis escuros por tema, mantendo Liquid Glass apenas na camada funcional.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Novo fundo global com linhas topográficas minimalistas, inspirado no conceito Meus Mapas e sem invadir os cards",
-    "[D+T] Sidebar/rail passa a ser uma superfície Liquid Glass flutuante com lente interna no item ativo",
-    "[G] Topbar, busca, menus, popovers, modais e docks compartilham a mesma hierarquia óptica, sem glass-on-glass",
-    "[G] Conteúdo permanente permanece sólido; KPIs e blocos da Home usam menos caixas e mais agrupamento",
-    "[T] Navegação do iPad passa a responder à largura disponível: rail em largura ampla e dock em largura estreita",
-    "[M] Smartphone preserva cinco destinos e densidade compacta, com topografia mais sutil",
-    "[G] Controles sobre capas usam Clear Glass e acessibilidade mantém Reduce Transparency, Increase Contrast e Reduce Motion"
+    "[G] Ambiente global ganha linhas topograficas minimalistas e malha cartografica discreta",
+    "[G] Design System V2 unifica sidebar, topbar, docks, menus, filtros e overlays sem glass-on-glass",
+    "[G] A Template V211 passa a orientar hero, tipografia, kickers, cards, paineis e formularios do sistema",
+    "[G] Cards de mapa passam a seguir a linguagem dos topic-card V211: superficie escura, borda fina e assinatura lateral por tema",
+    "[G] Home, Cursos, Mapas, Simulados, Progresso, Agenda, Configuracoes e Reader compartilham o mesmo vocabulario visual",
+    "[G] Desktop, iPad e iPhone preservam suas densidades e navegacoes aprovadas com fallbacks de acessibilidade"
   ],
   "automation": {
     "enabled": true,
