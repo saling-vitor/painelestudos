@@ -86,13 +86,13 @@ html:not(.is-phone-layout) .topbar{
       rgba(255,255,255,.036) 33%,
       transparent 60%),
     radial-gradient(96% 148% at 100% 126%,
-      rgba(172,205,234,.060) 0%,
+      rgba(255,255,255,.050) 0%,
       transparent 57%),
     linear-gradient(145deg,
       rgba(255,255,255,.038) 0%,
       rgba(255,255,255,.010) 38%,
       rgba(5,8,12,.075) 69%,
-      rgba(190,214,236,.024) 100%),
+      rgba(255,255,255,.020) 100%),
     rgba(7,10,14,.34)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   -webkit-backdrop-filter:
@@ -139,7 +139,7 @@ html:not(.is-phone-layout) .topbar::after{
       rgba(255,255,255,.050) 0%,
       transparent 46%),
     radial-gradient(60% 160% at 88% 100%,
-      rgba(172,205,234,.040) 0%,
+      rgba(255,255,255,.032) 0%,
       transparent 54%)!important;
   filter:none!important;
   opacity:.92!important;
@@ -163,7 +163,7 @@ html:not(.is-phone-layout) .topbar .search{
       rgba(255,255,255,.038) 0%,
       rgba(255,255,255,.010) 42%,
       rgba(4,7,11,.070) 70%,
-      rgba(190,214,236,.025) 100%),
+      rgba(255,255,255,.020) 100%),
     rgba(10,13,18,.30)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   -webkit-backdrop-filter:
@@ -247,7 +247,7 @@ html:not(.is-phone-layout) .topbar .search:focus-within{
       rgba(255,255,255,.048) 0%,
       rgba(255,255,255,.013) 42%,
       rgba(4,7,11,.060) 70%,
-      rgba(190,214,236,.032) 100%),
+      rgba(255,255,255,.026) 100%),
     rgba(10,13,18,.27)!important;
   -webkit-backdrop-filter:
     blur(10px)
@@ -277,7 +277,7 @@ html:not(.is-phone-layout) .topbar #syncTop{
     linear-gradient(145deg,
       rgba(255,255,255,.065) 0%,
       rgba(255,255,255,.018) 55%,
-      rgba(190,224,255,.045) 100%),
+      rgba(255,255,255,.035) 100%),
     rgba(8,11,15,.16)!important;
   color:#f0f3f7!important;
   -webkit-backdrop-filter:
@@ -307,7 +307,7 @@ html:not(.is-phone-layout) .topbar #syncTop{
       linear-gradient(145deg,
         rgba(255,255,255,.082) 0%,
         rgba(255,255,255,.023) 55%,
-        rgba(190,224,255,.060) 100%),
+        rgba(255,255,255,.045) 100%),
       rgba(8,11,15,.14)!important;
     color:#fff!important;
     box-shadow:
