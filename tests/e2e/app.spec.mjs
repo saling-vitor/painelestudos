@@ -77,7 +77,7 @@ test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#p
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
-test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',async({page},testInfo)=>{
+test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({page},testInfo)=>{
   await expect(page.locator('link[href*="liquid-glass-surfaces-v15-40.css"]')).toHaveCount(1);
 
   const glass=async locator=>locator.evaluate(el=>{
@@ -90,7 +90,9 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
       background:s.backgroundImage,
       backgroundColor:s.backgroundColor,
       filled:(s.backgroundImage!=='none'&&!/^none$/i.test(s.backgroundImage))||!['rgba(0, 0, 0, 0)','transparent'].includes(s.backgroundColor),
-      border:parseFloat(s.borderTopWidth)||0
+      border:parseFloat(s.borderTopWidth)||0,
+      borderLeft:parseFloat(s.borderLeftWidth)||0,
+      gap:parseFloat(s.gap)||0
     };
   });
 
@@ -110,8 +112,9 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
     expect(dockGlass.backdrop).not.toBe('none');
     expect(dockGlass.filled).toBe(true);
     const activeDock=page.locator('.bottom-nav>button.active').first();
-    const activeGlass=await glass(activeDock);
-    expect(activeGlass.backdrop).not.toBe('none');
+    const activeLens=await glass(activeDock);
+    expect(activeLens.backdrop).toBe('none');
+    expect(activeLens.filled).toBe(true);
   }else{
     const activeNav=page.locator('.side .nav-btn.active').first();
     await expect(activeNav).toBeVisible();
@@ -122,12 +125,42 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
 
   if(testInfo.project.name==='desktop-chromium'){
     await page.goto('/#course/porto-alegre');
+
+    const actionGroup=page.locator('.course-primary-actions');
+    await expect(actionGroup).toBeVisible();
+    const groupGlass=await glass(actionGroup);
+    expect(groupGlass.backdrop).not.toBe('none');
+    expect(groupGlass.filled).toBe(true);
+    expect(groupGlass.border).toBeGreaterThan(0);
+    expect(groupGlass.gap).toBe(0);
+
+    const editalLens=await glass(page.locator('#openEdital'));
+    const simulationsLens=await glass(page.locator('#courseSimulationsBtn'));
+    const moreLens=await glass(page.locator('#courseMoreBtn'));
+    expect(editalLens.backdrop).toBe('none');
+    expect(simulationsLens.backdrop).toBe('none');
+    expect(moreLens.backdrop).toBe('none');
+    expect(simulationsLens.borderLeft).toBeGreaterThan(0);
+    const moreWrapBorder=await page.locator('.course-more-wrap').evaluate(el=>parseFloat(getComputedStyle(el).borderLeftWidth)||0);
+    expect(moreWrapBorder).toBeGreaterThan(0);
+
     await page.locator('#courseMoreBtn').click();
     const courseMenu=page.locator('#courseMoreMenu');
     await expect(courseMenu).toBeVisible();
     const menuGlass=await glass(courseMenu);
     expect(menuGlass.backdrop).not.toBe('none');
     expect(menuGlass.filled).toBe(true);
+    await page.locator('#courseMoreBtn').click();
+
+    const mapMenuButton=page.locator('#courseMaps .map-admin-btn').first();
+    if(await mapMenuButton.count()){
+      await mapMenuButton.click();
+      const mapMenu=page.locator('#courseMaps .map-actions-menu:not([hidden])').first();
+      await expect(mapMenu).toBeVisible();
+      const mapMenuGlass=await glass(mapMenu);
+      expect(mapMenuGlass.backdrop).not.toBe('none');
+      expect(mapMenuGlass.filled).toBe(true);
+    }
 
     const activeStudyFilter=page.locator('.course-study-filter.active').first();
     if(await activeStudyFilter.count()){
@@ -136,10 +169,20 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
     }
 
     await page.goto('/#simulations');
-    const simSelect=page.locator('#simulationCourseFilter');
+    const customSimSelect=page.locator('.simulation-toolbar .ui-select-trigger').first();
+    const simSelect=(await customSimSelect.count())?customSimSelect:page.locator('#simulationCourseFilter');
     await expect(simSelect).toBeVisible();
     const selectGlass=await glass(simSelect);
     expect(selectGlass.backdrop).not.toBe('none');
+    if(await customSimSelect.count()){
+      await customSimSelect.click();
+      const selectPopover=page.locator('.ui-select-popover').first();
+      await expect(selectPopover).toBeVisible();
+      const popoverGlass=await glass(selectPopover);
+      expect(popoverGlass.backdrop).not.toBe('none');
+      expect(popoverGlass.filled).toBe(true);
+      await page.keyboard.press('Escape');
+    }
   }
 
   await page.goto('/#settings');
@@ -906,8 +949,9 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.topbarBackdrop).not.toBe('none');
-  expect(visual.searchBackdrop).not.toBe('none');
-  expect(visual.syncBackdrop).not.toBe('none');
+  // Apple HIG: a topbar é o único material; controles internos usam fill/vibrancy.
+  expect(visual.searchBackdrop).toBe('none');
+  expect(visual.syncBackdrop).toBe('none');
   expect(visual.topbarBackground).toContain('gradient');
   expect(visual.searchBackground).toContain('gradient');
   expect(visual.syncBackground).toContain('gradient');
