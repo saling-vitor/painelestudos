@@ -1,4 +1,4 @@
-/* V15.40.0-G · Liquid Glass V3.1 para controles flutuantes sobre capas
+/* V15.40.0-G · Liquid Glass V3.2 para controles flutuantes sobre capas
    Diretriz:
    - refino óptico: menos névoa leitosa, mais transmissão da capa e borda especular;
    - preserva o conteúdo da capa sob o controle em vez de criar uma placa cinza;
@@ -89,10 +89,10 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     contrast(116%)
     brightness(110%)!important;
   backdrop-filter:
-    blur(8px)
-    saturate(190%)
-    contrast(112%)
-    brightness(112%)!important;
+    blur(5px)
+    saturate(205%)
+    contrast(116%)
+    brightness(110%)!important;
   background-clip:padding-box!important;
   box-shadow:
     0 7px 18px var(--cover-liquid-shadow),
@@ -125,37 +125,37 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   z-index:1;
 }
 
-/* Contorno fino nos símbolos `more` e estrela.
-   O traço é feito com micro drop-shadows sobre a máscara do ícone:
-   não altera tamanho, hit-area ou posição do controle. */
+/* Contorno preto visível nos símbolos `more` e estrela.
+   Dois anéis curtos de drop-shadow criam um stroke perceptível (~1 px visual)
+   mesmo sobre capas muito claras, sem alterar tamanho, posição ou hit-area. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover > .map-admin-btn,
   .map-card.has-cover > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ) > .ui-icon:is(.icon-more,.icon-star){
+  -webkit-filter:
+    drop-shadow(0 0 .85px rgba(0,0,0,.98))
+    drop-shadow(0 0 .85px rgba(0,0,0,.98))
+    drop-shadow(0 1px .35px rgba(0,0,0,.55))!important;
   filter:
-    drop-shadow(.55px 0 0 rgba(0,0,0,.82))
-    drop-shadow(-.55px 0 0 rgba(0,0,0,.82))
-    drop-shadow(0 .55px 0 rgba(0,0,0,.82))
-    drop-shadow(0 -.55px 0 rgba(0,0,0,.82))
-    drop-shadow(.38px .38px 0 rgba(0,0,0,.62))
-    drop-shadow(-.38px -.38px 0 rgba(0,0,0,.62))
-    drop-shadow(0 1px 1.2px rgba(0,0,0,.28))!important;
+    drop-shadow(0 0 .85px rgba(0,0,0,.98))
+    drop-shadow(0 0 .85px rgba(0,0,0,.98))
+    drop-shadow(0 1px .35px rgba(0,0,0,.55))!important;
 }
 
-/* Favorito ativo: somente a estrela recebe a cor; o contorno preto permanece. */
+/* Favorito ativo: somente a estrela recebe a cor; o mesmo contorno preto permanece. */
 .map-card > .fav.on > .ui-icon{
   color:#f2c94c!important;
   background-color:#f2c94c!important;
+  -webkit-filter:
+    drop-shadow(0 0 .9px rgba(0,0,0,1))
+    drop-shadow(0 0 .9px rgba(0,0,0,1))
+    drop-shadow(0 1px .4px rgba(0,0,0,.58))!important;
   filter:
-    drop-shadow(.55px 0 0 rgba(0,0,0,.84))
-    drop-shadow(-.55px 0 0 rgba(0,0,0,.84))
-    drop-shadow(0 .55px 0 rgba(0,0,0,.84))
-    drop-shadow(0 -.55px 0 rgba(0,0,0,.84))
-    drop-shadow(.38px .38px 0 rgba(0,0,0,.64))
-    drop-shadow(-.38px -.38px 0 rgba(0,0,0,.64))
-    drop-shadow(0 1px 1.4px rgba(0,0,0,.30))!important;
+    drop-shadow(0 0 .9px rgba(0,0,0,1))
+    drop-shadow(0 0 .9px rgba(0,0,0,1))
+    drop-shadow(0 1px .4px rgba(0,0,0,.58))!important;
 }
 
 /* Menu aberto: aumenta a definição do contorno, sem virar uma placa opaca. */
@@ -218,10 +218,10 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
       contrast(118%)
       brightness(113%)!important;
     backdrop-filter:
-      blur(7px)
-      saturate(205%)
-      contrast(114%)
-      brightness(116%)!important;
+      blur(5px)
+      saturate(215%)
+      contrast(118%)
+      brightness(113%)!important;
     box-shadow:
       0 10px 24px rgba(0,0,0,.29),
       0 1px 2px rgba(0,0,0,.14),
@@ -271,10 +271,10 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     contrast(115%)
     brightness(107%)!important;
   backdrop-filter:
-    blur(9px)
-    saturate(180%)
-    contrast(113%)
-    brightness(106%)!important;
+    blur(6px)
+    saturate(195%)
+    contrast(115%)
+    brightness(107%)!important;
   box-shadow:
     0 4px 11px var(--cover-liquid-shadow-close),
     inset 0 1px 1px rgba(255,255,255,.45),
