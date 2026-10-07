@@ -1068,7 +1068,7 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
   padding:0 9px!important;
   border:1px solid rgba(255,255,255,.09)!important;
   border-radius:7px!important;
-  background:#0e1014!important;
+  background:#0e0e0f!important;
   color:#e1e3e7!important;
   font:750 10px var(--mono)!important;
   letter-spacing:.01em;
