@@ -77,8 +77,8 @@ test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#p
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
-test('[G] V15.42 aplica ambiente topográfico sem transformar conteúdo em vidro',async({page})=>{
-  await expect(page.locator('link[href*="topographic-environment-v15-42.css"]')).toHaveCount(1);
+test('[G] V15.45 aplica ambiente topográfico raster contínuo sem transformar conteúdo em vidro',async({page})=>{
+  await expect(page.locator('link[href*="topographic-environment-v15-43.css"]')).toHaveCount(1);
   await expect(page.locator('link[href*="design-system-v15-42.css"]')).toHaveCount(1);
   const visual=await page.evaluate(()=>{
     const bodyBefore=getComputedStyle(document.body,'::before');
@@ -89,11 +89,15 @@ test('[G] V15.42 aplica ambiente topográfico sem transformar conteúdo em vidro
     return{
       topoImage:bodyBefore.backgroundImage,
       topoOpacity:parseFloat(bodyBefore.opacity)||0,
+      topoRepeat:bodyBefore.backgroundRepeat,
+      topoFilter:bodyBefore.filter,
       mapBackdrop:mapStyle?(mapStyle.backdropFilter||mapStyle.webkitBackdropFilter||'none'):'none',
       sideBackdrop:sideStyle?(sideStyle.backdropFilter||sideStyle.webkitBackdropFilter||'none'):'none'
     };
   });
-  expect(visual.topoImage).toContain('topographic-map-v15-42.svg');
+  expect(visual.topoImage).toContain('topographic-lines-v15-43.webp');
+  expect(visual.topoRepeat).toBe('no-repeat');
+  expect(visual.topoFilter).toBe('none');
   expect(visual.topoOpacity).toBeGreaterThan(0);
   expect(visual.mapBackdrop).toBe('none');
   if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).not.toBe('none');
@@ -4413,4 +4417,116 @@ test('V15.44 [G] PASSO 3 · 1280 desktop e iPad por largura não geram overflow'
       expect(state.dockItems).toBe(5);
     }
   }
+});
+
+
+/* PASSO 4 · Topographic Raster Environment */
+test('V15.45 [G] PASSO 4 · raster orgânico é contínuo, responsivo e sem mosaico',async({page},testInfo)=>{
+  const project=testInfo.project.name;
+  const cases=project==='desktop-chromium'
+    ?[
+      {width:1920,height:1080,opacity:.46},
+      {width:2560,height:1440,opacity:.46}
+    ]
+    :project==='ipad'
+      ?[
+        {width:1024,height:834,opacity:.38},
+        {width:820,height:1180,opacity:.38}
+      ]
+      :[
+        {width:390,height:844,opacity:.27}
+      ];
+
+  for(const viewport of cases){
+    await page.setViewportSize({width:viewport.width,height:viewport.height});
+    await page.goto('/#home');
+    await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+
+    const state=await page.evaluate(()=>{
+      const root=getComputedStyle(document.documentElement);
+      const topo=getComputedStyle(document.body,'::before');
+      return{
+        token:parseFloat(root.getPropertyValue('--mm-topo-opacity'))||0,
+        image:topo.backgroundImage,
+        repeat:topo.backgroundRepeat,
+        position:topo.backgroundPosition,
+        size:topo.backgroundSize,
+        filter:topo.filter,
+        overflow:document.documentElement.scrollWidth-innerWidth
+      };
+    });
+
+    expect(Math.abs(state.token-viewport.opacity)).toBeLessThan(.005);
+    expect(state.image).toContain('topographic-lines-v15-43.webp');
+    expect(state.repeat).toBe('no-repeat');
+    expect(state.filter).toBe('none');
+    expect(state.overflow).toBeLessThanOrEqual(2);
+    if(project==='iphone-webkit'){
+      expect(state.position).toMatch(/center.*top|50% 0%/);
+      expect(state.size).not.toBe('auto');
+    }else{
+      expect(state.size).toContain('cover');
+    }
+  }
+});
+
+test('V15.45 [G] PASSO 4 · topografia permanece global e conteúdo matte não recebe a textura',async({page})=>{
+  for(const route of ['home','courses','maps','simulations','progress','agenda','settings']){
+    await page.goto('/#'+route);
+    await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+    const state=await page.evaluate(()=>{
+      const topo=getComputedStyle(document.body,'::before');
+      const permanent=document.querySelector('.course-card,.map-card,.simulation-card,.progress-insight-card,.panel');
+      const permanentImage=permanent?getComputedStyle(permanent).backgroundImage:'none';
+      return{
+        topoImage:topo.backgroundImage,
+        topoRepeat:topo.backgroundRepeat,
+        permanentImage,
+        overflow:document.documentElement.scrollWidth-innerWidth
+      };
+    });
+    expect(state.topoImage).toContain('topographic-lines-v15-43.webp');
+    expect(state.topoRepeat).toBe('no-repeat');
+    expect(state.permanentImage).not.toContain('topographic-lines-v15-43.webp');
+    expect(state.overflow).toBeLessThanOrEqual(2);
+  }
+});
+
+test('V15.45 [G] PASSO 4 · leitor continua limpo e restaura o ambiente ao fechar',async({page})=>{
+  await page.goto('/#course/porto-alegre');
+  await page.waitForFunction(()=>document.querySelectorAll('#courseMaps .map-card').length>0);
+  const before=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
+  expect(before).toBeGreaterThan(0);
+
+  const card=page.locator('#courseMaps .map-card').first();
+  await card.click();
+  await expect(page.locator('#reader')).toHaveClass(/open/);
+  const openOpacity=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
+  expect(openOpacity).toBe(0);
+
+  await page.locator('#readerClose').click();
+  await expect(page.locator('#reader')).not.toHaveClass(/open/);
+  const restored=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
+  expect(restored).toBeGreaterThan(0);
+});
+
+test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o novo raster',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.MMDynamicGlass&&typeof window.MMDynamicGlass.snapshot==='function');
+  const data=await page.evaluate(()=>{
+    const topo=getComputedStyle(document.body,'::before');
+    const topbar=document.querySelector('.topbar');
+    const side=document.querySelector('.side');
+    const filter=el=>el?(getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter||'none'):'missing';
+    return{
+      topo:topo.backgroundImage,
+      topbarFilter:filter(topbar),
+      sideFilter:filter(side),
+      dynamic:window.MMDynamicGlass.snapshot()
+    };
+  });
+  expect(data.topo).toContain('topographic-lines-v15-43.webp');
+  expect(data.topbarFilter).not.toBe('none');
+  if(await page.locator('.side').isVisible())expect(data.sideFilter).not.toBe('none');
+  expect(data.dynamic.opticalSurfaces).toBeGreaterThan(0);
 });
