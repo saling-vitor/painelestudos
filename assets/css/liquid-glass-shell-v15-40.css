@@ -1,0 +1,278 @@
+/* V15.40.0-G · Liquid Glass shell + true layered icon outline
+   - topbar [D+T] recebe o mesmo material óptico dos controles sobre capas;
+   - smartphone mantém a topbar compacta existente;
+   - ••• e estrela usam duas camadas reais: preenchimento + base preta contornada;
+   - sem alterar dimensões, posição ou hit-area dos controles. */
+
+:root{
+  --lg-shell-border:rgba(255,255,255,.34);
+  --lg-shell-border-strong:rgba(255,255,255,.52);
+  --lg-shell-highlight:rgba(255,255,255,.38);
+  --lg-shell-shadow:rgba(0,0,0,.30);
+  --lg-shell-icon-stroke:#05070a;
+}
+
+/* ---------- Ícones das capas: contorno real em camada separada ---------- */
+.cover-icon-stack{
+  position:relative;
+  display:inline-block;
+  width:16px;
+  height:16px;
+  min-width:16px;
+  min-height:16px;
+  overflow:visible;
+  flex:0 0 16px;
+  color:inherit;
+  line-height:0;
+  pointer-events:none;
+}
+
+.cover-icon-stack>.ui-icon{
+  position:absolute!important;
+  inset:0!important;
+  width:16px!important;
+  height:16px!important;
+  min-width:16px!important;
+  min-height:16px!important;
+  --icon-size:16px!important;
+  margin:0!important;
+  transform:none!important;
+}
+
+.cover-icon-stack>.cover-icon-stroke{
+  z-index:1;
+  color:var(--lg-shell-icon-stroke)!important;
+  background-color:var(--lg-shell-icon-stroke)!important;
+  -webkit-filter:
+    drop-shadow(.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 .9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 -.9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(.6px .6px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.6px -.6px 0 var(--lg-shell-icon-stroke))!important;
+  filter:
+    drop-shadow(.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 .9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 -.9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(.6px .6px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.6px -.6px 0 var(--lg-shell-icon-stroke))!important;
+}
+
+.cover-icon-stack>.cover-icon-fill{
+  z-index:2;
+  color:inherit!important;
+  background-color:currentColor!important;
+  -webkit-filter:none!important;
+  filter:none!important;
+}
+
+/* Favorito ativo: frente dourada, contorno continua preto. */
+.map-card>.fav.on .cover-icon-fill.icon-star{
+  color:#f2c94c!important;
+  background-color:#f2c94c!important;
+}
+.map-card>.fav.on .cover-icon-stroke.icon-star{
+  color:var(--lg-shell-icon-stroke)!important;
+  background-color:var(--lg-shell-icon-stroke)!important;
+}
+
+/* ---------- Topbar Liquid Glass [D+T] ---------- */
+html:not(.is-phone-layout) .topbar{
+  border-color:var(--lg-shell-border)!important;
+  background:
+    radial-gradient(125% 170% at 8% -80%,
+      rgba(255,255,255,.30) 0%,
+      rgba(255,255,255,.085) 34%,
+      transparent 61%),
+    radial-gradient(95% 145% at 100% 125%,
+      rgba(185,220,255,.095) 0%,
+      transparent 58%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.080) 0%,
+      rgba(255,255,255,.022) 38%,
+      rgba(9,12,17,.055) 69%,
+      rgba(215,236,255,.045) 100%),
+    rgba(8,11,15,.20)!important;
+  background-blend-mode:screen,screen,normal,normal!important;
+  -webkit-backdrop-filter:
+    blur(12px)
+    saturate(182%)
+    contrast(111%)
+    brightness(105%)!important;
+  backdrop-filter:
+    blur(12px)
+    saturate(182%)
+    contrast(111%)
+    brightness(105%)!important;
+  box-shadow:
+    0 16px 42px var(--lg-shell-shadow),
+    0 2px 8px rgba(0,0,0,.16),
+    inset 0 1px 1px rgba(255,255,255,.42),
+    inset 1px 0 1px rgba(255,255,255,.13),
+    inset -1px 0 1px rgba(255,255,255,.07),
+    inset 0 -1px 1px rgba(0,0,0,.22)!important;
+}
+
+html:not(.is-phone-layout) .topbar::before{
+  inset:0!important;
+  border-radius:inherit!important;
+  background:
+    linear-gradient(112deg,
+      rgba(255,255,255,.22) 0%,
+      rgba(255,255,255,.065) 17%,
+      transparent 37%,
+      transparent 100%)!important;
+  opacity:.82!important;
+  filter:none!important;
+}
+
+html:not(.is-phone-layout) .topbar::after{
+  inset:1px!important;
+  width:auto!important;
+  height:auto!important;
+  left:1px!important;
+  top:1px!important;
+  border-radius:inherit!important;
+  background:
+    radial-gradient(70% 180% at 16% 0%,
+      rgba(255,255,255,.12) 0%,
+      transparent 48%),
+    radial-gradient(60% 160% at 88% 100%,
+      rgba(185,220,255,.07) 0%,
+      transparent 55%)!important;
+  filter:none!important;
+  opacity:1!important;
+}
+
+/* Campo da busca: segunda lâmina de vidro, mais limpa e transparente. */
+html:not(.is-phone-layout) .topbar .search{
+  border-color:rgba(255,255,255,.23)!important;
+  background:
+    radial-gradient(130% 150% at 7% -65%,
+      rgba(255,255,255,.21) 0%,
+      rgba(255,255,255,.055) 38%,
+      transparent 63%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.050) 0%,
+      rgba(255,255,255,.012) 52%,
+      rgba(190,224,255,.035) 100%),
+    rgba(7,10,14,.16)!important;
+  -webkit-backdrop-filter:
+    blur(7px)
+    saturate(195%)
+    contrast(113%)
+    brightness(106%)!important;
+  backdrop-filter:
+    blur(7px)
+    saturate(195%)
+    contrast(113%)
+    brightness(106%)!important;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.28),
+    inset 0 -1px 1px rgba(0,0,0,.16),
+    0 1px 2px rgba(0,0,0,.12)!important;
+}
+
+html:not(.is-phone-layout) .topbar .search:focus-within{
+  border-color:rgba(255,255,255,.48)!important;
+  background:
+    radial-gradient(135% 160% at 7% -65%,
+      rgba(255,255,255,.27) 0%,
+      rgba(255,255,255,.072) 39%,
+      transparent 64%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.065) 0%,
+      rgba(255,255,255,.018) 52%,
+      rgba(190,224,255,.045) 100%),
+    rgba(7,10,14,.14)!important;
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,.035),
+    inset 0 1px 1px rgba(255,255,255,.34),
+    inset 0 -1px 1px rgba(0,0,0,.14)!important;
+}
+
+/* Sincronizar integra-se à mesma família do vidro das capas. */
+html:not(.is-phone-layout) .topbar #syncTop{
+  border-color:rgba(255,255,255,.30)!important;
+  background:
+    radial-gradient(140% 160% at 8% -70%,
+      rgba(255,255,255,.26) 0%,
+      rgba(255,255,255,.070) 39%,
+      transparent 63%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.065) 0%,
+      rgba(255,255,255,.018) 55%,
+      rgba(190,224,255,.045) 100%),
+    rgba(8,11,15,.16)!important;
+  color:#f0f3f7!important;
+  -webkit-backdrop-filter:
+    blur(7px)
+    saturate(195%)
+    contrast(113%)
+    brightness(106%)!important;
+  backdrop-filter:
+    blur(7px)
+    saturate(195%)
+    contrast(113%)
+    brightness(106%)!important;
+  box-shadow:
+    0 5px 14px rgba(0,0,0,.18),
+    inset 0 1px 1px rgba(255,255,255,.32),
+    inset 0 -1px 1px rgba(0,0,0,.16)!important;
+}
+
+@media(hover:hover) and (pointer:fine){
+  html:not(.is-phone-layout) .topbar #syncTop:hover{
+    border-color:var(--lg-shell-border-strong)!important;
+    background:
+      radial-gradient(145% 165% at 8% -70%,
+        rgba(255,255,255,.34) 0%,
+        rgba(255,255,255,.095) 39%,
+        transparent 64%),
+      linear-gradient(145deg,
+        rgba(255,255,255,.082) 0%,
+        rgba(255,255,255,.023) 55%,
+        rgba(190,224,255,.060) 100%),
+      rgba(8,11,15,.14)!important;
+    color:#fff!important;
+    box-shadow:
+      0 7px 18px rgba(0,0,0,.21),
+      inset 0 1px 1px rgba(255,255,255,.42),
+      inset 0 -1px 1px rgba(0,0,0,.14)!important;
+  }
+}
+
+/* iPad preserva dimensões/touch targets; muda apenas o material. */
+html.is-ipad:not(.is-phone-layout) .topbar #syncTop{
+  border-color:rgba(255,255,255,.28)!important;
+}
+
+/* Acessibilidade: densidade maior quando transparência é reduzida. */
+@media(prefers-reduced-transparency:reduce){
+  html:not(.is-phone-layout) .topbar{
+    background:rgba(19,22,28,.94)!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  html:not(.is-phone-layout) .topbar .search,
+  html:not(.is-phone-layout) .topbar #syncTop{
+    background:rgba(31,35,43,.94)!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+
+@media(forced-colors:active){
+  .cover-icon-stack>.cover-icon-stroke{display:none!important}
+  html:not(.is-phone-layout) .topbar,
+  html:not(.is-phone-layout) .topbar .search,
+  html:not(.is-phone-layout) .topbar #syncTop{
+    background:Canvas!important;
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
