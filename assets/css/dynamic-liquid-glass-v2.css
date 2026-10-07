@@ -108,8 +108,11 @@ textarea{
   opacity:.72;
   transition:opacity var(--mm-motion-fast) ease;
 }
-.mm-optical-surface>*{
+.mm-optical-surface>:not(.side-bottom){
   position:relative;
+  z-index:1;
+}
+.side.mm-optical-surface>.side-bottom{
   z-index:1;
 }
 
