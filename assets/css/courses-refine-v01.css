@@ -176,7 +176,7 @@ html:not(.is-phone-layout) .nav-btn.active::before{
   }
   html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card:hover .enter{
     border-color:color-mix(in srgb,var(--course-accent,#b99c68) 50%,rgba(255,255,255,.10))!important;
-    background:color-mix(in srgb,var(--course-accent,#b99c68) 12%,#0b0d10)!important;
+    background:color-mix(in srgb,var(--course-accent,#b99c68) 12%,#0b0b0c)!important;
   }
 }
 
