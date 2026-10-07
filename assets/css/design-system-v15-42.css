@@ -1,0 +1,427 @@
+/* V15.42 · MEUS MAPAS Design System V2
+   Apple-inspired functional layer + identidade cartográfica própria.
+   Princípio: conteúdo sólido; navegação/controles/overlays formam a camada Liquid Glass. */
+:root{
+  --mm-text-strong:#f3f4f6;
+  --mm-text:#d2d6dc;
+  --mm-text-muted:#8e949d;
+  --mm-accent:#d8c59e;
+
+  --mm-surface-0:rgba(5,7,10,.82);
+  --mm-surface-1:rgba(9,12,16,.88);
+  --mm-surface-2:rgba(13,16,21,.92);
+  --mm-surface-border:rgba(255,255,255,.075);
+  --mm-surface-border-soft:rgba(255,255,255,.050);
+
+  --mm-glass-bg:rgba(8,11,15,.58);
+  --mm-glass-dense:rgba(8,11,15,.78);
+  --mm-glass-border:rgba(255,255,255,.19);
+  --mm-glass-highlight:rgba(255,255,255,.15);
+  --mm-glass-outer:rgba(0,0,0,.74);
+  --mm-glass-filter:blur(20px) saturate(148%) contrast(106%);
+
+  --mm-radius-control:9px;
+  --mm-radius-inner:10px;
+  --mm-radius-surface:13px;
+  --mm-radius-shell:18px;
+  --mm-radius-overlay:16px;
+
+  --mm-shadow-surface:0 12px 30px rgba(0,0,0,.20);
+  --mm-shadow-float:0 24px 68px rgba(0,0,0,.52);
+  --mm-motion-fast:140ms;
+  --mm-motion:190ms;
+}
+
+/* =========================================================
+   1 · CONTEÚDO: MENOS CAIXAS, MAIS HIERARQUIA
+   ========================================================= */
+:is(
+  .study-command-card,
+  .study-intelligence-row>article,
+  .home-review-section,
+  .continue-card,
+  .simulation-recent-item,
+  .course-card,
+  .map-card,
+  .progress-insights,
+  .progress-insight-card,
+  .progress-attention,
+  .panel
+){
+  border-color:var(--mm-surface-border)!important;
+  box-shadow:none!important;
+}
+:is(
+  .study-command-card,
+  .home-review-section,
+  .continue-card,
+  .simulation-recent-item,
+  .progress-insights,
+  .panel
+){
+  background:linear-gradient(180deg,rgba(11,14,18,.88),rgba(7,9,12,.86))!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.section-head{position:relative}
+.section-head h2{letter-spacing:-.018em}
+.section-head p{color:var(--mm-text-muted)!important}
+
+/* KPIs do hero funcionam como uma faixa única, não como mini-cards soltos. */
+.hero-stats{
+  gap:0!important;
+  overflow:hidden;
+  border:1px solid var(--mm-surface-border)!important;
+  border-radius:var(--mm-radius-inner)!important;
+  background:rgba(5,7,10,.64)!important;
+}
+.hero-stats .stat{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.hero-stats .stat+.stat{border-left:1px solid rgba(255,255,255,.065)!important}
+
+/* Métricas internas seguem a mesma lógica de agrupamento discreto. */
+.study-command-metrics{
+  gap:1px!important;
+  overflow:hidden;
+  border:1px solid var(--mm-surface-border-soft);
+  border-radius:var(--mm-radius-inner);
+  background:rgba(255,255,255,.045);
+}
+.study-command-metrics>button{
+  border:0!important;
+  border-radius:0!important;
+  background:rgba(7,9,12,.88)!important;
+  box-shadow:none!important;
+}
+
+/* Configurações: painéis continuam semânticos, porém mais planos. */
+.settings-layout-v3 .panel{
+  border-color:rgba(255,255,255,.065)!important;
+  background:rgba(8,10,13,.82)!important;
+  box-shadow:none!important;
+}
+.settings-layout-v3 .panel-kicker{letter-spacing:.12em}
+
+/* =========================================================
+   2 · SIDEBAR / RAIL · UMA SUPERFÍCIE FUNCIONAL
+   ========================================================= */
+html:not(.is-phone-layout) .side{
+  top:10px!important;
+  bottom:10px!important;
+  left:10px!important;
+  width:calc(var(--nav) - 20px)!important;
+  height:auto!important;
+  overflow:hidden;
+  border:1px solid var(--mm-glass-border)!important;
+  border-radius:var(--mm-radius-shell)!important;
+  background:
+    radial-gradient(125% 80% at 12% -20%,rgba(255,255,255,.105),transparent 56%),
+    linear-gradient(155deg,rgba(255,255,255,.025),rgba(2,4,7,.11)),
+    rgba(7,10,14,.66)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(145%) contrast(105%)!important;
+  backdrop-filter:blur(20px) saturate(145%) contrast(105%)!important;
+  box-shadow:
+    0 0 0 1px var(--mm-glass-outer),
+    18px 20px 58px rgba(0,0,0,.34),
+    inset 0 1px 0 var(--mm-glass-highlight),
+    inset 0 -1px 0 rgba(0,0,0,.30)!important;
+}
+html:not(.is-phone-layout) .side .brand{padding-inline:10px}
+html:not(.is-phone-layout) .side .nav-btn{
+  border-radius:var(--mm-radius-control)!important;
+  transition:background var(--mm-motion-fast) ease,border-color var(--mm-motion-fast) ease,color var(--mm-motion-fast) ease,transform var(--mm-motion-fast) ease;
+}
+html:not(.is-phone-layout) .side .nav-btn.active{
+  border-color:rgba(255,255,255,.12)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.060),rgba(255,255,255,.020)),
+    rgba(255,255,255,.014)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+html:not(.is-phone-layout) .side .nav-btn.active::before{
+  width:2px!important;
+  opacity:.88!important;
+}
+
+/* =========================================================
+   3 · TOPBAR · UMA CAMADA ÓPTICA
+   ========================================================= */
+html:not(.is-phone-layout) .topbar{
+  border-color:var(--mm-glass-border)!important;
+  border-radius:var(--mm-radius-shell)!important;
+  background:
+    radial-gradient(120% 150% at 8% -62%,rgba(255,255,255,.12),rgba(255,255,255,.024) 40%,transparent 62%),
+    linear-gradient(145deg,rgba(255,255,255,.028),rgba(3,5,8,.10)),
+    rgba(7,10,14,.55)!important;
+  -webkit-backdrop-filter:var(--mm-glass-filter)!important;
+  backdrop-filter:var(--mm-glass-filter)!important;
+  box-shadow:
+    0 0 0 1px var(--mm-glass-outer),
+    0 16px 42px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.17),
+    inset 0 -1px 0 rgba(0,0,0,.26)!important;
+}
+html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
+  border-radius:var(--mm-radius-control)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* =========================================================
+   4 · LIQUID GLASS REGULAR / DENSE
+   ========================================================= */
+:is(
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet
+){
+  border:1px solid rgba(255,255,255,.22)!important;
+  border-radius:var(--mm-radius-overlay)!important;
+  background:
+    radial-gradient(120% 95% at 8% -24%,rgba(255,255,255,.115),transparent 56%),
+    linear-gradient(155deg,rgba(255,255,255,.025),rgba(2,4,7,.11)),
+    var(--mm-glass-dense)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
+  backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.68),
+    var(--mm-shadow-float),
+    inset 0 1px 0 rgba(255,255,255,.15)!important;
+}
+.modal-card{
+  border:1px solid rgba(255,255,255,.19)!important;
+  border-radius:var(--mm-radius-overlay)!important;
+  background:
+    radial-gradient(110% 74% at 7% -10%,rgba(255,255,255,.09),transparent 54%),
+    linear-gradient(155deg,rgba(255,255,255,.022),rgba(3,5,8,.105)),
+    rgba(7,10,14,.84)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
+  backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
+  box-shadow:0 0 0 1px rgba(0,0,0,.72),0 34px 96px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,255,255,.14)!important;
+}
+
+/* =========================================================
+   5 · CONTROLES SOBRE CAPAS · CLEAR GLASS
+   ========================================================= */
+:is(
+  .map-card.has-cover>.fav,
+  .map-card.has-cover>.map-admin-btn,
+  .course-card-edit,
+  .simulation-card.has-cover .simulation-card-menu-btn
+){
+  border-color:rgba(255,255,255,.31)!important;
+  background:
+    radial-gradient(135% 150% at 18% -45%,rgba(255,255,255,.22),transparent 56%),
+    linear-gradient(145deg,rgba(255,255,255,.070),rgba(4,6,9,.10)),
+    rgba(8,11,15,.22)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
+  backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.56),
+    0 6px 18px rgba(0,0,0,.25),
+    inset 0 1px 0 rgba(255,255,255,.22)!important;
+}
+
+/* =========================================================
+   6 · GRUPO DO CURSO · UMA SUPERFÍCIE, TRÊS CONTROLES
+   ========================================================= */
+.course-primary-actions{
+  gap:0!important;
+  overflow:visible;
+  border:1px solid var(--mm-glass-border)!important;
+  border-radius:var(--mm-radius-inner)!important;
+  background:
+    radial-gradient(125% 140% at 8% -54%,rgba(255,255,255,.12),transparent 60%),
+    linear-gradient(145deg,rgba(255,255,255,.028),rgba(3,5,8,.085)),
+    rgba(8,11,15,.54)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(146%) contrast(105%)!important;
+  backdrop-filter:blur(15px) saturate(146%) contrast(105%)!important;
+  box-shadow:0 0 0 1px rgba(0,0,0,.56),0 10px 25px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.13)!important;
+}
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn){
+  border-radius:0!important;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+.course-primary-actions>#openEdital{border-radius:8px 0 0 8px!important}
+.course-primary-actions>.course-more-wrap>#courseMoreBtn{border-radius:0 8px 8px 0!important}
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn):is(:hover,:focus-visible){
+  background:rgba(255,255,255,.055)!important;
+}
+
+/* =========================================================
+   7 · FILTROS / SELECTS · VIDRO SOMENTE ONDE FAZ SENTIDO
+   ========================================================= */
+:is(.course-study-filter.active,.category-btn.active){
+  border-color:rgba(255,255,255,.15)!important;
+  border-radius:var(--mm-radius-control)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.018)),rgba(8,11,15,.40)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(138%)!important;
+  backdrop-filter:blur(9px) saturate(138%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09)!important;
+}
+.simulation-toolbar :is(select,.ui-select-trigger){
+  border-radius:var(--mm-radius-control)!important;
+  border-color:rgba(255,255,255,.15)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.040),rgba(255,255,255,.012)),rgba(8,11,15,.55)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(138%)!important;
+  backdrop-filter:blur(10px) saturate(138%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;
+}
+
+/* =========================================================
+   8 · BOTTOM NAV · DOCK ÚNICO + LENTE INTERNA
+   ========================================================= */
+.bottom-nav{
+  border-color:var(--mm-glass-border)!important;
+  background:
+    radial-gradient(125% 160% at 10% -72%,rgba(255,255,255,.13),transparent 61%),
+    linear-gradient(145deg,rgba(255,255,255,.027),rgba(3,5,8,.095)),
+    rgba(7,10,14,.67)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(150%) contrast(105%)!important;
+  backdrop-filter:blur(20px) saturate(150%) contrast(105%)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.64),
+    0 20px 58px rgba(0,0,0,.54),
+    inset 0 1px 0 rgba(255,255,255,.14)!important;
+}
+.bottom-nav>button{
+  border-radius:var(--mm-radius-inner)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.bottom-nav>button.active{
+  border-color:rgba(255,255,255,.12)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.060),rgba(255,255,255,.020))!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+
+/* =========================================================
+   9 · IPAD · NAVEGAÇÃO RESPONDE À LARGURA, NÃO À ORIENTAÇÃO
+   ========================================================= */
+@media(min-width:900px){
+  html.is-ipad:not(.is-phone-layout){--nav:88px!important}
+  html.is-ipad:not(.is-phone-layout) .app{
+    display:grid!important;
+    grid-template-columns:88px minmax(0,1fr)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .side{
+    display:block!important;
+    width:72px!important;
+    left:8px!important;
+    top:8px!important;
+    bottom:8px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .main{grid-column:2!important;width:auto!important}
+  html.is-ipad:not(.is-phone-layout) .bottom-nav{display:none!important}
+  html.is-ipad:not(.is-phone-layout) .content{
+    width:min(1180px,100%)!important;
+    padding-left:18px!important;
+    padding-right:18px!important;
+    padding-bottom:52px!important;
+  }
+}
+@media(max-width:899px){
+  html.is-ipad:not(.is-phone-layout){--nav:0px!important;scroll-padding-bottom:104px}
+  html.is-ipad:not(.is-phone-layout) .app{display:block!important;grid-template-columns:none!important}
+  html.is-ipad:not(.is-phone-layout) .side{display:none!important}
+  html.is-ipad:not(.is-phone-layout) .main{grid-column:auto!important;width:100%!important}
+  html.is-ipad:not(.is-phone-layout) .content{
+    width:100%!important;
+    max-width:100%!important;
+    padding-left:16px!important;
+    padding-right:16px!important;
+    padding-bottom:132px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .bottom-nav{
+    display:grid!important;
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    left:10px!important;
+    right:10px!important;
+    bottom:calc(8px + var(--safe-bottom))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .bottom-nav :is(.bottom-nav-simulations,.bottom-nav-agenda){display:grid!important}
+}
+
+/* =========================================================
+   10 · SMARTPHONE · COMPACTO, SEM AUMENTAR CARDS
+   ========================================================= */
+@media(max-width:480px){
+  html.is-phone-layout .content{padding-inline:12px!important}
+  html.is-phone-layout .bottom-nav{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    left:7px!important;
+    right:7px!important;
+    bottom:calc(6px + var(--safe-bottom))!important;
+    border-radius:15px!important;
+  }
+  html.is-phone-layout .bottom-nav :is(.bottom-nav-simulations,.bottom-nav-agenda){display:none!important}
+  html.is-phone-layout .topbar{
+    border-color:rgba(255,255,255,.14)!important;
+    background:rgba(7,10,14,.64)!important;
+  }
+  html.is-phone-layout :is(.course-toolbar,.maps-toolbar,.simulation-toolbar){
+    gap:6px!important;
+  }
+}
+
+/* =========================================================
+   11 · CONTEÚDO PERMANENTE NUNCA VIRA GLASS
+   ========================================================= */
+:is(.course-card,.map-card,.simulation-card,.progress-insight-card,.study-plan-item,.agenda-day){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* =========================================================
+   12 · ACESSIBILIDADE / FALLBACKS
+   ========================================================= */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    background:#0b0e12!important;
+  }
+}
+@media(prefers-reduced-transparency:reduce){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    background:#0b0e12!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+@media(prefers-contrast:more){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    border-color:rgba(255,255,255,.48)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  :is(.nav-btn,.bottom-nav button,.course-primary-actions button,.ui-select-trigger,.course-study-filter,.category-btn){
+    transition:none!important;
+  }
+}
+@media(forced-colors:active){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    background:Canvas!important;
+    background-image:none!important;
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
