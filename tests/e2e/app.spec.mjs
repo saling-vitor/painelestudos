@@ -82,11 +82,14 @@ test('[G] Liquid Glass fica restrito a navegação, overlays e filtros ativos',a
 
   const glass=async locator=>locator.evaluate(el=>{
     const s=getComputedStyle(el);
+    const standard=s.backdropFilter||'';
+    const prefixed=s.webkitBackdropFilter||'';
+    const backdrop=standard&&standard!=='none'?standard:(prefixed||standard||'none');
     return{
-      backdrop:s.backdropFilter||s.webkitBackdropFilter||'none',
+      backdrop,
       background:s.backgroundImage,
       backgroundColor:s.backgroundColor,
-      filled:s.backgroundImage!=='none'&&!/^none$/i.test(s.backgroundImage)||!['rgba(0, 0, 0, 0)','transparent'].includes(s.backgroundColor),
+      filled:(s.backgroundImage!=='none'&&!/^none$/i.test(s.backgroundImage))||!['rgba(0, 0, 0, 0)','transparent'].includes(s.backgroundColor),
       border:parseFloat(s.borderTopWidth)||0
     };
   });
