@@ -9,9 +9,9 @@
    - fallbacks para transparência, contraste, movimento e forced colors. */
 
 :root{
-  --lg-regular-bg:rgba(9,12,16,.64);
-  --lg-regular-bg-dense:rgba(9,12,16,.78);
-  --lg-regular-border:rgba(255,255,255,.20);
+  --lg-regular-bg:var(--mm-glass-regular-bg,rgba(9,10,11,.64));
+  --lg-regular-bg-dense:var(--mm-glass-dense-bg,rgba(8,9,10,.78));
+  --lg-regular-border:var(--mm-glass-border,rgba(255,255,255,.20));
   --lg-regular-border-strong:rgba(255,255,255,.30);
   --lg-regular-highlight:rgba(255,255,255,.16);
   --lg-regular-shadow:0 22px 58px rgba(0,0,0,.48);
