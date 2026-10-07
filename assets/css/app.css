@@ -1769,7 +1769,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .course-primary-actions>button{height:41px}
 .course-more-wrap{position:relative}
 .course-more-wrap>#courseMoreBtn{width:41px;height:41px;padding:0}
-.course-more-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:70;min-width:190px;max-width:min(220px,calc(100vw - 32px));padding:5px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:rgba(12,14,18,.98);box-shadow:0 18px 50px rgba(0,0,0,.50)}
+.course-more-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:70;min-width:190px;max-width:min(220px,calc(100vw - 32px));padding:5px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:rgba(12,14,18,.98);box-shadow:0 18px 50px rgba(0,0,0,.50)}.course-more-menu.course-more-menu-portal{position:fixed;z-index:1450;right:auto;top:auto;min-width:190px;max-width:min(240px,calc(100vw - 16px));isolation:isolate}
 .course-more-menu[hidden],.course-more-menu button[hidden]{display:none!important}
 .course-more-menu button{display:flex;align-items:center;gap:8px;width:100%;min-height:38px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#adb1b8;text-align:left;cursor:pointer}
 .course-more-menu button:hover{background:rgba(255,255,255,.045);color:#e2e3e5}
