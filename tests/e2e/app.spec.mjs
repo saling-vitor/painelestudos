@@ -4566,6 +4566,11 @@ test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e
 
   await page.goto('/#progress');
   await expect(page.locator('#progressSort')).toHaveCount(0);
+  if(testInfo.project.name==='iphone-webkit'){
+    const subjects=page.locator('[data-mobile-progress-group="subjects"]');
+    await expect(subjects).toBeVisible();
+    if(!(await subjects.evaluate(el=>el.open)))await subjects.locator(':scope > summary').click();
+  }
   const sortTrigger=page.locator('#progressSortTrigger');
   await expect(sortTrigger).toBeVisible();
   await sortTrigger.click();
