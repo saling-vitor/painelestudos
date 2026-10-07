@@ -1173,14 +1173,33 @@ test('[G] Simulados vinculados herdam o accent do curso sem alterar o badge da b
   const card=page.locator('#homeSimulations .simulation-recent-item').first();
   await expect(card).toBeVisible();
   await expect(card.locator('.simulation-recent-board')).toBeVisible();
-  await expect.poll(async()=>card.evaluate(el=>!el.dataset.simulationCourseCover||!!el.dataset.simulationCourseAccentSrc),{timeout:4000}).toBe(true);
-  const visual=await card.evaluate(el=>{
+
+  // O sync da Home pode substituir o nó do card no WebKit enquanto a capa/accent
+  // é resolvida. Valida sempre o nó atual e conectado para não ler computed style
+  // vazio de um elemento que acabou de ser destacado do DOM.
+  await expect.poll(async()=>{
+    const current=page.locator('#homeSimulations .simulation-recent-item').first();
+    if(!await current.count())return false;
+    return current.evaluate(el=>el.isConnected&&(!el.dataset.simulationCourseCover||!!el.dataset.simulationCourseAccentSrc));
+  },{timeout:5000}).toBe(true);
+
+  await expect.poll(async()=>{
+    const current=page.locator('#homeSimulations .simulation-recent-item').first();
+    if(!await current.count())return '';
+    return current.evaluate(el=>{
+      if(!el.isConnected)return '';
+      const style=getComputedStyle(el);
+      return [style.borderLeftColor,style.boxShadow].filter(v=>v&&v!=='none').join('|');
+    });
+  },{timeout:5000}).not.toBe('');
+
+  const visual=await page.locator('#homeSimulations .simulation-recent-item').first().evaluate(el=>{
     const style=getComputedStyle(el),board=el.querySelector('.simulation-recent-board');
     return{
-      linked:!!el.dataset.simulationCourseCover,
+      linked:el.isConnected&&!!el.dataset.simulationCourseCover,
       inlineAccent:el.style.getPropertyValue('--simulation-accent').trim(),
       inlineGeneric:el.style.getPropertyValue('--accent').trim(),
-      edgeVisual:[style.borderLeftColor,style.boxShadow].filter(Boolean).join('|'),
+      edgeVisual:[style.borderLeftColor,style.boxShadow].filter(v=>v&&v!=='none').join('|'),
       boardColor:board?getComputedStyle(board).color:''
     };
   });
@@ -1188,10 +1207,8 @@ test('[G] Simulados vinculados herdam o accent do curso sem alterar o badge da b
   expect(visual.inlineAccent).not.toBe('');
   expect(visual.inlineGeneric).toBe(visual.inlineAccent);
   expect(visual.edgeVisual).not.toBe('');
-  expect(visual.edgeVisual).not.toBe('none');
   expect(visual.boardColor).not.toBe('');
 });
-
 test('cursos da home ocupam a largura em grade responsiva',async({page})=>{
   await page.goto('/#home');
   const count=await page.locator('#homeCourses .home-course-card').count();
