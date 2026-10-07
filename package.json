@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
+    "prepare:release": "node scripts/prepare-release.mjs",
+    "validate:release": "node scripts/validate-release.mjs",
     "test:e2e": "playwright test"
   },
   "devDependencies": {

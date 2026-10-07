@@ -33,6 +33,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Prepare automatic release version
+        run: node scripts/prepare-release.mjs
+
       - name: Install test dependencies
         run: npm install --no-audit --no-fund
 
@@ -68,6 +71,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+
+      - name: Prepare automatic release version
+        run: node scripts/prepare-release.mjs
 
       - name: Install test dependencies
         run: npm install --no-audit --no-fund
@@ -106,6 +112,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Prepare automatic release version
+        run: node scripts/prepare-release.mjs
+
       - name: Install test dependencies
         run: npm install --no-audit --no-fund
 
@@ -142,6 +151,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+
+      - name: Prepare automatic release version
+        run: node scripts/prepare-release.mjs
 
       - name: Install test dependencies
         run: npm install --no-audit --no-fund
@@ -181,6 +193,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Prepare automatic release version
+        run: node scripts/prepare-release.mjs
+
       - name: Build search index
         run: node scripts/build-search-index.mjs
 
@@ -208,6 +223,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Prepare automatic release version
+        run: node scripts/prepare-release.mjs
 
       - name: Confirm public site serves this release
         shell: bash

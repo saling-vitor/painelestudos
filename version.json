@@ -1,13 +1,19 @@
 {
-  "version": "15.40.0",
-  "label": "V15.40.0-G",
-  "releasedAt": "2026-10-06T14:55:00.000Z",
-  "notes": "A criação de concursos por edital agora entende layouts diferentes de banca e usa OCR local quando o PDF é digitalizado.",
+  "version": "15.41.0",
+  "label": "V15.41.0-G",
+  "releasedAt": "2026-10-07T15:06:15.000Z",
+  "notes": "O versionamento do Meus Mapas agora é sincronizado automaticamente pelo sistema em cada publicação.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Parser por múltiplas estratégias para Objetiva, FUNDATEC, Instituto AOCP e demais layouts",
-    "[G] Cidade e órgão priorizam o cabeçalho do ente público, evitando confundir o endereço da banca",
-    "[G] Data da prova é associada ao evento e ao grupo/código do cargo quando o edital possui datas diferentes",
-    "[G] PDFs digitalizados recebem OCR local como fallback, sem criar o concurso automaticamente"
-  ]
+    "[G] Cada publicação recebe uma versão automática e única",
+    "[G] Versão, cache, Service Worker e arquivos do app são sincronizados no mesmo build",
+    "[G] Configurações passa a mostrar a versão realmente publicada, sem ficar presa em uma versão antiga",
+    "[G] GitHub Pages valida a mesma versão que foi entregue ao navegador"
+  ],
+  "automation": {
+    "enabled": true,
+    "series": "15.41",
+    "channel": "G",
+    "runBase": 660
+  }
 }
