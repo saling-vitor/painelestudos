@@ -1,0 +1,582 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   MEUS MAPAS · DYNAMIC LIQUID GLASS V2 · OPTICAL INTERACTION
+   Passo 3 · progressive enhancement sobre Black Editorial (Passo 2)
+   Conteúdo permanente permanece matte. Glass continua restrito à camada funcional.
+   ========================================================================== */
+
+:root{
+  /* Tipografia oficial: Inter em todas as plataformas; sistema apenas fallback. */
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+
+  /* Escala óptica */
+  --mm-micro-bg:rgba(12,12,13,.25);
+  --mm-micro-filter:blur(11px) saturate(134%) contrast(104%);
+  --mm-controls-bg:rgba(9,10,11,.56);
+  --mm-controls-filter:blur(15px) saturate(128%) contrast(104%);
+  --mm-bar-bg:rgba(9,10,11,.60);
+  --mm-bar-filter:blur(20px) saturate(126%) contrast(104%);
+  --mm-large-bg:rgba(8,9,10,.76);
+  --mm-large-filter:blur(22px) saturate(122%) contrast(105%);
+
+  /* Refractive rim */
+  --mm-glass-rim-light:rgba(255,255,255,.18);
+  --mm-glass-rim-soft:rgba(255,255,255,.07);
+  --mm-glass-rim-shadow:rgba(0,0,0,.48);
+  --mm-glass-rim-width:1px;
+
+  /* Context tint: neutro por padrão; JS só injeta em contexto local. */
+  --mm-context-tint:transparent;
+  --mm-context-tint-strength:0;
+
+  /* Press / shadow */
+  --mm-press-scale:.988;
+  --mm-press-light:rgba(255,255,255,.09);
+  --mm-press-shadow:0 7px 18px rgba(0,0,0,.30);
+
+  /* Motion */
+  --mm-motion-instant:80ms;
+  --mm-motion-fast:140ms;
+  --mm-motion-medium:200ms;
+  --mm-motion-morph:240ms;
+  --mm-motion-spring:260ms cubic-bezier(.2,.78,.22,1);
+
+  /* Specular tracking */
+  --glass-x:50%;
+  --glass-y:0%;
+  --glass-intensity:0;
+  --glass-highlight-alpha:.045;
+  --glass-shadow-x:0px;
+  --glass-shadow-y:18px;
+}
+
+/* Inter governa UI e controles. Condensed/mono seguem reservadas aos papéis editoriais. */
+body,
+button,
+input,
+select,
+textarea{
+  font-family:var(--sans)!important;
+}
+
+/* ==========================================================================
+   1 · BASE / FEATURE FLAGS
+   ========================================================================== */
+.mm-optical-surface{
+  --glass-x:50%;
+  --glass-y:0%;
+  --glass-intensity:0;
+  --glass-highlight-alpha:.045;
+  --glass-shadow-x:0px;
+  position:relative;
+  isolation:isolate;
+  overflow:visible;
+  contain:paint;
+}
+.mm-optical-surface::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+  padding:var(--mm-glass-rim-width);
+  background:
+    radial-gradient(88% 118% at var(--glass-x) var(--glass-y),
+      rgba(255,255,255,var(--glass-highlight-alpha)) 0%,
+      rgba(255,255,255,.020) 36%,
+      transparent 68%),
+    linear-gradient(180deg,var(--mm-glass-rim-light),var(--mm-glass-rim-soft) 24%,transparent 55%,var(--mm-glass-rim-shadow));
+  opacity:calc(.58 + (var(--glass-intensity) * .24));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  transition:opacity var(--mm-motion-medium) ease;
+}
+.mm-optical-surface::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+  background:
+    radial-gradient(70% 95% at var(--glass-x) var(--glass-y),
+      rgba(255,255,255,calc(var(--glass-intensity) * .050)) 0%,
+      transparent 72%);
+  mix-blend-mode:screen;
+  opacity:.72;
+  transition:opacity var(--mm-motion-fast) ease;
+}
+.mm-optical-surface>*{
+  position:relative;
+  z-index:1;
+}
+
+/* ==========================================================================
+   2 · ESCALA DE MATERIAIS
+   ========================================================================== */
+.mm-glass-micro{
+  --mm-press-scale:.976;
+}
+.mm-glass-controls{
+  --mm-press-scale:.989;
+}
+.mm-glass-bar{
+  --mm-press-scale:.994;
+}
+.mm-glass-large{
+  --mm-press-scale:.996;
+}
+
+/* BAR GLASS: topbar, dock, sticky toolbars. */
+.mm-optics-supported :is(.topbar,.bottom-nav,.course-sticky-bar).mm-glass-bar{
+  border-color:rgba(255,255,255,.16)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.034),rgba(255,255,255,.008) 38%,transparent 66%),
+    rgba(9,10,11,var(--mm-bar-alpha,.60))!important;
+  -webkit-backdrop-filter:var(--mm-bar-filter)!important;
+  backdrop-filter:var(--mm-bar-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.84),
+    var(--glass-shadow-x) var(--glass-shadow-y) 52px rgba(0,0,0,.46),
+    inset 0 1px 0 rgba(255,255,255,.09)!important;
+  transition:
+    background-color var(--mm-motion-medium) ease,
+    border-color var(--mm-motion-medium) ease,
+    box-shadow var(--mm-motion-medium) ease;
+}
+
+/* LARGE GLASS: sidebar ampla / modal grande. */
+.mm-optics-supported .side.mm-glass-large{
+  border-color:rgba(255,255,255,.145)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.024),transparent 42%),
+    var(--mm-large-bg)!important;
+  -webkit-backdrop-filter:var(--mm-large-filter)!important;
+  backdrop-filter:var(--mm-large-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.86),
+    calc(16px + var(--glass-shadow-x)) 20px 60px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.085)!important;
+}
+
+/* CONTROLS GLASS: um invólucro, controles internos sem blur. */
+.mm-optics-supported :is(.course-primary-actions,.mm-controls-glass).mm-glass-controls{
+  border-color:rgba(255,255,255,.15)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.036),rgba(255,255,255,.010) 44%,transparent 72%),
+    var(--mm-controls-bg)!important;
+  -webkit-backdrop-filter:var(--mm-controls-filter)!important;
+  backdrop-filter:var(--mm-controls-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.70),
+    0 12px 30px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.095)!important;
+}
+.mm-optics-supported :is(.course-primary-actions,.mm-controls-glass) :is(button,input,select,.ui-select-trigger){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* MICRO GLASS: controles sobre capas; context tint é local e muito fraco. */
+.mm-optics-supported .mm-glass-micro{
+  border-color:rgba(255,255,255,.23)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.105),rgba(255,255,255,.022) 56%,transparent 78%),
+    linear-gradient(var(--mm-context-tint),var(--mm-context-tint)),
+    var(--mm-micro-bg)!important;
+  -webkit-backdrop-filter:var(--mm-micro-filter)!important;
+  backdrop-filter:var(--mm-micro-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.62),
+    0 6px 17px rgba(0,0,0,.31),
+    inset 0 1px 0 rgba(255,255,255,.17)!important;
+  transition:
+    transform var(--mm-motion-fast) cubic-bezier(.2,.8,.2,1),
+    border-color var(--mm-motion-fast) ease,
+    box-shadow var(--mm-motion-fast) ease,
+    background-color var(--mm-motion-fast) ease;
+}
+.mm-pointer-fine .mm-glass-micro:hover{
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.29)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.58),
+    0 9px 21px rgba(0,0,0,.36),
+    inset 0 1px 0 rgba(255,255,255,.20)!important;
+}
+
+/* Local dimming: somente sob o micro controle, nunca na capa inteira. */
+.mm-optics-supported .mm-glass-micro .ui-icon::after{
+  content:"";
+  position:absolute;
+  inset:-7px;
+  z-index:-1;
+  border-radius:10px;
+  background:radial-gradient(circle,rgba(0,0,0,.30),rgba(0,0,0,.08) 54%,transparent 76%);
+  pointer-events:none;
+}
+
+/* ==========================================================================
+   3 · SPECULAR TRACKING / DYNAMIC SHADOW
+   ========================================================================== */
+.mm-pointer-fine .mm-optical-surface.mm-specular{
+  will-change:box-shadow;
+}
+.mm-pointer-fine .mm-optical-surface.mm-specular.is-mm-hovered::before{
+  opacity:.90;
+}
+.mm-pointer-fine .mm-optical-surface.mm-specular.is-mm-hovered{
+  --glass-shadow-y:20px;
+}
+
+/* Nunca aplicar óptica dinâmica a conteúdo permanente. */
+:is(
+  .course-card,.course-library-card,.map-card,.simulation-card,
+  .progress-insight-card,.study-plan-item,.agenda-day,.panel,
+  .study-command-card,.continue-card,.home-review-section
+){
+  --glass-intensity:0!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* ==========================================================================
+   4 · PRESS OPTICS
+   ========================================================================== */
+.mm-pressable{
+  transform-origin:center;
+  transition:
+    transform var(--mm-motion-fast) cubic-bezier(.2,.8,.2,1),
+    box-shadow var(--mm-motion-fast) ease,
+    background-color var(--mm-motion-fast) ease,
+    border-color var(--mm-motion-fast) ease;
+}
+.mm-pressable.mm-pressed{
+  transform:scale(var(--mm-press-scale));
+  box-shadow:var(--mm-press-shadow)!important;
+}
+.mm-pressable.mm-pressed::before{
+  opacity:.96;
+}
+.mm-pressable.mm-pressed:not(.mm-optical-surface){
+  background-color:rgba(255,255,255,.055)!important;
+}
+
+/* Itens internos continuam lenses/fills, não glass-on-glass. */
+:is(
+  .topbar .search,.topbar #syncTop,.topbar #installBtn,
+  .side .nav-btn,.bottom-nav>button,
+  .course-primary-actions #openEdital,
+  .course-primary-actions #courseSimulationsBtn,
+  .course-primary-actions #courseMoreBtn,
+  .course-sticky-bar button,.course-sticky-bar input,.course-sticky-bar select
+){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* ==========================================================================
+   5 · ACTIVE LENS COMPARTILHADA
+   ========================================================================== */
+.mm-lens-host{
+  position:relative!important;
+  isolation:isolate;
+}
+.mm-active-lens{
+  position:absolute!important;
+  left:0;
+  top:0;
+  z-index:0!important;
+  width:var(--mm-lens-w,0px);
+  height:var(--mm-lens-h,0px);
+  border:1px solid rgba(255,255,255,.105);
+  border-radius:var(--mm-lens-radius,10px);
+  background:
+    radial-gradient(120% 130% at 22% -28%,rgba(255,255,255,.075),transparent 58%),
+    rgba(255,255,255,.028);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.085),
+    0 7px 18px rgba(0,0,0,.12);
+  pointer-events:none;
+  opacity:var(--mm-lens-opacity,0);
+  transform:translate3d(var(--mm-lens-x,0px),var(--mm-lens-y,0px),0);
+  transform-origin:center;
+  transition:
+    transform var(--mm-motion-morph) cubic-bezier(.22,.74,.20,1),
+    width var(--mm-motion-morph) cubic-bezier(.22,.74,.20,1),
+    height var(--mm-motion-morph) cubic-bezier(.22,.74,.20,1),
+    border-radius var(--mm-motion-medium) ease,
+    opacity var(--mm-motion-fast) ease;
+  will-change:transform,width,height;
+}
+.mm-lens-host>.mm-active-lens{z-index:0!important}
+.side.mm-lens-host>:not(.mm-active-lens),
+.bottom-nav.mm-lens-host>button,
+.course-study-filters.mm-lens-host>button,
+.category-row.mm-lens-host>button{
+  position:relative;
+  z-index:1;
+}
+
+/* O item ativo deixa de possuir "placa" própria: a mesma lens se move. */
+.mm-lens-ready .side .nav-btn.active,
+.mm-lens-ready .bottom-nav>button.active,
+.mm-lens-ready .course-study-filters>.active,
+.mm-lens-ready .category-row>.active{
+  background:transparent!important;
+  box-shadow:none!important;
+  border-color:transparent!important;
+}
+
+/* ==========================================================================
+   6 · SEARCH MORPH
+   ========================================================================== */
+.global-search-shell{
+  position:relative;
+}
+.global-search-shell .search{
+  transition:
+    border-color var(--mm-motion-medium) ease,
+    background-color var(--mm-motion-medium) ease,
+    border-radius var(--mm-motion-morph) cubic-bezier(.2,.75,.2,1),
+    box-shadow var(--mm-motion-medium) ease,
+    transform var(--mm-motion-fast) ease;
+}
+.global-search-shell.mm-search-open .search{
+  border-color:rgba(255,255,255,.20)!important;
+  border-radius:11px 11px 8px 8px!important;
+  background:rgba(255,255,255,.043)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.075),
+    0 0 0 1px rgba(0,0,0,.28)!important;
+}
+.global-search-shell .global-search-panel{
+  transform-origin:50% 0%;
+}
+.global-search-shell.mm-search-open .global-search-panel:not([hidden]){
+  margin-top:4px!important;
+  border-top-left-radius:10px!important;
+  border-top-right-radius:10px!important;
+  animation:mm-search-panel-in var(--mm-motion-morph) cubic-bezier(.2,.75,.2,1) both;
+}
+@keyframes mm-search-panel-in{
+  from{opacity:0;transform:translate3d(0,-4px,0) scale(.992)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+
+/* ==========================================================================
+   7 · POPOVER SOURCE MORPH / SHARED GEOMETRY
+   ========================================================================== */
+:is(
+  .global-search-panel,.course-more-menu,.reader-more-menu,
+  .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+  .ui-select-popover,.mobile-menu-sheet,.popover,.context-menu
+)[data-mm-open="true"]{
+  transform-origin:var(--mm-source-x,50%) var(--mm-source-y,0%);
+  animation:mm-popover-source-in var(--mm-motion-morph) cubic-bezier(.2,.78,.22,1) both;
+}
+@keyframes mm-popover-source-in{
+  from{opacity:.18;transform:translate3d(0,-3px,0) scale(.975)}
+  62%{opacity:1}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+.mm-popover-source.mm-source-active{
+  transform:scale(.982);
+}
+
+/* Popover pequeno mais responsivo; modal grande permanece estável. */
+:is(.course-more-menu,.map-actions-menu,.simulation-card-action-menu,.ui-select-popover).mm-optical-surface{
+  --mm-large-bg:rgba(8,9,10,.82);
+}
+:is(.modal-card,.planner-modal-card,.study-doubt-card).mm-optical-surface{
+  --glass-intensity:0!important;
+}
+
+/* ==========================================================================
+   8 · SCROLL EDGE + TOPBAR DENSITY
+   ========================================================================== */
+:is(.topbar,.bottom-nav,.course-sticky-bar){
+  position:relative;
+}
+.mm-scroll-edge{
+  position:absolute!important;
+  left:2px;
+  right:2px;
+  z-index:0!important;
+  height:18px;
+  pointer-events:none;
+  opacity:var(--mm-edge-opacity,.50);
+  transition:opacity var(--mm-motion-medium) ease;
+}
+.topbar>.mm-scroll-edge,
+.course-sticky-bar>.mm-scroll-edge{
+  bottom:-16px;
+  background:linear-gradient(180deg,rgba(2,3,4,.28),rgba(2,3,4,.10) 48%,transparent);
+  -webkit-mask-image:linear-gradient(#000,transparent);
+  mask-image:linear-gradient(#000,transparent);
+}
+.bottom-nav>.mm-scroll-edge{
+  top:-16px;
+  background:linear-gradient(0deg,rgba(2,3,4,.34),rgba(2,3,4,.11) 48%,transparent);
+  -webkit-mask-image:linear-gradient(0deg,#000,transparent);
+  mask-image:linear-gradient(0deg,#000,transparent);
+}
+:is(.topbar,.bottom-nav,.course-sticky-bar)>.mm-scroll-edge~*{
+  position:relative;
+  z-index:1;
+}
+
+/* Topbar é levemente mais clara no topo e densifica até ~48px de scroll. */
+.topbar.mm-scroll-density{
+  --mm-bar-alpha:.54;
+  --mm-edge-opacity:.30;
+}
+html.mm-scrolled .topbar.mm-scroll-density{
+  --mm-edge-opacity:.58;
+}
+
+/* ==========================================================================
+   9 · GEOMETRIA CONCÊNTRICA
+   ========================================================================== */
+.topbar.mm-glass-bar{border-radius:18px!important}
+.topbar .search{border-radius:10px!important}
+.bottom-nav.mm-glass-bar{border-radius:18px!important}
+.bottom-nav>button{border-radius:11px!important}
+.course-primary-actions.mm-glass-controls{border-radius:11px!important}
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn){border-radius:9px!important}
+:is(.course-more-menu,.map-actions-menu,.simulation-card-action-menu,.ui-select-popover){
+  border-radius:15px!important;
+}
+
+/* ==========================================================================
+   10 · TOUCH / POINTER
+   ========================================================================== */
+.mm-touch .mm-optical-surface{
+  --glass-x:50%;
+  --glass-y:0%;
+  --glass-intensity:0;
+}
+.mm-touch .mm-glass-micro:hover{
+  transform:none;
+}
+.mm-touch .mm-pressable.mm-pressed{
+  transform:scale(var(--mm-press-scale));
+}
+
+/* Smartphone: menos blur/shadow/compositing; sem lógica desktop-only. */
+@media(max-width:480px){
+  :root{
+    --mm-bar-filter:blur(17px) saturate(122%) contrast(103%);
+    --mm-controls-filter:blur(13px) saturate(124%) contrast(103%);
+    --mm-micro-filter:blur(9px) saturate(128%) contrast(103%);
+  }
+  .mm-optics-supported :is(.topbar,.bottom-nav).mm-glass-bar{
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.80),
+      0 14px 38px rgba(0,0,0,.42),
+      inset 0 1px 0 rgba(255,255,255,.075)!important;
+  }
+  .mm-optical-surface::after{display:none}
+}
+
+/* ==========================================================================
+   11 · REDUCE MOTION
+   ========================================================================== */
+.mm-reduced-motion *,
+.mm-reduced-motion *::before,
+.mm-reduced-motion *::after{
+  scroll-behavior:auto!important;
+}
+.mm-reduced-motion .mm-active-lens,
+.mm-reduced-motion .mm-pressable,
+.mm-reduced-motion .global-search-shell .search,
+.mm-reduced-motion [data-mm-open="true"]{
+  animation:none!important;
+  transition:none!important;
+}
+.mm-reduced-motion .mm-optical-surface{
+  --glass-intensity:0!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .mm-active-lens,
+  .mm-pressable,
+  .global-search-shell .search,
+  [data-mm-open="true"]{
+    animation:none!important;
+    transition:none!important;
+  }
+  .mm-optical-surface{--glass-intensity:0!important}
+}
+
+/* ==========================================================================
+   12 · REDUCE TRANSPARENCY
+   ========================================================================== */
+.mm-reduced-transparency :is(
+  .topbar,.side,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+  .global-search-panel,.course-more-menu,.reader-more-menu,
+  .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+  .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+  .study-doubt-card,.toast,.mm-glass-micro
+){
+  background:#0B0C0E!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  --mm-context-tint:transparent!important;
+}
+.mm-reduced-transparency .mm-optical-surface::before,
+.mm-reduced-transparency .mm-optical-surface::after{
+  display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+  :is(
+    .topbar,.side,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast,.mm-glass-micro
+  ){
+    background:#0B0C0E!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .mm-optical-surface::before,
+  .mm-optical-surface::after{display:none!important}
+}
+
+/* ==========================================================================
+   13 · CONTRAST / FORCED COLORS
+   ========================================================================== */
+@media(prefers-contrast:more){
+  .mm-optical-surface{border-color:rgba(255,255,255,.46)!important}
+  .mm-active-lens{border-color:rgba(255,255,255,.38)!important}
+}
+@media(forced-colors:active){
+  .mm-optical-surface::before,
+  .mm-optical-surface::after,
+  .mm-scroll-edge{display:none!important}
+  .mm-active-lens{
+    background:Highlight!important;
+    border:1px solid Highlight!important;
+    opacity:.16!important;
+    box-shadow:none!important;
+  }
+}
+
+/* Progressive enhancement: se backdrop não existe, nível 1 continua sólido. */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :is(.mm-glass-micro,.mm-glass-controls,.mm-glass-bar,.mm-glass-large){
+    background:#0B0C0E!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .mm-optical-surface::before,
+  .mm-optical-surface::after{display:none!important}
+}
