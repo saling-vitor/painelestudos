@@ -350,3 +350,88 @@ html.is-ipad:not(.is-phone-layout) .topbar #syncTop{
     backdrop-filter:none!important;
   }
 }
+
+
+/* V15.41.x-G · Apple HIG revalidation: one optical layer per topbar group */
+/* A topbar é o container Liquid Glass. Busca e Sincronizar continuam com aparência
+   de lente, mas deixam de aplicar um segundo backdrop-filter sobre o vidro pai. */
+html:not(.is-phone-layout) .topbar .search{
+  background:
+    radial-gradient(145% 175% at 6% -88%,
+      rgba(255,255,255,.14) 0%,
+      rgba(255,255,255,.042) 31%,
+      rgba(255,255,255,.010) 48%,
+      transparent 66%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.040) 0%,
+      rgba(255,255,255,.012) 44%,
+      rgba(3,5,8,.068) 100%),
+    rgba(10,13,18,.22)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html:not(.is-phone-layout) .topbar .search:focus-within{
+  background:
+    radial-gradient(145% 178% at 6% -88%,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.055) 31%,
+      rgba(255,255,255,.014) 49%,
+      transparent 67%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.050) 0%,
+      rgba(255,255,255,.016) 44%,
+      rgba(3,5,8,.060) 100%),
+    rgba(10,13,18,.20)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html:not(.is-phone-layout) .topbar #syncTop{
+  background:
+    radial-gradient(140% 160% at 8% -70%,
+      rgba(255,255,255,.20) 0%,
+      rgba(255,255,255,.055) 39%,
+      transparent 63%),
+    linear-gradient(145deg,
+      rgba(255,255,255,.055) 0%,
+      rgba(255,255,255,.016) 55%,
+      rgba(255,255,255,.026) 100%),
+    rgba(8,11,15,.12)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+@media(hover:hover) and (pointer:fine){
+  html:not(.is-phone-layout) .topbar #syncTop:hover{
+    background:
+      radial-gradient(145% 165% at 8% -70%,
+        rgba(255,255,255,.26) 0%,
+        rgba(255,255,255,.075) 39%,
+        transparent 64%),
+      linear-gradient(145deg,
+        rgba(255,255,255,.068) 0%,
+        rgba(255,255,255,.020) 55%,
+        rgba(255,255,255,.032) 100%),
+      rgba(8,11,15,.11)!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  html:not(.is-phone-layout) .topbar{
+    background:rgba(18,22,28,.94)!important;
+  }
+}
+@media(prefers-contrast:more){
+  html:not(.is-phone-layout) .topbar{
+    border-color:rgba(255,255,255,.46)!important;
+    background-color:rgba(7,9,12,.90)!important;
+  }
+  html:not(.is-phone-layout) .topbar :is(.search,#syncTop){
+    border-color:rgba(255,255,255,.40)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html:not(.is-phone-layout) .topbar,
+  html:not(.is-phone-layout) .topbar :is(.search,#syncTop){
+    transition:none!important;
+  }
+}
