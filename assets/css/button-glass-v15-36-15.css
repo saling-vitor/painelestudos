@@ -1,3 +1,37 @@
+/* CONSOLIDADO V15.47 · NORMALIZAÇÃO DE BOTÕES
+   Incorporado de button-depth-v15-36-14.css no mesmo ponto da cascata. */
+:is(
+  button.primary,a.primary,
+  button.secondary,a.secondary,
+  button.danger,a.danger,
+  .icon-btn,.compact-icon-btn,
+  .category-btn,.course-study-filter,.progress-filter,.close
+){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+}
+:is(
+  button.primary,a.primary,
+  button.secondary,a.secondary,
+  button.danger,a.danger,
+  .icon-btn,.compact-icon-btn,
+  .category-btn,.course-study-filter,.progress-filter,.close
+):active{
+  transform:none!important;
+  filter:none!important;
+}
+:is(
+  button.primary,a.primary,
+  button.secondary,a.secondary,
+  button.danger,a.danger,
+  .icon-btn,.compact-icon-btn,
+  .category-btn,.course-study-filter,.progress-filter,.close
+):focus-visible{
+  outline:1px solid rgba(255,255,255,.24)!important;
+  outline-offset:2px!important;
+}
+
 /* V15.40.0-G · Liquid Glass V3.2 para controles flutuantes sobre capas
    Diretriz:
    - refino óptico: menos névoa leitosa, mais transmissão da capa e borda especular;
