@@ -67,9 +67,9 @@
 .priority-why-intro{
   margin-top:12px;
   padding:9px 10px;
-  border:1px solid rgba(109,130,152,.13);
+  border:1px solid rgba(255,255,255,.075);
   border-radius:9px;
-  background:rgba(109,130,152,.025);
+  background:rgba(255,255,255,.016);
   color:#8b929b;
   font-size:9px;
   line-height:1.45;
@@ -455,7 +455,7 @@
   align-items:center;
   gap:9px;
   padding:7px 8px;
-  border-left:2px solid rgba(109,130,152,.48);
+  border-left:2px solid rgba(232,215,177,.24);
   border-radius:7px;
   background:rgba(255,255,255,.009);
 }
