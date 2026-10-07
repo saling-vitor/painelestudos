@@ -1,3 +1,10 @@
+/* CONSOLIDADO V15.47 · MAP CARD FOOT
+   Regra antes isolada em map-card-cleanup-v15-36-23.css. */
+[data-view="maps"] .map-card .foot,
+[data-view="course"] .map-card .foot{
+  border-top:0;
+}
+
 /* V15.36.31-G · Capas full-bleed em Cursos [D+T] + Home [T] */
 html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card{
   padding:0!important;
