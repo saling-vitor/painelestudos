@@ -192,7 +192,8 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     const activeStudyFilter=page.locator('.course-study-filter.active').first();
     if(await activeStudyFilter.count()){
       const filterGlass=await glass(activeStudyFilter);
-      expect(filterGlass.backdrop).not.toBe('none');
+      // PASSO 2: filtro ativo é lente interna, sem novo backdrop-filter.
+      expect(filterGlass.backdrop).toBe('none');
     }
 
     await page.goto('/#simulations');
@@ -200,7 +201,8 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     const simSelect=(await customSimSelect.count())?customSimSelect:page.locator('#simulationCourseFilter');
     await expect(simSelect).toBeVisible();
     const selectGlass=await glass(simSelect);
-    expect(selectGlass.backdrop).not.toBe('none');
+    // PASSO 2: trigger/select interno usa fill; o popover é que recebe Dense Glass.
+    expect(selectGlass.backdrop).toBe('none');
     if(await customSimSelect.count()){
       await customSimSelect.click();
       const selectPopover=page.locator('.ui-select-popover').first();
