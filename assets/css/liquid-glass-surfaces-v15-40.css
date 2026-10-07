@@ -201,6 +201,29 @@ html:not(.is-phone-layout) .nav-btn.active{
     inset 0 1px 0 rgba(255,255,255,.11)!important;
 }
 
+/* Smartphone: mobile-first mantém modais sólidos por desempenho.
+   Reativamos Liquid Glass apenas nos diálogos/folhas flutuantes. */
+@media(max-width:480px){
+  html.is-phone-layout .modal-card,
+  html.is-phone-layout .planner-modal-card,
+  html.is-phone-layout .study-doubt-card{
+    border-color:rgba(255,255,255,.17)!important;
+    background:
+      radial-gradient(115% 80% at 8% -15%,
+        rgba(255,255,255,.085),
+        transparent 50%),
+      linear-gradient(155deg,
+        rgba(255,255,255,.022),
+        rgba(3,6,10,.105) 72%),
+      rgba(8,11,15,.86)!important;
+    -webkit-backdrop-filter:blur(16px) saturate(145%) contrast(104%)!important;
+    backdrop-filter:blur(16px) saturate(145%) contrast(104%)!important;
+    box-shadow:
+      0 28px 82px rgba(0,0,0,.68),
+      inset 0 1px 0 rgba(255,255,255,.12)!important;
+  }
+}
+
 /* 6. Superfícies flutuantes e filtros selecionados. */
 .course-sticky-bar{
   border-color:rgba(255,255,255,.17)!important;
