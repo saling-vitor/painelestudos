@@ -450,7 +450,8 @@ function ensureAgendaView(){
   }
   function saveGoalsFromForm(form){
     const data=readData();
-    data.goals={...(goalDraft||goalsFromForm(form))};
+    // Releia o formulário no submit: um draft anterior não pode sobrescrever campos recém-editados.
+    data.goals={...goalsFromForm(form)};
     goalDraft=null;
     writeData(data);renderAll();toast('Metas de estudo salvas.');
   }

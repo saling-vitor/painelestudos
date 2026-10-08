@@ -1,16 +1,15 @@
 {
-  "version": "15.48.1",
-  "label": "V15.48.1-G",
+  "version": "15.48.2",
+  "label": "V15.48.2-G",
   "releasedAt": "2026-10-07T23:55:00.000Z",
-  "notes": "Lista mestra: SVG vetorial, Liquid Glass iPad/iPhone, capas e refinamento do painel diário.",
+  "notes": "Lista Mestra V2 (09–16): topografia suavizada, docks e topbars Liquid Glass sem tarjas, identidade cromática de cada seção em Desktop, iPad e iPhone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Topografia em SVG transparente mais perceptível nos dispositivos",
-    "[T+M] Menus Liquid Glass com destaque estático e topbar iPad",
-    "[G] Hidratação de capas segura contra atualização obsoleta",
-    "[D] Capas e faixa de retomada/simulados sem bordas redundantes",
-    "[M] Capas full-bleed com controles internos",
-    "[D+T] Rodapé do estudo de hoje com métricas alinhadas"
+    "[G] Topografia vetorial atenuada ~30% sem abandonar a textura",
+    "[T] Dock iPad sem tarja retangular, topbar translúcida, validação retrato/paisagem",
+    "[M] Barra superior e dock iPhone em vidro translúcido com fallback",
+    "[G] Sete acentos distintos para Início, Cursos, Mapas, Simulados, Progresso, Agenda e Configurações",
+    "[G] Estados ativo, foco, hover e painel Mais cromaticamente consistentes e acessíveis"
   ],
   "automation": {
     "enabled": true,

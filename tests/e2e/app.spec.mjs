@@ -4411,16 +4411,16 @@ test('V15.48.1 [G] PASSO 4 · SVG topográfico é contínuo, responsivo e sem mo
   const project=testInfo.project.name;
   const cases=project==='desktop-chromium'
     ?[
-      {width:1920,height:1080,opacity:.86},
-      {width:2560,height:1440,opacity:.86}
+      {width:1920,height:1080,opacity:.60},
+      {width:2560,height:1440,opacity:.60}
     ]
     :project==='ipad'
       ?[
-        {width:1024,height:834,opacity:.94},
-        {width:820,height:1180,opacity:.94}
+        {width:1024,height:834,opacity:.65},
+        {width:820,height:1180,opacity:.65}
       ]
       :[
-        {width:390,height:844,opacity:1}
+        {width:390,height:844,opacity:.70}
       ];
 
   for(const viewport of cases){
@@ -4540,7 +4540,8 @@ test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e
     await inactive.hover();
     const hover=await inactive.evaluate(el=>({background:getComputedStyle(el).backgroundImage,backgroundColor:getComputedStyle(el).backgroundColor}));
     expect(hover.background).toBe('none');
-    expect(hover.backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    // V2: hover recebe leve tonalidade sem virar outra superfície glass.
+    expect(hover.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
   }
 
   await page.goto('/#course/porto-alegre');
@@ -4611,4 +4612,67 @@ test('V15.48 mantém modais fora da shell em Black Editorial neutro',async({page
   expect(focusRgb[2]).toBeLessThanOrEqual(Math.max(focusRgb[0],focusRgb[1])+4);
   expect(visual.cardBackgroundImage).toContain('linear-gradient');
   expect(visual.cardBackgroundImage).not.toContain('rgb(8, 11, 15)');
+});
+
+
+/* LISTA MESTRA V2 — navegação por identidade e superfícies flutuantes. */
+test('V15.48.2 [G] sete seções possuem identidades cromáticas distintas',async({page},testInfo)=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const data=await page.evaluate(()=>{
+    const colors={};
+    for(const id of ['home','courses','maps','simulations','progress','agenda','settings']){
+      const button=document.querySelector('.side .nav-btn[data-nav="'+id+'"]');
+      colors[id]=button&&getComputedStyle(button).getPropertyValue('--nav-accent').trim();
+    }
+    return colors;
+  });
+  for(const [name,color] of Object.entries(data)){
+    expect(color,name).toMatch(/^#[a-fA-F0-9]{6}$/);
+  }
+  expect(new Set(Object.values(data)).size).toBe(7);
+  const tabletOrPhone=testInfo.project.name!=='desktop-chromium';
+  if(tabletOrPhone){
+    const result=await page.evaluate(()=>{
+      const btn=document.querySelector('.bottom-nav button[data-nav="home"]');
+      return {accent:getComputedStyle(btn).getPropertyValue('--nav-accent').trim(),
+        icon:getComputedStyle(btn.querySelector('.ui-icon')).color};
+    });
+    expect(result.accent).toBe(data.home);
+    expect(result.icon).not.toBe('');
+  }
+});
+
+test('V15.48.2 [T+M] vidro de dock e topbar é translúcido, sem tarja',async({page},testInfo)=>{
+  test.skip(testInfo.project.name==='desktop-chromium');
+  await page.goto('/#home');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const visual=await page.evaluate(()=>{
+    const root=document.documentElement;
+    const dock=document.querySelector('.bottom-nav');
+    const topbar=document.querySelector('.topbar');
+    const wrap=document.querySelector('.topbar-wrap');
+    const d=getComputedStyle(dock),t=getComputedStyle(topbar),w=getComputedStyle(wrap);
+    const edge=dock.querySelector(':scope > .mm-scroll-edge');
+    return {
+      reduced:root.classList.contains('mm-reduced-transparency'),
+      dockBackground:d.backgroundColor,
+      dockFilter:d.backdropFilter||d.webkitBackdropFilter,
+      topbarBackground:t.backgroundColor,
+      topbarFilter:t.backdropFilter||t.webkitBackdropFilter,
+      wrapBackground:w.backgroundColor,
+      edgeVisible:edge&&getComputedStyle(edge).display!=='none',
+      dockRadius:parseFloat(d.borderTopLeftRadius)
+    };
+  });
+  expect(visual.edgeVisible).toBeFalsy();
+  expect(visual.dockRadius).toBeGreaterThanOrEqual(12);
+  expect(visual.wrapBackground).toBe('rgba(0, 0, 0, 0)');
+  if(!visual.reduced){
+    const alpha=color=>Number((color.match(/rgba?\([^)]+\)/)||[''])[0].split(',').at(-1).replace(')','').trim());
+    expect(alpha(visual.dockBackground)).toBeLessThan(.5);
+    expect(alpha(visual.topbarBackground)).toBeLessThan(.5);
+    expect(visual.dockFilter).toContain('blur(');
+    expect(visual.topbarFilter).toContain('blur(');
+  }
 });

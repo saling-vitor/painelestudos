@@ -52,8 +52,13 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===44,'auditoria: build ativo usa 44 CSS incluindo refinamento responsivo');
+check(activeCssFiles.length===45,'auditoria: build ativo usa 45 CSS com módulo final de navegação V2');
 check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
+check(index.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
+check(sw.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: estilo precached no PWA');
+const navV2Css=read('assets/css/nav-liquid-glass-v15-48-2.css');
+for(const section of ['home','courses','maps','simulations','progress','agenda','settings'])check(navV2Css.includes(`data-nav="${section}"`),'Identidade cromática de navegação: '+section);
+check(navV2Css.includes('mm-reduced-transparency'),'V2 preserva preferência de transparência reduzida');
 const deadLegacyFiles=[
   'assets/css/ipad-cloud-compact-v15-36-1.css',
   'assets/css/button-depth-v15-36-14.css',
@@ -86,11 +91,13 @@ const v13BrandLegacy=[
 ];
 for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 removida '+file);
 const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
-const baselineCssText=activeCssFiles.filter(file=>file!=='assets/css/master-refinement-v15-48-1.css').filter(exists).map(read).join('\n');
+const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css'].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
 check(importantCount<=6694,'auditoria: !important não regrediu ('+importantCount+')');
+const navGlassImportant=(read('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
+check(navGlassImportant<=90,'auditoria: V2 preserva limite próprio de overrides ('+navGlassImportant+')');
 check(legacyBlueCount<=19,'auditoria: azul legacy ficou restrito a semântica ('+legacyBlueCount+')');
 const automationCss=read('assets/css/study-automation-v15-37-0.css');
 const settingsControlCss=read('assets/css/settings-control-center-v15-38-0.css');
