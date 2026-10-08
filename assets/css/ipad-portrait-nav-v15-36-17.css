@@ -5,7 +5,7 @@
   html.is-ipad:not(.is-phone-layout){
     --nav:0px;
     scroll-padding-top:90px;
-    scroll-padding-bottom:104px;
+    scroll-padding-bottom:calc(88px + var(--safe-bottom));
   }
 
   html.is-ipad:not(.is-phone-layout) .app{
@@ -22,7 +22,9 @@
   html.is-ipad:not(.is-phone-layout) .main{
     grid-column:auto!important;
     width:100%!important;
-    min-width:0!important;
+    min-width:0;
+    /* A área rolável alcança o limite inferior da viewport, atrás do dock. */
+    height:100dvh!important;
   }
 
   html.is-ipad:not(.is-phone-layout) .content{
@@ -31,7 +33,7 @@
     margin-inline:auto!important;
     padding-left:16px!important;
     padding-right:16px!important;
-    padding-bottom:132px!important;
+    padding-bottom:calc(84px + var(--safe-bottom))!important;
   }
 
   html.is-ipad:not(.is-phone-layout) [data-view] :is(

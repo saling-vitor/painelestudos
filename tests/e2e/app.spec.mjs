@@ -4713,3 +4713,50 @@ test('V15.48.3 [G] somente menu ativo tem cor; inativos brancos em Desktop/iPad/
     await expect(option.locator('b')).toHaveCSS('color','rgb(244, 244, 244)');
   }
 });
+
+
+test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Comportamento específico do iPad em retrato');
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#courses');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const state=await page.evaluate(async()=>{
+    const nav=document.querySelector('.bottom-nav');
+    const content=document.querySelector('.content');
+    const probe=document.createElement('div');
+    probe.setAttribute('data-dock-scroll-probe','');
+    probe.style.cssText='height:80px;background:#f5b33f;position:relative;margin-top:900px;';
+    const trailing=document.createElement('div');
+    trailing.style.cssText='height:1400px;background:transparent;pointer-events:none';
+    content.append(probe,trailing);
+    const d=nav.getBoundingClientRect();
+    document.documentElement.style.scrollBehavior='auto';
+    const scroller=document.querySelector('.main');
+    const target=probe.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop-d.top+24;
+    scroller.scrollTop=target;
+    const scrollParents=[];
+    for(let node=probe.parentElement;node;node=node.parentElement){
+      const css=getComputedStyle(node);
+      if(node.scrollHeight>node.clientHeight+2){
+        scrollParents.push({tag:node.tagName,cls:node.className,scrollTop:node.scrollTop,height:node.clientHeight,scrollHeight:node.scrollHeight,overflowY:css.overflowY});
+      }
+    }
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const n=nav.getBoundingClientRect(),p=probe.getBoundingClientRect();
+    const cs=getComputedStyle(nav);
+    const lowerPoint=document.elementFromPoint(innerWidth/2,Math.min(innerHeight-2,n.bottom+4));
+    const overlap=p.top<n.bottom&&p.bottom>n.top;
+    const scrollAudit={scrollY,scrollHeight:document.scrollingElement?.scrollHeight,clientHeight:document.scrollingElement?.clientHeight,probe:{top:p.top,bottom:p.bottom},nav:{top:n.top,bottom:n.bottom},contentScrollTop:content.scrollTop,bodyScrollTop:document.body.scrollTop,visualViewportHeight:visualViewport?.height,scrollParents};
+    const value={overlap,navFixed:cs.position==='fixed',navRadius:parseFloat(cs.borderTopLeftRadius),glass:cs.backdropFilter||cs.webkitBackdropFilter,
+      navColor:cs.backgroundColor,scrollAudit,lowerIsNav:lowerPoint===nav||nav.contains(lowerPoint),
+      pageOverflow:document.documentElement.scrollWidth-innerWidth};
+    probe.remove();trailing.remove();return value;
+  });
+  console.log('[IPAD DOCK SCROLL AUDIT]',JSON.stringify(state.scrollAudit));
+  expect(state.navFixed).toBe(true);
+  expect(state.overlap).toBe(true);
+  expect(state.navRadius).toBeGreaterThanOrEqual(16);
+  expect(state.glass).toContain('blur(');
+  expect(state.lowerIsNav).toBe(false);
+  expect(state.pageOverflow).toBeLessThanOrEqual(2);
+});
