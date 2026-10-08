@@ -4731,7 +4731,9 @@ test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',asyn
     content.append(probe,trailing);
     const d=nav.getBoundingClientRect();
     document.documentElement.style.scrollBehavior='auto';
-    probe.scrollIntoView({block:'center',behavior:'instant'});
+    const scroller=document.querySelector('.main');
+    const target=probe.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop-d.top+24;
+    scroller.scrollTop=target;
     const scrollParents=[];
     for(let node=probe.parentElement;node;node=node.parentElement){
       const css=getComputedStyle(node);
