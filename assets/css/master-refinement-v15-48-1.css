@@ -35,7 +35,7 @@ html.is-ipad:not(.is-phone-layout) .topbar{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 10px 28px rgba(0,0,0,.22)!important
 }
 html.is-ipad:not(.is-phone-layout) .topbar :is(.search,#syncTop){
-  background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.12)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.016)),rgba(30,30,31,.27)!important;border-color:rgba(255,255,255,.12)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important
 }
 
@@ -124,4 +124,33 @@ html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-l
 }
 html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-footer{
   left:14px!important;right:14px!important
+}
+
+/* 03 [T+M] Acessibilidade tem precedência sobre as novas camadas de vidro. */
+html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .topbar,
+html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .bottom-nav,
+html.mm-reduced-transparency.is-phone-layout .bottom-nav,
+html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .topbar :is(.search,#syncTop){
+  background:#0b0b0b!important;background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+}
+@media(prefers-reduced-transparency:reduce){
+  html.is-ipad:not(.is-phone-layout) .topbar,
+  html.is-ipad:not(.is-phone-layout) .bottom-nav,
+  html.is-phone-layout .bottom-nav,
+  html.is-ipad:not(.is-phone-layout) .topbar :is(.search,#syncTop){
+    background:#0b0b0b!important;background-image:none!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+  }
+}
+/* 07 [D] A thumbnail permanece 16:9 integral, colada ao topo e lateral. */
+html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card{
+  min-height:150px!important
+}
+html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb{
+  height:auto!important;min-height:0!important;
+  aspect-ratio:16/9!important;align-self:start!important
+}
+html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb img{
+  object-fit:contain!important
 }
