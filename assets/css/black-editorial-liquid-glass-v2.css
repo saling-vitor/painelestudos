@@ -423,22 +423,22 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 /* ==========================================================================
    9 · FORMULÁRIOS / CONTROLES GERAIS — SEM TINT ESTRUTURAL FRIA
    ========================================================================== */
-.app :is(input,select,textarea,.ui-select-trigger){
+body :is(input,select,textarea,.ui-select-trigger){
   color:var(--mm-text)!important;
 }
-.app :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
+body :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
   border-color:rgba(255,255,255,.10)!important;
   background:#0A0A0B!important;
   box-shadow:none!important;
 }
-.app :is(input,select,textarea):focus-visible{
+body :is(input,select,textarea):focus-visible{
   border-color:rgba(232,215,177,.38)!important;
   outline:1px solid rgba(232,215,177,.42)!important;
   outline-offset:2px!important;
 }
 
 /* Focus keyboard visível também em botões e links. */
-.app :is(button,a,[role="button"],[tabindex]):focus-visible{
+body :is(button,a,[role="button"],[tabindex]):focus-visible{
   outline:2px solid rgba(232,215,177,.62)!important;
   outline-offset:2px!important;
 }
@@ -556,7 +556,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
     border-color:rgba(255,255,255,.48)!important;
     background-color:#070809!important;
   }
-  .app :is(input,select,textarea,button,a,[role="button"]):focus-visible{
+  body :is(input,select,textarea,button,a,[role="button"]):focus-visible{
     outline-color:#fff!important;
   }
 }
@@ -594,7 +594,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
-  .app :is(button,a,input,select,textarea,[role="button"]):focus-visible{
+  body :is(button,a,input,select,textarea,[role="button"]):focus-visible{
     outline:2px solid Highlight!important;
   }
 }
