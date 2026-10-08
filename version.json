@@ -1,17 +1,17 @@
 {
-  "version": "15.48.4",
-  "label": "V15.48.4-G",
-  "notes": "Topografia global atenuada, dock do iPad refinado e maior contraste em Ritmo de estudo e Minhas dúvidas.",
+  "version": "15.48.5",
+  "label": "V15.48.5-T",
+  "notes": "Dock flutuante no iPad em retrato, sem tarja retangular inferior; conteúdos rolando sob Liquid Glass.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Topografia atenuada em Desktop, iPad e smartphone",
-    "[T] Dock do iPad em retrato: superfície óptica isolada e camadas auxiliares removidas"
+    "[T] Somente o dock possui superfície Liquid Glass",
+    "[T] Região inferior sem camada retangular adicional",
+    "[T] Espaço de rolagem preservado para último card"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "G",
-    "runBase": 706
-  },
-  "releasedAt": "2026-10-08T14:27:59.000Z"
+    "channel": "T",
+    "runBase": 707
+  }
 }
