@@ -4557,10 +4557,10 @@ test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e
 
     const inactive=page.locator('.side .nav-btn[data-nav="courses"]');
     await inactive.hover();
-    const hover=await inactive.evaluate(el=>({background:getComputedStyle(el).backgroundImage,backgroundColor:getComputedStyle(el).backgroundColor}));
+    const hover=await inactive.evaluate(el=>({background:getComputedStyle(el).backgroundImage}));
     expect(hover.background).toBe('none');
-    // V2: hover recebe leve tonalidade sem virar outra superfície glass.
-    expect(hover.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    // Aguarda a transição CSS antes de medir a tonalidade discreta do hover.
+    await expect.poll(()=>inactive.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
   }
 
   await page.goto('/#course/porto-alegre');
