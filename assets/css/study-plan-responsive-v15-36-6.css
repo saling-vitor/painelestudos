@@ -9,7 +9,7 @@
   border-radius:14px!important;
   background:
     radial-gradient(520px 180px at 0 0,color-mix(in srgb,var(--plan-accent) 5%,transparent),transparent 72%),
-    linear-gradient(145deg,rgba(255,255,255,.018),rgba(6,8,11,.965) 58%)!important;
+    linear-gradient(145deg,rgba(255,255,255,.018),rgba(6,6,6,.965) 58%)!important;
   box-shadow:0 18px 44px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.018)!important;
 }
 .home-review-section .section-head{
