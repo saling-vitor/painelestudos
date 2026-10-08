@@ -24,9 +24,9 @@ def valid(file_path, size, name):
     with p.open("rb") as f:
         head = f.read(100)
     if name.endswith(".png"):
-        return head.startswith(b"\x5cx89PNG\x5cr\x5cn\x5cx1a\x5cn")
+        return head.startswith(b"\x89PNG\r\n\x1a\n")
     if name.endswith(".ico"):
-        return head.startswith(b"\x5cx00\x5cx00\x5cx01\x5cx00")
+        return head.startswith(b"\x00\x00\x01\x00")
     if name.endswith(".svg"):
         return b"<svg" in head or b"<?xml" in head
     return True
