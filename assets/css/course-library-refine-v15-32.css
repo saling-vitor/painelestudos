@@ -172,7 +172,7 @@ html.is-phone-layout .map-card{
 
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill{
   border:1px solid rgba(255,255,255,.12)!important;
-  background:linear-gradient(180deg,rgba(54,59,66,.86),rgba(33,33,34,.84))!important;
+  background:linear-gradient(180deg,rgba(58,58,57,.86),rgba(33,33,34,.84))!important;
   box-shadow:0 8px 22px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.055)!important;
   -webkit-backdrop-filter:blur(14px)!important;
   backdrop-filter:blur(14px)!important;
@@ -188,7 +188,7 @@ html.is-phone-layout .map-card{
   border:1px solid color-mix(in srgb,var(--course-accent,#9aa1aa) 34%,rgba(255,255,255,.08))!important;
   background:linear-gradient(180deg,
     color-mix(in srgb,var(--course-accent,#9aa1aa) 11%,rgba(255,255,255,.018)),
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 6%,rgba(7,9,12,.94)))!important;
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 6%,rgba(7,7,7,.94)))!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info b{
   color:color-mix(in srgb,var(--course-accent,#9aa1aa) 78%,white)!important;
@@ -200,12 +200,12 @@ html.is-phone-layout .map-card{
   border-color:color-mix(in srgb,var(--course-accent,#9aa1aa) 48%,rgba(255,255,255,.10))!important;
   background:linear-gradient(180deg,
     color-mix(in srgb,var(--course-accent,#9aa1aa) 16%,rgba(255,255,255,.022)),
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 9%,#0a0d10))!important;
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 9%,#0d0d0d))!important;
   color:color-mix(in srgb,var(--course-accent,#9aa1aa) 80%,white)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-progress-mini .progress-track>span{
   background:linear-gradient(90deg,
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 72%,#15181c),
+    color-mix(in srgb,var(--course-accent,#9aa1aa) 72%,#181818),
     color-mix(in srgb,var(--course-accent,#9aa1aa) 94%,white))!important;
 }
 
