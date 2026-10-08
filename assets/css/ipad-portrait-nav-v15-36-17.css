@@ -93,11 +93,8 @@
     white-space:nowrap!important;
   }
 
-  html.is-ipad:not(.is-phone-layout) .bottom-nav button.active{
-    color:#ead7af!important;
-    background:linear-gradient(180deg,rgba(216,197,158,.12),rgba(216,197,158,.055))!important;
-    box-shadow:inset 0 1px rgba(255,255,255,.05)!important;
-  }
+  /* Cor e fundo do botão ativo são definidos pelo módulo cromático
+     nav-liquid-glass, sem fallback dourado conflitante. */
 
   html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-agenda{
     display:grid!important;
