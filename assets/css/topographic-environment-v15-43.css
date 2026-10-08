@@ -109,6 +109,13 @@ html.is-phone-layout body::before{
   display:block;
   visibility:visible;
 }
+/* WebKit/iPadOS: o raster global permanece contínuo, sem layer
+   artificial por translateZ(0) atrás de elementos fixed/backdrop. */
+@media(orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) body::before{
+    transform:none;
+  }
+}
 
 /* Tablet / iPad: presença menor, mantendo o material glass conectado ao ambiente. */
 @media(max-width:1180px){

@@ -11,7 +11,7 @@ export default defineConfig({
     {name:'ipad',grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
     {
       name:'ipad-webkit',
-      grep:/\[T\+M\]/i,
+      grep:/\[T\+M\]|Dock iPad \[T\]/i,
       use:{...devices['iPad Pro 11'],browserName:'webkit',serviceWorkers:'block'}
     },
     {

@@ -312,50 +312,24 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
 }
 
 /* =========================================================
-   9 · IPAD · NAVEGAÇÃO RESPONDE À LARGURA, NÃO À ORIENTAÇÃO
+   9 · IPAD · CONTRATO ÚNICO POR ORIENTAÇÃO
+   A geometria do dock em retrato pertence exclusivamente a
+   ipad-portrait-nav-v15-36-17.css. Esta folha conserva apenas
+   a densidade adicional da barra lateral em paisagem.
    ========================================================= */
-@media(min-width:900px){
-  html.is-ipad:not(.is-phone-layout){--nav:88px!important}
-  html.is-ipad:not(.is-phone-layout) .app{
-    display:grid!important;
-    grid-template-columns:88px minmax(0,1fr)!important;
-  }
+@media(orientation:landscape){
   html.is-ipad:not(.is-phone-layout) .side{
-    display:block!important;
     width:72px!important;
     left:8px!important;
     top:8px!important;
     bottom:8px!important;
   }
-  html.is-ipad:not(.is-phone-layout) .main{grid-column:2!important;width:auto!important}
-  html.is-ipad:not(.is-phone-layout) .bottom-nav{display:none!important}
   html.is-ipad:not(.is-phone-layout) .content{
     width:min(1180px,100%)!important;
     padding-left:18px!important;
     padding-right:18px!important;
     padding-bottom:52px!important;
   }
-}
-@media(max-width:899px){
-  html.is-ipad:not(.is-phone-layout){--nav:0px!important;scroll-padding-bottom:104px}
-  html.is-ipad:not(.is-phone-layout) .app{display:block!important;grid-template-columns:none!important}
-  html.is-ipad:not(.is-phone-layout) .side{display:none!important}
-  html.is-ipad:not(.is-phone-layout) .main{grid-column:auto!important;width:100%!important}
-  html.is-ipad:not(.is-phone-layout) .content{
-    width:100%!important;
-    max-width:100%!important;
-    padding-left:16px!important;
-    padding-right:16px!important;
-    padding-bottom:132px!important;
-  }
-  html.is-ipad:not(.is-phone-layout) .bottom-nav{
-    display:grid!important;
-    grid-template-columns:repeat(7,minmax(0,1fr))!important;
-    left:10px!important;
-    right:10px!important;
-    bottom:calc(8px + var(--safe-bottom))!important;
-  }
-  html.is-ipad:not(.is-phone-layout) .bottom-nav :is(.bottom-nav-simulations,.bottom-nav-agenda){display:grid!important}
 }
 
 /* =========================================================

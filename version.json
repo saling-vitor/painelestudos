@@ -1,18 +1,18 @@
 {
-  "version": "15.48.10",
-  "label": "V15.48.10-T+M",
-  "notes": "Safari/WebKit: dock e topbar iPad/iPhone sem overlays auxiliares, com safe areas e navegação tocável após rolagem.",
+  "version": "15.48.11",
+  "label": "V15.48.11-T",
+  "notes": "iPad 10 e demais tablets: dock de sete destinos compacto, superfície única de vidro e eliminação de regras conflitantes por largura; fundo topográfico global preservado.",
   "showWhatsNew": true,
   "highlights": [
-    "[T+M] Liquid Glass único no dock e topbar, sem tarjas ou overlays auxiliares",
-    "[T] Sete destinos do dock preservados no iPad retrato e navegação lateral em paisagem",
-    "[M] Dock do iPhone respeita safe areas e mantém cinco botões e menu Mais",
-    "[T+M] Sem compressão dos botões de navegação; service worker sincronizado"
+    "[T] Dock retrato com sete destinos e dimensões compactas",
+    "[T] Liquid Glass com fundo translúcido e sombra leve, sem camadas extras",
+    "[T] Breakpoints de navegação por orientação, preservando modo paisagem",
+    "[T] Fundo topográfico contínuo sem promoção artificial de GPU no iPad retrato"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "T+M",
+    "channel": "T",
     "runBase": 710
   }
 }

@@ -101,7 +101,7 @@ html.is-ipad:not(.is-phone-layout) .topbar>.mm-scroll-edge { display:none!import
 /* WebKit iPadOS/iOS: UM backdrop no próprio contêiner, sem máscara,
    overflow clipping ou superfícies-filhas adicionais. As bordas dos
    botões continuam interativas, acima da pintura óptica. */
-html:is(.is-ipad,.is-phone-layout) .bottom-nav {
+html.is-phone-layout .bottom-nav {
   isolation:auto;
   overflow:visible!important;
   border-radius:18px!important;
@@ -199,23 +199,27 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
    Remover sombras/placas externas sem destruir conteúdo nem o destaque ativo. */
 @media (orientation:portrait) {
  html.is-ipad:not(.is-phone-layout) .bottom-nav {
-   border-radius:20px!important;
-   /* A translucidez acompanha o scroll da .main; jamais desenhar
-      uma superfície no entorno do próprio dock. */
-   background:linear-gradient(165deg,rgba(255,255,255,.105),rgba(255,255,255,.018) 48%,transparent 78%),rgba(15,15,16,var(--mm-dock-alpha,.075))!important;
-   box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 5px 13px rgba(0,0,0,.13)!important;
- }
- html.is-ipad:not(.is-phone-layout) .bottom-nav::before,
- html.is-ipad:not(.is-phone-layout) .bottom-nav::after,
- html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-scroll-edge {
-   content:none!important;
-   display:none!important;
- }
- html.is-ipad:not(.is-phone-layout) .bottom-nav>button {
-   -webkit-backdrop-filter:none!important;
-   backdrop-filter:none!important;
-   touch-action:manipulation;
-   pointer-events:auto;
+   /* ÚNICA pintura óptica do dock iPad. O tamanho é decidido pelo
+      ipad-portrait-nav, sem wrapper, máscara ou placa auxiliar. */
+   isolation:auto;
+   overflow:visible!important;
+   border-radius:19px!important;
+   border:1px solid rgba(255,255,255,.24)!important;
+   background:
+     linear-gradient(180deg,
+       rgba(255,255,255,.16) 0%,
+       rgba(255,255,255,.075) 18%,
+       rgba(255,255,255,.032) 58%,
+       rgba(255,255,255,.018) 100%),
+     rgba(35,35,37,var(--mm-dock-alpha,.10))!important;
+   -webkit-backdrop-filter:blur(20px) saturate(124%) contrast(103%)!important;
+   backdrop-filter:blur(20px) saturate(124%) contrast(103%)!important;
+   box-shadow:
+     inset 0 1px 0 rgba(255,255,255,.21),
+     0 5px 16px rgba(0,0,0,.16)!important;
+   transform:none;
+   filter:none;
+   will-change:auto;
  }
 }
 /* V15.48.4-T | Progresso iPad: contraste seletivo sem poluir demais cards. */
