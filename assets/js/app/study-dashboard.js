@@ -475,6 +475,11 @@ function ensureAgendaView(){
       const layout=view.querySelector('.settings-layout')||view;
       layout.insertAdjacentElement('afterend',root);
     }
+    // V15.48.8-G: refresh de nuvem/analytics não pode desmontar
+    // o formulário enquanto um campo de duração está sendo editado.
+    // O submit continua renderizando normalmente quando o foco sai do input.
+    const focused=document.activeElement;
+    if(focused&&root.contains(focused)&&focused.matches?.('#studyGoalsForm .study-duration-input'))return;
     const data=readData(),g=goalDraft||data.goals,snap=goalSnapshot();
     const allTime=window.StudyTime?.all?.()||0;
     const manageOpen=!!root.querySelector('.study-time-manage[open]');
