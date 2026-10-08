@@ -148,7 +148,7 @@
       addClasses(topbar,'mm-scroll-density');
       // Safari/WebKit: uma única superfície composta para topbar móvel.
       // O scroll-edge auxiliar permanece apenas no desktop.
-      if(root.classList.contains('is-ipad')||root.classList.contains('is-phone-layout')){
+      if(root.classList.contains('is-ipad')||root.classList.contains('is-phone-layout')||matchMedia('(max-width: 480px)').matches){
         q(':scope > .mm-scroll-edge',topbar)?.remove();
       }else{
         ensureScrollEdge(topbar);
