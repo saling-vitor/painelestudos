@@ -115,7 +115,7 @@ html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-mini 
 }
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-progress-mini .progress-track>span{
   background:linear-gradient(90deg,
-    color-mix(in srgb,var(--course-accent,#b99c68) 72%,#15181c),
+    color-mix(in srgb,var(--course-accent,#b99c68) 72%,#181818),
     color-mix(in srgb,var(--course-accent,#b99c68) 92%,#fff))!important;
   box-shadow:0 0 12px color-mix(in srgb,var(--course-accent,#b99c68) 20%,transparent);
 }
@@ -138,7 +138,7 @@ html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .enter{
   background:
     linear-gradient(180deg,
       color-mix(in srgb,var(--course-accent,#b99c68) 13%,rgba(255,255,255,.018)),
-      color-mix(in srgb,var(--course-accent,#b99c68) 7%,rgba(7,9,12,.92)))!important;
+      color-mix(in srgb,var(--course-accent,#b99c68) 7%,rgba(7,7,7,.92)))!important;
   color:color-mix(in srgb,var(--course-accent,#b99c68) 74%,#fff)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.025),0 5px 14px rgba(0,0,0,.13);
 }
