@@ -4731,13 +4731,20 @@ test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',asyn
     content.append(probe,trailing);
     const d=nav.getBoundingClientRect();
     document.documentElement.style.scrollBehavior='auto';
-    window.scrollTo(0,probe.getBoundingClientRect().top+scrollY-d.top+15);
+    probe.scrollIntoView({block:'center',behavior:'instant'});
+    const scrollParents=[];
+    for(let node=probe.parentElement;node;node=node.parentElement){
+      const css=getComputedStyle(node);
+      if(node.scrollHeight>node.clientHeight+2){
+        scrollParents.push({tag:node.tagName,cls:node.className,scrollTop:node.scrollTop,height:node.clientHeight,scrollHeight:node.scrollHeight,overflowY:css.overflowY});
+      }
+    }
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     const n=nav.getBoundingClientRect(),p=probe.getBoundingClientRect();
     const cs=getComputedStyle(nav);
     const lowerPoint=document.elementFromPoint(innerWidth/2,Math.min(innerHeight-2,n.bottom+4));
     const overlap=p.top<n.bottom&&p.bottom>n.top;
-    const scrollAudit={scrollY,scrollHeight:document.scrollingElement?.scrollHeight,clientHeight:document.scrollingElement?.clientHeight,probe:{top:p.top,bottom:p.bottom},nav:{top:n.top,bottom:n.bottom},contentScrollTop:content.scrollTop,bodyScrollTop:document.body.scrollTop,visualViewportHeight:visualViewport?.height};
+    const scrollAudit={scrollY,scrollHeight:document.scrollingElement?.scrollHeight,clientHeight:document.scrollingElement?.clientHeight,probe:{top:p.top,bottom:p.bottom},nav:{top:n.top,bottom:n.bottom},contentScrollTop:content.scrollTop,bodyScrollTop:document.body.scrollTop,visualViewportHeight:visualViewport?.height,scrollParents};
     const value={overlap,navFixed:cs.position==='fixed',navRadius:parseFloat(cs.borderTopLeftRadius),glass:cs.backdropFilter||cs.webkitBackdropFilter,
       navColor:cs.backgroundColor,scrollAudit,lowerIsNav:lowerPoint===nav||nav.contains(lowerPoint),
       pageOverflow:document.documentElement.scrollWidth-innerWidth};
