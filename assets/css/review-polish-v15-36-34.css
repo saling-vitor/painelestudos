@@ -40,19 +40,8 @@ html.topbar-scrolled:not(.is-phone-layout) .topbar{
   mask-image:none;
 }
 
-/* =========================================================
-   [T] iPad retrato: dock inferior de cinco destinos.
-   Simulados e Agenda vivem em Mais; paisagem continua com sidebar.
-   ========================================================= */
-@media (orientation:portrait){
-  html.is-ipad:not(.is-phone-layout) .bottom-nav{
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-  }
-  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-simulations,
-  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-agenda{
-    display:none!important;
-  }
-}
+/* [T] Navegação retrato de sete destinos centralizada no
+   ipad-portrait-nav-v15-36-17.css. Variante histórica de cinco itens removida. */
 html.is-ipad.keyboard-open .bottom-nav{
   opacity:0!important;
   transform:translateY(calc(100% + 28px))!important;
@@ -61,33 +50,6 @@ html.is-ipad.keyboard-open .bottom-nav{
 .tablet-more-shortcuts{
   display:none;
 }
-@media (orientation:portrait){
-  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin:0 0 12px;
-  }
-  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts>button{
-    min-height:58px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:10px 12px;
-    border:1px solid rgba(255,255,255,.065);
-    border-radius:11px;
-    background:rgba(255,255,255,.015);
-    color:#c5c9cf;
-    text-align:left;
-  }
-  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts>button>span:last-child{
-    display:grid;
-    gap:2px;
-  }
-  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts b{font-size:11px}
-  html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts small{color:#777e87;font-size:9px}
-}
-
 /* Meus Cursos usa melhor a largura em paisagem. */
 @media (orientation:landscape) and (min-width:900px){
   html.is-ipad:not(.is-phone-layout) [data-view="courses"] #coursesGrid{
