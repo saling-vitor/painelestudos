@@ -98,7 +98,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue{
   border-color:color-mix(in srgb,var(--map-accent,#c3aa84) 28%,rgba(255,255,255,.08))!important;
   border-left:2px solid var(--map-accent,#c3aa84)!important;
   background:
-    linear-gradient(90deg,color-mix(in srgb,var(--map-accent,#c3aa84) 7%,rgba(255,255,255,.015)),rgba(8,10,13,.76))!important;
+    linear-gradient(90deg,color-mix(in srgb,var(--map-accent,#c3aa84) 7%,rgba(255,255,255,.015)),rgba(8,8,8,.76))!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-copy{
   gap:4px!important;
