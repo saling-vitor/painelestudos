@@ -2,7 +2,7 @@
    Fundo em camadas: página -> painel -> sequência -> progresso. */
 
 [data-view="home"]{
-  --home-ambient:rgba(122,136,154,.028);
+  --home-ambient:rgba(138,138,134,.022);
   --home-ambient-soft:rgba(255,255,255,.012);
 }
 [data-view="home"].active{
@@ -14,7 +14,7 @@
 .home-review-section{
   --plan-edge:rgba(255,255,255,.075);
   --plan-edge-soft:rgba(255,255,255,.052);
-  --plan-surface:#090b0f;
+  --plan-surface:#09090a;
   --plan-surface-soft:rgba(255,255,255,.012);
   position:relative;
   isolation:isolate;
@@ -23,7 +23,7 @@
   background:
     radial-gradient(680px 250px at 6% -2%,rgba(255,255,255,.024),transparent 68%),
     radial-gradient(560px 220px at 100% 0,color-mix(in srgb,var(--plan-accent,#8f98a3) 4%,transparent),transparent 72%),
-    linear-gradient(152deg,rgba(12,14,18,.97),rgba(6,8,11,.985) 62%,rgba(4,6,8,.99))!important;
+    linear-gradient(152deg,rgba(12,12,13,.97),rgba(6,6,7,.985) 62%,rgba(4,4,5,.99))!important;
   box-shadow:
     0 18px 46px rgba(0,0,0,.22),
     inset 0 1px rgba(255,255,255,.024)!important;
@@ -113,14 +113,14 @@ html:not(.is-ipad):not(.is-phone-layout) .home-review-section .study-plan-grid{
 
 /* [T] iPad · painel mais definido e divisórias menos agressivas. */
 html.is-ipad:not(.is-phone-layout) [data-view="home"].active{
-  --home-ambient:rgba(118,132,149,.022);
+  --home-ambient:rgba(136,136,132,.018);
   --home-ambient-soft:rgba(255,255,255,.009);
 }
 html.is-ipad:not(.is-phone-layout) .home-review-section{
   background:
     radial-gradient(520px 210px at 0 0,rgba(255,255,255,.020),transparent 70%),
     radial-gradient(440px 180px at 100% 0,color-mix(in srgb,var(--plan-accent,#8f98a3) 3%,transparent),transparent 74%),
-    linear-gradient(150deg,rgba(11,13,17,.975),rgba(6,8,11,.99))!important;
+    linear-gradient(150deg,rgba(11,11,12,.975),rgba(6,6,7,.99))!important;
   box-shadow:
     0 15px 34px rgba(0,0,0,.18),
     inset 0 1px rgba(255,255,255,.020)!important;
@@ -144,14 +144,14 @@ html.is-ipad:not(.is-phone-layout) .study-plan-footer{
 
 /* [M] iPhone · menos massa preta e mais respiro entre as superfícies. */
 html.is-phone-layout [data-view="home"].active{
-  --home-ambient:rgba(118,132,149,.014);
+  --home-ambient:rgba(136,136,132,.012);
   --home-ambient-soft:rgba(255,255,255,.006);
 }
 html.is-phone-layout .home-review-section{
   border-color:rgba(255,255,255,.070)!important;
   background:
     radial-gradient(380px 170px at 10% 0,rgba(255,255,255,.018),transparent 70%),
-    linear-gradient(180deg,rgba(11,13,17,.975),rgba(6,8,11,.992))!important;
+    linear-gradient(180deg,rgba(11,11,12,.975),rgba(6,6,7,.992))!important;
   box-shadow:
     0 12px 28px rgba(0,0,0,.16),
     inset 0 1px rgba(255,255,255,.018)!important;
