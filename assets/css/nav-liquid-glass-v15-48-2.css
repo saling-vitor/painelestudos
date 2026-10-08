@@ -1,4 +1,4 @@
-/* MEUS MAPAS — V15.48.2-G | LISTA MESTRA V2 (09–16)
+/* MEUS MAPAS — V15.48.3-G | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
    Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
    Base: V15.48.1-G. CSS carregado por último para substituir legados. */
 
@@ -20,54 +20,80 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"] { --nav
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"] { --nav-accent:#d994ac }
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#c9d47d }
 
-/* Cor leve nos ícones inativos, reforço acessível com borda/fundo no ativo. */
-.side .nav-btn[data-nav]>.ui-icon,
-.bottom-nav>button[data-nav]>.ui-icon,
-html.is-phone-layout .bottom-nav>.mobile-menu-trigger>.ui-icon,
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav] .ui-icon {
-  color:color-mix(in srgb,var(--nav-accent) 70%,#8b8b8b)!important
+/* V15.48.3 [G] Cor EXCLUSIVA do item ativo. Inativos brancos,
+   também em hover/focus: feedback neutro, sem mostrar outra cor. */
+html .side .nav-btn[data-nav]:not(.active),
+html .bottom-nav>button[data-nav]:not(.active),
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"]),
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) {
+  color:#f4f4f4!important;
 }
-.side .nav-btn[data-nav]:is(.active,:hover,:focus-visible)>.ui-icon,
-.bottom-nav>button[data-nav]:is(.active,:hover,:focus-visible)>.ui-icon,
-html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"])>.ui-icon,
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:is(.is-current,:focus-visible) .ui-icon {
-  color:var(--nav-accent)!important
+html .side .nav-btn[data-nav]:not(.active)>.ui-icon,
+html .bottom-nav>button[data-nav]:not(.active)>.ui-icon,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"])>.ui-icon,
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) .ui-icon {
+  color:#f4f4f4!important;
 }
-html:not(.is-phone-layout) .side .nav-btn[data-nav]:is(:hover,:focus-visible):not(.active) {
-  border-color:color-mix(in srgb,var(--nav-accent) 16%,transparent)!important;
-  background:color-mix(in srgb,var(--nav-accent) 6%,transparent)!important
+html .side .nav-btn[data-nav]:not(.active) .txt,
+html .bottom-nav>button[data-nav]:not(.active) .bottom-nav-label,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"]) .bottom-nav-label,
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) b {
+  color:#f4f4f4!important;
 }
+/* O acento é exibido SOMENTE no item que representa a seção atual. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active {
-  color:color-mix(in srgb,var(--nav-accent) 42%,#f6f4ef)!important;
+  color:var(--nav-accent)!important;
   border:1px solid color-mix(in srgb,var(--nav-accent) 29%,transparent)!important;
-  background:
-    linear-gradient(90deg,color-mix(in srgb,var(--nav-accent) 13%,rgba(255,255,255,.018)),rgba(255,255,255,.015) 82%)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--nav-accent) 13%,rgba(255,255,255,.018)),
+    rgba(255,255,255,.015) 82%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before {
   background:var(--nav-accent)!important;
-  box-shadow:0 0 11px color-mix(in srgb,var(--nav-accent) 30%,transparent)!important
+  box-shadow:0 0 11px color-mix(in srgb,var(--nav-accent) 30%,transparent)!important;
 }
-.bottom-nav>button[data-nav]:is(.active,:hover,:focus-visible),
-html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"],:focus-visible) {
-  color:color-mix(in srgb,var(--nav-accent) 55%,#f3f1ec)!important;
+html .side .nav-btn[data-nav].active :is(.ui-icon,.txt),
+html .bottom-nav>button[data-nav].active :is(.ui-icon,.bottom-nav-label),
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]) :is(.ui-icon,.bottom-nav-label),
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current :is(.ui-icon,b) {
+  color:var(--nav-accent)!important;
+}
+/* Hover/foco em item NÃO ativo: apenas cinza translúcido, SEM acento. */
+html:not(.is-phone-layout) .side .nav-btn[data-nav]:is(:hover,:focus-visible):not(.active) {
+  border-color:rgba(255,255,255,.13)!important;
+  background:rgba(255,255,255,.055)!important;
+}
+html .bottom-nav>button[data-nav]:is(:hover,:focus-visible):not(.active),
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(:hover,:focus-visible):not(.active):not([aria-expanded="true"]) {
+  color:#f4f4f4!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  background:rgba(255,255,255,.055)!important;
+  box-shadow:none!important;
+}
+/* Ativo: vidro neutro e cor única da seção, sem animação de lente. */
+html .bottom-nav>button[data-nav].active,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]) {
+  color:var(--nav-accent)!important;
   border:1px solid color-mix(in srgb,var(--nav-accent) 25%,transparent)!important;
   background:linear-gradient(180deg,
     color-mix(in srgb,var(--nav-accent) 17%,rgba(255,255,255,.055)),
     color-mix(in srgb,var(--nav-accent) 7%,rgba(10,10,10,.09)))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
 }
-.bottom-nav>button[data-nav].active::before,
+html .bottom-nav>button[data-nav].active::before,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before {
-  background:var(--nav-accent)!important
+  background:var(--nav-accent)!important;
 }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:is(.is-current,:hover,:focus-visible) {
-  color:color-mix(in srgb,var(--nav-accent) 40%,#f5f3ee)!important;
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:is(:hover,:focus-visible):not(.is-current){
+  color:#f4f4f4!important;
+  border-color:rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.045)!important;
+}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current {
+  color:var(--nav-accent)!important;
   border-color:color-mix(in srgb,var(--nav-accent) 24%,transparent)!important;
-  background:color-mix(in srgb,var(--nav-accent) 8%,rgba(255,255,255,.016))!important
-}
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav] .ui-icon {
-  color:var(--nav-accent)!important
+  background:color-mix(in srgb,var(--nav-accent) 8%,rgba(255,255,255,.016))!important;
 }
 
 /* 10/14 [T+M] Remove o gradiente retangular externo, culpado da "tarja".

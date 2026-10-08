@@ -1,15 +1,14 @@
 {
-  "version": "15.48.2",
-  "label": "V15.48.2-G",
+  "version": "15.48.3",
+  "label": "V15.48.3-G",
   "releasedAt": "2026-10-07T23:55:00.000Z",
-  "notes": "Lista Mestra V2 (09–16): topografia suavizada, docks e topbars Liquid Glass sem tarjas, identidade cromática de cada seção em Desktop, iPad e iPhone.",
+  "notes": "Navegação: cor exclusiva no botão ativo, demais ícones e textos brancos em Desktop, Tablet e Smartphone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Topografia vetorial atenuada ~30% sem abandonar a textura",
-    "[T] Dock iPad sem tarja retangular, topbar translúcida, validação retrato/paisagem",
-    "[M] Barra superior e dock iPhone em vidro translúcido com fallback",
-    "[G] Sete acentos distintos para Início, Cursos, Mapas, Simulados, Progresso, Agenda e Configurações",
-    "[G] Estados ativo, foco, hover e painel Mais cromaticamente consistentes e acessíveis"
+    "[G] Sete cores exclusivas preservadas para seções ativas",
+    "[G] Todos os itens inativos ficam brancos, inclusive durante hover/foco",
+    "[D+T+M] Desktop, iPad e iPhone: estados consistentes, sem alteração da aparência Liquid Glass",
+    "[M] Menu Mais: somente a seção atual recebe cor"
   ],
   "automation": {
     "enabled": true,
