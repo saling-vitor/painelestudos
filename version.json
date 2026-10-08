@@ -1,15 +1,16 @@
 {
-  "version": "15.48.0",
-  "label": "V15.48.0-G",
+  "version": "15.48.1",
+  "label": "V15.48.1-G",
   "releasedAt": "2026-10-07T23:55:00.000Z",
-  "notes": "Auditoria cromática estrutural: remove navy residual de campos, modais, chrome e superfícies Liquid Glass, incluindo controles fora da shell .app.",
+  "notes": "Lista mestra: SVG vetorial, Liquid Glass iPad/iPhone, capas e refinamento do painel diário.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Campos e selects dos modais passam a usar preto neutro, inclusive fora de .app",
-    "[G] Foco de formulários deixa de usar azul e passa ao champagne neutro da identidade",
-    "[G] Bases navy quase pretas de app, planner, progresso, mapas e configurações são convertidas para graphite neutro",
-    "[D/T/M] Liquid Glass mantém transparência e profundidade sem tint azul estrutural",
-    "[G] Cores semânticas de revisão, sucesso, alerta, erro, curso e mapa permanecem preservadas"
+    "[G] Topografia em SVG transparente mais perceptível nos dispositivos",
+    "[T+M] Menus Liquid Glass com destaque estático e topbar iPad",
+    "[G] Hidratação de capas segura contra atualização obsoleta",
+    "[D] Capas e faixa de retomada/simulados sem bordas redundantes",
+    "[M] Capas full-bleed com controles internos",
+    "[D+T] Rodapé do estudo de hoje com métricas alinhadas"
   ],
   "automation": {
     "enabled": true,
