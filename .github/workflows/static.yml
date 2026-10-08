@@ -122,7 +122,7 @@ jobs:
         run: node scripts/build-search-index.mjs
 
       - name: Browser E2E — iPad
-        run: npx playwright test --project=ipad
+        run: npx playwright test --project=ipad --project=ipad-webkit
 
       - name: Upload Playwright failure artifacts
         if: failure()
