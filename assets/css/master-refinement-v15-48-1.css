@@ -8,14 +8,15 @@ body:has(#reader.open)::before,body:has(#simulationReader.open)::before,body:has
 @media(forced-colors:active){body::before{display:none!important}}
 
 /* 03 [T+M] Vidro somente no invólucro; seleção estática, sem lente móvel. */
-html.is-ipad:not(.is-phone-layout) .bottom-nav,html.is-phone-layout .bottom-nav{
+/* Vidro do dock iPad pertence ao módulo final nav-liquid-glass; smartphone mantém estes tokens. */
+html.is-phone-layout .bottom-nav{
   background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.012) 55%),rgba(29,29,30,.48)!important;
   border:1px solid rgba(255,255,255,.20)!important;
   -webkit-backdrop-filter:blur(19px) saturate(125%)!important;
   backdrop-filter:blur(19px) saturate(125%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 12px 36px rgba(0,0,0,.25)!important
 }
-html.is-ipad:not(.is-phone-layout) .bottom-nav>button.active,html.is-phone-layout .bottom-nav>button.active{
+html.is-phone-layout .bottom-nav>button.active{
   background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.026))!important;
   border-color:rgba(255,255,255,.14)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
