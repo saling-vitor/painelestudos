@@ -7,14 +7,14 @@
   --mm-text-muted:#8e949d;
   --mm-accent:#d8c59e;
 
-  --mm-surface-0:rgba(8,8,9,.82);
-  --mm-surface-1:rgba(10,10,11,.88);
-  --mm-surface-2:rgba(14,14,15,.92);
+  --mm-surface-0:rgba(8,8,8,.82);
+  --mm-surface-1:rgba(10,10,10,.88);
+  --mm-surface-2:rgba(14,14,14,.92);
   --mm-surface-border:rgba(255,255,255,.075);
   --mm-surface-border-soft:rgba(255,255,255,.050);
 
-  --mm-glass-bg:rgba(9,9,10,.58);
-  --mm-glass-dense:rgba(8,8,9,.78);
+  --mm-glass-bg:rgba(9,9,9,.58);
+  --mm-glass-dense:rgba(8,8,8,.78)
   --mm-glass-border:rgba(255,255,255,.19);
   --mm-glass-highlight:rgba(255,255,255,.15);
   --mm-glass-outer:rgba(0,0,0,.74);
