@@ -202,3 +202,35 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
 html.is-ipad:not(.is-phone-layout) body::after {
  pointer-events:none;
 }
+
+/* V15.48.4-T | Progresso iPad: contraste seletivo sem poluir demais cards. */
+html.is-ipad:not(.is-phone-layout) .study-analytics-panel .study-heatmap-primary {
+ background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 65%),rgba(23,23,24,.80)!important;
+ border:1px solid rgba(255,255,255,.15)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-rhythm-kpis>article {
+ background:rgba(31,31,32,.77)!important;
+ border-color:rgba(255,255,255,.12)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-rhythm-details,
+html.is-ipad:not(.is-phone-layout) .study-rhythm-distribution>div {
+ background:rgba(28,28,29,.82)!important;
+ border-color:rgba(255,255,255,.12)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-inbox.is-empty,
+html.is-ipad:not(.is-phone-layout) .study-doubt-list>article {
+ background:linear-gradient(150deg,rgba(255,255,255,.045),transparent 80%),rgba(26,26,27,.83)!important;
+ border:1px solid rgba(255,255,255,.13)!important;
+ border-radius:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-list>article {
+ margin-block:7px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-empty {
+ border-top-color:rgba(255,255,255,.095)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-inbox :is(.study-doubt-count,.study-doubt-empty>span) {
+ color:#c5c5c5!important;
+ border-color:rgba(255,255,255,.15)!important;
+}
