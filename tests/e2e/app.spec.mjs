@@ -4713,3 +4713,36 @@ test('V15.48.3 [G] somente menu ativo tem cor; inativos brancos em Desktop/iPad/
     await expect(option.locator('b')).toHaveCSS('color','rgb(244, 244, 244)');
   }
 });
+
+
+test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Comportamento específico do iPad em retrato');
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#courses');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const state=await page.evaluate(async()=>{
+    const nav=document.querySelector('.bottom-nav');
+    const content=document.querySelector('.content');
+    const probe=document.createElement('div');
+    probe.setAttribute('data-dock-scroll-probe','');
+    probe.style.cssText='height:64px;background:#f5b33f;position:relative;margin-top:900px;';
+    content.appendChild(probe);
+    const d=nav.getBoundingClientRect();
+    window.scrollTo(0,probe.getBoundingClientRect().top+scrollY-d.top+15);
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const n=nav.getBoundingClientRect(),p=probe.getBoundingClientRect();
+    const cs=getComputedStyle(nav);
+    const lowerPoint=document.elementFromPoint(innerWidth/2,Math.min(innerHeight-2,n.bottom+4));
+    const overlap=p.top<n.bottom&&p.bottom>n.top;
+    const value={overlap,navFixed:cs.position==='fixed',navRadius:parseFloat(cs.borderTopLeftRadius),glass:cs.backdropFilter||cs.webkitBackdropFilter,
+      navColor:cs.backgroundColor,lowerIsNav:lowerPoint===nav||nav.contains(lowerPoint),
+      pageOverflow:document.documentElement.scrollWidth-innerWidth};
+    probe.remove();return value;
+  });
+  expect(state.navFixed).toBe(true);
+  expect(state.overlap).toBe(true);
+  expect(state.navRadius).toBeGreaterThanOrEqual(16);
+  expect(state.glass).toContain('blur(');
+  expect(state.lowerIsNav).toBe(false);
+  expect(state.pageOverflow).toBeLessThanOrEqual(2);
+});
