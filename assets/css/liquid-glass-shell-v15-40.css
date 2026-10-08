@@ -91,9 +91,9 @@ html:not(.is-phone-layout) .topbar{
     linear-gradient(145deg,
       rgba(255,255,255,.038) 0%,
       rgba(255,255,255,.010) 38%,
-      rgba(5,8,12,.075) 69%,
+      rgba(7,7,7,.075) 69%,
       rgba(255,255,255,.020) 100%),
-    rgba(7,10,14,.34)!important;
+    rgba(9,9,9,.34)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   -webkit-backdrop-filter:
     blur(13px)
@@ -162,7 +162,7 @@ html:not(.is-phone-layout) .topbar .search{
     linear-gradient(145deg,
       rgba(255,255,255,.038) 0%,
       rgba(255,255,255,.010) 42%,
-      rgba(4,7,11,.070) 70%,
+      rgba(6,6,6,.070) 70%,
       rgba(255,255,255,.020) 100%),
     rgba(10,10,11,.30)!important;
   background-blend-mode:screen,screen,normal,normal!important;
@@ -246,7 +246,7 @@ html:not(.is-phone-layout) .topbar .search:focus-within{
     linear-gradient(145deg,
       rgba(255,255,255,.048) 0%,
       rgba(255,255,255,.013) 42%,
-      rgba(4,7,11,.060) 70%,
+      rgba(6,6,6,.060) 70%,
       rgba(255,255,255,.026) 100%),
     rgba(10,10,11,.27)!important;
   -webkit-backdrop-filter:
