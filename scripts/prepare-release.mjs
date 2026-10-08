@@ -12,6 +12,7 @@ const stateFile='assets/js/app/state.js';
 const indexFile='index.html';
 const updatesFile='assets/js/app/updates.js';
 const swFile='sw.js';
+const iconSettingsFile='assets/js/app-icon-settings-v15-36-2.js';
 
 const meta=json(versionFile);
 const automation=meta.automation||{};
@@ -85,5 +86,9 @@ sw=sw.replace(/^\/\/[^\n]*\n/,'// '+releaseLabel+' · release automática do sis
 sw=sw.replace(/const V='study-pwa-v[^']+';/,"const V='"+swCache+"';");
 if(!sw.includes(swCache))throw new Error('Falha ao sincronizar cache do service worker');
 write(swFile,sw);
+
+// Mantém ícones Claro/Escuro/Automático e manifests no mesmo cache-bust da release.
+let iconSettings=replaceThreePartQuery(read(iconSettingsFile));
+write(iconSettingsFile,iconSettings);
 
 console.log('✓ Release sincronizada: '+releaseLabel+(autoEnabled?' · run '+runNumber+' · '+commit:' · modo local'));
