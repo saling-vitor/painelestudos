@@ -3,7 +3,7 @@
    O ambiente pertence ao fundo global; conteúdo, leitores e superfícies matte permanecem limpos. */
 
 :root{
-  --mm-topo-opacity:.46;
+  --mm-topo-opacity:.20;
 
   --mm-bg-0:#020304;
   --mm-bg-1:#040506;
@@ -99,10 +99,10 @@ body:has(.simulation-reader.open)::before{
 
 /* Classes de layout têm prioridade sobre largura física: split view/PWA não deve apagar o ambiente. */
 html.is-ipad:not(.is-phone-layout){
-  --mm-topo-opacity:.42;
+  --mm-topo-opacity:.21;
 }
 html.is-phone-layout{
-  --mm-topo-opacity:.32;
+  --mm-topo-opacity:.20;
 }
 html.is-ipad:not(.is-phone-layout) body::before,
 html.is-phone-layout body::before{
@@ -113,7 +113,7 @@ html.is-phone-layout body::before{
 /* Tablet / iPad: presença menor, mantendo o material glass conectado ao ambiente. */
 @media(max-width:1180px){
   :root{
-    --mm-topo-opacity:.42;
+    --mm-topo-opacity:.21;
   }
 
   body::before{
@@ -125,7 +125,7 @@ html.is-phone-layout body::before{
 /* Smartphone: assinatura cartográfica, sem competir com o conteúdo. */
 @media(max-width:600px){
   :root{
-    --mm-topo-opacity:.32;
+    --mm-topo-opacity:.20;
   }
 
   body{
