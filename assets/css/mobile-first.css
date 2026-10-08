@@ -3311,7 +3311,7 @@
   html.is-phone-layout input:not([type="checkbox"]):not([type="radio"]):focus,
   html.is-phone-layout select:focus,
   html.is-phone-layout textarea:focus{
-    border-color:rgba(169,200,231,.28)!important;
+    border-color:rgba(232,215,177,.30)!important;
     background:rgba(10,10,11,.90)!important;
   }
 
