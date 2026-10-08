@@ -4173,9 +4173,9 @@ test('V15.48 [G] Black Editorial neutro aplica tokens e evita glass-on-glass',as
   });
   expect(data.bg).toBe('#040404');
   expect(data.bgDeep).toBe('#020202');
-  expect(data.surface1).toBe('#0B0B0C');
-  expect(data.regular).toBe('rgba(9,9,10,.60)');
-  expect(data.dense).toBe('rgba(8,8,9,.82)');
+  expect(data.surface1).toBe('#0B0B0B');
+  expect(data.regular).toBe('rgba(9,9,9,.60)');
+  expect(data.dense).toBe('rgba(8,8,8,.82)');
   expect(data.clear).toBe('rgba(12,12,12,.24)');
   expect(data.searchFilter).toBe('none');
   expect(data.syncFilter).toBe('none');
