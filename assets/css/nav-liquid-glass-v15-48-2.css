@@ -14,11 +14,11 @@ html.is-phone-layout { --mm-topo-opacity:.70 }
 :is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"] { --nav-accent:#d994ac }
 :is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"] { --nav-accent:#b5a5e2 }
 :is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"] { --nav-accent:#8ec8ce }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"] { --nav-accent:#e5b77e }
-html.is-phone-layout .bottom-nav>.mobile-menu-trigger { --nav-accent:#e5b77e }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"] { --nav-accent:#c9d47d }
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger { --nav-accent:#c9d47d }
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"] { --nav-accent:#8ec8ce }
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"] { --nav-accent:#d994ac }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#e5b77e }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#c9d47d }
 
 /* Cor leve nos ícones inativos, reforço acessível com borda/fundo no ativo. */
 .side .nav-btn[data-nav]>.ui-icon,
