@@ -1,12 +1,13 @@
 {
-  "version": "15.48.8",
-  "label": "V15.48.8-G",
-  "notes": "Estabilidade de interação em atualizações assíncronas: campos de metas e detalhes de prioridades preservados, mantendo correções do dock iPad.",
+  "version": "15.48.9",
+  "label": "V15.48.9-G",
+  "notes": "Topografia mais discreta e Liquid Glass estático: remoção das lentes deslizantes, reflexos guiados pelo ponteiro e compressão no toque.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Campos de metas preservados durante refresh",
-    "[G] Painel de prioridades permanece aberto após recalcular",
-    "[T] Dock Liquid Glass e navegação por toque preservados"
+    "[G] Linhas topográficas suavizadas em todas as plataformas",
+    "[G] Seleção de menus estática, preservando cores individuais",
+    "[G] Sem reflexo especular dinâmico ou lens compression",
+    "[G] Estado do aplicativo e versão do PWA sincronizados"
   ],
   "automation": {
     "enabled": true,

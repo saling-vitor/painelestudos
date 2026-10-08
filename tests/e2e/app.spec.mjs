@@ -4300,7 +4300,7 @@ test('V15.48.1 [G] seleção do dock é estática e mantém navegação acessív
   const host=useSide?side:page.locator('.bottom-nav');
   await expect(host).toBeVisible();
   const target=useSide?host.locator('.nav-btn[data-nav="maps"]'):host.locator(':scope > button[data-nav="maps"]');
-  if(!useSide)await expect(host.locator(':scope > .mm-active-lens')).toHaveCount(0);
+  await expect(page.locator('.mm-active-lens')).toHaveCount(0);
   await target.click();
   await expect(page.locator('[data-view="maps"]')).toHaveClass(/active/);
   await expect(target).toHaveClass(/active/);
@@ -4342,15 +4342,16 @@ test('V15.44 [G] PASSO 3 · busca e popover mantêm geometria conectada sem glas
   await expect(panel).toBeHidden();
 });
 
-test('V15.44 [G] PASSO 3 · Reduce Motion e Reduce Transparency preservam estado final',async({page})=>{
+test('V15.48.9 [G] Reduce Motion e Reduce Transparency preservam vidro acessível',async({page})=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>window.MMDynamicGlass);
   await page.evaluate(()=>document.documentElement.classList.add('mm-reduced-motion'));
-  const motion=await page.locator('.mm-active-lens').first().evaluate(el=>({
+  await expect(page.locator('.mm-active-lens')).toHaveCount(0);
+  const motion=await page.locator('.global-search-shell .search').evaluate(el=>({
     transition:getComputedStyle(el).transitionDuration,
     animation:getComputedStyle(el).animationName
   }));
-  expect(['0s','0s, 0s, 0s, 0s, 0s']).toContain(motion.transition);
+  expect(motion.transition).toMatch(/^0s(?:, 0s)*$/);
   expect(['none','']).toContain(motion.animation);
 
   await page.evaluate(()=>document.documentElement.classList.add('mm-reduced-transparency'));
@@ -4362,26 +4363,30 @@ test('V15.44 [G] PASSO 3 · Reduce Motion e Reduce Transparency preservam estado
   expect(transparency.background).not.toBe('rgba(0, 0, 0, 0)');
 });
 
-test('V15.44 [G] PASSO 3 · pointer tracking é coalescido e touch não depende de hover',async({page},testInfo)=>{
+test('V15.48.9 [G] Glass não segue ponteiro nem cria compressão ou lente móvel',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>window.MMDynamicGlass);
-  const before=await page.evaluate(()=>MMDynamicGlass.snapshot());
-
+  const topbar=page.locator('.topbar');
   if(testInfo.project.name==='desktop-chromium'){
-    const box=await page.locator('.topbar').boundingBox();
+    const box=await topbar.boundingBox();
     expect(box).not.toBeNull();
     await page.mouse.move(box.x+box.width*.25,box.y+box.height*.5);
     await page.mouse.move(box.x+box.width*.75,box.y+box.height*.5);
-    await page.waitForTimeout(40);
-    const after=await page.evaluate(()=>MMDynamicGlass.snapshot());
-    expect(after.pointerFrames).toBeGreaterThan(before.pointerFrames);
-    expect(after.pointerRectReads-before.pointerRectReads).toBeLessThanOrEqual(2);
   }else{
     await page.locator('.bottom-nav [data-nav="maps"]:visible').first().tap();
-    await page.waitForTimeout(40);
-    const after=await page.evaluate(()=>MMDynamicGlass.snapshot());
-    expect(after.pointerFrames).toBe(before.pointerFrames);
   }
+  const result=await page.evaluate(()=>({
+    lensCount:document.querySelectorAll('.mm-active-lens').length,
+    pressedCount:document.querySelectorAll('.mm-pressed').length,
+    specularCount:document.querySelectorAll('.mm-specular').length,
+    dynamicHighlight:document.querySelector('.topbar').style.getPropertyValue('--glass-x'),
+    snapshot:MMDynamicGlass.snapshot()
+  }));
+  expect(result.lensCount).toBe(0);
+  expect(result.pressedCount).toBe(0);
+  expect(result.specularCount).toBe(0);
+  expect(result.dynamicHighlight).toBe('');
+  expect(Object.hasOwn(result.snapshot,'pointerFrames')).toBe(false);
 });
 
 test('V15.44 [G] PASSO 3 · 1280 desktop e iPad por largura não geram overflow',async({page},testInfo)=>{
@@ -4423,16 +4428,16 @@ test('V15.48.1 [G] PASSO 4 · SVG topográfico é contínuo, responsivo e sem mo
   const project=testInfo.project.name;
   const cases=project==='desktop-chromium'
     ?[
-      {width:1920,height:1080,opacity:.40},
-      {width:2560,height:1440,opacity:.40}
+      {width:1920,height:1080,opacity:.20},
+      {width:2560,height:1440,opacity:.20}
     ]
     :project==='ipad'
       ?[
-        {width:1024,height:834,opacity:.44},
-        {width:820,height:1180,opacity:.44}
+        {width:1024,height:834,opacity:.21},
+        {width:820,height:1180,opacity:.21}
       ]
       :[
-        {width:390,height:844,opacity:.48}
+        {width:390,height:844,opacity:.20}
       ];
 
   for(const viewport of cases){
@@ -4532,9 +4537,9 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
 
 test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e ordenação canônicos',async({page},testInfo)=>{
   const topoOpacity=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
-  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeGreaterThanOrEqual(.45);
-  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeGreaterThanOrEqual(.41);
-  else expect(topoOpacity).toBeGreaterThanOrEqual(.37);
+  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeCloseTo(.20,2);
+  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeCloseTo(.21,2);
+  else expect(topoOpacity).toBeCloseTo(.20,2);
 
   if(testInfo.project.name==='desktop-chromium'){
     const side=page.locator('.side');

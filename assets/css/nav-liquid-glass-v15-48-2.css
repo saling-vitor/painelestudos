@@ -2,10 +2,7 @@
    Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
    Base: V15.48.1-G. CSS carregado por último para substituir legados. */
 
-/* 09 [G] Calibração: ~30% menos intensidade que o SVG V15.48.1. */
-:root { --mm-topo-opacity:.40 }
-html.is-ipad:not(.is-phone-layout) { --mm-topo-opacity:.44 }
-html.is-phone-layout { --mm-topo-opacity:.48 }
+/* Intensidade topográfica consolidada em topographic-environment-v15-43.css. */
 
 /* 16 [G] Paleta exclusiva de navegação — NÃO altera acentos dos cursos/mapas. */
 :is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#e6c790 }
@@ -191,7 +188,6 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
  }
  html.is-ipad:not(.is-phone-layout) .bottom-nav::before,
  html.is-ipad:not(.is-phone-layout) .bottom-nav::after,
- html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-active-lens,
  html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-scroll-edge {
    content:none!important;
    display:none!important;

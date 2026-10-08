@@ -15,17 +15,10 @@
   const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
   const transparencyQuery=matchMedia('(prefers-reduced-transparency: reduce)');
 
-  const lensHosts=new Set();
   const microObserved=new WeakSet();
-  const geometry=new WeakMap();
-  let activeSurface=null;
-  let activeRect=null;
-  let pointerFrame=0;
   let enhanceFrame=0;
   let scrollFrame=0;
-  let pendingPointer=null;
-  let pressed=null;
-  const stats={pointerFrames:0,pointerRectReads:0,rectReads:0,enhancePasses:0,lensMoves:0};
+  const stats={rectReads:0,enhancePasses:0};
 
   function syncFlags(){
     root.classList.toggle('mm-optics-supported',supportsBackdrop);
@@ -62,13 +55,10 @@
     for(const cls of classes)if(cls)el.classList.add(cls);
   }
 
-  function markSurface(el,scale,{specular=false,press=true}={}){
+  function markSurface(el,scale){
     if(!el)return;
     addClasses(el,'mm-optical-surface','mm-glass-'+scale);
     if(getComputedStyle(el).position==='static')el.classList.add('mm-position-anchor');
-    if(specular&&fineQuery.matches&&!motionQuery.matches)addClasses(el,'mm-specular');
-    else el.classList.remove('mm-specular');
-    if(press)addClasses(el,'mm-pressable');
   }
 
   function accentFrom(el){
@@ -100,58 +90,6 @@
     host.append(edge);
   }
 
-  function lensTarget(host){
-    if(host.matches('.side'))return q('.nav-btn.active',host);
-    if(host.matches('.bottom-nav'))return q(':scope > button.active',host);
-    return q(':scope > .active',host)||q(':scope > button[aria-pressed="true"]',host);
-  }
-
-  function ensureLens(host){
-    if(!host||host.dataset.mmLensHost==='1')return;
-    host.dataset.mmLensHost='1';
-    addClasses(host,'mm-lens-host');
-    const lens=document.createElement('span');
-    lens.className='mm-active-lens';
-    lens.setAttribute('aria-hidden','true');
-    host.append(lens);
-    lensHosts.add(host);
-  }
-
-  function updateLens(host){
-    if(!host||!host.isConnected)return;
-    const lens=q(':scope > .mm-active-lens',host);
-    const target=lensTarget(host);
-    if(!lens||!target||getComputedStyle(host).display==='none'){
-      host.style.setProperty('--mm-lens-opacity','0');
-      return;
-    }
-    const hr=host.getBoundingClientRect();
-    const tr=target.getBoundingClientRect();
-    stats.rectReads+=2;
-    if(!hr.width||!hr.height||!tr.width||!tr.height){
-      host.style.setProperty('--mm-lens-opacity','0');
-      return;
-    }
-    const x=tr.left-hr.left;
-    const y=tr.top-hr.top;
-    const radius=parseFloat(getComputedStyle(target).borderRadius)||10;
-    host.style.setProperty('--mm-lens-x',x.toFixed(2)+'px');
-    host.style.setProperty('--mm-lens-y',y.toFixed(2)+'px');
-    host.style.setProperty('--mm-lens-w',tr.width.toFixed(2)+'px');
-    host.style.setProperty('--mm-lens-h',tr.height.toFixed(2)+'px');
-    host.style.setProperty('--mm-lens-radius',Math.max(8,Math.min(radius,16))+'px');
-    host.style.setProperty('--mm-lens-opacity','1');
-    stats.lensMoves++;
-  }
-
-  function updateAllLenses(){
-    for(const host of [...lensHosts]){
-      if(!host.isConnected){lensHosts.delete(host);continue}
-      updateLens(host);
-    }
-    root.classList.toggle('mm-lens-ready',lensHosts.size>0);
-  }
-
   function popoverSource(panel){
     if(panel.id==='globalSearchPanel')return q('#globalSearch');
     if(panel.id==='courseMoreMenu')return q('#courseMoreBtn');
@@ -169,8 +107,7 @@
 
   function markPopover(panel){
     if(!panel)return;
-    const large=panel.classList.contains('maps-filter-panel')||panel.classList.contains('mobile-menu-sheet');
-    markSurface(panel,large?'large':'large',{specular:!large,press:false});
+    markSurface(panel,'large');
     const isOpen=!panel.hidden&&getComputedStyle(panel).display!=='none';
     if(!isOpen){
       panel.removeAttribute('data-mm-open');
@@ -178,7 +115,6 @@
     }
     const source=popoverSource(panel);
     if(source){
-      source.classList.add('mm-popover-source');
       const pr=panel.getBoundingClientRect();
       const sr=source.getBoundingClientRect();
       stats.rectReads+=2;
@@ -208,20 +144,19 @@
 
     const topbar=q('.topbar');
     if(topbar){
-      markSurface(topbar,'bar',{specular:true,press:false});
+      markSurface(topbar,'bar');
       addClasses(topbar,'mm-scroll-density');
       ensureScrollEdge(topbar);
     }
 
     const side=q('.side');
     if(side){
-      markSurface(side,'large',{specular:false,press:false});
-      ensureLens(side);
+      markSurface(side,'large');
     }
 
     const dock=q('.bottom-nav');
     if(dock){
-      markSurface(dock,'bar',{specular:false,press:false});
+      markSurface(dock,'bar');
       // V15.48.7-T: iPad não deve conter a faixa auxiliar antiga.
       // Criar e ocultar a faixa via CSS deixava uma camada DOM residual.
       if(root.classList.contains('is-ipad')){
@@ -229,25 +164,16 @@
       }else{
         ensureScrollEdge(dock);
       }
-      /* dock use static active button treatment; no moving lens */
-      qa(':scope > button',dock).forEach(el=>addClasses(el,'mm-pressable'));
+      /* Seleção estática por item; sem overlay deslizante. */
     }
 
     qa('.course-primary-actions').forEach(group=>{
-      markSurface(group,'controls',{specular:true,press:false});
-      qa('button',group).forEach(el=>addClasses(el,'mm-pressable'));
+      markSurface(group,'controls');
     });
 
     qa('.course-sticky-bar').forEach(bar=>{
-      markSurface(bar,'bar',{specular:false,press:false});
+      markSurface(bar,'bar');
       ensureScrollEdge(bar);
-      qa('button,.ui-select-trigger',bar).forEach(el=>addClasses(el,'mm-pressable'));
-    });
-
-    qa('.side .nav-btn').forEach(el=>addClasses(el,'mm-pressable'));
-    qa('.course-study-filters,.category-row').forEach(host=>{
-      ensureLens(host);
-      qa(':scope > button',host).forEach(el=>addClasses(el,'mm-pressable'));
     });
 
     qa(
@@ -257,7 +183,7 @@
       '.course-library-card .course-card-edit,'+
       '.simulation-card.has-cover .simulation-card-menu-btn'
     ).forEach(el=>{
-      markSurface(el,'micro',{specular:true,press:true});
+      markSurface(el,'micro');
       applyContextTint(el);
       observeMicro(el);
     });
@@ -269,107 +195,16 @@
     ).forEach(markPopover);
 
     qa('.modal-card,.planner-modal-card,.study-doubt-card').forEach(el=>{
-      markSurface(el,'large',{specular:false,press:false});
+      markSurface(el,'large');
     });
 
-    qa(
-      '.topbar .search,.topbar #syncTop,.topbar #installBtn,'+
-      '.course-study-filter,.category-btn,.ui-select-trigger,'+
-      '.course-more-menu button,.map-actions-menu button,'+
-      '.simulation-card-action-menu button,.ui-select-option'
-    ).forEach(el=>addClasses(el,'mm-pressable'));
-
     syncSearchMorph();
-    requestAnimationFrame(updateAllLenses);
   }
 
   function scheduleEnhance(){
     if(enhanceFrame)return;
     enhanceFrame=requestAnimationFrame(enhanceAll);
   }
-
-  function readActiveRect(surface){
-    if(activeSurface!==surface||!activeRect){
-      activeSurface=surface;
-      activeRect=surface.getBoundingClientRect();
-      geometry.set(surface,activeRect);
-      stats.rectReads++;
-      stats.pointerRectReads++;
-    }
-    return activeRect;
-  }
-
-  function processPointer(){
-    pointerFrame=0;
-    const packet=pendingPointer;
-    pendingPointer=null;
-    if(!packet||!fineQuery.matches||motionQuery.matches)return;
-    const {surface,x,y}=packet;
-    if(!surface?.isConnected)return;
-    const rect=readActiveRect(surface);
-    if(!rect.width||!rect.height)return;
-    const px=clamp((x-rect.left)/rect.width);
-    const py=clamp((y-rect.top)/rect.height);
-    const edge=Math.max(Math.abs(px-.5),Math.abs(py-.5))*2;
-    const intensity=clamp(.46+edge*.24,.46,.70);
-    const alpha=.052+intensity*.038;
-    surface.style.setProperty('--glass-x',(px*100).toFixed(1)+'%');
-    surface.style.setProperty('--glass-y',(py*100).toFixed(1)+'%');
-    surface.style.setProperty('--glass-intensity',intensity.toFixed(3));
-    surface.style.setProperty('--glass-highlight-alpha',alpha.toFixed(3));
-    surface.style.setProperty('--glass-shadow-x',((.5-px)*5).toFixed(2)+'px');
-    stats.pointerFrames++;
-  }
-
-  document.addEventListener('pointerover',event=>{
-    if(!fineQuery.matches||motionQuery.matches||event.pointerType==='touch')return;
-    const surface=event.target.closest?.('.mm-optical-surface.mm-specular.mm-visible-glass,.mm-optical-surface.mm-specular:not(.mm-glass-micro)');
-    if(!surface)return;
-    if(surface.contains(event.relatedTarget))return;
-    activeSurface=surface;
-    activeRect=surface.getBoundingClientRect();
-    geometry.set(surface,activeRect);
-    stats.rectReads++;
-    stats.pointerRectReads++;
-    surface.classList.add('is-mm-hovered');
-  },{passive:true});
-
-  document.addEventListener('pointermove',event=>{
-    if(!fineQuery.matches||motionQuery.matches||event.pointerType==='touch')return;
-    const surface=event.target.closest?.('.mm-optical-surface.mm-specular.mm-visible-glass,.mm-optical-surface.mm-specular:not(.mm-glass-micro)');
-    if(!surface)return;
-    pendingPointer={surface,x:event.clientX,y:event.clientY};
-    if(!pointerFrame)pointerFrame=requestAnimationFrame(processPointer);
-  },{passive:true});
-
-  document.addEventListener('pointerout',event=>{
-    const surface=event.target.closest?.('.mm-optical-surface.mm-specular');
-    if(!surface||surface.contains(event.relatedTarget))return;
-    surface.classList.remove('is-mm-hovered');
-    surface.style.setProperty('--glass-intensity','0');
-    surface.style.setProperty('--glass-x','50%');
-    surface.style.setProperty('--glass-y','0%');
-    surface.style.setProperty('--glass-shadow-x','0px');
-    if(activeSurface===surface){activeSurface=null;activeRect=null}
-  },{passive:true});
-
-  document.addEventListener('pointerdown',event=>{
-    const target=event.target.closest?.('.mm-pressable');
-    if(!target)return;
-    pressed=target;
-    target.classList.add('mm-pressed');
-    if(target.classList.contains('mm-popover-source'))target.classList.add('mm-source-active');
-  },{passive:true});
-
-  const releasePress=()=>{
-    if(!pressed)return;
-    const target=pressed;
-    pressed=null;
-    target.classList.remove('mm-pressed','mm-source-active');
-  };
-  document.addEventListener('pointerup',releasePress,{passive:true});
-  document.addEventListener('pointercancel',releasePress,{passive:true});
-  window.addEventListener('blur',releasePress,{passive:true});
 
   document.addEventListener('click',()=>scheduleEnhance(),true);
   document.addEventListener('focusin',event=>{
@@ -384,13 +219,11 @@
 
   window.addEventListener('studyapp:navigation',()=>scheduleEnhance());
   window.addEventListener('resize',()=>{
-    activeRect=null;
     scheduleEnhance();
   },{passive:true});
 
   function syncScroll(){
     scrollFrame=0;
-    activeRect=null;
     // O iPad rola .main, e não a janela. A densidade óptica precisa
     // acompanhar esse scroller sem mover nem interceptar o dock.
     const ipadPortrait=root.classList.contains('is-ipad')&&!root.classList.contains('is-phone-layout')&&matchMedia('(orientation: portrait)').matches;
@@ -438,23 +271,17 @@
 
   window.MMDynamicGlass={
     refresh:scheduleEnhance,
-    updateLenses:updateAllLenses,
     snapshot:()=>({
       opticsSupported:supportsBackdrop,
       pointerFine:fineQuery.matches,
       touch:touchQuery.matches||navigator.maxTouchPoints>0,
       reducedMotion:motionQuery.matches,
       reducedTransparency:transparencyQuery.matches,
-      lensHosts:[...lensHosts].filter(el=>el.isConnected).length,
       opticalSurfaces:qa('.mm-optical-surface').length,
       microSurfaces:qa('.mm-glass-micro').length,
       visibleMicroSurfaces:qa('.mm-glass-micro.mm-visible-glass').length,
-      pointerFrames:stats.pointerFrames,
-      pointerRectReads:stats.pointerRectReads,
       rectReads:stats.rectReads,
-      pointerRectReads:stats.pointerRectReads,
-      enhancePasses:stats.enhancePasses,
-      lensMoves:stats.lensMoves
+      enhancePasses:stats.enhancePasses
     })
   };
 

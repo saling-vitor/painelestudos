@@ -276,46 +276,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   }
 }
 
-/* Touch/press: a lente fica ligeiramente mais densa e escura,
-   mantendo exatamente a mesma geometria. */
-:is(
-  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-  .map-card.has-cover > .map-admin-btn,
-  .map-card.has-cover > .fav,
-  .simulation-card.has-cover .simulation-card-menu-btn
-):active{
-  transform:none!important;
-  filter:none!important;
-  border-color:rgba(255,255,255,.49)!important;
-  background:
-    radial-gradient(145% 108% at 12% -14%,
-      rgba(255,255,255,.30) 0%,
-      rgba(255,255,255,.10) 23%,
-      rgba(255,255,255,.022) 44%,
-      transparent 65%),
-    linear-gradient(145deg,
-      rgba(255,255,255,.12) 0%,
-      rgba(255,255,255,.026) 42%,
-      rgba(12,12,12,.055) 72%,
-      rgba(255,255,255,.060) 100%),
-    rgba(244,249,255,.010)!important;
-  -webkit-backdrop-filter:
-    blur(6px)
-    saturate(195%)
-    contrast(115%)
-    brightness(107%)!important;
-  backdrop-filter:
-    blur(6px)
-    saturate(195%)
-    contrast(115%)
-    brightness(107%)!important;
-  box-shadow:
-    0 4px 11px var(--cover-liquid-shadow-close),
-    inset 0 1px 1px rgba(255,255,255,.45),
-    inset 0 2px 5px rgba(0,0,0,.09),
-    inset 0 0 10px rgba(255,255,255,.11)!important;
-}
-
+/* Botões Clear Glass mantêm o acabamento estático também durante o press. */
 /* Foco acessível sem substituir o material. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
