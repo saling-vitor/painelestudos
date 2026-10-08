@@ -49,7 +49,7 @@
   }
   html.is-phone-layout [data-view="home"] .hero:before{
     background:
-      linear-gradient(180deg,#06080b 0%,rgba(6,6,7,.98) 46%,rgba(6,6,7,.72) 69%,rgba(6,6,7,.20) 100%)!important;
+      linear-gradient(180deg,#060606 0%,rgba(6,6,7,.98) 46%,rgba(6,6,7,.72) 69%,rgba(6,6,7,.20) 100%)!important;
   }
   html.is-phone-layout [data-view="home"] .hero-copy{
     max-width:none;
@@ -2450,7 +2450,7 @@
     background:#080809!important;
   }
   html.is-phone-layout .map-card.has-cover .map-cover:after{
-    background:linear-gradient(180deg,rgba(2,3,5,.01),rgba(2,3,5,.02) 72%,rgba(2,3,5,.14))!important;
+    background:linear-gradient(180deg,rgba(2,2,2,.01),rgba(2,2,2,.02) 72%,rgba(2,2,2,.14))!important;
     box-shadow:none!important;
   }
   html.is-phone-layout .map-card.has-cover .map-cover img{
@@ -3045,7 +3045,7 @@
    ========================================================= */
 @media(max-width:480px){
   html.is-phone-layout{
-    --phone-bg:#030405;
+    --phone-bg:#030303;
     --phone-surface:
       linear-gradient(145deg,rgba(255,255,255,.022),rgba(255,255,255,.006) 48%,transparent 76%),
       rgba(9,9,10,.86);
@@ -3072,9 +3072,9 @@
   /* Fundo com profundidade discreta, sem "mancha" dourada decorativa. */
   html.is-phone-layout body{
     background:
-      radial-gradient(560px 390px at 12% -6%,rgba(39,50,64,.15),transparent 67%),
+      radial-gradient(560px 390px at 12% -6%,rgba(48,48,46,.08),transparent 67%),
       radial-gradient(440px 320px at 104% 22%,rgba(216,197,158,.022),transparent 72%),
-      linear-gradient(180deg,#030405 0%,#050609 44%,#020304 100%)!important;
+      linear-gradient(180deg,#030303 0%,#050505 44%,#020202 100%)!important;
   }
   html.is-phone-layout .content{
     padding-top:9px!important;
