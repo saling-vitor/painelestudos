@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 /* ==========================================================================
-   MEUS MAPAS · DYNAMIC LIQUID GLASS V2 · OPTICAL INTERACTION
+   MEUS MAPAS · STATIC LIQUID GLASS · REFLEXOS FIXOS
    Passo 3 · progressive enhancement sobre Black Editorial (Passo 2)
    Conteúdo permanente permanece matte. Glass continua restrito à camada funcional.
    ========================================================================== */
@@ -30,25 +30,12 @@
   --mm-context-tint:transparent;
   --mm-context-tint-strength:0;
 
-  /* Press / shadow */
-  --mm-press-scale:.988;
-  --mm-press-light:rgba(255,255,255,.09);
-  --mm-press-shadow:0 7px 18px rgba(0,0,0,.30);
-
   /* Motion */
   --mm-motion-instant:80ms;
   --mm-motion-fast:140ms;
   --mm-motion-medium:200ms;
   --mm-motion-morph:240ms;
-  --mm-motion-spring:260ms cubic-bezier(.2,.78,.22,1);
 
-  /* Specular tracking */
-  --glass-x:50%;
-  --glass-y:0%;
-  --glass-intensity:0;
-  --glass-highlight-alpha:.045;
-  --glass-shadow-x:0px;
-  --glass-shadow-y:18px;
 }
 
 /* Inter governa UI e controles. Condensed/mono seguem reservadas aos papéis editoriais. */
@@ -63,14 +50,7 @@ textarea{
 /* ==========================================================================
    1 · BASE / FEATURE FLAGS
    ========================================================================== */
-.mm-optical-surface{
-  --glass-x:50%;
-  --glass-y:0%;
-  --glass-intensity:0;
-  --glass-highlight-alpha:.045;
-  --glass-shadow-x:0px;
-  isolation:isolate;
-}
+.mm-optical-surface{isolation:isolate}
 .mm-optical-surface::before{
   content:"";
   position:absolute;
@@ -80,33 +60,17 @@ textarea{
   border-radius:inherit;
   padding:var(--mm-glass-rim-width);
   background:
-    radial-gradient(88% 118% at var(--glass-x) var(--glass-y),
-      rgba(255,255,255,var(--glass-highlight-alpha)) 0%,
+    radial-gradient(88% 118% at 50% 0%,
+      rgba(255,255,255,.045) 0%,
       rgba(255,255,255,.020) 36%,
       transparent 68%),
     linear-gradient(180deg,var(--mm-glass-rim-light),var(--mm-glass-rim-soft) 24%,transparent 55%,var(--mm-glass-rim-shadow));
-  opacity:calc(.58 + (var(--glass-intensity) * .24));
+  opacity:.58;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask-composite:exclude;
-  transition:opacity var(--mm-motion-medium) ease;
-}
-.mm-optical-surface::after{
-  content:"";
-  position:absolute;
-  inset:1px;
-  z-index:0;
-  pointer-events:none;
-  border-radius:inherit;
-  background:
-    radial-gradient(70% 95% at var(--glass-x) var(--glass-y),
-      rgba(255,255,255,calc(var(--glass-intensity) * .050)) 0%,
-      transparent 72%);
-  mix-blend-mode:screen;
-  opacity:.72;
-  transition:opacity var(--mm-motion-fast) ease;
 }
 .mm-optical-surface>:not(.side-bottom){
   position:relative;
@@ -119,19 +83,6 @@ textarea{
 /* ==========================================================================
    2 · ESCALA DE MATERIAIS
    ========================================================================== */
-.mm-glass-micro{
-  --mm-press-scale:.976;
-}
-.mm-glass-controls{
-  --mm-press-scale:.989;
-}
-.mm-glass-bar{
-  --mm-press-scale:.994;
-}
-.mm-glass-large{
-  --mm-press-scale:.996;
-}
-
 /* BAR GLASS: topbar, dock, sticky toolbars. */
 .mm-optics-supported :is(.topbar,.bottom-nav,.course-sticky-bar).mm-glass-bar{
   border-color:rgba(255,255,255,.16)!important;
@@ -142,7 +93,7 @@ textarea{
   backdrop-filter:var(--mm-bar-filter)!important;
   box-shadow:
     0 0 0 1px rgba(0,0,0,.84),
-    var(--glass-shadow-x) var(--glass-shadow-y) 52px rgba(0,0,0,.46),
+    0 18px 52px rgba(0,0,0,.46),
     inset 0 1px 0 rgba(255,255,255,.09)!important;
   transition:
     background-color var(--mm-motion-medium) ease,
@@ -160,7 +111,7 @@ textarea{
   backdrop-filter:var(--mm-large-filter)!important;
   box-shadow:
     0 0 0 1px rgba(0,0,0,.86),
-    calc(16px + var(--glass-shadow-x)) 20px 60px rgba(0,0,0,.42),
+    16px 20px 60px rgba(0,0,0,.42),
     inset 0 1px 0 rgba(255,255,255,.085)!important;
 }
 
@@ -229,130 +180,26 @@ textarea{
 }
 
 /* ==========================================================================
-   3 · SPECULAR TRACKING / DYNAMIC SHADOW
+   3 · CONTEÚDO PERMANENTE SEM BACKDROP
    ========================================================================== */
-.mm-pointer-fine .mm-optical-surface.mm-specular{
-  will-change:box-shadow;
-}
-.mm-pointer-fine .mm-optical-surface.mm-specular.is-mm-hovered::before{
-  opacity:.90;
-}
-.mm-pointer-fine .mm-optical-surface.mm-specular.is-mm-hovered{
-  --glass-shadow-y:20px;
-}
-
-/* Nunca aplicar óptica dinâmica a conteúdo permanente. */
-:is(
-  .course-card,.course-library-card,.map-card,.simulation-card,
+:is(.course-card,.course-library-card,.map-card,.simulation-card,
   .progress-insight-card,.study-plan-item,.agenda-day,.panel,
-  .study-command-card,.continue-card,.home-review-section
-){
-  --glass-intensity:0!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
+  .study-command-card,.continue-card,.home-review-section){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-
 /* ==========================================================================
-   4 · PRESS OPTICS
+   4 · CONTROLES: SEM VIDRO ANINHADO
    ========================================================================== */
-.mm-pressable{
-  transform-origin:center;
-  transition:
-    transform var(--mm-motion-fast) cubic-bezier(.2,.8,.2,1),
-    box-shadow var(--mm-motion-fast) ease,
-    background-color var(--mm-motion-fast) ease,
-    border-color var(--mm-motion-fast) ease;
-}
-.mm-pressable.mm-pressed{
-  transform:scale(var(--mm-press-scale));
-  box-shadow:var(--mm-press-shadow)!important;
-}
-.mm-pressable.mm-pressed::before{
-  opacity:.96;
-}
-.mm-pressable.mm-pressed:not(.mm-optical-surface){
-  background-color:rgba(255,255,255,.055)!important;
-}
-
-/* Itens internos continuam lenses/fills, não glass-on-glass. */
-:is(
-  .topbar .search,.topbar #syncTop,.topbar #installBtn,
+:is(.topbar .search,.topbar #syncTop,.topbar #installBtn,
   .side .nav-btn,.bottom-nav>button,
   .course-primary-actions #openEdital,
   .course-primary-actions #courseSimulationsBtn,
   .course-primary-actions #courseMoreBtn,
-  .course-sticky-bar button,.course-sticky-bar input,.course-sticky-bar select
-){
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
+  .course-sticky-bar button,.course-sticky-bar input,.course-sticky-bar select){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-
-/* ==========================================================================
-   5 · ACTIVE LENS COMPARTILHADA
-   ========================================================================== */
-.mm-lens-host{
-  isolation:isolate;
-}
-.mm-position-anchor,
-.course-study-filters.mm-lens-host,
-.category-row.mm-lens-host{
-  position:relative!important;
-}
-.mm-active-lens{
-  position:absolute!important;
-  left:0;
-  top:0;
-  z-index:0!important;
-  width:var(--mm-lens-w,0px);
-  height:var(--mm-lens-h,0px);
-  border:1px solid rgba(255,255,255,.105);
-  border-radius:var(--mm-lens-radius,10px);
-  background:
-    radial-gradient(120% 130% at 22% -28%,rgba(255,255,255,.075),transparent 58%),
-    rgba(255,255,255,.028);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.085),
-    0 7px 18px rgba(0,0,0,.12);
-  pointer-events:none;
-  opacity:var(--mm-lens-opacity,0);
-  transform:translate3d(var(--mm-lens-x,0px),var(--mm-lens-y,0px),0);
-  transform-origin:center;
-  transition:
-    transform var(--mm-motion-morph) cubic-bezier(.22,.74,.20,1),
-    width var(--mm-motion-morph) cubic-bezier(.22,.74,.20,1),
-    height var(--mm-motion-morph) cubic-bezier(.22,.74,.20,1),
-    border-radius var(--mm-motion-medium) ease,
-    opacity var(--mm-motion-fast) ease;
-  will-change:transform,width,height;
-}
-.mm-lens-host>.mm-active-lens{z-index:0!important}
-.side.mm-lens-host>.brand,
-.side.mm-lens-host>.nav-label,
-.side.mm-lens-host>.nav{
-  position:relative;
-  z-index:1;
-}
-.side.mm-lens-host>.side-bottom{
-  z-index:1;
-}
-.side.mm-lens-host .nav-btn,
-.bottom-nav.mm-lens-host>button,
-.course-study-filters.mm-lens-host>button,
-.category-row.mm-lens-host>button{
-  position:relative;
-  z-index:1;
-}
-
-/* O item ativo deixa de possuir "placa" própria: a mesma lens se move. */
-.mm-lens-ready .side .nav-btn.active,
-.mm-lens-ready .bottom-nav>button.active,
-.mm-lens-ready .course-study-filters>.active,
-.mm-lens-ready .category-row>.active{
-  background:transparent!important;
-  box-shadow:none!important;
-  border-color:transparent!important;
-}
-
+/* Âncora de posicionamento das superfícies estáticas. */
+.mm-position-anchor{position:relative!important}
 /* ==========================================================================
    6 · SEARCH MORPH
    ========================================================================== */
@@ -405,16 +252,11 @@ textarea{
   62%{opacity:1}
   to{opacity:1;transform:translate3d(0,0,0) scale(1)}
 }
-.mm-popover-source.mm-source-active{
-  transform:scale(.982);
-}
-
 /* Popover pequeno mais responsivo; modal grande permanece estável. */
 :is(.course-more-menu,.map-actions-menu,.simulation-card-action-menu,.ui-select-popover).mm-optical-surface{
   --mm-large-bg:rgba(9,9,9,.82)
 }
 :is(.modal-card,.planner-modal-card,.study-doubt-card).mm-optical-surface{
-  --glass-intensity:0!important;
 }
 
 /* ==========================================================================
@@ -473,18 +315,9 @@ html.mm-scrolled .topbar.mm-scroll-density{
 /* ==========================================================================
    10 · TOUCH / POINTER
    ========================================================================== */
-.mm-touch .mm-optical-surface{
-  --glass-x:50%;
-  --glass-y:0%;
-  --glass-intensity:0;
-}
 .mm-touch .mm-glass-micro:hover{
   transform:none;
 }
-.mm-touch .mm-pressable.mm-pressed{
-  transform:scale(var(--mm-press-scale));
-}
-
 /* Smartphone: menos blur/shadow/compositing; sem lógica desktop-only. */
 @media(max-width:480px){
   :root{
@@ -498,7 +331,6 @@ html.mm-scrolled .topbar.mm-scroll-density{
       0 14px 38px rgba(0,0,0,.42),
       inset 0 1px 0 rgba(255,255,255,.075)!important;
   }
-  .mm-optical-surface::after{display:none}
 }
 
 /* ==========================================================================
@@ -506,30 +338,16 @@ html.mm-scrolled .topbar.mm-scroll-density{
    ========================================================================== */
 .mm-reduced-motion *,
 .mm-reduced-motion *::before,
-.mm-reduced-motion *::after{
-  scroll-behavior:auto!important;
-}
-.mm-reduced-motion .mm-active-lens,
-.mm-reduced-motion .mm-pressable,
+.mm-reduced-motion *::after{scroll-behavior:auto!important}
 .mm-reduced-motion .global-search-shell .search,
 .mm-reduced-motion [data-mm-open="true"]{
-  animation:none!important;
-  transition:none!important;
-}
-.mm-reduced-motion .mm-optical-surface{
-  --glass-intensity:0!important;
+  animation:none!important;transition:none!important;
 }
 @media(prefers-reduced-motion:reduce){
-  .mm-active-lens,
-  .mm-pressable,
-  .global-search-shell .search,
-  [data-mm-open="true"]{
-    animation:none!important;
-    transition:none!important;
+  .global-search-shell .search,[data-mm-open="true"]{
+    animation:none!important;transition:none!important;
   }
-  .mm-optical-surface{--glass-intensity:0!important}
 }
-
 /* ==========================================================================
    12 · REDUCE TRANSPARENCY
    ========================================================================== */
@@ -546,8 +364,7 @@ html.mm-scrolled .topbar.mm-scroll-density{
   backdrop-filter:none!important;
   --mm-context-tint:transparent!important;
 }
-.mm-reduced-transparency .mm-optical-surface::before,
-.mm-reduced-transparency .mm-optical-surface::after{
+.mm-reduced-transparency .mm-optical-surface::before{
   display:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
@@ -563,8 +380,7 @@ html.mm-scrolled .topbar.mm-scroll-density{
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
-  .mm-optical-surface::before,
-  .mm-optical-surface::after{display:none!important}
+  .mm-optical-surface::before{display:none!important}
 }
 
 /* ==========================================================================
@@ -572,18 +388,10 @@ html.mm-scrolled .topbar.mm-scroll-density{
    ========================================================================== */
 @media(prefers-contrast:more){
   .mm-optical-surface{border-color:rgba(255,255,255,.46)!important}
-  .mm-active-lens{border-color:rgba(255,255,255,.38)!important}
 }
 @media(forced-colors:active){
   .mm-optical-surface::before,
-  .mm-optical-surface::after,
   .mm-scroll-edge{display:none!important}
-  .mm-active-lens{
-    background:Highlight!important;
-    border:1px solid Highlight!important;
-    opacity:.16!important;
-    box-shadow:none!important;
-  }
 }
 
 /* Progressive enhancement: se backdrop não existe, nível 1 continua sólido. */
@@ -594,8 +402,7 @@ html.mm-scrolled .topbar.mm-scroll-density{
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
-  .mm-optical-surface::before,
-  .mm-optical-surface::after{display:none!important}
+  .mm-optical-surface::before{display:none!important}
 }
 
 
@@ -624,8 +431,7 @@ html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface::after{
     backdrop-filter:none!important;
     --mm-context-tint:transparent!important;
   }
-  html.mm-optics-supported .mm-optical-surface::before,
-  html.mm-optics-supported .mm-optical-surface::after{
+  html.mm-optics-supported .mm-optical-surface::before{
     display:none!important;
   }
 }
