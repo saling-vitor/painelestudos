@@ -418,8 +418,7 @@ html.mm-optics-supported.mm-reduced-transparency .toast{
   backdrop-filter:none!important;
   --mm-context-tint:transparent!important;
 }
-html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface::before,
-html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface::after{
+html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface::before{
   display:none!important;
 }
 @media(prefers-reduced-transparency:reduce){
