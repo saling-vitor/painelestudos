@@ -2,7 +2,6 @@
 
 html.is-ipad:not(.is-phone-layout){
   --ipad-topbar-height:64px;
-  --ipad-bottom-nav-height:70px;
   scroll-padding-top:calc(var(--ipad-topbar-height) + 10px);
 }
 
@@ -53,28 +52,28 @@ html.is-ipad:not(.is-phone-layout).ipad-topbar-compact #syncTop{
   justify-content:center!important;
 }
 
-/* P0 · no retrato, a área rolável termina antes da bottom-nav: nada fica encoberto. */
-@media (orientation:portrait){
+/* iPad retrato: scroll interno ocupa a viewport inteira,
+   com o conteúdo passando atrás do único dock fixo.
+   A reserva para o dock fica exclusivamente no padding da .content
+   em ipad-portrait-nav-v15-36-17.css; nenhum retângulo auxiliar. */
+@media(orientation:portrait){
   html.is-ipad:not(.is-phone-layout) body{
     height:100dvh;
     overflow:hidden!important;
   }
   html.is-ipad:not(.is-phone-layout) .app{
-    height:calc(100dvh - var(--ipad-bottom-nav-height,70px) - 16px - var(--safe-bottom,0px))!important;
-    min-height:0!important;
-    overflow:hidden!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    overflow:visible!important;
   }
   html.is-ipad:not(.is-phone-layout) .main{
-    height:100%!important;
+    height:100dvh!important;
     min-height:0!important;
     overflow-x:hidden!important;
     overflow-y:auto!important;
     overscroll-behavior-y:contain;
     -webkit-overflow-scrolling:touch;
     scroll-padding-top:calc(var(--ipad-topbar-height,64px) + 10px)!important;
-  }
-  html.is-ipad:not(.is-phone-layout) .content{
-    padding-bottom:28px!important;
   }
   html.is-ipad:not(.is-phone-layout) .bottom-nav{
     z-index:130!important;
