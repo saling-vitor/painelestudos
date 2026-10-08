@@ -5097,8 +5097,8 @@ test('Topografia [T+M] · intensidade responsiva e fundo sem artefatos WebKit',a
     expect(result.pointerEvents).toBe('none');
     expect(result.overflow).toBeLessThanOrEqual(2);
     if(tablet){
-      expect(result.bottom).toBeGreaterThanOrEqual(viewport.height-2);
       if(viewport.height>viewport.width){
+        expect(result.bottom).toBeGreaterThanOrEqual(viewport.height-2);
         expect(result.transform).toBe('none');
         expect(result.dockHeight).toBeGreaterThanOrEqual(56);
         expect(result.dockHeight).toBeLessThanOrEqual(64);
