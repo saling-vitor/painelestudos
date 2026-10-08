@@ -105,7 +105,7 @@ body>.app{position:relative;z-index:1}
   color:var(--mm-cream)!important;
 }
 .hero h1,.course-hero h1{color:var(--mm-cream)!important}
-.hero h1 span{color:var(--mm-coral)!important}
+.hero h1 span{color:var(--mm-cream)!important}
 
 /* ==========================================================================
    3 · REGULAR GLASS — SHELL FUNCIONAL
@@ -330,10 +330,10 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   .course-library-card .course-card-edit,
   .simulation-card.has-cover .simulation-card-menu-btn
 ){
-  border:1px solid rgba(255,255,255,.24)!important;
+  border:1px solid rgba(255,255,255,.43)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.090),rgba(255,255,255,.018) 56%,transparent),
-    var(--mm-glass-clear-bg)!important;
+    linear-gradient(145deg,rgba(255,255,255,.25),rgba(255,255,255,.14) 52%,rgba(255,255,255,.085)),
+    rgba(237,239,238,.14)!important;
   -webkit-backdrop-filter:var(--mm-glass-clear-filter)!important;
   backdrop-filter:var(--mm-glass-clear-filter)!important;
   box-shadow:
