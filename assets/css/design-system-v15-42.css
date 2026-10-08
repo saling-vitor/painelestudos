@@ -120,7 +120,7 @@ html:not(.is-phone-layout) .side{
   border-radius:var(--mm-radius-shell)!important;
   background:
     radial-gradient(125% 80% at 12% -20%,rgba(255,255,255,.105),transparent 56%),
-    linear-gradient(155deg,rgba(255,255,255,.025),rgba(2,4,7,.11)),
+    linear-gradient(155deg,rgba(255,255,255,.025),rgba(3,3,3,.11)),
     rgba(8,8,9,.66)!important;
   -webkit-backdrop-filter:blur(20px) saturate(145%) contrast(105%)!important;
   backdrop-filter:blur(20px) saturate(145%) contrast(105%)!important;
@@ -157,7 +157,7 @@ html:not(.is-phone-layout) .topbar{
   border-radius:var(--mm-radius-shell)!important;
   background:
     radial-gradient(120% 150% at 8% -62%,rgba(255,255,255,.12),rgba(255,255,255,.024) 40%,transparent 62%),
-    linear-gradient(145deg,rgba(255,255,255,.028),rgba(3,5,8,.10)),
+    linear-gradient(145deg,rgba(255,255,255,.028),rgba(4,4,4,.10)),
     rgba(8,8,9,.55)!important;
   -webkit-backdrop-filter:var(--mm-glass-filter)!important;
   backdrop-filter:var(--mm-glass-filter)!important;
@@ -190,7 +190,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-radius:var(--mm-radius-overlay)!important;
   background:
     radial-gradient(120% 95% at 8% -24%,rgba(255,255,255,.115),transparent 56%),
-    linear-gradient(155deg,rgba(255,255,255,.025),rgba(2,4,7,.11)),
+    linear-gradient(155deg,rgba(255,255,255,.025),rgba(3,3,3,.11)),
     var(--mm-glass-dense)!important;
   -webkit-backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
   backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
@@ -204,7 +204,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-radius:var(--mm-radius-overlay)!important;
   background:
     radial-gradient(110% 74% at 7% -10%,rgba(255,255,255,.09),transparent 54%),
-    linear-gradient(155deg,rgba(255,255,255,.022),rgba(3,5,8,.105)),
+    linear-gradient(155deg,rgba(255,255,255,.022),rgba(4,4,4,.105)),
     rgba(8,8,9,.84)!important;
   -webkit-backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
   backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
@@ -223,7 +223,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-color:rgba(255,255,255,.31)!important;
   background:
     radial-gradient(135% 150% at 18% -45%,rgba(255,255,255,.22),transparent 56%),
-    linear-gradient(145deg,rgba(255,255,255,.070),rgba(4,6,9,.10)),
+    linear-gradient(145deg,rgba(255,255,255,.070),rgba(5,5,5,.10)),
     rgba(8,8,9,.22)!important;
   -webkit-backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
   backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
@@ -243,7 +243,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-radius:var(--mm-radius-inner)!important;
   background:
     radial-gradient(125% 140% at 8% -54%,rgba(255,255,255,.12),transparent 60%),
-    linear-gradient(145deg,rgba(255,255,255,.028),rgba(3,5,8,.085)),
+    linear-gradient(145deg,rgba(255,255,255,.028),rgba(4,4,4,.085)),
     rgba(8,8,9,.54)!important;
   -webkit-backdrop-filter:blur(15px) saturate(146%) contrast(105%)!important;
   backdrop-filter:blur(15px) saturate(146%) contrast(105%)!important;
@@ -289,7 +289,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-color:var(--mm-glass-border)!important;
   background:
     radial-gradient(125% 160% at 10% -72%,rgba(255,255,255,.13),transparent 61%),
-    linear-gradient(145deg,rgba(255,255,255,.027),rgba(3,5,8,.095)),
+    linear-gradient(145deg,rgba(255,255,255,.027),rgba(4,4,4,.095)),
     rgba(8,8,9,.67)!important;
   -webkit-backdrop-filter:blur(20px) saturate(150%) contrast(105%)!important;
   backdrop-filter:blur(20px) saturate(150%) contrast(105%)!important;
