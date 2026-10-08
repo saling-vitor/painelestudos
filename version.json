@@ -1,17 +1,17 @@
 {
-  "version": "15.48.5",
-  "label": "V15.48.5-T",
-  "notes": "Dock flutuante no iPad em retrato, sem tarja retangular inferior; conteúdos rolando sob Liquid Glass.",
+  "version": "15.48.6",
+  "label": "V15.48.6-T",
+  "notes": "Auditoria estrutural do dock iPad: vidro mais translúcido, rolagem sob a barra e reserva inferior reduzida.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Somente o dock possui superfície Liquid Glass",
-    "[T] Região inferior sem camada retangular adicional",
-    "[T] Espaço de rolagem preservado para último card"
+    "[T] Dock com material translúcido sem sobreposição opaca",
+    "[T] Espaço de rolagem inferior ajustado",
+    "[T] Teste E2E de conteúdo atravessando o dock"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
     "channel": "T",
-    "runBase": 707
+    "runBase": 708
   }
 }
