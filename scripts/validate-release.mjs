@@ -163,9 +163,9 @@ check(topoRasterCss.includes('topographic-lines-v15-48-1.svg'),'CSS topográfico
 check(/background-repeat\s*:\s*no-repeat/i.test(topoRasterCss),'topografia raster não repete');
 check(!/background-repeat\s*:\s*repeat(?:\s|;|!)/i.test(topoRasterCss),'topografia raster não usa mosaico repeat');
 check(!/(?:^|[;{])\s*(?:-webkit-)?filter\s*:\s*blur\s*\(/im.test(topoRasterCss),'background raster não aplica blur');
-check(topoRasterCss.includes('--mm-topo-opacity:.46'),'topografia desktop usa opacidade .46');
-check(topoRasterCss.includes('--mm-topo-opacity:.42'),'topografia tablet usa opacidade .42');
-check(topoRasterCss.includes('--mm-topo-opacity:.32'),'topografia smartphone usa opacidade .32');
+check(topoRasterCss.includes('--mm-topo-opacity:.20'),'topografia desktop usa opacidade .20');
+check(topoRasterCss.includes('--mm-topo-opacity:.21'),'topografia tablet usa opacidade .21');
+check(topoRasterCss.includes('--mm-topo-opacity:.20'),'topografia smartphone usa opacidade .20');
 check(topoRasterCss.includes('opacity:.025!important'),'topografia reduz ruído em transparência/contraste');
 check(topoRasterCss.includes('body:has(#reader.open)::before'),'leitor oculta o ambiente topográfico global');
 check(!blackEditorialCss.includes('topographic-map-v15-42.svg'),'Black Editorial não reativa o SVG topográfico legado');
