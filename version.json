@@ -1,18 +1,18 @@
 {
-  "version": "15.48.11",
-  "label": "V15.48.11-T",
-  "notes": "iPad 10 e demais tablets: dock de sete destinos compacto, superfície única de vidro e eliminação de regras conflitantes por largura; fundo topográfico global preservado.",
+  "version": "15.48.12",
+  "label": "V15.48.12-T+M",
+  "notes": "Topografia reforçada no iPad (0,32) e smartphone (0,28), mantendo o Desktop e o dock compactado sem alterações de layout.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Dock retrato com sete destinos e dimensões compactas",
-    "[T] Liquid Glass com fundo translúcido e sombra leve, sem camadas extras",
-    "[T] Breakpoints de navegação por orientação, preservando modo paisagem",
-    "[T] Fundo topográfico contínuo sem promoção artificial de GPU no iPad retrato"
+    "[T] Fundo topográfico mais visível no iPad em retrato e paisagem",
+    "[M] Curvas cartográficas reforçadas no smartphone, com leitura preservada",
+    "[T+M] SVG, dock Liquid Glass, leitores e preferências de acessibilidade preservados",
+    "[D] Intensidade e aspecto existentes do Desktop mantidos"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "T",
+    "channel": "T+M",
     "runBase": 710
   }
 }
