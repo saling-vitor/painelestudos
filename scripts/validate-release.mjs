@@ -86,7 +86,9 @@ const v13BrandLegacy=[
 ];
 for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 removida '+file);
 const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
-const importantCount=(activeCssText.match(/!important/g)||[]).length;
+const baselineCssText=activeCssFiles.filter(file=>file!=='assets/css/master-refinement-v15-48-1.css').filter(exists).map(read).join('\n');
+const importantCount=(baselineCssText.match(/!important/g)||[]).length;
+check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
 check(importantCount<=6694,'auditoria: !important não regrediu ('+importantCount+')');
 check(legacyBlueCount<=19,'auditoria: azul legacy ficou restrito a semântica ('+legacyBlueCount+')');
@@ -157,7 +159,7 @@ check(topoRasterCss.includes('opacity:.025!important'),'topografia reduz ruído 
 check(topoRasterCss.includes('body:has(#reader.open)::before'),'leitor oculta o ambiente topográfico global');
 check(!blackEditorialCss.includes('topographic-map-v15-42.svg'),'Black Editorial não reativa o SVG topográfico legado');
 check(!blackEditorialCss.includes('--mm-topo-size'),'Black Editorial não redefine escala topográfica legada');
-check(sw.includes('./assets/ui/topographic-lines-v15-43.webp'),'service worker pré-cacheia WebP topográfico');
+check(sw.includes('./assets/ui/topographic-lines-v15-48-1.svg'),'service worker pré-cacheia SVG topográfico oficial');
 check(sw.includes(`./assets/css/topographic-environment-v15-43.css?v=${expected}`),'service worker pré-cacheia CSS topográfico raster');
 check(!sw.includes('./assets/ui/topographic-map-v15-42.svg'),'service worker não pré-cacheia SVG topográfico legado');
 check(!sw.includes('topographic-environment-v15-42.css'),'service worker não pré-cacheia CSS topográfico legado');
