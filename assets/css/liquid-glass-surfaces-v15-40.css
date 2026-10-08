@@ -9,8 +9,8 @@
    - fallbacks para transparência, contraste, movimento e forced colors. */
 
 :root{
-  --lg-regular-bg:var(--mm-glass-regular-bg,rgba(9,10,11,.64));
-  --lg-regular-bg-dense:var(--mm-glass-dense-bg,rgba(8,9,10,.78));
+  --lg-regular-bg:var(--mm-glass-regular-bg,rgba(9,9,9,.64));
+  --lg-regular-bg-dense:var(--mm-glass-dense-bg,rgba(8,8,8,.78));
   --lg-regular-border:var(--mm-glass-border,rgba(255,255,255,.20));
   --lg-regular-border-strong:rgba(255,255,255,.30);
   --lg-regular-highlight:rgba(255,255,255,.16);
@@ -100,7 +100,7 @@ html:not(.is-phone-layout) .nav-btn.active::before{
         rgba(255,255,255,.030) 0%,
         rgba(255,255,255,.008) 54%,
         rgba(3,3,4,.10) 100%),
-      rgba(8,8,9,.66)!important;
+      rgba(8,8,8,.66)!important;
     -webkit-backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
     backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
     box-shadow:
@@ -135,7 +135,7 @@ html.is-ipad:not(.is-phone-layout) .bottom-nav{
       rgba(255,255,255,.030) 0%,
       rgba(255,255,255,.008) 54%,
       rgba(3,3,4,.10) 100%),
-    rgba(8,8,9,.66)!important;
+    rgba(8,8,8,.66)!important;
   -webkit-backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
   backdrop-filter:blur(21px) saturate(155%) contrast(106%)!important;
   box-shadow:
@@ -163,7 +163,7 @@ html.is-ipad:not(.is-phone-layout) .bottom-nav button.active{
         rgba(255,255,255,.026) 38%,
         transparent 62%),
       linear-gradient(145deg,rgba(255,255,255,.025),rgba(3,3,4,.10)),
-      rgba(8,8,9,.72)!important;
+      rgba(8,8,8,.72)!important;
     -webkit-backdrop-filter:blur(18px) saturate(150%) contrast(105%)!important;
     backdrop-filter:blur(18px) saturate(150%) contrast(105%)!important;
     box-shadow:
@@ -377,7 +377,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
   background:
     radial-gradient(130% 135% at 12% -38%,rgba(255,255,255,.105),transparent 53%),
     linear-gradient(145deg,rgba(255,255,255,.047),rgba(255,255,255,.018)),
-    rgba(9,9,10,.42)!important;
+    rgba(9,9,9,.42)!important;
   -webkit-backdrop-filter:blur(10px) saturate(140%)!important;
   backdrop-filter:blur(10px) saturate(140%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 5px 14px rgba(0,0,0,.14)!important;
