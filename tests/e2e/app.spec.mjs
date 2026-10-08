@@ -4611,9 +4611,9 @@ test('V15.48 mantém modais fora da shell em Black Editorial neutro',async({page
     return result;
   });
   expect(visual.modalInsideApp).toBe(false);
-  expect(visual.inputBackground).toBe('rgb(10, 10, 11)');
+  expect(visual.inputBackground).toBe('rgb(10, 10, 10)');
   expect(visual.inputBackgroundImage).toBe('none');
-  expect(visual.focusBackground).toBe('rgb(10, 10, 11)');
+  expect(visual.focusBackground).toBe('rgb(10, 10, 10)');
   const focusRgb=(visual.focusBorder.match(/\d+/g)||[]).slice(0,3).map(Number);
   expect(focusRgb.length).toBe(3);
   expect(focusRgb[0]).toBeGreaterThan(focusRgb[2]);
