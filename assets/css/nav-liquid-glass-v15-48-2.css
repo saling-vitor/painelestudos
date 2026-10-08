@@ -102,9 +102,8 @@ html.is-ipad:not(.is-phone-layout) .topbar>.mm-scroll-edge { display:none!import
    overflow clipping ou superfícies-filhas adicionais. As bordas dos
    botões continuam interativas, acima da pintura óptica. */
 html:is(.is-ipad,.is-phone-layout) .bottom-nav {
-  isolation:auto!important;
+  isolation:auto;
   overflow:visible!important;
-  background-clip:padding-box!important;
   border-radius:18px!important;
   border:1px solid rgba(255,255,255,.22)!important;
   background:
@@ -113,20 +112,18 @@ html:is(.is-ipad,.is-phone-layout) .bottom-nav {
   -webkit-backdrop-filter:blur(15px) saturate(118%) contrast(103%)!important;
   backdrop-filter:blur(15px) saturate(118%) contrast(103%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 5px 17px rgba(0,0,0,.16)!important;
-  transform:none!important;
-  filter:none!important;
-  will-change:auto!important;
+  transform:none;
+  will-change:auto;
   touch-action:pan-y;
 }
 html:is(.is-ipad,.is-phone-layout) .bottom-nav::before,
 html:is(.is-ipad,.is-phone-layout) .bottom-nav::after,
 html:is(.is-ipad,.is-phone-layout) .bottom-nav>.mm-scroll-edge{
   content:none!important;
-  display:none!important;
-  pointer-events:none!important;
+  pointer-events:none;
 }
 html:is(.is-ipad,.is-phone-layout) .bottom-nav>button{
-  transform:none!important;
+  transform:none;
   transition:color .12s ease,background-color .12s ease,border-color .12s ease!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
@@ -149,7 +146,7 @@ html:is(.is-ipad,.is-phone-layout) .topbar-wrap {
 /* Barra superior: apenas um blur, sem overlays e sem camada
    isolada aninhada. Safari recompõe uma superfície durante o scroll. */
 html:is(.is-ipad,.is-phone-layout) .topbar {
-  isolation:auto!important;
+  isolation:auto;
   border:1px solid rgba(255,255,255,.21)!important;
   background:
     linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.019) 36%,transparent 75%),
@@ -157,14 +154,13 @@ html:is(.is-ipad,.is-phone-layout) .topbar {
   -webkit-backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
   backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 7px 20px rgba(0,0,0,.16)!important;
-  will-change:auto!important;
+  will-change:auto;
 }
 html:is(.is-ipad,.is-phone-layout) .topbar::before,
 html:is(.is-ipad,.is-phone-layout) .topbar::after,
 html:is(.is-ipad,.is-phone-layout) .topbar>.mm-scroll-edge{
   content:none!important;
-  display:none!important;
-  pointer-events:none!important;
+  pointer-events:none;
 }
 html.mobile-topbar-compact.is-phone-layout .topbar {
   background:linear-gradient(150deg,rgba(255,255,255,.10),transparent 75%),rgba(17,17,18,.22)!important
