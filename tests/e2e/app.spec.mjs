@@ -4960,3 +4960,84 @@ test('Safari iPhone [M] dock e topbar estáveis durante a rolagem',async({page},
   await page.locator('#mobileMenuBtn').click();
   await expect(page.locator('#mobileMenuBtn')).toHaveAttribute('aria-expanded','true');
 });
+
+
+test('Dock iPad [T] · geometria de sete destinos e sem placa de fundo',async({page},testInfo)=>{
+  test.skip(!['ipad','ipad-webkit'].includes(testInfo.project.name),'Somente tablet');
+  test.setTimeout(90000);
+  for(const viewport of [
+    {width:820,height:1180},
+    {width:834,height:1194},
+    {width:1024,height:1366}
+  ]){
+    await page.setViewportSize(viewport);
+    await page.goto('/#home');
+    await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+    const state=await page.evaluate(async()=>{
+      const nav=document.querySelector('.bottom-nav');
+      const scroller=document.querySelector('.main');
+      const content=document.querySelector('.content');
+      const probe=document.createElement('div');
+      probe.style.cssText='height:1500px;pointer-events:none';
+      content.appendChild(probe);
+      scroller.scrollTop=480;
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      const n=nav.getBoundingClientRect();
+      const buttons=[...nav.querySelectorAll(':scope > button[data-nav]')];
+      const info=buttons.map(button=>{
+        const rect=button.getBoundingClientRect();
+        const x=rect.left+rect.width/2,y=rect.top+rect.height/2;
+        const actual=document.elementFromPoint(x,y);
+        return {
+          name:button.dataset.nav,height:rect.height,width:rect.width,
+          touchable:!!actual&&actual.closest('button')===button
+        };
+      });
+      const belowY=Math.min(innerHeight-2,n.bottom+4);
+      const below=document.elementFromPoint(innerWidth/2,belowY);
+      const backdrop=getComputedStyle(nav);
+      const topo=getComputedStyle(document.body,'::before');
+      const result={
+        dock:{height:n.height,width:n.width,top:n.top,bottom:n.bottom},
+        buttons:info,scrollTop:scroller.scrollTop,
+        display:backdrop.display,position:backdrop.position,
+        overflow:backdrop.overflow,glass:backdrop.backdropFilter||backdrop.webkitBackdropFilter,
+        radius:parseFloat(backdrop.borderTopLeftRadius),
+        bg:backdrop.backgroundImage,
+        before:getComputedStyle(nav,'::before').content,
+        after:getComputedStyle(nav,'::after').content,
+        overlay:nav.querySelectorAll(':scope > .mm-scroll-edge').length,
+        topology:{image:topo.backgroundImage,transform:topo.transform,position:topo.position},
+        directBodyChild:nav.parentElement===document.body,
+        belowIsNav:below===nav||nav.contains(below),
+        horizontalOverflow:document.documentElement.scrollWidth-innerWidth
+      };
+      probe.remove();
+      return result;
+    });
+    console.log('[IPAD COMPACT DOCK]',JSON.stringify({viewport,...state}));
+    expect(state.dock.height).toBeGreaterThanOrEqual(56);
+    expect(state.dock.height).toBeLessThanOrEqual(64);
+    expect(state.dock.bottom).toBeLessThanOrEqual(viewport.height);
+    expect(state.buttons.map(x=>x.name)).toEqual(['home','courses','maps','simulations','agenda','progress','settings']);
+    expect(state.buttons.every(x=>x.height>=44&&x.height<=52&&x.touchable)).toBe(true);
+    expect(state.scrollTop).toBeGreaterThan(100);
+    expect(state.glass).toContain('blur(');
+    expect(state.radius).toBeGreaterThanOrEqual(17);
+    expect(state.before).toBe('none');
+    expect(state.after).toBe('none');
+    expect(state.overlay).toBe(0);
+    expect(state.directBodyChild).toBe(true);
+    expect(state.belowIsNav).toBe(false);
+    expect(state.horizontalOverflow).toBeLessThanOrEqual(2);
+    expect(state.topology.position).toBe('fixed');
+    expect(state.topology.image).not.toBe('none');
+    expect(state.topology.transform).toBe('none');
+    await testInfo.attach('ipad-single-glass-'+viewport.width+'x'+viewport.height,{
+      body:await page.screenshot(),contentType:'image/png'
+    });
+  }
+  await page.setViewportSize({width:1180,height:820});
+  await expect(page.locator('.bottom-nav')).toBeHidden();
+  await expect(page.locator('.side')).toBeVisible();
+});
