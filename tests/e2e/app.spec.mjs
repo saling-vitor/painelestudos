@@ -4996,6 +4996,8 @@ test('Dock iPad [T] · geometria de sete destinos e sem placa de fundo',async({p
       const belowY=Math.min(innerHeight-2,n.bottom+4);
       const below=document.elementFromPoint(innerWidth/2,belowY);
       const backdrop=getComputedStyle(nav);
+      const appBox=document.querySelector('.app').getBoundingClientRect();
+      const mainBox=scroller.getBoundingClientRect();
       const topo=getComputedStyle(document.body,'::before');
       const result={
         dock:{height:n.height,width:n.width,top:n.top,bottom:n.bottom},
@@ -5009,6 +5011,7 @@ test('Dock iPad [T] · geometria de sete destinos e sem placa de fundo',async({p
         overlay:nav.querySelectorAll(':scope > .mm-scroll-edge').length,
         topology:{image:topo.backgroundImage,transform:topo.transform,position:topo.position},
         directBodyChild:nav.parentElement===document.body,
+        appBottom:appBox.bottom,mainBottom:mainBox.bottom,
         belowIsNav:below===nav||nav.contains(below),
         horizontalOverflow:document.documentElement.scrollWidth-innerWidth
       };
@@ -5028,6 +5031,9 @@ test('Dock iPad [T] · geometria de sete destinos e sem placa de fundo',async({p
     expect(state.after).toBe('none');
     expect(state.overlay).toBe(0);
     expect(state.directBodyChild).toBe(true);
+    // A faixa rosa vinha de uma .app menor do que a viewport.
+    expect(state.appBottom).toBeGreaterThanOrEqual(viewport.height-2);
+    expect(state.mainBottom).toBeGreaterThanOrEqual(viewport.height-2);
     expect(state.belowIsNav).toBe(false);
     expect(state.horizontalOverflow).toBeLessThanOrEqual(2);
     expect(state.topology.position).toBe('fixed');
