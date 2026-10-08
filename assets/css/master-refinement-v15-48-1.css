@@ -111,3 +111,17 @@ html:not(.is-phone-layout) .home-review-section .study-plan-footer i{min-width:0
   html.is-ipad:not(.is-phone-layout) .home-review-section .study-plan-footer i{grid-column:1/3!important;grid-row:2!important}
   html.is-ipad:not(.is-phone-layout) .home-review-section .study-plan-footer strong{grid-column:3!important;grid-row:2!important}
 }
+
+/* 05 [D] full-bleed real para Home Desktop: o legado ainda define padding:16px. */
+html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card{
+  padding:0 0 14px!important;
+}
+html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card> :is(
+  .course-card-kicker-row,h3,.course-card-role,.course-card-institution,.course-card-meta
+){margin-left:14px!important;margin-right:14px!important}
+html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-progress-mini{
+  left:14px!important;right:14px!important
+}
+html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-footer{
+  left:14px!important;right:14px!important
+}
