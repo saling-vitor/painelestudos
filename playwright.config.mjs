@@ -16,7 +16,7 @@ export default defineConfig({
     },
     {
       name:'iphone-webkit',
-      grep:/(?:\[G\]|\[M\]|smartphone|iPhone real|agenda de revisão)/i,
+      grep:/(?:\[G\]|\[M\]|\[T\+M\]|smartphone|iPhone real|agenda de revisão)/i,
       retries:1,
       use:{
         browserName:'webkit',
