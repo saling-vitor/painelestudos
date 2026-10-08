@@ -2414,6 +2414,9 @@ test('Progresso adapta as decisões e mantém prioridades recolhidas',async({pag
   await expect(details).not.toHaveAttribute('open');
   await details.locator('summary').click();
   await expect(details).toHaveAttribute('open','');
+  // O estado aberto deve sobreviver à atualização da inteligência de estudos.
+  await page.evaluate(()=>StudyPlanner.render());
+  await expect(details).toHaveAttribute('open','');
   const priorities=await details.locator('.priority-engine-grid>article').count();
   expect(priorities).toBeGreaterThan(0);
   expect(priorities).toBeLessThanOrEqual(3);
