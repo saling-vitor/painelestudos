@@ -2,10 +2,9 @@
    [T] iPad com composição própria · [D+T] Retomar sem cortes
    [G] empty states com mascote · [M] smartphone preservado. */
 
-/* =========================================================
-   TABLET / IPAD [T]
-   O tablet mantém o dock lateral em qualquer orientação.
-   ========================================================= */
+/* [T] Apenas paisagem mantém a lateral. Retrato tem autoridade
+   exclusiva no ipad-portrait-nav-v15-36-17.css. */
+@media(orientation:landscape){
 html.is-ipad:not(.is-phone-layout){
   --nav:82px;
 }
@@ -49,6 +48,7 @@ html.is-ipad:not(.is-phone-layout) .home-courses-section>.section-head{
 }
 html.is-ipad:not(.is-phone-layout) .home-courses-section #newCourseBtn{
   flex:0 0 auto!important;
+}
 }
 
 /* =========================================================
