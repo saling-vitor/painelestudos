@@ -829,7 +829,7 @@
     height:100dvh!important;
     padding-top:env(safe-area-inset-top,0px)!important;
     padding-bottom:env(safe-area-inset-bottom,0px)!important;
-    background:#030406!important;
+    background:#030303!important;
   }
   html.mobile-reader-open.is-phone-layout .readerbar,
   html.mobile-reader-open.is-phone-layout .simulation-readerbar{
