@@ -1,0 +1,151 @@
+/* MEUS MAPAS — V15.48.2-G | LISTA MESTRA V2 (09–16)
+   Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
+   Base: V15.48.1-G. CSS carregado por último para substituir legados. */
+
+/* 09 [G] Calibração: ~30% menos intensidade que o SVG V15.48.1. */
+:root { --mm-topo-opacity:.60 }
+html.is-ipad:not(.is-phone-layout) { --mm-topo-opacity:.65 }
+html.is-phone-layout { --mm-topo-opacity:.70 }
+
+/* 16 [G] Paleta exclusiva de navegação — NÃO altera acentos dos cursos/mapas. */
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#e6c790 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="courses"] { --nav-accent:#ed9981 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="maps"] { --nav-accent:#92cda9 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"] { --nav-accent:#d994ac }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"] { --nav-accent:#b5a5e2 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"] { --nav-accent:#8ec8ce }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"] { --nav-accent:#e5b77e }
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger { --nav-accent:#e5b77e }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"] { --nav-accent:#8ec8ce }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"] { --nav-accent:#d994ac }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#e5b77e }
+
+/* Cor leve nos ícones inativos, reforço acessível com borda/fundo no ativo. */
+.side .nav-btn[data-nav]>.ui-icon,
+.bottom-nav>button[data-nav]>.ui-icon,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger>.ui-icon,
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav] .ui-icon {
+  color:color-mix(in srgb,var(--nav-accent) 70%,#8b8b8b)!important
+}
+.side .nav-btn[data-nav]:is(.active,:hover,:focus-visible)>.ui-icon,
+.bottom-nav>button[data-nav]:is(.active,:hover,:focus-visible)>.ui-icon,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"])>.ui-icon,
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:is(.is-current,:focus-visible) .ui-icon {
+  color:var(--nav-accent)!important
+}
+html:not(.is-phone-layout) .side .nav-btn[data-nav]:is(:hover,:focus-visible):not(.active) {
+  border-color:color-mix(in srgb,var(--nav-accent) 16%,transparent)!important;
+  background:color-mix(in srgb,var(--nav-accent) 6%,transparent)!important
+}
+html:not(.is-phone-layout) .side .nav-btn[data-nav].active {
+  color:color-mix(in srgb,var(--nav-accent) 42%,#f6f4ef)!important;
+  border:1px solid color-mix(in srgb,var(--nav-accent) 29%,transparent)!important;
+  background:
+    linear-gradient(90deg,color-mix(in srgb,var(--nav-accent) 13%,rgba(255,255,255,.018)),rgba(255,255,255,.015) 82%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important
+}
+html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before {
+  background:var(--nav-accent)!important;
+  box-shadow:0 0 11px color-mix(in srgb,var(--nav-accent) 30%,transparent)!important
+}
+.bottom-nav>button[data-nav]:is(.active,:hover,:focus-visible),
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"],:focus-visible) {
+  color:color-mix(in srgb,var(--nav-accent) 55%,#f3f1ec)!important;
+  border:1px solid color-mix(in srgb,var(--nav-accent) 25%,transparent)!important;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--nav-accent) 17%,rgba(255,255,255,.055)),
+    color-mix(in srgb,var(--nav-accent) 7%,rgba(10,10,10,.09)))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important
+}
+.bottom-nav>button[data-nav].active::before,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before {
+  background:var(--nav-accent)!important
+}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:is(.is-current,:hover,:focus-visible) {
+  color:color-mix(in srgb,var(--nav-accent) 40%,#f5f3ee)!important;
+  border-color:color-mix(in srgb,var(--nav-accent) 24%,transparent)!important;
+  background:color-mix(in srgb,var(--nav-accent) 8%,rgba(255,255,255,.016))!important
+}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav] .ui-icon {
+  color:var(--nav-accent)!important
+}
+
+/* 10/14 [T+M] Remove o gradiente retangular externo, culpado da "tarja".
+   A navegação não tem um segundo backdrop/overlay fora dos cantos. */
+html:is(.is-ipad,.is-phone-layout) .bottom-nav>.mm-scroll-edge,
+html.is-phone-layout .topbar>.mm-scroll-edge { display:none!important }
+html.is-ipad:not(.is-phone-layout) .topbar>.mm-scroll-edge { display:none!important }
+html:is(.is-ipad,.is-phone-layout) .bottom-nav {
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background-clip:padding-box!important;
+  border-radius:18px!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  background:
+    linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,.035) 25%,transparent 63%),
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),
+    rgba(17,17,18,.20)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(125%) contrast(108%)!important;
+  backdrop-filter:blur(14px) saturate(125%) contrast(108%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(255,255,255,.055),
+    0 12px 32px rgba(0,0,0,.32)!important
+}
+html.is-phone-layout .bottom-nav {
+  border-radius:16px!important
+}
+/* 12/13/15 [T+M] Topbar: fundo de vidro em vez de placa sólida, mantendo
+   campo e sync legíveis com fills leves, não dois backdrop-filter empilhados. */
+html:is(.is-ipad,.is-phone-layout) .topbar-wrap {
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important
+}
+html:is(.is-ipad,.is-phone-layout) .topbar {
+  isolation:isolate!important;
+  border:1px solid rgba(255,255,255,.23)!important;
+  background:
+    linear-gradient(150deg,rgba(255,255,255,.11),rgba(255,255,255,.028) 30%,transparent 73%),
+    rgba(17,17,18,.19)!important;
+  -webkit-backdrop-filter:blur(13px) saturate(125%) contrast(108%)!important;
+  backdrop-filter:blur(13px) saturate(125%) contrast(108%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 9px 26px rgba(0,0,0,.23)!important
+}
+html.mobile-topbar-compact.is-phone-layout .topbar {
+  background:linear-gradient(150deg,rgba(255,255,255,.10),transparent 75%),rgba(17,17,18,.22)!important
+}
+html:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#syncTop) {
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.022))!important;
+  border-color:rgba(255,255,255,.15)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important
+}
+html:is(.is-ipad,.is-phone-layout) .topbar .search:focus-within {
+  border-color:rgba(255,255,255,.32)!important
+}
+/* Preserve a classe de acessibilidade implementada no runtime.
+   Sem blur/transparência quando a preferência pede uma superfície sólida. */
+html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) :is(.topbar,.bottom-nav),
+html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#syncTop){
+  background:#101010!important;background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+}
+@media (prefers-reduced-transparency:reduce) {
+  html:is(.is-ipad,.is-phone-layout) :is(.topbar,.bottom-nav),
+  html:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#syncTop){
+    background:#101010!important;background-image:none!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important
+  }
+}
+@media (forced-colors:active) {
+  .bottom-nav>button[data-nav].active,.side .nav-btn[data-nav].active {
+    outline:2px solid Highlight!important;outline-offset:-2px
+  }
+}
