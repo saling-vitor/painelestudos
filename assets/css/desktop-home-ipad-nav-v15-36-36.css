@@ -204,15 +204,7 @@
    [T] IPAD RETRATO · DOCK DE SETE DESTINOS
    ========================================================= */
 @media (orientation:portrait){
-  html.is-ipad:not(.is-phone-layout) .bottom-nav{
-    grid-template-columns:repeat(7,minmax(0,1fr))!important;
-    gap:2px!important;
-  }
-
-  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-simulations,
-  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-agenda{
-    display:grid!important;
-  }
+  /* Grid e destinos definidos apenas no módulo ipad-portrait-nav. */
 
   html.is-ipad:not(.is-phone-layout) .tablet-more-shortcuts{
     display:none!important;
