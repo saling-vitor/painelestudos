@@ -45,7 +45,7 @@ html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-l
   box-shadow:none!important;
 }
 html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover::after{
-  background:linear-gradient(180deg,transparent 0%,transparent 48%,rgba(2,3,5,.18) 100%)!important;
+  background:linear-gradient(180deg,transparent 0%,transparent 48%,rgba(2,2,2,.18) 100%)!important;
 }
 /* Reforço de especificidade: neutraliza padding legado da biblioteca sem tocar no conteúdo interno. */
 html:not(.is-phone-layout) body .app .main [data-view="courses"] #coursesGrid.course-grid>.course-card.course-library-card{
