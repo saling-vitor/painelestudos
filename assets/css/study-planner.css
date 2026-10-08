@@ -685,7 +685,7 @@
 .planner-page-actions select:focus-visible,
 .planner-advanced-settings input:focus-visible,
 .planner-advanced-settings select:focus-visible{
-  border-color:rgba(169,200,231,.44)!important;
+  border-color:rgba(232,215,177,.38)!important;
   background:#111112!important;
 }
 
