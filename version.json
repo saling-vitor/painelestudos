@@ -1,12 +1,12 @@
 {
   "version": "15.48.8",
   "label": "V15.48.8-G",
-  "notes": "Estabilidade das metas de estudo em atualizações assíncronas, preservando inputs em edição; mantém correções do dock iPad de V15.48.7-T.",
+  "notes": "Estabilidade de interação em atualizações assíncronas: campos de metas e detalhes de prioridades preservados, mantendo correções do dock iPad.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Campos de metas preservados durante refresh de interface",
-    "[G] Teste de meta semanal submetida durante atualizações",
-    "[T] Dock Liquid Glass e botões preservados"
+    "[G] Campos de metas preservados durante refresh",
+    "[G] Painel de prioridades permanece aberto após recalcular",
+    "[T] Dock Liquid Glass e navegação por toque preservados"
   ],
   "automation": {
     "enabled": true,
