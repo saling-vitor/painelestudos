@@ -1,4 +1,4 @@
-/* MEUS MAPAS — V15.48.4-G | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
+/* MEUS MAPAS — V15.48.5-T | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
    Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
    Base: V15.48.1-G. CSS carregado por último para substituir legados. */
 
@@ -198,10 +198,6 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
    backdrop-filter:none!important;
  }
 }
-/* Fora da barra, nenhum elemento auxiliar deve formar uma placa no rodapé. */
-html.is-ipad:not(.is-phone-layout) body::after {
- pointer-events:none;
-}
 
 /* V15.48.4-T | Progresso iPad: contraste seletivo sem poluir demais cards. */
 html.is-ipad:not(.is-phone-layout) .study-analytics-panel .study-heatmap-primary {
@@ -233,4 +229,45 @@ html.is-ipad:not(.is-phone-layout) .study-doubt-empty {
 html.is-ipad:not(.is-phone-layout) .study-doubt-inbox :is(.study-doubt-count,.study-doubt-empty>span) {
  color:#c5c5c5!important;
  border-color:rgba(255,255,255,.15)!important;
+}
+
+/* V15.48.5-T — iPad portrait: somente o dock é uma superfície.
+   A área entre dock e borda e as laterais são viewport transparente,
+   sem rodapé acompanhante; a página mantém scroll sob o vidro. */
+@media (orientation:portrait) {
+  html.is-ipad:not(.is-phone-layout) {
+    background:#020304!important;
+  }
+  html.is-ipad:not(.is-phone-layout) :is(body,.app,.main,.content) {
+    background-color:transparent!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .bottom-nav {
+    position:fixed!important;
+    bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+    left:clamp(10px,2vw,24px)!important;
+    right:clamp(10px,2vw,24px)!important;
+    width:auto!important;
+    margin:0!important;
+    transform:none!important;
+    -webkit-transform:none!important;
+    contain:layout style!important;
+    overflow:hidden!important;
+    border-radius:20px!important;
+    /* A sombra acompanha exclusivamente a forma arredondada. */
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 20px rgba(0,0,0,.16)!important;
+    -webkit-backdrop-filter:blur(16px) saturate(120%) contrast(105%)!important;
+    backdrop-filter:blur(16px) saturate(120%) contrast(105%)!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .bottom-nav :is(.mm-scroll-edge,.mm-active-lens) {
+    display:none!important;
+  }
+  /* Preserva espaço de rolagem para o último conteúdo ficar acessível,
+     mas não pinta nem cria uma segunda barra de navegação. */
+  html.is-ipad:not(.is-phone-layout) .content {
+    padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .bottom-nav>button:not(.active) {
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
 }
