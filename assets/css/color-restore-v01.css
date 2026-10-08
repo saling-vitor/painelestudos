@@ -46,7 +46,7 @@ html:not(.is-phone-layout) .topbar{
   background:
     radial-gradient(460px 120px at 0% 0%,rgba(255,255,255,.020),transparent 72%),
     radial-gradient(360px 120px at 100% 0%,rgba(216,197,158,.035),transparent 74%),
-    linear-gradient(135deg,rgba(24,25,28,.72),rgba(13,15,18,.66) 52%,rgba(8,10,12,.74));
+    linear-gradient(135deg,rgba(24,24,25,.72),rgba(13,13,14,.66) 52%,rgba(8,8,9,.74));
   box-shadow:0 16px 42px rgba(0,0,0,.31),0 3px 12px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.07)
 }
 html:not(.is-phone-layout) .search:focus-within{
@@ -59,7 +59,7 @@ html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-li
   background:
     radial-gradient(430px 205px at 0% 0%,rgba(216,197,158,.075),transparent 68%),
     radial-gradient(340px 220px at 100% 0%,rgba(255,255,255,.024),transparent 70%),
-    linear-gradient(145deg,rgba(14,16,20,.985),rgba(9,11,14,.99) 48%,rgba(7,8,10,.997))!important;
+    linear-gradient(145deg,rgba(14,14,15,.985),rgba(9,9,10,.99) 48%,rgba(7,7,8,.997))!important;
   box-shadow:0 17px 40px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.03)!important
 }
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card::before{opacity:.58}
