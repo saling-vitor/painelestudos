@@ -32,7 +32,11 @@
   padding:12px 14px;
   border:1px solid rgba(255,255,255,.065);
   border-radius:13px;
-  background:linear-gradient(135deg,rgba(16,16,17,.98),rgba(9,9,10,.99));
+  background:linear-gradient(135deg,rgba(255,255,255,.018),rgba(7,7,8,.76));
+}
+/* Lote 01 [D] · superfície escura sólida no Desktop; preservar Tablet e Smartphone. */
+html:not(.is-ipad):not(.is-phone-layout) .course-automation-overview{
+  background:linear-gradient(135deg,rgba(16,16,17,.98),rgba(9,9,10,.99))!important;
 }
 .course-automation-overview>div:first-child{display:grid;gap:3px}
 .course-automation-overview>div:first-child>b{color:#e5e7ea;font-size:13px}
