@@ -1759,7 +1759,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
       heroWidth:box.width,bgSize:style.backgroundSize
     };
   });
-  expect(layout.bg).toContain('home-hero-panel-hq.webp');
+  expect(layout.bg).toContain('topographic-editorial-v1/covers/home-hero.png');
   if(await page.evaluate(()=>innerWidth>=900)){
     expect(layout.height).toBeGreaterThanOrEqual(280);
     expect(layout.height).toBeLessThanOrEqual(345);
@@ -1768,10 +1768,10 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
   }
 });
 
-test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
+test('hero editorial Topographic V1 mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp',{cache:'no-store'});
+    const response=await fetch('./assets/brand/topographic-editorial-v1/covers/home-hero.png',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -1784,7 +1784,7 @@ test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   expect(result.size).toBeGreaterThan(300000);
   expect(result.width).toBeGreaterThanOrEqual(1500);
   expect(result.height).toBeGreaterThanOrEqual(640);
-  expect(result.type).toContain('image/webp');
+  expect(result.type).toContain('image/png');
 });
 
 
@@ -3840,18 +3840,18 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   const light=await chooseMode('light');
   await expect(light).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('light');
-  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-light-rounded-192/);
+  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/pwa-icon-light-192\.png/);
   expect(await page.locator('#appIconExplicitFavicon').getAttribute('media')).toBe('all');
-  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-light-rounded-192/);
-  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-light-v15.36.2.webmanifest');
+  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/apple-touch-icon-light\.png/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href',/manifest-light-v15\.36\.2\.webmanifest\?v=\d+\.\d+\.\d+/);
 
   await ensurePanelOpen();
   const dark=await chooseMode('dark');
   await expect(dark).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('dark');
-  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-dark-rounded-192/);
-  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-dark-rounded-180/);
-  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-v15.23.6.webmanifest');
+  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/pwa-icon-192\.png/);
+  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/apple-touch-icon\.png/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href',/manifest-v15\.23\.6\.webmanifest\?v=\d+\.\d+\.\d+/);
 
   await ensurePanelOpen();
   const automatic=await chooseMode('auto');
