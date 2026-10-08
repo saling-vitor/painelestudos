@@ -4737,11 +4737,13 @@ test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',asyn
     const cs=getComputedStyle(nav);
     const lowerPoint=document.elementFromPoint(innerWidth/2,Math.min(innerHeight-2,n.bottom+4));
     const overlap=p.top<n.bottom&&p.bottom>n.top;
+    const scrollAudit={scrollY,scrollHeight:document.scrollingElement?.scrollHeight,clientHeight:document.scrollingElement?.clientHeight,probe:{top:p.top,bottom:p.bottom},nav:{top:n.top,bottom:n.bottom},contentScrollTop:content.scrollTop,bodyScrollTop:document.body.scrollTop,visualViewportHeight:visualViewport?.height};
     const value={overlap,navFixed:cs.position==='fixed',navRadius:parseFloat(cs.borderTopLeftRadius),glass:cs.backdropFilter||cs.webkitBackdropFilter,
-      navColor:cs.backgroundColor,lowerIsNav:lowerPoint===nav||nav.contains(lowerPoint),
+      navColor:cs.backgroundColor,scrollAudit,lowerIsNav:lowerPoint===nav||nav.contains(lowerPoint),
       pageOverflow:document.documentElement.scrollWidth-innerWidth};
     probe.remove();trailing.remove();return value;
   });
+  console.log('[IPAD DOCK SCROLL AUDIT]',JSON.stringify(state.scrollAudit));
   expect(state.navFixed).toBe(true);
   expect(state.overlap).toBe(true);
   expect(state.navRadius).toBeGreaterThanOrEqual(16);
