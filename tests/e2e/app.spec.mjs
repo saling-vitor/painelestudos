@@ -2204,6 +2204,15 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   const form=page.locator('#studyGoalsForm');
   await form.locator('[name="dailyMinutes"]').fill('1h 30min');
   await form.locator('[name="weeklyMinutes"]').fill('8h');
+  // Uma atualização assíncrona da central não pode substituir o input
+  // focado nem restaurar a meta semanal padrão durante a edição.
+  const editorPreserved=await page.evaluate(()=>{
+    const input=document.querySelector('#studyGoalsForm [name="weeklyMinutes"]');
+    StudyDashboard.render();
+    return input===document.querySelector('#studyGoalsForm [name="weeklyMinutes"]')&&document.activeElement===input;
+  });
+  expect(editorPreserved).toBe(true);
+  await expect(form.locator('[name="weeklyMinutes"]')).toHaveValue('8h');
   await form.locator('button[type="submit"]').click();
   const goals=await page.evaluate(()=>StudyDashboard.goals());
   expect(goals.dailyMinutes).toBe(90);
