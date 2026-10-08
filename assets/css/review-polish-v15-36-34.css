@@ -12,7 +12,7 @@
   height:18px;
   pointer-events:none;
   opacity:0;
-  background:linear-gradient(180deg,rgba(3,4,6,.72),rgba(3,4,6,.18) 58%,transparent);
+  background:linear-gradient(180deg,rgba(3,3,3,.72),rgba(3,3,3,.18) 58%,transparent);
   transition:opacity .16s ease;
 }
 html.topbar-scrolled:not(.is-phone-layout) .topbar-wrap::after{opacity:1}

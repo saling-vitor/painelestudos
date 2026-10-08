@@ -23,7 +23,7 @@ body{
   background:
     radial-gradient(
       1200px 820px at 4% -8%,
-      rgba(48,52,56,.15),
+      rgba(52,52,50,.13),
       transparent 66%
     ),
     radial-gradient(
@@ -132,7 +132,7 @@ html.is-phone-layout body::before{
     background:
       radial-gradient(
         720px 520px at 8% -8%,
-        rgba(42,46,50,.11),
+        rgba(46,46,44,.10),
         transparent 68%
       ),
       linear-gradient(

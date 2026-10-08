@@ -134,7 +134,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     inset 0 1px 1px var(--cover-liquid-highlight),
     inset 1px 0 1px var(--cover-liquid-highlight-soft),
     inset -1px 0 1px rgba(255,255,255,.09),
-    inset 0 -1px 1px rgba(5,10,16,.28),
+    inset 0 -1px 1px rgba(8,8,8,.28),
     inset 0 0 8px var(--cover-liquid-rim-cool)!important;
   text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
   transform:none!important;
@@ -262,7 +262,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
       inset 0 1px 1px rgba(255,255,255,.78),
       inset 1px 0 1px rgba(255,255,255,.28),
       inset -1px 0 1px rgba(255,255,255,.11),
-      inset 0 -1px 1px rgba(5,10,16,.21),
+      inset 0 -1px 1px rgba(8,8,8,.21),
       inset 0 0 9px rgba(255,255,255,.13)!important;
   }
 
@@ -296,7 +296,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     linear-gradient(145deg,
       rgba(255,255,255,.12) 0%,
       rgba(255,255,255,.026) 42%,
-      rgba(8,14,22,.055) 72%,
+      rgba(12,12,12,.055) 72%,
       rgba(255,255,255,.060) 100%),
     rgba(244,249,255,.010)!important;
   -webkit-backdrop-filter:
@@ -340,7 +340,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
         rgba(255,255,255,.45),
         rgba(255,255,255,.12) 42%,
         transparent 66%),
-      rgba(40,48,60,.66)!important;
+      rgba(48,48,46,.66)!important;
   }
 }
 
@@ -352,7 +352,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     .map-card.has-cover > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:rgba(34,39,48,.92)!important;
+    background:rgba(38,38,39,.92)!important;
     background-blend-mode:normal!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
@@ -370,7 +370,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   ){
     color:#fff!important;
     border-color:rgba(255,255,255,.68)!important;
-    background-color:rgba(15,18,23,.54)!important;
+    background-color:rgba(16,16,17,.54)!important;
   }
 }
 

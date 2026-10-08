@@ -9,16 +9,16 @@
   color-scheme:dark;
 
   /* Ambiente */
-  --mm-bg-deep:#020304;
-  --mm-bg:#040506;
-  --mm-bg-raised:#070809;
-  --mm-bg-soft:#0A0B0C;
+  --mm-bg-deep:#020202;
+  --mm-bg:#040404;
+  --mm-bg-raised:#070707;
+  --mm-bg-soft:#0A0A0A;
 
   /* Superfícies permanentes */
-  --mm-surface-0:#08090A;
-  --mm-surface-1:#0B0C0E;
-  --mm-surface-2:#0E0F11;
-  --mm-surface-3:#111214;
+  --mm-surface-0:#080808;
+  --mm-surface-1:#0B0B0B;
+  --mm-surface-2:#0E0E0E;
+  --mm-surface-3:#111111;
 
   /* Texto */
   --mm-text-strong:#F4F2ED;
@@ -38,11 +38,11 @@
   --mm-shadow-float:0 28px 78px rgba(0,0,0,.62);
 
   /* Liquid Glass — uma superfície funcional = um backdrop-filter */
-  --mm-glass-regular-bg:rgba(9,10,11,.60);
+  --mm-glass-regular-bg:rgba(9,9,9,.60);
   --mm-glass-regular-filter:blur(20px) saturate(128%) contrast(104%);
-  --mm-glass-dense-bg:rgba(8,9,10,.82);
+  --mm-glass-dense-bg:rgba(8,8,8,.82);
   --mm-glass-dense-filter:blur(24px) saturate(122%) contrast(105%);
-  --mm-glass-clear-bg:rgba(12,12,13,.24);
+  --mm-glass-clear-bg:rgba(12,12,12,.24);
   --mm-glass-clear-filter:blur(11px) saturate(135%);
   --mm-glass-border:rgba(255,255,255,.16);
   --mm-glass-border-strong:rgba(255,255,255,.22);
@@ -286,7 +286,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 
 /* Cards principais um pouco mais sólidos/escuros. */
 .app .content :is(.map-card,.course-card,.course-library-card,.simulation-card){
-  background:linear-gradient(180deg,#0D0E10,#090A0C)!important;
+  background:linear-gradient(180deg,#0D0D0D,#090909)!important;
 }
 .app .content .map-card:hover{
   box-shadow:0 17px 38px rgba(0,0,0,.42)!important;
@@ -297,7 +297,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   border-color:rgba(255,255,255,.085)!important;
   background:
     radial-gradient(580px 290px at 0% 0%,rgba(232,215,177,.045),transparent 70%),
-    linear-gradient(110deg,#0E0F11,#08090A 62%,#060708)!important;
+    linear-gradient(110deg,#0E0E0E,#080808 62%,#060606)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
   box-shadow:0 22px 54px rgba(0,0,0,.38)!important;
@@ -396,7 +396,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   border:1px solid rgba(255,255,255,.18)!important;
   background:
     linear-gradient(180deg,rgba(255,255,255,.030),rgba(255,255,255,.005) 45%,transparent 70%),
-    rgba(7,8,9,.88)!important;
+    rgba(8,8,8,.88)!important;
   -webkit-backdrop-filter:var(--mm-glass-dense-filter)!important;
   backdrop-filter:var(--mm-glass-dense-filter)!important;
   box-shadow:
@@ -414,7 +414,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   border-color:rgba(255,255,255,.16)!important;
   background:
     linear-gradient(180deg,rgba(255,255,255,.030),transparent 64%),
-    rgba(8,9,10,.82)!important;
+    rgba(9,9,9,.82)!important;
   -webkit-backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
   backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
   box-shadow:0 22px 58px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.11)!important;
@@ -423,22 +423,23 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 /* ==========================================================================
    9 · FORMULÁRIOS / CONTROLES GERAIS — SEM TINT ESTRUTURAL FRIA
    ========================================================================== */
-.app :is(input,select,textarea,.ui-select-trigger){
+body :is(input,select,textarea,.ui-select-trigger){
   color:var(--mm-text)!important;
 }
-.app :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
+body :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
   border-color:rgba(255,255,255,.10)!important;
-  background-color:#0A0B0C!important;
+  background:#0A0A0A!important;
   box-shadow:none!important;
 }
-.app :is(input,select,textarea):focus-visible{
+body :is(input,select,textarea):focus,
+body :is(input,select,textarea):focus-visible{
   border-color:rgba(232,215,177,.38)!important;
   outline:1px solid rgba(232,215,177,.42)!important;
   outline-offset:2px!important;
 }
 
 /* Focus keyboard visível também em botões e links. */
-.app :is(button,a,[role="button"],[tabindex]):focus-visible{
+body :is(button,a,[role="button"],[tabindex]):focus-visible{
   outline:2px solid rgba(232,215,177,.62)!important;
   outline-offset:2px!important;
 }
@@ -455,7 +456,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   html.is-ipad:not(.is-phone-layout) .side{
     background:
       linear-gradient(180deg,rgba(255,255,255,.020),transparent 40%),
-      rgba(7,8,9,.73)!important;
+      rgba(8,8,8,.73)!important;
   }
 }
 @media(max-width:899px){
@@ -523,7 +524,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
     .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
     .study-doubt-card,.toast
   ){
-    background:#0B0C0E!important;
+    background:#0B0B0B!important;
     background-image:none!important;
   }
 }
@@ -538,7 +539,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
     .map-card.has-cover>.fav,.map-card.has-cover>.map-admin-btn,
     .course-card-edit,.simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:#0B0C0E!important;
+    background:#0B0B0B!important;
     background-image:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
@@ -556,7 +557,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
     border-color:rgba(255,255,255,.48)!important;
     background-color:#070809!important;
   }
-  .app :is(input,select,textarea,button,a,[role="button"]):focus-visible{
+  body :is(input,select,textarea,button,a,[role="button"]):focus-visible{
     outline-color:#fff!important;
   }
 }
@@ -594,7 +595,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
-  .app :is(button,a,input,select,textarea,[role="button"]):focus-visible{
+  body :is(button,a,input,select,textarea,[role="button"]):focus-visible{
     outline:2px solid Highlight!important;
   }
 }

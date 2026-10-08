@@ -176,7 +176,7 @@ html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer
   min-height:156px!important;
   border-style:solid!important;
   border-color:rgba(255,255,255,.08)!important;
-  background:linear-gradient(180deg,rgba(14,17,21,.72),rgba(7,9,12,.82))!important;
+  background:linear-gradient(180deg,rgba(14,14,15,.72),rgba(7,7,8,.82))!important;
 }
 .planner-topic-review-empty .empty-state-graphic,
 .planner-errors-empty .empty-state-graphic{

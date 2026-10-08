@@ -125,11 +125,16 @@ check(dynamicGlassJs.includes('prefers-reduced-motion'),'runtime detecta Reduce 
 check(dynamicGlassJs.includes('prefers-reduced-transparency'),'runtime detecta Reduce Transparency');
 check(!/getImageData|drawImage\s*\(/.test(dynamicGlassJs),'runtime não faz análise de pixel das capas');
 const blackEditorialCss=read('assets/css/black-editorial-liquid-glass-v2.css');
-check(blackEditorialCss.includes('--mm-bg-deep:#020304'),'Black Editorial token --mm-bg-deep');
-check(blackEditorialCss.includes('--mm-glass-regular-bg:rgba(9,10,11,.60)'),'Liquid Glass Regular neutro');
-check(blackEditorialCss.includes('--mm-glass-dense-bg:rgba(8,9,10,.82)'),'Liquid Glass Dense neutro');
-check(blackEditorialCss.includes('--mm-glass-clear-bg:rgba(12,12,13,.24)'),'Liquid Glass Clear neutro');
+check(blackEditorialCss.includes('--mm-bg-deep:#020202'),'Black Editorial token --mm-bg-deep neutro');
+check(blackEditorialCss.includes('--mm-glass-regular-bg:rgba(9,9,9,.60)'),'Liquid Glass Regular neutro');
+check(blackEditorialCss.includes('--mm-glass-dense-bg:rgba(8,8,8,.82)'),'Liquid Glass Dense neutro');
+check(blackEditorialCss.includes('--mm-glass-clear-bg:rgba(12,12,12,.24)'),'Liquid Glass Clear neutro');
 check(!(new RegExp('\\b(?:blue|navy|cyan|teal)\\b','i')).test(blackEditorialCss),'tema final sem nomes estruturais blue/navy/cyan/teal');
+check(blackEditorialCss.includes('body :is(input,select,textarea):not([type="checkbox"]):not([type="radio"])'),'Black Editorial cobre formulários fora de .app');
+check(blackEditorialCss.includes('background:#0A0A0A!important'),'controles estruturais usam preto neutro');
+for(const legacy of ['#101319','rgba(8,11,15','rgba(10,13,18','rgba(19,22,28','#a9c8e7','rgba(169,200,231','#030406','#06080b','rgba(39,50,64','rgba(54,59,66','rgba(8,14,22','#12151a']){
+  check(!activeCssText.includes(legacy),'cromia estrutural fria removida: '+legacy);
+}
 const mmSaturates=[...blackEditorialCss.matchAll(/saturate\((\d+(?:\.\d+)?)%\)/g)].map(match=>Number(match[1]));
 check(mmSaturates.length>0&&Math.max(...mmSaturates)<=135,'Liquid Glass saturate principal <= 135%');
 check(blackEditorialCss.includes('@media(prefers-reduced-transparency:reduce)'),'fallback prefers-reduced-transparency');

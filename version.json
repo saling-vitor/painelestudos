@@ -1,21 +1,20 @@
 {
-  "version": "15.47.0",
-  "label": "V15.47.0-G",
-  "releasedAt": "2026-10-07T23:20:00.000Z",
-  "notes": "Auditoria profunda e consolidação legacy: reduz camadas ativas, remove arquivos substituídos e duplicatas, neutraliza resíduos estruturais antigos e estabelece a V15.47 como nova base limpa.",
+  "version": "15.48.0",
+  "label": "V15.48.0-G",
+  "releasedAt": "2026-10-07T23:55:00.000Z",
+  "notes": "Auditoria cromática estrutural: remove navy residual de campos, modais, chrome e superfícies Liquid Glass, incluindo controles fora da shell .app.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Build ativo consolidado de 46 para 43 CSS e de 31 para 30 scripts JS diretos",
-    "[G] Patches de botões, nuvem do iPad, map-card e review polish incorporados aos módulos canônicos",
-    "[G] Topografia SVG V15.42, autofill V15.39 e hero antigo removidos após substituição",
-    "[G] Duplicatas binárias V13 da identidade removidas sem alterar os assets atuais",
-    "[D/T/M] Regras antigas contraditórias de Home/iPad retiradas da cascata em vez de sobrescritas",
-    "[G] Tokens e superfícies estruturais aproximados do Black Editorial neutro, preservando cores semânticas"
+    "[G] Campos e selects dos modais passam a usar preto neutro, inclusive fora de .app",
+    "[G] Foco de formulários deixa de usar azul e passa ao champagne neutro da identidade",
+    "[G] Bases navy quase pretas de app, planner, progresso, mapas e configurações são convertidas para graphite neutro",
+    "[D/T/M] Liquid Glass mantém transparência e profundidade sem tint azul estrutural",
+    "[G] Cores semânticas de revisão, sucesso, alerta, erro, curso e mapa permanecem preservadas"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.47",
+    "series": "15.48",
     "channel": "G",
-    "runBase": 703
+    "runBase": 705
   }
 }

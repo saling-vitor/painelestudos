@@ -51,7 +51,7 @@
 #appDiagnosticPanel.settings-diagnostic-embedded .diagnostic-row{
   min-height:34px;
   border:0;
-  background:#0c0e12;
+  background:#0c0c0d;
 }
 #appDiagnosticPanel.settings-diagnostic-embedded .admin-actions{
   margin-top:9px;
@@ -93,7 +93,7 @@
   padding:0!important;
   border:1px solid rgba(255,255,255,.12)!important;
   border-radius:999px!important;
-  background:#111419!important;
+  background:#111112!important;
   cursor:pointer;
   transition:.16s ease;
 }
@@ -1068,7 +1068,7 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
   padding:0 9px!important;
   border:1px solid rgba(255,255,255,.09)!important;
   border-radius:7px!important;
-  background:#0e1014!important;
+  background:#0e0e0f!important;
   color:#e1e3e7!important;
   font:750 10px var(--mono)!important;
   letter-spacing:.01em;

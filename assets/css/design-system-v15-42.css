@@ -7,14 +7,14 @@
   --mm-text-muted:#8e949d;
   --mm-accent:#d8c59e;
 
-  --mm-surface-0:rgba(8,9,10,.82);
-  --mm-surface-1:rgba(10,11,12,.88);
-  --mm-surface-2:rgba(14,15,16,.92);
+  --mm-surface-0:rgba(8,8,8,.82);
+  --mm-surface-1:rgba(10,10,10,.88);
+  --mm-surface-2:rgba(14,14,14,.92);
   --mm-surface-border:rgba(255,255,255,.075);
   --mm-surface-border-soft:rgba(255,255,255,.050);
 
-  --mm-glass-bg:rgba(9,10,11,.58);
-  --mm-glass-dense:rgba(8,9,10,.78);
+  --mm-glass-bg:rgba(9,9,9,.58);
+  --mm-glass-dense:rgba(8,8,8,.78)
   --mm-glass-border:rgba(255,255,255,.19);
   --mm-glass-highlight:rgba(255,255,255,.15);
   --mm-glass-outer:rgba(0,0,0,.74);
@@ -59,7 +59,7 @@
   .progress-insights,
   .panel
 ){
-  background:linear-gradient(180deg,rgba(11,14,18,.88),rgba(7,9,12,.86))!important;
+  background:linear-gradient(180deg,rgba(11,11,12,.88),rgba(7,7,8,.86))!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
@@ -73,7 +73,7 @@
   overflow:hidden;
   border:1px solid var(--mm-surface-border)!important;
   border-radius:var(--mm-radius-inner)!important;
-  background:rgba(5,7,10,.64)!important;
+  background:rgba(5,5,6,.64)!important;
 }
 .hero-stats .stat{
   border:0!important;
@@ -94,14 +94,14 @@
 .study-command-metrics>button{
   border:0!important;
   border-radius:0!important;
-  background:rgba(7,9,12,.88)!important;
+  background:rgba(7,7,8,.88)!important;
   box-shadow:none!important;
 }
 
 /* Configurações: painéis continuam semânticos, porém mais planos. */
 .settings-layout-v3 .panel{
   border-color:rgba(255,255,255,.065)!important;
-  background:rgba(8,10,13,.82)!important;
+  background:rgba(8,8,9,.82)!important;
   box-shadow:none!important;
 }
 .settings-layout-v3 .panel-kicker{letter-spacing:.12em}
@@ -120,8 +120,8 @@ html:not(.is-phone-layout) .side{
   border-radius:var(--mm-radius-shell)!important;
   background:
     radial-gradient(125% 80% at 12% -20%,rgba(255,255,255,.105),transparent 56%),
-    linear-gradient(155deg,rgba(255,255,255,.025),rgba(2,4,7,.11)),
-    rgba(7,10,14,.66)!important;
+    linear-gradient(155deg,rgba(255,255,255,.025),rgba(3,3,3,.11)),
+    rgba(8,8,9,.66)!important;
   -webkit-backdrop-filter:blur(20px) saturate(145%) contrast(105%)!important;
   backdrop-filter:blur(20px) saturate(145%) contrast(105%)!important;
   box-shadow:
@@ -157,8 +157,8 @@ html:not(.is-phone-layout) .topbar{
   border-radius:var(--mm-radius-shell)!important;
   background:
     radial-gradient(120% 150% at 8% -62%,rgba(255,255,255,.12),rgba(255,255,255,.024) 40%,transparent 62%),
-    linear-gradient(145deg,rgba(255,255,255,.028),rgba(3,5,8,.10)),
-    rgba(7,10,14,.55)!important;
+    linear-gradient(145deg,rgba(255,255,255,.028),rgba(4,4,4,.10)),
+    rgba(8,8,9,.55)!important;
   -webkit-backdrop-filter:var(--mm-glass-filter)!important;
   backdrop-filter:var(--mm-glass-filter)!important;
   box-shadow:
@@ -190,7 +190,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-radius:var(--mm-radius-overlay)!important;
   background:
     radial-gradient(120% 95% at 8% -24%,rgba(255,255,255,.115),transparent 56%),
-    linear-gradient(155deg,rgba(255,255,255,.025),rgba(2,4,7,.11)),
+    linear-gradient(155deg,rgba(255,255,255,.025),rgba(3,3,3,.11)),
     var(--mm-glass-dense)!important;
   -webkit-backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
   backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
@@ -204,8 +204,8 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-radius:var(--mm-radius-overlay)!important;
   background:
     radial-gradient(110% 74% at 7% -10%,rgba(255,255,255,.09),transparent 54%),
-    linear-gradient(155deg,rgba(255,255,255,.022),rgba(3,5,8,.105)),
-    rgba(7,10,14,.84)!important;
+    linear-gradient(155deg,rgba(255,255,255,.022),rgba(4,4,4,.105)),
+    rgba(8,8,9,.84)!important;
   -webkit-backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
   backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
   box-shadow:0 0 0 1px rgba(0,0,0,.72),0 34px 96px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,255,255,.14)!important;
@@ -223,8 +223,8 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-color:rgba(255,255,255,.31)!important;
   background:
     radial-gradient(135% 150% at 18% -45%,rgba(255,255,255,.22),transparent 56%),
-    linear-gradient(145deg,rgba(255,255,255,.070),rgba(4,6,9,.10)),
-    rgba(8,11,15,.22)!important;
+    linear-gradient(145deg,rgba(255,255,255,.070),rgba(5,5,5,.10)),
+    rgba(8,8,9,.22)!important;
   -webkit-backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
   backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
   box-shadow:
@@ -243,8 +243,8 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-radius:var(--mm-radius-inner)!important;
   background:
     radial-gradient(125% 140% at 8% -54%,rgba(255,255,255,.12),transparent 60%),
-    linear-gradient(145deg,rgba(255,255,255,.028),rgba(3,5,8,.085)),
-    rgba(8,11,15,.54)!important;
+    linear-gradient(145deg,rgba(255,255,255,.028),rgba(4,4,4,.085)),
+    rgba(8,8,9,.54)!important;
   -webkit-backdrop-filter:blur(15px) saturate(146%) contrast(105%)!important;
   backdrop-filter:blur(15px) saturate(146%) contrast(105%)!important;
   box-shadow:0 0 0 1px rgba(0,0,0,.56),0 10px 25px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.13)!important;
@@ -268,7 +268,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
 :is(.course-study-filter.active,.category-btn.active){
   border-color:rgba(255,255,255,.15)!important;
   border-radius:var(--mm-radius-control)!important;
-  background:linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.018)),rgba(8,11,15,.40)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.018)),rgba(8,8,9,.40)!important;
   -webkit-backdrop-filter:blur(9px) saturate(138%)!important;
   backdrop-filter:blur(9px) saturate(138%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.09)!important;
@@ -276,7 +276,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
 .simulation-toolbar :is(select,.ui-select-trigger){
   border-radius:var(--mm-radius-control)!important;
   border-color:rgba(255,255,255,.15)!important;
-  background:linear-gradient(180deg,rgba(255,255,255,.040),rgba(255,255,255,.012)),rgba(8,11,15,.55)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.040),rgba(255,255,255,.012)),rgba(8,8,9,.55)!important;
   -webkit-backdrop-filter:blur(10px) saturate(138%)!important;
   backdrop-filter:blur(10px) saturate(138%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.07)!important;
@@ -289,8 +289,8 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   border-color:var(--mm-glass-border)!important;
   background:
     radial-gradient(125% 160% at 10% -72%,rgba(255,255,255,.13),transparent 61%),
-    linear-gradient(145deg,rgba(255,255,255,.027),rgba(3,5,8,.095)),
-    rgba(7,10,14,.67)!important;
+    linear-gradient(145deg,rgba(255,255,255,.027),rgba(4,4,4,.095)),
+    rgba(8,8,9,.67)!important;
   -webkit-backdrop-filter:blur(20px) saturate(150%) contrast(105%)!important;
   backdrop-filter:blur(20px) saturate(150%) contrast(105%)!important;
   box-shadow:
@@ -373,7 +373,7 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
   html.is-phone-layout .bottom-nav :is(.bottom-nav-simulations,.bottom-nav-agenda){display:none!important}
   html.is-phone-layout .topbar{
     border-color:rgba(255,255,255,.14)!important;
-    background:rgba(7,10,14,.64)!important;
+    background:rgba(8,8,9,.64)!important;
   }
   html.is-phone-layout :is(.course-toolbar,.maps-toolbar,.simulation-toolbar){
     gap:6px!important;
@@ -393,12 +393,12 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
    ========================================================= */
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
-    background:#0b0e12!important;
+    background:#0b0b0c!important;
   }
 }
 @media(prefers-reduced-transparency:reduce){
   :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
-    background:#0b0e12!important;
+    background:#0b0b0c!important;
     background-image:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;

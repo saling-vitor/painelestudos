@@ -4146,7 +4146,7 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
 
 
 /* PASSO 2 · Black Editorial + Liquid Glass refinado */
-test('V15.42 [G] PASSO 2 · Black Editorial aplica tokens e evita glass-on-glass',async({page},testInfo)=>{
+test('V15.48 [G] Black Editorial neutro aplica tokens e evita glass-on-glass',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
   const data=await page.evaluate(()=>{
@@ -4171,12 +4171,12 @@ test('V15.42 [G] PASSO 2 · Black Editorial aplica tokens e evita glass-on-glass
       dockActiveFilter:readFilter(activeDock)
     };
   });
-  expect(data.bg).toBe('#040506');
-  expect(data.bgDeep).toBe('#020304');
-  expect(data.surface1).toBe('#0B0C0E');
-  expect(data.regular).toBe('rgba(9,10,11,.60)');
-  expect(data.dense).toBe('rgba(8,9,10,.82)');
-  expect(data.clear).toBe('rgba(12,12,13,.24)');
+  expect(data.bg).toBe('#040404');
+  expect(data.bgDeep).toBe('#020202');
+  expect(data.surface1).toBe('#0B0B0B');
+  expect(data.regular).toBe('rgba(9,9,9,.60)');
+  expect(data.dense).toBe('rgba(8,8,8,.82)');
+  expect(data.clear).toBe('rgba(12,12,12,.24)');
   expect(data.searchFilter).toBe('none');
   expect(data.syncFilter).toBe('none');
   if(testInfo.project.name!=='iphone-webkit')expect(data.sideActiveFilter).toBe('none');
@@ -4584,4 +4584,39 @@ test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e
     return mergePreferencePayloads(local,cloud,Date.parse('2026-10-07T12:00:00.000Z'),Date.parse('2026-10-07T09:00:00.000Z')).coverOverrides['course::porto-alegre'];
   });
   expect(merge.path).toBe('cloud.webp');
+});
+
+
+test('V15.48 mantém modais fora da shell em Black Editorial neutro',async({page})=>{
+  await page.goto('/#courses');
+  await page.evaluate(()=>openModal('courseManageModal'));
+  const modal=page.locator('#courseManageModal');
+  await expect(modal).toHaveClass(/open/);
+  const visual=await page.evaluate(()=>{
+    const modal=document.querySelector('#courseManageModal');
+    const card=modal.querySelector('.modal-card');
+    const input=document.querySelector('#manageCourseTitle');
+    const before=getComputedStyle(input);
+    const result={
+      modalInsideApp:Boolean(modal.closest('.app')),
+      inputBackground:before.backgroundColor,
+      inputBackgroundImage:before.backgroundImage,
+      cardBackground: getComputedStyle(card).backgroundColor,
+      cardBackgroundImage:getComputedStyle(card).backgroundImage
+    };
+    input.focus();
+    const focused=getComputedStyle(input);
+    result.focusBorder=focused.borderTopColor;
+    result.focusBackground=focused.backgroundColor;
+    return result;
+  });
+  expect(visual.modalInsideApp).toBe(false);
+  expect(visual.inputBackground).toBe('rgb(10, 10, 10)');
+  expect(visual.inputBackgroundImage).toBe('none');
+  expect(visual.focusBackground).toBe('rgb(10, 10, 10)');
+  const focusRgb=(visual.focusBorder.match(/\d+/g)||[]).slice(0,3).map(Number);
+  expect(focusRgb.length).toBe(3);
+  expect(focusRgb[2]).toBeLessThanOrEqual(Math.max(focusRgb[0],focusRgb[1])+4);
+  expect(visual.cardBackgroundImage).toContain('linear-gradient');
+  expect(visual.cardBackgroundImage).not.toContain('rgb(8, 11, 15)');
 });
