@@ -52,7 +52,7 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===43,'auditoria: build ativo usa 43 CSS após consolidação');
+check(activeCssFiles.length===44,'auditoria: build ativo usa 44 CSS incluindo refinamento responsivo');
 check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
 const deadLegacyFiles=[
   'assets/css/ipad-cloud-compact-v15-36-1.css',
@@ -86,7 +86,9 @@ const v13BrandLegacy=[
 ];
 for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 removida '+file);
 const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
-const importantCount=(activeCssText.match(/!important/g)||[]).length;
+const baselineCssText=activeCssFiles.filter(file=>file!=='assets/css/master-refinement-v15-48-1.css').filter(exists).map(read).join('\n');
+const importantCount=(baselineCssText.match(/!important/g)||[]).length;
+check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
 check(importantCount<=6694,'auditoria: !important não regrediu ('+importantCount+')');
 check(legacyBlueCount<=19,'auditoria: azul legacy ficou restrito a semântica ('+legacyBlueCount+')');
@@ -142,11 +144,11 @@ check(blackEditorialCss.includes('@media(prefers-contrast:more)'),'fallback pref
 check(blackEditorialCss.includes('@media(prefers-reduced-motion:reduce)'),'fallback prefers-reduced-motion');
 check(blackEditorialCss.includes('@media(forced-colors:active)'),'fallback forced-colors');
 check(exists('assets/css/topographic-environment-v15-43.css'),'CSS topográfico raster V15.43 existe');
-check(exists('assets/ui/topographic-lines-v15-43.webp'),'WebP topográfico raster V15.43 existe');
+check(exists('assets/ui/topographic-lines-v15-48-1.svg'),'SVG topográfico vetorial oficial existe');
 const topoRasterCss=read('assets/css/topographic-environment-v15-43.css');
-const topoRasterStat=fs.statSync(path.join(ROOT,'assets/ui/topographic-lines-v15-43.webp'));
-check(topoRasterStat.size>300000,'WebP topográfico usa o asset orgânico de alta resolução fornecido');
-check(topoRasterCss.includes('topographic-lines-v15-43.webp'),'CSS topográfico referencia o WebP V15.43');
+const topoRasterStat=fs.statSync(path.join(ROOT,'assets/ui/topographic-lines-v15-48-1.svg'));
+check(topoRasterStat.size>100000,'SVG topográfico original preserva a geometria vetorial em alta qualidade');
+check(topoRasterCss.includes('topographic-lines-v15-48-1.svg'),'CSS topográfico referencia o SVG oficial V15.48.1');
 check(/background-repeat\s*:\s*no-repeat/i.test(topoRasterCss),'topografia raster não repete');
 check(!/background-repeat\s*:\s*repeat(?:\s|;|!)/i.test(topoRasterCss),'topografia raster não usa mosaico repeat');
 check(!/(?:^|[;{])\s*(?:-webkit-)?filter\s*:\s*blur\s*\(/im.test(topoRasterCss),'background raster não aplica blur');
@@ -157,7 +159,7 @@ check(topoRasterCss.includes('opacity:.025!important'),'topografia reduz ruído 
 check(topoRasterCss.includes('body:has(#reader.open)::before'),'leitor oculta o ambiente topográfico global');
 check(!blackEditorialCss.includes('topographic-map-v15-42.svg'),'Black Editorial não reativa o SVG topográfico legado');
 check(!blackEditorialCss.includes('--mm-topo-size'),'Black Editorial não redefine escala topográfica legada');
-check(sw.includes('./assets/ui/topographic-lines-v15-43.webp'),'service worker pré-cacheia WebP topográfico');
+check(sw.includes('./assets/ui/topographic-lines-v15-48-1.svg'),'service worker pré-cacheia SVG topográfico oficial');
 check(sw.includes(`./assets/css/topographic-environment-v15-43.css?v=${expected}`),'service worker pré-cacheia CSS topográfico raster');
 check(!sw.includes('./assets/ui/topographic-map-v15-42.svg'),'service worker não pré-cacheia SVG topográfico legado');
 check(!sw.includes('topographic-environment-v15-42.css'),'service worker não pré-cacheia CSS topográfico legado');

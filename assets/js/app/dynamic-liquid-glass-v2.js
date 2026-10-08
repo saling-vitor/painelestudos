@@ -223,7 +223,7 @@
     if(dock){
       markSurface(dock,'bar',{specular:false,press:false});
       ensureScrollEdge(dock);
-      ensureLens(dock);
+      /* dock use static active button treatment; no moving lens */
       qa(':scope > button',dock).forEach(el=>addClasses(el,'mm-pressable'));
     }
 
