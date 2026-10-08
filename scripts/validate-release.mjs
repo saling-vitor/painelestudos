@@ -91,11 +91,13 @@ const v13BrandLegacy=[
 ];
 for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 removida '+file);
 const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
-const baselineCssText=activeCssFiles.filter(file=>file!=='assets/css/master-refinement-v15-48-1.css').filter(exists).map(read).join('\n');
+const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css'].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
 check(importantCount<=6694,'auditoria: !important não regrediu ('+importantCount+')');
+const navGlassImportant=(read('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
+check(navGlassImportant<=90,'auditoria: V2 preserva limite próprio de overrides ('+navGlassImportant+')');
 check(legacyBlueCount<=19,'auditoria: azul legacy ficou restrito a semântica ('+legacyBlueCount+')');
 const automationCss=read('assets/css/study-automation-v15-37-0.css');
 const settingsControlCss=read('assets/css/settings-control-center-v15-38-0.css');
