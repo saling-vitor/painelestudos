@@ -97,12 +97,14 @@ body:has(.simulation-reader.open)::before{
   opacity:0!important;
 }
 
-/* Classes de layout têm prioridade sobre largura física: split view/PWA não deve apagar o ambiente. */
+/* Intensidade responsiva: as classes reais prevalecem sobre os
+   fallbacks por largura. iPad + iPhone: reforço visual; desktop intacto.
+   Não alterar os fundos do dock, a pintura global ou o modo de leitura. */
 html.is-ipad:not(.is-phone-layout){
-  --mm-topo-opacity:.21;
+  --mm-topo-opacity:.32;
 }
 html.is-phone-layout{
-  --mm-topo-opacity:.20;
+  --mm-topo-opacity:.28;
 }
 html.is-ipad:not(.is-phone-layout) body::before,
 html.is-phone-layout body::before{
@@ -117,7 +119,8 @@ html.is-phone-layout body::before{
   }
 }
 
-/* Tablet / iPad: presença menor, mantendo o material glass conectado ao ambiente. */
+/* Fallback histórico por largura (sem alterar a aparência de desktop estreito).
+   Em tablets reais, a classe is-ipad acima prevalece por especificidade. */
 @media(max-width:1180px){
   :root{
     --mm-topo-opacity:.21;
@@ -129,7 +132,8 @@ html.is-phone-layout body::before{
   }
 }
 
-/* Smartphone: assinatura cartográfica, sem competir com o conteúdo. */
+/* Fallback histórico para telas estreitas; o iPhone usa o token .28
+   definido por is-phone-layout, mesmo quando a viewport muda. */
 @media(max-width:600px){
   :root{
     --mm-topo-opacity:.20;

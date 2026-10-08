@@ -195,9 +195,13 @@ check(topoRasterCss.includes('topographic-lines-v15-48-1.svg'),'CSS topográfico
 check(/background-repeat\s*:\s*no-repeat/i.test(topoRasterCss),'topografia raster não repete');
 check(!/background-repeat\s*:\s*repeat(?:\s|;|!)/i.test(topoRasterCss),'topografia raster não usa mosaico repeat');
 check(!/(?:^|[;{])\s*(?:-webkit-)?filter\s*:\s*blur\s*\(/im.test(topoRasterCss),'background raster não aplica blur');
-check(topoRasterCss.includes('--mm-topo-opacity:.20'),'topografia desktop usa opacidade .20');
-check(topoRasterCss.includes('--mm-topo-opacity:.21'),'topografia tablet usa opacidade .21');
-check(topoRasterCss.includes('--mm-topo-opacity:.20'),'topografia smartphone usa opacidade .20');
+check(/:root\s*\{\s*--mm-topo-opacity:\.20\s*;/.test(topoRasterCss),'topografia desktop mantém .20');
+check(/html\.is-ipad:not\(\.is-phone-layout\)\s*\{\s*--mm-topo-opacity:\.32\s*;/.test(topoRasterCss),'topografia iPad usa .32');
+check(/html\.is-phone-layout\s*\{\s*--mm-topo-opacity:\.28\s*;/.test(topoRasterCss),'topografia smartphone usa .28');
+check(/@media\(max-width:1180px\)\s*\{\s*:root\s*\{\s*--mm-topo-opacity:\.21\s*;/.test(topoRasterCss),'fallback histórico por largura preservado');
+check(topoRasterCss.includes('transform:none;'),'transform de proteção do dock do iPad preservado');
+check(!read('assets/css/nav-liquid-glass-v15-48-2.css').includes('--mm-topo-opacity'),'dock não sobrepõe topografia');
+check(read('tests/e2e/app.spec.mjs').includes('Topografia [T+M] · intensidade'),'teste de visibilidade WebKit presente');
 check(topoRasterCss.includes('opacity:.025!important'),'topografia reduz ruído em transparência/contraste');
 check(topoRasterCss.includes('body:has(#reader.open)::before'),'leitor oculta o ambiente topográfico global');
 check(!blackEditorialCss.includes('topographic-map-v15-42.svg'),'Black Editorial não reativa o SVG topográfico legado');
