@@ -4760,3 +4760,59 @@ test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',asyn
   expect(state.lowerIsNav).toBe(false);
   expect(state.pageOverflow).toBeLessThanOrEqual(2);
 });
+
+test('V15.48.7 [T] dock responde ao scroll real e mantém todos os botões tocáveis',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='ipad','Dock inferior exclusivo do iPad');
+  test.setTimeout(90000);
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#home');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const audit=await page.evaluate(async()=>{
+    const nav=document.querySelector('.bottom-nav');
+    const scroller=document.querySelector('.main');
+    const content=document.querySelector('.content');
+    const probe=document.createElement('div');
+    probe.style.cssText='height:86px;background:linear-gradient(90deg,#d8c59e,#72baaa);margin-top:900px';
+    probe.dataset.dockTestProbe='1';
+    const tail=document.createElement('div');
+    tail.style.cssText='height:1200px;pointer-events:none';
+    tail.dataset.dockTestTail='1';
+    content.append(probe,tail);
+    const before=getComputedStyle(nav).getPropertyValue('--mm-dock-alpha').trim();
+    const n=nav.getBoundingClientRect();
+    scroller.scrollTop=probe.getBoundingClientRect().top-scroller.getBoundingClientRect().top+scroller.scrollTop-n.top+25;
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const p=probe.getBoundingClientRect();
+    const glass=getComputedStyle(nav);
+    const blocked=[...nav.querySelectorAll(':scope > button[data-nav]')].filter(button=>{
+      const box=button.getBoundingClientRect();
+      const target=document.elementFromPoint(box.x+box.width/2,box.y+box.height/2);
+      return !target||target.closest('button')!==button;
+    }).map(el=>el.dataset.nav);
+    const outside=document.elementFromPoint(4,n.top+24);
+    return {scrollTop:scroller.scrollTop,overlap:p.top<n.bottom&&p.bottom>n.top,
+      before,after:glass.getPropertyValue('--mm-dock-alpha').trim(),
+      filter:glass.backdropFilter||glass.webkitBackdropFilter,
+      edge:!!nav.querySelector(':scope > .mm-scroll-edge'),
+      blocked,outsideNav:outside!==nav&&!nav.contains(outside),
+      position:glass.position,navCount:nav.querySelectorAll(':scope > button[data-nav]').length};
+  });
+  expect(audit.scrollTop).toBeGreaterThan(100);
+  expect(audit.overlap).toBe(true);
+  expect(audit.filter).toContain('blur(');
+  expect(audit.edge).toBe(false);
+  expect(audit.outsideNav).toBe(true);
+  expect(audit.blocked).toEqual([]);
+  expect(audit.position).toBe('fixed');
+  expect(Number(audit.after)).toBeGreaterThan(Number(audit.before));
+  await testInfo.attach('ipad-glass-scroll-overlap',{body:await page.screenshot(),contentType:'image/png'});
+  for(const name of ['courses','maps','simulations','agenda','progress','settings','home']){
+    await page.locator('.bottom-nav > button[data-nav="'+name+'"]').click();
+    await expect(page.locator('.bottom-nav > button[data-nav="'+name+'"]')).toHaveAttribute('aria-current','page');
+  }
+  await page.evaluate(()=>{
+    document.querySelector('[data-dock-test-probe]')?.remove();
+    document.querySelector('[data-dock-test-tail]')?.remove();
+  });
+});
