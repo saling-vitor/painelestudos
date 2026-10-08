@@ -1,11 +1,11 @@
-/* MEUS MAPAS — V15.48.3-G | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
+/* MEUS MAPAS — V15.48.4-G | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
    Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
    Base: V15.48.1-G. CSS carregado por último para substituir legados. */
 
 /* 09 [G] Calibração: ~30% menos intensidade que o SVG V15.48.1. */
-:root { --mm-topo-opacity:.60 }
-html.is-ipad:not(.is-phone-layout) { --mm-topo-opacity:.65 }
-html.is-phone-layout { --mm-topo-opacity:.70 }
+:root { --mm-topo-opacity:.40 }
+html.is-ipad:not(.is-phone-layout) { --mm-topo-opacity:.44 }
+html.is-phone-layout { --mm-topo-opacity:.48 }
 
 /* 16 [G] Paleta exclusiva de navegação — NÃO altera acentos dos cursos/mapas. */
 :is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#e6c790 }
@@ -174,4 +174,31 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
   .bottom-nav>button[data-nav].active,.side .nav-btn[data-nav].active {
     outline:2px solid Highlight!important;outline-offset:-2px
   }
+}
+
+/* V15.48.4-G | dock iPad: a única superfície óptica deve ser a barra.
+   Remover sombras/placas externas sem destruir conteúdo nem o destaque ativo. */
+@media (orientation:portrait) {
+ html.is-ipad:not(.is-phone-layout) .bottom-nav {
+   isolation:isolate!important;
+   overflow:hidden!important;
+   background-clip:padding-box!important;
+   border-radius:20px!important;
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 9px 24px rgba(0,0,0,.22)!important;
+ }
+ html.is-ipad:not(.is-phone-layout) .bottom-nav::before,
+ html.is-ipad:not(.is-phone-layout) .bottom-nav::after,
+ html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-active-lens,
+ html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-scroll-edge {
+   content:none!important;
+   display:none!important;
+ }
+ html.is-ipad:not(.is-phone-layout) .bottom-nav>button {
+   -webkit-backdrop-filter:none!important;
+   backdrop-filter:none!important;
+ }
+}
+/* Fora da barra, nenhum elemento auxiliar deve formar uma placa no rodapé. */
+html.is-ipad:not(.is-phone-layout) body::after {
+ pointer-events:none;
 }
