@@ -57,7 +57,9 @@
     display:grid!important;
     grid-template-columns:repeat(7,minmax(0,1fr))!important;
     gap:2px!important;
-    padding:6px!important;
+    padding:4px!important;
+    /* Dock compacto de sete destinos: uma só área óptica. */
+    align-items:stretch!important;
     /* Geometria apenas. O material do vidro pertence exclusivamente
        à última camada nav-liquid-glass, sem fundo ou filtro legado aqui. */
   }
@@ -67,11 +69,11 @@
     grid-template-rows:auto auto!important;
     place-items:center!important;
     align-content:center!important;
-    gap:3px!important;
+    gap:2px!important;
     min-width:0!important;
-    height:58px!important;
-    min-height:58px!important;
-    padding:4px 2px!important;
+    height:50px!important;
+    min-height:50px!important;
+    padding:2px 2px!important;
     border:0!important;
     border-radius:11px!important;
     background:transparent!important;
@@ -81,14 +83,14 @@
   }
 
   html.is-ipad:not(.is-phone-layout) .bottom-nav button>.ui-icon{
-    --icon-size:20px;
+    --icon-size:18px;
     margin:0!important;
   }
 
   html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-label{
     display:block!important;
     margin:0!important;
-    font-size:8px!important;
+    font-size:9px!important;
     line-height:1.1!important;
     white-space:nowrap!important;
   }
@@ -96,7 +98,7 @@
   /* Cor e fundo do botão ativo são definidos pelo módulo cromático
      nav-liquid-glass, sem fallback dourado conflitante. */
 
-  html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-agenda{
+  html.is-ipad:not(.is-phone-layout) .bottom-nav :is(.bottom-nav-agenda,.bottom-nav-simulations){
     display:grid!important;
   }
 }
