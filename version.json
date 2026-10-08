@@ -1,17 +1,18 @@
 {
-  "version": "15.48.8",
-  "label": "V15.48.8-G",
-  "notes": "Estabilidade de interação em atualizações assíncronas: campos de metas e detalhes de prioridades preservados, mantendo correções do dock iPad.",
+  "version": "15.48.9",
+  "label": "V15.48.9-G",
+  "notes": "Sincronização da versão-fonte da aplicação, atualizações, PWA e metadados; estabilidade das metas e prioridades preservada.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Campos de metas preservados durante refresh",
-    "[G] Painel de prioridades permanece aberto após recalcular",
-    "[T] Dock Liquid Glass e navegação por toque preservados"
+    "[G] APP_VERSION e APP_VERSION_LABEL alinhados ao código-fonte",
+    "[G] Registro de Service Worker e caches sincronizados",
+    "[G] Metas e prioridades resistentes a re-render",
+    "[T] Dock Liquid Glass e navegação preservados"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
     "channel": "G",
-    "runBase": 710
+    "runBase": 711
   }
 }
