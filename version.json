@@ -1,17 +1,17 @@
 {
-  "version": "15.48.7",
-  "label": "V15.48.7-T",
-  "notes": "Dock iPad: remover camada legada, sincronizar Liquid Glass com rolagem da .main e validar botões navegáveis.",
+  "version": "15.48.8",
+  "label": "V15.48.8-G",
+  "notes": "Estabilidade das metas de estudo em atualizações assíncronas, preservando inputs em edição; mantém correções do dock iPad de V15.48.7-T.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Liquid Glass acompanha scroll da .main",
-    "[T] Remoção de scroll-edge e fundo legado do dock",
-    "[T] Verificação de sete botões após rolagem"
+    "[G] Campos de metas preservados durante refresh de interface",
+    "[G] Teste de meta semanal submetida durante atualizações",
+    "[T] Dock Liquid Glass e botões preservados"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "T",
-    "runBase": 709
+    "channel": "G",
+    "runBase": 710
   }
 }
