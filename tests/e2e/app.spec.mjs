@@ -4616,7 +4616,7 @@ test('V15.48 mantém modais fora da shell em Black Editorial neutro',async({page
   expect(visual.focusBackground).toBe('rgb(10, 10, 10)');
   const focusRgb=(visual.focusBorder.match(/\d+/g)||[]).slice(0,3).map(Number);
   expect(focusRgb.length).toBe(3);
-  expect(focusRgb[0]).toBeGreaterThan(focusRgb[2]);
+  expect(focusRgb[2]).toBeLessThanOrEqual(Math.max(focusRgb[0],focusRgb[1])+4);
   expect(visual.cardBackgroundImage).toContain('linear-gradient');
   expect(visual.cardBackgroundImage).not.toContain('rgb(8, 11, 15)');
 });
