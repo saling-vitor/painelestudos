@@ -1,11 +1,11 @@
-/* MEUS MAPAS — V15.48.3-G | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
+/* MEUS MAPAS — V15.48.4-G | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
    Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
    Base: V15.48.1-G. CSS carregado por último para substituir legados. */
 
 /* 09 [G] Calibração: ~30% menos intensidade que o SVG V15.48.1. */
-:root { --mm-topo-opacity:.60 }
-html.is-ipad:not(.is-phone-layout) { --mm-topo-opacity:.65 }
-html.is-phone-layout { --mm-topo-opacity:.70 }
+:root { --mm-topo-opacity:.40 }
+html.is-ipad:not(.is-phone-layout) { --mm-topo-opacity:.44 }
+html.is-phone-layout { --mm-topo-opacity:.48 }
 
 /* 16 [G] Paleta exclusiva de navegação — NÃO altera acentos dos cursos/mapas. */
 :is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#e6c790 }
@@ -174,4 +174,63 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
   .bottom-nav>button[data-nav].active,.side .nav-btn[data-nav].active {
     outline:2px solid Highlight!important;outline-offset:-2px
   }
+}
+
+/* V15.48.4-G | dock iPad: a única superfície óptica deve ser a barra.
+   Remover sombras/placas externas sem destruir conteúdo nem o destaque ativo. */
+@media (orientation:portrait) {
+ html.is-ipad:not(.is-phone-layout) .bottom-nav {
+   isolation:isolate!important;
+   overflow:hidden!important;
+   background-clip:padding-box!important;
+   border-radius:20px!important;
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 9px 24px rgba(0,0,0,.22)!important;
+ }
+ html.is-ipad:not(.is-phone-layout) .bottom-nav::before,
+ html.is-ipad:not(.is-phone-layout) .bottom-nav::after,
+ html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-active-lens,
+ html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-scroll-edge {
+   content:none!important;
+   display:none!important;
+ }
+ html.is-ipad:not(.is-phone-layout) .bottom-nav>button {
+   -webkit-backdrop-filter:none!important;
+   backdrop-filter:none!important;
+ }
+}
+/* Fora da barra, nenhum elemento auxiliar deve formar uma placa no rodapé. */
+html.is-ipad:not(.is-phone-layout) body::after {
+ pointer-events:none;
+}
+
+/* V15.48.4-T | Progresso iPad: contraste seletivo sem poluir demais cards. */
+html.is-ipad:not(.is-phone-layout) .study-analytics-panel .study-heatmap-primary {
+ background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 65%),rgba(23,23,24,.80)!important;
+ border:1px solid rgba(255,255,255,.15)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-rhythm-kpis>article {
+ background:rgba(31,31,32,.77)!important;
+ border-color:rgba(255,255,255,.12)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-rhythm-details,
+html.is-ipad:not(.is-phone-layout) .study-rhythm-distribution>div {
+ background:rgba(28,28,29,.82)!important;
+ border-color:rgba(255,255,255,.12)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-inbox.is-empty,
+html.is-ipad:not(.is-phone-layout) .study-doubt-list>article {
+ background:linear-gradient(150deg,rgba(255,255,255,.045),transparent 80%),rgba(26,26,27,.83)!important;
+ border:1px solid rgba(255,255,255,.13)!important;
+ border-radius:12px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-list>article {
+ margin-block:7px!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-empty {
+ border-top-color:rgba(255,255,255,.095)!important;
+}
+html.is-ipad:not(.is-phone-layout) .study-doubt-inbox :is(.study-doubt-count,.study-doubt-empty>span) {
+ color:#c5c5c5!important;
+ border-color:rgba(255,255,255,.15)!important;
 }

@@ -4411,16 +4411,16 @@ test('V15.48.1 [G] PASSO 4 · SVG topográfico é contínuo, responsivo e sem mo
   const project=testInfo.project.name;
   const cases=project==='desktop-chromium'
     ?[
-      {width:1920,height:1080,opacity:.60},
-      {width:2560,height:1440,opacity:.60}
+      {width:1920,height:1080,opacity:.40},
+      {width:2560,height:1440,opacity:.40}
     ]
     :project==='ipad'
       ?[
-        {width:1024,height:834,opacity:.65},
-        {width:820,height:1180,opacity:.65}
+        {width:1024,height:834,opacity:.44},
+        {width:820,height:1180,opacity:.44}
       ]
       :[
-        {width:390,height:844,opacity:.70}
+        {width:390,height:844,opacity:.48}
       ];
 
   for(const viewport of cases){
@@ -4520,9 +4520,9 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
 
 test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e ordenação canônicos',async({page},testInfo)=>{
   const topoOpacity=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
-  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeGreaterThanOrEqual(.30);
-  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeGreaterThanOrEqual(.40);
-  else expect(topoOpacity).toBeGreaterThanOrEqual(.44);
+  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeGreaterThanOrEqual(.45);
+  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeGreaterThanOrEqual(.41);
+  else expect(topoOpacity).toBeGreaterThanOrEqual(.37);
 
   if(testInfo.project.name==='desktop-chromium'){
     const side=page.locator('.side');
