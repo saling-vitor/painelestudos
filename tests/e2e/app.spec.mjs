@@ -4676,3 +4676,40 @@ test('V15.48.2 [T+M] vidro de dock e topbar é translúcido, sem tarja',async({p
     expect(visual.topbarFilter).toContain('blur(');
   }
 });
+
+
+test('V15.48.3 [G] somente menu ativo tem cor; inativos brancos em Desktop/iPad/iPhone',async({page},testInfo)=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  const prefix=testInfo.project.name==='desktop-chromium'?'.side .nav-btn':'.bottom-nav>button';
+  const menu=id=>page.locator(prefix+'[data-nav="'+id+'"]');
+  const icon=id=>menu(id).locator(':scope > .ui-icon');
+  const label=id=>menu(id).locator(':scope > :is(.txt,.bottom-nav-label)');
+  await expect(menu('home')).toHaveClass(/active/);
+  await expect(icon('home')).not.toHaveCSS('color','rgb(244, 244, 244)');
+  await expect(icon('courses')).toHaveCSS('color','rgb(244, 244, 244)');
+  await expect(label('courses')).toHaveCSS('color','rgb(244, 244, 244)');
+  await expect(icon('maps')).toHaveCSS('color','rgb(244, 244, 244)');
+  if(testInfo.project.name==='desktop-chromium'){
+    await menu('courses').hover();
+    await expect(icon('courses')).toHaveCSS('color','rgb(244, 244, 244)');
+    await expect(label('courses')).toHaveCSS('color','rgb(244, 244, 244)');
+  }
+  await menu('maps').click();
+  await expect(menu('maps')).toHaveClass(/active/);
+  await expect(icon('maps')).not.toHaveCSS('color','rgb(244, 244, 244)');
+  await expect(label('maps')).not.toHaveCSS('color','rgb(244, 244, 244)');
+  await expect(icon('home')).toHaveCSS('color','rgb(244, 244, 244)');
+  await expect(label('home')).toHaveCSS('color','rgb(244, 244, 244)');
+  if(testInfo.project.name==='iphone-webkit'){
+    const more=page.locator('#mobileMenuBtn');
+    await expect(more).toBeVisible();
+    await expect(more.locator(':scope > .ui-icon')).toHaveCSS('color','rgb(244, 244, 244)');
+    await more.click();
+    await expect(more).toHaveAttribute('aria-expanded','true');
+    await expect(more.locator(':scope > .ui-icon')).not.toHaveCSS('color','rgb(244, 244, 244)');
+    const option=page.locator('.mobile-menu-option[data-mobile-sheet-nav="agenda"]');
+    await expect(option.locator('.ui-icon')).toHaveCSS('color','rgb(244, 244, 244)');
+    await expect(option.locator('b')).toHaveCSS('color','rgb(244, 244, 244)');
+  }
+});
