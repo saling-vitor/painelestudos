@@ -8,15 +8,15 @@
 .continue-card{--map-accent:var(--continue-accent,#9aa1aa);border-color:color-mix(in srgb,var(--map-accent) 36%,#343434)}
 .continue-card .continue-thumb-code,.continue-card .continue-content>b,.continue-card .activity-label{color:var(--map-accent)}
 .continue-card .continue-progress span{background:var(--map-accent)}
-.continue-card .primary{border-color:color-mix(in srgb,var(--map-accent) 52%,#3a3d43);color:color-mix(in srgb,var(--map-accent) 78%,white)}
+.continue-card .primary{border-color:color-mix(in srgb,var(--map-accent) 52%,#3d3d3c);color:color-mix(in srgb,var(--map-accent) 78%,white)}
 .continue-card .continue-thumb{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--map-accent) 36%,transparent)}
 .study-plan-item.has-map-accent{border-left:2px solid var(--map-accent)}
 .study-plan-item.has-map-accent .study-plan-code{color:var(--map-accent);border-color:color-mix(in srgb,var(--map-accent) 48%,#363636);background:color-mix(in srgb,var(--map-accent) 10%,transparent)}
-.study-plan-item.has-map-accent .secondary{border-color:color-mix(in srgb,var(--map-accent) 28%,#34383f)}
-.study-plan-item.has-map-accent:hover{border-color:color-mix(in srgb,var(--map-accent) 46%,#34383f)}
+.study-plan-item.has-map-accent .secondary{border-color:color-mix(in srgb,var(--map-accent) 28%,#383837)}
+.study-plan-item.has-map-accent:hover{border-color:color-mix(in srgb,var(--map-accent) 46%,#383837)}
 .study-command-card[data-map-accent="true"]{border-color:color-mix(in srgb,var(--map-accent) 28%,#343434)}
 .study-command-map-code{display:inline-flex;width:max-content;margin-bottom:6px;padding:4px 8px;border:1px solid color-mix(in srgb,var(--map-accent) 48%,#343434);border-radius:8px;color:var(--map-accent);background:color-mix(in srgb,var(--map-accent) 9%,transparent);font:700 10px/1 var(--mono,ui-monospace,monospace);letter-spacing:.06em}
-.study-command-card[data-map-accent="true"] .primary{border-color:color-mix(in srgb,var(--map-accent) 42%,#373b42)}
+.study-command-card[data-map-accent="true"] .primary{border-color:color-mix(in srgb,var(--map-accent) 42%,#3b3b3a)}
 .study-command-card[data-map-accent="true"] .study-command-metrics em{background:var(--map-accent)}
 .global-search-option[style*="--map-accent"]{border-left:2px solid var(--map-accent)}
 .global-search-option[style*="--map-accent"] b{color:color-mix(in srgb,var(--map-accent) 58%,white)}
@@ -31,7 +31,7 @@
 .progress-insight-title{display:flex;align-items:center;gap:8px;min-width:0}
 .progress-insight-title b{font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .progress-insight-card p{margin:5px 0 0;color:#969ca5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.progress-insight-card>.secondary{grid-area:action;align-self:center;border-color:color-mix(in srgb,var(--map-accent) 34%,#34383f);color:color-mix(in srgb,var(--map-accent) 78%,white)}
+.progress-insight-card>.secondary{grid-area:action;align-self:center;border-color:color-mix(in srgb,var(--map-accent) 34%,#383837);color:color-mix(in srgb,var(--map-accent) 78%,white)}
 .progress-insight-card .map-code{color:var(--map-accent);border-color:color-mix(in srgb,var(--map-accent) 50%,#343434);background:color-mix(in srgb,var(--map-accent) 9%,transparent)}
 .progress-insight-simulation{--map-accent:#a84e58}
 .progress-map-row{--map-accent:#9aa1aa;border-left:2px solid var(--map-accent)}
@@ -44,7 +44,7 @@
 .progress-map-row .map-code,.progress-map-summary-line b,.progress-map-row .progress-open{color:var(--map-accent)}
 .progress-map-row .map-code{border-color:color-mix(in srgb,var(--map-accent) 46%,#343434);background:color-mix(in srgb,var(--map-accent) 9%,transparent)}
 .progress-map-row .progress-track span{background:var(--map-accent)}
-.progress-map-row .progress-open{border-color:color-mix(in srgb,var(--map-accent) 32%,#34383f)}
+.progress-map-row .progress-open{border-color:color-mix(in srgb,var(--map-accent) 32%,#383837)}
 @media (max-width:700px){
  html.is-phone-layout .progress-insights{padding:12px}
  html.is-phone-layout .progress-insights-grid{display:grid;grid-template-columns:1fr;gap:10px}
