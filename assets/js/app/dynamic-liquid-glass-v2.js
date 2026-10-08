@@ -146,7 +146,13 @@
     if(topbar){
       markSurface(topbar,'bar');
       addClasses(topbar,'mm-scroll-density');
-      ensureScrollEdge(topbar);
+      // Safari/WebKit: uma única superfície composta para topbar móvel.
+      // O scroll-edge auxiliar permanece apenas no desktop.
+      if(root.classList.contains('is-ipad')||root.classList.contains('is-phone-layout')){
+        q(':scope > .mm-scroll-edge',topbar)?.remove();
+      }else{
+        ensureScrollEdge(topbar);
+      }
     }
 
     const side=q('.side');
@@ -157,13 +163,9 @@
     const dock=q('.bottom-nav');
     if(dock){
       markSurface(dock,'bar');
-      // V15.48.7-T: iPad não deve conter a faixa auxiliar antiga.
-      // Criar e ocultar a faixa via CSS deixava uma camada DOM residual.
-      if(root.classList.contains('is-ipad')){
-        q(':scope > .mm-scroll-edge',dock)?.remove();
-      }else{
-        ensureScrollEdge(dock);
-      }
+      // Safari/WebKit: o dock é a própria superfície óptica.
+      // Não manter overlays de scroll ocultos no DOM (iPad e iPhone).
+      q(':scope > .mm-scroll-edge',dock)?.remove();
       /* Seleção estática por item; sem overlay deslizante. */
     }
 
@@ -228,7 +230,7 @@
     // acompanhar esse scroller sem mover nem interceptar o dock.
     const ipadPortrait=root.classList.contains('is-ipad')&&!root.classList.contains('is-phone-layout')&&matchMedia('(orientation: portrait)').matches;
     const mainScroll=ipadPortrait?(q('.main')?.scrollTop||0):0;
-    const y=Math.max(0,mainScroll,window.scrollY||document.documentElement.scrollTop||0);
+    const y=Math.max(0,mainScroll,window.scrollY||document.scrollingElement?.scrollTop||0);
     const t=clamp((y-8)/40);
     const dock=ipadPortrait?q('.bottom-nav'):null;
     if(dock) dock.style.setProperty('--mm-dock-alpha',(.075+t*.035).toFixed(3));
