@@ -4833,3 +4833,130 @@ test('V15.48.7 [T] dock responde ao scroll real e mantém todos os botões tocá
     document.querySelector('[data-dock-test-tail]')?.remove();
   });
 });
+
+
+
+test('Safari iPad [T+M] material único e toque no dock com scroll e standalone',async({page},testInfo)=>{
+  test.skip(!['ipad','ipad-webkit'].includes(testInfo.project.name),'Teste somente de tablet');
+  test.setTimeout(90000);
+  await page.setViewportSize({width:820,height:1180});
+  await page.goto('/#home');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  for(const standalone of [false,true]){
+    if(standalone)await page.evaluate(()=>document.documentElement.classList.add('is-standalone'));
+    const audit=await page.evaluate(async()=>{
+      const nav=document.querySelector('.bottom-nav'),topbar=document.querySelector('.topbar');
+      const content=document.querySelector('.content'),scroller=document.querySelector('.main');
+      const probe=document.createElement('div');
+      probe.style.cssText='height:1400px;pointer-events:none';
+      content.appendChild(probe);
+      scroller.scrollTop=520;
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      const css=getComputedStyle(nav),barCss=getComputedStyle(topbar);
+      const hit=[...nav.querySelectorAll(':scope > button[data-nav]')].filter(el=>{
+        const r=el.getBoundingClientRect();
+        const hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+        return hit&&hit.closest('button')===el;
+      }).map(x=>x.dataset.nav);
+      const data={
+        count:nav.querySelectorAll(':scope > button[data-nav]').length,
+        hits:hit,
+        overflow:css.overflow,
+        isolation:css.isolation,
+        dockGlass:css.backdropFilter||css.webkitBackdropFilter,
+        barGlass:barCss.backdropFilter||barCss.webkitBackdropFilter,
+        dockBefore:getComputedStyle(nav,'::before').content,
+        topbarBefore:getComputedStyle(topbar,'::before').content,
+        dockOverlay:nav.querySelectorAll(':scope > .mm-scroll-edge').length,
+        topOverlay:topbar.querySelectorAll(':scope > .mm-scroll-edge').length,
+        scrollTop:scroller.scrollTop,
+        bottom:nav.getBoundingClientRect().bottom,
+        viewport:innerHeight
+      };
+      probe.remove();
+      return data;
+    });
+    expect(audit.count).toBe(7);
+    expect(audit.hits).toEqual(['home','courses','maps','simulations','agenda','progress','settings']);
+    expect(audit.overflow).toBe('visible');
+    expect(audit.isolation).toBe('auto');
+    expect(audit.dockGlass).toContain('blur(');
+    expect(audit.barGlass).toContain('blur(');
+    expect(audit.dockBefore).toBe('none');
+    expect(audit.topbarBefore).toBe('none');
+    expect(audit.dockOverlay).toBe(0);
+    expect(audit.topOverlay).toBe(0);
+    expect(audit.scrollTop).toBeGreaterThan(100);
+    expect(audit.bottom).toBeLessThanOrEqual(audit.viewport);
+    await testInfo.attach('safari-ipad-'+(standalone?'standalone':'browser'),{
+      body:await page.screenshot(),contentType:'image/png'
+    });
+  }
+  for(const name of ['courses','simulations','agenda','progress','settings','home']){
+    const el=page.locator('.bottom-nav > button[data-nav="'+name+'"]');
+    await el.click();
+    await expect(el).toHaveAttribute('aria-current','page');
+  }
+  await page.setViewportSize({width:1180,height:820});
+  await expect(page.locator('.side')).toBeVisible();
+  await expect(page.locator('.bottom-nav')).toBeHidden();
+});
+
+test('Safari iPhone [M] dock e topbar estáveis durante a rolagem',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='iphone-webkit','Teste exclusivo do WebKit mobile');
+  test.setTimeout(60000);
+  await page.goto('/#home');
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+  for(const standalone of [false,true]){
+    if(standalone)await page.evaluate(()=>document.documentElement.classList.add('is-standalone'));
+    const audit=await page.evaluate(async()=>{
+      const nav=document.querySelector('.bottom-nav'),bar=document.querySelector('.topbar');
+      const content=document.querySelector('.content');
+      const probe=document.createElement('div');
+      probe.style.cssText='height:1700px;pointer-events:none';
+      content.append(probe);
+      window.scrollTo(0,550);
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      const ns=getComputedStyle(nav),bs=getComputedStyle(bar);
+      const visible=[...nav.querySelectorAll(':scope > button')].filter(x=>getComputedStyle(x).display!=='none');
+      const blocked=visible.filter(x=>{
+        const r=x.getBoundingClientRect(),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+        return !hit||hit.closest('button')!==x;
+      }).map(x=>x.id||x.dataset.nav);
+      const result={
+        visible:visible.length,blocked,overflow:ns.overflow,isolation:ns.isolation,
+        dockGlass:ns.backdropFilter||ns.webkitBackdropFilter,
+        barGlass:bs.backdropFilter||bs.webkitBackdropFilter,
+        dockBefore:getComputedStyle(nav,'::before').content,
+        topbarBefore:getComputedStyle(bar,'::before').content,
+        dockOverlay:nav.querySelectorAll(':scope > .mm-scroll-edge').length,
+        barOverlay:bar.querySelectorAll(':scope > .mm-scroll-edge').length,
+        left:nav.getBoundingClientRect().left,
+        right:innerWidth-nav.getBoundingClientRect().right,
+        scrollY:window.scrollY
+      };
+      probe.remove();
+      return result;
+    });
+    expect(audit.visible).toBe(5);
+    expect(audit.blocked).toEqual([]);
+    expect(audit.overflow).toBe('visible');
+    expect(audit.isolation).toBe('auto');
+    expect(audit.dockGlass).toContain('blur(');
+    expect(audit.barGlass).toContain('blur(');
+    expect(audit.dockBefore).toBe('none');
+    expect(audit.topbarBefore).toBe('none');
+    expect(audit.dockOverlay).toBe(0);
+    expect(audit.barOverlay).toBe(0);
+    expect(audit.left).toBeGreaterThanOrEqual(5);
+    expect(audit.right).toBeGreaterThanOrEqual(5);
+    expect(audit.scrollY).toBeGreaterThan(100);
+    await testInfo.attach('safari-iphone-'+(standalone?'standalone':'browser'),{
+      body:await page.screenshot(),contentType:'image/png'
+    });
+  }
+  await page.locator('.bottom-nav > button[data-nav="courses"]').click();
+  await expect(page.locator('.bottom-nav > button[data-nav="courses"]')).toHaveAttribute('aria-current','page');
+  await page.locator('#mobileMenuBtn').click();
+  await expect(page.locator('#mobileMenuBtn')).toHaveAttribute('aria-expanded','true');
+});
