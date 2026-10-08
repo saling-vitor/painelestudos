@@ -4433,11 +4433,11 @@ test('V15.48.1 [G] PASSO 4 · SVG topográfico é contínuo, responsivo e sem mo
     ]
     :project==='ipad'
       ?[
-        {width:1024,height:834,opacity:.21},
-        {width:820,height:1180,opacity:.21}
+        {width:1024,height:834,opacity:.32},
+        {width:820,height:1180,opacity:.32}
       ]
       :[
-        {width:390,height:844,opacity:.20}
+        {width:390,height:844,opacity:.28}
       ];
 
   for(const viewport of cases){
@@ -4537,8 +4537,8 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
 
 test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e ordenação canônicos',async({page},testInfo)=>{
   const topoOpacity=await page.evaluate(()=>parseFloat(getComputedStyle(document.body,'::before').opacity)||0);
-  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeCloseTo(.20,2);
-  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeCloseTo(.21,2);
+  if(testInfo.project.name==='iphone-webkit')expect(topoOpacity).toBeCloseTo(.28,2);
+  else if(testInfo.project.name==='ipad')expect(topoOpacity).toBeCloseTo(.32,2);
   else expect(topoOpacity).toBeCloseTo(.20,2);
 
   if(testInfo.project.name==='desktop-chromium'){
@@ -5046,4 +5046,66 @@ test('Dock iPad [T] · geometria de sete destinos e sem placa de fundo',async({p
   await page.setViewportSize({width:1180,height:820});
   await expect(page.locator('.bottom-nav')).toBeHidden();
   await expect(page.locator('.side')).toBeVisible();
+});
+
+
+test('Topografia [T+M] · intensidade responsiva e fundo sem artefatos WebKit',async({page},testInfo)=>{
+  const project=testInfo.project.name;
+  test.skip(!['ipad','ipad-webkit','iphone-webkit'].includes(project),'Teste T+M');
+  const tablet=project!=='iphone-webkit';
+  const viewports=tablet?[
+    {width:820,height:1180},{width:1180,height:820}
+  ]:[
+    {width:390,height:844},{width:428,height:926}
+  ];
+  for(const viewport of viewports){
+    await page.setViewportSize(viewport);
+    await page.goto('/#home');
+    await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
+    await page.evaluate(async()=>{
+      const target=document.querySelector('.main');
+      if(target&&target.scrollHeight>target.clientHeight)target.scrollTop=240;
+      else window.scrollTo(0,240);
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    });
+    const result=await page.evaluate(()=>{
+      const html=document.documentElement,topo=getComputedStyle(document.body,'::before');
+      const dock=document.querySelector('.bottom-nav'),dockBox=dock?.getBoundingClientRect();
+      return {
+        ipad:html.classList.contains('is-ipad'),
+        phone:html.classList.contains('is-phone-layout'),
+        token:parseFloat(getComputedStyle(html).getPropertyValue('--mm-topo-opacity')),
+        opacity:parseFloat(topo.opacity),
+        image:topo.backgroundImage,
+        position:topo.position,
+        repeat:topo.backgroundRepeat,
+        transform:topo.transform,
+        pointerEvents:topo.pointerEvents,
+        dockHeight:dockBox?.height||0,
+        bottom:document.querySelector('.main')?.getBoundingClientRect().bottom,
+        overflow:html.scrollWidth-innerWidth
+      };
+    });
+    const target=tablet?.32:.28;
+    expect(result.ipad).toBe(tablet);
+    expect(result.phone).toBe(!tablet);
+    expect(result.token).toBeCloseTo(target,2);
+    expect(result.opacity).toBeCloseTo(target,2);
+    expect(result.image).toContain('topographic-lines-v15-48-1.svg');
+    expect(result.repeat).toBe('no-repeat');
+    expect(result.position).toBe('fixed');
+    expect(result.pointerEvents).toBe('none');
+    expect(result.overflow).toBeLessThanOrEqual(2);
+    if(tablet){
+      expect(result.bottom).toBeGreaterThanOrEqual(viewport.height-2);
+      if(viewport.height>viewport.width){
+        expect(result.transform).toBe('none');
+        expect(result.dockHeight).toBeGreaterThanOrEqual(56);
+        expect(result.dockHeight).toBeLessThanOrEqual(64);
+      }
+    }
+    await testInfo.attach('topography-'+project+'-'+viewport.width+'x'+viewport.height,{
+      body:await page.screenshot(),contentType:'image/png'
+    });
+  }
 });
