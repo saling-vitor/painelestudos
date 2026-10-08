@@ -1,4 +1,4 @@
-/* MEUS MAPAS — V15.48.5-T | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
+/* MEUS MAPAS — V15.48.7-T | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
    Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
    Base: V15.48.1-G. CSS carregado por último para substituir legados. */
 
@@ -184,7 +184,9 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
    overflow:hidden!important;
    background-clip:padding-box;
    border-radius:20px!important;
-   background:linear-gradient(155deg,rgba(255,255,255,.105),rgba(255,255,255,.018) 48%,transparent 78%),rgba(17,17,18,.10)!important;
+   /* A translucidez acompanha o scroll da .main; jamais desenhar
+      uma superfície no entorno do próprio dock. */
+   background:linear-gradient(155deg,rgba(255,255,255,.105),rgba(255,255,255,.018) 48%,transparent 78%),rgba(17,17,18,var(--mm-dock-alpha,.075))!important;
    box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 5px 13px rgba(0,0,0,.12)!important;
  }
  html.is-ipad:not(.is-phone-layout) .bottom-nav::before,
@@ -197,15 +199,10 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
  html.is-ipad:not(.is-phone-layout) .bottom-nav>button {
    -webkit-backdrop-filter:none!important;
    backdrop-filter:none!important;
+   touch-action:manipulation;
+   pointer-events:auto;
  }
 }
-/* V15.48.6-T: não criar camada posterior ao dock nem fundo de rodapé.
-   A superfície é exclusiva de .bottom-nav; o conteúdo continua rolando atrás. */
-@media (orientation:portrait) {
- html.is-ipad:not(.is-phone-layout) :is(.app,.main,.content) { background-color:transparent; }
- html.is-ipad:not(.is-phone-layout) body::after {content:none;display:none;}
-}
-
 /* V15.48.4-T | Progresso iPad: contraste seletivo sem poluir demais cards. */
 html.is-ipad:not(.is-phone-layout) .study-analytics-panel .study-heatmap-primary {
  background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 65%),rgba(23,23,24,.80)!important;
