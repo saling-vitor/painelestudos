@@ -1,18 +1,18 @@
 {
-  "version": "15.48.9",
-  "label": "V15.48.9-G",
-  "notes": "Topografia mais discreta e Liquid Glass estático: remoção das lentes deslizantes, reflexos guiados pelo ponteiro e compressão no toque.",
+  "version": "15.48.10",
+  "label": "V15.48.10-T+M",
+  "notes": "Safari/WebKit: dock e topbar iPad/iPhone sem overlays auxiliares, com safe areas e navegação tocável após rolagem.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Linhas topográficas suavizadas em todas as plataformas",
-    "[G] Seleção de menus estática, preservando cores individuais",
-    "[G] Sem reflexo especular dinâmico ou lens compression",
-    "[G] Estado do aplicativo e versão do PWA sincronizados"
+    "[T+M] Liquid Glass único no dock e topbar, sem tarjas ou overlays auxiliares",
+    "[T] Sete destinos do dock preservados no iPad retrato e navegação lateral em paisagem",
+    "[M] Dock do iPhone respeita safe areas e mantém cinco botões e menu Mais",
+    "[T+M] Sem compressão dos botões de navegação; service worker sincronizado"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "G",
+    "channel": "T+M",
     "runBase": 710
   }
 }
