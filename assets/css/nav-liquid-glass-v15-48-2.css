@@ -221,18 +221,6 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
    filter:none;
    will-change:auto;
  }
- html.is-ipad:not(.is-phone-layout) .bottom-nav::before,
- html.is-ipad:not(.is-phone-layout) .bottom-nav::after,
- html.is-ipad:not(.is-phone-layout) .bottom-nav>.mm-scroll-edge {
-   content:none!important;
-   display:none!important;
- }
- html.is-ipad:not(.is-phone-layout) .bottom-nav>button {
-   -webkit-backdrop-filter:none!important;
-   backdrop-filter:none!important;
-   touch-action:manipulation;
-   pointer-events:auto;
- }
 }
 /* V15.48.4-T | Progresso iPad: contraste seletivo sem poluir demais cards. */
 html.is-ipad:not(.is-phone-layout) .study-analytics-panel .study-heatmap-primary {
