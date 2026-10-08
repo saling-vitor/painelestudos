@@ -222,7 +222,13 @@
     const dock=q('.bottom-nav');
     if(dock){
       markSurface(dock,'bar',{specular:false,press:false});
-      ensureScrollEdge(dock);
+      // V15.48.7-T: iPad não deve conter a faixa auxiliar antiga.
+      // Criar e ocultar a faixa via CSS deixava uma camada DOM residual.
+      if(root.classList.contains('is-ipad')){
+        q(':scope > .mm-scroll-edge',dock)?.remove();
+      }else{
+        ensureScrollEdge(dock);
+      }
       /* dock use static active button treatment; no moving lens */
       qa(':scope > button',dock).forEach(el=>addClasses(el,'mm-pressable'));
     }
@@ -385,8 +391,14 @@
   function syncScroll(){
     scrollFrame=0;
     activeRect=null;
-    const y=Math.max(0,window.scrollY||document.documentElement.scrollTop||0);
+    // O iPad rola .main, e não a janela. A densidade óptica precisa
+    // acompanhar esse scroller sem mover nem interceptar o dock.
+    const ipadPortrait=root.classList.contains('is-ipad')&&!root.classList.contains('is-phone-layout')&&matchMedia('(orientation: portrait)').matches;
+    const mainScroll=ipadPortrait?(q('.main')?.scrollTop||0):0;
+    const y=Math.max(0,mainScroll,window.scrollY||document.documentElement.scrollTop||0);
     const t=clamp((y-8)/40);
+    const dock=ipadPortrait?q('.bottom-nav'):null;
+    if(dock) dock.style.setProperty('--mm-dock-alpha',(.075+t*.035).toFixed(3));
     const topbar=q('.topbar');
     if(topbar){
       topbar.style.setProperty('--mm-bar-alpha',(.54+t*.12).toFixed(3));
@@ -394,9 +406,14 @@
     }
     root.classList.toggle('mm-scrolled',y>8);
   }
-  window.addEventListener('scroll',()=>{
+  function requestScrollSync(){
     if(!scrollFrame)scrollFrame=requestAnimationFrame(syncScroll);
-  },{passive:true});
+  }
+  window.addEventListener('scroll',requestScrollSync,{passive:true});
+  // Escutar o elemento que realmente recebe o movimento no iPad.
+  // Manter a ligação ativa na paisagem é inofensivo: syncScroll ignora
+  // mainScroll fora do retrato.
+  q('.main')?.addEventListener('scroll',requestScrollSync,{passive:true});
 
   const mutationObserver=new MutationObserver(records=>{
     if(records.some(record=>
