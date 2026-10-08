@@ -4215,11 +4215,11 @@ test('V15.42 [G] PASSO 2 · breakpoints e overflow permanecem íntegros',async({
       dockVisibleItems:[...document.querySelectorAll('.bottom-nav>button')].filter(el=>getComputedStyle(el).display!=='none').length
     }));
     expect(state.overflow).toBeLessThanOrEqual(2);
-    if(project==='ipad'&&viewport.width>=900){
+    if(project==='ipad'&&viewport.width>viewport.height){
       expect(state.side).not.toBe('none');
       expect(state.dock).toBe('none');
     }
-    if(project==='ipad'&&viewport.width<900){
+    if(project==='ipad'&&viewport.width<=viewport.height){
       expect(state.side).toBe('none');
       expect(state.dock).not.toBe('none');
     }
@@ -4407,11 +4407,11 @@ test('V15.44 [G] PASSO 3 · 1280 desktop e iPad por largura não geram overflow'
       dockItems:[...document.querySelectorAll('.bottom-nav>button')].filter(el=>getComputedStyle(el).display!=='none').length
     }));
     expect(state.overflow).toBeLessThanOrEqual(2);
-    if(testInfo.project.name==='ipad'&&viewport.width>=900){
+    if(testInfo.project.name==='ipad'&&viewport.width>viewport.height){
       expect(state.side).not.toBe('none');
       expect(state.dock).toBe('none');
     }
-    if(testInfo.project.name==='ipad'&&viewport.width<900){
+    if(testInfo.project.name==='ipad'&&viewport.width<=viewport.height){
       expect(state.side).toBe('none');
       expect(state.dock).not.toBe('none');
     }
