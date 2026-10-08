@@ -95,7 +95,7 @@ test('[G] V15.45 aplica ambiente topográfico raster contínuo sem transformar c
       sideBackdrop:sideStyle?(sideStyle.backdropFilter||sideStyle.webkitBackdropFilter||'none'):'none'
     };
   });
-  expect(visual.topoImage).toContain('topographic-lines-v15-43.webp');
+  expect(visual.topoImage).toContain('topographic-lines-v15-48-1.svg');
   expect(visual.topoRepeat).toBe('no-repeat');
   expect(visual.topoFilter).toBe('none');
   expect(visual.topoOpacity).toBeGreaterThan(0);
@@ -4280,31 +4280,23 @@ test('V15.44 [G] PASSO 3 · runtime óptico, Inter e orçamento de glass estão 
   if(testInfo.project.name==='iphone-webkit')expect(data.flags).toContain('mm-touch');
 });
 
-test('V15.44 [G] PASSO 3 · active lens compartilhada existe e se move',async({page})=>{
+test('V15.48.1 [G] seleção do dock é estática e mantém navegação acessível',async({page})=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>window.MMDynamicGlass);
   const side=page.locator('.side');
   const useSide=await side.isVisible();
   const host=useSide?side:page.locator('.bottom-nav');
   await expect(host).toBeVisible();
-  await expect(host.locator(':scope > .mm-active-lens')).toHaveCount(1);
-
-  const before=await host.evaluate(el=>({
-    x:getComputedStyle(el).getPropertyValue('--mm-lens-x').trim(),
-    y:getComputedStyle(el).getPropertyValue('--mm-lens-y').trim(),
-    opacity:getComputedStyle(el).getPropertyValue('--mm-lens-opacity').trim()
-  }));
   const target=useSide?host.locator('.nav-btn[data-nav="maps"]'):host.locator(':scope > button[data-nav="maps"]');
+  if(!useSide)await expect(host.locator(':scope > .mm-active-lens')).toHaveCount(0);
   await target.click();
   await expect(page.locator('[data-view="maps"]')).toHaveClass(/active/);
-  await page.waitForTimeout(80);
-  const after=await host.evaluate(el=>({
-    x:getComputedStyle(el).getPropertyValue('--mm-lens-x').trim(),
-    y:getComputedStyle(el).getPropertyValue('--mm-lens-y').trim(),
-    opacity:getComputedStyle(el).getPropertyValue('--mm-lens-opacity').trim()
-  }));
-  expect(after.opacity).toBe('1');
-  expect(after.x+'|'+after.y).not.toBe(before.x+'|'+before.y);
+  await expect(target).toHaveClass(/active/);
+  if(!useSide){
+    const glass=await target.evaluate(el=>({background:getComputedStyle(el).backgroundImage,color:getComputedStyle(el).color}));
+    expect(glass.background).not.toBe('none');
+    expect(glass.color).not.toBe('');
+  }
 });
 
 test('V15.44 [G] PASSO 3 · busca e popover mantêm geometria conectada sem glass-on-glass',async({page})=>{
@@ -4415,20 +4407,20 @@ test('V15.44 [G] PASSO 3 · 1280 desktop e iPad por largura não geram overflow'
 
 
 /* PASSO 4 · Topographic Raster Environment */
-test('V15.45 [G] PASSO 4 · raster orgânico é contínuo, responsivo e sem mosaico',async({page},testInfo)=>{
+test('V15.48.1 [G] PASSO 4 · SVG topográfico é contínuo, responsivo e sem mosaico',async({page},testInfo)=>{
   const project=testInfo.project.name;
   const cases=project==='desktop-chromium'
     ?[
-      {width:1920,height:1080,opacity:.46},
-      {width:2560,height:1440,opacity:.46}
+      {width:1920,height:1080,opacity:.86},
+      {width:2560,height:1440,opacity:.86}
     ]
     :project==='ipad'
       ?[
-        {width:1024,height:834,opacity:.42},
-        {width:820,height:1180,opacity:.42}
+        {width:1024,height:834,opacity:.94},
+        {width:820,height:1180,opacity:.94}
       ]
       :[
-        {width:390,height:844,opacity:.32}
+        {width:390,height:844,opacity:1}
       ];
 
   for(const viewport of cases){
@@ -4451,7 +4443,7 @@ test('V15.45 [G] PASSO 4 · raster orgânico é contínuo, responsivo e sem mosa
     });
 
     expect(Math.abs(state.token-viewport.opacity)).toBeLessThan(.005);
-    expect(state.image).toContain('topographic-lines-v15-43.webp');
+    expect(state.image).toContain('topographic-lines-v15-48-1.svg');
     expect(state.repeat).toBe('no-repeat');
     expect(state.filter).toBe('none');
     expect(state.overflow).toBeLessThanOrEqual(2);
@@ -4479,9 +4471,9 @@ test('V15.45 [G] PASSO 4 · topografia permanece global e conteúdo matte não r
         overflow:document.documentElement.scrollWidth-innerWidth
       };
     });
-    expect(state.topoImage).toContain('topographic-lines-v15-43.webp');
+    expect(state.topoImage).toContain('topographic-lines-v15-48-1.svg');
     expect(state.topoRepeat).toBe('no-repeat');
-    expect(state.permanentImage).not.toContain('topographic-lines-v15-43.webp');
+    expect(state.permanentImage).not.toContain('topographic-lines-v15-48-1.svg');
     expect(state.overflow).toBeLessThanOrEqual(2);
   }
 });
@@ -4519,7 +4511,7 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
       dynamic:window.MMDynamicGlass.snapshot()
     };
   });
-  expect(data.topo).toContain('topographic-lines-v15-43.webp');
+  expect(data.topo).toContain('topographic-lines-v15-48-1.svg');
   expect(data.topbarFilter).not.toBe('none');
   if(await page.locator('.side').isVisible())expect(data.sideFilter).not.toBe('none');
   expect(data.dynamic.opticalSurfaces).toBeGreaterThan(0);
