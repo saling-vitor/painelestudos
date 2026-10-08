@@ -4146,7 +4146,7 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
 
 
 /* PASSO 2 · Black Editorial + Liquid Glass refinado */
-test('V15.42 [G] PASSO 2 · Black Editorial aplica tokens e evita glass-on-glass',async({page},testInfo)=>{
+test('V15.48 [G] Black Editorial neutro aplica tokens e evita glass-on-glass',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
   const data=await page.evaluate(()=>{
@@ -4171,12 +4171,12 @@ test('V15.42 [G] PASSO 2 · Black Editorial aplica tokens e evita glass-on-glass
       dockActiveFilter:readFilter(activeDock)
     };
   });
-  expect(data.bg).toBe('#040506');
-  expect(data.bgDeep).toBe('#020304');
-  expect(data.surface1).toBe('#0B0C0E');
-  expect(data.regular).toBe('rgba(9,10,11,.60)');
-  expect(data.dense).toBe('rgba(8,9,10,.82)');
-  expect(data.clear).toBe('rgba(12,12,13,.24)');
+  expect(data.bg).toBe('#040404');
+  expect(data.bgDeep).toBe('#020202');
+  expect(data.surface1).toBe('#0B0B0C');
+  expect(data.regular).toBe('rgba(9,9,10,.60)');
+  expect(data.dense).toBe('rgba(8,8,9,.82)');
+  expect(data.clear).toBe('rgba(12,12,12,.24)');
   expect(data.searchFilter).toBe('none');
   expect(data.syncFilter).toBe('none');
   if(testInfo.project.name!=='iphone-webkit')expect(data.sideActiveFilter).toBe('none');
