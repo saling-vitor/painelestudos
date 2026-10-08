@@ -1,4 +1,4 @@
-/* MEUS MAPAS — V15.48.7-T | NAV ACTIVE-ONLY COLOR / LISTA MESTRA V2 (09–16)
+/* MEUS MAPAS — V15.48.10-T+M | SAFARI WEBKIT · NAV ACTIVE-ONLY COLOR
    Uma única camada óptica por barra; sem vidro aninhado nem lente móvel.
    Base: V15.48.1-G. CSS carregado por último para substituir legados. */
 
@@ -98,22 +98,37 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current {
 html:is(.is-ipad,.is-phone-layout) .bottom-nav>.mm-scroll-edge,
 html.is-phone-layout .topbar>.mm-scroll-edge { display:none!important }
 html.is-ipad:not(.is-phone-layout) .topbar>.mm-scroll-edge { display:none!important }
+/* WebKit iPadOS/iOS: UM backdrop no próprio contêiner, sem máscara,
+   overflow clipping ou superfícies-filhas adicionais. As bordas dos
+   botões continuam interativas, acima da pintura óptica. */
 html:is(.is-ipad,.is-phone-layout) .bottom-nav {
-  isolation:isolate!important;
-  overflow:hidden!important;
-  background-clip:padding-box!important;
+  isolation:auto;
+  overflow:visible!important;
   border-radius:18px!important;
-  border:1px solid rgba(255,255,255,.25)!important;
+  border:1px solid rgba(255,255,255,.22)!important;
   background:
-    linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,.035) 25%,transparent 63%),
-    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),
-    rgba(17,17,18,.20)!important;
-  -webkit-backdrop-filter:blur(14px) saturate(125%) contrast(108%)!important;
-  backdrop-filter:blur(14px) saturate(125%) contrast(108%)!important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.20),
-    inset 0 -1px 0 rgba(255,255,255,.055),
-    0 12px 32px rgba(0,0,0,.32)!important
+    linear-gradient(165deg,rgba(255,255,255,.105),rgba(255,255,255,.020) 42%,transparent 73%),
+    rgba(15,15,16,.16)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(118%) contrast(103%)!important;
+  backdrop-filter:blur(15px) saturate(118%) contrast(103%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 5px 17px rgba(0,0,0,.16)!important;
+  transform:none;
+  will-change:auto;
+  touch-action:pan-y;
+}
+html:is(.is-ipad,.is-phone-layout) .bottom-nav::before,
+html:is(.is-ipad,.is-phone-layout) .bottom-nav::after,
+html:is(.is-ipad,.is-phone-layout) .bottom-nav>.mm-scroll-edge{
+  content:none!important;
+  pointer-events:none;
+}
+html:is(.is-ipad,.is-phone-layout) .bottom-nav>button{
+  transform:none;
+  transition:color .12s ease,background-color .12s ease,border-color .12s ease!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  touch-action:manipulation;
+  pointer-events:auto;
 }
 html.is-phone-layout .bottom-nav {
   border-radius:16px!important
@@ -128,17 +143,24 @@ html:is(.is-ipad,.is-phone-layout) .topbar-wrap {
   backdrop-filter:none!important;
   box-shadow:none!important
 }
+/* Barra superior: apenas um blur, sem overlays e sem camada
+   isolada aninhada. Safari recompõe uma superfície durante o scroll. */
 html:is(.is-ipad,.is-phone-layout) .topbar {
-  isolation:isolate!important;
-  border:1px solid rgba(255,255,255,.23)!important;
+  isolation:auto;
+  border:1px solid rgba(255,255,255,.21)!important;
   background:
-    linear-gradient(150deg,rgba(255,255,255,.11),rgba(255,255,255,.028) 30%,transparent 73%),
-    rgba(17,17,18,.19)!important;
-  -webkit-backdrop-filter:blur(13px) saturate(125%) contrast(108%)!important;
-  backdrop-filter:blur(13px) saturate(125%) contrast(108%)!important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.16),
-    0 9px 26px rgba(0,0,0,.23)!important
+    linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.019) 36%,transparent 75%),
+    rgba(15,15,16,.16)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
+  backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 7px 20px rgba(0,0,0,.16)!important;
+  will-change:auto;
+}
+html:is(.is-ipad,.is-phone-layout) .topbar::before,
+html:is(.is-ipad,.is-phone-layout) .topbar::after,
+html:is(.is-ipad,.is-phone-layout) .topbar>.mm-scroll-edge{
+  content:none!important;
+  pointer-events:none;
 }
 html.mobile-topbar-compact.is-phone-layout .topbar {
   background:linear-gradient(150deg,rgba(255,255,255,.10),transparent 75%),rgba(17,17,18,.22)!important
@@ -177,14 +199,11 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
    Remover sombras/placas externas sem destruir conteúdo nem o destaque ativo. */
 @media (orientation:portrait) {
  html.is-ipad:not(.is-phone-layout) .bottom-nav {
-   isolation:isolate!important;
-   overflow:hidden!important;
-   background-clip:padding-box;
    border-radius:20px!important;
    /* A translucidez acompanha o scroll da .main; jamais desenhar
       uma superfície no entorno do próprio dock. */
-   background:linear-gradient(155deg,rgba(255,255,255,.105),rgba(255,255,255,.018) 48%,transparent 78%),rgba(17,17,18,var(--mm-dock-alpha,.075))!important;
-   box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 5px 13px rgba(0,0,0,.12)!important;
+   background:linear-gradient(165deg,rgba(255,255,255,.105),rgba(255,255,255,.018) 48%,transparent 78%),rgba(15,15,16,var(--mm-dock-alpha,.075))!important;
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 5px 13px rgba(0,0,0,.13)!important;
  }
  html.is-ipad:not(.is-phone-layout) .bottom-nav::before,
  html.is-ipad:not(.is-phone-layout) .bottom-nav::after,

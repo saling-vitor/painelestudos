@@ -482,8 +482,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     color .18s ease,
     background-color .18s ease,
     border-color .18s ease,
-    box-shadow .18s ease,
-    transform .14s ease;
+    box-shadow .18s ease;
 }
 .bottom-nav button>.ui-icon,
 .bottom-nav button .bottom-nav-label{color:currentColor}
@@ -512,7 +511,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   opacity:.78;
   box-shadow:0 0 12px color-mix(in srgb,var(--nav-accent) 32%,transparent);
 }
-.bottom-nav button:active{transform:scale(.97)}
+.bottom-nav button:active{transform:none}
 .bottom-nav button.active:active{
   background:color-mix(in srgb,var(--nav-accent) 15%,#0a0a0b);
 }

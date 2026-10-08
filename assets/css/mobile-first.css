@@ -157,7 +157,7 @@
     backdrop-filter:none!important;
     box-shadow:none!important;
     transition:transform .22s ease,opacity .18s ease,padding .18s ease;
-    will-change:transform;
+    will-change:auto;
   }
   html.is-phone-layout .topbar{
     gap:5px!important;
@@ -193,7 +193,7 @@
   }
   html.mobile-topbar-compact.is-phone-layout .topbar{
     padding:3px!important;
-    background:rgba(11,11,12,.94)!important;
+    /* Material final pertence ao módulo WebKit de navegação. */
   }
   html.mobile-topbar-compact.is-phone-layout .search,
   html.mobile-topbar-compact.is-phone-layout #syncTop{
@@ -1685,13 +1685,11 @@
     background:rgba(255,255,255,.025)!important;
   }
   html.is-phone-layout .bottom-nav{
-    left:6px!important;
-    right:6px!important;
+    left:calc(6px + var(--safe-left))!important;
+    right:calc(6px + var(--safe-right))!important;
     bottom:calc(5px + var(--safe-bottom))!important;
     padding:3px!important;
     border-radius:13px!important;
-    background:rgba(8,8,9,.86)!important;
-    backdrop-filter:blur(16px)!important;
   }
   html.is-phone-layout .bottom-nav button{
     height:48px!important;
@@ -1815,7 +1813,7 @@
     min-width:0!important;height:44px!important;min-height:44px!important;padding:2px 1px!important
   }
   html.is-phone-layout .bottom-nav .mobile-menu-trigger>.ui-icon{--icon-size:19px!important;margin:0!important}
-  html.is-phone-layout .bottom-nav{padding:2px!important;border-radius:12px!important;backdrop-filter:none!important;background:rgba(9,9,10,.985)!important}
+  html.is-phone-layout .bottom-nav{padding:2px!important;border-radius:12px!important}
   html.is-phone-layout .bottom-nav button{height:44px!important;min-height:44px!important;touch-action:manipulation}
   html.is-phone-layout .bottom-nav button>.ui-icon{--icon-size:19px!important}
   html.is-phone-layout .bottom-nav-label{margin-top:1px!important;font-size:8px!important}
@@ -2164,7 +2162,6 @@
    V15.11.0 · PHONE POLISH · feedback tátil sem custo gráfico
    ========================================================= */
 @media(max-width:480px){
-  html.is-phone-layout .bottom-nav button,
   html.is-phone-layout .mobile-menu-option,
   html.is-phone-layout .mobile-settings-toggle,
   html.is-phone-layout .mobile-agenda-plan-toggle,
@@ -2178,7 +2175,6 @@
       transform var(--ui-motion-fast) ease!important;
   }
 
-  html.is-phone-layout .bottom-nav button:active,
   html.is-phone-layout .mobile-menu-option:active,
   html.is-phone-layout .mobile-settings-toggle:active,
   html.is-phone-layout .mobile-agenda-plan-toggle:active,

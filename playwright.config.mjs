@@ -10,6 +10,11 @@ export default defineConfig({
     {name:'desktop-chromium',grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
     {name:'ipad',grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
     {
+      name:'ipad-webkit',
+      grep:/\[T\+M\]/i,
+      use:{...devices['iPad Pro 11'],browserName:'webkit',serviceWorkers:'block'}
+    },
+    {
       name:'iphone-webkit',
       grep:/(?:\[G\]|\[M\]|smartphone|iPhone real|agenda de revisão)/i,
       retries:1,

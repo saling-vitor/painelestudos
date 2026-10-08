@@ -135,6 +135,46 @@ jobs:
           if-no-files-found: ignore
           retention-days: 10
 
+  e2e-ipad-webkit:
+    name: E2E iPad WebKit
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --user 1001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Prepare automatic release version
+        run: node scripts/prepare-release.mjs
+
+      - name: Install test dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build search index
+        run: node scripts/build-search-index.mjs
+
+      - name: Browser E2E — iPad WebKit
+        run: npx playwright test --project=ipad-webkit
+
+      - name: Upload Playwright failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-ipad-webkit-${{ github.run_id }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 10
+
   e2e-iphone:
     name: E2E iPhone
     needs: validate
@@ -177,7 +217,7 @@ jobs:
 
   deploy:
     name: Deploy Pages
-    needs: [validate, e2e-desktop, e2e-ipad, e2e-iphone]
+    needs: [validate, e2e-desktop, e2e-ipad, e2e-ipad-webkit, e2e-iphone]
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10

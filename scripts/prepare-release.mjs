@@ -22,7 +22,7 @@ const sourceParts=sourceVersion.split('.').map(Number);
 const series=String(automation.series||sourceParts.slice(0,2).join('.')).trim();
 if(!/^\d+\.\d+$/.test(series))throw new Error('version.json.automation.series precisa usar X.Y');
 
-const labelMatch=String(meta.label||'').match(/-([GDTM])$/i);
+const labelMatch=String(meta.label||'').match(/-(G|D|T|M|D\+T|T\+M|D\+M)$/i);
 const channel=String(automation.channel||labelMatch?.[1]||'G').toUpperCase();
 const runNumber=Number(process.env.GITHUB_RUN_NUMBER||0);
 const runBase=Number(automation.runBase||0);
