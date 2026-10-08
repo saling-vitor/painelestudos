@@ -111,6 +111,14 @@ check(finalDockCss.includes('ÚNICA pintura óptica'),'dock iPad tem uma superf�
 check(!read('assets/css/master-refinement-v15-48-1.css').includes('html.is-ipad:not(.is-phone-layout) .bottom-nav,html.is-phone-layout .bottom-nav'),'master não redefine fundo óptico do iPad');
 check(globalTopoCss.includes('html.is-ipad:not(.is-phone-layout) body::before{\n    transform:none;'),'raster do iPad sem camada GPU artificial');
 check(finalDockCss.includes('content:none!important;'),'dock elimina pseudo-layer');
+const legacyTabletNav=read('assets/css/review-polish-v15-36-34.css');
+const ipadContentCss=read('assets/css/ipad-course-refine-v15-38-2.css');
+const baseIpadCss=read('assets/css/responsive-polish-v15-36-16.css');
+check(!legacyTabletNav.includes('dock inferior de cinco destinos'),'variante obsoleta de cinco destinos removida');
+check(!legacyTabletNav.includes('html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-simulations'),'legado não esconde Simulados e Calendário');
+check(!ipadContentCss.includes('--ipad-bottom-nav-height'),'sem faixa reservada para dock fora da viewport');
+check(ipadContentCss.includes('height:100dvh!important'),'área rolável ocupa viewport até a borda');
+check(!baseIpadCss.includes('dock lateral em qualquer orientação'),'sidebar legada restringida a paisagem');
 check(read('tests/e2e/app.spec.mjs').includes('Dock iPad [T] · geometria'),'teste visual do dock iPad presente');
 check(legacyBlueCount<=19,'auditoria: azul legacy ficou restrito a semântica ('+legacyBlueCount+')');
 const automationCss=read('assets/css/study-automation-v15-37-0.css');
