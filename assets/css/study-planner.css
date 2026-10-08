@@ -925,7 +925,7 @@ html.is-ipad .reader.focus-mode .ipad-reader-rail-handle{
   z-index:18;
   margin:10px 0 12px;
   padding:8px 0;
-  background:linear-gradient(180deg,rgba(3,4,6,.97),rgba(3,4,6,.90) 78%,transparent);
+  background:linear-gradient(180deg,rgba(3,3,3,.97),rgba(3,3,3,.90) 78%,transparent);
   -webkit-backdrop-filter:blur(10px);
   backdrop-filter:blur(10px);
 }
