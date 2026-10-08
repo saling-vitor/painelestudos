@@ -286,7 +286,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 
 /* Cards principais um pouco mais sólidos/escuros. */
 .app .content :is(.map-card,.course-card,.course-library-card,.simulation-card){
-  background:linear-gradient(180deg,#0D0E10,#090A0C)!important;
+  background:linear-gradient(180deg,#0D0D0D,#090909)!important;
 }
 .app .content .map-card:hover{
   box-shadow:0 17px 38px rgba(0,0,0,.42)!important;
@@ -297,7 +297,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   border-color:rgba(255,255,255,.085)!important;
   background:
     radial-gradient(580px 290px at 0% 0%,rgba(232,215,177,.045),transparent 70%),
-    linear-gradient(110deg,#0E0F11,#08090A 62%,#060708)!important;
+    linear-gradient(110deg,#0E0E0E,#080808 62%,#060606)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
   box-shadow:0 22px 54px rgba(0,0,0,.38)!important;
@@ -523,7 +523,7 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
     .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
     .study-doubt-card,.toast
   ){
-    background:#0B0C0E!important;
+    background:#0B0B0B!important;
     background-image:none!important;
   }
 }
@@ -538,7 +538,7 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
     .map-card.has-cover>.fav,.map-card.has-cover>.map-admin-btn,
     .course-card-edit,.simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:#0B0C0E!important;
+    background:#0B0B0B!important;
     background-image:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
