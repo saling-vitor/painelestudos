@@ -11,13 +11,13 @@
   --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 
   /* Escala óptica */
-  --mm-micro-bg:rgba(12,12,13,.25);
+  --mm-micro-bg:rgba(12,12,12,.25);
   --mm-micro-filter:blur(11px) saturate(134%) contrast(104%);
-  --mm-controls-bg:rgba(9,10,11,.56);
+  --mm-controls-bg:rgba(10,10,10,.56);
   --mm-controls-filter:blur(15px) saturate(128%) contrast(104%);
-  --mm-bar-bg:rgba(9,10,11,.60);
+  --mm-bar-bg:rgba(10,10,10,.60);
   --mm-bar-filter:blur(20px) saturate(126%) contrast(104%);
-  --mm-large-bg:rgba(8,9,10,.76);
+  --mm-large-bg:rgba(9,9,9,.76);
   --mm-large-filter:blur(22px) saturate(122%) contrast(105%);
 
   /* Refractive rim */
@@ -411,7 +411,7 @@ textarea{
 
 /* Popover pequeno mais responsivo; modal grande permanece estável. */
 :is(.course-more-menu,.map-actions-menu,.simulation-card-action-menu,.ui-select-popover).mm-optical-surface{
-  --mm-large-bg:rgba(8,9,10,.82);
+  --mm-large-bg:rgba(9,9,9,.82)
 }
 :is(.modal-card,.planner-modal-card,.study-doubt-card).mm-optical-surface{
   --glass-intensity:0!important;
