@@ -52,8 +52,13 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===44,'auditoria: build ativo usa 44 CSS incluindo refinamento responsivo');
+check(activeCssFiles.length===45,'auditoria: build ativo usa 45 CSS com módulo final de navegação V2');
 check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
+check(index.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
+check(sw.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: estilo precached no PWA');
+const navV2Css=read('assets/css/nav-liquid-glass-v15-48-2.css');
+for(const section of ['home','courses','maps','simulations','progress','agenda','settings'])check(navV2Css.includes(`data-nav="${section}"`),'Identidade cromática de navegação: '+section);
+check(navV2Css.includes('mm-reduced-transparency'),'V2 preserva preferência de transparência reduzida');
 const deadLegacyFiles=[
   'assets/css/ipad-cloud-compact-v15-36-1.css',
   'assets/css/button-depth-v15-36-14.css',
