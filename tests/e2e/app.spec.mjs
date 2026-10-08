@@ -4725,9 +4725,12 @@ test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',asyn
     const content=document.querySelector('.content');
     const probe=document.createElement('div');
     probe.setAttribute('data-dock-scroll-probe','');
-    probe.style.cssText='height:64px;background:#f5b33f;position:relative;margin-top:900px;';
-    content.appendChild(probe);
+    probe.style.cssText='height:80px;background:#f5b33f;position:relative;margin-top:900px;';
+    const trailing=document.createElement('div');
+    trailing.style.cssText='height:1400px;background:transparent;pointer-events:none';
+    content.append(probe,trailing);
     const d=nav.getBoundingClientRect();
+    document.documentElement.style.scrollBehavior='auto';
     window.scrollTo(0,probe.getBoundingClientRect().top+scrollY-d.top+15);
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     const n=nav.getBoundingClientRect(),p=probe.getBoundingClientRect();
@@ -4737,7 +4740,7 @@ test('V15.48.6 [T] conteúdo atravessa o dock flutuante sem tarja inferior',asyn
     const value={overlap,navFixed:cs.position==='fixed',navRadius:parseFloat(cs.borderTopLeftRadius),glass:cs.backdropFilter||cs.webkitBackdropFilter,
       navColor:cs.backgroundColor,lowerIsNav:lowerPoint===nav||nav.contains(lowerPoint),
       pageOverflow:document.documentElement.scrollWidth-innerWidth};
-    probe.remove();return value;
+    probe.remove();trailing.remove();return value;
   });
   expect(state.navFixed).toBe(true);
   expect(state.overlap).toBe(true);
