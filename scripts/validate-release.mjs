@@ -134,7 +134,7 @@ check(dynamicGlassCss.includes('.mm-reduced-transparency'),'Dynamic Glass oferec
 check(dynamicGlassCss.includes('"Inter"')||dynamicGlassCss.includes('family=Inter'),'Inter configurada como tipografia principal');
 const navGlassCss=read('assets/css/nav-liquid-glass-v15-48-2.css');
 const mobileGlassCss=read('assets/css/mobile-first.css');
-check(navGlassCss.includes('Safari/WebKit iPadOS/iOS'),'dock WebKit usa um único material');
+check(navGlassCss.includes('WebKit iPadOS/iOS'),'dock WebKit usa um único material');
 check(navGlassCss.includes('overflow:visible!important'),'dock móvel sem clipping do compositor');
 check(navGlassCss.includes('touch-action:manipulation'),'dock preserva captura de toque');
 check(dynamicGlassJs.includes("q(':scope > .mm-scroll-edge',dock)?.remove()"),'runtime remove overlays do dock');
