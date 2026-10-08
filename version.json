@@ -1,7 +1,7 @@
 {
   "version": "15.48.4",
   "label": "V15.48.4-G",
-  "notes": "Candidata: redução da topografia global e refinamento do dock no iPad; publicação pendente de validação.",
+  "notes": "Topografia global atenuada, dock do iPad refinado e maior contraste em Ritmo de estudo e Minhas dúvidas.",
   "showWhatsNew": true,
   "highlights": [
     "[G] Topografia atenuada em Desktop, iPad e smartphone",
@@ -12,5 +12,6 @@
     "series": "15.48",
     "channel": "G",
     "runBase": 706
-  }
+  },
+  "releasedAt": "2026-10-08T14:27:59.000Z"
 }
