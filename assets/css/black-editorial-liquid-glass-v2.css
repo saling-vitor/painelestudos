@@ -431,6 +431,7 @@ body :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
   background:#0A0A0A!important;
   box-shadow:none!important;
 }
+body :is(input,select,textarea):focus,
 body :is(input,select,textarea):focus-visible{
   border-color:rgba(232,215,177,.38)!important;
   outline:1px solid rgba(232,215,177,.42)!important;
