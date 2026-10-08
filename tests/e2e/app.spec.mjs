@@ -332,6 +332,7 @@ test('sincronização de capas usa updatedAt por mapa e não ressuscita capa res
 test('PWA detecta worker mais novo que o bundle aberto',async({page})=>{await page.goto('/#settings');const result=await page.evaluate(()=>({same:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v='+APP_VERSION}),newer:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v=99.0.0'}),older:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v=1.0.0'}),parsed:serviceWorkerAppVersion({scriptURL:location.origin+location.pathname+'sw.js?v=99.0.0'})}));expect(result.same).toBe(false);expect(result.newer).toBe(true);expect(result.older).toBe(false);expect(result.parsed).toBe('99.0.0')});
 test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
   await page.goto('/#settings');
+  await page.evaluate(()=>navigator.serviceWorker.ready);
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
   await page.evaluate(()=>checkForAppUpdate({silent:true}));
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
@@ -2204,6 +2205,7 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   const form=page.locator('#studyGoalsForm');
   await form.locator('[name="dailyMinutes"]').fill('1h 30min');
   await form.locator('[name="weeklyMinutes"]').fill('8h');
+  await form.locator('[name="weeklyMinutes"]').focus(); // precondição: edição realmente focada
   // Uma atualização assíncrona da central não pode substituir o input
   // focado nem restaurar a meta semanal padrão durante a edição.
   const editorPreserved=await page.evaluate(()=>{
