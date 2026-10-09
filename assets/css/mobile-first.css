@@ -3133,6 +3133,7 @@
   /* A "central do dia" deixa o dourado apenas em ações/progresso. */
   html.is-phone-layout .study-command-card{
     border-color:var(--phone-edge)!important;
+    background:rgba(12,12,13,.97)!important;
   }
   html.is-phone-layout .study-command-metrics{
     gap:7px!important;
@@ -3140,7 +3141,7 @@
   html.is-phone-layout .study-command-metrics>button{
     border:1px solid var(--phone-divider)!important;
     border-radius:var(--phone-radius-control)!important;
-    background:var(--phone-surface-soft)!important;
+    background:rgba(18,18,19,.96)!important;
     box-shadow:none!important;
   }
   html.is-phone-layout .study-command-metrics>button:active{
