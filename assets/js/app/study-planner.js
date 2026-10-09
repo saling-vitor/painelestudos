@@ -13,6 +13,7 @@
     weeklyReviewDay:0
   };
   let dragState=null,agendaPointerDrag=null,agendaHoldTimer=0;
+  let homeQuickMinutes=15;
 
   const esc=value=>typeof ESC==='function'?ESC(String(value??'')):String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const nowIso=()=>new Date().toISOString();
@@ -377,11 +378,11 @@
     root=document.createElement('div');root.id=id;root.className=className;root.hidden=true;document.body.appendChild(root);return root;
   }
   function closePlannerModal(id){const el=document.getElementById(id);if(el)el.hidden=true}
-  function showTimePlan(minutes=30){
+  function showTimePlan(minutes=30,{focusOnStart=false}={}){
     const plan=buildTimePlan(minutes),modal=makeModal('studyTimePlanModal');
     modal.innerHTML='<div class="planner-modal-card"><div class="planner-modal-head"><div><span class="kicker">Tenho '+plan.requested+' minutos</span><h2>Sessão sugerida</h2><p>'+plan.planned+' min planejados com base nas prioridades atuais.</p></div><button type="button" data-planner-close>×</button></div><div class="planner-sequence">'+plan.items.map((item,index)=>'<article><span>'+(index+1)+'</span><div><b>'+esc(item.title)+'</b><small>'+esc(item.reason)+'</small></div><strong>'+item.minutes+' min</strong></article>').join('')+'</div><div class="planner-modal-actions"><button class="secondary" type="button" data-planner-close>Cancelar</button><button class="primary" type="button" data-timeplan-start '+(!plan.items.length?'disabled':'')+'>Começar primeira sessão</button></div></div>';
     modal.hidden=false;modal.querySelectorAll('[data-planner-close]').forEach(b=>b.onclick=()=>modal.hidden=true);
-    modal.querySelector('[data-timeplan-start]').onclick=async()=>{const item=plan.items[0];if(!item)return;modal.hidden=true;await openMap(item.key);window.StudyDashboard?.start?.({map:item.map,mode:'planned',minutes:item.minutes,label:item.title})};
+    modal.querySelector('[data-timeplan-start]').onclick=async()=>{const item=plan.items[0];if(!item)return;modal.hidden=true;await openMap(item.key);window.StudyDashboard?.start?.({map:item.map,mode:'planned',minutes:item.minutes,label:item.title});if(focusOnStart&&document.getElementById('reader')?.classList.contains('open')&&!document.getElementById('reader')?.classList.contains('focus-mode')&&typeof toggleReaderFocus==='function')toggleReaderFocus()};
   }
   function showTopicReview(){
     const due=dueTopicRows(),modal=makeModal('topicReviewModal');
@@ -530,14 +531,40 @@
 
   function renderHomeIntelligence(){
     const root=document.getElementById('homeStudyDashboard');if(!root)return;
-    let panel=root.querySelector('.study-intelligence-row');if(!panel){panel=document.createElement('div');panel.className='study-intelligence-row';root.appendChild(panel)}
+    let panel=root.querySelector('.study-intelligence-row');
+    if(!panel){panel=document.createElement('div');panel.className='study-intelligence-row';root.appendChild(panel)}
     const top=priorityRows()[0],courseId=top?.map?.courseId||combinedCourses()[0]?.id||'',fc=forecast(courseId),due=dueTopicRows().length;
-    const priorityTitle=top?.map?.shortTitle||top?.map?.title||'Seu próximo estudo',priorityReasons=top?.reasons?.slice(0,2)||['conteúdo pendente'],priorityCode=top?.map?.code||'',priorityMinutes=top?.minutes||20,priorityAccent=top?.map&&typeof mapAccentValue==='function'?mapAccentValue(top.map):'',priorityStyle=priorityAccent?' style="'+esc('--map-accent:'+priorityAccent)+'" data-map-accent="true"':'',priorityReasonHtml=priorityReasons.map(reason=>'<span class="priority-reason-chip">'+esc(reason)+'</span>').join(''),finishLabel=fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}),explanationCount=priorityExplanationRows(top).length;
-    panel.innerHTML='<article class="study-now-card"><span class="kicker">Tenho tempo agora</span><h3>Montar sessão rápida</h3><div class="study-now-buttons">'+[15,30,60,120].map(min=>'<button type="button" data-time-now="'+min+'">'+(min<60?min+' min':min/60+'h')+'</button>').join('')+'</div></article><article class="priority-now-card"'+priorityStyle+'><span class="kicker">Prioridade agora</span><div class="priority-now-main">'+(priorityCode?'<span class="priority-now-code">'+esc(priorityCode)+'</span>':'')+'<div><h3>'+esc(priorityTitle)+'</h3><small>'+priorityMinutes+' min sugeridos</small></div></div><div class="priority-reason-list">'+priorityReasonHtml+'</div><div class="priority-now-actions">'+(top&&explanationCount>=2?'<button type="button" class="secondary" data-priority-why>Por que este mapa?</button>':'')+(top?'<button type="button" class="primary" data-priority-open="'+esc(top.key)+'">Começar · '+priorityMinutes+' min</button>':'')+'</div></article><article class="forecast-home-card"><span class="kicker">Ritmo atual</span><h3>'+fc.remainingTopics+' tópicos restantes</h3><p><span class="forecast-home-date">Planejamento até '+esc(finishLabel)+'</span> · '+esc(fmtSeconds(fc.remainingSeconds))+' estimadas'+(fc.marginDays!==null?' · '+(fc.marginDays>=0?fc.marginDays+' dias antes da prova':Math.abs(fc.marginDays)+' dias após a prova'):'')+'</p><div><button type="button" class="secondary" data-home-matrix>Abrir matriz</button>'+(due?'<button type="button" class="secondary" data-home-topic-review>'+due+' revisar</button>':'')+'</div></article>';
-    panel.querySelectorAll('[data-time-now]').forEach(button=>button.onclick=()=>showTimePlan(Number(button.dataset.timeNow)));
+    const priorityTitle=top?.map?.shortTitle||top?.map?.title||'Seu próximo estudo';
+    const priorityReasons=top?.reasons?.slice(0,2)||['Conteúdo pendente'],priorityCode=top?.map?.code||'',priorityMinutes=top?.minutes||20;
+    const priorityAccent=top?.map&&typeof mapAccentValue==='function'?mapAccentValue(top.map):'';
+    const priorityStyle=priorityAccent?' style="'+esc('--map-accent:'+priorityAccent)+'" data-map-accent="true"':'';
+    const priorityReasonHtml=priorityReasons.map(reason=>'<span class="priority-reason-chip">'+esc(reason)+'</span>').join('');
+    const finishLabel=fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});
+    const explanationCount=priorityExplanationRows(top).length;
+    const progress=top?.progress||{},priorityPercent=progress.total?Math.max(0,Math.min(100,Math.round(Number(progress.marked||0)*100/progress.total))):0;
+    const priorityCover=top?.map&&typeof mapCover==='function'?mapCover(top.map):'';
+    const priorityImage=priorityCover?'<img src="'+esc(priorityCover)+'" alt="" loading="lazy" decoding="async">':'';
+    const days=studyTimeDays(),week=weekStart(),dayNames=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+    const bars=dayNames.map((name,index)=>({name,seconds:Math.max(0,Number(days[dateKey(addDays(week,index))]||0))}));
+    const maxSeconds=Math.max(1,...bars.map(row=>row.seconds));
+    const graphHtml=bars.map((row,index)=>'<div class="forecast-day" title="'+esc(row.name+': '+fmtSeconds(row.seconds))+'"><span class="forecast-day-track"><i style="height:'+(row.seconds?Math.max(11,Math.round(row.seconds/maxSeconds*100)):4)+'%"'+(row.seconds?'':' class="is-zero"')+'></i></span><span class="forecast-day-label">'+esc(row.name.slice(0,1))+'</span></div>').join('');
+    const quickButtons=[15,30,60,120].map(min=>'<button type="button" data-time-now="'+min+'" aria-pressed="'+(homeQuickMinutes===min?'true':'false')+'" class="'+(homeQuickMinutes===min?'is-selected':'')+'">'+(min<60?min+' min':min/60+'h')+'</button>').join('');
+    const whyAvailable=!!top&&explanationCount>=2;
+    const whyHtml=whyAvailable?'<button type="button" class="priority-why-tile" data-priority-why>'+priorityImage+'<span data-reason="'+esc(priorityReasons[0]||'Recomendado pelo seu planejamento')+'"><b>Por que este mapa?</b></span></button>':'<div class="priority-why-tile priority-why-static">'+priorityImage+'<span><b>Próximo estudo</b><small>'+esc(priorityReasons[0]||'Siga o planejamento de hoje')+'</small></span></div>';
+    panel.innerHTML=
+      '<article class="study-now-card"><div class="home-command-label"><span class="home-command-symbol" aria-hidden="true">ϟ</span><span class="kicker">Tenho tempo agora</span></div><h3>Montar sessão rápida</h3><p>Escolha um tempo e comece a estudar.</p><div class="study-now-buttons">'+quickButtons+'</div><button type="button" class="study-now-focus" data-home-focus><span class="focus-round" aria-hidden="true">▶</span><span><b>Foco total</b><small>Estudo sem interrupções</small></span><span class="focus-chevron" aria-hidden="true">›</span></button></article>'+
+      '<article class="priority-now-card"'+priorityStyle+'><div class="home-command-label"><span class="home-command-symbol" aria-hidden="true">◎</span><span class="kicker">Prioridade agora</span></div><div class="priority-now-main">'+(priorityCode?'<span class="priority-now-code">'+esc(priorityCode)+'</span>':'')+'<div><h3>'+esc(priorityTitle)+'</h3><small>'+priorityMinutes+' min sugeridos · '+priorityPercent+'%</small></div></div><div class="priority-progress-track" role="progressbar" aria-label="Progresso do mapa recomendado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+priorityPercent+'"><i style="width:'+priorityPercent+'%"></i></div><div class="priority-reason-list">'+priorityReasonHtml+'</div>'+whyHtml+'<div class="priority-now-actions">'+(top?'<button type="button" class="primary" data-priority-open="'+esc(top.key)+'">Começar · '+priorityMinutes+' min</button>':'<span class="priority-empty">Nenhum mapa disponível</span>')+'</div></article>'+
+      '<article class="forecast-home-card"><div class="home-command-label"><span class="home-command-symbol" aria-hidden="true">▥</span><span class="kicker">Ritmo atual</span></div><h3>'+fc.remainingTopics+' tópicos restantes</h3><p><span class="forecast-home-date">Planejamento até '+esc(finishLabel)+'</span> · '+esc(fmtSeconds(fc.remainingSeconds))+' estimadas'+(fc.marginDays!==null?' · '+(fc.marginDays>=0?fc.marginDays+' dias antes da prova':Math.abs(fc.marginDays)+' dias após a prova'):'')+'</p><div class="forecast-week-chart" role="img" aria-label="Tempo de estudo por dia da semana">'+graphHtml+'</div><div class="forecast-home-actions"><button type="button" class="secondary" data-home-matrix>Abrir matriz</button>'+(due?'<button type="button" class="secondary" data-home-topic-review>'+due+' revisar</button>':'<span class="forecast-clear">Sem revisões vencidas</span>')+'</div></article>';
+    panel.querySelectorAll('[data-time-now]').forEach(button=>button.onclick=()=>{
+      homeQuickMinutes=Number(button.dataset.timeNow);
+      panel.querySelectorAll('[data-time-now]').forEach(item=>{const selected=item===button;item.classList.toggle('is-selected',selected);item.setAttribute('aria-pressed',String(selected))});
+      showTimePlan(homeQuickMinutes);
+    });
+    panel.querySelector('[data-home-focus]')?.addEventListener('click',()=>showTimePlan(homeQuickMinutes,{focusOnStart:true}));
     panel.querySelector('[data-priority-open]')?.addEventListener('click',e=>openMap(e.currentTarget.dataset.priorityOpen));
     panel.querySelector('[data-priority-why]')?.addEventListener('click',e=>showPriorityExplanation(top,e.currentTarget));
-    panel.querySelector('[data-home-matrix]').onclick=()=>nav('matrix');panel.querySelector('[data-home-topic-review]')?.addEventListener('click',showTopicReview);
+    panel.querySelector('[data-home-matrix]')?.addEventListener('click',()=>nav('matrix'));
+    panel.querySelector('[data-home-topic-review]')?.addEventListener('click',showTopicReview);
   }
 
   function renderProgressIntelligence(){

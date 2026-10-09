@@ -251,3 +251,369 @@ html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .topbar :is(.search,#
   }
 }
 @media(prefers-reduced-motion:reduce){#homeSimulations .simulation-recent-item:active{filter:none}}
+
+
+/* V15.48.149-G · HOME · faixa editorial aprovada
+   Consolida a composição visual no CSS mestre; os geradores permanecem separados.
+   Respeita a sidebar, as classes de plataforma e as funções do plano diário. */
+#homeStudyDashboard{
+  --home-yellow:#e4c65e;
+  --home-yellow-soft:#f4df94;
+  display:grid!important;
+  grid-template-columns:minmax(0,2.05fr) minmax(0,.95fr) minmax(0,1.14fr) minmax(0,1.12fr)!important;
+  gap:9px!important;align-items:stretch!important;
+  width:100%!important;min-width:0!important;
+  margin:15px 0 0!important;
+}
+#homeStudyDashboard>.study-intelligence-row{display:contents!important}
+#homeStudyDashboard .study-command-card,
+#homeStudyDashboard .study-intelligence-row>article{
+  box-sizing:border-box!important;min-width:0!important;
+  height:176px!important;min-height:176px!important;max-height:176px!important;
+  margin:0!important;border-radius:11px!important;
+  background:linear-gradient(140deg,rgba(255,255,255,.024),transparent 54%),#0a0a0b!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
+  overflow:hidden!important;transform:none!important;
+}
+#homeStudyDashboard .study-command-card{
+  position:relative!important;display:flex!important;flex-direction:column!important;
+  justify-content:space-between!important;grid-column:1!important;
+  border-color:rgba(228,198,94,.47)!important;
+  padding:12px 13px 11px!important;isolation:isolate!important;
+  background:radial-gradient(ellipse at 85% 12%,rgba(153,134,62,.12),transparent 70%),#0a0a0b!important;
+}
+#homeStudyDashboard .study-command-art{
+  position:absolute;inset:0 0 0 39%;pointer-events:none;z-index:-1;overflow:hidden;
+  background:radial-gradient(ellipse at 95% 0,rgba(255,255,255,.065),transparent 70%);
+}
+#homeStudyDashboard .study-command-art img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:center 42%;
+  filter:grayscale(1) contrast(1.13) brightness(.65);
+}
+#homeStudyDashboard .study-command-art:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,#0a0a0b 0%,rgba(10,10,11,.86) 15%,rgba(10,10,11,.22) 65%,rgba(10,10,11,.48) 100%);
+}
+#homeStudyDashboard .study-command-head{
+  display:block!important;position:relative;z-index:1;min-width:0!important;flex:0 1 auto!important;
+  margin:0!important;padding:0!important;
+}
+#homeStudyDashboard .study-command-copy{min-width:0;max-width:85%}
+#homeStudyDashboard .study-command-kicker,
+#homeStudyDashboard .home-command-label{
+  display:flex;align-items:center;gap:8px;min-width:0;
+}
+#homeStudyDashboard .study-command-kicker{margin-bottom:8px}
+#homeStudyDashboard .study-command-kicker .kicker,
+#homeStudyDashboard .home-command-label .kicker{
+  margin:0!important;color:var(--home-yellow)!important;
+  font:800 8px/1.2 var(--mono,monospace)!important;
+  letter-spacing:.14em!important;text-transform:uppercase;
+}
+#homeStudyDashboard .study-command-map-code{
+  display:inline-flex!important;align-items:center;min-height:21px!important;
+  padding:0 7px!important;margin:0!important;
+  color:#d5dae1!important;border:1px solid rgba(255,255,255,.22)!important;
+  border-radius:6px!important;background:rgba(31,33,35,.7)!important;
+  font:800 8px/1 var(--mono,monospace)!important;
+}
+#homeStudyDashboard .study-command-head h2{
+  margin:0 0 5px!important;color:#f0f0f0!important;
+  font:800 clamp(13px,1.1vw,17px)/1.14 var(--sans)!important;
+  letter-spacing:-.025em!important;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+#homeStudyDashboard .study-command-head p{
+  margin:0!important;color:#a5a5aa!important;font-size:9px!important;
+  line-height:1.32!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#homeStudyDashboard .study-command-progress{
+  width:min(77%,380px);height:4px;min-height:4px;flex:0 0 4px;
+  margin-top:7px;border-radius:5px;overflow:hidden;background:rgba(255,255,255,.12);
+}
+#homeStudyDashboard .study-command-progress>i{
+  display:block;height:100%;border-radius:inherit;background:var(--home-yellow);min-width:0;
+}
+#homeStudyDashboard .study-command-context{
+  margin:4px 0 1px;color:#97979a;font-size:8px;line-height:1.15;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+#homeStudyDashboard .study-command-bottom{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  gap:7px;align-items:stretch!important;min-width:0!important;
+  margin-top:5px!important;
+}
+#homeStudyDashboard .study-command-metrics{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:5px!important;min-width:0!important;margin:0!important;
+}
+html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth-child(n+3){display:none!important}
+#homeStudyDashboard .study-command-metrics>button{
+  display:flex!important;flex-direction:column;justify-content:center;align-items:flex-start;
+  min-height:38px!important;height:38px!important;min-width:0!important;
+  padding:3px 7px!important;margin:0!important;border-radius:6px!important;
+  border-color:rgba(255,255,255,.09)!important;background:rgba(8,8,9,.49)!important;
+  text-align:left!important;box-shadow:none!important;
+}
+#homeStudyDashboard .study-command-metrics>button span{
+  font-size:7px!important;color:#9fa1a6!important;letter-spacing:.02em!important;
+}
+#homeStudyDashboard .study-command-metrics>button b{
+  font-size:11px!important;line-height:1.2!important;color:#efefef!important;
+  white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;width:100%;
+}
+#homeStudyDashboard .study-command-metrics>button i{display:none!important}
+#homeStudyDashboard .study-command-cta{
+  align-self:stretch;display:flex;align-items:center;justify-content:center;gap:9px;
+  min-height:38px!important;min-width:104px;max-width:138px;
+  margin:0!important;padding:0 10px!important;border-radius:6px!important;
+  border:1px solid #f1dc8f!important;background:var(--home-yellow-soft)!important;
+  color:#15120b!important;font:850 10px/1 var(--sans)!important;
+  box-shadow:none!important;white-space:nowrap;transition:none!important;
+}
+#homeStudyDashboard .study-command-cta:hover{
+  background:var(--home-yellow-soft)!important;color:#15120b!important;
+  border-color:#f1dc8f!important;filter:none!important;transform:none!important;
+}
+#homeStudyDashboard .study-command-cta:focus-visible,
+#homeStudyDashboard .study-intelligence-row button:focus-visible{
+  outline:2px solid #f2dc8f!important;outline-offset:2px!important;
+}
+#homeStudyDashboard .study-intelligence-row>article{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:0!important;padding:11px 10px!important;
+}
+#homeStudyDashboard .home-command-label{gap:6px;margin-bottom:6px;min-height:12px}
+#homeStudyDashboard .home-command-symbol{
+  font-size:16px;line-height:1;color:var(--home-yellow);
+}
+#homeStudyDashboard .study-intelligence-row h3{
+  margin:0 0 5px!important;color:#f0f0f0!important;
+  font:800 12px/1.15 var(--sans)!important;letter-spacing:-.02em;
+}
+#homeStudyDashboard .study-intelligence-row p{
+  margin:0!important;font-size:8px!important;line-height:1.3!important;color:#92939a!important;
+}
+#homeStudyDashboard .study-now-buttons{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:4px!important;margin:10px 0 6px!important;
+}
+#homeStudyDashboard .study-now-buttons button{
+  box-sizing:border-box;min-width:0!important;min-height:28px!important;height:28px!important;
+  margin:0!important;padding:0 2px!important;border-radius:6px!important;
+  background:#101011!important;border:1px solid rgba(255,255,255,.16)!important;
+  color:#cdced0!important;font:750 8px/1 var(--sans)!important;
+  transform:none!important;box-shadow:none!important;
+}
+#homeStudyDashboard .study-now-buttons button.is-selected,
+#homeStudyDashboard .study-now-buttons button[aria-pressed="true"]{
+  background:var(--home-yellow-soft)!important;border-color:#f1dc8f!important;color:#13110b!important;
+}
+#homeStudyDashboard .study-now-focus{
+  display:flex;align-items:center;gap:8px;text-align:left;
+  width:100%;min-height:42px!important;margin-top:auto!important;
+  padding:6px 8px!important;border-radius:7px!important;
+  background:#141415!important;border:1px solid rgba(255,255,255,.14)!important;
+  color:#e5e5e6!important;box-shadow:none!important;
+}
+#homeStudyDashboard .study-now-focus:hover,
+#homeStudyDashboard .priority-why-tile:hover,
+#homeStudyDashboard .priority-now-card button:hover,
+#homeStudyDashboard .forecast-home-card button:hover{
+  transform:none!important;filter:none!important;background-color:inherit;
+}
+#homeStudyDashboard .focus-round{
+  display:grid;place-items:center;flex:0 0 25px;width:25px;height:25px;
+  border-radius:99px;border:1px solid rgba(228,198,94,.35);color:var(--home-yellow);font-size:11px;
+}
+#homeStudyDashboard .study-now-focus b{display:block;font-size:9px;line-height:1.1}
+#homeStudyDashboard .study-now-focus small{display:block;margin-top:3px;color:#95969c;font-size:7px}
+#homeStudyDashboard .focus-chevron{margin-left:auto;color:#c8c9ce;font-size:18px}
+#homeStudyDashboard .priority-now-main{
+  display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important;
+}
+#homeStudyDashboard .priority-now-main>div{flex:1;min-width:0}
+#homeStudyDashboard .priority-now-code{
+  min-height:25px!important;min-width:37px!important;display:grid!important;place-items:center;
+  padding:2px 5px!important;border-radius:6px!important;
+  border:1px solid color-mix(in srgb,var(--map-accent,#9da2ab) 32%,rgba(255,255,255,.11))!important;
+  background:rgba(24,25,27,.76)!important;color:#c7cad1!important;
+  font:750 8px/1 var(--mono,monospace)!important;
+}
+#homeStudyDashboard .priority-now-main h3{
+  margin:0 0 2px!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;font-size:10px!important;line-height:1.18!important;
+}
+#homeStudyDashboard .priority-now-main small{display:block;color:#92939a;font-size:7px}
+#homeStudyDashboard .priority-progress-track{
+  height:4px;min-height:4px;margin:7px 0 4px;border-radius:5px;
+  background:rgba(255,255,255,.11);overflow:hidden;
+}
+#homeStudyDashboard .priority-progress-track i{
+  display:block;height:100%;border-radius:5px;background:var(--home-yellow);
+}
+#homeStudyDashboard .priority-reason-list{
+  display:flex!important;min-height:12px;gap:4px!important;flex-wrap:nowrap!important;
+  overflow:hidden!important;margin:0 0 4px!important;
+}
+#homeStudyDashboard .priority-reason-chip{
+  border:0!important;padding:0!important;background:none!important;color:#a0a1a4!important;
+  font-size:7px!important;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;
+}
+#homeStudyDashboard .priority-why-tile{
+  width:100%;min-width:0;min-height:33px;display:flex!important;align-items:center!important;
+  gap:6px;padding:2px!important;border:0!important;border-radius:4px!important;
+  background:transparent!important;color:#d4d5d8!important;text-align:left;
+  box-shadow:none!important;
+}
+#homeStudyDashboard .priority-why-tile img{
+  width:37px;height:29px;flex:0 0 37px;object-fit:cover;border-radius:3px;filter:grayscale(1) brightness(.88);
+}
+#homeStudyDashboard .priority-why-tile span{flex:1;min-width:0}
+#homeStudyDashboard .priority-why-tile b{display:block;font-size:8px;line-height:1.1}
+#homeStudyDashboard .priority-why-tile [data-reason]::after{
+  content:attr(data-reason);
+  display:block;max-width:100%;font-size:7px;line-height:1.15;color:#94959a;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#homeStudyDashboard .priority-now-actions{margin-top:auto!important;display:block!important;width:100%}
+#homeStudyDashboard .priority-now-actions .primary::before{
+  content:"▷";display:inline-block;margin-right:8px;color:var(--home-yellow);
+  font-size:12px;vertical-align:middle;
+}
+#homeStudyDashboard .priority-now-actions .primary{
+  width:100%;min-height:27px!important;height:27px!important;margin:0!important;
+  background:rgba(228,198,94,.075)!important;border:1px solid rgba(228,198,94,.55)!important;
+  color:#e8d18a!important;border-radius:6px!important;font:800 8px/1 var(--sans)!important;
+  box-shadow:none!important;transform:none!important;
+}
+#homeStudyDashboard .forecast-home-card h3{font-size:13px!important;margin:0 0 5px!important}
+#homeStudyDashboard .forecast-home-card>p{
+  display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  overflow:hidden;min-height:23px;line-height:1.35!important;
+}
+#homeStudyDashboard .forecast-home-date{color:#c7b579!important}
+#homeStudyDashboard .forecast-week-chart{
+  display:flex!important;align-items:flex-end!important;gap:4px;
+  justify-content:space-between;width:100%;height:47px;margin:6px 0 4px;
+}
+#homeStudyDashboard .forecast-day{
+  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  height:100%;gap:3px;
+}
+#homeStudyDashboard .forecast-day-track{
+  display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  width:100%;height:33px;
+}
+#homeStudyDashboard .forecast-day-track i{
+  display:block;width:min(65%,8px);min-height:2px;max-height:33px;
+  background:var(--home-yellow);border-radius:3px;transition:none;
+}
+#homeStudyDashboard .forecast-day-track i.is-zero{background:rgba(255,255,255,.15)}
+#homeStudyDashboard .forecast-day-label{font:700 7px/1 var(--sans);color:#a9a9ad}
+#homeStudyDashboard .forecast-home-actions{
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important;
+  margin-top:auto!important;align-items:center;
+}
+#homeStudyDashboard .forecast-home-actions>button{
+  min-height:27px!important;height:27px!important;width:100%;min-width:0!important;
+  margin:0!important;padding:2px 4px!important;border:1px solid rgba(255,255,255,.14)!important;
+  border-radius:6px!important;background:#151516!important;color:#d0d0d2!important;
+  font:750 8px/1 var(--sans)!important;box-shadow:none!important;
+}
+#homeStudyDashboard .forecast-clear{font-size:7px;color:#a2a3a6}
+[data-view="home"]>#homeReviewSection{
+  margin-top:10px!important;padding:11px 12px 9px!important;border-radius:11px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.023),transparent 65%),#0a0a0b!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025)!important;
+}
+#homeReviewSection .section-head{position:relative;gap:11px!important;padding:3px 2px 10px!important}
+#homeReviewSection .home-review-icon{
+  width:28px;height:28px;flex:0 0 28px;display:grid;place-items:center;
+  border:1px solid rgba(228,198,94,.24);border-radius:7px;color:var(--home-yellow,#e4c65e);
+  background:rgba(228,198,94,.035);
+}
+#homeReviewSection .home-review-icon .ui-icon{--icon-size:16px}
+#homeReviewSection .section-head h2{font-size:18px!important;letter-spacing:-.02em}
+#homeReviewSection .study-plan-item{
+  min-height:43px!important;padding-block:5px!important;
+  border-bottom:1px solid rgba(255,255,255,.065);
+}
+#homeReviewSection .study-plan-item:last-child{border-bottom:0}
+#homeReviewSection .study-plan-copy b{font-size:10px!important}
+#homeReviewSection #homeReviewNowBtn{
+  min-height:36px!important;padding:0 12px!important;
+  border:1px solid rgba(255,255,255,.2)!important;background:#19191a!important;
+  color:#e5e5e6!important;border-radius:7px!important;
+  box-shadow:none!important;transform:none!important;
+}
+#homeReviewSection .study-plan-footer{background:rgba(255,255,255,.018)!important}
+#homeStudyDashboard button:focus-visible,
+#homeReviewSection button:focus-visible{outline:2px solid #e4c65e!important;outline-offset:2px!important}
+@media(max-width:1450px){
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-card{
+    grid-column:1/-1!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .forecast-home-card{
+    grid-column:1/-1!important;
+  }
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-card,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .forecast-home-card{
+  grid-column:1/-1!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-card{height:182px!important;min-height:182px!important;max-height:182px!important}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article{
+  height:176px!important;min-height:176px!important;max-height:176px!important;
+}
+html.is-phone-layout #homeStudyDashboard{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  gap:8px!important;margin-top:9px!important;
+}
+html.is-phone-layout #homeStudyDashboard .study-command-card{
+  grid-column:1!important;height:auto!important;min-height:195px!important;max-height:none!important;
+  padding:12px!important;border-radius:14px!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.is-phone-layout #homeStudyDashboard .study-intelligence-row>article{
+  height:auto!important;min-height:158px!important;max-height:none!important;
+  grid-column:1!important;padding:12px!important;
+}
+html.is-phone-layout #homeStudyDashboard .study-command-head h2{font-size:15px!important}
+html.is-phone-layout #homeStudyDashboard .study-command-metrics>button:nth-child(n+3){
+  /* O módulo mobile original controla a expansão desta dupla. */
+  min-height:38px!important;height:38px!important;
+}
+html.is-phone-layout #homeStudyDashboard .study-command-bottom{grid-template-columns:minmax(0,1fr) auto!important}
+html.is-phone-layout #homeStudyDashboard .study-command-cta{min-width:104px!important;min-height:40px!important}
+html.is-phone-layout #homeStudyDashboard .study-now-buttons button{min-height:42px!important;height:42px!important}
+html.is-phone-layout #homeStudyDashboard .study-intelligence-row .study-now-card{min-height:170px!important}
+html.is-phone-layout #homeStudyDashboard .priority-now-card{min-height:194px!important}
+html.is-phone-layout #homeStudyDashboard .forecast-home-card{min-height:180px!important}
+html.is-phone-layout #homeStudyDashboard .forecast-week-chart{max-width:260px}
+html.is-phone-layout #homeStudyDashboard .priority-now-main h3{font-size:12px!important}
+html.is-phone-layout #homeReviewSection .home-review-icon{display:none!important}
+html.is-phone-layout [data-view="home"]>#homeReviewSection{padding:10px!important;margin-top:9px!important}
+html.is-phone-layout #homeReviewSection .study-plan-item{min-height:62px!important}
+@media(prefers-reduced-motion:reduce){
+  #homeStudyDashboard *,#homeReviewSection *{animation:none!important;transition:none!important}
+}
+
+
+/* Mobile: preserva o controle de expandir as quatro métricas já existente. */
+html.is-phone-layout #homeStudyDashboard .study-command-metrics>button:nth-child(n+3){display:none!important}
+html.is-phone-layout #homeStudyDashboard .study-command-card.mobile-plan-expanded .study-command-metrics>button:nth-child(n+3){display:flex!important}
+html.is-phone-layout #homeStudyDashboard .study-command-metrics{order:1}
+html.is-phone-layout #homeStudyDashboard .study-command-cta{order:2}
+html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
+  order:3;grid-column:1/-1;justify-self:stretch;
+  min-height:28px!important;margin:1px 0 0!important;padding:2px 4px!important;
+  font-size:8px!important;
+}

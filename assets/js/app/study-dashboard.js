@@ -266,7 +266,24 @@
     const nextMeta=nextPlan?((nextPlan.reason||'')+(nextPlan.minutes?' · '+nextPlan.minutes+' min':'')):planned[0]?.minutes?(planned[0].minutes+' min planejados'):'Abra um mapa ou use uma sessão livre';
     const commandStyle=nextAccent?' style="'+escape('--map-accent:'+nextAccent)+'" data-map-accent="true"':'';
     const commandMap=nextMap?'<span class="study-command-map-code">'+escape(nextCode)+'</span>':'';
-    root.innerHTML='<div class="study-command-card"'+commandStyle+'><div class="study-command-head"><div>'+commandMap+'<span class="kicker">Hoje</span><h2>'+escape(nextTitle)+'</h2><p>'+escape(nextMeta)+'</p></div><button type="button" class="primary" data-dashboard-start>'+(active?'Ver sessão':'Começar agora')+'</button></div><div class="study-command-metrics"><button type="button" data-dashboard-agenda><span>Meta de hoje</span><b>'+escape(fmtMin(snap.today))+' / '+escape(fmtMin(snap.dailyTarget))+'</b><i><em style="width:'+snap.dailyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Semana</span><b>'+escape(fmtMin(snap.week))+' / '+escape(fmtMin(snap.weeklyTarget))+'</b><i><em style="width:'+snap.weeklyPct+'%"></em></i></button><button type="button" data-dashboard-agenda><span>Revisões</span><b>'+Number(review.dueCount||0)+'</b><small>pendentes</small></button>'+(exam?'<button type="button" data-dashboard-agenda><span>Próxima prova</span><b>'+exam.days+' dia'+(exam.days===1?'':'s')+'</b><small>'+escape(exam.course.title||'Concurso')+'</small></button>':'<button type="button" data-dashboard-agenda><span>Agenda</span><b>'+planned.length+'</b><small>itens hoje</small></button>')+'</div></div>';
+    const coverUrl=nextMap&&typeof mapCover==='function'?mapCover(nextMap):'';
+    const coverHtml=coverUrl?'<img src="'+escape(coverUrl)+'" loading="lazy" decoding="async" alt="">':'';
+    const contextText=Number(review.dueCount||0)+' revisões'+(exam?' · prova em '+exam.days+' dia'+(exam.days===1?'':'s'):' · '+planned.length+' itens na agenda');
+    root.innerHTML='<div class="study-command-card"'+commandStyle+'>'+
+      '<div class="study-command-art" aria-hidden="true">'+coverHtml+'</div>'+
+      '<div class="study-command-head"><div class="study-command-copy">'+
+        '<div class="study-command-kicker">'+commandMap+'<span class="kicker">Hoje · Estude agora</span></div>'+
+        '<h2>'+escape(nextTitle)+'</h2><p>'+escape(nextMeta)+'</p>'+
+      '</div></div>'+
+      '<div class="study-command-progress" role="progressbar" aria-label="Meta diária concluída" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+snap.dailyPct+'"><i style="width:'+snap.dailyPct+'%"></i></div>'+
+      '<div class="study-command-context">'+escape(contextText)+'</div>'+
+      '<div class="study-command-bottom"><div class="study-command-metrics">'+
+        '<button type="button" data-dashboard-agenda><span>Meta de hoje</span><b>'+escape(fmtMin(snap.today))+' / '+escape(fmtMin(snap.dailyTarget))+'</b><i><em style="width:'+snap.dailyPct+'%"></em></i></button>'+
+        '<button type="button" data-dashboard-agenda><span>Semana</span><b>'+escape(fmtMin(snap.week))+' / '+escape(fmtMin(snap.weeklyTarget))+'</b><i><em style="width:'+snap.weeklyPct+'%"></em></i></button>'+
+        '<button type="button" data-dashboard-agenda><span>Revisões</span><b>'+Number(review.dueCount||0)+'</b><small>pendentes</small></button>'+
+        (exam?'<button type="button" data-dashboard-agenda><span>Próxima prova</span><b>'+exam.days+' dia'+(exam.days===1?'':'s')+'</b><small>'+escape(exam.course.title||'Concurso')+'</small></button>':'<button type="button" data-dashboard-agenda><span>Agenda</span><b>'+planned.length+'</b><small>itens hoje</small></button>')+
+      '</div><button type="button" class="primary study-command-cta" data-dashboard-start>'+(active?'Continuar agora':'Continuar agora')+' <span aria-hidden="true">→</span></button></div>'+
+    '</div>';
     root.querySelector('[data-dashboard-start]').onclick=()=>{
       if(active){ensureTimerRoot().classList.add('is-open');renderTimer();return}
       if(nextPlan?.kind==='map'&&nextPlan.key){
