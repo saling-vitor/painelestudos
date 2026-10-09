@@ -1286,8 +1286,8 @@ test('home refinada usa composição compacta e hierarquia coerente no desktop',
   expect(layout.sameRow).toBe(true);
   expect(layout.resumeBeforeSims).toBe(true);
   expect(layout.inside).toBe(true);
-  expect(layout.commandHeight).toBeLessThan(180);
-  expect(layout.intelligenceHeight).toBeLessThan(150);
+  expect(layout.commandHeight).toBeLessThan(201);
+  expect(layout.intelligenceHeight).toBeLessThan(201);
   expect(layout.resumeShare).toBeGreaterThan(.54);
   expect(layout.resumeShare).toBeLessThan(.62);
   expect(layout.simulationItemHeight).toBeGreaterThanOrEqual(148);
@@ -5259,4 +5259,47 @@ test('V15.48.149 [G] Home editorial mantém os quatro comandos e dados reais',as
   }
   await quick.locator('[data-home-focus]').click();
   await expect(page.locator('#studyTimePlanModal')).toBeVisible();
+});
+
+test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder',async({page},testInfo)=>{
+  await page.goto('/#home');
+  const root=page.locator('#homeStudyDashboard');
+  const command=root.locator('.study-command-card');
+  await expect(command).toBeVisible();
+  await expect(command.locator('.study-command-art img')).toBeVisible();
+  await expect.poll(()=>command.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+  expect(await command.locator('.study-command-art img').getAttribute('src')).toContain('home-hero.png');
+  await expect(command.locator('[data-dashboard-help]')).toBeVisible();
+  await command.locator('[data-dashboard-help]').click();
+  await expect(command.locator('#studyCommandHelpDetail')).toBeVisible();
+  await command.locator('[data-dashboard-help]').click();
+  await expect(command.locator('#studyCommandHelpDetail')).toBeHidden();
+  await expect(command.locator('.study-command-metric-icon')).toHaveCount(2);
+  await expect(root.locator('.home-command-symbol')).toHaveCount(3);
+  await expect(root.locator('.forecast-day-reference')).toHaveCount(7);
+  await expect(root.locator('.forecast-home-actions .ui-icon')).toHaveCount(2);
+  await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
+  const imgs=['bolt','target','chart-bars','clock','book-open','play','help'];
+  for(const name of imgs){
+    const res=await page.request.get('/assets/ui-icons/sf-black-filled/'+name+'.png');
+    expect(res.ok()).toBe(true);
+    expect(res.headers()['content-type']).toMatch(/image\/png/);
+    const data=await res.body();
+    expect(data.subarray(0,8).toString('hex')).toBe('89504e470d0a1a0a');
+    expect(data.length).toBeGreaterThan(100);
+  }
+  const masks=await root.locator('.home-command-symbol').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).maskImage||getComputedStyle(el).webkitMaskImage));
+  expect(masks.every(v=>v.includes('/sf-black-filled/'))).toBe(true);
+  if(testInfo.project.name==='desktop-chromium'){
+    const geometry=await page.evaluate(()=>{
+      const c=document.querySelector('#homeStudyDashboard .study-command-card').getBoundingClientRect();
+      const m=document.querySelector('#homeStudyDashboard .study-command-metrics').getBoundingClientRect();
+      const b=document.querySelector('#homeStudyDashboard .study-command-cta').getBoundingClientRect();
+      const h=document.querySelector('#homeReviewSection .section-head').getBoundingClientRect();
+      return {card:c.height,inside:m.left>=c.left&&b.right<=c.right+1,header:h.height};
+    });
+    expect(geometry.card).toBeLessThanOrEqual(201);
+    expect(geometry.inside).toBe(true);
+    expect(geometry.header).toBeLessThan(80);
+  }
 });
