@@ -35,17 +35,21 @@
   outline-offset:2px!important;
 }
 
-/* [G] Smoked Liquid Glass: preenchimento grafite .72 e reflexo discreto.
+/* [G] Smoked Liquid Glass V2 · auditoria de contraste
+   Aumento de opacidade preto→preto NÃO tornava o vidro visível em capa preta.
+   Placa grafite neutra 48/48/50 a 88%, reconhecível sobre fotografia P&B.
+   Controles são estáticos (sem estado visual de hover/press).
    Smoked Liquid Glass de capa: fumê escuro e constante em todas as
    plataformas. O material não pode se alterar no mouseover ou toque.
    38 × 38 px, sem brilho branco opaco nem efeitos de movimento. */
 
 :root{
-  --cover-liquid-border:rgba(255,255,255,.46);
-  --cover-liquid-highlight:rgba(255,255,255,.28);
-  --cover-liquid-highlight-soft:rgba(255,255,255,.10);
+  --cover-liquid-border:rgba(255,255,255,.52);
+  --cover-liquid-highlight:rgba(255,255,255,.32);
+  --cover-liquid-highlight-soft:rgba(255,255,255,.12);
   --cover-liquid-shadow:rgba(0,0,0,.42);
   --cover-liquid-icon:#fff;
+  --cover-liquid-plate:rgba(48,48,50,.88);
 }
 
 /* Geometria canônica dos controles sobre capas. */
@@ -96,14 +100,14 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   border:1px solid var(--cover-liquid-border)!important;
   background:
     radial-gradient(120% 96% at 12% -18%,
-      rgba(255,255,255,.18) 0%,
-      rgba(255,255,255,.05) 28%,
+      rgba(255,255,255,.19) 0%,
+      rgba(255,255,255,.055) 28%,
       transparent 68%),
     linear-gradient(155deg,
-      rgba(255,255,255,.07) 0%,
-      rgba(255,255,255,.018) 45%,
-      rgba(0,0,0,.10) 100%),
-    rgba(12,13,15,.72)!important;
+      rgba(255,255,255,.065) 0%,
+      rgba(255,255,255,.025) 45%,
+      rgba(0,0,0,.12) 100%),
+    var(--cover-liquid-plate)!important;
   background-blend-mode:normal!important;
   background-clip:padding-box!important;
   color:var(--cover-liquid-icon)!important;
@@ -217,7 +221,7 @@ html .map-list .map-card.has-cover > .fav{
   ){
     background:
       linear-gradient(160deg,rgba(255,255,255,.085),transparent 58%),
-      rgba(14,15,17,.82)!important;
+      rgba(43,43,45,.94)!important;
   }
 }
 
