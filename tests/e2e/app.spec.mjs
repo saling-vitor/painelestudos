@@ -5171,6 +5171,8 @@ test('V15.48.19 [D] Home usa duas mini-capas reais e ações sem alterar T/M',as
   const desktop=testInfo.project.name==='desktop-chromium';
   if(desktop)await page.setViewportSize({width:1600,height:900});
   await page.goto('/#home');
+  await page.evaluate(()=>{const map=combinedMaps()[0];if(map){localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()}});
+  if(desktop)await expect(page.locator('.home-continue-section .continue-card')).toBeVisible();
   const cards=page.locator('#homeSimulations .simulation-recent-item');
   await expect(cards).toHaveCount(3);
   const cover=cards.first().locator('.simulation-recent-cover');
