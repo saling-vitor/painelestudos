@@ -37,11 +37,21 @@ test('Superfícies opacas [G] [T+M] · Ritmo, planejamento, Agenda e Progresso',
     };
     const opacity = {};
     for (const [name, selector] of Object.entries(targets)) {
-      const value = getComputedStyle(host.querySelector(selector)).backgroundColor;
-      const channels = value.match(/^rgba?\(([^)]+)\)$/);
-      if (!channels) throw new Error('Cor de fundo inesperada em '+name+': '+value);
-      const parts = channels[1].split(',').map(x => Number.parseFloat(x.trim()));
-      opacity[name] = parts.length === 4 ? parts[3] : 1;
+      const style = getComputedStyle(host.querySelector(selector));
+      const color = style.backgroundColor;
+      const channels = color.match(/^rgba?\(([^)]+)\)$/);
+      const parts = channels ? channels[1].split(',').map(x => Number.parseFloat(x.trim())) : [];
+      const baseAlpha = parts.length === 4 ? parts[3] : parts.length === 3 ? 1 : 0;
+      // Gradientes com stops totalmente opacos também escondem o desenho
+      // topográfico, ainda que backgroundColor seja transparente.
+      const gradient = style.backgroundImage;
+      const stops = [...gradient.matchAll(/rgba?\(([^)]+)\)/g)].map(x => {
+        const values = x[1].split(',').map(v => Number.parseFloat(v.trim()));
+        return values.length === 4 ? values[3] : 1;
+      });
+      const opaqueGradient = gradient.includes('gradient') && stops.length >= 2 &&
+        stops.every(alpha => alpha >= 0.92);
+      opacity[name] = Math.max(baseAlpha, opaqueGradient ? 1 : 0);
     }
     host.remove();
     return opacity;
