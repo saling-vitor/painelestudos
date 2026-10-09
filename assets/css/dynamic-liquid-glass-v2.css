@@ -133,8 +133,10 @@ textarea{
   backdrop-filter:none!important;
 }
 
-/* MICRO GLASS: controles sobre capas; context tint é local e muito fraco. */
-.mm-optics-supported .mm-glass-micro{
+/* MICRO GLASS genérico: NÃO estilizar os botões das capas.
+   O acabamento desses controles pertence exclusivamente a button-glass.
+   Evita a sobrescrita tardia e a mudança de material durante mouseover. */
+.mm-optics-supported .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)){
   border-color:rgba(255,255,255,.23)!important;
   background:
     linear-gradient(180deg,rgba(255,255,255,.105),rgba(255,255,255,.022) 56%,transparent 78%),
@@ -152,7 +154,7 @@ textarea{
     box-shadow var(--mm-motion-fast) ease,
     background-color var(--mm-motion-fast) ease;
 }
-.mm-pointer-fine .mm-glass-micro:hover{
+.mm-pointer-fine .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)):hover{
   border-color:rgba(255,255,255,.29)!important;
   box-shadow:
     0 0 0 1px rgba(0,0,0,.58),
@@ -161,7 +163,7 @@ textarea{
 }
 
 /* Local dimming: somente sob o micro controle, nunca na capa inteira. */
-.mm-optics-supported .mm-glass-micro .ui-icon::after{
+.mm-optics-supported .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)) .ui-icon::after{
   content:"";
   position:absolute;
   inset:-7px;
@@ -171,7 +173,7 @@ textarea{
   pointer-events:none;
 }
 
-.mm-optics-supported .mm-glass-micro:not(.mm-visible-glass){
+.mm-optics-supported .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)):not(.mm-visible-glass){
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
   background:rgba(12,12,13,.42)!important;
