@@ -49,7 +49,8 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
       backdrop: s.backdropFilter || s.webkitBackdropFilter || 'none',
       border: s.borderTopColor,
       outline: s.outlineStyle,
-      color: s.color
+      color: s.color,
+      transform: s.transform
     };
   });
 
@@ -71,12 +72,22 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
       const hovered = await style(control);
       expect(hovered.alpha, 'Hover escuro/opaco é uma regressão do LG-01').toBeLessThan(0.28);
       expect(hovered.backgroundImage).toContain('radial-gradient');
+      expect(hovered.transform, 'Hover não pode deslocar controle').toBe('none');
       if (backdropSupported) expect(hovered.backdrop).not.toBe('none');
     } else {
       await control.tap();
       const touched = await style(control);
       expect(touched.alpha, 'Toque não pode fixar uma placa opaca').toBeLessThan(0.40);
+      expect(touched.transform, 'Toque não pode comprimir vidro').toBe('none');
     }
+    await control.focus();
+    const keyboard = await control.evaluate(el => ({
+      focused: document.activeElement === el,
+      focusVisible: el.matches(':focus-visible'),
+      outline: getComputedStyle(el).outlineStyle
+    }));
+    expect(keyboard.focused, 'Controle mantém foco por teclado').toBe(true);
+    if (keyboard.focusVisible) expect(keyboard.outline).not.toBe('none');
   }
 
   const favorite = page.locator('#glassAuditFixture .map-card > .fav.on > .ui-icon');
