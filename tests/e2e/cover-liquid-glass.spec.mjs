@@ -69,8 +69,8 @@ test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito 
   for (const control of controls) {
     await expect(control).toBeVisible();
     const base = await style(control);
-    expect(base.alpha, 'Vidro fumê deve ter preenchimento escuro estável').toBeGreaterThanOrEqual(0.42);
-    expect(base.alpha, 'Vidro não deve virar placa opaca').toBeLessThanOrEqual(0.72);
+    expect(base.alpha, 'Vidro fumê deve ter preenchimento grafite consistente e visível').toBeGreaterThanOrEqual(0.70);
+    expect(base.alpha, 'Vidro deve manter alguma transmissão da capa').toBeLessThanOrEqual(0.80);
     expect(base.backgroundImage).toContain('radial-gradient');
     expect(base.transform).toBe('none');
     expect(base.transitionDuration.split(',').every(n => Number.parseFloat(n) === 0),
