@@ -1,6 +1,6 @@
-/* AUTORIDADE ÚNICA LG-01/LG-02: o material e hover dos menus de capa
-   ficam definidos nesta folha; MATTE não deve sobrepor esses controles.
-   Capas em modo lista são explicitamente excluídas da superfície GLASS. */
+/* AUTORIDADE ÚNICA LG-01/LG-02: acabamento Smoked Liquid Glass ESTÁTICO
+   dos menus e favoritos sobre capas, sem :hover nem compressão no clique.
+   MATTE em modo lista continua fora da superfície de vidro. */
 /* CONSOLIDADO V15.47 · NORMALIZAÇÃO DE BOTÕES
    Incorporado de button-depth-v15-36-14.css no mesmo ponto da cascata. */
 :is(
@@ -35,22 +35,15 @@
   outline-offset:2px!important;
 }
 
-/* V15.40.0-G · Liquid Glass V3.2 para controles flutuantes sobre capas
-   Diretriz:
-   - refino óptico: menos névoa leitosa, mais transmissão da capa e borda especular;
-   - preserva o conteúdo da capa sob o controle em vez de criar uma placa cinza;
-   - somente controles sobre capa recebem o material;
-   - mantém a geometria canônica de 38 × 38 px e o posicionamento original;
-   - sem pseudo-elementos posicionados para não interferir no layout dos cards. */
+/* [G] Smoked Liquid Glass de capa: fumê escuro e constante em todas as
+   plataformas. O material não pode se alterar no mouseover ou toque.
+   38 × 38 px, sem brilho branco opaco nem efeitos de movimento. */
 
 :root{
-  --cover-liquid-border:rgba(255,255,255,.66);
-  --cover-liquid-border-hover:rgba(255,255,255,.80);
-  --cover-liquid-highlight:rgba(255,255,255,.72);
-  --cover-liquid-highlight-soft:rgba(255,255,255,.24);
-  --cover-liquid-rim-cool:rgba(255,255,255,.11);
-  --cover-liquid-shadow:rgba(0,0,0,.24);
-  --cover-liquid-shadow-close:rgba(0,0,0,.20);
+  --cover-liquid-border:rgba(255,255,255,.38);
+  --cover-liquid-highlight:rgba(255,255,255,.24);
+  --cover-liquid-highlight-soft:rgba(255,255,255,.08);
+  --cover-liquid-shadow:rgba(0,0,0,.38);
   --cover-liquid-icon:#fff;
 }
 
@@ -88,10 +81,9 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   min-height:38px!important;
 }
 
-/* Material principal.
-   O blur foi reduzido e a saturação/luminosidade aumentadas para o fundo continuar
-   reconhecível através do vidro, evitando o aspecto fosco/cinza da versão anterior.
-   As camadas radiais funcionam como highlight especular e rim óptico. */
+/* Material canônico: smoked glass, leitura estável e borda luminosa discreta.
+   Sem estilos :hover/:active de superfície: pointer, trackpad e toque
+   compartilham exatamente o mesmo acabamento. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
   .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
@@ -102,53 +94,30 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   overflow:hidden;
   border:1px solid var(--cover-liquid-border)!important;
   background:
-    radial-gradient(150% 112% at 10% -18%,
-      rgba(255,255,255,.36) 0%,
-      rgba(255,255,255,.11) 20%,
-      rgba(255,255,255,.025) 41%,
-      transparent 64%),
-    radial-gradient(116% 96% at 108% 110%,
-      rgba(255,255,255,.09) 0%,
-      rgba(255,255,255,.028) 36%,
-      transparent 64%),
-    linear-gradient(145deg,
-      rgba(255,255,255,.10) 0%,
-      rgba(255,255,255,.035) 31%,
-      rgba(255,255,255,.008) 56%,
-      rgba(255,255,255,.040) 79%,
-      rgba(255,255,255,.075) 100%),
-    rgba(245,246,246,.13)!important;
-  background-blend-mode:screen,screen,normal,normal!important;
-  color:var(--cover-liquid-icon)!important;
-  -webkit-backdrop-filter:
-    blur(5px)
-    saturate(205%)
-    contrast(116%)
-    brightness(110%)!important;
-  backdrop-filter:
-    blur(5px)
-    saturate(205%)
-    contrast(116%)
-    brightness(110%)!important;
+    radial-gradient(120% 96% at 12% -18%,
+      rgba(255,255,255,.15) 0%,
+      rgba(255,255,255,.04) 28%,
+      transparent 68%),
+    linear-gradient(155deg,
+      rgba(255,255,255,.055) 0%,
+      rgba(255,255,255,.012) 45%,
+      rgba(0,0,0,.075) 100%),
+    rgba(13,14,16,.56)!important;
+  background-blend-mode:normal!important;
   background-clip:padding-box!important;
+  color:var(--cover-liquid-icon)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(128%) contrast(106%)!important;
+  backdrop-filter:blur(12px) saturate(128%) contrast(106%)!important;
   box-shadow:
-    0 7px 18px var(--cover-liquid-shadow),
-    0 1px 2px rgba(0,0,0,.15),
-    inset 0 1px 1px var(--cover-liquid-highlight),
-    inset 1px 0 1px var(--cover-liquid-highlight-soft),
-    inset -1px 0 1px rgba(255,255,255,.09),
-    inset 0 -1px 1px rgba(8,8,8,.28),
-    inset 0 0 8px var(--cover-liquid-rim-cool)!important;
-  text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
+    0 5px 16px var(--cover-liquid-shadow),
+    0 1px 2px rgba(0,0,0,.22),
+    inset 0 1px 0 var(--cover-liquid-highlight),
+    inset 1px 0 0 var(--cover-liquid-highlight-soft),
+    inset 0 -1px 0 rgba(0,0,0,.30)!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.50)!important;
   transform:none!important;
   filter:none!important;
-  transition:
-    border-color .16s ease,
-    background .16s ease,
-    box-shadow .16s ease,
-    color .16s ease,
-    -webkit-backdrop-filter .16s ease,
-    backdrop-filter .16s ease!important;
+  transition:none!important;
 }
 
 /* Mantém os pictogramas visualmente acima do material sem alterar o posicionamento do botão. */
@@ -206,18 +175,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     inset 0 0 13px rgba(255,255,255,.16)!important;
 }
 
-/* Feedback estático de pressão para menus sobre capas. Sem lente móvel nem compressão.
-   O favorito fica fora desta regra e preserva seu estado aprovado. */
-:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit:active,
-.map-card.has-cover:not(.map-list .map-card)>.map-admin-btn:active,
-.simulation-card.has-cover .simulation-card-menu-btn:active{
-  transform:none!important;
-  border-color:rgba(255,255,255,.82)!important;
-  box-shadow:
-    0 5px 15px rgba(0,0,0,.25),
-    inset 0 1px 1px rgba(255,255,255,.72),
-    inset 0 0 0 1px rgba(255,255,255,.15)!important;
-}
+/* Sem variação óptica ao pressionar: mantém o vidro estável. */
 
 /* Lista não exibe a capa: seus controles permanecem MATTE mesmo sob
    overrides responsivos mais específicos (ex.: html.is-phone-layout).
@@ -234,65 +192,7 @@ html .map-list .map-card.has-cover > .fav{
   filter:none!important;
 }
 
-/* Mouse/trackpad: o vidro ganha brilho especular e maior transmissão,
-   sem zoom, salto ou mudança de posição. */
-@media(hover:hover) and (pointer:fine){
-  :is(
-    :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-    .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
-    .map-card.has-cover:not(.map-list .map-card) > .fav,
-    .simulation-card.has-cover .simulation-card-menu-btn
-  ):hover{
-    transform:none!important;
-    filter:none!important;
-    border-color:var(--cover-liquid-border-hover)!important;
-    background:
-      radial-gradient(152% 114% at 9% -18%,
-        rgba(255,255,255,.46) 0%,
-        rgba(255,255,255,.15) 21%,
-        rgba(255,255,255,.035) 42%,
-        transparent 65%),
-      radial-gradient(120% 98% at 108% 112%,
-        rgba(255,255,255,.12) 0%,
-        rgba(255,255,255,.035) 37%,
-        transparent 65%),
-      linear-gradient(145deg,
-        rgba(255,255,255,.085) 0%,
-        rgba(255,255,255,.042) 32%,
-        rgba(255,255,255,.010) 56%,
-        rgba(255,255,255,.048) 79%,
-        rgba(255,255,255,.095) 100%),
-      rgba(248,252,255,.048)!important;
-    color:#fff!important;
-    -webkit-backdrop-filter:
-      blur(5px)
-      saturate(215%)
-      contrast(118%)
-      brightness(113%)!important;
-    backdrop-filter:
-      blur(5px)
-      saturate(215%)
-      contrast(118%)
-      brightness(113%)!important;
-    box-shadow:
-      0 10px 24px rgba(0,0,0,.29),
-      0 1px 2px rgba(0,0,0,.14),
-      inset 0 1px 1px rgba(255,255,255,.78),
-      inset 1px 0 1px rgba(255,255,255,.28),
-      inset -1px 0 1px rgba(255,255,255,.11),
-      inset 0 -1px 1px rgba(8,8,8,.21),
-      inset 0 0 9px rgba(255,255,255,.13)!important;
-  }
-
-  .map-list .map-card.has-cover > .map-admin-btn:hover,
-  .map-list .map-card.has-cover > .fav:hover{
-    border:0!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    -webkit-backdrop-filter:none!important;
-    backdrop-filter:none!important;
-  }
-}
+/* Sem regra :hover: o material não sofre qualquer transição óptica. */
 
 /* Botões Clear Glass mantêm o acabamento estático também durante o press. */
 /* Foco acessível sem substituir o material. */
@@ -306,7 +206,7 @@ html .map-list .map-card.has-cover > .fav{
   outline-offset:2px!important;
 }
 
-/* Fallback: sem backdrop-filter, usa superfície translúcida com rim mais definido. */
+/* Fallback sem blur: fumê escuro também em navegadores sem backdrop-filter. */
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
@@ -315,11 +215,8 @@ html .map-list .map-card.has-cover > .fav{
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
     background:
-      radial-gradient(145% 108% at 10% -15%,
-        rgba(255,255,255,.45),
-        rgba(255,255,255,.12) 42%,
-        transparent 66%),
-      rgba(48,48,46,.66)!important;
+      linear-gradient(160deg,rgba(255,255,255,.085),transparent 58%),
+      rgba(14,15,17,.82)!important;
   }
 }
 
