@@ -1,3 +1,6 @@
+/* AUTORIDADE ÚNICA LG-01/LG-02: o material e hover dos menus de capa
+   ficam definidos nesta folha; MATTE não deve sobrepor esses controles.
+   Capas em modo lista são explicitamente excluídas da superfície GLASS. */
 /* CONSOLIDADO V15.47 · NORMALIZAÇÃO DE BOTÕES
    Incorporado de button-depth-v15-36-14.css no mesmo ponto da cascata. */
 :is(
@@ -54,8 +57,8 @@
 /* Geometria canônica dos controles sobre capas. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-  .map-card.has-cover > .map-admin-btn,
-  .map-card.has-cover > .fav,
+  .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+  .map-card.has-cover:not(.map-list .map-card) > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ){
   box-sizing:border-box!important;
@@ -91,8 +94,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
    As camadas radiais funcionam como highlight especular e rim óptico. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-  .map-card.has-cover > .map-admin-btn,
-  .map-card.has-cover > .fav,
+  .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+  .map-card.has-cover:not(.map-list .map-card) > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ){
   isolation:isolate;
@@ -151,8 +154,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 /* Mantém os pictogramas visualmente acima do material sem alterar o posicionamento do botão. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-  .map-card.has-cover > .map-admin-btn,
-  .map-card.has-cover > .fav,
+  .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+  .map-card.has-cover:not(.map-list .map-card) > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ) > *{
   position:relative;
@@ -164,8 +167,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
    mesmo sobre capas muito claras, sem alterar tamanho, posição ou hit-area. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-  .map-card.has-cover > .map-admin-btn,
-  .map-card.has-cover > .fav,
+  .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+  .map-card.has-cover:not(.map-list .map-card) > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ) > .ui-icon:is(.icon-more,.icon-star){
   -webkit-filter:
@@ -203,6 +206,19 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     inset 0 0 13px rgba(255,255,255,.16)!important;
 }
 
+/* Feedback estático de pressão para menus sobre capas. Sem lente móvel nem compressão.
+   O favorito fica fora desta regra e preserva seu estado aprovado. */
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit:active,
+.map-card.has-cover:not(.map-list .map-card)>.map-admin-btn:active,
+.simulation-card.has-cover .simulation-card-menu-btn:active{
+  transform:none!important;
+  border-color:rgba(255,255,255,.82)!important;
+  box-shadow:
+    0 5px 15px rgba(0,0,0,.25),
+    inset 0 1px 1px rgba(255,255,255,.72),
+    inset 0 0 0 1px rgba(255,255,255,.15)!important;
+}
+
 /* Lista não exibe a capa: portanto seus controles permanecem sem vidro. */
 .map-list .map-card.has-cover > .map-admin-btn,
 .map-list .map-card.has-cover > .fav{
@@ -221,8 +237,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 @media(hover:hover) and (pointer:fine){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-    .map-card.has-cover > .map-admin-btn,
-    .map-card.has-cover > .fav,
+    .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+    .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ):hover{
     transform:none!important;
@@ -244,7 +260,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
         rgba(255,255,255,.010) 56%,
         rgba(255,255,255,.048) 79%,
         rgba(255,255,255,.095) 100%),
-      rgba(248,252,255,.012)!important;
+      rgba(248,252,255,.048)!important;
     color:#fff!important;
     -webkit-backdrop-filter:
       blur(5px)
@@ -280,8 +296,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 /* Foco acessível sem substituir o material. */
 :is(
   :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-  .map-card.has-cover > .map-admin-btn,
-  .map-card.has-cover > .fav,
+  .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+  .map-card.has-cover:not(.map-list .map-card) > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ):focus-visible{
   outline:1px solid rgba(255,255,255,.62)!important;
@@ -292,8 +308,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-    .map-card.has-cover > .map-admin-btn,
-    .map-card.has-cover > .fav,
+    .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+    .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
     background:
@@ -309,8 +325,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 @media(prefers-reduced-transparency:reduce){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-    .map-card.has-cover > .map-admin-btn,
-    .map-card.has-cover > .fav,
+    .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+    .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
     background:rgba(38,38,39,.92)!important;
@@ -325,8 +341,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 @media(prefers-contrast:more){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-    .map-card.has-cover > .map-admin-btn,
-    .map-card.has-cover > .fav,
+    .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+    .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
     color:#fff!important;
@@ -339,8 +355,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 @media(prefers-reduced-motion:reduce){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-    .map-card.has-cover > .map-admin-btn,
-    .map-card.has-cover > .fav,
+    .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+    .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
     transition:none!important;
@@ -351,8 +367,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 @media(forced-colors:active){
   :is(
     :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
-    .map-card.has-cover > .map-admin-btn,
-    .map-card.has-cover > .fav,
+    .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+    .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
     border:1px solid ButtonText!important;
@@ -362,18 +378,5 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     text-shadow:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
-  }
-}
-
-/* Hover fumê exclusivamente nos menus •••; estrela ★ é preservada. */
-@media(hover:hover) and (pointer:fine){
-  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit:hover,
-  .map-card.has-cover>.map-admin-btn:hover,
-  .simulation-card.has-cover .simulation-card-menu-btn:hover{
-    background:linear-gradient(155deg,rgba(255,255,255,.085),rgba(255,255,255,.008) 65%),rgba(12,13,14,.54)!important;
-    border-color:rgba(255,255,255,.34)!important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 5px 14px rgba(0,0,0,.22)!important;
-    -webkit-backdrop-filter:blur(5px) saturate(123%)!important;
-    backdrop-filter:blur(5px) saturate(123%)!important;transform:none!important;
   }
 }
