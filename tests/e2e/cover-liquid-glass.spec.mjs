@@ -87,6 +87,8 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
   const listStyle = await style(listMenu);
   expect(listStyle.alpha, 'Menu em lista deve continuar sem vidro').toBe(0);
   expect(listStyle.backdrop).toBe('none');
+  // JS enhancement must respect MATTE / GLASS even after grid->list transitions.
+  await expect(listMenu).not.toHaveClass(/mm-glass-micro/);
 
   await page.locator('#glassAuditFixture').evaluate(el => el.remove());
 });
