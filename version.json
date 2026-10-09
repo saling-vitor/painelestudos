@@ -1,13 +1,13 @@
 {
-  "version": "15.48.13",
-  "label": "V15.48.13-G",
-  "notes": "Lote 01: identidade Topographic Editorial V1.0; novas capas padrão e hero; fundos de cards, vidro e correções de overflow no Desktop.",
+  "version": "15.48.14",
+  "label": "V15.48.14-G",
+  "notes": "Refino global do Liquid Glass, hover neutro, hierarquia de Progresso e superfícies opacas em Desktop, Tablet e Smartphone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Identidade Topographic Editorial V1.0 com versões claras e escuras e ícones PWA",
-    "[G] Novos padrões de capa para cursos e mapas e nova imagem da home",
-    "[G] Palavra MAPAS da hero em branco e controles de capa com vidro mais claro",
-    "[D] Cards Meus Cursos sem overflow, Retomar sem sobra de imagem e superfícies opacas no Progresso e Ritmo"
+    "[G] Corrige transparência de Progresso, Ritmo, Distribuição e Planejamento em dia nas três plataformas",
+    "[G] Reorganiza cards de próximas ações e atenção sem alterar a lógica dos estudos",
+    "[G] Refina Liquid Glass da topbar e hover dos menus preservando a estrela ★",
+    "[G] Ajusta seleção da Agenda e alinhamento do estado da nuvem"
   ],
   "automation": {
     "enabled": true,
