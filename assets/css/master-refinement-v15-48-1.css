@@ -472,7 +472,8 @@ html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth
 }
 #homeStudyDashboard .priority-why-tile span{flex:1;min-width:0}
 #homeStudyDashboard .priority-why-tile b{display:block;font-size:8px;line-height:1.1}
-#homeStudyDashboard .priority-why-tile small{
+#homeStudyDashboard .priority-why-tile [data-reason]::after{
+  content:attr(data-reason);
   display:block;max-width:100%;font-size:7px;line-height:1.15;color:#94959a;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }

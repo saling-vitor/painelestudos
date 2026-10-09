@@ -4033,7 +4033,8 @@ test('[M] Home compacta Prioridade, Ritmo e Plano do dia em linhas acionáveis',
     };
   });
   expect(data.planMax).toBeLessThanOrEqual(72);
-  expect(data.intelMax).toBeLessThanOrEqual(150);
+  // V15.48.149-G: cartões editoriais têm imagem, gráfico e ações reais.
+  expect(data.intelMax).toBeLessThanOrEqual(215);
   expect(data.actionCovers).toBe(true);
   expect(data.roleVisible).toBe(false);
   expect(data.activityVisible).toBe(false);
