@@ -1,13 +1,12 @@
 {
-  "version": "15.48.14",
-  "label": "V15.48.14-G",
-  "notes": "Refino global do Liquid Glass, hover neutro, hierarquia de Progresso e superfícies opacas em Desktop, Tablet e Smartphone.",
+  "version": "15.48.16",
+  "label": "V15.48.16-G",
+  "notes": "Auditoria global LG-01–LG-08: padroniza o Liquid Glass fumê dos botões de ações e favoritos sobre capas, sem variação óptica no hover, preservando menus, modo lista e PWA.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Corrige transparência de Progresso, Ritmo, Distribuição e Planejamento em dia nas três plataformas",
-    "[G] Reorganiza cards de próximas ações e atenção sem alterar a lógica dos estudos",
-    "[G] Refina Liquid Glass da topbar e hover dos menus preservando a estrela ★",
-    "[G] Ajusta seleção da Agenda e alinhamento do estado da nuvem"
+    "[G] Controles ••• e ★ sobre capas em Liquid Glass grafite uniforme no Desktop, iPad e iPhone, sem efeito de hover",
+    "[G] Elimina regras CSS concorrentes entre Design System, Black Editorial e micro glass, sem alterar ações e favoritos",
+    "[G] Preserva modo lista MATTE, contorno dos ícones, estrela amarela, foco acessível e imagem da Home já publicada"
   ],
   "automation": {
     "enabled": true,
