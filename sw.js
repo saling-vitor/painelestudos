@@ -39,7 +39,24 @@ async function cacheOptional(cache,path){try{const req=new Request(absolute(path
 async function cacheCatalogResources(cache){try{const req=new Request(absolute('./data/catalog.json'),{cache:'reload'}),r=await fetch(req);if(!r.ok)return;const data=await r.clone().json();await cache.put(req,r);const paths=[...(data.maps||[]).flatMap(m=>[m.href,m.cover]),...(data.courses||[]).map(c=>c.edital),...Object.values(data.bundledCourseAssets||{}).map(c=>c.edital)].filter(Boolean);await Promise.allSettled(paths.map(p=>cacheOptional(cache,'./'+String(p).replace(/^\.\//,''))))}catch{}}
 async function cacheSimulationResources(cache){try{const req=new Request(absolute('./data/simulados.json'),{cache:'reload'}),r=await fetch(req);if(!r.ok)return;const data=await r.clone().json();await cache.put(req,r);const paths=(data.simulations||[]).map(s=>s.href).filter(Boolean);await Promise.allSettled(paths.map(p=>cacheOptional(cache,'./'+String(p).replace(/^\.\//,''))))}catch{}}async function networkFirst(request,fallback){try{const r=await fetch(request);if(r&&r.ok){const cache=await caches.open(V);await cache.put(request,r.clone())}return r}catch{const hit=await caches.match(request,{ignoreSearch:true});if(hit)return hit;if(fallback){const fb=await caches.match(absolute(fallback),{ignoreSearch:true});if(fb)return fb}return new Response('Offline',{status:503,statusText:'Offline'})}}
 async function cacheFirst(request){const hit=await caches.match(request);if(hit)return hit;try{const r=await fetch(request);if(r&&r.ok){const cache=await caches.open(V);await cache.put(request,r.clone())}return r}catch{return new Response('Offline',{status:503,statusText:'Offline'})}}
-self.addEventListener('install',e=>e.waitUntil((async()=>{const cache=await caches.open(V);await cache.addAll([...CORE,...UI_ICONS,...BRAND_ASSETS,...DEFAULT_ASSETS,...SIMULATION_COVERS]);await cacheCatalogResources(cache);await cacheSimulationResources(cache)})()));
-self.addEventListener('message',event=>{const data=event.data||{};if(data.type==='SKIP_WAITING')event.waitUntil(self.skipWaiting())});
+// O PWA deve ativar antes de baixar catálogos, mídias e capas não essenciais.
+// O aquecimento secundário preserva o suporte offline sem bloquear navigator.serviceWorker.ready.
+const BOOT_ASSETS=['./','./index.html','./offline.html','./reader.html','./assets/css/app.css?v=15.48.13','./assets/js/app.js?v=15.48.13'];
+self.addEventListener('install',event=>event.waitUntil((async()=>{const cache=await caches.open(V);await cache.addAll(BOOT_ASSETS)})()));
+let warmCachePromise=null;
+function warmOfflineCache(){
+  if(!warmCachePromise)warmCachePromise=(async()=>{
+    const cache=await caches.open(V);
+    const paths=[...CORE,...UI_ICONS,...BRAND_ASSETS,...DEFAULT_ASSETS,...SIMULATION_COVERS];
+    await Promise.allSettled(paths.map(path=>cacheOptional(cache,path)));
+    await Promise.allSettled([cacheCatalogResources(cache),cacheSimulationResources(cache)]);
+  })().finally(()=>{warmCachePromise=null});
+  return warmCachePromise;
+}
+self.addEventListener('message',event=>{
+  const data=event.data||{};
+  if(data.type==='SKIP_WAITING')event.waitUntil(self.skipWaiting());
+  if(data.type==='WARM_CACHE')event.waitUntil(warmOfflineCache());
+});
 self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('study-pwa-')&&k!==V).map(k=>caches.delete(k)));await self.clients.claim()})()));
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET'||!sameOrigin(r))return;const u=new URL(r.url);if(/\/version\.json$/i.test(u.pathname)){e.respondWith(fetch(r,{cache:'no-store'}));return}if(r.mode==='navigate'){if(/\/simulados\/.*\.html$/i.test(u.pathname)){e.respondWith(cacheFirst(r));return}const fallback=u.pathname.endsWith('/reader.html')?'./reader.html':'./index.html';e.respondWith(networkFirst(r,fallback));return}if(/\/cursos\/.*\/mapas\/.*\.html$/i.test(u.pathname)){e.respondWith(cacheFirst(r));return}if(/\/cursos\/.*\/documentos\/.*\.pdf$/i.test(u.pathname)){e.respondWith(cacheFirst(r));return}if(/\/data\/(?:catalog|simulados)\.json$/i.test(u.pathname)){e.respondWith(networkFirst(r));return}e.respondWith(cacheFirst(r))});
