@@ -41,8 +41,8 @@
    - sem pseudo-elementos posicionados para não interferir no layout dos cards. */
 
 :root{
-  --cover-liquid-border:rgba(255,255,255,.56);
-  --cover-liquid-border-hover:rgba(255,255,255,.72);
+  --cover-liquid-border:rgba(255,255,255,.66);
+  --cover-liquid-border-hover:rgba(255,255,255,.80);
   --cover-liquid-highlight:rgba(255,255,255,.72);
   --cover-liquid-highlight-soft:rgba(255,255,255,.24);
   --cover-liquid-rim-cool:rgba(255,255,255,.11);
@@ -114,7 +114,7 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
       rgba(255,255,255,.008) 56%,
       rgba(255,255,255,.040) 79%,
       rgba(255,255,255,.075) 100%),
-    rgba(245,250,255,.010)!important;
+    rgba(245,246,246,.13)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   color:var(--cover-liquid-icon)!important;
   -webkit-backdrop-filter:

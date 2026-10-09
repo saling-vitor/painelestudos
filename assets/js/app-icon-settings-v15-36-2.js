@@ -5,18 +5,18 @@
   const media=window.matchMedia('(prefers-color-scheme: light)');
   const assets={
     light:{
-      preview:'assets/brand/app-icons/app-icon-light-rounded-192-v15-23-1.png',
-      favicon:'assets/brand/app-icons/app-icon-light-rounded-192-v15-23-1.png',
-      touch:'assets/brand/app-icons/app-icon-light-rounded-192-v15-23-1.png',
-      touchSize:'192x192',
-      manifest:'manifest-light-v15.36.2.webmanifest'
+      preview:'assets/brand/topographic-editorial-v1/icons/pwa-icon-light-192.png',
+      favicon:'assets/brand/topographic-editorial-v1/icons/pwa-icon-light-192.png',
+      touch:'assets/brand/topographic-editorial-v1/icons/apple-touch-icon-light.png',
+      touchSize:'180x180',
+      manifest:'manifest-light-v15.36.2.webmanifest?v=15.48.13'
     },
     dark:{
-      preview:'assets/brand/app-icons/app-icon-dark-rounded-192-v15-23-1.png',
-      favicon:'assets/brand/app-icons/app-icon-dark-rounded-192-v15-23-1.png',
-      touch:'assets/brand/app-icons/app-icon-dark-rounded-180-v15-23-1.png',
+      preview:'assets/brand/topographic-editorial-v1/icons/pwa-icon-192.png',
+      favicon:'assets/brand/topographic-editorial-v1/icons/pwa-icon-192.png',
+      touch:'assets/brand/topographic-editorial-v1/icons/apple-touch-icon.png',
       touchSize:'180x180',
-      manifest:'manifest-v15.23.6.webmanifest'
+      manifest:'manifest-v15.23.6.webmanifest?v=15.48.13'
     }
   };
   function readMode(){
@@ -42,10 +42,10 @@
     const explicit=document.getElementById('appIconExplicitFavicon');
     if(explicit){
       explicit.media=mode==='auto'?'not all':'all';
-      explicit.href=asset.favicon+'?v=15.36.2-'+resolved;
+      explicit.href=asset.favicon+'?v=15.48.13-'+resolved;
     }
-    setHref('appAppleTouchIcon',asset.touch+'?v=15.36.2-'+resolved,asset.touchSize);
-    setHref('appAppleTouchIconPrecomposed',asset.touch+'?v=15.36.2-'+resolved,asset.touchSize);
+    setHref('appAppleTouchIcon',asset.touch+'?v=15.48.13-'+resolved,asset.touchSize);
+    setHref('appAppleTouchIconPrecomposed',asset.touch+'?v=15.48.13-'+resolved,asset.touchSize);
     const manifest=document.getElementById('appManifest');
     if(manifest&&manifest.getAttribute('href')!==asset.manifest)manifest.setAttribute('href',asset.manifest);
 

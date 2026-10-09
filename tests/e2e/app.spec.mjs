@@ -332,6 +332,7 @@ test('sincronização de capas usa updatedAt por mapa e não ressuscita capa res
 test('PWA detecta worker mais novo que o bundle aberto',async({page})=>{await page.goto('/#settings');const result=await page.evaluate(()=>({same:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v='+APP_VERSION}),newer:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v=99.0.0'}),older:serviceWorkerIsNewerThanBundle({scriptURL:location.origin+location.pathname+'sw.js?v=1.0.0'}),parsed:serviceWorkerAppVersion({scriptURL:location.origin+location.pathname+'sw.js?v=99.0.0'})}));expect(result.same).toBe(false);expect(result.newer).toBe(true);expect(result.older).toBe(false);expect(result.parsed).toBe('99.0.0')});
 test('PWA registra service worker da versão atual e fica sem atualização pendente',async({page})=>{
   await page.goto('/#settings');
+  await page.evaluate(()=>navigator.serviceWorker.ready);
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
   await page.evaluate(()=>checkForAppUpdate({silent:true}));
   await page.waitForFunction(()=>typeof appUpdateState!=='undefined'&&!appUpdateState.checking);
@@ -1759,7 +1760,7 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
       heroWidth:box.width,bgSize:style.backgroundSize
     };
   });
-  expect(layout.bg).toContain('home-hero-panel-hq.webp');
+  expect(layout.bg).toContain('topographic-editorial-v1/covers/home-hero.png');
   if(await page.evaluate(()=>innerWidth>=900)){
     expect(layout.height).toBeGreaterThanOrEqual(280);
     expect(layout.height).toBeLessThanOrEqual(345);
@@ -1768,10 +1769,10 @@ test('hero da home usa a nova arte oficial sem cobrir a ilustração',async({pag
   }
 });
 
-test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
+test('hero editorial Topographic V1 mantém arquivo com qualidade suficiente',async({page})=>{
   await page.goto('/#home');
   const result=await page.evaluate(async()=>{
-    const response=await fetch('./assets/home-hero-panel-hq.webp',{cache:'no-store'});
+    const response=await fetch('./assets/brand/topographic-editorial-v1/covers/home-hero.png',{cache:'no-store'});
     const blob=await response.blob();
     const img=new Image();
     const loaded=new Promise((resolve,reject)=>{img.onload=()=>resolve({width:img.naturalWidth,height:img.naturalHeight});img.onerror=reject});
@@ -1784,7 +1785,7 @@ test('hero HQ mantém arquivo com qualidade suficiente',async({page})=>{
   expect(result.size).toBeGreaterThan(300000);
   expect(result.width).toBeGreaterThanOrEqual(1500);
   expect(result.height).toBeGreaterThanOrEqual(640);
-  expect(result.type).toContain('image/webp');
+  expect(result.type).toContain('image/png');
 });
 
 
@@ -2204,6 +2205,7 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   const form=page.locator('#studyGoalsForm');
   await form.locator('[name="dailyMinutes"]').fill('1h 30min');
   await form.locator('[name="weeklyMinutes"]').fill('8h');
+  await form.locator('[name="weeklyMinutes"]').focus(); // precondição: edição realmente focada
   // Uma atualização assíncrona da central não pode substituir o input
   // focado nem restaurar a meta semanal padrão durante a edição.
   const editorPreserved=await page.evaluate(()=>{
@@ -3840,18 +3842,18 @@ test('[G] Configurações permite escolher ícone Claro, Escuro ou Automático',
   const light=await chooseMode('light');
   await expect(light).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('light');
-  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-light-rounded-192/);
+  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/pwa-icon-light-192\.png/);
   expect(await page.locator('#appIconExplicitFavicon').getAttribute('media')).toBe('all');
-  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-light-rounded-192/);
-  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-light-v15.36.2.webmanifest');
+  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/apple-touch-icon-light\.png/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href',/manifest-light-v15\.36\.2\.webmanifest\?v=\d+\.\d+\.\d+/);
 
   await ensurePanelOpen();
   const dark=await chooseMode('dark');
   await expect(dark).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>localStorage.getItem('studyapp.appIconMode'))).toBe('dark');
-  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/app-icon-dark-rounded-192/);
-  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/app-icon-dark-rounded-180/);
-  await expect(page.locator('#appManifest')).toHaveAttribute('href','manifest-v15.23.6.webmanifest');
+  await expect(page.locator('#appIconPreview')).toHaveAttribute('src',/pwa-icon-192\.png/);
+  await expect(page.locator('#appAppleTouchIcon')).toHaveAttribute('href',/apple-touch-icon\.png/);
+  await expect(page.locator('#appManifest')).toHaveAttribute('href',/manifest-v15\.23\.6\.webmanifest\?v=\d+\.\d+\.\d+/);
 
   await ensurePanelOpen();
   const automatic=await chooseMode('auto');
@@ -4110,7 +4112,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
 });
 
 
-test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',async({page},testInfo)=>{
+test('[D] Retomar onde parei preenche capa sem faixa inferior e contém o conteúdo',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva do desktop.');
   await page.setViewportSize({width:1600,height:900});
   await page.goto('/#home');
@@ -4130,6 +4132,7 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
     const states=el.querySelector('.continue-states');
     const cardBox=el.getBoundingClientRect();
     const thumbBox=thumb?.getBoundingClientRect();
+    const imgBox=img?.getBoundingClientRect();
     const contentBox=content?.getBoundingClientRect();
     const actionBox=action?.getBoundingClientRect();
     const statesBox=states?.getBoundingClientRect();
@@ -4138,6 +4141,8 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
       cardWidth:cardBox.width,
       thumbWidth:thumbBox?.width||0,
       thumbHeight:thumbBox?.height||0,
+      mediaFitsCard:!!thumbBox&&Math.abs(thumbBox.height-cardBox.height)<=2,
+      imageFillsMedia:!!imgBox&&!!thumbBox&&Math.abs(imgBox.height-thumbBox.height)<=2&&Math.abs(imgBox.width-thumbBox.width)<=2,
       objectFit:img?getComputedStyle(img).objectFit:'',
       contentInside:!!contentBox&&contentBox.left>=cardBox.left-1&&contentBox.right<=cardBox.right+1&&contentBox.bottom<=cardBox.bottom+1,
       actionInside:!!actionBox&&actionBox.left>=cardBox.left-1&&actionBox.right<=cardBox.right+1&&actionBox.bottom<=cardBox.bottom+1,
@@ -4147,9 +4152,9 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
   });
   expect(data.cardHeight).toBeGreaterThanOrEqual(150);
   expect(data.thumbHeight).toBeGreaterThanOrEqual(110);
-  expect(data.thumbWidth/data.thumbHeight).toBeGreaterThan(1.72);
-  expect(data.thumbWidth/data.thumbHeight).toBeLessThan(1.83);
-  expect(data.objectFit).toBe('contain');
+  expect(data.mediaFitsCard).toBe(true);
+  expect(data.imageFillsMedia).toBe(true);
+  expect(data.objectFit).toBe('cover');
   expect(data.contentInside).toBe(true);
   expect(data.actionInside).toBe(true);
   expect(data.statesInside).toBe(true);
@@ -4555,10 +4560,10 @@ test('[G] consolidação Black Editorial mantém topografia, sidebar, popovers e
 
     const inactive=page.locator('.side .nav-btn[data-nav="courses"]');
     await inactive.hover();
-    const hover=await inactive.evaluate(el=>({background:getComputedStyle(el).backgroundImage,backgroundColor:getComputedStyle(el).backgroundColor}));
+    const hover=await inactive.evaluate(el=>({background:getComputedStyle(el).backgroundImage}));
     expect(hover.background).toBe('none');
-    // V2: hover recebe leve tonalidade sem virar outra superfície glass.
-    expect(hover.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    // Aguarda a transição CSS antes de medir a tonalidade discreta do hover.
+    await expect.poll(()=>inactive.evaluate(el=>getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)');
   }
 
   await page.goto('/#course/porto-alegre');

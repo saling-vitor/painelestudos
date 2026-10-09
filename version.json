@@ -1,18 +1,18 @@
 {
-  "version": "15.48.12",
-  "label": "V15.48.12-T+M",
-  "notes": "Topografia reforçada no iPad (0,32) e smartphone (0,28), mantendo o Desktop e o dock compactado sem alterações de layout.",
+  "version": "15.48.13",
+  "label": "V15.48.13-G",
+  "notes": "Lote 01: identidade Topographic Editorial V1.0; novas capas padrão e hero; fundos de cards, vidro e correções de overflow no Desktop.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Fundo topográfico mais visível no iPad em retrato e paisagem",
-    "[M] Curvas cartográficas reforçadas no smartphone, com leitura preservada",
-    "[T+M] SVG, dock Liquid Glass, leitores e preferências de acessibilidade preservados",
-    "[D] Intensidade e aspecto existentes do Desktop mantidos"
+    "[G] Identidade Topographic Editorial V1.0 com versões claras e escuras e ícones PWA",
+    "[G] Novos padrões de capa para cursos e mapas e nova imagem da home",
+    "[G] Palavra MAPAS da hero em branco e controles de capa com vidro mais claro",
+    "[D] Cards Meus Cursos sem overflow, Retomar sem sobra de imagem e superfícies opacas no Progresso e Ritmo"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "T+M",
+    "channel": "G",
     "runBase": 710
   }
 }
