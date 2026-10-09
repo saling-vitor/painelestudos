@@ -85,6 +85,7 @@ html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb 
   object-fit:cover!important;object-position:center!important;background:transparent!important
 }
 html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-content{min-width:0!important;padding-block:10px!important}
+html:not(.is-ipad):not(.is-phone-layout) :is(.home-continue-section .continue-card,.home-simulations-section .simulation-recent-item){box-sizing:border-box!important;height:152px!important;max-height:156px!important}
 html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .simulation-recent-item{border-radius:12px!important;min-width:0!important}
 html:not(.is-ipad):not(.is-phone-layout) :is(.home-continue-section,.home-simulations-section) .section-head{align-items:center!important}
 
