@@ -38,7 +38,7 @@ test('Superfícies opacas [G] [T+M] · Ritmo, planejamento, Agenda e Progresso',
     const opacity = {};
     for (const [name, selector] of Object.entries(targets)) {
       const value = getComputedStyle(host.querySelector(selector)).backgroundColor;
-      const channels = value.match(/^rgba?\\(([^)]+)\\)$/);
+      const channels = value.match(/^rgba?\(([^)]+)\)$/);
       if (!channels) throw new Error('Cor de fundo inesperada em '+name+': '+value);
       const parts = channels[1].split(',').map(x => Number.parseFloat(x.trim()));
       opacity[name] = parts.length === 4 ? parts[3] : 1;
