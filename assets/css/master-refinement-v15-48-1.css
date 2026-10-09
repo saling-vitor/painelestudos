@@ -478,6 +478,10 @@ html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 #homeStudyDashboard .priority-now-actions{margin-top:auto!important;display:block!important;width:100%}
+#homeStudyDashboard .priority-now-actions .primary::before{
+  content:"▷";display:inline-block;margin-right:8px;color:var(--home-yellow);
+  font-size:12px;vertical-align:middle;
+}
 #homeStudyDashboard .priority-now-actions .primary{
   width:100%;min-height:27px!important;height:27px!important;margin:0!important;
   background:rgba(228,198,94,.075)!important;border:1px solid rgba(228,198,94,.55)!important;
@@ -575,7 +579,8 @@ html.is-phone-layout #homeStudyDashboard{
 }
 html.is-phone-layout #homeStudyDashboard .study-command-card{
   grid-column:1!important;height:auto!important;min-height:195px!important;max-height:none!important;
-  padding:12px!important;
+  padding:12px!important;border-radius:14px!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html.is-phone-layout #homeStudyDashboard .study-intelligence-row>article{
   height:auto!important;min-height:158px!important;max-height:none!important;
