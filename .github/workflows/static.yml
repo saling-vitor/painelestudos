@@ -282,8 +282,11 @@ jobs:
             version_body="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/version.json?t=$stamp" || true)"
             actual="$(printf '%s' "$version_body" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(JSON.parse(s).version||'')}catch{}})")"
             index_body="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/?t=$stamp" || true)"
-            if [ "$actual" = "$expected" ] && printf '%s' "$index_body" | grep -Fq "app.js?v=$expected"; then
+            # Confere o CSS efetivamente servido, não apenas o número da versão.
+            glass_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/button-glass-v15-36-15.css?v=$expected&t=$stamp" || true)"
+            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]]; then
               echo "✓ GitHub Pages público está em $actual"
+              echo "✓ Material grafite dos botões •••/★ presente no CSS público"
               exit 0
             fi
             echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível}"

@@ -45,6 +45,7 @@ test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito 
     const channels = rgb ? rgb[1].split(',').map(n => Number.parseFloat(n.trim())) : [];
     return {
       alpha: channels.length === 4 ? channels[3] : channels.length === 3 ? 1 : 0,
+      rgb: channels.slice(0,3),
       backgroundImage: s.backgroundImage,
       backgroundColor: s.backgroundColor,
       boxShadow: s.boxShadow,
@@ -64,13 +65,18 @@ test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito 
     page.locator('#glassAuditFixture .map-card:not(.map-list .map-card) > .fav')
   ];
   const pointerFine = await page.evaluate(() => matchMedia('(hover:hover) and (pointer:fine)').matches);
+  const defaultTransparency = await page.evaluate(() => !matchMedia('(prefers-reduced-transparency: reduce)').matches);
+  expect(defaultTransparency, 'Fixture testa acabamento padrão; acessibilidade usa outra regra').toBe(true);
   const backdropSupported = await page.evaluate(() => CSS.supports('backdrop-filter','blur(1px)') || CSS.supports('-webkit-backdrop-filter','blur(1px)'));
 
   for (const control of controls) {
     await expect(control).toBeVisible();
     const base = await style(control);
-    expect(base.alpha, 'Vidro fumê deve ter preenchimento grafite consistente e visível').toBeGreaterThanOrEqual(0.70);
-    expect(base.alpha, 'Vidro deve manter alguma transmissão da capa').toBeLessThanOrEqual(0.80);
+    expect(base.alpha, 'Vidro fumê deve ter densidade suficiente').toBeGreaterThanOrEqual(backdropSupported ? 0.85 : 0.92);
+    expect(base.alpha, 'Vidro grafite mantém translucidez').toBeLessThanOrEqual(backdropSupported ? 0.91 : 0.99);
+    expect(base.rgb[0], 'Placa não pode continuar quase preta sobre capas pretas').toBeGreaterThanOrEqual(42);
+    expect(base.rgb[0], 'Placa não pode tornar-se leitosa').toBeLessThanOrEqual(58);
+    expect(Math.abs(base.rgb[0]-base.rgb[1]), 'Cor neutra sem tonalidade azul').toBeLessThanOrEqual(2);
     expect(base.backgroundImage).toContain('radial-gradient');
     expect(base.transform).toBe('none');
     expect(base.transitionDuration.split(',').every(n => Number.parseFloat(n) === 0),

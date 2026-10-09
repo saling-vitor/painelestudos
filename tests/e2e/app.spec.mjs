@@ -5122,3 +5122,46 @@ test('Topografia [T+M] · intensidade responsiva e fundo sem artefatos WebKit',a
     });
   }
 });
+
+test('[G] Smoked Liquid Glass das capas: teste DOM real em curso, mapa e favorito', async({page})=>{
+  // Caso de regressão pós-publicação: conferir botões REAIS renderizados por
+  // mapCard/courseCard, não somente cartões de fixture isolada.
+  const backdropSupported=await page.evaluate(()=>CSS.supports('backdrop-filter','blur(1px)')||CSS.supports('-webkit-backdrop-filter','blur(1px)'));
+  const finePointer=await page.evaluate(()=>matchMedia('(hover:hover) and (pointer:fine)').matches);
+  const inspect=async control=>{
+    await expect(control).toBeVisible();
+    const read=()=>control.evaluate(el=>{
+      const s=getComputedStyle(el);
+      const rgba=s.backgroundColor.match(/rgba?\(([^)]+)\)/);
+      const vals=rgba?rgba[1].split(',').map(v=>Number.parseFloat(v.trim())):[];
+      return{
+        rgb:vals.slice(0,3),alpha:vals.length===4?vals[3]:1,
+        image:s.backgroundImage,shadow:s.boxShadow,border:s.borderTopColor,
+        filter:s.backdropFilter||s.webkitBackdropFilter||'none',
+        width:Math.round(el.getBoundingClientRect().width),
+        height:Math.round(el.getBoundingClientRect().height)
+      };
+    });
+    const base=await read();
+    expect(base.rgb[0], 'Controle real deve ter cor grafite, não preta').toBeGreaterThanOrEqual(42);
+    expect(base.rgb[0], 'Material grafite não deve ficar cinza claro').toBeLessThanOrEqual(58);
+    expect(base.alpha,'Controle real deve ter fundo com corpo').toBeGreaterThanOrEqual(backdropSupported?0.85:0.92);
+    expect(base.image,'Material conserva reflexo em gradiente').toContain('radial-gradient');
+    expect(base.width,'Área do controle não reduzida').toBeGreaterThanOrEqual(36);
+    expect(base.height,'Área do controle não reduzida').toBeGreaterThanOrEqual(36);
+    if(finePointer){
+      await control.hover();
+      const hovering=await read();
+      for(const key of ['rgb','alpha','image','shadow','border','filter']){
+        expect(hovering[key], 'Nenhuma alteração visual de '+key+' no hover real').toEqual(base[key]);
+      }
+    }
+  };
+  const course=page.locator('#homeCourses .course-card-edit').first();
+  await inspect(course);
+  await page.goto('/#course/porto-alegre');
+  const mapMenu=page.locator('#courseMaps .map-card.has-cover > .map-admin-btn').first();
+  const fav=page.locator('#courseMaps .map-card.has-cover > .fav').first();
+  await inspect(mapMenu);
+  await inspect(fav);
+});

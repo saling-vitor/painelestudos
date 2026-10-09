@@ -1,12 +1,12 @@
 {
-  "version": "15.48.17",
-  "label": "V15.48.17-G",
-  "notes": "Aumenta a densidade do Smoked Liquid Glass nos botões ••• e ★ sobre capas de cursos, mapas e simulados, preservando o acabamento estático, a legibilidade e o modo lista.",
+  "version": "15.48.18",
+  "label": "V15.48.18-G",
+  "notes": "Auditoria de contraste e entrega real: botões ••• e ★ sobre capas recebem grafite neutro visível (48/48/50 a 88%), sem hover, com testes no DOM real e verificação do CSS publicado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Vidro fumê grafite com preenchimento mais presente (72% de opacidade), borda discreta e blur refinado",
-    "[G] Botões ••• e ★ mantêm aparência idêntica em repouso e hover em Desktop, Tablet e Smartphone",
-    "[G] Preserva a estrela ativa amarela, o modo lista MATTE, a acessibilidade e as demais superfícies"
+    "[G] Botões das capas com vidro grafite perceptível sobre preto e branco, sem aspecto leitoso",
+    "[G] Mantém o mesmo material no hover; estrela amarela, foco e controles em lista preservados",
+    "[G] Testes automatizados de DOM real em desktop/iPad/iPhone e verificação do CSS realmente servido pelo GitHub Pages"
   ],
   "automation": {
     "enabled": true,
