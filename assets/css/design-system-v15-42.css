@@ -212,26 +212,10 @@ html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
 }
 
 /* =========================================================
-   5 · CONTROLES SOBRE CAPAS · CLEAR GLASS
+   5 · CONTROLES SOBRE CAPAS
+   Material centralizado no CSS de botões (Smoked Glass estático).
+   Este módulo define apenas tokens compartilhados e outros componentes.
    ========================================================= */
-:is(
-  .map-card.has-cover>.fav,
-  .map-card.has-cover>.map-admin-btn,
-  .course-card-edit,
-  .simulation-card.has-cover .simulation-card-menu-btn
-){
-  border-color:rgba(255,255,255,.31)!important;
-  background:
-    radial-gradient(135% 150% at 18% -45%,rgba(255,255,255,.22),transparent 56%),
-    linear-gradient(145deg,rgba(255,255,255,.070),rgba(5,5,5,.10)),
-    rgba(8,8,9,.22)!important;
-  -webkit-backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
-  backdrop-filter:blur(10px) saturate(155%) contrast(106%)!important;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,.56),
-    0 6px 18px rgba(0,0,0,.25),
-    inset 0 1px 0 rgba(255,255,255,.22)!important;
-}
 
 /* =========================================================
    6 · GRUPO DO CURSO · UMA SUPERFÍCIE, TRÊS CONTROLES

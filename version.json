@@ -1,10 +1,12 @@
 {
-  "version": "15.48.15",
-  "label": "V15.48.15-G",
-  "notes": "Substitui a arte panorâmica principal da Home pela imagem editorial em preto e branco aprovada, sem alterar textos, menus ou funcionalidades.",
+  "version": "15.48.16",
+  "label": "V15.48.16-G",
+  "notes": "Auditoria global LG-01–LG-08: padroniza o Liquid Glass fumê dos botões de ações e favoritos sobre capas, sem variação óptica no hover, preservando menus, modo lista e PWA.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Nova imagem panorâmica principal da Home (2048 × 682 px), com atualização de cache e preservação do layout responsivo"
+    "[G] Controles ••• e ★ sobre capas em Liquid Glass grafite uniforme no Desktop, iPad e iPhone, sem efeito de hover",
+    "[G] Elimina regras CSS concorrentes entre Design System, Black Editorial e micro glass, sem alterar ações e favoritos",
+    "[G] Preserva modo lista MATTE, contorno dos ícones, estrela amarela, foco acessível e imagem da Home já publicada"
   ],
   "automation": {
     "enabled": true,

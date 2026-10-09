@@ -3024,9 +3024,13 @@ test('iPhone real mantém feedback tátil e navegação alinhada',async({page},t
   await page.goto('/#course/porto-alegre');
   const map=page.locator('#courseMaps .map-card').first();
   await expect(map).toBeVisible();
-  await page.waitForTimeout(220);
-  const transform=await map.evaluate(el=>getComputedStyle(el).transform);
-  expect(['none','matrix(1, 0, 0, 1, 0, 0)']).toContain(transform);
+  // O card entra com map-card-enter (translateY(3px) -> none).
+  // Aguarda a animação concluir mesmo quando os dados chegam após o primeiro paint;
+  // não altera o comportamento da UI nem aceita deslocamento permanente.
+  await expect.poll(
+    () => map.evaluate(el => getComputedStyle(el).transform),
+    { timeout:5000, intervals:[100,200,300,500] }
+  ).toMatch(/^(?:none|matrix\(1, 0, 0, 1, 0, 0\))$/);
 });
 
 test('agenda de revisão invalida é regenerada sem atraso absurdo',async({page})=>{

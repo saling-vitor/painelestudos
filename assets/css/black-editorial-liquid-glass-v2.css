@@ -321,26 +321,10 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 }
 
 /* ==========================================================================
-   6 · CLEAR GLASS — SOMENTE CONTROLES SOBRE CAPAS
-   ========================================================================== */
-:is(
-  .map-card.has-cover>.fav,
-  .map-card.has-cover>.map-admin-btn,
-  .course-card-edit,
-  .course-library-card .course-card-edit,
-  .simulation-card.has-cover .simulation-card-menu-btn
-){
-  border:1px solid rgba(255,255,255,.43)!important;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.25),rgba(255,255,255,.14) 52%,rgba(255,255,255,.085)),
-    rgba(237,239,238,.14)!important;
-  -webkit-backdrop-filter:var(--mm-glass-clear-filter)!important;
-  backdrop-filter:var(--mm-glass-clear-filter)!important;
-  box-shadow:
-    0 0 0 1px rgba(0,0,0,.58),
-    0 7px 20px rgba(0,0,0,.34),
-    inset 0 1px 0 rgba(255,255,255,.20)!important;
-}
+   6 · CONTROLES SOBRE CAPAS
+   Estilos duplicados de Clear Glass retirados desta camada editorial.
+   Fonte única: button-glass-v15-36-15.css, carregada anteriormente.
+   ========================================================================= */
 
 /* ==========================================================================
    7 · DENSE GLASS — MENUS / POPOVERS / SEARCH RESULTS
