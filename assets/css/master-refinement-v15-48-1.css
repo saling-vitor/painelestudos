@@ -599,3 +599,15 @@ html.is-phone-layout #homeReviewSection .study-plan-item{min-height:62px!importa
 @media(prefers-reduced-motion:reduce){
   #homeStudyDashboard *,#homeReviewSection *{animation:none!important;transition:none!important}
 }
+
+
+/* Mobile: preserva o controle de expandir as quatro métricas já existente. */
+html.is-phone-layout #homeStudyDashboard .study-command-metrics>button:nth-child(n+3){display:none!important}
+html.is-phone-layout #homeStudyDashboard .study-command-card.mobile-plan-expanded .study-command-metrics>button:nth-child(n+3){display:flex!important}
+html.is-phone-layout #homeStudyDashboard .study-command-metrics{order:1}
+html.is-phone-layout #homeStudyDashboard .study-command-cta{order:2}
+html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
+  order:3;grid-column:1/-1;justify-self:stretch;
+  min-height:28px!important;margin:1px 0 0!important;padding:2px 4px!important;
+  font-size:8px!important;
+}
