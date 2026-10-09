@@ -153,21 +153,3 @@ html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .topbar :is(.search,#
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important
   }
 }
-/* 07 [D] Miniatura 16:9 integral e sem sobra inferior na faixa ampla. */
-html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card{
-  min-height:150px!important
-}
-html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb{
-  height:auto!important;min-height:0!important;
-  aspect-ratio:16/9!important;align-self:start!important;
-  overflow:hidden!important
-}
-html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-thumb img{
-  object-fit:contain!important;object-position:center!important
-}
-@media(min-width:1500px){
-  html:not(.is-ipad):not(.is-phone-layout) .home-continue-section .continue-card{
-    grid-template-columns:278px minmax(0,1fr) 108px!important;
-    min-height:156px!important
-  }
-}
