@@ -4112,7 +4112,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
 });
 
 
-test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',async({page},testInfo)=>{
+test('[D] Retomar onde parei preenche capa sem faixa inferior e contém o conteúdo',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='desktop-chromium','Validação exclusiva do desktop.');
   await page.setViewportSize({width:1600,height:900});
   await page.goto('/#home');
@@ -4132,6 +4132,7 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
     const states=el.querySelector('.continue-states');
     const cardBox=el.getBoundingClientRect();
     const thumbBox=thumb?.getBoundingClientRect();
+    const imgBox=img?.getBoundingClientRect();
     const contentBox=content?.getBoundingClientRect();
     const actionBox=action?.getBoundingClientRect();
     const statesBox=states?.getBoundingClientRect();
@@ -4140,6 +4141,8 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
       cardWidth:cardBox.width,
       thumbWidth:thumbBox?.width||0,
       thumbHeight:thumbBox?.height||0,
+      mediaFitsCard:!!thumbBox&&Math.abs(thumbBox.height-cardBox.height)<=2,
+      imageFillsMedia:!!imgBox&&!!thumbBox&&Math.abs(imgBox.height-thumbBox.height)<=2&&Math.abs(imgBox.width-thumbBox.width)<=2,
       objectFit:img?getComputedStyle(img).objectFit:'',
       contentInside:!!contentBox&&contentBox.left>=cardBox.left-1&&contentBox.right<=cardBox.right+1&&contentBox.bottom<=cardBox.bottom+1,
       actionInside:!!actionBox&&actionBox.left>=cardBox.left-1&&actionBox.right<=cardBox.right+1&&actionBox.bottom<=cardBox.bottom+1,
@@ -4149,9 +4152,9 @@ test('[D] Retomar onde parei preserva capa completa e conteúdo dentro do card',
   });
   expect(data.cardHeight).toBeGreaterThanOrEqual(150);
   expect(data.thumbHeight).toBeGreaterThanOrEqual(110);
-  expect(data.thumbWidth/data.thumbHeight).toBeGreaterThan(1.72);
-  expect(data.thumbWidth/data.thumbHeight).toBeLessThan(1.83);
-  expect(data.objectFit).toBe('contain');
+  expect(data.mediaFitsCard).toBe(true);
+  expect(data.imageFillsMedia).toBe(true);
+  expect(data.objectFit).toBe('cover');
   expect(data.contentInside).toBe(true);
   expect(data.actionInside).toBe(true);
   expect(data.statesInside).toBe(true);
