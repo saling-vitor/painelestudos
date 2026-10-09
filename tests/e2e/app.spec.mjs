@@ -5204,3 +5204,58 @@ test('V15.48.148 [G] Simulados recentes têm capa ampliada e card clicável',asy
   await page.keyboard.press('Enter');
   await expect(page.locator('#simulationReader')).toHaveClass(/open/);
 });
+
+
+test('V15.48.149 [G] Home editorial mantém os quatro comandos e dados reais',async({page},testInfo)=>{
+  if(testInfo.project.name==='desktop-chromium')await page.setViewportSize({width:1600,height:900});
+  if(testInfo.project.name==='iphone-webkit')await page.setViewportSize({width:390,height:844});
+  await page.goto('/#home');
+  const root=page.locator('#homeStudyDashboard');
+  const main=root.locator('.study-command-card');
+  const quick=root.locator('.study-now-card');
+  const priority=root.locator('.priority-now-card');
+  const rhythm=root.locator('.forecast-home-card');
+  await expect(main).toBeVisible();
+  await expect(quick).toBeVisible();
+  await expect(priority).toBeVisible();
+  await expect(rhythm).toBeVisible();
+  await expect(root.locator('.study-command-progress')).toHaveAttribute('role','progressbar');
+  await expect(root.locator('.priority-progress-track')).toHaveAttribute('role','progressbar');
+  await expect(priority.locator('.priority-why-tile')).toBeVisible();
+  await expect(rhythm.locator('.forecast-day')).toHaveCount(7);
+  await expect(page.locator('#homeReviewSection .home-review-icon')).toHaveCount(1);
+  await expect(quick.locator('[data-time-now]')).toHaveCount(4);
+  await expect(quick.locator('[data-home-focus]')).toBeVisible();
+  const layout=await page.evaluate(()=>{
+    const box=el=>el.getBoundingClientRect(),root=document.getElementById('homeStudyDashboard'),
+      main=root.querySelector('.study-command-card'),quick=root.querySelector('.study-now-card'),
+      priority=root.querySelector('.priority-now-card'),rhythm=root.querySelector('.forecast-home-card');
+    const r=box(root),a=box(main),b=box(quick),c=box(priority),d=box(rhythm);
+    return{width:innerWidth,overflow:document.documentElement.scrollWidth-innerWidth,
+      mainWidth:a.width,quickWidth:b.width,mainTop:a.top,quickTop:b.top,
+      priorityTop:c.top,rhythmTop:d.top,mainHeight:a.height,
+      cols:getComputedStyle(root).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+      allInside:[a,b,c,d].every(x=>x.left>=r.left-1&&x.right<=r.right+1)};
+  });
+  expect(layout.overflow).toBeLessThanOrEqual(2);
+  expect(layout.allInside).toBe(true);
+  if(testInfo.project.name==='desktop-chromium'){
+    expect(layout.cols).toBe(4);
+    expect(layout.mainWidth).toBeGreaterThan(layout.quickWidth*1.5);
+    expect(Math.abs(layout.mainTop-layout.quickTop)).toBeLessThanOrEqual(2);
+    expect(Math.abs(layout.mainTop-layout.priorityTop)).toBeLessThanOrEqual(2);
+    expect(Math.abs(layout.mainTop-layout.rhythmTop)).toBeLessThanOrEqual(2);
+    expect(layout.mainHeight).toBeLessThanOrEqual(180);
+  }
+  if(testInfo.project.name==='iphone-webkit'){
+    expect(layout.cols).toBe(1);
+    expect(layout.mainTop).toBeLessThan(layout.quickTop);
+    expect(layout.quickTop).toBeLessThan(layout.priorityTop);
+    expect(layout.priorityTop).toBeLessThan(layout.rhythmTop);
+    await expect(main.locator('.study-command-metrics>button:visible')).toHaveCount(2);
+    await page.locator('.mobile-study-plan-toggle').click();
+    await expect(main.locator('.study-command-metrics>button:visible')).toHaveCount(4);
+  }
+  await quick.locator('[data-home-focus]').click();
+  await expect(page.locator('#studyTimePlanModal')).toBeVisible();
+});

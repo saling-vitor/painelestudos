@@ -1,13 +1,14 @@
 {
-  "version": "15.48.148",
-  "label": "V15.48.148-G",
-  "notes": "Global: capas maiores e informações compactas nos Simulados recentes, sem Começar/•••; card inteiro clicável no desktop, tablet e smartphone.",
+  "version": "15.48.149",
+  "label": "V15.48.149-G",
+  "notes": "Home Swiss/Black: quatro cards coordenados com capa, sessões rápidas, prioridade com progresso real, ritmo semanal e Plano do dia compacto; ajustes responsivos G.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Capa maior com rodapé compacto nos cards recentes da Home",
-    "[G] Removidos botões Começar e ••• na Home, preservando gerenciamento na biblioteca",
-    "[G] Clique, Enter e Espaço abrem diretamente o simulado",
-    "[G] Main e GitHub Pages usam o mesmo identificador de release"
+    "[G] Home editorial em faixa coordenada — Hoje, Tempo, Prioridade e Ritmo",
+    "[G] Capa do mapa no comando principal, progresso real e CTA de continuação",
+    "[G] Sessão rápida com duração selecionada e opção Foco total explícita",
+    "[G] Prioridade com miniatura, justificativa e progresso verdadeiro",
+    "[G] Gráfico semanal com dados reais e Plano do dia compacto"
   ],
   "automation": {
     "enabled": true,
