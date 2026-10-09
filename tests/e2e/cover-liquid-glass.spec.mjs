@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// LG-01–LG-05: no account or persisted user data needed.
+// LG-01–LG-05: smoked glass imóvel no hover; sem conta ou dados persistidos.
 // The fixture shares the same classes and ancestor selectors as production cards.
-test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo lista', async ({ page }) => {
+test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito e lista', async ({ page }) => {
   // The real app may display the "what's new" modal over the fixture.
   // Mark the current test build as acknowledged before app boot: no forced clicks
   // and no permanent change to the production modal behavior.
@@ -46,6 +46,9 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
     return {
       alpha: channels.length === 4 ? channels[3] : channels.length === 3 ? 1 : 0,
       backgroundImage: s.backgroundImage,
+      backgroundColor: s.backgroundColor,
+      boxShadow: s.boxShadow,
+      transitionDuration: s.transitionDuration,
       backdrop: s.backdropFilter || s.webkitBackdropFilter || 'none',
       border: s.borderTopColor,
       outline: s.outlineStyle,
@@ -57,7 +60,8 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
   const controls = [
     page.locator('#glassAuditFixture .course-card-edit'),
     page.locator('#glassAuditFixture .map-card:not(.map-list .map-card) > .map-admin-btn'),
-    page.locator('#glassAuditFixture .simulation-card-menu-btn')
+    page.locator('#glassAuditFixture .simulation-card-menu-btn'),
+    page.locator('#glassAuditFixture .map-card:not(.map-list .map-card) > .fav')
   ];
   const pointerFine = await page.evaluate(() => matchMedia('(hover:hover) and (pointer:fine)').matches);
   const backdropSupported = await page.evaluate(() => CSS.supports('backdrop-filter','blur(1px)') || CSS.supports('-webkit-backdrop-filter','blur(1px)'));
@@ -65,20 +69,25 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
   for (const control of controls) {
     await expect(control).toBeVisible();
     const base = await style(control);
-    expect(base.alpha, 'Botão sobre capa não deve ter placa opaca').toBeLessThan(0.40);
+    expect(base.alpha, 'Vidro fumê deve ter preenchimento escuro estável').toBeGreaterThanOrEqual(0.42);
+    expect(base.alpha, 'Vidro não deve virar placa opaca').toBeLessThanOrEqual(0.72);
+    expect(base.backgroundImage).toContain('radial-gradient');
+    expect(base.transform).toBe('none');
+    expect(base.transitionDuration.split(',').every(n => Number.parseFloat(n) === 0),
+      'Botão não deve animar material/posição').toBe(true);
     if (backdropSupported) expect(base.backdrop).not.toBe('none');
     if (pointerFine) {
       await control.hover();
       const hovered = await style(control);
-      expect(hovered.alpha, 'Hover escuro/opaco é uma regressão do LG-01').toBeLessThan(0.28);
-      expect(hovered.backgroundImage).toContain('radial-gradient');
-      expect(hovered.transform, 'Hover não pode deslocar controle').toBe('none');
-      if (backdropSupported) expect(hovered.backdrop).not.toBe('none');
+      for (const property of ['alpha','backgroundColor','backgroundImage','boxShadow','backdrop','border','color','transform']) {
+        expect(hovered[property], `O hover não pode mudar ${property}`).toBe(base[property]);
+      }
     } else {
       await control.tap();
       const touched = await style(control);
-      expect(touched.alpha, 'Toque não pode fixar uma placa opaca').toBeLessThan(0.40);
-      expect(touched.transform, 'Toque não pode comprimir vidro').toBe('none');
+      for (const property of ['alpha','backgroundColor','backgroundImage','boxShadow','backdrop','border','transform']) {
+        expect(touched[property], `O toque não pode mudar ${property}`).toBe(base[property]);
+      }
     }
     await control.focus();
     const keyboard = await control.evaluate(el => ({
