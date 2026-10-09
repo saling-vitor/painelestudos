@@ -3175,6 +3175,8 @@
   html.is-phone-layout .progress-insight-card{
     min-height:108px!important;
     padding:10px!important;
+    /* Superfície opaca na origem mobile, sem depender de outra camada. */
+    background:rgba(17,17,18,.96)!important;
   }
   html.is-phone-layout .progress-attention-card{
     padding:9px!important;
