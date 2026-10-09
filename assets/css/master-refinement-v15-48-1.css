@@ -155,121 +155,99 @@ html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .topbar :is(.search,#
 }
 
 
-/* V15.48.19-D · Home editorial: mini-capas de simulados EXCLUSIVAMENTE no PC.
-   Reaproveita simulationCover(s), sem duplicar arquivos ou afetar T/M.
-   Regras após a densidade legada para substituir alturas e 3-colunas antigas. */
-.home-simulations-section .simulation-recent-cover,
-.home-simulations-section .simulation-recent-manage{display:none!important}
+/* V15.48.148-G · Simulados recentes: capa protagonista e ação pelo card.
+   Substitui o bloco desktop anterior. Biblioteca completa permanece independente. */
+#homeSimulations .simulation-recent-item{
+  box-sizing:border-box!important;position:relative!important;isolation:isolate!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:100px minmax(0,1fr)!important;align-items:stretch!important;
+  gap:0!important;width:100%!important;min-width:0!important;
+  height:158px!important;min-height:158px!important;max-height:158px!important;
+  padding:0!important;overflow:hidden!important;border-radius:12px!important;
+  border:1px solid rgba(255,255,255,.085)!important;background:#09090a!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025)!important;
+  cursor:pointer!important;transition:none!important;-webkit-tap-highlight-color:transparent;
+}
+#homeSimulations .simulation-recent-item:hover{
+  border-color:rgba(255,255,255,.085)!important;background:#09090a!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025)!important;transform:none!important;
+}
+#homeSimulations .simulation-recent-item:focus-visible{
+  outline:2px solid #e5e5e6!important;outline-offset:3px!important;
+}
+#homeSimulations .simulation-recent-item:active{filter:brightness(.94)}
+#homeSimulations .simulation-recent-cover{
+  box-sizing:border-box!important;display:block!important;position:relative!important;
+  grid-column:1!important;grid-row:1!important;width:100%!important;
+  height:100px!important;min-height:100px!important;overflow:hidden!important;
+  border:0!important;border-bottom:1px solid rgba(255,255,255,.07)!important;
+  background:linear-gradient(120deg,#291d21,#09090a)!important;
+}
+#homeSimulations .simulation-recent-cover::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.025) 50%,rgba(0,0,0,.19));
+}
+#homeSimulations .simulation-recent-cover img{
+  display:block!important;width:100%!important;height:100%!important;
+  object-fit:cover!important;object-position:center center!important;
+  filter:brightness(.89) contrast(1.02)!important;
+}
+#homeSimulations .simulation-recent-cover-fallback{
+  display:flex!important;align-items:center!important;height:100%!important;
+  padding:0 12px!important;margin:0!important;color:#e0e0e2!important;
+  font:900 24px/1 var(--sans)!important;
+}
+#homeSimulations .simulation-recent-copy{
+  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+  justify-content:center!important;grid-column:1!important;grid-row:2!important;
+  min-width:0!important;min-height:0!important;gap:2px!important;
+  padding:5px 10px 6px!important;overflow:hidden!important;
+}
+#homeSimulations .simulation-recent-title-row{
+  display:flex!important;align-items:center!important;gap:5px!important;min-height:12px!important;
+}
+#homeSimulations .simulation-recent-title-row b{
+  min-width:0!important;font:800 11px/1.1 var(--sans)!important;
+  color:#ededee!important;letter-spacing:-.01em!important;
+}
+#homeSimulations .simulation-recent-board{
+  min-height:14px!important;max-width:85px!important;
+  padding:1px 5px!important;margin:0!important;font-size:6.5px!important;
+}
+#homeSimulations .simulation-recent-meta{
+  margin:0!important;font-size:8px!important;line-height:1.2!important;
+}
+#homeSimulations .simulation-recent-state-row{
+  display:flex!important;align-items:center!important;min-height:13px!important;gap:5px!important;
+}
+#homeSimulations .simulation-recent-status{
+  min-height:13px!important;padding:1px 5px!important;margin:0!important;font-size:6.5px!important;
+}
+#homeSimulations .simulation-recent-score{margin:0!important}
+#homeSimulations .simulation-recent-action,
+#homeSimulations .simulation-recent-manage{display:none!important}
 @media(min-width:1181px){
   html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-list{
-    display:grid!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    align-items:stretch!important;
-    gap:10px!important;
-    width:100%!important;
-    min-width:0!important;
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;align-items:stretch!important;overflow:visible!important;
+    padding:0!important;width:100%!important;
   }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-list>.simulation-recent-item:nth-child(n+3){
-    display:none!important;
-  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-item:nth-child(n+3){display:none!important}
   html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-item{
-    box-sizing:border-box!important;
-    position:relative!important;
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) auto!important;
-    grid-template-rows:61px minmax(0,1fr)!important;
-    align-items:stretch!important;
-    gap:0!important;
-    width:100%!important;
-    min-width:0!important;
-    height:152px!important;
-    min-height:152px!important;
-    max-height:152px!important;
-    padding:0!important;
-    overflow:hidden!important;
-    border-radius:12px!important;
-    isolation:isolate!important;
-    background:#09090a!important;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.018)!important;
+    height:152px!important;min-height:152px!important;max-height:152px!important;
+    grid-template-rows:98px minmax(0,1fr)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-cover{
-    position:relative!important;
-    display:block!important;
-    grid-column:1/-1!important;
-    grid-row:1!important;
-    width:100%!important;
-    height:61px!important;
-    min-height:0!important;
-    overflow:hidden!important;
-    border-bottom:1px solid rgba(255,255,255,.07)!important;
-    background:linear-gradient(110deg,rgba(50,38,38,.32),rgba(9,9,11,.95)),#09090a!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-cover::after{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:linear-gradient(180deg,rgba(3,3,4,.11),rgba(3,3,4,.10) 44%,rgba(5,5,6,.40));
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-cover img{
-    display:block;width:100%;height:100%;
-    object-fit:cover;object-position:center 35%;
-    filter:grayscale(.10) brightness(.79) saturate(.88);
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-cover-fallback{
-    display:flex!important;align-items:center;height:100%;padding-left:10px;
-    font:900 19px/1 var(--sans);letter-spacing:-.045em;color:rgba(226,228,231,.72)!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-manage{
-    position:absolute!important;display:grid!important;place-items:center!important;
-    z-index:3!important;right:7px!important;top:7px!important;
-    width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;
-    padding:0!important;border-radius:9px!important;
-    border:1px solid rgba(255,255,255,.30)!important;
-    background:rgba(30,31,33,.86)!important;
-    color:#f2f2f3!important;
-    -webkit-backdrop-filter:blur(9px)!important;backdrop-filter:blur(9px)!important;
-    box-shadow:0 3px 12px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.13)!important;
-    transform:none!important;transition:none!important;
-    cursor:pointer;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-manage:hover{
-    background:rgba(30,31,33,.86)!important;
-    border-color:rgba(255,255,255,.30)!important;
-    box-shadow:0 3px 12px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.13)!important;
-    transform:none!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-manage .ui-icon{--icon-size:12px!important}
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-manage:focus-visible{outline:2px solid #e5e5e6!important;outline-offset:2px!important}
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-copy{
-    grid-column:1!important;grid-row:2!important;
-    align-self:stretch!important;align-content:center!important;
-    gap:4px!important;
-    padding:7px 1px 9px 10px!important;min-width:0!important;
-    overflow:hidden!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-title-row{
-    gap:5px!important;min-width:0!important;overflow:hidden!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-title-row b{
-    font:800 10px/1.15 var(--sans)!important;letter-spacing:-.01em!important;
-    color:#ececed!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-board{
-    max-width:57px!important;font-size:6px!important;min-height:15px!important;
-    padding:2px 4px!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-meta{
-    font-size:7.5px!important;line-height:1.22!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-status{
-    min-height:15px!important;padding:2px 5px!important;font-size:6px!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #homeSimulations .simulation-recent-action{
-    grid-column:2!important;grid-row:2!important;
-    align-self:end!important;justify-self:end!important;
-    box-sizing:border-box!important;
-    min-width:64px!important;min-height:29px!important;
-    height:29px!important;
-    margin:0 8px 9px 4px!important;padding:0 7px!important;
-    border-radius:8px!important;
-    font-size:8px!important;
+    height:98px!important;min-height:98px!important;
   }
 }
+@media(max-width:480px){
+  html.is-phone-layout #homeSimulations .simulation-recent-item{
+    height:158px!important;min-height:158px!important;max-height:158px!important;
+    grid-template-rows:101px minmax(0,1fr)!important;padding:0!important;
+  }
+  html.is-phone-layout #homeSimulations .simulation-recent-cover{
+    height:101px!important;min-height:101px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){#homeSimulations .simulation-recent-item:active{filter:none}}
