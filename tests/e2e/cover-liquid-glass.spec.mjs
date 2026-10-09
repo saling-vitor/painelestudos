@@ -3,8 +3,18 @@ import { test, expect } from '@playwright/test';
 // LG-01–LG-05: no account or persisted user data needed.
 // The fixture shares the same classes and ancestor selectors as production cards.
 test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo lista', async ({ page }) => {
+  // The real app may display the "what's new" modal over the fixture.
+  // Mark the current test build as acknowledged before app boot: no forced clicks
+  // and no permanent change to the production modal behavior.
+  const versionResponse = await page.request.get('/version.json');
+  expect(versionResponse.ok()).toBeTruthy();
+  const release = await versionResponse.json();
+  await page.addInitScript(version => {
+    localStorage.setItem('studyapp.lastSeenVersion', version);
+  }, release.version);
   await page.goto('/#home');
   await expect(page.locator('#homeCourses')).toBeAttached();
+  await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
 
   await page.evaluate(() => {
     document.querySelector('#glassAuditFixture')?.remove();
