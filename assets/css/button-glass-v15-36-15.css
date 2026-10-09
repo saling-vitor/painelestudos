@@ -219,9 +219,11 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     inset 0 0 0 1px rgba(255,255,255,.15)!important;
 }
 
-/* Lista não exibe a capa: portanto seus controles permanecem sem vidro. */
-.map-list .map-card.has-cover > .map-admin-btn,
-.map-list .map-card.has-cover > .fav{
+/* Lista não exibe a capa: seus controles permanecem MATTE mesmo sob
+   overrides responsivos mais específicos (ex.: html.is-phone-layout).
+   A origem autoritativa é esta regra, não um patch ao final da cascata. */
+html .map-list .map-card.has-cover > .map-admin-btn,
+html .map-list .map-card.has-cover > .fav{
   border:0!important;
   background:transparent!important;
   background-blend-mode:normal!important;
