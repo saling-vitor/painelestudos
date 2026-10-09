@@ -188,7 +188,12 @@
       // LIST = matte control, not glass over artwork. Never promote list actions
       // into micro glass; also clean classes when switching card -> list layout.
       if(el.closest('.map-list')){
-        el.classList.remove('mm-glass-micro','mm-optical-surface','mm-visible-glass');
+        // Avoid no-op class writes: a subtree MutationObserver watches "class".
+        // An unconditional remove() here could schedule endless enhance passes.
+        if(['mm-glass-micro','mm-optical-surface','mm-visible-glass']
+          .some(cls=>el.classList.contains(cls))){
+          el.classList.remove('mm-glass-micro','mm-optical-surface','mm-visible-glass');
+        }
         microObserver?.unobserve(el);
         microObserved.delete(el);
         return;
