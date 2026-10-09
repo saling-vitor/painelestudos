@@ -56,7 +56,6 @@ test('Superfícies opacas [G] [T+M] · Ritmo, planejamento, Agenda e Progresso',
     host.remove();
     return opacity;
   });
-  for (const [surface, opacity] of Object.entries(result)) {
-    expect(opacity, surface+' não pode revelar a topografia').toBeGreaterThanOrEqual(0.92);
-  }
+  const failures = Object.entries(result).filter(([, alpha]) => alpha < 0.92);
+  expect(failures, 'Superfícies com transparência indevida: '+JSON.stringify(result)).toEqual([]);
 });
