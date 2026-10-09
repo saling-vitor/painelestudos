@@ -32,8 +32,10 @@ const autoEnabled=automation.enabled!==false&&runNumber>0&&runBase>=0;
 let releaseVersion=sourceVersion;
 let sequence=null;
 if(autoEnabled){
-  sequence=Math.max(1,runNumber-runBase);
-  releaseVersion=series+'.'+sequence;
+  // Mantém o version.json da main como versão única; automatiza apenas a
+  // sincronização dos identificadores, metadados e caches do artefato.
+  sequence=sourceParts[2];
+  releaseVersion=sourceVersion;
 }
 const releaseLabel='V'+releaseVersion+'-'+channel;
 

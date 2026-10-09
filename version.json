@@ -1,17 +1,18 @@
 {
-  "version": "15.48.19",
-  "label": "V15.48.19-D",
-  "notes": "Desktop: Simulados recentes passam a mini-cards editoriais com faixa de capa discreta, dois lado a lado e mesmo alinhamento de Retomar onde parei, preservando tablet e celular.",
+  "version": "15.48.148",
+  "label": "V15.48.148-G",
+  "notes": "Global: capas maiores e informações compactas nos Simulados recentes, sem Começar/•••; card inteiro clicável no desktop, tablet e smartphone.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Dois mini cards de simulados com recorte superior das capas reais da banca, alinhados ao card Retomar",
-    "[D] Densidade refinada, botão Começar compacto, estado e botão de gerenciamento discretos",
-    "[D] Tablet e smartphone sem alterações de layout; favoritos, dados e interações preservados"
+    "[G] Capa maior com rodapé compacto nos cards recentes da Home",
+    "[G] Removidos botões Começar e ••• na Home, preservando gerenciamento na biblioteca",
+    "[G] Clique, Enter e Espaço abrem diretamente o simulado",
+    "[G] Main e GitHub Pages usam o mesmo identificador de release"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "D",
+    "channel": "G",
     "runBase": 710
   }
 }

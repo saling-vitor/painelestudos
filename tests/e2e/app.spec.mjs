@@ -1193,13 +1193,13 @@ test('simulados recentes usam títulos legíveis e estado',async({page})=>{
   const board=(await first.locator('.simulation-recent-board').textContent())||'';
   const meta=(await first.locator('.simulation-recent-meta').textContent())||'';
   const status=(await first.locator('.simulation-recent-status').textContent())||'';
-  const action=(await first.locator('.simulation-recent-action').textContent())||'';
   expect(title).toMatch(/Simulado/i);
   expect(title).not.toContain('_');
   expect(board).toMatch(/FUNDATEC|AOCP|FEPESE|OBJETIVA|LEGALLE/i);
   expect(meta).toMatch(/questões/);
   expect(status).toMatch(/Não iniciado|Em andamento|Concluído/i);
-  expect(action).toMatch(/Começar|Continuar|Rever/i);
+  await expect(first).toHaveAttribute('role','button');
+  await expect(first.locator('.simulation-recent-action,[data-simulation-home-manage]')).toHaveCount(0);
 });
 
 test('[G] Simulados vinculados herdam o accent do curso sem alterar o badge da banca',async({page})=>{
@@ -2707,7 +2707,7 @@ test('A Home responsiva preserva a composição aprovada no iPhone',async({page}
   await expect(page.locator('#homeSimulations .simulation-recent-item')).toHaveCount(3);
   const data=await page.evaluate(()=>{
     const sims=document.querySelector('.simulation-recent-list');
-    const action=document.querySelector('#homeSimulations .simulation-recent-action');
+    const card=document.querySelector('#homeSimulations .simulation-recent-item');
     const courses=document.querySelector('#homeCourses');
     return{
       width:innerWidth,
@@ -2716,7 +2716,7 @@ test('A Home responsiva preserva a composição aprovada no iPhone',async({page}
       simDisplay:getComputedStyle(sims).display,
       simOverflow:getComputedStyle(sims).overflowX,
       thirdDisplay:getComputedStyle(document.querySelector('#homeSimulations .simulation-recent-item:nth-child(3)')).display,
-      actionHeight:action?.getBoundingClientRect().height||0,
+      cardHeight:card?.getBoundingClientRect().height||0,
       courseColumns:getComputedStyle(courses).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length
     };
   });
@@ -2725,7 +2725,7 @@ test('A Home responsiva preserva a composição aprovada no iPhone',async({page}
   expect(data.simDisplay).toBe('grid');
   expect(['visible','clip']).toContain(data.simOverflow);
   expect(data.thirdDisplay).not.toBe('none');
-  expect(data.actionHeight).toBeGreaterThanOrEqual(70);
+  expect(data.cardHeight).toBeGreaterThanOrEqual(145);
   expect(data.courseColumns).toBe(1);
 });
 
@@ -4079,7 +4079,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
   expect(homeData.simDisplay).toBe('grid');
   expect(['visible','clip']).toContain(homeData.simOverflow);
   expect(homeData.simCount).toBeLessThanOrEqual(3);
-  expect(homeData.simMaxHeight).toBeLessThan(110);
+  expect(homeData.simMaxHeight).toBeLessThan(180);
   expect(homeData.documentScrollWidth).toBeLessThanOrEqual(homeData.width+2);
 
   await page.goto('/#progress');
@@ -5167,47 +5167,40 @@ test('[G] Smoked Liquid Glass das capas: teste DOM real em curso, mapa e favorit
 });
 
 
-test('V15.48.19 [D] Home usa duas mini-capas reais e ações sem alterar T/M',async({page},testInfo)=>{
+test('V15.48.148 [G] Simulados recentes têm capa ampliada e card clicável',async({page},testInfo)=>{
   const desktop=testInfo.project.name==='desktop-chromium';
   if(desktop)await page.setViewportSize({width:1600,height:900});
   await page.goto('/#home');
   await page.evaluate(()=>{const map=combinedMaps()[0];if(map){localStorage.setItem('studyapp.lastMap',map._key||mapKey(map));renderHome()}});
-  if(desktop)await expect(page.locator('.home-continue-section .continue-card')).toBeVisible();
-  const cards=page.locator('#homeSimulations .simulation-recent-item');
+  const cards=page.locator('#homeSimulations .simulation-recent-item'),card=cards.first();
   await expect(cards).toHaveCount(3);
-  const cover=cards.first().locator('.simulation-recent-cover');
-  const manage=cards.first().locator('[data-simulation-home-manage]');
-  if(!desktop){
-    await expect(cover).toBeHidden();
-    await expect(manage).toBeHidden();
-    return;
-  }
-  await expect(cards.nth(0)).toBeVisible();
-  await expect(cards.nth(1)).toBeVisible();
-  await expect(cards.nth(2)).toBeHidden();
+  await expect(card).toBeVisible();
+  await expect(card).toHaveAttribute('role','button');
+  await expect(card).toHaveAttribute('tabindex','0');
+  await expect(card.locator('.simulation-recent-action,[data-simulation-home-manage]')).toHaveCount(0);
+  const cover=card.locator('.simulation-recent-cover');
   await expect(cover).toBeVisible();
-  await expect(manage).toBeVisible();
   const img=cover.locator('img');
   await expect(img).toBeVisible();
   await expect.poll(()=>img.evaluate(el=>el.complete&&el.naturalWidth>0)).toBe(true);
-  const size=await page.evaluate(()=>{
-    const list=document.querySelector('#homeSimulations .simulation-recent-list');
-    const items=[...list.children],resume=document.querySelector('.home-continue-section .continue-card');
-    const first=items[0],second=items[1],cover=first.querySelector('.simulation-recent-cover');
-    return{
-      columns:getComputedStyle(list).gridTemplateColumns.split(/\s+/).filter(Boolean).length,
-      gap:Math.round(second.getBoundingClientRect().left-first.getBoundingClientRect().right),
-      coverHeight:cover.getBoundingClientRect().height,
-      heightDiff:Math.abs(first.getBoundingClientRect().height-resume.getBoundingClientRect().height),
-      overflow:document.documentElement.scrollWidth-innerWidth
-    };
+  const sizes=await card.evaluate(el=>{
+    const h=el.getBoundingClientRect().height;
+    return{h,cover:el.querySelector('.simulation-recent-cover').getBoundingClientRect().height,overflow:document.documentElement.scrollWidth-innerWidth}
   });
-  expect(size.columns).toBe(2);
-  expect(size.gap).toBeGreaterThanOrEqual(7);
-  expect(size.coverHeight).toBeGreaterThanOrEqual(54);
-  expect(size.coverHeight).toBeLessThanOrEqual(70);
-  expect(size.heightDiff).toBeLessThanOrEqual(2);
-  expect(size.overflow).toBeLessThanOrEqual(2);
-  await manage.click();
-  await expect(page.locator('#simulationManageModal')).toBeVisible();
+  expect(sizes.cover).toBeGreaterThanOrEqual(95);
+  expect(sizes.cover/sizes.h).toBeGreaterThan(.60);
+  expect(sizes.overflow).toBeLessThanOrEqual(2);
+  if(desktop){
+    await expect(cards.nth(1)).toBeVisible();
+    await expect(cards.nth(2)).toBeHidden();
+    const resume=page.locator('.home-continue-section .continue-card');
+    await expect(resume).toBeVisible();
+    expect(Math.abs(sizes.h-(await resume.boundingBox()).height)).toBeLessThanOrEqual(2);
+  }
+  await card.click();
+  await expect(page.locator('#simulationReader')).toHaveClass(/open/);
+  await page.evaluate(()=>closeSimulation(false,{history:false}));
+  await card.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#simulationReader')).toHaveClass(/open/);
 });
