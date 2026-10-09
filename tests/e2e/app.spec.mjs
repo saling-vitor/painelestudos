@@ -5165,3 +5165,47 @@ test('[G] Smoked Liquid Glass das capas: teste DOM real em curso, mapa e favorit
   await inspect(mapMenu);
   await inspect(fav);
 });
+
+
+test('V15.48.19 [D] Home usa duas mini-capas reais e ações sem alterar T/M',async({page},testInfo)=>{
+  const desktop=testInfo.project.name==='desktop-chromium';
+  if(desktop)await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  const cards=page.locator('#homeSimulations .simulation-recent-item');
+  await expect(cards).toHaveCount(3);
+  const cover=cards.first().locator('.simulation-recent-cover');
+  const manage=cards.first().locator('[data-simulation-home-manage]');
+  if(!desktop){
+    await expect(cover).toBeHidden();
+    await expect(manage).toBeHidden();
+    return;
+  }
+  await expect(cards.nth(0)).toBeVisible();
+  await expect(cards.nth(1)).toBeVisible();
+  await expect(cards.nth(2)).toBeHidden();
+  await expect(cover).toBeVisible();
+  await expect(manage).toBeVisible();
+  const img=cover.locator('img');
+  await expect(img).toBeVisible();
+  await expect.poll(()=>img.evaluate(el=>el.complete&&el.naturalWidth>0)).toBe(true);
+  const size=await page.evaluate(()=>{
+    const list=document.querySelector('#homeSimulations .simulation-recent-list');
+    const items=[...list.children],resume=document.querySelector('.home-continue-section .continue-card');
+    const first=items[0],second=items[1],cover=first.querySelector('.simulation-recent-cover');
+    return{
+      columns:getComputedStyle(list).gridTemplateColumns.split(/\s+/).filter(Boolean).length,
+      gap:Math.round(second.getBoundingClientRect().left-first.getBoundingClientRect().right),
+      coverHeight:cover.getBoundingClientRect().height,
+      heightDiff:Math.abs(first.getBoundingClientRect().height-resume.getBoundingClientRect().height),
+      overflow:document.documentElement.scrollWidth-innerWidth
+    };
+  });
+  expect(size.columns).toBe(2);
+  expect(size.gap).toBeGreaterThanOrEqual(7);
+  expect(size.coverHeight).toBeGreaterThanOrEqual(54);
+  expect(size.coverHeight).toBeLessThanOrEqual(70);
+  expect(size.heightDiff).toBeLessThanOrEqual(2);
+  expect(size.overflow).toBeLessThanOrEqual(2);
+  await manage.click();
+  await expect(page.locator('#simulationManageModal')).toBeVisible();
+});
