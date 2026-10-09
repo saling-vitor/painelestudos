@@ -1,12 +1,12 @@
 {
-  "version": "15.48.16",
-  "label": "V15.48.16-G",
-  "notes": "Auditoria global LG-01–LG-08: padroniza o Liquid Glass fumê dos botões de ações e favoritos sobre capas, sem variação óptica no hover, preservando menus, modo lista e PWA.",
+  "version": "15.48.17",
+  "label": "V15.48.17-G",
+  "notes": "Aumenta a densidade do Smoked Liquid Glass nos botões ••• e ★ sobre capas de cursos, mapas e simulados, preservando o acabamento estático, a legibilidade e o modo lista.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Controles ••• e ★ sobre capas em Liquid Glass grafite uniforme no Desktop, iPad e iPhone, sem efeito de hover",
-    "[G] Elimina regras CSS concorrentes entre Design System, Black Editorial e micro glass, sem alterar ações e favoritos",
-    "[G] Preserva modo lista MATTE, contorno dos ícones, estrela amarela, foco acessível e imagem da Home já publicada"
+    "[G] Vidro fumê grafite com preenchimento mais presente (72% de opacidade), borda discreta e blur refinado",
+    "[G] Botões ••• e ★ mantêm aparência idêntica em repouso e hover em Desktop, Tablet e Smartphone",
+    "[G] Preserva a estrela ativa amarela, o modo lista MATTE, a acessibilidade e as demais superfícies"
   ],
   "automation": {
     "enabled": true,

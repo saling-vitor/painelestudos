@@ -9,14 +9,14 @@
       favicon:'assets/brand/topographic-editorial-v1/icons/pwa-icon-light-192.png',
       touch:'assets/brand/topographic-editorial-v1/icons/apple-touch-icon-light.png',
       touchSize:'180x180',
-      manifest:'manifest-light-v15.36.2.webmanifest?v=15.48.16'
+      manifest:'manifest-light-v15.36.2.webmanifest?v=15.48.17'
     },
     dark:{
       preview:'assets/brand/topographic-editorial-v1/icons/pwa-icon-192.png',
       favicon:'assets/brand/topographic-editorial-v1/icons/pwa-icon-192.png',
       touch:'assets/brand/topographic-editorial-v1/icons/apple-touch-icon.png',
       touchSize:'180x180',
-      manifest:'manifest-v15.23.6.webmanifest?v=15.48.16'
+      manifest:'manifest-v15.23.6.webmanifest?v=15.48.17'
     }
   };
   function readMode(){
@@ -42,10 +42,10 @@
     const explicit=document.getElementById('appIconExplicitFavicon');
     if(explicit){
       explicit.media=mode==='auto'?'not all':'all';
-      explicit.href=asset.favicon+'?v=15.48.16-'+resolved;
+      explicit.href=asset.favicon+'?v=15.48.17-'+resolved;
     }
-    setHref('appAppleTouchIcon',asset.touch+'?v=15.48.16-'+resolved,asset.touchSize);
-    setHref('appAppleTouchIconPrecomposed',asset.touch+'?v=15.48.16-'+resolved,asset.touchSize);
+    setHref('appAppleTouchIcon',asset.touch+'?v=15.48.17-'+resolved,asset.touchSize);
+    setHref('appAppleTouchIconPrecomposed',asset.touch+'?v=15.48.17-'+resolved,asset.touchSize);
     const manifest=document.getElementById('appManifest');
     if(manifest&&manifest.getAttribute('href')!==asset.manifest)manifest.setAttribute('href',asset.manifest);
 
