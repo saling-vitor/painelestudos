@@ -31,7 +31,7 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
 
   const style = async (locator) => locator.evaluate(el => {
     const s = getComputedStyle(el);
-    const rgb = s.backgroundColor.match(/rgba?\\(([^)]+)\\)/);
+    const rgb = s.backgroundColor.match(/rgba?\(([^)]+)\)/);
     const channels = rgb ? rgb[1].split(',').map(n => Number.parseFloat(n.trim())) : [];
     return {
       alpha: channels.length === 4 ? channels[3] : channels.length === 3 ? 1 : 0,
@@ -71,7 +71,7 @@ test('[G] [T+M] Clear Glass das capas: material, hover, toque, favorito e modo l
 
   const favorite = page.locator('#glassAuditFixture .map-card > .fav.on > .ui-icon');
   await expect(favorite).toBeAttached();
-  expect((await style(favorite)).color).toMatch(/242,\\s*201,\\s*76/);
+  expect((await style(favorite)).color).toMatch(/242,\s*201,\s*76/);
 
   const listMenu = page.locator('#glassAuditFixture .map-list .map-admin-btn');
   const listStyle = await style(listMenu);
