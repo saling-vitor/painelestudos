@@ -35,7 +35,7 @@
 
 .progress-insight-card{
   border-radius:10px!important;
-  background:rgba(7,7,8,.82)!important;
+  background:rgba(12,12,13,.96)!important;
   box-shadow:none!important;
 }
 .progress-insight-thumb{
@@ -78,50 +78,33 @@
 .progress-insight-card p{min-height:0!important;margin:3px 0 0!important;font-size:8.5px!important;line-height:1.35!important}
 .progress-insight-card>.secondary{grid-area:action;margin:0!important}
 
+/* As três próximas ações recebem peso visual equilibrado, sem card dominante. */
 @media(min-width:1101px){
   html:not(.is-ipad):not(.is-phone-layout) .progress-insights-grid{
-    display:grid!important;
-    grid-template-columns:minmax(0,1.18fr) minmax(300px,.82fr)!important;
-    grid-template-rows:repeat(2,72px)!important;
-    gap:7px!important;
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:auto!important;gap:10px!important;
   }
-  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card.is-primary{
-    grid-column:1!important;
-    grid-row:1 / span 2!important;
-    grid-template-columns:112px minmax(0,1fr) auto!important;
-    grid-template-areas:"thumb copy action"!important;
-    align-items:center!important;
-    gap:14px!important;
-    min-height:151px!important;
-    padding:11px!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card.is-primary .progress-insight-thumb{
-    width:112px!important;
-    height:63px!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card.is-primary .progress-insight-title b{font-size:15px!important}
+  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card,
+  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card.is-primary,
   html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card:not(.is-primary){
-    grid-column:2!important;
-    display:grid!important;
-    grid-template-columns:58px minmax(0,1fr) auto!important;
-    grid-template-areas:"thumb copy action"!important;
-    align-items:center!important;
-    gap:9px!important;
-    min-height:72px!important;
-    padding:7px 8px!important;
+    grid-column:auto!important;grid-row:auto!important;display:grid!important;
+    grid-template-columns:70px minmax(0,1fr)!important;
+    grid-template-areas:"thumb copy" "action action"!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    align-items:center!important;gap:9px 11px!important;
+    min-height:148px!important;padding:13px!important;
   }
-  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card:not(.is-primary) .progress-insight-thumb{
-    width:58px!important;
-    height:42px!important;
+  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card .progress-insight-thumb{
+    width:70px!important;height:53px!important;
   }
-  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card:not(.is-primary)>.secondary{
-    min-width:82px!important;
-    min-height:34px!important;
-    padding-inline:9px!important;
-    font-size:8px!important;
+  html:not(.is-ipad):not(.is-phone-layout) .progress-insight-card>.secondary{
+    width:100%!important;min-width:0!important;min-height:36px!important;
   }
 }
-
+@media(min-width:901px) and (max-width:1100px){
+  html:not(.is-ipad):not(.is-phone-layout) .progress-insights-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+ 
 /* ---------- Atenção adaptativa ---------- */
 .study-intelligence-panel{margin-top:16px!important}
 .progress-intelligence-head{margin-bottom:8px!important}
@@ -135,7 +118,7 @@
   padding:9px 11px;
   border:1px solid rgba(105,168,126,.15);
   border-radius:9px;
-  background:rgba(105,168,126,.035);
+  background:rgba(14,19,16,.95);
 }
 .progress-intelligence-status>span{
   width:24px;height:24px;display:grid;place-items:center;flex:0 0 auto;
@@ -146,16 +129,16 @@
 .progress-intelligence-status small{font-size:8px;color:#7f8b82}
 
 .intelligence-primary-actions{
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;
-  gap:7px!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
   margin-top:0!important;
 }
 .intelligence-primary-actions>article{
-  min-height:104px!important;
-  padding:10px!important;
-  border:1px solid rgba(255,255,255,.06)!important;
-  border-radius:9px!important;
-  background:rgba(255,255,255,.012)!important;
+  min-height:124px!important;
+  padding:13px!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+  border-radius:11px!important;
+  background:rgba(16,16,17,.96)!important;
   box-shadow:none!important;
 }
 .intelligence-primary-actions>article>span{font-size:7px!important}
@@ -209,7 +192,7 @@
   padding:9px 10px;
   border:1px solid rgba(255,255,255,.06);
   border-radius:9px;
-  background:rgba(255,255,255,.012);
+  background:rgba(20,20,21,.96);
 }
 .study-rhythm-kpis span{color:#747b84;font:750 7px var(--mono);letter-spacing:.08em;text-transform:uppercase}
 .study-rhythm-kpis b{color:#e1e3e6;font-size:14px}
@@ -217,7 +200,7 @@
   margin-top:7px;
   border:1px solid rgba(255,255,255,.055);
   border-radius:9px;
-  background:rgba(255,255,255,.01);
+  background:rgba(18,18,19,.96);
   overflow:hidden;
 }
 .study-rhythm-details>summary{
@@ -248,7 +231,7 @@
   padding:8px;
   border:1px solid rgba(255,255,255,.045);
   border-radius:8px;
-  background:rgba(255,255,255,.01);
+  background:rgba(22,22,23,.96);
 }
 .study-rhythm-distribution>div>span{display:block;margin-bottom:6px;color:#737a83;font:750 7px var(--mono);text-transform:uppercase;letter-spacing:.08em}
 .study-rhythm-empty{
@@ -259,7 +242,7 @@
   padding:8px 10px;
   border:1px solid rgba(255,255,255,.05);
   border-radius:9px;
-  background:rgba(255,255,255,.01);
+  background:rgba(19,19,20,.96);
 }
 .study-rhythm-empty b{font-size:9px;color:#bfc3c8}
 .study-rhythm-empty span{font-size:8px;color:#747a82}
@@ -716,7 +699,7 @@ html.is-ipad:not(.is-phone-layout) .progress-map-row{min-height:60px!important}
   html.is-phone-layout .progress-map-trailing span{font-size:19px!important}
 
   html.is-phone-layout .study-doubt-inbox{margin:0!important;padding:0!important}
-  html.is-phone-layout .study-doubt-inbox.is-empty{border:0!important;background:transparent!important}
+  html.is-phone-layout .study-doubt-inbox.is-empty{border:1px solid rgba(255,255,255,.10)!important;background:rgba(16,16,17,.96)!important}
   html.is-phone-layout .study-doubt-inbox>.section-head{display:none!important}
   html.is-phone-layout .study-doubt-inbox .study-doubt-list{margin:0!important}
   html.is-phone-layout .study-doubt-empty{min-height:50px!important;padding:8px!important;border:0!important}
@@ -761,7 +744,7 @@ html.is-ipad:not(.is-phone-layout) .progress-map-row{min-height:60px!important}
   box-shadow:0 8px 20px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.018)!important;
 }
 .study-heatmap-primary{
-  background:linear-gradient(180deg,rgba(13,13,14,.9),rgba(8,8,9,.95))!important;
+  background:linear-gradient(180deg,rgba(17,17,18,.98),rgba(10,10,11,.98))!important;
   box-shadow:0 8px 20px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.018)!important;
 }
 @media(max-width:480px){

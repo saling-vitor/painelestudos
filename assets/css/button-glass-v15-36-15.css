@@ -364,3 +364,16 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
     backdrop-filter:none!important;
   }
 }
+
+/* Hover fumê exclusivamente nos menus •••; estrela ★ é preservada. */
+@media(hover:hover) and (pointer:fine){
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit:hover,
+  .map-card.has-cover>.map-admin-btn:hover,
+  .simulation-card.has-cover .simulation-card-menu-btn:hover{
+    background:linear-gradient(155deg,rgba(255,255,255,.085),rgba(255,255,255,.008) 65%),rgba(12,13,14,.54)!important;
+    border-color:rgba(255,255,255,.34)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 5px 14px rgba(0,0,0,.22)!important;
+    -webkit-backdrop-filter:blur(5px) saturate(123%)!important;
+    backdrop-filter:blur(5px) saturate(123%)!important;transform:none!important;
+  }
+}

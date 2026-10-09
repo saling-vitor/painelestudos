@@ -181,7 +181,7 @@ html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn){
 }
 html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn):is(:hover,:focus-visible){
   border-color:rgba(255,255,255,.18)!important;
-  background:rgba(255,255,255,.050)!important;
+  background:rgba(255,255,255,.023)!important;
 }
 
 /* Sidebar: itens transparentes, hover discreto, ativo = lente interna. */
@@ -224,7 +224,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   box-shadow:none!important;
 }
 .course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn):is(:hover,:focus-visible){
-  background:rgba(255,255,255,.045)!important;
+  background:rgba(255,255,255,.018)!important;
 }
 
 /* Filtros e selects dentro de barras funcionais: fill, nunca glass aninhado. */

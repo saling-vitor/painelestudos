@@ -59,13 +59,13 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current :is(.
 /* Hover/foco em item NÃO ativo: apenas cinza translúcido, SEM acento. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav]:is(:hover,:focus-visible):not(.active) {
   border-color:rgba(255,255,255,.13)!important;
-  background:rgba(255,255,255,.055)!important;
+  background:rgba(255,255,255,.018)!important;
 }
 html .bottom-nav>button[data-nav]:is(:hover,:focus-visible):not(.active),
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(:hover,:focus-visible):not(.active):not([aria-expanded="true"]) {
   color:#f4f4f4!important;
   border:1px solid rgba(255,255,255,.10)!important;
-  background:rgba(255,255,255,.055)!important;
+  background:rgba(255,255,255,.018)!important;
   box-shadow:none!important;
 }
 /* Ativo: vidro neutro e cor única da seção, sem animação de lente. */
@@ -150,7 +150,7 @@ html:is(.is-ipad,.is-phone-layout) .topbar {
   border:1px solid rgba(255,255,255,.21)!important;
   background:
     linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.019) 36%,transparent 75%),
-    rgba(15,15,16,.16)!important;
+    rgba(20,20,21,.42)!important;
   -webkit-backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
   backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 7px 20px rgba(0,0,0,.16)!important;
@@ -163,10 +163,10 @@ html:is(.is-ipad,.is-phone-layout) .topbar>.mm-scroll-edge{
   pointer-events:none;
 }
 html.mobile-topbar-compact.is-phone-layout .topbar {
-  background:linear-gradient(150deg,rgba(255,255,255,.10),transparent 75%),rgba(17,17,18,.22)!important
+  background:linear-gradient(150deg,rgba(255,255,255,.10),transparent 75%),rgba(19,19,20,.42)!important
 }
 html:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#syncTop) {
-  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.022))!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),rgba(14,14,15,.39)!important;
   border-color:rgba(255,255,255,.15)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
@@ -222,34 +222,16 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
    will-change:auto;
  }
 }
-/* V15.48.4-T | Progresso iPad: contraste seletivo sem poluir demais cards. */
-html.is-ipad:not(.is-phone-layout) .study-analytics-panel .study-heatmap-primary {
- background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 65%),rgba(23,23,24,.80)!important;
- border:1px solid rgba(255,255,255,.15)!important;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;
+/* Fundos do Progresso são globais, definidos em progress-hierarchy,
+   sem override exclusivo para tablet que muda a opacidade da mesma superfície. */
+
+/* Uma lente fumê na topbar desktop, sem aninhar backdrop nos controles. */
+html:not(.is-ipad):not(.is-phone-layout) .topbar{
+  background:linear-gradient(158deg,rgba(255,255,255,.085),rgba(255,255,255,.018) 42%,transparent 78%),rgba(17,17,18,.55)!important;
+  border-color:rgba(255,255,255,.19)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 10px 28px rgba(0,0,0,.24)!important;
 }
-html.is-ipad:not(.is-phone-layout) .study-rhythm-kpis>article {
- background:rgba(31,31,32,.77)!important;
- border-color:rgba(255,255,255,.12)!important;
-}
-html.is-ipad:not(.is-phone-layout) .study-rhythm-details,
-html.is-ipad:not(.is-phone-layout) .study-rhythm-distribution>div {
- background:rgba(28,28,29,.82)!important;
- border-color:rgba(255,255,255,.12)!important;
-}
-html.is-ipad:not(.is-phone-layout) .study-doubt-inbox.is-empty,
-html.is-ipad:not(.is-phone-layout) .study-doubt-list>article {
- background:linear-gradient(150deg,rgba(255,255,255,.045),transparent 80%),rgba(26,26,27,.83)!important;
- border:1px solid rgba(255,255,255,.13)!important;
- border-radius:12px!important;
-}
-html.is-ipad:not(.is-phone-layout) .study-doubt-list>article {
- margin-block:7px!important;
-}
-html.is-ipad:not(.is-phone-layout) .study-doubt-empty {
- border-top-color:rgba(255,255,255,.095)!important;
-}
-html.is-ipad:not(.is-phone-layout) .study-doubt-inbox :is(.study-doubt-count,.study-doubt-empty>span) {
- color:#c5c5c5!important;
- border-color:rgba(255,255,255,.15)!important;
+html:not(.is-ipad):not(.is-phone-layout) .topbar :is(.search,#syncTop){
+  background:linear-gradient(180deg,rgba(255,255,255,.038),rgba(255,255,255,.012)),rgba(15,15,16,.54)!important;
+  border-color:rgba(255,255,255,.13)!important;
 }
