@@ -731,7 +731,7 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
 #homeStudyDashboard .study-command-help{
   border-color:color-mix(in srgb,var(--home-card-theme) 39%,#323232)!important;
 }
-#homeStudyDashboard .priority-now-card{
+#homeStudyDashboard .study-intelligence-row>.priority-now-card{
   --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
   border-color:color-mix(in srgb,var(--home-card-theme) 53%,#282828)!important;
   background:radial-gradient(ellipse at 92% 10%,color-mix(in srgb,var(--home-card-theme) 11%,transparent),transparent 70%),#0a0a0b!important;
