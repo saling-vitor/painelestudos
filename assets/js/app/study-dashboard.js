@@ -287,6 +287,8 @@
         (exam?'<button type="button" data-dashboard-agenda><span>Próxima prova</span><b>'+exam.days+' dia'+(exam.days===1?'':'s')+'</b><small>'+escape(exam.course.title||'Concurso')+'</small></button>':'<button type="button" data-dashboard-agenda><span>Agenda</span><b>'+planned.length+'</b><small>itens hoje</small></button>')+
       '</div><button type="button" class="primary study-command-cta" data-dashboard-start><span>Continuar agora</span><span class="ui-icon icon-chevron-right" aria-hidden="true"></span></button></div>'+
     '</div>';
+    // Extrair a cor cromática da capa quando carregar, como na biblioteca de mapas.
+    if(nextMap&&typeof applyMapCoverAccent==='function')applyMapCoverAccent(root.querySelector('.study-command-card'));
     root.querySelector('[data-dashboard-start]').onclick=()=>{
       if(active){ensureTimerRoot().classList.add('is-open');renderTimer();return}
       if(nextPlan?.kind==='map'&&nextPlan.key){
