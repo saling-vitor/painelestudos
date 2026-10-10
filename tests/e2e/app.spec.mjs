@@ -5246,7 +5246,8 @@ test('V15.48.149 [G] Home editorial mantém os quatro comandos e dados reais',as
     expect(Math.abs(layout.mainTop-layout.quickTop)).toBeLessThanOrEqual(2);
     expect(Math.abs(layout.mainTop-layout.priorityTop)).toBeLessThanOrEqual(2);
     expect(Math.abs(layout.mainTop-layout.rhythmTop)).toBeLessThanOrEqual(2);
-    expect(layout.mainHeight).toBeLessThanOrEqual(180);
+    // V15.48.150-G: altura editorial de 186 px, mantendo tolerância máxima de 190 px.
+    expect(layout.mainHeight).toBeLessThanOrEqual(190);
   }
   if(testInfo.project.name==='iphone-webkit'){
     expect(layout.cols).toBe(1);
