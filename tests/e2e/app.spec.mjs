@@ -5183,7 +5183,10 @@ test('V15.48.148 [G] Simulados recentes têm capa ampliada e card clicável',asy
   await expect(cover).toBeVisible();
   const img=cover.locator('img');
   await expect(img).toBeVisible();
-  await expect.poll(()=>img.evaluate(el=>el.complete&&el.naturalWidth>0)).toBe(true);
+  // A capa dos simulados é lazy-loaded. No iPhone fica abaixo da dobra;
+  // trazer o elemento ao viewport antes de exigir naturalWidth.
+  await img.scrollIntoViewIfNeeded();
+  await expect.poll(()=>img.evaluate(el=>el.complete&&el.naturalWidth>0),{timeout:10000}).toBe(true);
   const sizes=await card.evaluate(el=>{
     const h=el.getBoundingClientRect().height;
     return{h,cover:el.querySelector('.simulation-recent-cover').getBoundingClientRect().height,overflow:document.documentElement.scrollWidth-innerWidth}
@@ -5269,7 +5272,12 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
   await expect(command).toBeVisible();
   await expect(command.locator('.study-command-art img')).toBeVisible();
   await expect.poll(()=>command.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
-  expect(await command.locator('.study-command-art img').getAttribute('src')).toContain('home-hero.png');
+  const expectedCover=await page.evaluate(()=>{
+    const row=window.StudyCoach?.snapshot?.().items?.[0]||null;
+    const map=row?.kind==='map'&&row.key?mapById(row.key):null;
+    return map?mapCover(map):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
+  });
+  expect(await command.locator('.study-command-art img').getAttribute('src')).toBe(expectedCover);
   await expect(command.locator('[data-dashboard-help]')).toBeVisible();
   await command.locator('[data-dashboard-help]').click();
   await expect(command.locator('#studyCommandHelpDetail')).toBeVisible();
@@ -5305,4 +5313,74 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
     expect(geometry.inside).toBe(true);
     expect(geometry.header).toBeLessThan(80);
   }
+});
+
+
+test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prioridade',async({page})=>{
+  await page.goto('/#home');
+  const root=page.locator('#homeStudyDashboard'),main=root.locator('.study-command-card'),priority=root.locator('.priority-now-card');
+  await expect(main).toBeVisible();
+  await expect(priority).toBeVisible();
+  // Extrator cromático assíncrono: aguardar as imagens reais do mapa.
+  await expect.poll(()=>main.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+  const thumb=priority.locator('.priority-why-tile img');
+  if(await thumb.count())await expect.poll(()=>thumb.evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+  const verify=await page.evaluate(()=>{
+    const main=document.querySelector('#homeStudyDashboard .study-command-card');
+    const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
+    const next=window.StudyCoach?.snapshot?.().items?.[0]||null,
+      current=next?.kind==='map'&&next.key?mapById(next.key):null,
+      priorityCode=priority.querySelector('.priority-now-code')?.textContent?.trim()||'';
+    const src=priority.querySelector('.priority-why-tile img')?.getAttribute('src')||'';
+    const matched=combinedMaps().find(m=>mapCover(m)===src&&(!priorityCode||m.code===priorityCode))
+      ||combinedMaps().find(m=>m.code===priorityCode);
+    const mainCover=current?mapCover(current):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
+    const mainAccent=current?mapAccentValue(current):'';
+    const priorityAccent=matched?mapAccentValue(matched):'';
+    const derivedMainAccent=current?cachedCoverAccent(mainCover):'';
+    const derivedPriorityAccent=matched?cachedCoverAccent(mapCover(matched)):'';
+    const image=main.querySelector('.study-command-art img');
+    const priorityImage=priority.querySelector('.priority-why-tile img');
+    const accent=(node)=>node.style.getPropertyValue('--map-accent').trim();
+    const getColor=node=>getComputedStyle(node).borderTopColor;
+    const renderedMainAccent=accent(main),renderedPriorityAccent=accent(priority);
+    const before=getColor(main),beforePriority=getColor(priority);
+    main.style.setProperty('--map-accent','#fd3860');
+    priority.style.setProperty('--map-accent','#41c7b5');
+    const after=getColor(main),afterPriority=getColor(priority);
+    return{
+      mainCover,renderedCover:image.getAttribute('src'),
+      mainAccent,renderedMainAccent,derivedMainAccent,
+      priorityAccent,renderedPriorityAccent,derivedPriorityAccent,
+      priorityCover:matched?mapCover(matched):'',
+      renderedPriorityCover:priorityImage?.getAttribute('src')||'',
+      hasPlannedMap:!!current,hasPriorityMap:!!matched,
+      borderReactive:before!==after,priorityReactive:beforePriority!==afterPriority,
+      mainProgressColor:getComputedStyle(main.querySelector('.study-command-progress>i')).backgroundColor,
+      priorityProgressColor:getComputedStyle(priority.querySelector('.priority-progress-track>i')).backgroundColor
+    };
+  });
+  expect(verify.renderedCover).toBe(verify.mainCover);
+  if(verify.hasPlannedMap){
+    expect(verify.renderedMainAccent).toBe(verify.mainAccent);
+    if(verify.derivedMainAccent)expect(verify.renderedMainAccent).toBe(verify.derivedMainAccent);
+  }
+  if(verify.hasPriorityMap){
+    expect(verify.renderedPriorityAccent).toBe(verify.priorityAccent);
+    if(verify.derivedPriorityAccent)expect(verify.renderedPriorityAccent).toBe(verify.derivedPriorityAccent);
+    expect(verify.renderedPriorityCover).toBe(verify.priorityCover);
+  }
+  expect(verify.borderReactive).toBe(true);
+  expect(verify.priorityReactive).toBe(true);
+  expect(verify.mainProgressColor).not.toBe('rgba(0, 0, 0, 0)');
+  expect(verify.priorityProgressColor).not.toBe('rgba(0, 0, 0, 0)');
+  const geometry=await page.evaluate(()=>({
+    overflow:document.documentElement.scrollWidth-innerWidth,
+    mainHeight:document.querySelector('#homeStudyDashboard .study-command-card').getBoundingClientRect().height
+  }));
+  expect(geometry.overflow).toBeLessThanOrEqual(2);
+  // O layout móvel pode exibir métricas adicionais e CTA em linhas próprias;
+  // mantém limite explícito de compactação sem cortar conteúdo legítimo.
+  const isPhone=await page.evaluate(()=>document.documentElement.classList.contains('is-phone-layout'));
+  expect(geometry.mainHeight).toBeLessThanOrEqual(isPhone?320:225);
 });
