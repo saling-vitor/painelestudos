@@ -745,3 +745,38 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
 #homeStudyDashboard .priority-now-card .priority-why-tile:hover{
   background:transparent!important;
 }
+
+/* V15.48.152-G · Seu estudo de hoje: miniaturas editoriais vinculadas à capa real. */
+#homeReviewSection .study-plan-item{
+  display:grid!important;
+  grid-template-columns:22px 62px minmax(0,1fr) auto auto!important;
+  gap:10px!important;align-items:center!important;
+  min-height:68px!important;padding:7px 10px!important;
+  border-radius:8px!important;
+}
+#homeReviewSection .study-plan-item .study-plan-cover{
+  display:block;width:62px;height:45px;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--map-accent,var(--plan-accent,#a8a8a8)) 28%,rgba(255,255,255,.08));
+  border-radius:5px;background:#131314;
+}
+#homeReviewSection .study-plan-cover img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+#homeReviewSection .study-plan-cover--fallback{display:grid;place-items:center;background:color-mix(in srgb,var(--map-accent,var(--plan-accent,#999)) 9%,#101011)}
+#homeReviewSection .study-plan-cover--fallback span{font:800 10px/1 var(--mono,monospace);color:var(--map-accent,var(--plan-accent,#d5d5d5))}
+#homeReviewSection .study-plan-order{font-variant-numeric:tabular-nums}
+#homeReviewSection .study-plan-code{display:none!important}
+#homeReviewSection .study-plan-copy{min-width:0;overflow:hidden}
+#homeReviewSection .study-plan-copy b{display:block;line-height:1.3!important}
+#homeReviewSection .study-plan-copy>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#homeReviewSection .study-plan-item.is-next{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--map-accent,var(--plan-accent,#aaa)) 9%,#0a0a0b),#0a0a0b 80%)!important;
+}
+#homeReviewSection .study-plan-item:hover{transform:none!important}
+#homeReviewSection .study-plan-item button:hover{transform:none!important}
+@media(max-width:700px){
+  #homeReviewSection .study-plan-item{grid-template-columns:18px 54px minmax(0,1fr) auto!important;gap:8px!important;min-height:72px!important;padding:7px!important}
+  #homeReviewSection .study-plan-cover{width:54px!important;height:42px!important}
+  #homeReviewSection .study-plan-item .study-plan-time{grid-column:3!important;font-size:9px}
+  #homeReviewSection .study-plan-item [data-study-plan-open]{grid-column:4!important;grid-row:1/3!important;min-width:56px!important;padding-inline:7px!important}
+  #homeReviewSection .study-plan-item .study-plan-copy{grid-row:1!important}
+}
+@media(prefers-reduced-motion:reduce){#homeReviewSection .study-plan-item,#homeReviewSection .study-plan-item button{transition:none!important}}
