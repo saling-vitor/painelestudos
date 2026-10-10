@@ -5323,10 +5323,13 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
     const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
     const next=window.StudyCoach?.snapshot?.().items?.[0]||null,
       current=next?.kind==='map'&&next.key?mapById(next.key):null,
-      top=priorityRows()[0]||null;
+      priorityCode=priority.querySelector('.priority-now-code')?.textContent?.trim()||'';
+    const src=priority.querySelector('.priority-why-tile img')?.getAttribute('src')||'';
+    const matched=combinedMaps().find(m=>mapCover(m)===src&&(!priorityCode||m.code===priorityCode))
+      ||combinedMaps().find(m=>m.code===priorityCode);
     const mainCover=current?mapCover(current):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
     const mainAccent=current?mapAccentValue(current):'';
-    const priorityAccent=top?.map?mapAccentValue(top.map):'';
+    const priorityAccent=matched?mapAccentValue(matched):'';
     const image=main.querySelector('.study-command-art img');
     const priorityImage=priority.querySelector('.priority-why-tile img');
     const accent=(node)=>node.style.getPropertyValue('--map-accent').trim();
@@ -5339,9 +5342,9 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
       mainCover,renderedCover:image.getAttribute('src'),
       mainAccent,renderedMainAccent:accent(main),
       priorityAccent,renderedPriorityAccent:accent(priority),
-      priorityCover:top?.map?mapCover(top.map):'',
+      priorityCover:matched?mapCover(matched):'',
       renderedPriorityCover:priorityImage?.getAttribute('src')||'',
-      hasPlannedMap:!!current,hasPriorityMap:!!top?.map,
+      hasPlannedMap:!!current,hasPriorityMap:!!matched,
       borderReactive:before!==after,priorityReactive:beforePriority!==afterPriority,
       mainProgressColor:getComputedStyle(main.querySelector('.study-command-progress>i')).backgroundColor,
       priorityProgressColor:getComputedStyle(priority.querySelector('.priority-progress-track>i')).backgroundColor
