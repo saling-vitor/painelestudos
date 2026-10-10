@@ -5318,6 +5318,10 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
   const root=page.locator('#homeStudyDashboard'),main=root.locator('.study-command-card'),priority=root.locator('.priority-now-card');
   await expect(main).toBeVisible();
   await expect(priority).toBeVisible();
+  // Extrator cromático assíncrono: aguardar as imagens reais do mapa.
+  await expect.poll(()=>main.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+  const thumb=priority.locator('.priority-why-tile img');
+  if(await thumb.count())await expect.poll(()=>thumb.evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
   const verify=await page.evaluate(()=>{
     const main=document.querySelector('#homeStudyDashboard .study-command-card');
     const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
@@ -5330,18 +5334,21 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
     const mainCover=current?mapCover(current):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
     const mainAccent=current?mapAccentValue(current):'';
     const priorityAccent=matched?mapAccentValue(matched):'';
+    const derivedMainAccent=current?cachedCoverAccent(mainCover):'';
+    const derivedPriorityAccent=matched?cachedCoverAccent(mapCover(matched)):'';
     const image=main.querySelector('.study-command-art img');
     const priorityImage=priority.querySelector('.priority-why-tile img');
     const accent=(node)=>node.style.getPropertyValue('--map-accent').trim();
     const getColor=node=>getComputedStyle(node).borderTopColor;
+    const renderedMainAccent=accent(main),renderedPriorityAccent=accent(priority);
     const before=getColor(main),beforePriority=getColor(priority);
     main.style.setProperty('--map-accent','#fd3860');
     priority.style.setProperty('--map-accent','#41c7b5');
     const after=getColor(main),afterPriority=getColor(priority);
     return{
       mainCover,renderedCover:image.getAttribute('src'),
-      mainAccent,renderedMainAccent:accent(main),
-      priorityAccent,renderedPriorityAccent:accent(priority),
+      mainAccent,renderedMainAccent,derivedMainAccent,
+      priorityAccent,renderedPriorityAccent,derivedPriorityAccent,
       priorityCover:matched?mapCover(matched):'',
       renderedPriorityCover:priorityImage?.getAttribute('src')||'',
       hasPlannedMap:!!current,hasPriorityMap:!!matched,
@@ -5351,9 +5358,13 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
     };
   });
   expect(verify.renderedCover).toBe(verify.mainCover);
-  if(verify.hasPlannedMap)expect(verify.renderedMainAccent).toBe(verify.mainAccent);
+  if(verify.hasPlannedMap){
+    expect(verify.renderedMainAccent).toBe(verify.mainAccent);
+    if(verify.derivedMainAccent)expect(verify.renderedMainAccent).toBe(verify.derivedMainAccent);
+  }
   if(verify.hasPriorityMap){
     expect(verify.renderedPriorityAccent).toBe(verify.priorityAccent);
+    if(verify.derivedPriorityAccent)expect(verify.renderedPriorityAccent).toBe(verify.derivedPriorityAccent);
     expect(verify.renderedPriorityCover).toBe(verify.priorityCover);
   }
   expect(verify.borderReactive).toBe(true);
