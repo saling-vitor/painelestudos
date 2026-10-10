@@ -780,3 +780,27 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
   #homeReviewSection .study-plan-item .study-plan-copy{grid-row:1!important}
 }
 @media(prefers-reduced-motion:reduce){#homeReviewSection .study-plan-item,#homeReviewSection .study-plan-item button{transition:none!important}}
+
+/* [M] Toda a linha de estudo é acionável, sem perder a identificação do mapa. */
+html.is-phone-layout #homeReviewSection .study-plan-item{
+  box-sizing:border-box!important;position:relative!important;
+  height:72px!important;min-height:72px!important;max-height:72px!important;
+  grid-template-rows:minmax(0,1fr) auto!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
+  box-sizing:border-box!important;position:absolute!important;
+  inset:0!important;width:100%!important;height:100%!important;
+  max-width:none!important;min-width:0!important;min-height:0!important;
+  z-index:2!important;display:flex!important;justify-content:flex-end!important;
+  align-items:center!important;padding:0 11px 0 0!important;margin:0!important;
+  border:0!important;border-radius:inherit!important;
+  background:transparent!important;box-shadow:none!important;
+  color:var(--map-accent,var(--plan-accent,#e4c65e))!important;
+  text-align:right!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]:hover{
+  background:transparent!important;transform:none!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item .study-plan-copy{
+  padding-right:6px!important;
+}
