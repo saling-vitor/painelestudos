@@ -5269,7 +5269,12 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
   await expect(command).toBeVisible();
   await expect(command.locator('.study-command-art img')).toBeVisible();
   await expect.poll(()=>command.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
-  expect(await command.locator('.study-command-art img').getAttribute('src')).toContain('home-hero.png');
+  const expectedCover=await page.evaluate(()=>{
+    const row=window.StudyCoach?.snapshot?.().items?.[0]||null;
+    const map=row?.kind==='map'&&row.key?mapById(row.key):null;
+    return map?mapCover(map):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
+  });
+  expect(await command.locator('.study-command-art img').getAttribute('src')).toBe(expectedCover);
   await expect(command.locator('[data-dashboard-help]')).toBeVisible();
   await command.locator('[data-dashboard-help]').click();
   await expect(command.locator('#studyCommandHelpDetail')).toBeVisible();
@@ -5305,4 +5310,57 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
     expect(geometry.inside).toBe(true);
     expect(geometry.header).toBeLessThan(80);
   }
+});
+
+
+test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prioridade',async({page})=>{
+  await page.goto('/#home');
+  const root=page.locator('#homeStudyDashboard'),main=root.locator('.study-command-card'),priority=root.locator('.priority-now-card');
+  await expect(main).toBeVisible();
+  await expect(priority).toBeVisible();
+  const verify=await page.evaluate(()=>{
+    const main=document.querySelector('#homeStudyDashboard .study-command-card');
+    const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
+    const next=window.StudyCoach?.snapshot?.().items?.[0]||null,
+      current=next?.kind==='map'&&next.key?mapById(next.key):null,
+      top=priorityRows()[0]||null;
+    const mainCover=current?mapCover(current):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
+    const mainAccent=current?mapAccentValue(current):'';
+    const priorityAccent=top?.map?mapAccentValue(top.map):'';
+    const image=main.querySelector('.study-command-art img');
+    const priorityImage=priority.querySelector('.priority-why-tile img');
+    const accent=(node)=>node.style.getPropertyValue('--map-accent').trim();
+    const getColor=node=>getComputedStyle(node).borderTopColor;
+    const before=getColor(main),beforePriority=getColor(priority);
+    main.style.setProperty('--map-accent','#fd3860');
+    priority.style.setProperty('--map-accent','#41c7b5');
+    const after=getColor(main),afterPriority=getColor(priority);
+    return{
+      mainCover,renderedCover:image.getAttribute('src'),
+      mainAccent,renderedMainAccent:accent(main),
+      priorityAccent,renderedPriorityAccent:accent(priority),
+      priorityCover:top?.map?mapCover(top.map):'',
+      renderedPriorityCover:priorityImage?.getAttribute('src')||'',
+      hasPlannedMap:!!current,hasPriorityMap:!!top?.map,
+      borderReactive:before!==after,priorityReactive:beforePriority!==afterPriority,
+      mainProgressColor:getComputedStyle(main.querySelector('.study-command-progress>i')).backgroundColor,
+      priorityProgressColor:getComputedStyle(priority.querySelector('.priority-progress-track>i')).backgroundColor
+    };
+  });
+  expect(verify.renderedCover).toBe(verify.mainCover);
+  if(verify.hasPlannedMap)expect(verify.renderedMainAccent).toBe(verify.mainAccent);
+  if(verify.hasPriorityMap){
+    expect(verify.renderedPriorityAccent).toBe(verify.priorityAccent);
+    expect(verify.renderedPriorityCover).toBe(verify.priorityCover);
+  }
+  expect(verify.borderReactive).toBe(true);
+  expect(verify.priorityReactive).toBe(true);
+  expect(verify.mainProgressColor).not.toBe('rgba(0, 0, 0, 0)');
+  expect(verify.priorityProgressColor).not.toBe('rgba(0, 0, 0, 0)');
+  const geometry=await page.evaluate(()=>({
+    overflow:document.documentElement.scrollWidth-innerWidth,
+    mainHeight:document.querySelector('#homeStudyDashboard .study-command-card').getBoundingClientRect().height
+  }));
+  expect(geometry.overflow).toBeLessThanOrEqual(2);
+  expect(geometry.mainHeight).toBeLessThanOrEqual(225);
 });

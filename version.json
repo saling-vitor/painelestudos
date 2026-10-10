@@ -1,14 +1,13 @@
 {
-  "version": "15.48.150",
-  "label": "V15.48.150-G",
-  "notes": "Home: fidelidade editorial aos conceitos de Hoje, Ritmo e Plano do dia; 7 ícones PNG, foto arquitetônica P&B sem textos embutidos, métrica dupla, gráficos, ações e responsividade.",
+  "version": "15.48.151",
+  "label": "V15.48.151-G",
+  "notes": "Home: capa real do mapa em Hoje · Estude agora e identidade cromática real do mapa em Hoje e Prioridade, preservando os dados, o layout editorial e o amarelo dos controles genéricos.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Hoje · Estude agora com fotografia arquitetônica P&B limpa, relógio, gráfico e ajuda real",
-    "[G] Ritmo atual com ícones PNG, hierarquia reforçada, gráfico e barras de referência discretas",
-    "[G] Plano do dia com livro aberto PNG, alinhamento editorial e botão com Play",
-    "[G] Ícones de Tempo/Prioridade, foco e controles padronizados em PNG",
-    "[G] Layout e legibilidade revistos no desktop, iPad e iPhone"
+    "[G] Hoje · Estude agora usa mapCover() do mapa planejado, incluindo capas personalizadas",
+    "[G] Identidade temática por mapAccentValue() em borda, progresso, sigla, métricas e CTA do card Hoje",
+    "[G] Prioridade agora herda cor do mapa em borda, progresso, miniatura, sigla e CTA",
+    "[G] Fundo grafite, legibilidade e demais cards da Home preservados"
   ],
   "automation": {
     "enabled": true,
