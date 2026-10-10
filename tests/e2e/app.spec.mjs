@@ -5183,7 +5183,10 @@ test('V15.48.148 [G] Simulados recentes têm capa ampliada e card clicável',asy
   await expect(cover).toBeVisible();
   const img=cover.locator('img');
   await expect(img).toBeVisible();
-  await expect.poll(()=>img.evaluate(el=>el.complete&&el.naturalWidth>0)).toBe(true);
+  // A capa dos simulados é lazy-loaded. No iPhone fica abaixo da dobra;
+  // trazer o elemento ao viewport antes de exigir naturalWidth.
+  await img.scrollIntoViewIfNeeded();
+  await expect.poll(()=>img.evaluate(el=>el.complete&&el.naturalWidth>0),{timeout:10000}).toBe(true);
   const sizes=await card.evaluate(el=>{
     const h=el.getBoundingClientRect().height;
     return{h,cover:el.querySelector('.simulation-recent-cover').getBoundingClientRect().height,overflow:document.documentElement.scrollWidth-innerWidth}
