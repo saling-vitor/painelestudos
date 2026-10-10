@@ -266,7 +266,10 @@
     const nextMeta=nextPlan?((nextPlan.reason||'')+(nextPlan.minutes?' · '+nextPlan.minutes+' min':'')):planned[0]?.minutes?(planned[0].minutes+' min planejados'):'Abra um mapa ou use uma sessão livre';
     const commandStyle=nextAccent?' style="'+escape('--map-accent:'+nextAccent)+'" data-map-accent="true"':'';
     const commandMap=nextMap?'<span class="study-command-map-code">'+escape(nextCode)+'</span>':'';
-    const coverHtml='<img src="assets/brand/topographic-editorial-v1/covers/home-hero.png" alt="" loading="lazy" decoding="async">';
+    // Usar sempre a capa resolvida do mapa (inclusive substituições locais), sem imagem genérica fixa.
+    const selectedCover=nextMap&&typeof mapCover==='function'?mapCover(nextMap):'';
+    const commandCover=selectedCover||'assets/brand/topographic-editorial-v1/covers/home-hero.png';
+    const coverHtml='<img src="'+escape(commandCover)+'" alt="" loading="lazy" decoding="async">';
     const contextText=Number(review.dueCount||0)+' revisões'+(exam?' · prova em '+exam.days+' dia'+(exam.days===1?'':'s'):' · '+planned.length+' itens na agenda');
     root.innerHTML='<div class="study-command-card"'+commandStyle+'>'+
       '<div class="study-command-art" aria-hidden="true">'+coverHtml+'</div>'+
