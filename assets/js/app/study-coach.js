@@ -44,7 +44,7 @@ function renderHomeCoach(){
  const plan=studyCoachPlan(),active=window.StudyDashboard?.active?.()||null,completed=todayPlanCompletionIndexes(plan),firstMap=plan.items[0]?.kind==='map'?plan.items[0].map:null,planAccent=firstMap&&typeof mapAccentValue==='function'?mapAccentValue(firstMap):'';
  section.hidden=!plan.items.length;section.dataset.planState=active?'active':'idle';if(planAccent)section.style.setProperty('--plan-accent',planAccent);else section.style.removeProperty('--plan-accent');
  const head=section.querySelector('.section-head h2'),kicker=section.querySelector('.kicker');if(head)head.textContent='Seu estudo de hoje';if(kicker)kicker.textContent='Plano do dia';
- const header=section.querySelector('.section-head');if(header&&!header.querySelector('.home-review-icon'))header.insertAdjacentHTML('afterbegin','<span class="home-review-icon" aria-hidden="true"><span class="ui-icon icon-book-open"></span></span>');
+ const header=section.querySelector('.section-head');if(header&&!header.querySelector('.home-review-icon'))header.insertAdjacentHTML('afterbegin','<span class="home-review-icon" aria-hidden="true"><span class="ui-icon icon-calendar"></span></span>');
  const blockLabel=plan.items.length===1?'bloco':'blocos',doneLabel=completed.size===1?'concluído':'concluídos';
  summary.textContent=plan.items.length?(formatPlanMinutes(plan.summary.plannedMinutes)+' planejada · '+plan.items.length+' '+blockLabel+' · '+completed.size+' '+doneLabel):'';
  start.innerHTML='<span class="ui-icon icon-play" aria-hidden="true"></span><span>'+(active?'Continuar':'Começar estudo')+'</span>';start.hidden=!plan.items.length;start.onclick=()=>openPlanItem(plan.items[0]);
