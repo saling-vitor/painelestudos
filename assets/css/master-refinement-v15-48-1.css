@@ -745,3 +745,81 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
 #homeStudyDashboard .priority-now-card .priority-why-tile:hover{
   background:transparent!important;
 }
+
+
+/* V15.48.152-G — Home editorial: plano de hoje e cards, todas as plataformas. */
+#homeReviewSection .home-review-icon{
+  display:grid!important;place-items:center!important;flex:none!important;
+  width:40px!important;height:40px!important;border-radius:11px!important;
+  color:#e4e6e9!important;
+  background:linear-gradient(155deg,rgba(255,255,255,.105),rgba(255,255,255,.022))!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.10),0 6px 16px rgba(0,0,0,.12)!important;
+}
+#homeReviewSection .home-review-icon .ui-icon{width:22px!important;height:22px!important}
+#homeReviewSection .section-head{align-items:center!important;column-gap:13px!important}
+#homeReviewSection .section-head>div{flex:1;min-width:0}
+#homeReviewSection .section-head h2{letter-spacing:.015em!important}
+#homeReviewSection .study-plan-grid{display:grid!important;gap:5px!important}
+#homeReviewSection .study-plan-item{
+  --row-tone:var(--map-accent,var(--plan-accent,#a9abb0));
+  position:relative!important;isolation:isolate;
+  border:1px solid rgba(255,255,255,.045)!important;border-radius:9px!important;
+  background:linear-gradient(105deg,color-mix(in srgb,var(--row-tone) 6%,transparent),rgba(255,255,255,.007) 55%,transparent)!important;
+  box-shadow:inset 2px 0 color-mix(in srgb,var(--row-tone) 58%,transparent)!important;
+  transition:none!important;
+}
+#homeReviewSection .study-plan-item.is-next{
+  background:linear-gradient(105deg,color-mix(in srgb,var(--row-tone) 13%,transparent),rgba(255,255,255,.012) 65%,transparent)!important;
+  box-shadow:inset 3px 0 var(--row-tone)!important;
+}
+#homeReviewSection .study-plan-item :is(.study-plan-order,.study-plan-code){
+  color:var(--row-tone)!important;border-color:color-mix(in srgb,var(--row-tone) 43%,transparent)!important;
+  background:color-mix(in srgb,var(--row-tone) 9%,#111216)!important;
+}
+#homeReviewSection .study-plan-item .study-plan-order{font-weight:800!important}
+#homeReviewSection .study-plan-item .study-plan-code{font-weight:800!important}
+#homeReviewSection .study-plan-item .study-plan-copy b{color:#e4e6e9!important;line-height:1.35}
+#homeReviewSection .study-plan-item .study-plan-copy span{color:#959aa3!important;line-height:1.4}
+#homeReviewSection .study-plan-item [data-study-plan-open]{
+  border-color:color-mix(in srgb,var(--row-tone) 35%,rgba(255,255,255,.10))!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--row-tone) 11%,#141519),rgba(255,255,255,.015))!important;
+  color:#e6e8eb!important;box-shadow:inset 0 1px rgba(255,255,255,.06)!important;
+  transform:none!important;filter:none!important;transition:none!important;
+}
+#homeReviewSection .study-plan-item [data-study-plan-open]:hover{
+  transform:none!important;filter:none!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--row-tone) 11%,#141519),rgba(255,255,255,.015))!important;
+}
+#homeReviewSection .study-plan-footer{
+  border-color:rgba(255,255,255,.09)!important;
+  background:linear-gradient(120deg,rgba(255,255,255,.042),rgba(255,255,255,.009))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.055)!important;
+  backdrop-filter:blur(16px) saturate(125%);-webkit-backdrop-filter:blur(16px) saturate(125%);
+  font-variant-numeric:tabular-nums;
+}
+#homeReviewSection .study-plan-footer :is(b,strong){color:#e0e2e7!important}
+#homeReviewSection .study-plan-footer i{background:rgba(255,255,255,.09)!important;min-width:24px!important}
+#homeReviewSection .study-plan-footer em{background:var(--plan-accent,#b0b4b9)!important}
+#homeStudyDashboard .study-command-metrics>button{
+  background:linear-gradient(140deg,rgba(255,255,255,.075),rgba(255,255,255,.018))!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.065)!important;
+  backdrop-filter:blur(14px) saturate(125%);-webkit-backdrop-filter:blur(14px) saturate(125%);
+  transform:none!important;transition:none!important;
+}
+#homeStudyDashboard .study-command-metrics>button:hover{transform:none!important;filter:none!important}
+#homeStudyDashboard .study-command-metrics :is(em){background:var(--map-accent,#a4a8af)!important}
+#homeStudyDashboard .study-command-card{border-color:color-mix(in srgb,var(--map-accent,#81858a) 28%,rgba(255,255,255,.10))!important}
+#homeStudyDashboard .priority-now-card{border-color:color-mix(in srgb,var(--home-card-theme,#93979d) 34%,rgba(255,255,255,.09))!important}
+#homeStudyDashboard .priority-now-card :is(.priority-now-code,.focus-round){border-color:color-mix(in srgb,var(--home-card-theme,#93979d) 48%,transparent)!important;color:var(--home-card-theme,#e1e1e4)!important}
+#homeStudyDashboard .focus-chevron{font-size:14px!important;opacity:.72}
+@media(max-width:680px){
+ #homeReviewSection .section-head{flex-wrap:wrap!important}
+ #homeReviewSection .home-review-icon{width:35px!important;height:35px!important}
+ #homeReviewSection .study-plan-item{min-width:0!important}
+ #homeReviewSection .study-plan-footer{gap:8px!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ #homeReviewSection .study-plan-footer,#homeStudyDashboard .study-command-metrics>button{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
