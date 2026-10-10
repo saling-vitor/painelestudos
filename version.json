@@ -1,18 +1,17 @@
 {
-  "version": "15.48.151",
-  "label": "V15.48.151-G",
-  "notes": "Home: capa real do mapa em Hoje · Estude agora e identidade cromática real do mapa em Hoje e Prioridade, preservando os dados, o layout editorial e o amarelo dos controles genéricos.",
+  "version": "15.48.152",
+  "label": "V15.48.152-G",
+  "notes": "Plano do dia: miniaturas reais das capas dos mapas, fallback editorial, cor temática e composição responsiva para desktop, tablet e smartphone.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Hoje · Estude agora usa mapCover() do mapa planejado, incluindo capas personalizadas",
-    "[G] Identidade temática por mapAccentValue() em borda, progresso, sigla, métricas e CTA do card Hoje",
-    "[G] Prioridade agora herda cor do mapa em borda, progresso, miniatura, sigla e CTA",
-    "[G] Fundo grafite, legibilidade e demais cards da Home preservados"
+    "[G] Plano do dia com capa real e fallback visual para mapa/simulado",
+    "[G] Layout editorial compacto nos cards, com identidade cromática por mapa",
+    "[G] Responsividade desktop, tablet e smartphone sem alterar os IDs e o armazenamento"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
     "channel": "G",
-    "runBase": 710
+    "runBase": 711
   }
 }
