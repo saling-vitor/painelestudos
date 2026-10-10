@@ -5277,7 +5277,9 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
   await expect(command.locator('.study-command-metric-icon')).toHaveCount(2);
   await expect(root.locator('.home-command-symbol')).toHaveCount(3);
   await expect(root.locator('.forecast-day-reference')).toHaveCount(7);
-  await expect(root.locator('.forecast-home-actions .ui-icon')).toHaveCount(2);
+  // Revisão é condicional: sem tópicos vencidos, aparece somente Abrir matriz.
+  const reviewAvailable=await root.locator('[data-home-topic-review]').count();
+  await expect(root.locator('.forecast-home-actions .ui-icon')).toHaveCount(reviewAvailable?2:1);
   await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
   const imgs=['bolt','target','chart-bars','clock','book-open','play','help'];
   for(const name of imgs){
