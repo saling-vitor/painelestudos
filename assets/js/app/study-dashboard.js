@@ -7,7 +7,7 @@
   const ACTIVE_KEY='studyapp.studySession.active';
   const VERSION=1;
   const DEFAULT_GOALS={dailyMinutes:120,weeklyMinutes:600,pomodoroWork:25,pomodoroBreak:5,autoFocus:false};
-  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode='month',goalDraft=null;
+  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode='month',goalDraft=null,studyCommandHelpOpen=false;
 
   const safeJson=(value,fallback)=>{try{return JSON.parse(value)}catch{return fallback}};
   const isoNow=()=>new Date().toISOString();
@@ -276,8 +276,8 @@
       '<div class="study-command-head"><div class="study-command-copy">'+
         '<div class="study-command-kicker">'+commandMap+'<span class="kicker">Hoje · Estude agora</span></div>'+
         '<h2>'+escape(nextTitle)+'</h2><p>'+escape(nextMeta)+'</p>'+
-      '</div><button type="button" class="study-command-help" data-dashboard-help aria-label="Entenda seu plano de hoje" aria-expanded="false"><span class="ui-icon icon-help" aria-hidden="true"></span></button></div>'+
-      '<div class="study-command-help-detail" id="studyCommandHelpDetail" hidden>Metas, revisões e progresso são atualizados com os registros reais dos seus estudos.</div>'+
+      '</div><button type="button" class="study-command-help" data-dashboard-help aria-label="Entenda seu plano de hoje" aria-expanded="'+String(studyCommandHelpOpen)+'"><span class="ui-icon icon-help" aria-hidden="true"></span></button></div>'+
+      '<div class="study-command-help-detail" id="studyCommandHelpDetail"'+(studyCommandHelpOpen?'':' hidden')+'>Metas, revisões e progresso são atualizados com os registros reais dos seus estudos.</div>'+
       '<div class="study-command-progress" role="progressbar" aria-label="Meta diária concluída" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+snap.dailyPct+'"><i style="width:'+snap.dailyPct+'%"></i></div>'+
       '<div class="study-command-context">'+escape(contextText)+'</div>'+
       '<div class="study-command-bottom"><div class="study-command-metrics">'+
@@ -299,7 +299,7 @@
     root.querySelectorAll('[data-dashboard-agenda]').forEach(button=>button.onclick=()=>nav('agenda'));
     const helpButton=root.querySelector('[data-dashboard-help]'),helpDetail=root.querySelector('#studyCommandHelpDetail');
     if(helpButton&&helpDetail)helpButton.onclick=()=>{
-      helpDetail.hidden=!helpDetail.hidden;helpButton.setAttribute('aria-expanded',String(!helpDetail.hidden));
+      studyCommandHelpOpen=!studyCommandHelpOpen;helpDetail.hidden=!studyCommandHelpOpen;helpButton.setAttribute('aria-expanded',String(studyCommandHelpOpen));
     };
     if(window.StudyPlanner?.renderHome)setTimeout(()=>StudyPlanner.renderHome(),0);
   }
