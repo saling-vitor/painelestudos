@@ -5376,5 +5376,8 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
     mainHeight:document.querySelector('#homeStudyDashboard .study-command-card').getBoundingClientRect().height
   }));
   expect(geometry.overflow).toBeLessThanOrEqual(2);
-  expect(geometry.mainHeight).toBeLessThanOrEqual(225);
+  // O layout móvel pode exibir métricas adicionais e CTA em linhas próprias;
+  // mantém limite explícito de compactação sem cortar conteúdo legítimo.
+  const isPhone=await page.evaluate(()=>document.documentElement.classList.contains('is-phone-layout'));
+  expect(geometry.mainHeight).toBeLessThanOrEqual(isPhone?320:225);
 });
