@@ -1,14 +1,14 @@
 {
-  "version": "15.48.149",
-  "label": "V15.48.149-G",
-  "notes": "Home Swiss/Black: quatro cards coordenados com capa, sessões rápidas, prioridade com progresso real, ritmo semanal e Plano do dia compacto; ajustes responsivos G.",
+  "version": "15.48.150",
+  "label": "V15.48.150-G",
+  "notes": "Home: fidelidade editorial aos conceitos de Hoje, Ritmo e Plano do dia; 7 ícones PNG, foto arquitetônica P&B sem textos embutidos, métrica dupla, gráficos, ações e responsividade.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Home editorial em faixa coordenada — Hoje, Tempo, Prioridade e Ritmo",
-    "[G] Capa do mapa no comando principal, progresso real e CTA de continuação",
-    "[G] Sessão rápida com duração selecionada e opção Foco total explícita",
-    "[G] Prioridade com miniatura, justificativa e progresso verdadeiro",
-    "[G] Gráfico semanal com dados reais e Plano do dia compacto"
+    "[G] Hoje · Estude agora com fotografia arquitetônica P&B limpa, relógio, gráfico e ajuda real",
+    "[G] Ritmo atual com ícones PNG, hierarquia reforçada, gráfico e barras de referência discretas",
+    "[G] Plano do dia com livro aberto PNG, alinhamento editorial e botão com Play",
+    "[G] Ícones de Tempo/Prioridade, foco e controles padronizados em PNG",
+    "[G] Layout e legibilidade revistos no desktop, iPad e iPhone"
   ],
   "automation": {
     "enabled": true,
