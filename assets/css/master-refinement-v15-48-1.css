@@ -804,3 +804,26 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]:
 html.is-phone-layout #homeReviewSection .study-plan-item .study-plan-copy{
   padding-right:6px!important;
 }
+
+/* Corrige a herança de grid-area do CSS mobile legado: o overlay cobre o card inteiro. */
+html.is-phone-layout #homeReviewSection .study-plan-item{
+  grid-template-areas:none!important;
+  grid-template-columns:18px 54px minmax(0,1fr) 0px!important;
+  column-gap:8px!important;row-gap:2px!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item .study-plan-order{
+  grid-area:auto!important;grid-column:1!important;grid-row:1/3!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item .study-plan-cover{
+  grid-area:auto!important;grid-column:2!important;grid-row:1/3!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item .study-plan-copy{
+  grid-area:auto!important;grid-column:3!important;grid-row:1!important;
+  padding-right:20px!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item .study-plan-time{
+  grid-area:auto!important;grid-column:3!important;grid-row:2!important;
+}
+html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
+  grid-area:auto!important;opacity:0!important;
+}
