@@ -1,17 +1,18 @@
 {
-  "version": "15.48.152",
-  "label": "V15.48.152-G",
-  "notes": "Plano do dia: miniaturas reais das capas dos mapas, fallback editorial, cor temática e composição responsiva para desktop, tablet e smartphone.",
+  "version": "15.48.153",
+  "label": "V15.48.153-D",
+  "notes": "Home desktop: cores dinâmicas nas laterais, imagem em degradê, Liquid Glass de metas, contexto legível, capa íntegra em Prioridade e ícones SF Black Filled.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Plano do dia com capa real e fallback visual para mapa/simulado",
-    "[G] Layout editorial compacto nos cards, com identidade cromática por mapa",
-    "[G] Responsividade desktop, tablet e smartphone sem alterar os IDs e o armazenamento"
+    "[D] Hoje · Estude agora: lateral/acento do mapa, degradê da capa e texto visível",
+    "[D] Meta de hoje e Semana com Liquid Glass e iconografia harmônica",
+    "[D] Prioridade agora com borda temática, thumbnail sem corte e play SF Black Filled",
+    "[D] Tenho tempo agora, Ritmo atual e Seu estudo de hoje com ícones alinhados"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "G",
+    "channel": "D",
     "runBase": 711
   }
 }
