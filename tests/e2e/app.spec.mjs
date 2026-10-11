@@ -5329,7 +5329,7 @@ test('V15.48.154 [D] card Hoje apresenta capa full-bleed e métricas em vidro ú
     const metrics=query('.study-command-metrics'),items=[...metrics.querySelectorAll('button')].slice(0,2);
     const bottom=query('.study-command-bottom'),cta=query('.study-command-cta');
     const rect=box(el),artRect=box(art),pic=box(img);
-    const style=node=>getComputedStyle(node);
+    const style=(node,pseudo)=>getComputedStyle(node,pseudo);
     return{
       imageLeft:artRect.left-rect.left,imageRight:rect.right-artRect.right,
       imageWidth:pic.width,cardWidth:rect.width,imageHeight:pic.height,cardHeight:rect.height,
