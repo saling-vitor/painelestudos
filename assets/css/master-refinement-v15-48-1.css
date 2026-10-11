@@ -899,16 +899,16 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     min-height:45px!important;margin:0!important;padding:4px!important;gap:5px!important;
     border:1px solid rgba(255,255,255,.12)!important;border-radius:9px!important;
     background:linear-gradient(150deg,rgba(32,45,60,.19),rgba(10,15,22,.18))!important;
-    -webkit-backdrop-filter:blur(13px) saturate(116%);
-    backdrop-filter:blur(13px) saturate(116%);
+    -webkit-backdrop-filter:blur(13px) saturate(116%)!important;
+    backdrop-filter:blur(13px) saturate(116%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
     gap:0!important;padding:0!important;overflow:hidden!important;
     border:1px solid rgba(255,255,255,.19)!important;border-radius:7px!important;
     background:linear-gradient(155deg,rgba(255,255,255,.095),rgba(255,255,255,.026) 66%),rgba(17,24,33,.40)!important;
-    -webkit-backdrop-filter:blur(17px) saturate(125%);
-    backdrop-filter:blur(17px) saturate(125%);
+    -webkit-backdrop-filter:blur(17px) saturate(125%)!important;
+    backdrop-filter:blur(17px) saturate(125%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth-child(-n+2){
@@ -926,8 +926,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     background:linear-gradient(155deg,
       color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
       rgba(18,26,36,.48))!important;
-    -webkit-backdrop-filter:blur(15px) saturate(120%);
-    backdrop-filter:blur(15px) saturate(120%);
+    -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
+    backdrop-filter:blur(15px) saturate(120%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.12)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
