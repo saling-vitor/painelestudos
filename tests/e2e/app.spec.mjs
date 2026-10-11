@@ -5338,6 +5338,7 @@ test('V15.48.154 [D] card Hoje apresenta capa full-bleed e métricas em vidro ú
       gap:style(metrics).columnGap,metricsBackground:style(metrics).backgroundImage,
       metricsBlur:style(metrics).backdropFilter||style(metrics).webkitBackdropFilter,
       bottomBlur:style(bottom).backdropFilter||style(bottom).webkitBackdropFilter,
+      ctaBlur:style(cta).backdropFilter||style(cta).webkitBackdropFilter,
       buttonsBackground:items.map(item=>style(item).backgroundColor),
       buttonDivider:style(items[1]).borderLeftColor,
       ctaVisible:box(cta).right<=rect.right+1,
@@ -5355,6 +5356,7 @@ test('V15.48.154 [D] card Hoje apresenta capa full-bleed e métricas em vidro ú
   expect(v.metricsBackground).toContain('linear-gradient');
   expect(v.metricsBlur).toContain('blur(');
   expect(v.bottomBlur).toContain('blur(');
+  expect(v.ctaBlur).toContain('blur(');
   expect(v.buttonsBackground).toEqual(['rgba(0, 0, 0, 0)','rgba(0, 0, 0, 0)']);
   expect(v.buttonDivider).not.toBe('rgb(0, 0, 0)');
   expect(v.ctaVisible).toBe(true);
