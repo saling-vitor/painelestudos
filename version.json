@@ -1,13 +1,14 @@
 {
-  "version": "15.48.153",
-  "label": "V15.48.153-D",
-  "notes": "Home desktop: cores dinâmicas nas laterais, imagem em degradê, Liquid Glass de metas, contexto legível, capa íntegra em Prioridade e ícones SF Black Filled.",
+  "version": "15.48.154",
+  "label": "V15.48.154-D",
+  "notes": "Desktop: imagem contínua desde a borda esquerda no card Hoje, degradê temático sobre a foto e faixa Liquid Glass sem divisórias pretas.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Hoje · Estude agora: lateral/acento do mapa, degradê da capa e texto visível",
-    "[D] Meta de hoje e Semana com Liquid Glass e iconografia harmônica",
-    "[D] Prioridade agora com borda temática, thumbnail sem corte e play SF Black Filled",
-    "[D] Tenho tempo agora, Ritmo atual e Seu estudo de hoje com ícones alinhados"
+    "[D] Hoje · Estude agora: imagem de capa desde a borda esquerda, sem corte ao meio",
+    "[D] Degradê translúcido em cor temática aplicado sobre a imagem integral",
+    "[D] Meta de hoje e Semana: única superfície Liquid Glass com divisor translúcido",
+    "[D] Continuar agora: vidro harmonizado com a faixa inferior, sem hover opaco",
+    "[D] Regressão automatizada da geometria, cor e glass no navegador desktop"
   ],
   "automation": {
     "enabled": true,
