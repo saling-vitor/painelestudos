@@ -1224,6 +1224,10 @@ html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
     position:fixed!important;pointer-events:auto!important;
     width:min(390px,calc(100vw - 24px))!important;
     margin:0!important;
+    border-color:color-mix(in srgb,var(--priority-color) 42%,rgba(255,255,255,.18))!important;
+    background:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--priority-color) 11%,transparent),transparent 60%),linear-gradient(143deg,rgba(31,38,45,.82),rgba(10,14,19,.89) 76%)!important;
+    -webkit-backdrop-filter:blur(26px) saturate(132%)!important;
+    backdrop-filter:blur(26px) saturate(132%)!important;
   }
 }
 @media(max-width:700px){
