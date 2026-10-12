@@ -16,7 +16,8 @@ test('[G] Home editorial: capa discreta e prioridade com vidro fumê', async ({ 
     const decoration = getComputedStyle(el.parentElement, '::after');
     return { filter: style.filter, curtain: decoration.backgroundImage };
   });
-  expect(visual.filter).toContain('brightness(0.65)');
+  const mobile = await page.evaluate(() => document.documentElement.classList.contains('is-phone-layout') || innerWidth <= 700);
+  expect(visual.filter).toContain(mobile ? 'brightness(0.55)' : 'brightness(0.65)');
   expect(visual.curtain).toContain('linear-gradient');
 
   const tile = page.locator('#homeStudyDashboard [data-priority-why]');
