@@ -1012,7 +1012,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     border:0!important;border-radius:4px!important;
     background:transparent!important;box-shadow:none!important;color:#dde3e8!important;
   }
-  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .home-review-icon .icon-list{
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .home-review-icon .icon-book-open{
     --ui-icon:url("../ui-icons/sf-black-filled/list.png");--icon-size:22px!important;
     background-color:#dde3e8!important;
   }
