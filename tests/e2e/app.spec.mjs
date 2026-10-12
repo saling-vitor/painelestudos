@@ -5316,6 +5316,54 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
 });
 
 
+test('V15.48.154 [D] card Hoje apresenta capa full-bleed e métricas em vidro único',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Regressão visual específica do desktop.');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  const card=page.locator('#homeStudyDashboard .study-command-card');
+  await expect(card).toBeVisible();
+  await expect.poll(()=>card.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+  const v=await card.evaluate(el=>{
+    const query=s=>el.querySelector(s),box=node=>node.getBoundingClientRect();
+    const art=query('.study-command-art'),img=query('.study-command-art img');
+    const metrics=query('.study-command-metrics'),items=[...metrics.querySelectorAll('button')].slice(0,2);
+    const bottom=query('.study-command-bottom'),cta=query('.study-command-cta');
+    const rect=box(el),artRect=box(art),pic=box(img);
+    const style=(node,pseudo)=>getComputedStyle(node,pseudo);
+    return{
+      imageLeft:artRect.left-rect.left,imageRight:rect.right-artRect.right,
+      imageWidth:pic.width,cardWidth:rect.width,imageHeight:pic.height,cardHeight:rect.height,
+      artPosition:style(art).zIndex,imageFit:style(img).objectFit,
+      overlay:style(art,'::after').backgroundImage,
+      gap:style(metrics).columnGap,metricsBackground:style(metrics).backgroundImage,
+      metricsBlur:style(metrics).backdropFilter||style(metrics).webkitBackdropFilter,
+      bottomBlur:style(bottom).backdropFilter||style(bottom).webkitBackdropFilter,
+      ctaBlur:style(cta).backdropFilter||style(cta).webkitBackdropFilter,
+      buttonsBackground:items.map(item=>style(item).backgroundColor),
+      buttonDivider:style(items[1]).borderLeftColor,
+      ctaVisible:box(cta).right<=rect.right+1,
+      contextVisible:box(query('.study-command-context')).bottom<=box(bottom).top+1,
+      overflow:document.documentElement.scrollWidth-innerWidth
+    };
+  });
+  expect(Math.abs(v.imageLeft)).toBeLessThanOrEqual(4);
+  expect(Math.abs(v.imageRight)).toBeLessThanOrEqual(4);
+  expect(v.imageWidth).toBeGreaterThanOrEqual(v.cardWidth-5);
+  expect(v.imageHeight).toBeGreaterThanOrEqual(v.cardHeight-5);
+  expect(v.imageFit).toBe('cover');
+  expect(v.overlay).toContain('linear-gradient');
+  expect(v.gap).toBe('0px');
+  expect(v.metricsBackground).toContain('linear-gradient');
+  expect(v.metricsBlur).toContain('blur(');
+  expect(v.bottomBlur).toContain('blur(');
+  expect(v.ctaBlur).toContain('blur(');
+  expect(v.buttonsBackground).toEqual(['rgba(0, 0, 0, 0)','rgba(0, 0, 0, 0)']);
+  expect(v.buttonDivider).not.toBe('rgb(0, 0, 0)');
+  expect(v.ctaVisible).toBe(true);
+  expect(v.contextVisible).toBe(true);
+  expect(v.overflow).toBeLessThanOrEqual(2);
+});
+
 test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prioridade',async({page})=>{
   await page.goto('/#home');
   const root=page.locator('#homeStudyDashboard'),main=root.locator('.study-command-card'),priority=root.locator('.priority-now-card');
