@@ -1,14 +1,14 @@
 {
-  "version": "15.48.154",
-  "label": "V15.48.154-D",
-  "notes": "Desktop: imagem contínua desde a borda esquerda no card Hoje, degradê temático sobre a foto e faixa Liquid Glass sem divisórias pretas.",
+  "version": "15.48.155",
+  "label": "V15.48.155-D",
+  "notes": "Desktop: popover e modal Prioridade com cor do mapa, ícone SF Filled no plano, capas completas e cards com cores independentes.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Hoje · Estude agora: imagem de capa desde a borda esquerda, sem corte ao meio",
-    "[D] Degradê translúcido em cor temática aplicado sobre a imagem integral",
-    "[D] Meta de hoje e Semana: única superfície Liquid Glass com divisor translúcido",
-    "[D] Continuar agora: vidro harmonizado com a faixa inferior, sem hover opaco",
-    "[D] Regressão automatizada da geometria, cor e glass no navegador desktop"
+    "[D] Popover de ajuda herda cor temática do mapa",
+    "[D] Modal de Prioridade com bordas, detalhes e CTA na cor selecionada",
+    "[D] Ícone plano diário em estilo SF Black Filled no Desktop",
+    "[D] Capas inteiras e cor própria em cada linha de estudo",
+    "[D] Testes regressivos para identidade cromática, ícone e miniaturas"
   ],
   "automation": {
     "enabled": true,
