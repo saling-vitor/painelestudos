@@ -1087,3 +1087,191 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     box-shadow:none!important;transform:none!important;
   }
 }
+
+
+/* V15.48.156-G · HOME: capa editorial silenciosa e prioridade em Liquid Glass fumê.
+   Única camada de refinamento, após os estilos legados; sem hover luminoso. */
+#homeStudyDashboard .study-command-card{
+  background:radial-gradient(ellipse at 92% 16%,
+    color-mix(in srgb,var(--home-card-theme) 7%,transparent),transparent 64%),#080a0c!important;
+}
+#homeStudyDashboard .study-command-art{
+  inset:0 0 0 44%!important;
+  background:#080a0c!important;
+  opacity:.83!important;
+}
+#homeStudyDashboard .study-command-art img{
+  object-position:70% center!important;
+  filter:grayscale(.46) saturate(.43) brightness(.65) contrast(1.04)!important;
+}
+#homeStudyDashboard .study-command-art::after{
+  background:
+    linear-gradient(0deg,rgba(8,10,12,.82),rgba(8,10,12,.08) 74%),
+    linear-gradient(90deg,#080a0c 0%,rgba(8,10,12,.95) 22%,rgba(8,10,12,.72) 53%,rgba(8,10,12,.52) 100%)!important;
+}
+#homeStudyDashboard .study-command-copy{
+  position:relative;z-index:2;
+}
+#homeStudyDashboard .study-command-head h2{
+  text-shadow:0 2px 7px rgba(0,0,0,.68)!important;
+}
+#homeStudyDashboard .study-command-head p,
+#homeStudyDashboard .study-command-context{
+  color:#b9bec5!important;
+  text-shadow:0 1px 4px rgba(0,0,0,.85)!important;
+}
+#homeStudyDashboard .study-command-bottom{
+  z-index:2!important;
+}
+html:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
+  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
+  border-color:rgba(255,255,255,.18)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
+  backdrop-filter:blur(16px) saturate(115%)!important;
+}
+html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  border-color:rgba(255,255,255,.18)!important;
+}
+#homeStudyDashboard .study-command-cta,
+#homeStudyDashboard .study-command-cta:hover{
+  filter:none!important;transform:none!important;
+}
+
+/* O toque na miniatura de prioridade abre UMA superfície de vidro;
+   os itens internos continuam MATTE para garantir contraste. */
+#priorityWhyModal[hidden]{display:none!important}
+#priorityWhyModal.priority-why-modal{
+  --priority-color:var(--priority-theme,#929ba5);
+  position:fixed!important;inset:0!important;
+  z-index:10030!important;
+  display:grid;place-items:center;
+  padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));
+  background:rgba(2,4,7,.38)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(92%)!important;
+  backdrop-filter:blur(8px) saturate(92%)!important;
+}
+#priorityWhyModal .priority-why-card{
+  box-sizing:border-box!important;
+  width:min(410px,calc(100vw - 24px))!important;
+  max-height:calc(100dvh - 32px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  padding:16px!important;
+  border-radius:15px!important;
+  border:1px solid color-mix(in srgb,var(--priority-color) 42%,rgba(255,255,255,.18))!important;
+  background:
+    radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--priority-color) 11%,transparent),transparent 60%),
+    linear-gradient(143deg,rgba(31,38,45,.82),rgba(10,14,19,.89) 76%)!important;
+  -webkit-backdrop-filter:blur(26px) saturate(132%)!important;
+  backdrop-filter:blur(26px) saturate(132%)!important;
+  box-shadow:0 28px 70px rgba(0,0,0,.65),inset 0 1px rgba(255,255,255,.12)!important;
+  color:#edf0f3!important;
+}
+#priorityWhyModal .priority-why-head .kicker{
+  color:color-mix(in srgb,var(--priority-color) 68%,#eef2f5)!important;
+}
+#priorityWhyModal .priority-why-head h2{color:#f3f5f7!important}
+#priorityWhyModal .priority-why-head p{color:#aab3bc!important}
+#priorityWhyModal .priority-why-intro{
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(10,15,20,.68)!important;
+  color:#bec5cd!important;
+}
+#priorityWhyModal .priority-why-reasons article{
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(8,13,18,.77)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025)!important;
+}
+#priorityWhyModal .priority-why-reasons article>span{
+  color:color-mix(in srgb,var(--priority-color) 62%,#f1f3f5)!important;
+  border-color:color-mix(in srgb,var(--priority-color) 42%,#313943)!important;
+  background:color-mix(in srgb,var(--priority-color) 9%,#151b21)!important;
+}
+#priorityWhyModal .priority-why-reasons article b{color:#e7eaee!important}
+#priorityWhyModal .priority-why-reasons article p{color:#aeb7bf!important}
+#priorityWhyModal .priority-why-footer{
+  border-top-color:rgba(255,255,255,.11)!important;
+}
+#priorityWhyModal .priority-why-footer [data-priority-why-open],
+#priorityWhyModal .priority-why-footer [data-priority-why-open]:hover{
+  color:color-mix(in srgb,var(--priority-color) 56%,#f6f7f8)!important;
+  border:1px solid color-mix(in srgb,var(--priority-color) 51%,#363c43)!important;
+  background:color-mix(in srgb,var(--priority-color) 15%,rgba(19,26,33,.89))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+  filter:none!important;transform:none!important;
+}
+#priorityWhyModal .priority-why-close,
+#priorityWhyModal .priority-why-close:hover{
+  background:rgba(39,45,51,.53)!important;
+  border:1px solid rgba(255,255,255,.15)!important;
+  color:#d8dee5!important;
+  box-shadow:none!important;transform:none!important;
+}
+#priorityWhyModal button:focus-visible{
+  outline:2px solid color-mix(in srgb,var(--priority-color) 65%,#fff)!important;
+  outline-offset:2px!important;
+}
+/* Popover ancorado desktop: posicionamento e clique permanecem do JS original. */
+@media (min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored{
+    display:block!important;
+    background:transparent!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    pointer-events:none!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-card{
+    position:fixed!important;pointer-events:auto!important;
+    width:min(390px,calc(100vw - 24px))!important;
+    margin:0!important;
+    border-color:color-mix(in srgb,var(--priority-color) 42%,rgba(255,255,255,.18))!important;
+    background:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--priority-color) 11%,transparent),transparent 60%),linear-gradient(143deg,rgba(31,38,45,.82),rgba(10,14,19,.89) 76%)!important;
+    -webkit-backdrop-filter:blur(26px) saturate(132%)!important;
+    backdrop-filter:blur(26px) saturate(132%)!important;
+  }
+}
+@media(max-width:700px){
+  #priorityWhyModal .priority-why-card{padding:14px!important;border-radius:13px!important}
+  #priorityWhyModal .priority-why-footer>div{display:flex;flex-wrap:wrap;gap:7px}
+  #priorityWhyModal .priority-why-footer button{min-height:38px!important}
+  #homeStudyDashboard .study-command-art{inset:0 0 0 31%!important}
+  #homeStudyDashboard .study-command-art img{filter:grayscale(.50) saturate(.39) brightness(.55) contrast(1.04)!important}
+}
+@media(prefers-reduced-transparency:reduce){
+  #priorityWhyModal.priority-why-modal{
+    background:rgba(3,5,7,.94)!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+  #priorityWhyModal .priority-why-card{
+    background:#171c22!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+  html:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
+  html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    background:#182027!important;
+  }
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  #priorityWhyModal .priority-why-card{background:#161b21!important}
+  #priorityWhyModal.priority-why-modal:not(.is-anchored){background:rgba(3,5,7,.88)!important}
+}
+
+
+/* V15.48.156-G · elimina precedência do full-bleed legado desktop V15.48.154.
+   Mesma especificidade da regra anterior, após ela na ordem de cascata. */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-art{
+    inset:0!important;width:100%!important;height:100%!important;
+    background:#080a0c!important;opacity:.83!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-art img{
+    object-position:center center!important;
+    filter:grayscale(.46) saturate(.43) brightness(.65) contrast(1.04)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-art::after{
+    background:
+      linear-gradient(0deg,rgba(8,10,12,.80),rgba(8,10,12,.10) 74%),
+      linear-gradient(90deg,rgba(8,10,12,.96),rgba(8,10,12,.88) 35%,rgba(8,10,12,.67) 66%,rgba(8,10,12,.56) 100%)!important;
+  }
+}
