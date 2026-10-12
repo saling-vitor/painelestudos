@@ -1256,3 +1256,22 @@ html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
   #priorityWhyModal .priority-why-card{background:#161b21!important}
   #priorityWhyModal.priority-why-modal:not(.is-anchored){background:rgba(3,5,7,.88)!important}
 }
+
+
+/* V15.48.156-G · elimina precedência do full-bleed legado desktop V15.48.154.
+   Mesma especificidade da regra anterior, após ela na ordem de cascata. */
+@media(min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-art{
+    inset:0!important;width:100%!important;height:100%!important;
+    background:#080a0c!important;opacity:.83!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-art img{
+    object-position:center center!important;
+    filter:grayscale(.46) saturate(.43) brightness(.65) contrast(1.04)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-art::after{
+    background:
+      linear-gradient(0deg,rgba(8,10,12,.80),rgba(8,10,12,.10) 74%),
+      linear-gradient(90deg,rgba(8,10,12,.96),rgba(8,10,12,.88) 35%,rgba(8,10,12,.67) 66%,rgba(8,10,12,.56) 100%)!important;
+  }
+}
