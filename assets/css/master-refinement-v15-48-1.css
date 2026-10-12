@@ -986,3 +986,104 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .forecast-home-actions .ui-icon{--icon-size:13px;flex:0 0 13px}
   html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .home-review-icon .ui-icon{--icon-size:25px}
 }
+
+
+/* V15.48.155-D · Overlays temáticos e plano diário cromático — Desktop exclusivamente. */
+@media (min-width:1181px){
+  /* Ajuda: vidro tonalizado pela cor do próprio mapa, não amarelo fixo. */
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-help-detail{
+    top:38px!important;right:10px!important;width:min(212px,43%)!important;
+    border:1px solid color-mix(in srgb,var(--home-card-theme) 52%,rgba(255,255,255,.2))!important;
+    border-radius:9px!important;color:#f3f5f8!important;
+    background:linear-gradient(135deg,
+      color-mix(in srgb,var(--home-card-theme) 19%,rgba(16,23,30,.91)),
+      rgba(8,12,18,.90) 76%)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(123%)!important;
+    backdrop-filter:blur(18px) saturate(123%)!important;
+    box-shadow:0 14px 35px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.11)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-help[aria-expanded="true"]{
+    background:color-mix(in srgb,var(--home-card-theme) 19%,rgba(8,12,16,.78))!important;
+    border-color:color-mix(in srgb,var(--home-card-theme) 62%,#383e45)!important;
+  }
+  /* SF Black Filled, sem livro ilustrativo nem amarelo chapado. */
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .home-review-icon{
+    width:27px!important;height:27px!important;flex:0 0 27px!important;
+    border:0!important;border-radius:4px!important;
+    background:transparent!important;box-shadow:none!important;color:#dde3e8!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .home-review-icon .icon-book-open{
+    --ui-icon:url("../ui-icons/sf-black-filled/list.png");--icon-size:22px!important;
+    background-color:#dde3e8!important;
+  }
+  /* Cada item mantém a sua própria cor extraída da respectiva capa. */
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent,
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent.is-next{
+    --study-row-theme:var(--map-accent,var(--plan-accent,#8b929c));
+    margin:0!important;padding:7px 10px!important;border-radius:9px!important;
+    border:1px solid color-mix(in srgb,var(--study-row-theme) 42%,#292c31)!important;
+    border-left:3px solid var(--study-row-theme)!important;
+    background:linear-gradient(95deg,
+      color-mix(in srgb,var(--study-row-theme) 17%,#0a0c0f) 0%,
+      color-mix(in srgb,var(--study-row-theme) 7%,#0a0c0f) 55%,
+      #0a0b0e 100%)!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.04)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-cover{
+    width:62px!important;height:45px!important;
+    border:1px solid color-mix(in srgb,var(--study-row-theme) 52%,#30353b)!important;
+    border-radius:5px!important;background:color-mix(in srgb,var(--study-row-theme) 7%,#090b0d)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-cover img{
+    display:block!important;width:100%!important;height:100%!important;
+    object-fit:contain!important;object-position:center!important;filter:none!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-order{
+    color:color-mix(in srgb,var(--study-row-theme) 61%,#f0f3f6)!important;
+    border-color:color-mix(in srgb,var(--study-row-theme) 47%,#262b30)!important;
+    background:color-mix(in srgb,var(--study-row-theme) 12%,#14171b)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent [data-study-plan-open]{
+    color:color-mix(in srgb,var(--study-row-theme) 54%,#f1f4f7)!important;
+    border-color:color-mix(in srgb,var(--study-row-theme) 40%,#32373d)!important;
+    background:color-mix(in srgb,var(--study-row-theme) 9%,#13171c)!important;
+    box-shadow:none!important;transform:none!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent [data-study-plan-open]:hover{
+    background:color-mix(in srgb,var(--study-row-theme) 9%,#13171c)!important;transform:none!important;
+  }
+  /* Popover explicativo na cor do mapa realmente selecionado. */
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-card{
+    --priority-color:var(--priority-theme,#8995a7);
+    border-color:color-mix(in srgb,var(--priority-color) 53%,#292f35)!important;
+    background:radial-gradient(ellipse at 0% 0%,
+      color-mix(in srgb,var(--priority-color) 19%,transparent),transparent 72%),
+      linear-gradient(150deg,rgba(17,23,30,.94),rgba(7,10,14,.95))!important;
+    -webkit-backdrop-filter:blur(21px) saturate(118%)!important;
+    backdrop-filter:blur(21px) saturate(118%)!important;
+    box-shadow:0 22px 58px rgba(0,0,0,.6),inset 0 1px rgba(255,255,255,.10)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-head .kicker{
+    color:color-mix(in srgb,var(--priority-color) 72%,#e9edf1)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-intro{
+    border-color:color-mix(in srgb,var(--priority-color) 22%,#2a2e34)!important;
+    background:color-mix(in srgb,var(--priority-color) 5%,rgba(15,19,26,.50))!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-reasons article{
+    border-color:color-mix(in srgb,var(--priority-color) 22%,#24282e)!important;
+    background:color-mix(in srgb,var(--priority-color) 5%,#0d1116)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-reasons article>span{
+    color:color-mix(in srgb,var(--priority-color) 64%,#f1f3f6)!important;
+    border-color:color-mix(in srgb,var(--priority-color) 46%,#292e33)!important;
+    background:color-mix(in srgb,var(--priority-color) 11%,#11151a)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-footer [data-priority-why-open],
+  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-footer [data-priority-why-open]:hover{
+    border:1px solid color-mix(in srgb,var(--priority-color) 53%,#343a40)!important;
+    color:color-mix(in srgb,var(--priority-color) 60%,#f2f4f6)!important;
+    background:color-mix(in srgb,var(--priority-color) 15%,#171c22)!important;
+    box-shadow:none!important;transform:none!important;
+  }
+}

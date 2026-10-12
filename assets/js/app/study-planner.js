@@ -513,6 +513,14 @@
     const reasons=priorityExplanationRows(row),modal=makeModal('priorityWhyModal','priority-why-modal'),map=row.map||{},course=typeof courseById==='function'?courseById(map.courseId):null;
     modal.innerHTML='<div class="priority-why-card" role="dialog" aria-modal="true" aria-labelledby="priorityWhyTitle"><div class="priority-why-head"><div><span class="kicker">Prioridade do momento</span><h2 id="priorityWhyTitle">Por que este mapa agora?</h2><p>'+esc(map.code||'MAP')+' · '+esc(map.shortTitle||map.title||'Mapa')+(course?.title?' · '+esc(course.title):'')+'</p></div><button type="button" class="priority-why-close" data-priority-why-close aria-label="Fechar">×</button></div><div class="priority-why-intro">O sistema combinou prazo, progresso, revisões, dificuldade e desempenho para escolher a próxima ação.</div><div class="priority-why-reasons">'+reasons.map((item,index)=>'<article><span>'+(index+1)+'</span><div><b>'+esc(item.title)+'</b><p>'+esc(item.text)+'</p></div></article>').join('')+'</div><div class="priority-why-footer"><span>'+Math.round(Number(row.minutes)||20)+' min sugeridos · prioridade relativa '+Math.max(1,Math.round(Number(row.score)||1))+'</span><div><button type="button" class="secondary" data-priority-why-next>Ver próxima da fila</button><button type="button" class="primary" data-priority-why-open>Estudar este mapa</button></div></div></div>';
     modal.hidden=false;
+    // A cor acompanha o mapa do modal, inclusive ao escolher a próxima prioridade.
+    const source=anchor?.closest?.('.priority-now-card');
+    const sameMap=source?.querySelector('.priority-now-code')?.textContent?.trim()===String(map.code||'');
+    const sourceTone=sameMap?(source?.style?.getPropertyValue('--map-accent')?.trim()||''):'';
+    const cover=typeof mapCover==='function'?mapCover(map):'';
+    const extracted=typeof cachedCoverAccent==='function'&&cover?(cachedCoverAccent(cover)||''):'';
+    const specified=typeof mapAccentValue==='function'?mapAccentValue(map):'';
+    modal.style.setProperty('--priority-theme',extracted||sourceTone||specified||'#8995a7');
     const html=document.documentElement,isAnchored=!html.classList.contains('is-ipad')&&!html.classList.contains('is-phone-layout')&&innerWidth>=1181,card=modal.querySelector('.priority-why-card');
     modal.classList.toggle('is-anchored',isAnchored);
     if(isAnchored&&anchor&&card){
