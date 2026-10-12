@@ -1,19 +1,18 @@
 {
-  "version": "15.48.155",
-  "label": "V15.48.155-D",
-  "notes": "Desktop: popover e modal Prioridade com cor do mapa, ícone SF Filled no plano, capas completas e cards com cores independentes.",
+  "version": "15.48.156",
+  "label": "V15.48.156-G",
+  "notes": "Home: capa editorial mais discreta, contraste reforçado e modal de prioridade em Liquid Glass fumê com acento do mapa em todas as plataformas.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Popover de ajuda herda cor temática do mapa",
-    "[D] Modal de Prioridade com bordas, detalhes e CTA na cor selecionada",
-    "[D] Ícone plano diário em estilo SF Black Filled no Desktop",
-    "[D] Capas inteiras e cor própria em cada linha de estudo",
-    "[D] Testes regressivos para identidade cromática, ícone e miniaturas"
+    "[G] Capa do mapa mais silenciosa e textos legíveis no card Hoje · Estude agora",
+    "[G] Bloco de métricas separado do fundo sem perder efeito fumê",
+    "[G] Modal Por que este mapa? com vidro, desfoque e cor dinâmica",
+    "[G] Responsividade, fallback opaco e preferência de transparência reduzida"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "D",
+    "channel": "G",
     "runBase": 711
   }
 }
