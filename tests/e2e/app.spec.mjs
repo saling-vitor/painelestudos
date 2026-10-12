@@ -5364,6 +5364,70 @@ test('V15.48.154 [D] card Hoje apresenta capa full-bleed e métricas em vidro ú
   expect(v.overflow).toBeLessThanOrEqual(2);
 });
 
+
+test('V15.48.155 [D] popovers herdam a cor do mapa selecionado',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Sobreposições específicas do Desktop');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  const command=page.locator('#homeStudyDashboard .study-command-card');
+  await expect(command).toBeVisible();
+  await command.locator('[data-dashboard-help]').click();
+  const detail=command.locator('#studyCommandHelpDetail');
+  await expect(detail).toBeVisible();
+  const pop=await command.evaluate(card=>{
+    const detail=card.querySelector('#studyCommandHelpDetail'),before=getComputedStyle(detail).borderTopColor;
+    const current=card.style.getPropertyValue('--map-accent');
+    card.style.setProperty('--map-accent','#fa4882');
+    const after=getComputedStyle(detail).borderTopColor;
+    if(current)card.style.setProperty('--map-accent',current);else card.style.removeProperty('--map-accent');
+    return{before,after,bg:getComputedStyle(detail).backgroundImage,blur:getComputedStyle(detail).backdropFilter};
+  });
+  expect(pop.after).not.toBe(pop.before);
+  expect(pop.bg).toContain('gradient');
+  expect(pop.blur).toContain('blur(');
+  await command.locator('[data-dashboard-help]').click();
+  await page.locator('#homeStudyDashboard [data-priority-why]').click();
+  const modal=page.locator('#priorityWhyModal.is-anchored');
+  await expect(modal).toBeVisible();
+  const priority=await modal.evaluate(node=>{
+    const card=node.querySelector('.priority-why-card'),old=node.style.getPropertyValue('--priority-theme');
+    const before=getComputedStyle(card).borderTopColor;
+    node.style.setProperty('--priority-theme','#fa4882');
+    const after=getComputedStyle(card).borderTopColor;
+    node.style.setProperty('--priority-theme',old);
+    return{old,before,after,bg:getComputedStyle(card).backgroundImage,blur:getComputedStyle(card).backdropFilter};
+  });
+  expect(priority.old).toBeTruthy();
+  expect(priority.after).not.toBe(priority.before);
+  expect(priority.bg).toContain('gradient');
+  expect(priority.blur).toContain('blur(');
+  await modal.locator('[data-priority-why-close]').click();
+});
+test('V15.48.155 [D] plano diário usa capa inteira e cor individual por mapa',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Cores e miniaturas específicas do Desktop');
+  await page.setViewportSize({width:1600,height:900});
+  await page.goto('/#home');
+  await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
+  const icon=await page.locator('#homeReviewSection .home-review-icon .icon-book-open').evaluate(el=>getComputedStyle(el).maskImage||getComputedStyle(el).webkitMaskImage);
+  expect(icon).toContain('sf-black-filled/list.png');
+  const rows=page.locator('#homeStudyPlan .study-plan-item.has-map-accent');
+  await expect(rows.first()).toBeVisible();
+  expect(await rows.count()).toBeGreaterThanOrEqual(2);
+  const results=await rows.evaluateAll(nodes=>nodes.slice(0,3).map((el,i)=>{
+    const img=el.querySelector('.study-plan-cover img'),style=getComputedStyle(el);
+    const before=style.borderLeftColor,stored=el.style.getPropertyValue('--map-accent');
+    el.style.setProperty('--map-accent',i===0?'#1e83fa':'#ec6b38');
+    const after=getComputedStyle(el).borderLeftColor;
+    if(stored)el.style.setProperty('--map-accent',stored);else el.style.removeProperty('--map-accent');
+    return{fit:img?getComputedStyle(img).objectFit:'',cover:img?.getAttribute('src'),
+      before,after,bg:getComputedStyle(el).backgroundImage};
+  }));
+  expect(results.every(x=>x.fit==='contain')).toBe(true);
+  expect(results.every(x=>!!x.cover&&x.bg.includes('gradient'))).toBe(true);
+  expect(results.every(x=>x.before!==x.after)).toBe(true);
+  expect(results[0].after).not.toBe(results[1].after);
+});
+
 test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prioridade',async({page})=>{
   await page.goto('/#home');
   const root=page.locator('#homeStudyDashboard'),main=root.locator('.study-command-card'),priority=root.locator('.priority-now-card');
