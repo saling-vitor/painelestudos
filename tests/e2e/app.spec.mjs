@@ -1114,6 +1114,37 @@ test('V15.38.0 [G] Por que este mapa explica a prioridade sem tooltip curto',asy
   await expect(modal).toBeHidden();
 });
 
+test('V15.48.156 [G] prioridade usa Liquid Glass temático e permite fechar por teclado',async({page})=>{
+  await page.goto('/#home');
+  await page.waitForFunction(()=>window.StudyPlanner&&typeof StudyPlanner.priorityExplanationRows==='function'&&typeof combinedMaps==='function'&&combinedMaps().length>0);
+  const tile=page.locator('#homeStudyDashboard [data-priority-why]');
+  await expect(tile).toBeVisible();
+  await expect(tile).toHaveAttribute('aria-haspopup','dialog');
+  await expect(tile).toHaveAttribute('aria-controls','priorityWhyModal');
+  await tile.click();
+  const modal=page.locator('#priorityWhyModal'),card=modal.locator('.priority-why-card');
+  await expect(modal).toBeVisible();
+  await expect(modal.locator('.priority-why-reasons article').first()).toBeVisible();
+  await expect(modal.locator('[data-priority-why-close]')).toBeFocused();
+  const styles=await card.evaluate(el=>({
+    glass:getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter,
+    bg:getComputedStyle(el).backgroundImage,
+    border:getComputedStyle(el).borderTopColor,
+    theme:el.parentElement.style.getPropertyValue('--priority-theme').trim()
+  }));
+  expect(styles.glass).toContain('blur(');
+  expect(styles.bg).toContain('gradient');
+  expect(styles.theme).toMatch(/^#/);
+  if(page.viewportSize()?.width<=700)await expect(card).toHaveCSS('border-top-left-radius',/px/);
+  await modal.locator('[data-priority-why-close]').press('Escape');
+  await expect(modal).toBeHidden();
+  await expect(tile).toBeFocused();
+  await page.evaluate(()=>document.documentElement.classList.add('mm-reduced-transparency'));
+  await tile.click();
+  await expect(card).toHaveCSS('backdrop-filter','none');
+  await modal.locator('[data-priority-why-close]').click();
+});
+
 test('home consolidada prioriza o estudo diário',async({page})=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>typeof combinedMaps==='function'&&combinedMaps().length>0);

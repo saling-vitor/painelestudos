@@ -468,8 +468,10 @@ html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth
 }
 #homeStudyDashboard .priority-why-tile{
   width:100%;min-width:0;min-height:33px;display:flex!important;align-items:center!important;
-  gap:6px;padding:2px!important;border:0!important;border-radius:4px!important;
-  background:transparent!important;color:#d4d5d8!important;text-align:left;
+  gap:6px;padding:3px 4px!important;border:1px solid color-mix(in srgb,var(--home-card-theme) 23%,rgba(255,255,255,.12))!important;border-radius:7px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.062),rgba(255,255,255,.025))!important;
+  -webkit-backdrop-filter:blur(12px) saturate(115%);backdrop-filter:blur(12px) saturate(115%);
+  color:#e2e5e8!important;text-align:left;
   box-shadow:none!important;
 }
 #homeStudyDashboard .priority-why-tile img{
@@ -743,7 +745,8 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
   background-color:var(--home-card-theme)!important;
 }
 #homeStudyDashboard .priority-now-card .priority-why-tile:hover{
-  background:transparent!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.062),rgba(255,255,255,.025))!important;
+  transform:none!important;filter:none!important;
 }
 
 /* V15.48.152-G · Seu estudo de hoje: miniaturas editoriais vinculadas à capa real. */
@@ -1052,38 +1055,5 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent [data-study-plan-open]:hover{
     background:color-mix(in srgb,var(--study-row-theme) 9%,#13171c)!important;transform:none!important;
   }
-  /* Popover explicativo na cor do mapa realmente selecionado. */
-  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-card{
-    --priority-color:var(--priority-theme,#8995a7);
-    border-color:color-mix(in srgb,var(--priority-color) 53%,#292f35)!important;
-    background:radial-gradient(ellipse at 0% 0%,
-      color-mix(in srgb,var(--priority-color) 19%,transparent),transparent 72%),
-      linear-gradient(150deg,rgba(17,23,30,.94),rgba(7,10,14,.95))!important;
-    -webkit-backdrop-filter:blur(21px) saturate(118%)!important;
-    backdrop-filter:blur(21px) saturate(118%)!important;
-    box-shadow:0 22px 58px rgba(0,0,0,.6),inset 0 1px rgba(255,255,255,.10)!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-head .kicker{
-    color:color-mix(in srgb,var(--priority-color) 72%,#e9edf1)!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-intro{
-    border-color:color-mix(in srgb,var(--priority-color) 22%,#2a2e34)!important;
-    background:color-mix(in srgb,var(--priority-color) 5%,rgba(15,19,26,.50))!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-reasons article{
-    border-color:color-mix(in srgb,var(--priority-color) 22%,#24282e)!important;
-    background:color-mix(in srgb,var(--priority-color) 5%,#0d1116)!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-reasons article>span{
-    color:color-mix(in srgb,var(--priority-color) 64%,#f1f3f6)!important;
-    border-color:color-mix(in srgb,var(--priority-color) 46%,#292e33)!important;
-    background:color-mix(in srgb,var(--priority-color) 11%,#11151a)!important;
-  }
-  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-footer [data-priority-why-open],
-  html:not(.is-ipad):not(.is-phone-layout) #priorityWhyModal.is-anchored .priority-why-footer [data-priority-why-open]:hover{
-    border:1px solid color-mix(in srgb,var(--priority-color) 53%,#343a40)!important;
-    color:color-mix(in srgb,var(--priority-color) 60%,#f2f4f6)!important;
-    background:color-mix(in srgb,var(--priority-color) 15%,#171c22)!important;
-    box-shadow:none!important;transform:none!important;
-  }
+
 }
