@@ -2215,6 +2215,10 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   });
   expect(editorPreserved).toBe(true);
   await expect(form.locator('[name="weeklyMinutes"]')).toHaveValue('8h');
+  // Reafirma ambas as edições após o teste de atualização assíncrona do formulário.
+  await form.locator('[name="dailyMinutes"]').fill('1h 30min');
+  await form.locator('[name="weeklyMinutes"]').fill('8h');
+  await expect(form.locator('[name="dailyMinutes"]')).toHaveValue('1h 30min');
   await form.locator('button[type="submit"]').click();
   const goals=await page.evaluate(()=>StudyDashboard.goals());
   expect(goals.dailyMinutes).toBe(90);
@@ -3460,23 +3464,23 @@ test('etapa 1 [M] preserva Meus Cursos em uma coluna no iPhone',async({page},tes
 });
 
 
-test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page},testInfo)=>{
+test('estados vazios [G] utilizam ilustrações editoriais oficiais',async({page},testInfo)=>{
   await page.goto('/#courses');
   await page.evaluate(()=>{state.cloudCourses=[];state.cloudMaps=[];renderCoursesPage()});
   const coursesEmpty=page.locator('#coursesGrid .empty-state');
   await expect(coursesEmpty).toBeVisible();
-  await expect(coursesEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-livros-feliz-v15-22-0\.png/);
+  await expect(coursesEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/(?:03_empty-cursos|04_empty-desconectado)\.png/);
   await expect(coursesEmpty.locator('h3')).toContainText(/Nenhum concurso|biblioteca/i);
 
   await page.evaluate(()=>{state.cloudCourses=[];state.cloudMaps=[];nav('maps');renderAllMaps()});
   const mapsEmpty=page.locator('#allMaps .empty-state');
   await expect(mapsEmpty).toBeVisible();
-  await expect(mapsEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-pensando-v15-22-0\.png/);
+  await expect(mapsEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/02_empty-mapas\.png/);
 
   await page.evaluate(()=>{state.simulationCatalog={simulations:[]};state.cloudSimulations=[];nav('simulations');renderSimulations()});
   const simulationEmpty=page.locator('#simulationGrid .empty-state');
   await expect(simulationEmpty).toBeVisible();
-  await expect(simulationEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-notebook-v15-22-0\.png/);
+  await expect(simulationEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/14_empty-simulados-biblioteca\.png/);
 
   const geometry=await simulationEmpty.evaluate(el=>{const img=el.querySelector('.empty-state-graphic'),style=getComputedStyle(el);return{width:el.getBoundingClientRect().width,imgWidth:img.getBoundingClientRect().width,before:getComputedStyle(el,'::before').content,display:style.display}});
   expect(geometry.width).toBeGreaterThan(0);
@@ -3487,7 +3491,7 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page},t
   await page.evaluate(()=>{
     nav('home');
     const box=document.querySelector('#continueBox');
-    box.innerHTML=emptyStateHtml({title:'Pronto para começar?',text:'Abra um mapa pela primeira vez.',mascot:'continue',compact:true,className:'compact-geometry-probe'});
+    box.innerHTML=emptyStateHtml({title:'Pronto para começar?',text:'Abra um mapa pela primeira vez.',art:'resume',compact:true,className:'compact-geometry-probe'});
   });
   const compactProbe=page.locator('#continueBox .compact-geometry-probe');
   await expect(compactProbe).toBeVisible();
@@ -3501,7 +3505,7 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page},t
   await page.evaluate(()=>{
     nav('settings');
     const root=document.querySelector('#restorePointsList');
-    root.innerHTML=emptyStateHtml({title:'Nenhum ponto de restauração ainda',text:'Eles serão criados automaticamente antes de ações destrutivas.',mascot:'continue',compact:true,className:'restore-points-empty-state'});
+    root.innerHTML=emptyStateHtml({title:'Nenhum ponto de restauração ainda',text:'Eles serão criados automaticamente antes de ações destrutivas.',art:'restoration-empty',compact:true,className:'restore-points-empty-state'});
   });
   if(testInfo.project.name==='iphone-webkit'){
     const backupPanel=page.locator('[data-view="settings"] .backup-panel');
@@ -3511,12 +3515,12 @@ test('etapa 6 [G] padroniza estados vazios com mascotes oficiais',async({page},t
   }
   const restoreEmpty=page.locator('#restorePointsList .restore-points-empty-state');
   await expect(restoreEmpty).toBeVisible();
-  await expect(restoreEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-leitura-v15-22-0\.png/);
+  await expect(restoreEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/18_empty-restauracao\.png/);
 
   await page.evaluate(()=>{nav('maps');state.globalQuery='__sem_resultado_estado_vazio__';renderAllMaps()});
   const searchEmpty=page.locator('#allMaps .empty-state');
   await expect(searchEmpty).toBeVisible();
-  await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/mascote-pensando-v15-22-0\.png/);
+  await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/(?:02_empty-mapas|11_empty-busca-biblioteca)\.png/);
 });
 
 

@@ -1,14 +1,13 @@
 {
-  "version": "15.48.159",
-  "label": "V15.48.159-G",
-  "notes": "Padronização global da iconografia 100% preenchida em desktop, tablet e smartphone; estados de nuvem e controles de estudo unificados.",
+  "version": "15.48.160",
+  "label": "V15.48.160-G",
+  "notes": "Integração global de 19 estados vazios no padrão Topographic Editorial.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] 47 pictogramas sólidos SVG com geometria inspirada em Lucide",
-    "[G] Navegação, cards, biblioteca, simulados, agenda, progresso e ajustes consistentes",
-    "[G] Quatro estados reais da nuvem com símbolos distintos",
-    "[G] Controles de timer, leitor e menus com ícones, sem caracteres tipográficos",
-    "[G] Compatibilidade PWA offline e WebKit responsivo"
+    "[G] 19 PNGs RGBA originais de 1254 px nos estados vazios",
+    "[G] 19 mapeamentos específicos e identidade Black Editorial",
+    "[G] Botões funcionais e textos HTML preservados",
+    "[G] Cache PWA progressivo e compatibilidade com ícones sólidos"
   ],
   "automation": {
     "enabled": true,

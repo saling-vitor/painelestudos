@@ -52,6 +52,9 @@ jobs:
       - name: Validate release
         run: node scripts/validate-release.mjs
 
+      - name: Validate 19 editorial empty states
+        run: node scripts/validate-empty-states.mjs
+
       - name: Smoke test routes
         run: node scripts/smoke-static.mjs
 

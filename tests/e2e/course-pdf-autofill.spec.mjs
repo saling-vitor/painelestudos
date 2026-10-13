@@ -74,12 +74,12 @@ test('[G] parser multi-layout cobre Objetiva, FUNDATEC, DEMHAB e AOCP',async({pa
 
 test('[G] Novo concurso continua exigindo confirmação explícita',async({page})=>{
   await page.goto('/#courses');
+  // Aguarda a inicialização da Home antes de dispensar o modal de novidades:
+  // no iPad o modal pode abrir depois do primeiro frame.
+  await expect(page.locator('#newCourseBtn2')).toBeVisible();
+  await page.evaluate(()=>{const modal=document.querySelector('#whatsNewModal');if(modal?.classList.contains('open'))closeModal('whatsNewModal')});
   const whatsNew=page.locator('#whatsNewModal');
-  if(await whatsNew.count()&&await whatsNew.evaluate(el=>el.classList.contains('open'))){
-    const dismiss=page.locator('#whatsNewClose');
-    if(await dismiss.count())await dismiss.click();
-    else await page.evaluate(()=>closeModal('whatsNewModal'));
-  }
+  await expect(whatsNew).not.toHaveClass(/open/);
   await page.locator('#newCourseBtn2').click();
   await expect(page.locator('#courseModal')).toHaveClass(/open/);
   await expect(page.locator('#coursePdfAutofill')).toBeHidden();
