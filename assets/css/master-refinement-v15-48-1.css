@@ -1543,7 +1543,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>a
   border-radius:11px!important;
   box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
 }
-html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card{
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
   --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
   border-left:3px solid var(--home-card-theme)!important;
   border-top-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
