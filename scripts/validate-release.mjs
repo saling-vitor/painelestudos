@@ -52,7 +52,9 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===46,'auditoria: build ativo usa 46 CSS incluindo iconografia sólida global');
+check(activeCssFiles.length===47,'auditoria: build ativo usa 47 CSS, incluindo iconografia sólida e estados vazios');
+check(index.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
+check(sw.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
 check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
 check(index.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
 check(index.includes(`solid-lucide-v15-48-159.css?v=${expected}`),'Ícones sólidos carregados na última camada CSS');
