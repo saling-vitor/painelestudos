@@ -58,6 +58,16 @@ test('Dock iPad [T] · Home editorial, plano cromático e prioridade fumê em re
     expect(result.heroHeight).toBeGreaterThanOrEqual(200);
     expect(result.coverFit).toBe('contain');
     expect(result.red).not.toBe(result.green);
+    const priorityReactive=await page.locator('#homeStudyDashboard .priority-now-card').evaluate(el=>{
+      const initial=getComputedStyle(el).borderTopColor;
+      const previous=el.style.getPropertyValue('--map-accent');
+      el.style.setProperty('--map-accent','#eb34a1');
+      const after=getComputedStyle(el).borderTopColor;
+      if(previous)el.style.setProperty('--map-accent',previous);
+      else el.style.removeProperty('--map-accent');
+      return initial!==after;
+    });
+    expect(priorityReactive,'Borda de Prioridade deve reagir à cor do mapa no iPad').toBe(true);
     expect(result.rect.left).toBeGreaterThanOrEqual(-2);
     expect(result.rect.right).toBeLessThanOrEqual(result.viewport.w+2);
     expect(result.rect.top).toBeGreaterThanOrEqual(-2);
