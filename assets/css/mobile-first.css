@@ -2863,8 +2863,8 @@
     height:20px;
     display:block;
     background:currentColor;
-    -webkit-mask:url('../ui-icons/sf-black-filled/cloud.png') center/contain no-repeat;
-    mask:url('../ui-icons/sf-black-filled/cloud.png') center/contain no-repeat;
+    -webkit-mask:var(--solid-cloud) center/contain no-repeat;
+    mask:var(--solid-cloud) center/contain no-repeat;
   }
   html.is-phone-layout #syncTop[data-sync-state="syncing"]::after{
     animation:phoneCloudSyncPulse 1.1s ease-in-out infinite;

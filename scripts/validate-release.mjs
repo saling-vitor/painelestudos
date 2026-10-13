@@ -95,6 +95,8 @@ const v13BrandLegacy=[
 ];
 for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 removida '+file);
 const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
+check(!activeCssText.includes('../ui-icons/sf-black-filled/'),'auditoria: CSS ativo sem dependência de PNG antigo');
+check(/const UI_ICONS=\[\]/.test(sw),'PWA pré-cacheia SVG sólido via CSS sem PNG legado');
 const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/solid-lucide-v15-48-159.css'].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
