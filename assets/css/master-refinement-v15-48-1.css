@@ -1675,3 +1675,92 @@ html.is-ipad:not(.is-phone-layout) #priorityWhyModal button:hover{
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-card{background:#171d23!important}
 }
+
+
+/* ==========================================================
+   V15.48.158-D+T · Home: prioridades sem halo amarelo,
+   Liquid Glass neutro (grafite, sem azul) no Desktop + iPad.
+   Preserva cores temáticas apenas nas bordas, ícones e CTA.
+   ========================================================== */
+
+/* [T] A Prioridade herda SOMENTE a cor extraída da capa.
+   O fallback amarelo legado gerava uma faixa indevida. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
+  --home-card-theme:var(--map-accent,#909090);
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 38%,#292929)!important;
+  border-left:3px solid var(--home-card-theme)!important;
+  border-top-color:color-mix(in srgb,var(--home-card-theme) 38%,#292929)!important;
+  border-right-color:color-mix(in srgb,var(--home-card-theme) 28%,#292929)!important;
+  border-bottom-color:color-mix(in srgb,var(--home-card-theme) 38%,#292929)!important;
+  background:linear-gradient(115deg,
+    color-mix(in srgb,var(--home-card-theme) 10%,#0d0d0d),
+    color-mix(in srgb,var(--home-card-theme) 4%,#0d0d0d) 65%,#0b0b0b)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.04)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card::before,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card::after{
+  content:none!important;display:none!important;
+  background:none!important;box-shadow:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card .priority-progress-track i{
+  background:var(--home-card-theme)!important;
+}
+
+/* [D+T] Vidro fumê grafite: canais neutros; o acento cromático
+   permanece exclusivamente no CTA/ícones, não pinta o painel. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
+html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
+  background:linear-gradient(145deg,rgba(30,30,30,.68),rgba(12,12,12,.78))!important;
+  border:1px solid rgba(255,255,255,.17)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(65%)!important;
+  backdrop-filter:blur(18px) saturate(65%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.09),0 5px 18px rgba(0,0,0,.20)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics,
+html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+  background:linear-gradient(155deg,rgba(36,36,36,.64),rgba(16,16,16,.76))!important;
+  border:1px solid rgba(255,255,255,.15)!important;
+  -webkit-backdrop-filter:blur(19px) saturate(64%)!important;
+  backdrop-filter:blur(19px) saturate(64%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.075)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button,
+html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover,
+html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
+html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
+  background:linear-gradient(145deg,
+    color-mix(in srgb,var(--home-card-theme) 13%,rgba(28,28,28,.77)),
+    rgba(14,14,14,.83))!important;
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 43%,rgba(255,255,255,.17))!important;
+  -webkit-backdrop-filter:blur(16px) saturate(75%)!important;
+  backdrop-filter:blur(16px) saturate(75%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.085)!important;
+  transform:none!important;filter:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics,
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+    background:#1b1b1b!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-cta{
+    background:#202020!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics,
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+    background:#1b1b1b!important;
+  }
+}
