@@ -1763,3 +1763,14 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card .prior
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   }
 }
+
+
+/* V15.48.158-D+T · iPad WebKit: propriedade lateral explícita.
+   A regra de borda abreviada do legado podia preservar bege #c3aa84.
+   O lado esquerdo agora consulta DIRETAMENTE --map-accent e é reativo. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card.priority-now-card{
+  --home-card-theme:var(--map-accent,#87909a)!important;
+  border-left-style:solid!important;
+  border-left-width:3px!important;
+  border-left-color:var(--map-accent,#87909a)!important;
+}
