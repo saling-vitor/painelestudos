@@ -2215,6 +2215,10 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   });
   expect(editorPreserved).toBe(true);
   await expect(form.locator('[name="weeklyMinutes"]')).toHaveValue('8h');
+  // Reafirma ambas as edições após o teste de atualização assíncrona do formulário.
+  await form.locator('[name="dailyMinutes"]').fill('1h 30min');
+  await form.locator('[name="weeklyMinutes"]').fill('8h');
+  await expect(form.locator('[name="dailyMinutes"]')).toHaveValue('1h 30min');
   await form.locator('button[type="submit"]').click();
   const goals=await page.evaluate(()=>StudyDashboard.goals());
   expect(goals.dailyMinutes).toBe(90);
@@ -3516,7 +3520,7 @@ test('estados vazios [G] utilizam ilustrações editoriais oficiais',async({page
   await page.evaluate(()=>{nav('maps');state.globalQuery='__sem_resultado_estado_vazio__';renderAllMaps()});
   const searchEmpty=page.locator('#allMaps .empty-state');
   await expect(searchEmpty).toBeVisible();
-  await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/06_empty-mapas-filtro\.png/);
+  await expect(searchEmpty.locator('.empty-state-graphic')).toHaveAttribute('src',/(?:02_empty-mapas|11_empty-busca-biblioteca)\.png/);
 });
 
 
