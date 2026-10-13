@@ -1683,7 +1683,7 @@ html.is-ipad:not(.is-phone-layout) #priorityWhyModal button:hover{
   html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics,
   html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
   html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-card{
-    background:#171d23!important;
+    background:#19191b!important;
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   }
   html.is-ipad:not(.is-phone-layout) #priorityWhyModal.priority-why-modal{
