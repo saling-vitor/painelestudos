@@ -1,13 +1,14 @@
 {
-  "version": "15.48.160",
-  "label": "V15.48.160-G",
-  "notes": "Integração global de 19 estados vazios no padrão Topographic Editorial.",
+  "version": "15.48.161",
+  "label": "V15.48.161-G",
+  "notes": "Fidelidade cromática automática das capas dos cursos, mapas e simulados nas três plataformas.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] 19 PNGs RGBA originais de 1254 px nos estados vazios",
-    "[G] 19 mapeamentos específicos e identidade Black Editorial",
-    "[G] Botões funcionais e textos HTML preservados",
-    "[G] Cache PWA progressivo e compatibilidade com ícones sólidos"
+    "[G] Extração RGB/HEX representativa diretamente da capa, sem saturação artificial",
+    "[G] Cursos, mapas, retomada, planejamento e revisões herdam a cor real da capa",
+    "[G] Simulados priorizam a própria imagem e usam a cor do curso somente como alternativa",
+    "[G] Bordas e superfícies preservam a cor-base, com misturas discretas no Black Editorial",
+    "[G] Cache e identificadores PWA sincronizados"
   ],
   "automation": {
     "enabled": true,
