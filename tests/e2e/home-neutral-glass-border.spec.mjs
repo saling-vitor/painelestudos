@@ -56,16 +56,14 @@ test('Dock iPad [T] · Prioridade sem faixa amarela e vidro neutro em retrato/pa
       const a=getComputedStyle(node);
       const first={left:a.borderLeftColor,top:a.borderTopColor,right:a.borderRightColor,bottom:a.borderBottomColor,background:a.backgroundImage,
         before:getComputedStyle(node,'::before').content,
-        after:getComputedStyle(node,'::after').content,
-        mapAccent:a.getPropertyValue('--map-accent'),theme:a.getPropertyValue('--home-card-theme'),inline:node.getAttribute('style')};
+        after:getComputedStyle(node,'::after').content};
       node.style.setProperty('--map-accent','#31bc82');
       await settle();
       const b=getComputedStyle(node);
-      const second={left:b.borderLeftColor,top:b.borderTopColor,right:b.borderRightColor,bottom:b.borderBottomColor,mapAccent:b.getPropertyValue('--map-accent'),theme:b.getPropertyValue('--home-card-theme'),inline:node.getAttribute('style')};
+      const second={left:b.borderLeftColor,top:b.borderTopColor,right:b.borderRightColor,bottom:b.borderBottomColor};
       if(old)node.style.setProperty('--map-accent',old);else node.style.removeProperty('--map-accent');
       return{first,second};
     });
-    console.log('[iPad border diagnostic] '+JSON.stringify(colors));
     expect(colors.first.left).not.toBe(colors.second.left);
     expect(colors.first.top).not.toBe(colors.second.top);
     expect(colors.first.right).not.toBe(colors.second.right);
