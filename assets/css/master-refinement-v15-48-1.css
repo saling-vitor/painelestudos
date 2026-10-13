@@ -898,7 +898,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     position:relative!important;z-index:2!important;align-self:end!important;
     min-height:45px!important;margin:0!important;padding:4px!important;gap:5px!important;
     border:1px solid rgba(255,255,255,.12)!important;border-radius:9px!important;
-    background:linear-gradient(150deg,rgba(32,45,60,.19),rgba(10,15,22,.18))!important;
+    background:linear-gradient(150deg,rgba(36,36,38,.33),rgba(13,13,15,.55))!important;
     -webkit-backdrop-filter:blur(13px) saturate(116%)!important;
     backdrop-filter:blur(13px) saturate(116%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
@@ -906,7 +906,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
     gap:0!important;padding:0!important;overflow:hidden!important;
     border:1px solid rgba(255,255,255,.19)!important;border-radius:7px!important;
-    background:linear-gradient(155deg,rgba(255,255,255,.095),rgba(255,255,255,.026) 66%),rgba(17,24,33,.40)!important;
+    background:linear-gradient(155deg,rgba(255,255,255,.085),rgba(255,255,255,.022) 66%),rgba(23,23,25,.64)!important;
     -webkit-backdrop-filter:blur(17px) saturate(125%)!important;
     backdrop-filter:blur(17px) saturate(125%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
@@ -924,8 +924,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     min-height:40px!important;height:40px!important;
     border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
     background:linear-gradient(155deg,
-      color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-      rgba(18,26,36,.48))!important;
+      color-mix(in srgb,var(--home-card-theme) 12%,rgba(29,29,31,.74)),
+      rgba(16,16,18,.77))!important;
     -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
     backdrop-filter:blur(15px) saturate(120%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.12)!important;
@@ -933,8 +933,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
     border-color:color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
     background:linear-gradient(155deg,
-      color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-      rgba(18,26,36,.48))!important;
+      color-mix(in srgb,var(--home-card-theme) 12%,rgba(29,29,31,.74)),
+      rgba(16,16,18,.77))!important;
     transform:none!important;filter:none!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metric-icon{
@@ -1124,13 +1124,13 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   z-index:2!important;
 }
 html:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
-  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
+  background:linear-gradient(145deg,rgba(31,31,33,.68),rgba(12,12,14,.79))!important;
   border-color:rgba(255,255,255,.18)!important;
-  -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
-  backdrop-filter:blur(16px) saturate(115%)!important;
+  -webkit-backdrop-filter:blur(17px) saturate(102%)!important;
+  backdrop-filter:blur(17px) saturate(102%)!important;
 }
 html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
-  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  background:linear-gradient(150deg,rgba(41,41,43,.72),rgba(17,17,19,.83))!important;
   border-color:rgba(255,255,255,.18)!important;
 }
 #homeStudyDashboard .study-command-cta,
@@ -1356,9 +1356,9 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
   min-width:0!important;min-height:48px!important;
   border:1px solid rgba(255,255,255,.18)!important;
   border-radius:9px!important;
-  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
-  -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
-  backdrop-filter:blur(16px) saturate(115%)!important;
+  background:linear-gradient(145deg,rgba(31,31,33,.68),rgba(12,12,14,.79))!important;
+  -webkit-backdrop-filter:blur(17px) saturate(102%)!important;
+  backdrop-filter:blur(17px) saturate(102%)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
@@ -1366,7 +1366,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
   gap:0!important;padding:0!important;margin:0!important;
   min-width:0!important;overflow:hidden!important;
   border:1px solid rgba(255,255,255,.18)!important;border-radius:7px!important;
-  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  background:linear-gradient(150deg,rgba(41,41,43,.72),rgba(17,17,19,.83))!important;
   box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth-child(-n+2){
@@ -1393,8 +1393,8 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
   border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
   border-radius:7px!important;
   background:linear-gradient(155deg,
-    color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-    rgba(18,26,36,.48))!important;
+    color-mix(in srgb,var(--home-card-theme) 12%,rgba(29,29,31,.74)),
+    rgba(16,16,18,.77))!important;
   color:color-mix(in srgb,var(--home-card-theme) 62%,#fff)!important;
   -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
   backdrop-filter:blur(15px) saturate(120%)!important;
@@ -1544,11 +1544,12 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>a
   box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
-  --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
+  --home-card-theme:var(--map-accent,#92979a);
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
   border-left:3px solid var(--home-card-theme)!important;
-  border-top-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
-  border-right-color:color-mix(in srgb,var(--home-card-theme) 31%,#292f35)!important;
-  border-bottom-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
+  border-top-color:color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
+  border-right-color:color-mix(in srgb,var(--home-card-theme) 28%,#2b2b2d)!important;
+  border-bottom-color:color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
   background:linear-gradient(110deg,
     color-mix(in srgb,var(--home-card-theme) 12%,#090b0d),
     color-mix(in srgb,var(--home-card-theme) 4%,#090b0d) 65%,#090b0d)!important;
@@ -1573,8 +1574,8 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .pr
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary,
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary:hover{
   min-height:34px!important;height:34px!important;
-  border-color:color-mix(in srgb,var(--home-card-theme) 56%,#313942)!important;
-  background:color-mix(in srgb,var(--home-card-theme) 12%,#10151a)!important;
+  border-color:color-mix(in srgb,var(--home-card-theme) 49%,#303033)!important;
+  background:color-mix(in srgb,var(--home-card-theme) 10%,#141416)!important;
   color:color-mix(in srgb,var(--home-card-theme) 61%,#f0f3f5)!important;
   box-shadow:none!important;transform:none!important;filter:none!important;
 }
