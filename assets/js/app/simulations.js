@@ -62,7 +62,62 @@ async function duplicateSimulation(sOrKey){const s=typeof sOrKey==='string'?simu
 function requestResetSimulationProgress(){const s=simulationByKey(state.adminSimulationKey);if(!s)return;askConfirm('Resetar progresso do simulado?','Tentativas, resultado e estado “em andamento” deste simulado serão removidos desta conta.',async()=>{clearSimulationProgress(s);await syncPreferencesCloud().catch(()=>{});renderSimulations();renderHomeSimulations();toast('Progresso do simulado resetado.')},'Resetar progresso')}
 async function handleSimulationMenuAction(action,key){closeSimulationActionMenus();if(action==='manage')return openSimulationManage(key);if(action==='cover')return openSimulationManage(key,{section:'appearance',chooseCover:true});if(action==='link')return openSimulationManage(key,{section:'organization'});if(action==='replace')return openSimulationManage(key,{section:'advanced',chooseHtml:true});if(action==='duplicate')return duplicateSimulation(key);if(action==='export')return exportSimulation(key);if(action==='delete')return requestDeleteSimulation(key)}
 
-function simulationCourseAccentInfo(s){const course=typeof courseById==='function'?courseById(s?.courseId):null,explicit=String(course?.accent||'').trim().toLowerCase(),cover=course&&typeof courseCover==='function'?courseCover(course):'',cached=cover?cachedCoverAccent(cover):'',value=cached||(explicit&&explicit!=='gold'&&explicit!=='auto'&&accent[explicit]?accent[explicit]:CONTENT_NEUTRAL_ACCENT);return{value,cover}}function applySimulationCourseAccent(card){if(!card)return;const src=card.dataset.simulationCourseCover||'';if(!src||card.dataset.simulationCourseAccentSrc===src||card.dataset.simulationCourseAccentPendingSrc===src)return;card.dataset.simulationCourseAccentPendingSrc=src;const img=new Image();img.decoding='async';const finish=()=>{if(card.dataset.simulationCourseAccentPendingSrc===src)delete card.dataset.simulationCourseAccentPendingSrc};img.onload=()=>{try{let color=cachedCoverAccent(src);if(!color){color=extractCoverAccent(img);if(color)cacheCoverAccent(src,color)}if(color){card.style.setProperty('--simulation-accent',color);card.style.setProperty('--accent',color);card.dataset.simulationCourseAccentSrc=src}}catch(error){console.warn('Não foi possível extrair a cor do curso do simulado.',error)}finally{finish()}};img.onerror=finish;img.src=src}function applySimulationCourseAccents(root=document){root.querySelectorAll('[data-simulation-course-cover]').forEach(applySimulationCourseAccent)}
+/* A capa do próprio simulado prevalece sobre a do curso vinculado. */
+function simulationCourseAccentInfo(s){
+ const course=typeof courseById==='function'?courseById(s?.courseId):null;
+ const explicit=String(course?.accent||'').trim().toLowerCase();
+ const courseImage=course&&typeof courseCover==='function'?courseCover(course):'';
+ const simulationImage=simulationCover(s);
+ const courseTone=courseImage?cachedCoverAccent(courseImage):'';
+ const ownTone=simulationImage?cachedCoverAccent(simulationImage):'';
+ const fallback=courseTone||(explicit&&explicit!=='gold'&&explicit!=='auto'&&accent[explicit]?accent[explicit]:CONTENT_NEUTRAL_ACCENT);
+ return{value:ownTone||fallback,cover:courseImage};
+}
+function applySimulationCourseAccent(card){
+ if(!card)return;
+ const ownImage=card.querySelector('.simulation-cover img,.simulation-recent-cover img');
+ const courseSrc=card.dataset.simulationCourseCover||'';
+ const ownSrc=ownImage?.getAttribute('src')||'';
+ const src=ownSrc||courseSrc;
+ if(!src||card.dataset.simulationCourseAccentSrc===src||card.dataset.simulationCourseAccentPendingSrc===src)return;
+ card.dataset.simulationCourseAccentPendingSrc=src;
+ const finish=()=>{if(card.dataset.simulationCourseAccentPendingSrc===src)delete card.dataset.simulationCourseAccentPendingSrc};
+ const paint=(img,imageSrc)=>{
+  try{
+   const resolved=img.currentSrc||img.src||imageSrc;
+   let color=cachedCoverAccent(imageSrc)||cachedCoverAccent(resolved);
+   if(!color){
+    color=extractCoverAccent(img);
+    if(color){cacheCoverAccent(imageSrc,color);cacheCoverAccent(resolved,color)}
+   }
+   if(!color)return false;
+   card.style.setProperty('--simulation-accent',color);
+   card.style.setProperty('--accent',color);
+   card.dataset.simulationCourseAccentSrc=src;
+   return true;
+  }catch(error){console.warn('Não foi possível extrair a cor da capa do simulado.',error);return false}
+ };
+ const fallback=()=>{
+  if(!courseSrc||courseSrc===src){finish();return}
+  const courseImg=new Image();
+  courseImg.onload=()=>{paint(courseImg,courseSrc);finish()};
+  courseImg.onerror=finish;
+  courseImg.src=courseSrc;
+ };
+ if(ownImage){
+  const apply=()=>{if(paint(ownImage,src))finish();else fallback()};
+  if(ownImage.complete){if(ownImage.naturalWidth>0)apply();else fallback()}
+  else{ownImage.addEventListener('load',apply,{once:true});ownImage.addEventListener('error',fallback,{once:true})}
+ }else{
+  const courseImg=new Image();
+  courseImg.onload=()=>{paint(courseImg,src);finish()};
+  courseImg.onerror=finish;
+  courseImg.src=src;
+ }
+}
+function applySimulationCourseAccents(root=document){
+ root.querySelectorAll('.simulation-card,.simulation-recent-item').forEach(applySimulationCourseAccent);
+}
 function simulationCard(s){const key=s._key||simulationKey(s),course=simulationCourseLabel(s),questions=Number(s.questions)||0,cover=simulationCover(s),analytics=simulationAnalytics(s),result=analytics.latest,attempts=simulationAttemptsFor(key),studyStatus=simulationStudyStatus(s),courseAccent=simulationCourseAccentInfo(s),coverHtml=cover?'<div class="simulation-cover"><img src="'+simulationAttr(cover)+'" alt="" loading="lazy" decoding="async"></div>':'',history=attempts.length?'<button class="secondary" data-simulation-history="'+simulationAttr(key)+'">Desempenho</button>':'',resultHtml=analytics.count?'<div class="simulation-result-summary simulation-analytics-compact"><div><span>Última</span><b>'+Math.max(0,Math.min(100,Number(result?.score)||0))+'%</b></div><div><span>Melhor</span><b>'+analytics.best+'%</b></div><div><span>Média</span><b>'+analytics.average+'%</b></div><div><span>Tentativas</span><b>'+analytics.count+'</b></div></div>'+simulationTrendHtml(attempts):'<div class="simulation-meta" aria-label="Informações do simulado"><span class="simulation-meta-item simulation-meta-questions">'+ESC(questions?questions+' questões':'Questões não informadas')+'</span><span class="simulation-meta-item simulation-meta-duration">'+ESC(simulationDurationLabel(s.durationMinutes))+'</span><span class="simulation-meta-item simulation-meta-course">'+ESC(s.location||course)+'</span></div>',menu='<div class="simulation-card-menu-wrap"><button type="button" class="secondary simulation-card-menu-btn" data-simulation-menu="'+simulationAttr(key)+'" aria-label="Opções do simulado" title="Opções" aria-haspopup="menu" aria-expanded="false">'+coverUiIcon('more')+'</button><div class="simulation-card-action-menu" data-simulation-actions="'+simulationAttr(key)+'" role="menu" hidden><button type="button" data-simulation-action="manage">'+uiIcon('settings','ui-icon-sm')+'<span>Gerenciar simulado</span></button><button type="button" data-simulation-action="cover">'+uiIcon('upload','ui-icon-sm')+'<span>Trocar capa</span></button><button type="button" data-simulation-action="link">'+uiIcon('courses','ui-icon-sm')+'<span>'+(s.courseId?'Alterar curso vinculado':'Vincular a curso')+'</span></button><button type="button" data-simulation-action="replace">'+uiIcon('document','ui-icon-sm')+'<span>Substituir HTML</span></button><button type="button" data-simulation-action="duplicate">'+uiIcon('plus','ui-icon-sm')+'<span>Duplicar</span></button><button type="button" data-simulation-action="export">'+uiIcon('download','ui-icon-sm')+'<span>Exportar</span></button><button type="button" class="is-danger" data-simulation-action="delete">'+uiIcon('trash','ui-icon-sm')+'<span>Excluir simulado</span></button></div></div>';return'<article class="simulation-card'+(cover?' has-cover':'')+'" style="--simulation-accent:'+simulationAttr(courseAccent.value)+';--accent:'+simulationAttr(courseAccent.value)+'"'+(courseAccent.cover?' data-simulation-course-cover="'+simulationAttr(courseAccent.cover)+'"':'')+'>'+menu+coverHtml+'<div class="simulation-card-body"><div class="simulation-card-top"><div class="simulation-card-identity"><span class="simulation-code">'+ESC(simulationDisplayCode(s))+'</span><span class="simulation-study-status simulation-study-status-'+ESC(studyStatus.id)+'">'+ESC(studyStatus.label)+'</span></div><span class="simulation-board">'+ESC(s.board||'Banca não informada')+'</span></div><h3>'+ESC(s.title||s.filename||'Simulado')+'</h3><p class="simulation-subtitle">'+ESC(s.subtitle||course)+'</p>'+resultHtml+'<div class="simulation-card-footer"><span class="simulation-source simulation-source-'+(s.source==='cloud'?'cloud':'bundled')+'">'+(s.contentPath?'HTML personalizado':s.source==='cloud'?'Nuvem privada':'Incluído no app')+'</span><div class="simulation-card-actions">'+history+'<button class="primary" data-open-simulation="'+simulationAttr(key)+'">Abrir simulado</button></div></div></div></article>'}function bindSimulationCards(root=document){root.querySelectorAll('[data-open-simulation]').forEach(b=>{
   b.onclick=()=>openSimulation(b.dataset.openSimulation);
   if(b.matches('[role="button"]'))b.onkeydown=e=>{
