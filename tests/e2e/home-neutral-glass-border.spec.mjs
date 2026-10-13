@@ -48,15 +48,18 @@ test('Dock iPad [T] · Prioridade sem faixa amarela e vidro neutro em retrato/pa
     await inspectGlass(page);
     const priority=page.locator('#homeStudyDashboard .study-intelligence-row>article.priority-now-card');
     await expect(priority).toBeVisible();
-    const colors=await priority.evaluate(node=>{
+    const colors=await priority.evaluate(async node=>{
+      const settle=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{void node.offsetWidth;resolve()})));
       const old=node.style.getPropertyValue('--map-accent');
       node.style.setProperty('--map-accent','#f14b2d');
+      await settle();
       const a=getComputedStyle(node);
       const first={left:a.borderLeftColor,top:a.borderTopColor,right:a.borderRightColor,bottom:a.borderBottomColor,background:a.backgroundImage,
         before:getComputedStyle(node,'::before').content,
         after:getComputedStyle(node,'::after').content,
         mapAccent:a.getPropertyValue('--map-accent'),theme:a.getPropertyValue('--home-card-theme'),inline:node.getAttribute('style')};
       node.style.setProperty('--map-accent','#31bc82');
+      await settle();
       const b=getComputedStyle(node);
       const second={left:b.borderLeftColor,top:b.borderTopColor,right:b.borderRightColor,bottom:b.borderBottomColor,mapAccent:b.getPropertyValue('--map-accent'),theme:b.getPropertyValue('--home-card-theme'),inline:node.getAttribute('style')};
       if(old)node.style.setProperty('--map-accent',old);else node.style.removeProperty('--map-accent');
