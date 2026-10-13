@@ -18,7 +18,7 @@ test('Smoked Liquid Glass das capas [D+T] · vidro grafite e borda sem amarelo n
   const viewports=isTablet?[{width:834,height:1194},{width:1194,height:834}]:[{width:1600,height:900}];
   for(const viewport of viewports){
     await page.setViewportSize(viewport);
-    const result=await page.evaluate(()=>{
+    const result=await page.evaluate(async ()=>{
       const root=document.querySelector('#homeStudyDashboard');
       const bottom=getComputedStyle(root.querySelector('.study-command-bottom'));
       const metrics=getComputedStyle(root.querySelector('.study-command-metrics'));
@@ -27,9 +27,11 @@ test('Smoked Liquid Glass das capas [D+T] · vidro grafite e borda sem amarelo n
       const cardStyle=getComputedStyle(card);
       const actual=card.style.getPropertyValue('--map-accent');
       card.style.setProperty('--map-accent','#e95437');
+      await new Promise(resolve=>requestAnimationFrame(resolve));
       const warm=getComputedStyle(card).borderLeftColor;
       const iconWarm=getComputedStyle(card.querySelector('.home-command-symbol')).backgroundColor;
       card.style.setProperty('--map-accent','#38ba7d');
+      await new Promise(resolve=>requestAnimationFrame(resolve));
       const green=getComputedStyle(card).borderLeftColor;
       if(actual)card.style.setProperty('--map-accent',actual);
       else card.style.removeProperty('--map-accent');
