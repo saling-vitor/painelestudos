@@ -45,20 +45,22 @@ test('Dock iPad [T] Home prioridade sem amarelo e Liquid Glass grafite retrato/p
     assertNeutralGlass(glass);
     const priority=page.locator('#homeStudyDashboard .study-intelligence-row>article.priority-now-card');
     await expect(priority).toBeVisible();
-    const result=await priority.evaluate(el=>{
+    const result=await priority.evaluate(async el=>{
       const orig=el.style.getPropertyValue('--map-accent');
       el.style.setProperty('--map-accent','#dc482f');
+      await new Promise(resolve=>requestAnimationFrame(resolve));
       const card=getComputedStyle(el);
       const left=card.borderLeftColor,top=card.borderTopColor;
       const after=getComputedStyle(el.querySelector('.priority-progress-track>i')).backgroundColor;
       const beforePseudo=getComputedStyle(el,'::before').display;
       el.style.setProperty('--map-accent','#35b674');
+      await new Promise(resolve=>requestAnimationFrame(resolve));
       const green=getComputedStyle(el).borderLeftColor;
       if(orig)el.style.setProperty('--map-accent',orig);
       else el.style.removeProperty('--map-accent');
-      return {left,top,after,green,beforePseudo};
+      return {left,top,after,green,beforePseudo,computedAccent:getComputedStyle(el).getPropertyValue('--map-accent'),computedTheme:getComputedStyle(el).getPropertyValue('--home-card-theme'),rootClasses:document.documentElement.className};
     });
-    expect(result.left).toBe('rgb(220, 72, 47)');
+    expect(result.left,JSON.stringify(result)).toBe('rgb(220, 72, 47)');
     expect(result.after).toBe(result.left);
     expect(result.green).toBe('rgb(53, 182, 116)');
     expect(result.top).not.toBe('rgb(228, 198, 94)');
