@@ -76,7 +76,7 @@ test('[G] Novo concurso continua exigindo confirmação explícita',async({page}
   await page.goto('/#courses');
   // Aguarda a inicialização da Home antes de dispensar o modal de novidades:
   // no iPad o modal pode abrir depois do primeiro frame.
-  await page.waitForFunction(()=>typeof initialCloudSyncDone==='undefined'||initialCloudSyncDone===true);
+  await expect(page.locator('#newCourseBtn2')).toBeVisible();
   await page.evaluate(()=>{const modal=document.querySelector('#whatsNewModal');if(modal?.classList.contains('open'))closeModal('whatsNewModal')});
   const whatsNew=page.locator('#whatsNewModal');
   await expect(whatsNew).not.toHaveClass(/open/);
