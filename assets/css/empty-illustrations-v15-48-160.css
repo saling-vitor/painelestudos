@@ -1,0 +1,7 @@
+/* V15.48.160-G - 19 ilustrações Topographic Editorial, PNG RGBA sem corte. */
+.empty-state .empty-state-graphic,.simulation-home-empty .empty-state-graphic{aspect-ratio:1/1;object-fit:contain!important;object-position:center;max-width:100%;flex-shrink:0;filter:none!important}
+.study-doubt-empty{display:flex;align-items:center;gap:14px}
+.study-doubt-empty .study-doubt-empty-graphic{display:block;width:clamp(54px,8vw,82px);height:auto;aspect-ratio:1/1;object-fit:contain;object-position:center;flex:0 0 auto}
+.global-search-empty{display:grid;justify-items:center;align-content:center;gap:8px}
+.global-search-empty-graphic{display:block;width:58px;height:58px;aspect-ratio:1/1;object-fit:contain;object-position:center}
+@media(max-width:700px){.study-doubt-empty .study-doubt-empty-graphic{width:58px}.global-search-empty-graphic{width:48px;height:48px}}
