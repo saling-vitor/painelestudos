@@ -57,7 +57,7 @@
     if(card&&!q('.mobile-study-plan-toggle',card)){
       const metrics=q('.study-command-metrics',card),button=document.createElement('button');
       button.type='button';button.className='mobile-study-plan-toggle';button.setAttribute('aria-expanded','false');
-      button.innerHTML='<span>Ver plano completo</span><i aria-hidden="true">⌄</i>';
+      button.innerHTML='<span>Ver plano completo</span><i class="ui-icon icon-chevron-down" aria-hidden="true"></i>';
       button.onclick=()=>{
         const open=card.classList.toggle('mobile-plan-expanded');
         button.setAttribute('aria-expanded',open?'true':'false');
