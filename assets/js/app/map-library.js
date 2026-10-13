@@ -292,12 +292,12 @@
       root.innerHTML=emptyStateHtml({
         title:'Nenhum mapa disponível',
         text:StudyCloud.session()?'Adicione mapas aos seus concursos para vê-los nesta biblioteca.':'Entre na sua conta para carregar seus mapas.',
-        mascot:'maps',className:'all-maps-empty-state'
+        art:'maps-library',className:'all-maps-empty-state'
       });
     }else if(!visible.length){
       root.className='maps-library-results';
       const text=state.allMapsOffline&&state.allMapsOfflineChecking?'Verificando quais mapas estão disponíveis offline neste aparelho.':'Ajuste a busca ou remova algum filtro para exibir mapas.';
-      root.innerHTML=emptyStateHtml({title:'Nenhum mapa neste filtro',text,mascot:'maps',compact:true,className:'all-maps-filter-empty'});
+      root.innerHTML=emptyStateHtml({title:'Nenhum mapa neste filtro',text,art:'maps-filter',compact:true,className:'all-maps-filter-empty'});
     }else if(state.allMapsGroup){
       root.className='maps-library-results maps-library-grouped';
       root.innerHTML=renderAllMapsGroups(visible);
