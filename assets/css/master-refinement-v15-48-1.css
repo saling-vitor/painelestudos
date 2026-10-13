@@ -1275,3 +1275,403 @@ html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
       linear-gradient(90deg,rgba(8,10,12,.96),rgba(8,10,12,.88) 35%,rgba(8,10,12,.67) 66%,rgba(8,10,12,.56) 100%)!important;
   }
 }
+
+
+/* ============================================================
+   V15.48.157-T · HOME IPAD · Paridade editorial com Desktop
+   Aplicação tablet SOMENTE: retrato e paisagem. Conserva
+   dados/cálculos e o grid do iPad; sem alterações em D ou M.
+   ============================================================ */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard{
+  min-width:0!important;
+  gap:10px!important;
+}
+/* 1. Hero: fotografia full-bleed silenciosa sem borda entre camadas. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-card{
+  --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) 4px 14px auto!important;
+  align-content:stretch!important;justify-content:stretch!important;
+  row-gap:5px!important;
+  position:relative!important;isolation:isolate!important;
+  height:208px!important;min-height:208px!important;max-height:none!important;
+  min-width:0!important;padding:12px 13px 11px!important;
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,#292f35)!important;
+  border-left:3px solid var(--home-card-theme)!important;
+  border-radius:11px!important;
+  background:#080b0e!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.055)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-card::before{
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-art{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  z-index:0!important;opacity:.83!important;pointer-events:none!important;
+  overflow:hidden!important;background:#080a0c!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-art img{
+  display:block!important;width:100%!important;height:100%!important;
+  object-fit:cover!important;object-position:center center!important;
+  filter:grayscale(.46) saturate(.43) brightness(.65) contrast(1.04)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-art::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(0deg,rgba(8,10,12,.80),rgba(8,10,12,.10) 74%),
+    linear-gradient(90deg,rgba(8,10,12,.96),rgba(8,10,12,.88) 35%,rgba(8,10,12,.67) 66%,rgba(8,10,12,.56) 100%)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-head{
+  display:block!important;position:relative!important;z-index:2!important;
+  min-width:0!important;align-self:start!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-copy{
+  max-width:min(84%,620px)!important;min-width:0!important;position:relative;z-index:2;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-head h2{
+  font-size:clamp(14px,1.9vw,18px)!important;
+  line-height:1.2!important;-webkit-line-clamp:2;
+  color:#f0f3f6!important;text-shadow:0 2px 7px rgba(0,0,0,.68)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-head p,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-context{
+  color:#bdc4cc!important;text-shadow:0 1px 4px rgba(0,0,0,.85)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-progress{
+  position:relative!important;z-index:2!important;align-self:center!important;
+  margin:0!important;min-height:4px!important;height:4px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-context{
+  display:block!important;position:relative!important;z-index:2!important;
+  margin:0!important;padding:0!important;height:14px!important;
+  font:500 9px/14px var(--sans)!important;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+/* Um conjunto de vidro: painel externo + dois indicadores internos sem caixas opacas. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
+  display:grid!important;position:relative!important;z-index:2!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:stretch!important;align-self:end!important;
+  gap:6px!important;margin:0!important;padding:4px!important;
+  min-width:0!important;min-height:48px!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  border-radius:9px!important;
+  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
+  -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
+  backdrop-filter:blur(16px) saturate(115%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:0!important;padding:0!important;margin:0!important;
+  min-width:0!important;overflow:hidden!important;
+  border:1px solid rgba(255,255,255,.18)!important;border-radius:7px!important;
+  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth-child(-n+2){
+  display:flex!important;min-width:0!important;
+  height:38px!important;min-height:38px!important;
+  padding:0 8px!important;gap:7px!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  box-shadow:none!important;transform:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth-child(2){
+  border-left:1px solid rgba(255,255,255,.14)!important;
+  padding-left:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metric-icon{
+  --icon-size:20px!important;flex:0 0 20px!important;
+  background-color:var(--home-card-theme)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  min-height:40px!important;height:40px!important;
+  min-width:122px!important;max-width:none!important;
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
+  border-radius:7px!important;
+  background:linear-gradient(155deg,
+    color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
+    rgba(18,26,36,.48))!important;
+  color:color-mix(in srgb,var(--home-card-theme) 62%,#fff)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
+  backdrop-filter:blur(15px) saturate(120%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.12)!important;
+  filter:none!important;transform:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta .ui-icon{
+  --icon-size:14px!important;background-color:var(--home-card-theme)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-help-detail{
+  top:38px!important;right:10px!important;width:min(232px,47%)!important;
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 45%,rgba(255,255,255,.22))!important;
+  border-radius:9px!important;color:#f3f5f8!important;
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--home-card-theme) 17%,rgba(16,23,30,.93)),
+    rgba(8,12,18,.93) 76%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(123%)!important;
+  backdrop-filter:blur(18px) saturate(123%)!important;
+  box-shadow:0 14px 35px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.11)!important;
+}
+/* 2. Plano do dia: ícone SF Filled, capa integral e identidade individual do mapa. */
+html.is-ipad:not(.is-phone-layout) #homeReviewSection{
+  background:linear-gradient(145deg,rgba(255,255,255,.021),transparent 62%),#0a0c0f!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  border-radius:12px!important;
+  padding:13px 14px 12px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .section-head{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  min-width:0!important;gap:11px!important;
+  padding:4px 2px 13px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .section-head>div{
+  flex:1!important;min-width:0!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .home-review-icon{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 27px!important;width:27px!important;height:27px!important;
+  background:transparent!important;border:0!important;border-radius:4px!important;
+  color:#dde3e8!important;box-shadow:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .home-review-icon .icon-book-open{
+  --ui-icon:url("../ui-icons/sf-black-filled/list.png")!important;
+  --icon-size:22px!important;
+  background-color:#dde3e8!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .section-head h2{
+  margin:2px 0!important;font-size:15px!important;line-height:1.22!important;
+  letter-spacing:.09em!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .section-head p{
+  margin:2px 0 0!important;color:#aeb5be!important;font-size:10px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection #homeReviewNowBtn,
+html.is-ipad:not(.is-phone-layout) #homeReviewSection #homeReviewNowBtn:hover{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;gap:8px!important;
+  min-height:38px!important;margin:0!important;padding:0 12px!important;
+  border:1px solid rgba(255,255,255,.23)!important;border-radius:8px!important;
+  background:linear-gradient(145deg,rgba(45,49,54,.48),rgba(22,26,30,.88))!important;
+  color:#e9edf1!important;box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+  transform:none!important;filter:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-grid{
+  display:grid!important;gap:6px!important;min-width:0!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent,
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent.is-next{
+  --study-row-theme:var(--map-accent,var(--plan-accent,#8b929c));
+  box-sizing:border-box!important;display:grid!important;
+  grid-template-columns:22px 68px minmax(0,1fr) auto auto!important;
+  grid-template-areas:none!important;align-items:center!important;
+  gap:10px!important;min-width:0!important;
+  min-height:73px!important;height:auto!important;
+  margin:0!important;padding:8px 10px!important;
+  border:1px solid color-mix(in srgb,var(--study-row-theme) 37%,#2b3036)!important;
+  border-left:3px solid var(--study-row-theme)!important;
+  border-radius:9px!important;
+  background:linear-gradient(95deg,
+    color-mix(in srgb,var(--study-row-theme) 14%,#0b0d10) 0%,
+    color-mix(in srgb,var(--study-row-theme) 6%,#0b0d10) 55%,#0a0b0d 100%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item .study-plan-code{
+  display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-cover{
+  box-sizing:border-box!important;display:block!important;
+  width:68px!important;height:48px!important;
+  border:1px solid color-mix(in srgb,var(--study-row-theme) 47%,#30353b)!important;
+  border-radius:5px!important;
+  background:color-mix(in srgb,var(--study-row-theme) 6%,#090b0d)!important;
+  overflow:hidden!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-cover img{
+  display:block!important;width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center!important;filter:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-order{
+  color:color-mix(in srgb,var(--study-row-theme) 60%,#f0f3f6)!important;
+  border:1px solid color-mix(in srgb,var(--study-row-theme) 43%,#262b30)!important;
+  background:color-mix(in srgb,var(--study-row-theme) 11%,#14171b)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-copy{
+  min-width:0!important;overflow:hidden!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-copy b{
+  font-size:11px!important;line-height:1.3!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-copy>span{
+  color:#a9b0b9!important;font-size:9px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-time{
+  font-size:10px!important;color:#c7cbd1!important;
+  white-space:nowrap!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent [data-study-plan-open],
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent [data-study-plan-open]:hover{
+  min-height:36px!important;min-width:73px!important;
+  margin:0!important;padding:0 10px!important;
+  color:color-mix(in srgb,var(--study-row-theme) 55%,#f4f5f7)!important;
+  border:1px solid color-mix(in srgb,var(--study-row-theme) 39%,#32373d)!important;
+  border-radius:7px!important;
+  background:color-mix(in srgb,var(--study-row-theme) 9%,#13171c)!important;
+  box-shadow:none!important;transform:none!important;filter:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-footer{
+  margin-top:10px!important;padding:10px 12px!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+  border-radius:9px!important;background:#101316!important;
+  color:#aab1ba!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-footer i{
+  background:#22262b!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-footer em{
+  background:var(--plan-accent,#e4c65e)!important;
+}
+/* 3. Painéis de decisão com acentos discretos, sem glow colorido agressivo. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article{
+  box-sizing:border-box!important;min-width:0!important;
+  height:190px!important;min-height:190px!important;max-height:none!important;
+  padding:12px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.025),transparent 65%),#0a0c0f!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  border-radius:11px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card{
+  --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
+  border-left:3px solid var(--home-card-theme)!important;
+  border-top-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
+  border-right-color:color-mix(in srgb,var(--home-card-theme) 31%,#292f35)!important;
+  border-bottom-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
+  background:linear-gradient(110deg,
+    color-mix(in srgb,var(--home-card-theme) 12%,#090b0d),
+    color-mix(in srgb,var(--home-card-theme) 4%,#090b0d) 65%,#090b0d)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-why-tile{
+  min-height:42px!important;padding:4px!important;
+  border-radius:7px!important;background:rgba(9,12,16,.38)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-why-tile img{
+  box-sizing:border-box!important;display:block!important;
+  width:58px!important;height:36px!important;flex:0 0 58px!important;
+  object-fit:contain!important;object-position:center!important;
+  background:#0b0d10!important;filter:none!important;border-radius:5px!important;
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 46%,#22262a)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary::before{
+  content:""!important;display:inline-block!important;width:12px;height:12px;margin-right:7px;
+  vertical-align:-2px;background-color:var(--home-card-theme)!important;
+  -webkit-mask:url("../ui-icons/sf-black-filled/play.png") center/contain no-repeat!important;
+  mask:url("../ui-icons/sf-black-filled/play.png") center/contain no-repeat!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary:hover{
+  min-height:34px!important;height:34px!important;
+  border-color:color-mix(in srgb,var(--home-card-theme) 56%,#313942)!important;
+  background:color-mix(in srgb,var(--home-card-theme) 12%,#10151a)!important;
+  color:color-mix(in srgb,var(--home-card-theme) 61%,#f0f3f5)!important;
+  box-shadow:none!important;transform:none!important;filter:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-now-card,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .forecast-home-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.026),transparent 65%),#0a0c0f!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-now-buttons button:hover,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-now-focus:hover,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .forecast-home-actions button:hover{
+  transform:none!important;filter:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .home-command-symbol{
+  --icon-size:18px!important;flex:0 0 18px!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .focus-round{
+  width:27px!important;height:27px!important;flex:0 0 27px!important;
+  background:rgba(228,198,94,.06)!important;border-color:rgba(228,198,94,.37)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .focus-round .ui-icon{
+  --icon-size:14px!important;background-color:var(--home-yellow)!important;
+}
+/* 4. Prioridade explicada: manter único modal, vidro fumê e áreas matte. */
+html.is-ipad:not(.is-phone-layout) #priorityWhyModal.priority-why-modal{
+  padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right))
+          max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))!important;
+  background:rgba(2,4,7,.48)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(94%)!important;
+  backdrop-filter:blur(10px) saturate(94%)!important;
+}
+html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-card{
+  width:min(450px,calc(100vw - 40px))!important;
+  max-height:min(760px,calc(100dvh - 48px))!important;
+  background:radial-gradient(ellipse at 8% 0%,
+    color-mix(in srgb,var(--priority-theme,#929ba5) 11%,transparent),transparent 60%),
+    linear-gradient(143deg,rgba(31,38,45,.83),rgba(10,14,19,.91) 76%)!important;
+  -webkit-backdrop-filter:blur(26px) saturate(132%)!important;
+  backdrop-filter:blur(26px) saturate(132%)!important;
+}
+html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-reasons article{
+  background:rgba(8,13,18,.82)!important;border-color:rgba(255,255,255,.12)!important;
+}
+html.is-ipad:not(.is-phone-layout) #priorityWhyModal button:hover{
+  filter:none!important;transform:none!important;
+}
+/* Área útil reduzida em retrato: layout adapta, sem esmagar controles. */
+@media(max-width:900px){
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-card{
+    height:216px!important;min-height:216px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-copy{
+    max-width:89%!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent{
+    grid-template-columns:22px 58px minmax(0,1fr) auto!important;
+    column-gap:8px!important;row-gap:3px!important;
+    padding:8px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-cover{
+    width:58px!important;height:43px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item .study-plan-copy{
+    grid-column:3!important;grid-row:1!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item .study-plan-time{
+    grid-column:3!important;grid-row:2!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item [data-study-plan-open]{
+    grid-column:4!important;grid-row:1/3!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item .study-plan-order,
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item .study-plan-cover{
+    grid-row:1/3!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-footer{
+    grid-template-columns:1fr 1fr auto!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-footer i{
+    grid-column:1/3!important;grid-row:2!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-footer strong{
+    grid-column:3!important;grid-row:2!important;
+  }
+}
+@media(prefers-reduced-transparency:reduce){
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics,
+  html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
+  html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-card{
+    background:#171d23!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+  html.is-ipad:not(.is-phone-layout) #priorityWhyModal.priority-why-modal{
+    background:rgba(3,5,7,.94)!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-card{background:#171d23!important}
+}
