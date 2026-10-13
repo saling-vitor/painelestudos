@@ -1546,9 +1546,9 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>a
 /* V15.48.158-D+T: iPad sem borda amarela residual ou fallback dourado.
    A cor é extraída da capa via --map-accent; enquanto carrega, grafite neutro. */
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
-  --home-card-theme:var(--map-accent,#929296);
+  --home-card-theme:var(--map-accent,#929296)!important;
   border:1px solid color-mix(in srgb,var(--home-card-theme) 38%,#29292c)!important;
-  border-left:3px solid var(--home-card-theme)!important;
+  border-left:3px solid var(--map-accent,#929296)!important;
   border-top-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
   border-right-color:color-mix(in srgb,var(--home-card-theme) 31%,#292f35)!important;
   border-bottom-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
