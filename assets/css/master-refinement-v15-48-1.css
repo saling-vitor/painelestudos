@@ -898,7 +898,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     position:relative!important;z-index:2!important;align-self:end!important;
     min-height:45px!important;margin:0!important;padding:4px!important;gap:5px!important;
     border:1px solid rgba(255,255,255,.12)!important;border-radius:9px!important;
-    background:linear-gradient(150deg,rgba(32,45,60,.19),rgba(10,15,22,.18))!important;
+    background:linear-gradient(150deg,rgba(32,32,34,.30),rgba(12,12,14,.40))!important;
     -webkit-backdrop-filter:blur(13px) saturate(116%)!important;
     backdrop-filter:blur(13px) saturate(116%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
@@ -906,7 +906,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
     gap:0!important;padding:0!important;overflow:hidden!important;
     border:1px solid rgba(255,255,255,.19)!important;border-radius:7px!important;
-    background:linear-gradient(155deg,rgba(255,255,255,.095),rgba(255,255,255,.026) 66%),rgba(17,24,33,.40)!important;
+    background:linear-gradient(155deg,rgba(255,255,255,.095),rgba(255,255,255,.026) 66%),rgba(22,22,24,.54)!important;
     -webkit-backdrop-filter:blur(17px) saturate(125%)!important;
     backdrop-filter:blur(17px) saturate(125%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
@@ -924,8 +924,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     min-height:40px!important;height:40px!important;
     border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
     background:linear-gradient(155deg,
-      color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-      rgba(18,26,36,.48))!important;
+      color-mix(in srgb,var(--home-card-theme) 14%,rgba(30,30,32,.70)),
+      rgba(16,16,18,.80))!important;
     -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
     backdrop-filter:blur(15px) saturate(120%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.12)!important;
@@ -933,8 +933,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
     border-color:color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
     background:linear-gradient(155deg,
-      color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-      rgba(18,26,36,.48))!important;
+      color-mix(in srgb,var(--home-card-theme) 14%,rgba(30,30,32,.70)),
+      rgba(16,16,18,.80))!important;
     transform:none!important;filter:none!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metric-icon{
@@ -1124,13 +1124,13 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   z-index:2!important;
 }
 html:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
-  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
+  background:linear-gradient(135deg,rgba(28,28,30,.72),rgba(14,14,16,.84))!important;
   border-color:rgba(255,255,255,.18)!important;
   -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
   backdrop-filter:blur(16px) saturate(115%)!important;
 }
 html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
-  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  background:linear-gradient(145deg,rgba(34,34,36,.72),rgba(18,18,20,.82))!important;
   border-color:rgba(255,255,255,.18)!important;
 }
 #homeStudyDashboard .study-command-cta,
@@ -1249,7 +1249,7 @@ html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
   html:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom,
   html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-    background:#182027!important;
+    background:#19191b!important;
   }
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
@@ -1356,7 +1356,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
   min-width:0!important;min-height:48px!important;
   border:1px solid rgba(255,255,255,.18)!important;
   border-radius:9px!important;
-  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
+  background:linear-gradient(135deg,rgba(28,28,30,.72),rgba(14,14,16,.84))!important;
   -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
   backdrop-filter:blur(16px) saturate(115%)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
@@ -1366,7 +1366,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
   gap:0!important;padding:0!important;margin:0!important;
   min-width:0!important;overflow:hidden!important;
   border:1px solid rgba(255,255,255,.18)!important;border-radius:7px!important;
-  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  background:linear-gradient(145deg,rgba(34,34,36,.72),rgba(18,18,20,.82))!important;
   box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth-child(-n+2){
@@ -1393,8 +1393,8 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
   border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
   border-radius:7px!important;
   background:linear-gradient(155deg,
-    color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-    rgba(18,26,36,.48))!important;
+    color-mix(in srgb,var(--home-card-theme) 14%,rgba(30,30,32,.70)),
+    rgba(16,16,18,.80))!important;
   color:color-mix(in srgb,var(--home-card-theme) 62%,#fff)!important;
   -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
   backdrop-filter:blur(15px) saturate(120%)!important;
@@ -1543,15 +1543,34 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>a
   border-radius:11px!important;
   box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
 }
+/* V15.48.158-D+T: iPad sem borda amarela residual ou fallback dourado.
+   A cor é extraída da capa via --map-accent; enquanto carrega, grafite neutro. */
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
-  --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
-  border-left:3px solid var(--home-card-theme)!important;
+  --home-card-theme:var(--map-accent,#929296)!important;
+  border:1px solid color-mix(in srgb,var(--home-card-theme) 38%,#29292c)!important;
+  border-left:3px solid var(--map-accent,#929296)!important;
   border-top-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
   border-right-color:color-mix(in srgb,var(--home-card-theme) 31%,#292f35)!important;
   border-bottom-color:color-mix(in srgb,var(--home-card-theme) 42%,#292f35)!important;
   background:linear-gradient(110deg,
     color-mix(in srgb,var(--home-card-theme) 12%,#090b0d),
     color-mix(in srgb,var(--home-card-theme) 4%,#090b0d) 65%,#090b0d)!important;
+}
+/* Herança de decoração antiga não pode pintar uma segunda borda amarela. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card::before,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card::after{
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card .home-command-symbol{
+  color:var(--home-card-theme)!important;
+  background-color:var(--home-card-theme)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card .priority-progress-track i{
+  background:var(--home-card-theme)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card .priority-progress-track{
+  background:rgba(255,255,255,.10)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-why-tile{
   min-height:42px!important;padding:4px!important;
@@ -1664,7 +1683,7 @@ html.is-ipad:not(.is-phone-layout) #priorityWhyModal button:hover{
   html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics,
   html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
   html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-card{
-    background:#171d23!important;
+    background:#19191b!important;
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   }
   html.is-ipad:not(.is-phone-layout) #priorityWhyModal.priority-why-modal{
