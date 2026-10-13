@@ -1720,9 +1720,9 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
 /* iPad: o tema real do mapa governa borda, trilha, botão e iconografia.
    Sem fallback amarelo: antes da extração cromática usa grafite neutro. */
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
-  --home-card-theme:var(--map-accent,#87909a);
+  --home-card-theme:var(--map-accent,#87909a)!important;
   border:1px solid color-mix(in srgb,var(--home-card-theme) 36%,#292929)!important;
-  border-left:3px solid var(--home-card-theme)!important;
+  border-left:3px solid var(--map-accent,#87909a)!important;
   border-right-color:color-mix(in srgb,var(--home-card-theme) 26%,#292929)!important;
   background:linear-gradient(110deg,
     color-mix(in srgb,var(--home-card-theme) 10%,#0c0c0d),
