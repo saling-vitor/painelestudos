@@ -898,7 +898,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     position:relative!important;z-index:2!important;align-self:end!important;
     min-height:45px!important;margin:0!important;padding:4px!important;gap:5px!important;
     border:1px solid rgba(255,255,255,.12)!important;border-radius:9px!important;
-    background:linear-gradient(150deg,rgba(32,45,60,.19),rgba(10,15,22,.18))!important;
+    background:linear-gradient(150deg,rgba(28,28,30,.67),rgba(13,13,15,.77))!important;
     -webkit-backdrop-filter:blur(13px) saturate(116%)!important;
     backdrop-filter:blur(13px) saturate(116%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
@@ -906,7 +906,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
     gap:0!important;padding:0!important;overflow:hidden!important;
     border:1px solid rgba(255,255,255,.19)!important;border-radius:7px!important;
-    background:linear-gradient(155deg,rgba(255,255,255,.095),rgba(255,255,255,.026) 66%),rgba(17,24,33,.40)!important;
+    background:linear-gradient(155deg,rgba(255,255,255,.095),rgba(255,255,255,.026) 66%),rgba(21,21,23,.50)!important;
     -webkit-backdrop-filter:blur(17px) saturate(125%)!important;
     backdrop-filter:blur(17px) saturate(125%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
@@ -924,8 +924,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     min-height:40px!important;height:40px!important;
     border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
     background:linear-gradient(155deg,
-      color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-      rgba(18,26,36,.48))!important;
+      color-mix(in srgb,var(--home-card-theme) 21%,rgba(27,27,29,.69)),
+      rgba(16,16,18,.78))!important;
     -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
     backdrop-filter:blur(15px) saturate(120%)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.12)!important;
@@ -933,8 +933,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
     border-color:color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
     background:linear-gradient(155deg,
-      color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-      rgba(18,26,36,.48))!important;
+      color-mix(in srgb,var(--home-card-theme) 21%,rgba(27,27,29,.69)),
+      rgba(16,16,18,.78))!important;
     transform:none!important;filter:none!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metric-icon{
@@ -1124,13 +1124,13 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   z-index:2!important;
 }
 html:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
-  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
+  background:linear-gradient(135deg,rgba(27,27,29,.70),rgba(13,13,15,.81))!important;
   border-color:rgba(255,255,255,.18)!important;
   -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
   backdrop-filter:blur(16px) saturate(115%)!important;
 }
 html:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
-  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  background:linear-gradient(145deg,rgba(35,35,37,.70),rgba(18,18,20,.78))!important;
   border-color:rgba(255,255,255,.18)!important;
 }
 #homeStudyDashboard .study-command-cta,
@@ -1356,7 +1356,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
   min-width:0!important;min-height:48px!important;
   border:1px solid rgba(255,255,255,.18)!important;
   border-radius:9px!important;
-  background:linear-gradient(135deg,rgba(21,27,33,.80),rgba(10,14,19,.84))!important;
+  background:linear-gradient(135deg,rgba(27,27,29,.70),rgba(13,13,15,.81))!important;
   -webkit-backdrop-filter:blur(16px) saturate(115%)!important;
   backdrop-filter:blur(16px) saturate(115%)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.10)!important;
@@ -1366,7 +1366,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
   gap:0!important;padding:0!important;margin:0!important;
   min-width:0!important;overflow:hidden!important;
   border:1px solid rgba(255,255,255,.18)!important;border-radius:7px!important;
-  background:linear-gradient(145deg,rgba(37,44,51,.83),rgba(19,25,31,.85))!important;
+  background:linear-gradient(145deg,rgba(35,35,37,.70),rgba(18,18,20,.78))!important;
   box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics>button:nth-child(-n+2){
@@ -1393,8 +1393,8 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
   border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,rgba(255,255,255,.18))!important;
   border-radius:7px!important;
   background:linear-gradient(155deg,
-    color-mix(in srgb,var(--home-card-theme) 21%,rgba(23,31,41,.60)),
-    rgba(18,26,36,.48))!important;
+    color-mix(in srgb,var(--home-card-theme) 21%,rgba(27,27,29,.69)),
+    rgba(16,16,18,.78))!important;
   color:color-mix(in srgb,var(--home-card-theme) 62%,#fff)!important;
   -webkit-backdrop-filter:blur(15px) saturate(120%)!important;
   backdrop-filter:blur(15px) saturate(120%)!important;
@@ -1674,4 +1674,60 @@ html.is-ipad:not(.is-phone-layout) #priorityWhyModal button:hover{
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   html.is-ipad:not(.is-phone-layout) #priorityWhyModal .priority-why-card{background:#171d23!important}
+}
+
+
+/* V15.48.158-D+T · neutralizar a borda residual iPad + material GLASS
+   da Home desktop/tablet, sem alterar a cor extraída da capa e sem hover. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
+  /* O mapa define a cor; sem herança do amarelo de controles gerais. */
+  --home-card-theme:var(--map-accent,#8b929c);
+  border-image:none!important;outline:0!important;
+  border-left:3px solid var(--map-accent,#8b929c)!important;
+  border-top-color:color-mix(in srgb,var(--map-accent,#8b929c) 38%,#292929)!important;
+  border-right-color:color-mix(in srgb,var(--map-accent,#8b929c) 28%,#292929)!important;
+  border-bottom-color:color-mix(in srgb,var(--map-accent,#8b929c) 38%,#292929)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.04)!important;
+}
+/* Desligar decoração antiga independente da cor do mapa, mas manter a
+   capa, barra de progresso, rótulos e CTA com o acento cromático real. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card::before,
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card::after{
+  content:none!important;display:none!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card .priority-progress-track{
+  background:rgba(255,255,255,.095)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card .priority-progress-track>i{
+  background:var(--map-accent,#8b929c)!important;
+}
+/* Uma lâmina de vidro grafite, neutra; o acento do mapa só colore o CTA.
+   @supports/transparência reduzida das regras anteriores continuam válidos. */
+html:not(.is-phone-layout) #homeStudyDashboard .study-command-cta,
+html:not(.is-phone-layout) #homeStudyDashboard .study-command-cta:hover{
+  filter:none!important;transform:none!important;
+}
+@media (min-width:1181px){
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
+    border-color:rgba(255,255,255,.15)!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.085)!important;
+  }
+  html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+    background:linear-gradient(150deg,rgba(35,35,37,.70),rgba(18,18,20,.78))!important;
+    border-color:rgba(255,255,255,.16)!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.085)!important;
+  }
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-bottom{
+  border-color:rgba(255,255,255,.15)!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-metrics{
+  border-color:rgba(255,255,255,.16)!important;
+}
+/* Fidelidade: foco visível apenas no teclado; hover não muda o material. */
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card:focus-within{
+  outline:0!important;
+}
+html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-card button:focus-visible{
+  outline:2px solid var(--map-accent,#e8e8ea)!important;outline-offset:2px!important;
 }
