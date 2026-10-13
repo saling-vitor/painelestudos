@@ -410,8 +410,8 @@ html:not(.is-phone-layout) .cloud-card .cloud-dot{
   border-radius:0;
   background:#7e858e;
   box-shadow:none;
-  -webkit-mask:url('../ui-icons/sf-black-filled/cloud.png') center/contain no-repeat;
-  mask:url('../ui-icons/sf-black-filled/cloud.png') center/contain no-repeat;
+  -webkit-mask:var(--solid-cloud) center/contain no-repeat;
+  mask:var(--solid-cloud) center/contain no-repeat;
 }
 html:not(.is-phone-layout) .cloud-card .cloud-dot.online{background:#72c995;box-shadow:none}
 html:not(.is-phone-layout) .cloud-card .cloud-dot.warn{background:#b99a63}

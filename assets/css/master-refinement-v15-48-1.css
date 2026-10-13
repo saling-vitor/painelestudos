@@ -629,13 +629,13 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
 }
 
 /* V15.48.150-G · componentes reais do conceito, sem novos glifos Unicode. */
-#homeStudyDashboard .icon-bolt{--ui-icon:url("../ui-icons/sf-black-filled/bolt.png")}
-#homeStudyDashboard .icon-target{--ui-icon:url("../ui-icons/sf-black-filled/target.png")}
-#homeStudyDashboard .icon-chart-bars{--ui-icon:url("../ui-icons/sf-black-filled/chart-bars.png")}
-#homeStudyDashboard .icon-clock{--ui-icon:url("../ui-icons/sf-black-filled/clock.png")}
-#homeStudyDashboard .icon-play,#homeReviewSection .icon-play{--ui-icon:url("../ui-icons/sf-black-filled/play.png")}
-#homeStudyDashboard .icon-help{--ui-icon:url("../ui-icons/sf-black-filled/help.png")}
-#homeReviewSection .icon-book-open{--ui-icon:url("../ui-icons/sf-black-filled/book-open.png")}
+#homeStudyDashboard .icon-bolt{--ui-icon:var(--solid-bolt)}
+#homeStudyDashboard .icon-target{--ui-icon:var(--solid-target)}
+#homeStudyDashboard .icon-chart-bars{--ui-icon:var(--solid-chart-bars)}
+#homeStudyDashboard .icon-clock{--ui-icon:var(--solid-clock)}
+#homeStudyDashboard .icon-play,#homeReviewSection .icon-play{--ui-icon:var(--solid-play)}
+#homeStudyDashboard .icon-help{--ui-icon:var(--solid-help)}
+#homeReviewSection .icon-book-open{--ui-icon:var(--solid-book-open)}
 #homeStudyDashboard .home-command-symbol{--icon-size:17px;font-size:0!important}
 #homeStudyDashboard .study-command-head{position:relative!important}
 #homeStudyDashboard .study-command-help{
@@ -966,8 +966,8 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     content:""!important;display:inline-block!important;
     width:12px;height:12px;margin-right:7px;vertical-align:-2px;
     background-color:var(--home-card-theme)!important;
-    -webkit-mask:url("../ui-icons/sf-black-filled/play.png") center/contain no-repeat!important;
-    mask:url("../ui-icons/sf-black-filled/play.png") center/contain no-repeat!important;
+    -webkit-mask:var(--solid-play) center/contain no-repeat!important;
+    mask:var(--solid-play) center/contain no-repeat!important;
   }
   /* Uma escala iconográfica consistente para os cinco cards. */
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .home-command-symbol{--icon-size:18px;flex:0 0 18px}
@@ -1013,7 +1013,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     background:transparent!important;box-shadow:none!important;color:#dde3e8!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .home-review-icon .icon-book-open{
-    --ui-icon:url("../ui-icons/sf-black-filled/list.png");--icon-size:22px!important;
+    --icon-size:22px!important;
     background-color:#dde3e8!important;
   }
   /* Cada item mantém a sua própria cor extraída da respectiva capa. */
@@ -1437,7 +1437,7 @@ html.is-ipad:not(.is-phone-layout) #homeReviewSection .home-review-icon{
   color:#dde3e8!important;box-shadow:none!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeReviewSection .home-review-icon .icon-book-open{
-  --ui-icon:url("../ui-icons/sf-black-filled/list.png")!important;
+  
   --icon-size:22px!important;
   background-color:#dde3e8!important;
 }
@@ -1571,8 +1571,8 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-why-tile img{
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary::before{
   content:""!important;display:inline-block!important;width:12px;height:12px;margin-right:7px;
   vertical-align:-2px;background-color:var(--home-card-theme)!important;
-  -webkit-mask:url("../ui-icons/sf-black-filled/play.png") center/contain no-repeat!important;
-  mask:url("../ui-icons/sf-black-filled/play.png") center/contain no-repeat!important;
+  -webkit-mask:var(--solid-play) center/contain no-repeat!important;
+  mask:var(--solid-play) center/contain no-repeat!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary,
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .primary:hover{
