@@ -1,19 +1,17 @@
 {
-  "version": "15.48.157",
-  "label": "V15.48.157-T",
-  "notes": "iPad: Home com paridade editorial Desktop, capa silenciosa, plano do dia cromático, cards alinhados e prioridade Liquid Glass em retrato e paisagem.",
+  "version": "15.48.158",
+  "label": "V15.48.158-D+T",
+  "notes": "Home Desktop + iPad: Liquid Glass das métricas em grafite neutro e correção da borda amarela residual da Prioridade no iPad.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Hero com capa escurecida, véu técnico e base funcional em vidro fumê",
-    "[T] Plano do dia com ícone SF Filled e cores individuais extraídas das capas",
-    "[T] Cards de tempo, prioridade e ritmo com o mesmo acabamento editorial",
-    "[T] Modal de explicação Liquid Glass com safe areas e fallback de acessibilidade",
-    "[T] Layout revisado em iPad retrato e paisagem"
+    "[T] Prioridade agora sem faixa amarela residual; borda vinculada à cor real do mapa",
+    "[D+T] Vidro fumê neutro para Meta de hoje, Semana e Continuar agora",
+    "[D+T] Preserva acento cromático dos mapas e respeita redução de transparência"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "T",
+    "channel": "D+T",
     "runBase": 711
   }
 }
