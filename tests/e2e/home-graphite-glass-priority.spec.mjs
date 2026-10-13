@@ -41,18 +41,21 @@ test('Dock iPad [T] · vidro grafite e borda da prioridade na cor real da capa',
     await verifyGraphite(page);
     const priority=page.locator('#homeStudyDashboard .study-intelligence-row > article.priority-now-card');
     await expect(priority).toBeVisible();
-    const result=await priority.evaluate(node=>{
+    const result=await priority.evaluate(async node=>{
       const saved=node.style.getPropertyValue('--map-accent');
-      const border=()=>getComputedStyle(node).borderLeftColor;
+      const snapshot=()=>({left:getComputedStyle(node).borderLeftColor,top:getComputedStyle(node).borderTopColor,theme:getComputedStyle(node).getPropertyValue('--home-card-theme').trim()});
       node.style.setProperty('--map-accent','#dd553f');
-      const red=border();
+      await new Promise(requestAnimationFrame);
+      const red=snapshot();
       node.style.setProperty('--map-accent','#39b484');
-      const green=border();
+      await new Promise(requestAnimationFrame);
+      const green=snapshot();
       if(saved)node.style.setProperty('--map-accent',saved);
       else node.style.removeProperty('--map-accent');
       return{red,green,width:getComputedStyle(node).borderLeftWidth};
     });
-    expect(result.red).not.toBe(result.green);
+    expect(result.red.top,'A borda superior precisa reagir à cor da capa').not.toBe(result.green.top);
+    expect(result.red.left,JSON.stringify(result)).not.toBe(result.green.left);
     expect(result.width).toBe('3px');
   }
 });
