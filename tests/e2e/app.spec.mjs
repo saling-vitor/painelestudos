@@ -2202,9 +2202,14 @@ test('metas e analytics da central de estudo ficam disponíveis',async({page})=>
   await page.goto('/#settings');
   await expect(page.locator('#studySettingsPanel')).toBeVisible();
   await page.waitForFunction(()=>typeof state==='undefined'||state.cloudLoading===false);
+  // Aguardamos a hidratação inicial da central antes de editar metas.
+  // O teste continua exigindo que StudyDashboard.render preserve o input focado.
+  await page.waitForLoadState('networkidle');
   const form=page.locator('#studyGoalsForm');
+  await expect(form.locator('[name="weeklyMinutes"]')).toBeVisible();
   await form.locator('[name="dailyMinutes"]').fill('1h 30min');
   await form.locator('[name="weeklyMinutes"]').fill('8h');
+  await expect(form.locator('[name="weeklyMinutes"]')).toHaveValue('8h');
   await form.locator('[name="weeklyMinutes"]').focus(); // precondição: edição realmente focada
   // Uma atualização assíncrona da central não pode substituir o input
   // focado nem restaurar a meta semanal padrão durante a edição.
