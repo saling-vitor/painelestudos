@@ -5291,16 +5291,12 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
   await expect(root.locator('.forecast-home-actions .ui-icon')).toHaveCount(reviewAvailable?2:1);
   await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
   const imgs=['bolt','target','chart-bars','clock','book-open','play','help'];
-  for(const name of imgs){
-    const res=await page.request.get('/assets/ui-icons/sf-black-filled/'+name+'.png');
-    expect(res.ok()).toBe(true);
-    expect(res.headers()['content-type']).toMatch(/image\/png/);
-    const data=await res.body();
-    expect(data.subarray(0,8).toString('hex')).toBe('89504e470d0a1a0a');
-    expect(data.length).toBeGreaterThan(100);
-  }
+  const solid=await page.request.get('/assets/css/solid-lucide-v15-48-159.css');
+  expect(solid.ok()).toBe(true);
+  const css=await solid.text();
+  for(const name of imgs)expect(css).toContain('.ui-icon.icon-'+name+'{--ui-icon:url("data:image/svg+xml,');
   const masks=await root.locator('.home-command-symbol').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).maskImage||getComputedStyle(el).webkitMaskImage));
-  expect(masks.every(v=>v.includes('/sf-black-filled/'))).toBe(true);
+  expect(masks.every(v=>v.includes('data:image/svg+xml'))).toBe(true);
   if(testInfo.project.name==='desktop-chromium'){
     const geometry=await page.evaluate(()=>{
       const c=document.querySelector('#homeStudyDashboard .study-command-card').getBoundingClientRect();
@@ -5409,7 +5405,7 @@ test('V15.48.155 [D] plano diário usa capa inteira e cor individual por mapa',a
   await page.goto('/#home');
   await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
   const icon=await page.locator('#homeReviewSection .home-review-icon .icon-book-open').evaluate(el=>getComputedStyle(el).maskImage||getComputedStyle(el).webkitMaskImage);
-  expect(icon).toContain('sf-black-filled/list.png');
+  expect(icon).toContain('data:image/svg+xml');
   const rows=page.locator('#homeStudyPlan .study-plan-item.has-map-accent');
   await expect(rows.first()).toBeVisible();
   expect(await rows.count()).toBeGreaterThanOrEqual(2);
