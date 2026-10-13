@@ -1,0 +1,58 @@
+import {test,expect} from '@playwright/test';
+
+async function verifyGraphite(page) {
+  await page.goto('/#home');
+  const card=page.locator('#homeStudyDashboard .study-command-card');
+  await expect(card).toBeVisible();
+  await expect(card.locator('.study-command-bottom')).toBeVisible();
+  await expect(card.locator('.study-command-metrics')).toBeVisible();
+  const result=await card.evaluate(root=>{
+    const styles=['.study-command-bottom','.study-command-metrics','.study-command-cta']
+      .map(sel=>getComputedStyle(root.querySelector(sel)));
+    const colorChannels=gradient=>[...gradient.matchAll(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g)]
+      .map(match=>match.slice(1,4).map(Number));
+    const all=[...colorChannels(styles[0].backgroundImage),...colorChannels(styles[1].backgroundImage)];
+    return{
+      bottom:styles[0].backgroundImage,metrics:styles[1].backgroundImage,
+      cta:styles[2].backgroundImage,colors:all,
+      bottomBlur:styles[0].backdropFilter||styles[0].webkitBackdropFilter,
+      supportsGlass:CSS.supports('backdrop-filter','blur(1px)')||CSS.supports('-webkit-backdrop-filter','blur(1px)')
+    };
+  });
+  expect(result.bottom).toContain('linear-gradient');
+  expect(result.metrics).toContain('linear-gradient');
+  expect(result.cta).toContain('gradient');
+  expect(result.colors.length).toBeGreaterThanOrEqual(4);
+  for(const [r,g,b] of result.colors){
+    expect(Math.abs(r-g)).toBeLessThanOrEqual(2);
+    expect(Math.abs(b-g)).toBeLessThanOrEqual(2);
+  }
+  if(result.supportsGlass)expect(result.bottomBlur).toContain('blur(');
+}
+
+test('[D] Home Desktop tem Liquid Glass neutro, sem fundo azul',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  await verifyGraphite(page);
+});
+
+test('Dock iPad [T] · vidro grafite e borda da prioridade na cor real da capa',async({page})=>{
+  for(const viewport of [{width:834,height:1194},{width:1194,height:834}]){
+    await page.setViewportSize(viewport);
+    await verifyGraphite(page);
+    const priority=page.locator('#homeStudyDashboard .study-intelligence-row > article.priority-now-card');
+    await expect(priority).toBeVisible();
+    const result=await priority.evaluate(node=>{
+      const saved=node.style.getPropertyValue('--map-accent');
+      const border=()=>getComputedStyle(node).borderLeftColor;
+      node.style.setProperty('--map-accent','#dd553f');
+      const red=border();
+      node.style.setProperty('--map-accent','#39b484');
+      const green=border();
+      if(saved)node.style.setProperty('--map-accent',saved);
+      else node.style.removeProperty('--map-accent');
+      return{red,green,width:getComputedStyle(node).borderLeftWidth};
+    });
+    expect(result.red).not.toBe(result.green);
+    expect(result.width).toBe('3px');
+  }
+});
