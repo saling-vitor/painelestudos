@@ -1,18 +1,19 @@
 {
-  "version": "15.48.156",
-  "label": "V15.48.156-G",
-  "notes": "Home: capa editorial mais discreta, contraste reforçado e modal de prioridade em Liquid Glass fumê com acento do mapa em todas as plataformas.",
+  "version": "15.48.157",
+  "label": "V15.48.157-T",
+  "notes": "iPad: Home com paridade editorial Desktop, capa silenciosa, plano do dia cromático, cards alinhados e prioridade Liquid Glass em retrato e paisagem.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Capa do mapa mais silenciosa e textos legíveis no card Hoje · Estude agora",
-    "[G] Bloco de métricas separado do fundo sem perder efeito fumê",
-    "[G] Modal Por que este mapa? com vidro, desfoque e cor dinâmica",
-    "[G] Responsividade, fallback opaco e preferência de transparência reduzida"
+    "[T] Hero com capa escurecida, véu técnico e base funcional em vidro fumê",
+    "[T] Plano do dia com ícone SF Filled e cores individuais extraídas das capas",
+    "[T] Cards de tempo, prioridade e ritmo com o mesmo acabamento editorial",
+    "[T] Modal de explicação Liquid Glass com safe areas e fallback de acessibilidade",
+    "[T] Layout revisado em iPad retrato e paisagem"
   ],
   "automation": {
     "enabled": true,
     "series": "15.48",
-    "channel": "G",
+    "channel": "T",
     "runBase": 711
   }
 }
