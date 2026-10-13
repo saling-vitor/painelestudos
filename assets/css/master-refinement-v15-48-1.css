@@ -1544,9 +1544,12 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>a
   box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
+  /* Neutraliza o #c3aa84 herdado do legado. O --map-accent inline real tem precedência. */
+  --map-accent:#92979a;
   --home-card-theme:var(--map-accent,#92979a);
   border:1px solid color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
-  border-left:3px solid var(--home-card-theme)!important;
+  border-left:3px solid var(--map-accent,#92979a)!important;
+  border-left-color:var(--map-accent,#92979a)!important;
   border-top-color:color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
   border-right-color:color-mix(in srgb,var(--home-card-theme) 28%,#2b2b2d)!important;
   border-bottom-color:color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
