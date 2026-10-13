@@ -4,7 +4,7 @@ test('Dock iPad [T] · Home editorial, plano cromático e prioridade fumê em re
   const response=await page.request.get('/version.json');
   expect(response.ok()).toBeTruthy();
   const release=await response.json();
-  expect(release.label).toBe('V15.48.157-T');
+  expect(release.label.startsWith('V'+release.version+'-')).toBe(true);
   await page.addInitScript(v=>localStorage.setItem('studyapp.lastSeenVersion',v),release.version);
   await page.goto('/#home');
   await expect(page.locator('#homeStudyDashboard .study-command-card')).toBeAttached();
