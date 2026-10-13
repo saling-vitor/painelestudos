@@ -52,9 +52,13 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===45,'auditoria: build ativo usa 45 CSS com módulo final de navegação V2');
+check(activeCssFiles.length===46,'auditoria: build ativo usa 46 CSS incluindo iconografia sólida global');
 check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
 check(index.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
+check(index.includes(`solid-lucide-v15-48-159.css?v=${expected}`),'Ícones sólidos carregados na última camada CSS');
+check(sw.includes(`solid-lucide-v15-48-159.css?v=${expected}`),'Ícones sólidos disponíveis no PWA offline');
+const solidIcons=read('assets/css/solid-lucide-v15-48-159.css');
+for(const name of ['home','courses','maps','simulations','progress','settings','calendar','cloud','cloud-check','cloud-upload','cloud-off','cloud-alert','play','pause','focus','help'])check(solidIcons.includes(`.ui-icon.icon-${name}`),'Símbolo sólido SVG: '+name);
 check(sw.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: estilo precached no PWA');
 const navV2Css=read('assets/css/nav-liquid-glass-v15-48-2.css');
 for(const section of ['home','courses','maps','simulations','progress','agenda','settings'])check(navV2Css.includes(`data-nav="${section}"`),'Identidade cromática de navegação: '+section);
@@ -91,7 +95,7 @@ const v13BrandLegacy=[
 ];
 for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 removida '+file);
 const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
-const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css'].includes(file)).filter(exists).map(read).join('\n');
+const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/solid-lucide-v15-48-159.css'].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
