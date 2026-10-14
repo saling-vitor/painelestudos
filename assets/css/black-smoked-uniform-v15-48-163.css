@@ -1,9 +1,10 @@
-/* MEUS MAPAS · V15.48.163-G · BLACK SMOKED UNIFORME
+/* MEUS MAPAS · V15.48.164-G · BLACK SMOKED UNIFORME · CURSOS E SIMULADOS PRETOS
    Somente a camada optica/tematica. Preserva capas, layout, tipografia,
    interacoes e superficies de leitura. Sem gradientes cromaticos.
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
 :root{
   --mm-smoke-opacity:.84;
+  --mm-smoke-card-black:rgba(0,0,0,.92);
   --mm-smoke-tint:12%;
   --mm-smoke-ink:rgba(0,0,0,var(--mm-smoke-opacity));
   --mm-smoke-neutral:rgba(0,0,0,.84);
@@ -19,6 +20,11 @@ html .app .content :is(.map-card,.progress-map-row,.progress-insight-card){
 }
 html .app .content :is(.course-card,.course-library-card,.home-course-card){
   --mm-uniform-tone:var(--course-accent,var(--cover-accent,var(--mm-smoke-default)));
+}
+/* Exceções explícitas: biblioteca de Cursos e Simulados permanecem
+   PRETOS; outros cards mantêm o vidro temático homogêneo, sem degradê. */
+html .app .content :is(.course-card,.course-library-card,.simulation-card,.simulation-recent-item){
+  --mm-card-surface:var(--mm-smoke-card-black);
 }
 html .app .content :is(.simulation-card,.simulation-recent-item){
   --mm-uniform-tone:var(--simulation-accent,var(--cover-accent,var(--course-accent,#A8686D)));
@@ -45,8 +51,7 @@ html .app .content :is(
   .study-heatmap-card,.study-agenda-calendar,.study-agenda-side,
   .study-automation-panel,.settings-control-panel,.settings-panel
 ):not(.mm-smoke-opt-out){
-  background:rgba(0,0,0,.84)!important;
-  background:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink))!important;
+  background:var(--mm-card-surface,color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink)))!important;
   background-image:none!important;
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(255,255,255,.11))!important;
   box-shadow:var(--mm-smoke-rim),0 10px 26px rgba(0,0,0,.12)!important;
@@ -54,15 +59,15 @@ html .app .content :is(
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
-/* Os tres blocos de hoje e o plano visual devem permanecer coloridos,
-   mas cada pixel do fundo recebe o MESMO tom. */
+/* Cursos e Simulados são pretos; o plano e os mapas conservam cor temática
+   homogênea. Bordas, indicadores e botões mantêm os HEX oficiais. */
 html .app .content #homeReviewSection .study-plan-item,
 html .app .content #homeReviewSection .study-plan-item.is-next,
 html .app .content #homeStudyDashboard .study-command-card,
 html .app .content #homeStudyDashboard .priority-now-card,
 html .app .content .home-continue-section .continue-card,
 html .app .content #homeSimulations .simulation-recent-item{
-  background:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--mm-smoke-default))) var(--mm-smoke-tint),var(--mm-smoke-ink))!important;
+  background:var(--mm-card-surface,color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink)))!important;
   background-image:none!important;
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 43%,rgba(255,255,255,.09))!important;
 }
@@ -80,7 +85,7 @@ html .app .content #homeStudyDashboard .priority-now-card::before{
 html .app .content :is(.study-plan-item,.continue-card,.simulation-recent-item,.course-card,.map-card):is(:hover,:active){
   filter:none!important;
   transform:none!important;
-  background:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink))!important;
+  background:var(--mm-card-surface,color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink)))!important;
   background-image:none!important;
 }
 /* 03 · Superficies funcionais: um unico plano optico preto por grupo.
@@ -200,10 +205,19 @@ html :is(.category-btn.active,.course-study-filter.active,.progress-filter.activ
    de progresso (que permanecem com suas cores funcionais oficiais). */
 html .app .content :is(.study-plan-item,.continue-card,.priority-now-card)
   :is(.primary,.secondary,[data-study-plan-open]){
-  background:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,#A8A8A8)) 12%,rgba(0,0,0,.82))!important;
+  background:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,#A8A8A8)) 24%,rgba(0,0,0,.86))!important;
   background-image:none!important;
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,#A8A8A8)) 44%,rgba(255,255,255,.15))!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+/* Acoes coloridas por HEX contextual, mantendo os cards pretos;
+   botoes flutuantes ... e estrela continuam neutros. */
+html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item)
+  :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav):not(#mm-smoke-action-exclude){
+  background:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 24%,rgba(0,0,0,.86))!important;
+  background-image:none!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 55%,rgba(255,255,255,.15))!important;
+  color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 74%,white)!important;
 }
 /* 06 · Estados acessiveis e fallback estavel no Safari/iPadOS/Chrome. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
