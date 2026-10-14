@@ -44,7 +44,7 @@ html .app .content :is(
   .progress-insight-card,.progress-global-panel,.progress-course,
   .study-heatmap-card,.study-agenda-calendar,.study-agenda-side,
   .study-automation-panel,.settings-control-panel,.settings-panel
-){
+):not(.mm-smoke-opt-out){
   background:rgba(0,0,0,.84)!important;
   background:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink))!important;
   background-image:none!important;
