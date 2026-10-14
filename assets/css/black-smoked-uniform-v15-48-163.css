@@ -1,16 +1,17 @@
-/* MEUS MAPAS · V15.48.167-G · BLACK EDITORIAL · PRETO UNIVERSAL + MARFIM
+/* MEUS MAPAS · V15.48.169-G · BLACK EDITORIAL · VIDRO FUME PRETO + MARFIM
    Somente a camada optica/tematica. Preserva capas, layout, tipografia,
    interacoes e superficies de leitura. Sem gradientes cromaticos.
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
 :root{
   --mm-smoke-opacity:.84;
-  --mm-smoke-card-black:rgba(0,0,0,.96);
+  --mm-smoke-card-black:rgba(0,0,0,.78);
   --mm-smoke-tint:0%;
   --mm-smoke-ink:rgba(0,0,0,var(--mm-smoke-opacity));
-  --mm-smoke-neutral:rgba(0,0,0,.96);
+  --mm-smoke-neutral:rgba(0,0,0,.78);
   --mm-smoke-edge:rgba(255,255,255,.20);
   --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.13);
   --mm-smoke-filter:blur(18px) saturate(112%) contrast(105%);
+  --mm-smoke-card-filter:blur(12px) saturate(108%);
   --mm-smoke-default:#A8A8A8;
   --mm-ivory-strong:#EEE9E0;
   --mm-ivory-body:#CFC8BC;
@@ -66,9 +67,9 @@ html .app .content :is(
   
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(255,255,255,.11))!important;
   box-shadow:var(--mm-smoke-rim),0 10px 26px rgba(0,0,0,.12)!important;
-  /* Cards repetidos nao criam dezenas de camadas caras de blur. */
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
+  /* Camada unica de vidro fume por card, sem tingimento cromatico. */
+  -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
+  backdrop-filter:var(--mm-smoke-card-filter)!important;
 }
 /* Superficies da Home e Mapas: preto uniforme em vez de tingimento tematico.
    Bordas, indicadores e barras mantem os HEX oficiais. */
@@ -87,7 +88,8 @@ html .app .content :is(.home-review-section,.study-intelligence-panel,.study-pla
   background:var(--mm-smoke-neutral)!important;
   
   border-color:rgba(255,255,255,.085)!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
+  backdrop-filter:var(--mm-smoke-card-filter)!important;
 }
 html .app .content #homeStudyDashboard .priority-now-card::before{
   background:var(--mm-uniform-tone,var(--map-accent,#A8A8A8))!important;
@@ -336,12 +338,12 @@ html .app .content #homeSimulations .simulation-recent-cover{
 }
 
 
-/* V15.48.166-G · PRETO CANONICO NA SIDEBAR E TOM MARFIM [D+T / G]
-   Matte igual aos cards. Preserva logo, capas, cores funcionais e layout. */
+/* V15.48.169-G · SIDEBAR EM VIDRO FUME IGUAL AOS CARDS [D+T / G]
+   Mesmo preto translúcido e reflexão discreta. Preserva logo e layout. */
 html:not(.is-phone-layout) .app .side{
   background:var(--mm-smoke-card-black)!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
+  -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
+  backdrop-filter:var(--mm-smoke-filter)!important;
 }
 /* Eliminar halo cromatico que tingia o painel abaixo da capa. */
 html .app .content .map-card.has-cover::after{opacity:0}
@@ -374,8 +376,7 @@ html .app .content :is(
   .study-plan-item small,.home-review-section .section-head p
 ){color:var(--mm-ivory-body)!important}
 html .app .side :is(.nav-label,.cloud-line){color:var(--mm-ivory-muted)}
-/* Bordas ficam tematicas; o preenchimento continua neutro em mobile
-   e tablet, inclusive ao tocar/selecionar. */
+/* Bordas permanecem tematicas e o vidro permanece preto nos tres modos. */
 
 
 /* V15.48.167-G · MENU INATIVO MARFIM EM TODAS AS PLATAFORMAS
@@ -390,4 +391,30 @@ html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-exp
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current),
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) :is(.ui-icon,b){
   color:var(--mm-ivory-body)!important;
+}
+
+
+/* V15.48.169-G · Acessibilidade e compatibilidade: nas preferências que
+   reduzem transparência, os mesmos cards e sidebar tornam-se opacos. */
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  html .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
+  html:not(.is-phone-layout) .app .side{
+    background:#080808!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+html.mm-reduced-transparency .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
+html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
+  background:#080808!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  html .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
+  html:not(.is-phone-layout) .app .side{
+    background:#080808!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
 }
