@@ -240,6 +240,45 @@ html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal
   }
 }
 
+/* Unificar também os fills internos de busca/sync, hoje vindos de
+   camadas anteriores com seletores mais específicos. Sem gradientes. */
+html:not(.mm-reduced-transparency) .app .main .topbar .search,
+html:not(.mm-reduced-transparency) .app .main .topbar .search:focus-within,
+html:not(.mm-reduced-transparency) .app .main .topbar #syncTop,
+html:not(.mm-reduced-transparency) .app .main .topbar #installBtn,
+html:not(.mm-reduced-transparency) .app .main .global-search-shell .search{
+  background:rgba(0,0,0,.48)!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.15)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html:not(.mm-reduced-transparency).is-phone-layout .app .main .topbar,
+html:not(.mm-reduced-transparency).mobile-topbar-compact.is-phone-layout .app .main .topbar{
+  background:rgba(0,0,0,.58)!important;
+  background-image:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 7px 20px rgba(0,0,0,.16)!important;
+  -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
+  backdrop-filter:var(--mm-smoke-filter)!important;
+}
+html:not(.mm-reduced-transparency).is-ipad:not(.is-phone-layout) .app .main .topbar{
+  background:rgba(0,0,0,.42)!important;
+  background-image:none!important;
+}
+/* Na preferência do usuário, não reintroduzir blur por uma regra responsiva. */
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  html.is-phone-layout .app .main .topbar,
+  html.is-ipad:not(.is-phone-layout) .app .main .topbar,
+  html:not(.is-phone-layout) .app .main .topbar,
+  html .app .main .topbar .search,
+  html .app .main .topbar #syncTop,
+  html .app .main .topbar #installBtn{
+    background:#080808!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
 /* A preferencia de transparencia reduzida prevalece sobre variantes
    responsivas do Black Smoked, sem backdrop-filter residual. */
 html.mm-reduced-transparency .app .topbar,
