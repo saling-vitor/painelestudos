@@ -1,14 +1,13 @@
 {
-  "version": "15.48.164",
-  "label": "V15.48.164-G",
-  "notes": "Black Smoked uniforme: Meus Cursos e Simulados voltam ao preto; mapas e planejamento mantêm cor temática homogênea, sem degradês.",
+  "version": "15.48.165",
+  "label": "V15.48.165-G",
+  "notes": "Black Smoked: restauro do preto nos cards reais de Cursos e Simulados (inclusive Home), com chips sem degradê e testes dos componentes renderizados.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Meus Cursos e Simulados com fundo preto fumê uniforme, preservando as capas originais",
-    "[G] Cards dos mapas, retomada e planejamento preservam a cor temática homogênea, sem degradês",
-    "[G] Borda, botões e indicadores usam cores oficiais, sem tingir o fundo de Cursos e Simulados",
-    "[G] Menus e filtros ativos preservam cor temática; controles e dock mantêm transparência e acessibilidade",
-    "[G] Testes E2E para fundo preto em Cursos e Simulados e fundo colorido contextual nos mapas"
+    "[G] Cards de Cursos e Simulados efetivamente pretos no Desktop, Tablet e Smartphone",
+    "[G] Chips internos e fundos auxiliares uniformes, sem degradês cromáticos",
+    "[G] Capas preservadas; bordas, botões e indicadores continuam usando o HEX temático",
+    "[G] Testes E2E do HTML produzido pelos renderizadores reais"
   ],
   "automation": {
     "enabled": true,
