@@ -271,7 +271,7 @@ html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .topbar :is(.search,#
   box-sizing:border-box!important;min-width:0!important;
   height:186px!important;min-height:186px!important;max-height:186px!important;
   margin:0!important;border-radius:11px!important;
-  background:linear-gradient(140deg,rgba(255,255,255,.024),transparent 54%),#0a0a0b!important;
+  background:var(--mm-smoke-card-black)!important;
   border:1px solid rgba(255,255,255,.12)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
   overflow:hidden!important;transform:none!important;
@@ -282,7 +282,7 @@ html.mm-reduced-transparency.is-ipad:not(.is-phone-layout) .topbar :is(.search,#
   --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
   border-color:color-mix(in srgb,var(--home-card-theme) 57%,#262626)!important;
   padding:12px 13px 11px!important;isolation:isolate!important;
-  background:radial-gradient(ellipse at 85% 25%,color-mix(in srgb,var(--home-card-theme) 15%,transparent),transparent 69%),#08090a!important;
+  background:var(--mm-smoke-card-black)!important;
 }
 #homeStudyDashboard .study-command-art{
   position:absolute;inset:0 0 0 48%;pointer-events:none;z-index:-1;overflow:hidden;
@@ -734,7 +734,7 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
 #homeStudyDashboard .study-intelligence-row>.priority-now-card{
   --home-card-theme:var(--map-accent,var(--home-yellow,#e4c65e));
   border-color:color-mix(in srgb,var(--home-card-theme) 53%,#282828)!important;
-  background:radial-gradient(ellipse at 92% 10%,color-mix(in srgb,var(--home-card-theme) 11%,transparent),transparent 70%),#0a0a0b!important;
+  background:var(--mm-smoke-card-black)!important;
 }
 #homeStudyDashboard .priority-now-card .home-command-label .kicker{
   color:var(--home-card-theme)!important;
@@ -768,7 +768,7 @@ html.is-phone-layout #homeStudyDashboard .mobile-study-plan-toggle{
 #homeReviewSection .study-plan-copy b{display:block;line-height:1.3!important}
 #homeReviewSection .study-plan-copy>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #homeReviewSection .study-plan-item.is-next{
-  background:linear-gradient(90deg,color-mix(in srgb,var(--map-accent,var(--plan-accent,#aaa)) 9%,#0a0a0b),#0a0a0b 80%)!important;
+  background:var(--mm-smoke-card-black)!important;
 }
 #homeReviewSection .study-plan-item:hover{transform:none!important}
 #homeReviewSection .study-plan-item button:hover{transform:none!important}
@@ -949,9 +949,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   }
   /* Prioridade: herdar o acento e mostrar a imagem integral sem crop. */
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>.priority-now-card{
-    background:linear-gradient(110deg,
-      color-mix(in srgb,var(--home-card-theme) 15%,#090a0c),
-      color-mix(in srgb,var(--home-card-theme) 5%,#090a0c) 65%,#090a0c)!important;
+    background:var(--mm-smoke-card-black)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .priority-now-card>*{position:relative;z-index:1}
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .priority-why-tile img{
@@ -1023,10 +1021,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
     margin:0!important;padding:7px 10px!important;border-radius:9px!important;
     border:1px solid color-mix(in srgb,var(--study-row-theme) 42%,#292c31)!important;
     border-left:3px solid var(--study-row-theme)!important;
-    background:linear-gradient(95deg,
-      color-mix(in srgb,var(--study-row-theme) 17%,#0a0c0f) 0%,
-      color-mix(in srgb,var(--study-row-theme) 7%,#0a0c0f) 55%,
-      #0a0b0e 100%)!important;
+    background:var(--mm-smoke-card-black)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.04)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-accent .study-plan-cover{
@@ -1473,9 +1468,7 @@ html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item.has-map-a
   border:1px solid color-mix(in srgb,var(--study-row-theme) 37%,#2b3036)!important;
   border-left:3px solid var(--study-row-theme)!important;
   border-radius:9px!important;
-  background:linear-gradient(95deg,
-    color-mix(in srgb,var(--study-row-theme) 14%,#0b0d10) 0%,
-    color-mix(in srgb,var(--study-row-theme) 6%,#0b0d10) 55%,#0a0b0d 100%)!important;
+  background:var(--mm-smoke-card-black)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeReviewSection .study-plan-item .study-plan-code{
@@ -1553,9 +1546,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>a
   border-top-color:color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
   border-right-color:color-mix(in srgb,var(--home-card-theme) 28%,#2b2b2d)!important;
   border-bottom-color:color-mix(in srgb,var(--home-card-theme) 38%,#2b2b2d)!important;
-  background:linear-gradient(110deg,
-    color-mix(in srgb,var(--home-card-theme) 12%,#090b0d),
-    color-mix(in srgb,var(--home-card-theme) 4%,#090b0d) 65%,#090b0d)!important;
+  background:var(--mm-smoke-card-black)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-why-tile{
   min-height:42px!important;padding:4px!important;
