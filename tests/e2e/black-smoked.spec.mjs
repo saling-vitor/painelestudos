@@ -228,7 +228,12 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
     StudyCloud.session=()=>({user:{id:'visual-audit-e2e'}});
     renderHome();
     if(window.StudyCoach?.renderHome)StudyCoach.renderHome();
+    // A modal de novidades não deve ocultar a auditoria do conteúdo real.
+    if(typeof dismissWhatsNew==='function')dismissWhatsNew();
+    else document.querySelector('#whatsNewModal')?.classList.remove('open');
+    localStorage.setItem('studyapp.lastSeenVersion',APP_VERSION);
   });
+  await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
   const priority=page.locator('#homeStudyDashboard .priority-now-card');
   const today=page.locator('#homeStudyDashboard .study-command-card');
   const rows=page.locator('#homeReviewSection .study-plan-item.has-map-accent');
