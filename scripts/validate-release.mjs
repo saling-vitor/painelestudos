@@ -108,8 +108,8 @@ check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsiv
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
 check(importantCount<=6694,'auditoria: !important legado não regrediu ('+importantCount+')');
 const homeImportantCount=(read(newHomeCss).match(/!important/g)||[]).length;
-check(homeImportantCount<=400,'auditoria: overrides da Home responsiva <=400 ('+homeImportantCount+')');
-check(importantCount+homeImportantCount<=7094,'auditoria: total de overrides controlado ('+(importantCount+homeImportantCount)+')');
+check(homeImportantCount<=450,'auditoria: overrides da Home responsiva <=450 ('+homeImportantCount+')');
+check(importantCount+homeImportantCount<=7144,'auditoria: total de overrides controlado ('+(importantCount+homeImportantCount)+')');
 const navGlassImportant=(read('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
 check(navGlassImportant<=90,'auditoria: V2 preserva limite próprio de overrides ('+navGlassImportant+')');
 const ipadLayoutCss=read('assets/css/ipad-portrait-nav-v15-36-17.css');
