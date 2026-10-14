@@ -40,7 +40,9 @@ test.afterEach(async({page},testInfo)=>{
     // O WebKit pode emitir esta mensagem quando encerra o contexto após
     // uma navegação/resize. Apenas esse evento de ciclo de vida é ignorado.
     if(safari&&/^Context is stopped$/i.test(message))return false;
-    if(!iphone)return true;
+    // O WebKit do iPad e do iPhone pode emitir um aviso de CORS ao
+    // desmontar uma rota Supabase simulada. Não encobrir outros erros.
+    if(!safari)return true;
     if(/(?:version\.json|hapyzjfhbobtaellaejv\.supabase\.co\/[^\s]*)[^\n]*due to access control checks/i.test(message))return false;
     return true;
   });
