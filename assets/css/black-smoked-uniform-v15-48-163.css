@@ -1,4 +1,4 @@
-/* MEUS MAPAS · V15.48.164-G · BLACK SMOKED UNIFORME · CURSOS E SIMULADOS PRETOS
+/* MEUS MAPAS · V15.48.165-G · BLACK SMOKED UNIFORME · CURSOS E SIMULADOS PRETOS
    Somente a camada optica/tematica. Preserva capas, layout, tipografia,
    interacoes e superficies de leitura. Sem gradientes cromaticos.
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
@@ -320,3 +320,44 @@ html.mm-reduced-transparency .app .study-doubt-card{
     backdrop-filter:none!important;
   }
 }
+
+
+/* V15.48.165-G · GUARDA VISUAL NOS CARDS REAIS [G]
+   A cor da capa permanece nas bordas, indicadores e ações, jamais no
+   preenchimento das bibliotecas de Cursos e Simulados. Mantém as capas. */
+:root{--mm-smoke-card-real:rgba(0,0,0,.96)}
+html .app .content :is(#coursesGrid,#homeCourses)>.course-card.course-library-card,
+html .app .content #simulationGrid>.simulation-card,
+html .app .content #homeSimulations .simulation-recent-item{
+  --mm-card-surface:var(--mm-smoke-card-real)!important;
+  background:var(--mm-smoke-card-real)!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html .app .content :is(#coursesGrid,#homeCourses)>.course-card.course-library-card:is(:hover,:focus-within,:active),
+html .app .content #simulationGrid>.simulation-card:is(:hover,:focus-within,:active),
+html .app .content #homeSimulations .simulation-recent-item:is(:hover,:focus-within,:active){
+  background:var(--mm-smoke-card-real)!important;
+  background-image:none!important;
+  filter:none!important;
+  transform:none!important;
+}
+/* Remover os degradês legados também dos chips internos, sem afetar imagens. */
+html .app .content :is(#coursesGrid,#homeCourses) .course-card.course-library-card :is(
+  .course-status-pill,.course-exam-info,.course-card-meta-item,.course-edital-btn
+){
+  background:rgba(0,0,0,.72)!important;
+  background-image:none!important;
+}
+html .app .content #simulationGrid .simulation-card :is(
+  .simulation-meta-item,.simulation-result-summary>div
+){
+  background:rgba(0,0,0,.5)!important;
+  background-image:none!important;
+}
+html .app .content #homeSimulations .simulation-recent-cover{
+  background:#080808!important;
+  background-image:none!important;
+}
+/* A faixa temática e as barras de progresso continuam intencionais. */
