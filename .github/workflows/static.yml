@@ -288,12 +288,12 @@ jobs:
             # Confere o CSS efetivamente servido, não apenas o número da versão.
             glass_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/button-glass-v15-36-15.css?v=$expected&t=$stamp" || true)"
             smoked_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/black-smoked-uniform-v15-48-163.css?v=$expected&t=$stamp" || true)"
-            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"black-smoked-uniform-v15-48-163.css?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.78)"* ]] && [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-filter:blur(12px) saturate(108%)"* ]] && [[ "$smoked_css" == *"--mm-ivory-strong:#EEE9E0"* ]]; then
+            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"black-smoked-uniform-v15-48-163.css?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.58)"* ]] && [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-filter:blur(12px) saturate(105%)"* ]] && [[ "$smoked_css" == *"--mm-ivory-strong:#EEE9E0"* ]]; then
               echo "✓ GitHub Pages público está em $actual"
               echo "✓ Black Editorial: vidro fume real, preto neutro, tingimento zero e marfim publicados"
               exit 0
             fi
-            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível} | html=$( [[ "$index_body" == *"app.js?v=$expected"* ]] && echo ok || echo pendente ) | css=$( [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.78)"* ]] && echo ok || echo pendente )"
+            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível} | html=$( [[ "$index_body" == *"app.js?v=$expected"* ]] && echo ok || echo pendente ) | css=$( [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.58)"* ]] && echo ok || echo pendente )"
             sleep 10
           done
           echo "::error::O GitHub Pages não serviu a versão $expected dentro do prazo."
