@@ -211,6 +211,21 @@ test('V15.48.170-G [G] · reduzir transparência restaura fundo opaco nos cards'
    Capturas são anexadas para revisão visual do acabamento em cada viewport. */
 test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e capas intactas',async({page},testInfo)=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  // Ambiente E2E sem conta: alimenta o ESTADO REAL do app com mapas do catálogo,
+  // sem injetar cards artificiais, sem gravar no banco e sem alterar dados pessoais.
+  await page.evaluate(async()=>{
+    const response=await fetch('./data/catalog.json',{cache:'no-store'});
+    if(!response.ok)throw new Error('Catálogo local indisponível no teste');
+    const catalog=await response.json();
+    const maps=(catalog.maps||[]).filter(m=>m.courseId==='porto-alegre').slice(0,5);
+    if(maps.length<3)throw new Error('Catálogo precisa fornecer mapas reais ao teste');
+    state.catalog.maps=catalog.maps;
+    state.cloudCourses=[{id:'porto-alegre',title:'DEMHAB',subtitle:'Arquiteto e Urbanista',board:'FUNDATEC',status:'active',maps:maps.length}];
+    state.cloudMaps=maps.map(m=>({...m,_key:mapKey(m)}));
+    StudyCloud.session=()=>({user:{id:'visual-audit-e2e'}});
+    renderHome();
+    if(window.StudyCoach?.renderHome)StudyCoach.renderHome();
+  });
   const priority=page.locator('#homeStudyDashboard .priority-now-card');
   const today=page.locator('#homeStudyDashboard .study-command-card');
   const rows=page.locator('#homeReviewSection .study-plan-item.has-map-accent');
@@ -266,7 +281,7 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
     body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
   });
 
-  await page.goto('/#maps',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>nav('maps'));
   const maps=page.locator('#allMaps .map-card');
   await expect(maps.first()).toBeVisible({timeout:12000});
   const library=await maps.first().evaluate(node=>{
@@ -285,7 +300,7 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
     body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
   });
 
-  await page.goto('/#course/porto-alegre',{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>openCourse('porto-alegre'));
   const inCourse=page.locator('#courseMaps .map-card.has-cover');
   await expect(inCourse.first()).toBeVisible({timeout:12000});
   const courseStyle=await inCourse.first().evaluate(node=>{
