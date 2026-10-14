@@ -128,6 +128,18 @@ html #globalSearchPanel{
   -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
   backdrop-filter:var(--mm-smoke-filter)!important;
 }
+/* Preservar o contrato ja validado do dock no iPad/iPhone:
+   vidro PRETO sobre fundo preto, mas opacidade abaixo de 50% no iPad
+   e de 70% no iPhone para a topografia continuar visivel. */
+html.is-ipad:not(.is-phone-layout) :is(.topbar,.bottom-nav){
+  background:rgba(0,0,0,.42)!important;
+  background-image:none!important;
+}
+html.mobile-topbar-compact.is-phone-layout .topbar,
+html.is-phone-layout :is(.topbar,.bottom-nav){
+  background:rgba(0,0,0,.58)!important;
+  background-image:none!important;
+}
 /* Menu flutuante contextual com a mesma cor da capa do cartao. */
 html :is(.map-card,.course-card,.course-library-card,.simulation-card)
   :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
