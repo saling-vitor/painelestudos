@@ -94,7 +94,7 @@ test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#p
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
-test('[G] V15.45 aplica ambiente topográfico raster contínuo sem transformar conteúdo em vidro',async({page})=>{
+test('[G] V15.48.169 preserva topografia sob cards de vidro fumê neutro',async({page})=>{
   await expect(page.locator('link[href*="topographic-environment-v15-43.css"]')).toHaveCount(1);
   await expect(page.locator('link[href*="design-system-v15-42.css"]')).toHaveCount(1);
   const visual=await page.evaluate(()=>{
@@ -116,8 +116,8 @@ test('[G] V15.45 aplica ambiente topográfico raster contínuo sem transformar c
   expect(visual.topoRepeat).toBe('no-repeat');
   expect(visual.topoFilter).toBe('none');
   expect(visual.topoOpacity).toBeGreaterThan(0);
-  expect(visual.mapBackdrop).toBe('none');
-  if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).toBe('none');
+  expect(visual.mapBackdrop).toContain('blur(');
+  if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).toContain('blur(');
 });
 
 test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({page},testInfo)=>{
@@ -164,9 +164,9 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     await expect(activeNav).toBeVisible();
     const sideGlass=await glass(side);
     const navLens=await glass(activeNav);
-    expect(sideGlass.backdrop).toBe('none');
+    expect(sideGlass.backdrop).toContain('blur(');
     expect(sideGlass.filled).toBe(true);
-    // V15.48.166-G: sidebar fosca como cards; item ativo também fosco.
+    // V15.48.169-G: sidebar vidro fume e item ativo matte sem blur aninhado.
     expect(navLens.backdrop).toBe('none');
     expect(navLens.filled).toBe(true);
   }
@@ -3282,7 +3282,7 @@ test('iPhone etapa 4 unifica o sistema visual geral',async({page},testInfo)=>{
   expect(visual.bodyBackground).toContain('radial-gradient');
   expect(parseFloat(visual.cardRadius)).toBeGreaterThanOrEqual(13);
   expect(visual.cardShadow).not.toBe('none');
-  expect(['none','']).toContain(visual.cardBackdrop);
+  expect(visual.cardBackdrop).toContain('blur(');
   expect(visual.primaryBackground).toContain('linear-gradient');
   expect(visual.primaryShadow).toBe('none');
 });
@@ -4277,7 +4277,7 @@ test('V15.42 [G] PASSO 2 · breakpoints e overflow permanecem íntegros',async({
   }
 });
 
-test('V15.42 [G] PASSO 2 · conteúdo é matte e fallbacks de acessibilidade existem',async({page})=>{
+test('V15.48.169 [G] vidro fume em conteúdo e fallbacks de acessibilidade',async({page})=>{
   await page.goto('/#maps');
   await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
   const data=await page.evaluate(()=>{
@@ -4296,7 +4296,7 @@ test('V15.42 [G] PASSO 2 · conteúdo é matte e fallbacks de acessibilidade exi
       hasFocusRule:css.includes(':focus-visible')
     };
   });
-  if(data.cardFilter!=='missing')expect(data.cardFilter).toBe('none');
+  if(data.cardFilter!=='missing')expect(data.cardFilter).toContain('blur(');
   expect(data.reducedTransparency).toBe(true);
   expect(data.moreContrast).toBe(true);
   expect(data.reducedMotion).toBe(true);
@@ -4578,7 +4578,7 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
   });
   expect(data.topo).toContain('topographic-lines-v15-48-1.svg');
   expect(data.topbarFilter).not.toBe('none');
-  if(await page.locator('.side').isVisible())expect(data.sideFilter).toBe('none');
+  if(await page.locator('.side').isVisible())expect(data.sideFilter).toContain('blur(');
   expect(data.dynamic.opticalSurfaces).toBeGreaterThan(0);
 });
 
