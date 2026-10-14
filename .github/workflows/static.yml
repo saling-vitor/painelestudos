@@ -92,8 +92,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: black-smoked-visual-desktop-${{ github.run_id }}
-          path: test-results/**/attachments/visual-*.png
-          if-no-files-found: ignore
+          path: visual-audit/*.png
+          if-no-files-found: error
           retention-days: 10
 
       - name: Upload Playwright failure artifacts
@@ -141,8 +141,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: black-smoked-visual-ipad-${{ github.run_id }}
-          path: test-results/**/attachments/visual-*.png
-          if-no-files-found: ignore
+          path: visual-audit/*.png
+          if-no-files-found: error
           retention-days: 10
 
       - name: Upload Playwright failure artifacts
@@ -190,8 +190,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: black-smoked-visual-ipad-webkit-${{ github.run_id }}
-          path: test-results/**/attachments/visual-*.png
-          if-no-files-found: ignore
+          path: visual-audit/*.png
+          if-no-files-found: error
           retention-days: 10
 
       - name: Upload Playwright failure artifacts
@@ -239,8 +239,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: black-smoked-visual-iphone-${{ github.run_id }}
-          path: test-results/**/attachments/visual-*.png
-          if-no-files-found: ignore
+          path: visual-audit/*.png
+          if-no-files-found: error
           retention-days: 10
 
       - name: Upload Playwright failure artifacts
