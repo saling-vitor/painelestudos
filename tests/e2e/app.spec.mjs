@@ -116,7 +116,8 @@ test('[G] Black Smoked mantém topografia contínua sob cards translúcidos',asy
   expect(visual.topoRepeat).toBe('no-repeat');
   expect(visual.topoFilter).toBe('none');
   expect(visual.topoOpacity).toBeGreaterThan(0);
-  expect(visual.mapBackdrop).toContain('blur(');
+  if(await page.locator('.map-card').count())expect(visual.mapBackdrop).toContain('blur(');
+  else expect(visual.mapBackdrop).toBe('none');
   if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).toContain('blur(');
 });
 
