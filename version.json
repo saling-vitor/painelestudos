@@ -1,13 +1,13 @@
 {
-  "version": "15.48.169",
-  "label": "V15.48.169-G",
-  "notes": "Liquid Glass Black Smoked: vidro fumê preto translúcido em todos os cards e sidebar, cores apenas nas bordas, textos marfim e fallback acessível. Layout e capas preservados.",
+  "version": "15.48.170",
+  "label": "V15.48.170-G",
+  "notes": "Auditoria visual: vidro fumê perceptível sem tingimentos na Home e bibliotecas; CSS legado consolidado, cache PWA renovado e QA real.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Todos os cards de Mapas, Cursos, Simulados e Home em vidro fumê preto translúcido",
-    "[G] Sidebar com o mesmo vidro fumê dos cards, item ativo preto e borda temática",
-    "[G] Cores temáticas restritas às bordas, símbolos e barras; texto marfim suave",
-    "[G] Desfoque real com fallback opaco para redução de transparência e testes E2E"
+    "[G] Cards de Mapas, Cursos, Simulados e Home com preenchimento preto fumê mais translúcido",
+    "[G] Prioridade agora e Seu estudo de hoje sem gradientes temáticos de fundo",
+    "[G] HEX oficiais preservados em bordas, ícones, códigos e barras; capas intactas",
+    "[G] Cache PWA renovado, verificação E2E em componentes reais"
   ],
   "automation": {
     "enabled": true,
