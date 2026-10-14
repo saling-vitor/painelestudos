@@ -1,14 +1,14 @@
 {
-  "version": "15.48.162",
-  "label": "V15.48.162-G",
-  "notes": "Home responsiva: conceitos Tablet/Mobile, refinamento de cards e remoção da borda dupla da prioridade Desktop.",
+  "version": "15.48.163",
+  "label": "V15.48.163-G",
+  "notes": "Liquid Glass Black Smoked Uniforme: cor tematica homogenea, vidro preto translucido e selecoes cromaticas em Desktop, Tablet e Smartphone.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Retomar com capa panorâmica superior; Simulados recentes em três linhas horizontais",
-    "[M] Retomar editorial com capa e ação; simulados horizontais compactos",
-    "[M] Refinamento de Estude agora, tempo, prioridade, ritmo, hierarquia, respiro e área inferior",
-    "[D] Prioridade agora: única borda temática dinâmica, sem segunda faixa dourada",
-    "[G] Preserva a extração cromática fiel V15.48.161-G e os 19 estados vazios"
+    "[G] Vidro preto fumê uniforme sem gradientes cromáticos em menus, cards e controles",
+    "[G] Itens ativos da navegação herdam cores por seção; filtros e botões selecionados mantêm cor temática",
+    "[G] Cursos, mapas, plano de hoje, retomada, simulados, progresso e agenda usam tonalidades discretas e uniformes",
+    "[G] Base preta com bordas/reflexos estáticos e transparência reduzida acessível",
+    "[G] Preservadas capas/HEX oficiais, tipografia, topografia, layout e funções; PWA versionado"
   ],
   "automation": {
     "enabled": true,

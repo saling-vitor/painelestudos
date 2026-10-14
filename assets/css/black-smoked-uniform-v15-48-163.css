@@ -1,0 +1,213 @@
+/* MEUS MAPAS · V15.48.163-G · BLACK SMOKED UNIFORME
+   Somente a camada optica/tematica. Preserva capas, layout, tipografia,
+   interacoes e superficies de leitura. Sem gradientes cromaticos.
+   A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
+:root{
+  --mm-smoke-opacity:.84;
+  --mm-smoke-tint:12%;
+  --mm-smoke-ink:rgba(0,0,0,var(--mm-smoke-opacity));
+  --mm-smoke-neutral:rgba(0,0,0,.84);
+  --mm-smoke-edge:rgba(255,255,255,.20);
+  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.13);
+  --mm-smoke-filter:blur(18px) saturate(112%) contrast(105%);
+  --mm-smoke-default:#A8A8A8;
+}
+/* 01 · Cor contextual. A cascata acompanha automaticamente a cor da capa,
+   mesmo quando a extracao assincrona do HEX atualiza as custom properties. */
+html .app .content :is(.map-card,.progress-map-row,.progress-insight-card){
+  --mm-uniform-tone:var(--map-accent,var(--cover-accent,var(--accent,var(--mm-smoke-default))));
+}
+html .app .content :is(.course-card,.course-library-card,.home-course-card){
+  --mm-uniform-tone:var(--course-accent,var(--cover-accent,var(--mm-smoke-default)));
+}
+html .app .content :is(.simulation-card,.simulation-recent-item){
+  --mm-uniform-tone:var(--simulation-accent,var(--cover-accent,var(--course-accent,#A8686D)));
+}
+html .app .content :is(.continue-card,.home-continue-section .continue-card){
+  --mm-uniform-tone:var(--continue-accent,var(--map-accent,var(--cover-accent,var(--mm-smoke-default))));
+}
+html .app .content :is(.study-plan-item,.priority-now-card){
+  --mm-uniform-tone:var(--map-accent,var(--plan-accent,var(--home-card-theme,var(--mm-smoke-default))));
+}
+html .app .content :is(.study-command-card,.study-now-card,.forecast-home-card){
+  --mm-uniform-tone:var(--home-card-theme,var(--map-accent,var(--mm-smoke-default)));
+}
+html .app .content :is(.progress-course,.progress-global-panel,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel){
+  --mm-uniform-tone:var(--course-accent,var(--map-accent,var(--mm-smoke-default)));
+}
+/* 02 · Um preenchimento solido e uniforme. Nunca pintar um gradiente
+   tematico por cima da imagem, nem substituir as capas originais. */
+html .app .content :is(
+  .study-plan-item,.study-command-card,.study-now-card,.priority-now-card,
+  .forecast-home-card,.continue-card,.simulation-recent-item,
+  .simulation-card,.course-card,.course-library-card,.map-card,
+  .progress-insight-card,.progress-global-panel,.progress-course,
+  .study-heatmap-card,.study-agenda-calendar,.study-agenda-side,
+  .study-automation-panel,.settings-control-panel,.settings-panel
+){
+  background:rgba(0,0,0,.84)!important;
+  background:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink))!important;
+  background-image:none!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(255,255,255,.11))!important;
+  box-shadow:var(--mm-smoke-rim),0 10px 26px rgba(0,0,0,.12)!important;
+  /* Cards repetidos nao criam dezenas de camadas caras de blur. */
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+/* Os tres blocos de hoje e o plano visual devem permanecer coloridos,
+   mas cada pixel do fundo recebe o MESMO tom. */
+html .app .content #homeReviewSection .study-plan-item,
+html .app .content #homeReviewSection .study-plan-item.is-next,
+html .app .content #homeStudyDashboard .study-command-card,
+html .app .content #homeStudyDashboard .priority-now-card,
+html .app .content .home-continue-section .continue-card,
+html .app .content #homeSimulations .simulation-recent-item{
+  background:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--mm-smoke-default))) var(--mm-smoke-tint),var(--mm-smoke-ink))!important;
+  background-image:none!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 43%,rgba(255,255,255,.09))!important;
+}
+/* Painel estruturante preto, sem tirar a cor de cada linha. */
+html .app .content :is(.home-review-section,.study-intelligence-panel,.study-plan-footer,.study-command-metrics){
+  background:var(--mm-smoke-neutral)!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.085)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html .app .content #homeStudyDashboard .priority-now-card::before{
+  background:var(--mm-uniform-tone,var(--map-accent,#A8A8A8))!important;
+  background-image:none!important;
+}
+html .app .content :is(.study-plan-item,.continue-card,.simulation-recent-item,.course-card,.map-card):is(:hover,:active){
+  filter:none!important;
+  transform:none!important;
+  background:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink))!important;
+  background-image:none!important;
+}
+/* 03 · Superficies funcionais: um unico plano optico preto por grupo.
+   Evita glass sobre glass; borda clara e reflexo uniforme via inset. */
+html :is(
+  .topbar,.bottom-nav,.global-search-panel,
+  .course-more-menu,.reader-more-menu,.simulation-card-action-menu,
+  .map-actions-menu,.maps-filter-panel,.ui-select-popover,
+  .mobile-menu-sheet,.popover,.context-menu,
+  .modal-card,.planner-modal-card,.study-doubt-card,
+  .course-primary-actions,.course-sticky-bar,
+  .study-timer-idle-menu,.progress-sort-sheet
+){
+  background:rgba(0,0,0,.84)!important;
+  background-image:none!important;
+  border-color:var(--mm-smoke-edge)!important;
+  box-shadow:var(--mm-smoke-rim),0 14px 34px rgba(0,0,0,.27)!important;
+  -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
+  backdrop-filter:var(--mm-smoke-filter)!important;
+}
+/* Dentro da topbar/dock apenas uma camada de blur: controles sao matte. */
+html :is(.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar)
+  :is(.search,#syncTop,#installBtn,button,input,select,.ui-select-trigger){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html .topbar :is(.search,#syncTop,#installBtn),
+html .global-search-shell .search{
+  background:rgba(0,0,0,.48)!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.15)!important;
+}
+/* Menu flutuante contextual com a mesma cor da capa do cartao. */
+html :is(.map-card,.course-card,.course-library-card,.simulation-card)
+  :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
+  --mm-uniform-tone:var(--map-accent,var(--course-accent,var(--simulation-accent,var(--cover-accent,#B0B0B0))));
+  background:color-mix(in srgb,var(--mm-uniform-tone) 10%,rgba(0,0,0,.85))!important;
+  background-image:none!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(255,255,255,.25))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.20)!important;
+}
+/* 04 · Navegacao: a secao ativa recebe uma camada uniforme. */
+html .side .nav-btn[data-nav].active,
+html .bottom-nav>button[data-nav].active,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]),
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
+  --mm-uniform-tone:var(--nav-accent,#C8AF86);
+  background:color-mix(in srgb,var(--mm-uniform-tone) 13%,var(--mm-smoke-ink))!important;
+  background-image:none!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone) 52%,rgba(255,255,255,.1))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html .side .nav-btn[data-nav].active::before,
+html .bottom-nav>button[data-nav].active::before,
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before{
+  background:var(--nav-accent,#C8AF86)!important;
+  background-image:none!important;
+}
+html .side .nav-btn[data-nav].active :is(.ui-icon,.txt),
+html .bottom-nav>button[data-nav].active :is(.ui-icon,.bottom-nav-label),
+html.is-phone-layout .mobile-menu-option.is-current :is(.ui-icon,b){
+  color:var(--nav-accent,#D1B58D)!important;
+}
+html .side .nav-btn[data-nav]:not(.active):is(:hover,:focus-visible),
+html .bottom-nav>button[data-nav]:not(.active):is(:hover,:focus-visible){
+  background:rgba(255,255,255,.028)!important;
+  background-image:none!important;
+}
+/* 05 · Filtros e selecoes: cores homogeneas, sem mudar no hover. */
+html :is(
+  .category-btn.active,.course-study-filter.active,.progress-filter.active,
+  .maps-filter-toggle.active,.maps-filter-chip.active,
+  .agenda-day.selected,.agenda-day.today.selected,
+  .ui-select-option[aria-selected="true"],.mobile-menu-option.is-current,
+  .maps-sort-option.active,.progress-sort-option.active
+){
+  --mm-uniform-tone:var(--map-accent,var(--course-accent,var(--nav-accent,#C8AF86)));
+  background:color-mix(in srgb,var(--mm-uniform-tone) 13%,var(--mm-smoke-ink))!important;
+  background-image:none!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone) 47%,rgba(255,255,255,.12))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11)!important;
+}
+html :is(.category-btn.active,.course-study-filter.active,.progress-filter.active,.agenda-day.selected):is(:hover,:active){
+  background:color-mix(in srgb,var(--mm-uniform-tone) 13%,var(--mm-smoke-ink))!important;
+  background-image:none!important;
+}
+/* Evitar gradientes nos botoes de acao em vidro, sem alterar capa ou barra
+   de progresso (que permanecem com suas cores funcionais oficiais). */
+html .app .content :is(.study-plan-item,.continue-card,.priority-now-card)
+  :is(.primary,.secondary,[data-study-plan-open]){
+  background:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,#A8A8A8)) 12%,rgba(0,0,0,.82))!important;
+  background-image:none!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,#A8A8A8)) 44%,rgba(255,255,255,.15))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+/* 06 · Estados acessiveis e fallback estavel no Safari/iPadOS/Chrome. */
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  html :is(.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,
+    .mobile-menu-sheet,.modal-card,.planner-modal-card,.study-doubt-card,.course-sticky-bar,
+    .study-timer-idle-menu,.progress-sort-sheet){
+    background:#080808!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+}
+html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal-card,.planner-modal-card,.study-doubt-card){
+  background:#080808!important;background-image:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  html :is(.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,
+    .mobile-menu-sheet,.modal-card,.planner-modal-card,.study-doubt-card,.course-sticky-bar,
+    .study-timer-idle-menu,.progress-sort-sheet){
+    background:#080808!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+}
+@media (forced-colors:active){
+  html :is(.side .nav-btn.active,.bottom-nav>button.active,.study-plan-item,.map-card,.course-card){
+    forced-color-adjust:auto!important;
+    border:1px solid CanvasText!important;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  html :is(.side .nav-btn.active,.bottom-nav>button.active,.study-plan-item,.course-card,.map-card){
+    transition:none!important;animation:none!important;
+  }
+}

@@ -52,8 +52,16 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===48,'auditoria: build ativo usa 48 CSS, incluindo Home responsiva');
+check(activeCssFiles.length===49,'auditoria: build ativo usa 49 CSS, incluindo Black Smoked Uniforme');
 check(index.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
+check(index.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS final conectado');
+check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
+check(activeCssFiles.at(-1)==='assets/css/black-smoked-uniform-v15-48-163.css','Black Smoked Uniforme: CSS tem ultima precedencia');
+const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
+check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-tint:12%'),'Black Smoked: tokens visuais sincronizados');
+check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
+check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
+
 check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
 check(index.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
 check(sw.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
