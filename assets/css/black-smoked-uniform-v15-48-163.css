@@ -1,4 +1,4 @@
-/* MEUS MAPAS · V15.48.166-G · BLACK EDITORIAL · PRETO UNIVERSAL + MARFIM
+/* MEUS MAPAS · V15.48.167-G · BLACK EDITORIAL · PRETO UNIVERSAL + MARFIM
    Somente a camada optica/tematica. Preserva capas, layout, tipografia,
    interacoes e superficies de leitura. Sem gradientes cromaticos.
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
@@ -376,3 +376,18 @@ html .app .content :is(
 html .app .side :is(.nav-label,.cloud-line){color:var(--mm-ivory-muted)}
 /* Bordas ficam tematicas; o preenchimento continua neutro em mobile
    e tablet, inclusive ao tocar/selecionar. */
+
+
+/* V15.48.167-G · MENU INATIVO MARFIM EM TODAS AS PLATAFORMAS
+   O dock pode estar fora de .app. Seletores explícitos superam o
+   branco puro legado; o selecionado continua exclusivamente temático. */
+html .side .nav-btn[data-nav]:not(.active),
+html .side .nav-btn[data-nav]:not(.active) :is(.ui-icon,.txt),
+html .bottom-nav>button[data-nav]:not(.active),
+html .bottom-nav>button[data-nav]:not(.active) :is(.ui-icon,.bottom-nav-label),
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"]),
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"]) :is(.ui-icon,.bottom-nav-label),
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current),
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) :is(.ui-icon,b){
+  color:var(--mm-ivory-body)!important;
+}

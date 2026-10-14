@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 
-/* V15.48.166-G · Conjunto optico global sem depender de login ou dados locais.
+/* V15.48.167-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
 test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
@@ -28,7 +28,9 @@ test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async(
     const source=[...document.styleSheets].some(sheet=>{
       try{return !!sheet.href&&sheet.href.includes('black-smoked-uniform-v15-48-163.css')}catch{return false}
     });
-    return{rose,green,topColor:top.backgroundColor,topImage:top.backgroundImage,navImage:nav?.backgroundImage,navFill:nav?.backgroundColor,hasActive:!!active,source};
+    const dock=document.querySelector('.bottom-nav');
+    const dockFill=dock?getComputedStyle(dock).backgroundColor:null;
+    return{rose,green,topColor:top.backgroundColor,topImage:top.backgroundImage,navImage:nav?.backgroundImage,navFill:nav?.backgroundColor,dockFill,hasActive:!!active,source};
   });
   expect(data.source).toBeTruthy();
   expect(data.rose.backgroundImage).toBe('none');
@@ -40,7 +42,13 @@ test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async(
   expect(data.topColor).toBeTruthy();
   expect(data.hasActive).toBe(true);
   expect(data.navImage).not.toContain('gradient');
-  expect(data.navFill).not.toBe('rgba(0, 0, 0, 0)');
+  // No iPhone o item pode ser transparente: a barra preta já é o fundo.
+  // Em todos os casos a superficie visível deve continuar preta, nunca tingida.
+  if(data.navFill==='rgba(0, 0, 0, 0)'){
+    expect(data.dockFill).toMatch(/rgba?\(0,\s*0,\s*0/);
+  }else{
+    expect(data.navFill).toMatch(/rgba?\(0,\s*0,\s*0/);
+  }
 });
 
 test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',async({page})=>{
