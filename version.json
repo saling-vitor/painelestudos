@@ -1,14 +1,14 @@
 {
-  "version": "15.48.161",
-  "label": "V15.48.161-G",
-  "notes": "Fidelidade cromática automática das capas dos cursos, mapas e simulados nas três plataformas.",
+  "version": "15.48.162",
+  "label": "V15.48.162-G",
+  "notes": "Home responsiva: conceitos Tablet/Mobile, refinamento de cards e remoção da borda dupla da prioridade Desktop.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Extração RGB/HEX representativa diretamente da capa, sem saturação artificial",
-    "[G] Cursos, mapas, retomada, planejamento e revisões herdam a cor real da capa",
-    "[G] Simulados priorizam a própria imagem e usam a cor do curso somente como alternativa",
-    "[G] Bordas e superfícies preservam a cor-base, com misturas discretas no Black Editorial",
-    "[G] Cache e identificadores PWA sincronizados"
+    "[T] Retomar com capa panorâmica superior; Simulados recentes em três linhas horizontais",
+    "[M] Retomar editorial com capa e ação; simulados horizontais compactos",
+    "[M] Refinamento de Estude agora, tempo, prioridade, ritmo, hierarquia, respiro e área inferior",
+    "[D] Prioridade agora: única borda temática dinâmica, sem segunda faixa dourada",
+    "[G] Preserva a extração cromática fiel V15.48.161-G e os 19 estados vazios"
   ],
   "automation": {
     "enabled": true,
