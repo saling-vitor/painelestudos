@@ -851,7 +851,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-card{
     display:grid!important;grid-template-rows:minmax(0,1fr) 4px 12px auto!important;
     justify-content:stretch!important;align-content:stretch!important;row-gap:4px!important;
-    background:#080c11!important;
+    background:var(--mm-smoke-card-black)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-command-card::before{
     display:none!important; /* evita camada temática duplicada sobre a imagem */
@@ -1087,8 +1087,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item [data-study-plan-open]{
 /* V15.48.156-G · HOME: capa editorial silenciosa e prioridade em Liquid Glass fumê.
    Única camada de refinamento, após os estilos legados; sem hover luminoso. */
 #homeStudyDashboard .study-command-card{
-  background:radial-gradient(ellipse at 92% 16%,
-    color-mix(in srgb,var(--home-card-theme) 7%,transparent),transparent 64%),#080a0c!important;
+  background:var(--mm-smoke-card-black)!important;
 }
 #homeStudyDashboard .study-command-art{
   inset:0 0 0 44%!important;
@@ -1294,7 +1293,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-card{
   border:1px solid color-mix(in srgb,var(--home-card-theme) 51%,#292f35)!important;
   border-left:3px solid var(--home-card-theme)!important;
   border-radius:11px!important;
-  background:#080b0e!important;
+  background:var(--mm-smoke-card-black)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.055)!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-command-card::before{
