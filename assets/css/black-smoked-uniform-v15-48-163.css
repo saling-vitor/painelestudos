@@ -72,18 +72,6 @@ html .app .content :is(
   -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
   backdrop-filter:var(--mm-smoke-card-filter)!important;
 }
-/* Superficies da Home e Mapas: preto uniforme em vez de tingimento tematico.
-   Bordas, indicadores e barras mantem os HEX oficiais. */
-html .app .content #homeReviewSection .study-plan-item,
-html .app .content #homeReviewSection .study-plan-item.is-next,
-html .app .content #homeStudyDashboard .study-command-card,
-html .app .content #homeStudyDashboard .priority-now-card,
-html .app .content .home-continue-section .continue-card,
-html .app .content #homeSimulations .simulation-recent-item{
-  background:var(--mm-smoke-card-black)!important;
-  
-  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 43%,rgba(255,255,255,.09))!important;
-}
 /* Painel estruturante preto, sem tirar a cor de cada linha. */
 html .app .content :is(.home-review-section,.study-intelligence-panel,.study-plan-footer,.study-command-metrics){
   background:var(--mm-smoke-neutral)!important;
