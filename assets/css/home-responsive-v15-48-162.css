@@ -5,7 +5,7 @@
 /* DESKTOP — eliminar a faixa decorativa extra: só uma marca lateral dinâmica. */
 @media(min-width:1181px){
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
-    --home-card-theme:var(--map-accent,#92979a);
+    --home-card-theme:var(--map-accent,#92979a)!important;
     border-left:3px solid var(--home-card-theme)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
   }
@@ -61,7 +61,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .co
 html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .continue-card>.primary{
   position:absolute!important;right:12px!important;bottom:12px!important;
   display:inline-flex!important;justify-content:center!important;align-items:center!important;
-  width:auto!important;min-width:104px!important;min-height:38px!important;
+  width:auto!important;min-width:104px!important;min-height:44px!important;
   padding:8px 12px!important;margin:0!important;grid-column:auto!important;
   border-radius:9px!important;white-space:nowrap!important;
 }
@@ -108,7 +108,7 @@ html.is-phone-layout [data-view="home"] .home-study-dashboard{
 html.is-phone-layout [data-view="home"] .study-command-card{
   box-sizing:border-box!important;min-width:0!important;
   padding:14px!important;border-radius:15px!important;
-  background:linear-gradient(140deg,color-mix(in srgb,var(--map-accent,#9aa1aa) 7%,#0b0c0e),#0b0c0e 75%)!important;
+  background:#0b0c0e!important;
 }
 html.is-phone-layout [data-view="home"] .study-command-head h2{
   font-size:16px!important;line-height:1.3!important;
@@ -157,7 +157,8 @@ html.is-phone-layout [data-view="home"] .study-now-focus{
   margin-top:9px!important;
 }
 html.is-phone-layout [data-view="home"] .priority-now-card{
-  --home-card-theme:var(--map-accent,#92979a);
+  --home-card-theme:var(--map-accent,#92979a)!important;
+  padding:10px!important;
   border-left:3px solid var(--home-card-theme)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.03)!important;
 }
@@ -253,7 +254,7 @@ html.is-phone-layout [data-view="home"] .home-continue-section .continue-card>.p
   display:inline-flex!important;align-items:center!important;justify-content:center!important;
   grid-column:auto!important;grid-row:auto!important;
   width:auto!important;min-width:106px!important;max-width:52%!important;
-  min-height:40px!important;padding:8px 12px!important;margin:0!important;
+  min-height:44px!important;padding:8px 12px!important;margin:0!important;
   border-radius:9px!important;white-space:nowrap!important;
 }
 html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-list{

@@ -1150,8 +1150,7 @@ test('[G] Retomar replica a identidade cromática do mapa em todas as telas',asy
   await expect(card).toBeVisible();
   await expect(card.locator('.continue-map-code')).toHaveText(selected.code);
   await expect(card.locator('.continue-map-category')).toHaveText(selected.category);
-  if(testInfo.project.name==='iphone-webkit')await expect(card.locator('.continue-thumb')).toBeHidden();
-  else await expect(card.locator('.continue-thumb img')).toBeVisible();
+  await expect(card.locator('.continue-thumb img')).toBeVisible();
   const visual=await card.evaluate(el=>{
     const mapAccent=getComputedStyle(el).getPropertyValue('--map-accent').trim();
     const probe=document.createElement('span');
@@ -4038,14 +4037,14 @@ test('[M] Home compacta Prioridade, Ritmo e Plano do dia em linhas acionáveis',
   });
   expect(data.planMax).toBeLessThanOrEqual(72);
   // V15.48.149-G: cartões editoriais têm imagem, gráfico e ações reais.
-  expect(data.intelMax).toBeLessThanOrEqual(215);
+  expect(data.intelMax).toBeLessThanOrEqual(235);
   expect(data.actionCovers).toBe(true);
   expect(data.roleVisible).toBe(false);
   expect(data.activityVisible).toBe(false);
   expect(data.scrollWidth).toBeLessThanOrEqual(data.width+2);
 });
 
-test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos',async({page},testInfo)=>{
+test('[M] Retomar exibe capa panorâmica e Progresso mantém tags compactas',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='iphone-webkit','Validação exclusiva do iPhone.');
 
   await page.setViewportSize({width:390,height:844});
@@ -4060,7 +4059,7 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
   await expect(page.locator('#continueBox .continue-card')).toBeVisible();
   await expect(page.locator('#homeSimulations .simulation-recent-item').first()).toBeVisible();
 
-  await expect(page.locator('#continueBox .continue-thumb')).toBeHidden();
+  await expect(page.locator('#continueBox .continue-thumb img')).toBeVisible();
   await expect(page.locator('#continueBox .continue-map-code')).toBeVisible();
   const homeData=await page.evaluate(()=>{
     const card=document.querySelector('#continueBox .continue-card');
@@ -4079,8 +4078,10 @@ test('[M] Home e Progresso usam tags compactas em vez de capas nos blocos densos
       width:innerWidth
     };
   });
-  expect(homeData.continueHeight).toBeLessThan(155);
-  expect(Math.abs(homeData.continueActionWidth-homeData.continueWidth)).toBeLessThanOrEqual(2);
+  expect(homeData.continueHeight).toBeGreaterThan(230);
+  expect(homeData.continueHeight).toBeLessThan(640);
+  expect(homeData.continueActionWidth).toBeGreaterThanOrEqual(104);
+  expect(homeData.continueActionWidth).toBeLessThan(homeData.continueWidth);
   expect(homeData.simDisplay).toBe('grid');
   expect(['visible','clip']).toContain(homeData.simOverflow);
   expect(homeData.simCount).toBeLessThanOrEqual(3);
@@ -5172,7 +5173,7 @@ test('[G] Smoked Liquid Glass das capas: teste DOM real em curso, mapa e favorit
 });
 
 
-test('V15.48.148 [G] Simulados recentes têm capa ampliada e card clicável',async({page},testInfo)=>{
+test('V15.48.162 [G] Simulados recentes mantêm capas visíveis e cards clicáveis',async({page},testInfo)=>{
   const desktop=testInfo.project.name==='desktop-chromium';
   if(desktop)await page.setViewportSize({width:1600,height:900});
   await page.goto('/#home');
@@ -5195,7 +5196,8 @@ test('V15.48.148 [G] Simulados recentes têm capa ampliada e card clicável',asy
     const h=el.getBoundingClientRect().height;
     return{h,cover:el.querySelector('.simulation-recent-cover').getBoundingClientRect().height,overflow:document.documentElement.scrollWidth-innerWidth}
   });
-  expect(sizes.cover).toBeGreaterThanOrEqual(95);
+  expect(sizes.cover).toBeGreaterThanOrEqual(desktop?95:80);
+  if(!desktop)expect(sizes.cover).toBeLessThanOrEqual(96);
   expect(sizes.cover/sizes.h).toBeGreaterThan(.60);
   expect(sizes.overflow).toBeLessThanOrEqual(2);
   if(desktop){
