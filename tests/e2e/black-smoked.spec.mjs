@@ -132,6 +132,7 @@ test('V15.48.166-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
       const node=document.createElement('article');node.className=cls;
       node.innerHTML='<h3>Texto principal</h3><p>Texto secundário</p>';
       node.style.setProperty('--map-accent',tone);
+      node.style.setProperty('--continue-accent',tone);
       node.style.setProperty('--home-card-theme',tone);
       host.append(node);
       const style=getComputedStyle(node);
