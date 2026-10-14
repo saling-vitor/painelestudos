@@ -510,7 +510,11 @@ test('V15.38.0 [G] automação oferece modos, histórico e desfazer',async({page
   await page.waitForFunction(()=>window.StudyAutomation&&window.SettingsControlCenter);
   if(testInfo.project.name==='iphone-webkit'){
     const panel=page.locator('.settings-area-automation');
-    if(await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await panel.locator(':scope > .mobile-settings-toggle').click();
+    await expect(panel).toBeVisible();
+    const toggle=panel.locator(':scope > .mobile-settings-toggle');
+    await expect(toggle).toBeVisible();
+    if(await panel.evaluate(el=>el.classList.contains('mobile-settings-collapsed')))await toggle.click();
+    await expect(panel).not.toHaveClass(/mobile-settings-collapsed/);
   }
   const mode=page.locator('[data-automation-mode]');
   await expect(mode).toBeVisible();
