@@ -180,14 +180,8 @@ textarea{
   box-shadow:0 0 0 1px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.10)!important;
 }
 
-/* ==========================================================================
-   3 · CONTEÚDO PERMANENTE SEM BACKDROP
-   ========================================================================== */
-:is(.course-card,.course-library-card,.map-card,.simulation-card,
-  .progress-insight-card,.study-plan-item,.agenda-day,.panel,
-  .study-command-card,.continue-card,.home-review-section){
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-}
+/* V15.48.170-G: os cards da biblioteca e da Home obedecem ao
+   material fumê canônico, sem veto global ao backdrop-filter. */
 /* ==========================================================================
    4 · CONTROLES: SEM VIDRO ANINHADO
    ========================================================================== */
