@@ -1,13 +1,13 @@
 {
-  "version": "15.48.166",
-  "label": "V15.48.166-G",
-  "notes": "Black Editorial universal: fundo preto uniforme em todos os cards e sidebar; cor tematica restrita a bordas e detalhes; tipografia marfim alinhada a marca.",
+  "version": "15.48.167",
+  "label": "V15.48.167-G",
+  "notes": "Preto uniforme em todos os cards e sidebar; marfim suave consistente também na navegação Desktop/iPad/iPhone, mantendo cores temáticas apenas nas bordas, símbolos e indicadores.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Mapas, Cursos, Simulados e Home: fundo preto uniforme com bordas temáticas",
-    "[G] Sidebar fosca com o mesmo preto dos cards; item ativo sem preenchimento cromático",
-    "[G] Títulos e textos em off-white/marfim menos intenso, preservando status e identidade",
-    "[G] Testes de regressão atualizados para preto invariável, HEX de bordas e PWA"
+    "[G] Cards de Mapas, Cursos, Simulados e Home em preto uniforme, sem fundo tingido",
+    "[G] Sidebar matte preta e item ativo com borda e ícone temáticos",
+    "[G] Tipografia marfim, incluindo opções inativas da navegação em todos os dispositivos",
+    "[G] Testes automatizados compatíveis com o novo padrão Black Editorial"
   ],
   "automation": {
     "enabled": true,
