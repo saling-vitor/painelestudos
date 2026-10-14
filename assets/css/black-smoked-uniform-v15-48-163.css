@@ -212,7 +212,7 @@ html .app .content :is(.study-plan-item,.continue-card,.priority-now-card)
 }
 /* Acoes coloridas por HEX contextual, mantendo os cards pretos;
    botoes flutuantes ... e estrela continuam neutros. */
-html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item)
+html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item,#coursesGrid>.course-card.course-library-card,#homeCourses>.course-card.course-library-card,#simulationGrid>.simulation-card)
   :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav):not(#mm-smoke-action-exclude){
   background:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 24%,rgba(0,0,0,.86))!important;
   background-image:none!important;
