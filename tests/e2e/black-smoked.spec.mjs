@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 
-/* V15.48.169-G · Conjunto optico global sem depender de login ou dados locais.
+/* V15.48.170-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
 test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
@@ -89,7 +89,7 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
 });
 
 
-test('V15.48.169-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
+test('V15.48.170-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof courseCard==='function'&&typeof simulationCard==='function');
   const result=await page.evaluate(()=>{
@@ -134,7 +134,7 @@ test('V15.48.169-G [G] · renderizadores reais de curso e simulado usam fundo pr
 });
 
 
-test('V15.48.169-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
+test('V15.48.170-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const result=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -185,7 +185,7 @@ test('V15.48.169-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
 });
 
 
-test('V15.48.169-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
+test('V15.48.170-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const data=await page.evaluate(()=>{
     const node=document.createElement('article');node.className='map-card';
@@ -203,4 +203,85 @@ test('V15.48.169-G [G] · reduzir transparência restaura fundo opaco nos cards'
     expect(data.sideBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
     expect(data.sideBlur).toBe('none');
   }
+});
+
+
+/* V15.48.170-G · Auditoria dos elementos VISÍVEIS e não apenas cards artificiais.
+   Executado em desktop, iPad Chromium, iPad WebKit e iPhone WebKit.
+   Capturas são anexadas para revisão visual do acabamento em cada viewport. */
+test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e capas intactas',async({page},testInfo)=>{
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  const priority=page.locator('#homeStudyDashboard .priority-now-card');
+  const today=page.locator('#homeStudyDashboard .study-command-card');
+  const rows=page.locator('#homeReviewSection .study-plan-item.has-map-accent');
+  await expect(priority).toBeVisible();
+  await expect(today).toBeVisible();
+  await expect(rows.first()).toBeVisible();
+  const home=await page.evaluate(()=>{
+    const surface=node=>{
+      const style=getComputedStyle(node);
+      const background=style.backgroundColor;
+      const image=style.backgroundImage;
+      const blur=style.backdropFilter||style.webkitBackdropFilter||'none';
+      const edge=style.borderLeftColor;
+      const alpha=Number((background.match(/rgba?\(\s*\d+,\s*\d+,\s*\d+,\s*([\d.]+)\)/)||[])[1]||1);
+      return{background,image,blur,edge,alpha};
+    };
+    const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
+    const today=document.querySelector('#homeStudyDashboard .study-command-card');
+    const rows=[...document.querySelectorAll('#homeReviewSection .study-plan-item.has-map-accent')].slice(0,3);
+    const probe=node=>{
+      const previous=node.style.getPropertyValue('--map-accent');
+      const first=surface(node);
+      node.style.setProperty('--map-accent','#73AC91');
+      const second=surface(node);
+      if(previous)node.style.setProperty('--map-accent',previous);
+      else node.style.removeProperty('--map-accent');
+      return{first,second};
+    };
+    const image=today.querySelector('.study-command-art img');
+    return{priority:probe(priority),today:surface(today),rows:rows.map(probe),
+      cover:image?{complete:image.complete,naturalWidth:image.naturalWidth}:null,
+      panel:surface(document.querySelector('#homeReviewSection'))};
+  });
+  const assertNeutral=(entry,name)=>{
+    expect(entry.image,name+' deve ser preenchimento uniforme').toBe('none');
+    expect(entry.background,name+' deve ser preto neutro').toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(entry.alpha,name+' deve deixar o fundo visível').toBeLessThan(.72);
+    expect(entry.blur,name+' precisa de vidro óptico').toContain('blur(');
+  };
+  assertNeutral(home.priority.first,'Prioridade agora');
+  assertNeutral(home.today,'Hoje · Estude agora');
+  expect(home.priority.first.background).toBe(home.priority.second.background);
+  expect(home.priority.first.edge).not.toBe(home.priority.second.edge);
+  expect(home.rows.length).toBeGreaterThanOrEqual(2);
+  for(const [index,row] of home.rows.entries()){
+    assertNeutral(row.first,'Plano diário '+(index+1));
+    expect(row.first.background).toBe(row.second.background);
+    expect(row.first.edge).not.toBe(row.second.edge);
+  }
+  expect(home.panel.alpha).toBeLessThan(.50);
+  expect(home.cover?.naturalWidth,'a imagem do card Hoje deve carregar').toBeGreaterThan(0);
+  await testInfo.attach('visual-home-'+testInfo.project.name+'.png',{
+    body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
+  });
+
+  await page.goto('/#maps',{waitUntil:'domcontentloaded'});
+  const maps=page.locator('#allMaps .map-card');
+  await expect(maps.first()).toBeVisible({timeout:12000});
+  const library=await maps.first().evaluate(node=>{
+    const style=getComputedStyle(node);
+    const cover=node.querySelector('.map-cover img');
+    return{background:style.backgroundColor,image:style.backgroundImage,
+      blur:style.backdropFilter||style.webkitBackdropFilter||'none',
+      coverPresent:!!cover,coverSrc:cover?.getAttribute('src')||''};
+  });
+  expect(library.background).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(library.image).toBe('none');
+  expect(library.blur).toContain('blur(');
+  expect(library.coverPresent).toBe(true);
+  expect(library.coverSrc).not.toBe('');
+  await testInfo.attach('visual-mapas-'+testInfo.project.name+'.png',{
+    body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
+  });
 });
