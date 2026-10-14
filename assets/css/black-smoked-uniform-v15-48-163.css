@@ -135,11 +135,11 @@ html #globalSearchPanel{
    vidro PRETO sobre fundo preto, mas opacidade abaixo de 50% no iPad
    e de 70% no iPhone para a topografia continuar visivel. */
 html.is-ipad:not(.is-phone-layout) :is(.topbar,.bottom-nav){
-  background:rgba(18,18,19,.62)!important;
+  background:rgba(18,18,19,.42)!important;
 }
 html.mobile-topbar-compact.is-phone-layout .topbar,
 html.is-phone-layout :is(.topbar,.bottom-nav){
-  background:rgba(18,18,19,.76)!important;
+  background:rgba(18,18,19,.58)!important;
 }
 /* Menu flutuante neutro; a cor da capa fica nas bordas e simbolos. */
 html :is(.map-card,.course-card,.course-library-card,.simulation-card)
@@ -254,13 +254,13 @@ html:not(.mm-reduced-transparency) .app .main .global-search-shell .search{
 }
 html:not(.mm-reduced-transparency).is-phone-layout .app .main .topbar,
 html:not(.mm-reduced-transparency).mobile-topbar-compact.is-phone-layout .app .main .topbar{
-  background:rgba(18,18,19,.76)!important;
+  background:rgba(18,18,19,.58)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 7px 20px rgba(0,0,0,.16)!important;
   -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
   backdrop-filter:var(--mm-smoke-filter)!important;
 }
 html:not(.mm-reduced-transparency).is-ipad:not(.is-phone-layout) .app .main .topbar{
-  background:rgba(18,18,19,.62)!important;
+  background:rgba(18,18,19,.42)!important;
 }
 /* Na preferência do usuário, não reintroduzir blur por uma regra responsiva. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
@@ -348,7 +348,7 @@ html .app .content :is(#homeStudyDashboard .study-intelligence-row>article,
   backdrop-filter:var(--mm-smoke-card-filter)!important;
 }
 html .app .content :is(#homeReviewSection,.home-review-section,
-.study-command-metrics,.study-intelligence-panel){
+#homeStudyDashboard .study-command-metrics,.study-intelligence-panel){
   background:var(--mm-smoke-neutral)!important;
   background-image:none!important;
   border-color:rgba(255,255,255,.085)!important;
