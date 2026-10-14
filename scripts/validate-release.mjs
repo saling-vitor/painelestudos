@@ -52,8 +52,16 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===48,'auditoria: build ativo usa 48 CSS, incluindo Home responsiva');
+check(activeCssFiles.length===49,'auditoria: build ativo usa 49 CSS, incluindo Black Smoked Uniforme');
 check(index.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
+check(index.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS final conectado');
+check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
+check(activeCssFiles.at(-1)==='assets/css/black-smoked-uniform-v15-48-163.css','Black Smoked Uniforme: CSS tem ultima precedencia');
+const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
+check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-tint:12%'),'Black Smoked: tokens visuais sincronizados');
+check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
+check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
+
 check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
 check(index.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
 check(sw.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
@@ -102,14 +110,17 @@ const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
 check(!activeCssText.includes('../ui-icons/sf-black-filled/'),'auditoria: CSS ativo sem dependência de PNG antigo');
 check(/const UI_ICONS=\[\]/.test(sw),'PWA pré-cacheia SVG sólido via CSS sem PNG legado');
 const newHomeCss='assets/css/home-responsive-v15-48-162.css';
-const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/solid-lucide-v15-48-159.css',newHomeCss].includes(file)).filter(exists).map(read).join('\n');
+const smokedCss='assets/css/black-smoked-uniform-v15-48-163.css';
+const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/solid-lucide-v15-48-159.css',newHomeCss,smokedCss].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
 check(importantCount<=6694,'auditoria: !important legado não regrediu ('+importantCount+')');
 const homeImportantCount=(read(newHomeCss).match(/!important/g)||[]).length;
 check(homeImportantCount<=450,'auditoria: overrides da Home responsiva <=450 ('+homeImportantCount+')');
-check(importantCount+homeImportantCount<=7144,'auditoria: total de overrides controlado ('+(importantCount+homeImportantCount)+')');
+const smokedImportantCount=(read(smokedCss).match(/!important/g)||[]).length;
+check(smokedImportantCount<=110,'Black Smoked: limite de overrides do modulo <=110 ('+smokedImportantCount+')');
+check(importantCount+homeImportantCount+smokedImportantCount<=7144,'auditoria: total de overrides controlado ('+(importantCount+homeImportantCount+smokedImportantCount)+')');
 const navGlassImportant=(read('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
 check(navGlassImportant<=90,'auditoria: V2 preserva limite próprio de overrides ('+navGlassImportant+')');
 const ipadLayoutCss=read('assets/css/ipad-portrait-nav-v15-36-17.css');
