@@ -1,14 +1,14 @@
 {
-  "version": "15.48.163",
-  "label": "V15.48.163-G",
-  "notes": "Liquid Glass Black Smoked Uniforme: cor tematica homogenea, vidro preto translucido e selecoes cromaticas em Desktop, Tablet e Smartphone.",
+  "version": "15.48.164",
+  "label": "V15.48.164-G",
+  "notes": "Black Smoked: todos os cards pretos; cor temática nas bordas e botões; menus ativos coloridos. Sem degradês.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Vidro preto fumê uniforme sem gradientes cromáticos em menus, cards e controles",
-    "[G] Itens ativos da navegação herdam cores por seção; filtros e botões selecionados mantêm cor temática",
-    "[G] Cursos, mapas, plano de hoje, retomada, simulados, progresso e agenda usam tonalidades discretas e uniformes",
-    "[G] Base preta com bordas/reflexos estáticos e transparência reduzida acessível",
-    "[G] Preservadas capas/HEX oficiais, tipografia, topografia, layout e funções; PWA versionado"
+    "[G] Todos os cards com fundo preto fumê uniforme, incluindo Meus Cursos, Todos os Mapas e Simulados",
+    "[G] Cores oficiais das capas preservadas em bordas, botões, indicadores e seleções de menu",
+    "[G] Removida a película cromática de fundo dos cards, sem alterar imagens, dados ou layouts",
+    "[G] Botões de ação com preenchimento temático uniforme; menus selecionados mantêm a cor da seção",
+    "[G] Compatibilidade Desktop/Tablet/Smartphone e cobertura de regressão para fundos e botões"
   ],
   "automation": {
     "enabled": true,
