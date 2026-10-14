@@ -35,9 +35,12 @@ test.afterEach(async({page},testInfo)=>{
   // destruição do contexto em testes de resize/navegação. Não esconder outras
   // exceções JavaScript ou falhas da aplicação.
   const iphone=testInfo.project.name==='iphone-webkit';
+  const safari=iphone||testInfo.project.name==='ipad-webkit';
   const errors=(page.runtimeErrors||[]).filter(message=>{
+    // O WebKit pode emitir esta mensagem quando encerra o contexto após
+    // uma navegação/resize. Apenas esse evento de ciclo de vida é ignorado.
+    if(safari&&/^Context is stopped$/i.test(message))return false;
     if(!iphone)return true;
-    if(/^Context is stopped$/i.test(message))return false;
     if(/(?:version\.json|hapyzjfhbobtaellaejv\.supabase\.co\/[^\s]*)[^\n]*due to access control checks/i.test(message))return false;
     return true;
   });
