@@ -1,13 +1,13 @@
 {
-  "version": "15.48.165",
-  "label": "V15.48.165-G",
-  "notes": "Black Smoked: restauro do preto nos cards reais de Cursos e Simulados (inclusive Home), com chips sem degradê e testes dos componentes renderizados.",
+  "version": "15.48.166",
+  "label": "V15.48.166-G",
+  "notes": "Black Editorial universal: fundo preto uniforme em todos os cards e sidebar; cor tematica restrita a bordas e detalhes; tipografia marfim alinhada a marca.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cards de Cursos e Simulados efetivamente pretos no Desktop, Tablet e Smartphone",
-    "[G] Chips internos e fundos auxiliares uniformes, sem degradês cromáticos",
-    "[G] Capas preservadas; bordas, botões e indicadores continuam usando o HEX temático",
-    "[G] Testes E2E do HTML produzido pelos renderizadores reais"
+    "[G] Mapas, Cursos, Simulados e Home: fundo preto uniforme com bordas temáticas",
+    "[G] Sidebar fosca com o mesmo preto dos cards; item ativo sem preenchimento cromático",
+    "[G] Títulos e textos em off-white/marfim menos intenso, preservando status e identidade",
+    "[G] Testes de regressão atualizados para preto invariável, HEX de bordas e PWA"
   ],
   "automation": {
     "enabled": true,
