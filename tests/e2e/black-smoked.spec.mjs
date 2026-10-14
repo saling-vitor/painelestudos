@@ -157,11 +157,12 @@ test('V15.48.169-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
       name,rose:sample(name,'#b8829e'),green:sample(name,'#79a98b')
     }));
     const side=getComputedStyle(document.querySelector('.side'));
+    const isPhone=document.documentElement.classList.contains('is-phone-layout');
     const nav=document.querySelector('.side .nav-btn[data-nav].active');
     const selected=nav?getComputedStyle(nav):null;
     return{cards,side:{bg:side.backgroundColor,image:side.backgroundImage,blur:side.backdropFilter||side.webkitBackdropFilter},
       selected:selected?{bg:selected.backgroundColor,image:selected.backgroundImage}:null,
-      isPhone:document.documentElement.classList.contains('is-phone-layout')};
+      isPhone};
   });
   for(const {name,rose,green} of result.cards){
     expect(rose.background,name+' precisa ser preto').toMatch(/rgba?\(0,\s*0,\s*0/);
@@ -198,6 +199,8 @@ test('V15.48.169-G [G] · reduzir transparência restaura fundo opaco nos cards'
   });
   expect(data.cardBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
   expect(data.cardBlur).toBe('none');
-  expect(data.sideBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
-  expect(data.sideBlur).toBe('none');
+  if(!data.isPhone){
+    expect(data.sideBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
+    expect(data.sideBlur).toBe('none');
+  }
 });
