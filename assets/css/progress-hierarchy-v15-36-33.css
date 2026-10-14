@@ -138,7 +138,7 @@
   padding:13px!important;
   border:1px solid rgba(255,255,255,.11)!important;
   border-radius:11px!important;
-  background:rgba(16,16,17,.96)!important;
+  background:var(--mm-smoke-inset,rgba(27,27,28,.96))!important;
   box-shadow:none!important;
 }
 .intelligence-primary-actions>article>span{font-size:7px!important}
@@ -231,7 +231,7 @@
   padding:8px;
   border:1px solid rgba(255,255,255,.045);
   border-radius:8px;
-  background:rgba(22,22,23,.96);
+  background:var(--mm-smoke-inset,rgba(27,27,28,.96));
 }
 .study-rhythm-distribution>div>span{display:block;margin-bottom:6px;color:#737a83;font:750 7px var(--mono);text-transform:uppercase;letter-spacing:.08em}
 .study-rhythm-empty{
@@ -242,7 +242,7 @@
   padding:8px 10px;
   border:1px solid rgba(255,255,255,.05);
   border-radius:9px;
-  background:rgba(19,19,20,.96);
+  background:var(--mm-smoke-inset,rgba(27,27,28,.96));
 }
 .study-rhythm-empty b{font-size:9px;color:#bfc3c8}
 .study-rhythm-empty span{font-size:8px;color:#747a82}
@@ -321,7 +321,7 @@
   margin:0!important;
   padding:0!important;
   border-radius:10px!important;
-  background:rgba(7,7,8,.58)!important;
+  background:var(--mm-smoke-card-black,rgba(20,20,21,.94))!important;
   box-shadow:none!important;
   overflow:hidden;
 }
@@ -449,7 +449,7 @@
   padding:10px 12px!important;
   border:1px solid rgba(255,255,255,.055);
   border-radius:10px;
-  background:rgba(11,11,12,.97);
+  background:var(--mm-smoke-inset,rgba(27,27,28,.96));
 }
 .study-doubt-inbox.is-empty>.section-head{margin:0!important}
 .study-doubt-inbox.is-empty>.section-head p{margin-top:2px!important}
