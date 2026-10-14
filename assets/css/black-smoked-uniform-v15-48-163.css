@@ -1,15 +1,15 @@
-/* MEUS MAPAS · V15.48.169-G · BLACK EDITORIAL · VIDRO FUME PRETO + MARFIM
+/* MEUS MAPAS · V15.48.171-G · BLACK EDITORIAL · VIDRO FUME PRETO + MARFIM
    Somente a camada optica/tematica. Preserva capas, layout, tipografia,
    interacoes e superficies de leitura. Sem gradientes cromaticos.
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
 :root{
   --mm-smoke-opacity:.84;
-  --mm-smoke-card-black:rgba(0,0,0,.58);
+  --mm-smoke-card-black:rgba(19,19,20,.78);
   --mm-smoke-tint:0%;
   --mm-smoke-ink:rgba(0,0,0,var(--mm-smoke-opacity));
-  --mm-smoke-neutral:rgba(0,0,0,.34);
+  --mm-smoke-neutral:rgba(16,16,17,.66);
   --mm-smoke-edge:rgba(255,255,255,.20);
-  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.16);
+  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.085);
   --mm-smoke-filter:blur(18px) saturate(112%) contrast(105%);
   --mm-smoke-card-filter:blur(12px) saturate(105%);
   --mm-smoke-default:#A8A8A8;
@@ -53,7 +53,7 @@ html .app .content :is(.study-command-card,.study-now-card,.forecast-home-card){
 html .app .content :is(.progress-course,.progress-global-panel,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel){
   --mm-uniform-tone:var(--course-accent,var(--map-accent,var(--mm-smoke-default)));
 }
-/* 02 · Um único material preto fumê de 58%: sem gradiente temático.
+/* 02 · Material grafite fumê neutro; sem gradiente temático.
    Painéis estruturantes usam 34% para evitar glass sobre glass escuro.
    Não alterar capas e seus overlays fotográficos de legibilidade. */
 html .app .content :is(
@@ -67,7 +67,7 @@ html .app .content :is(
   background:var(--mm-smoke-card-black)!important;
   
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(255,255,255,.11))!important;
-  box-shadow:var(--mm-smoke-rim),0 10px 26px rgba(0,0,0,.12)!important;
+  box-shadow:var(--mm-smoke-rim),0 6px 18px rgba(0,0,0,.10)!important;
   /* Camada unica de vidro fume por card, sem tingimento cromatico. */
   -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
   backdrop-filter:var(--mm-smoke-card-filter)!important;
