@@ -33,7 +33,7 @@ test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor c
   expect(data.source).toBeTruthy();
   expect(data.rose.backgroundImage).toBe('none');
   expect(data.green.backgroundImage).toBe('none');
-  expect(data.rose.backgroundColor).toBe(data.green.backgroundColor);
+  expect(data.rose.backgroundColor).not.toBe(data.green.backgroundColor);
   expect(data.rose.border).not.toBe(data.green.border);
   expect(data.topImage).not.toContain('gradient');
   expect(data.topColor).toBeTruthy();
@@ -42,7 +42,7 @@ test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor c
   expect(data.navFill).not.toBe('rgba(0, 0, 0, 0)');
 });
 
-test('Black Smoked [G] · cursos, mapas e simulados com card preto e botoes tematicos',async({page})=>{
+test('Black Smoked [G] · cursos e simulados pretos, mapas coloridos, todos com botoes tematicos',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const actual=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -68,7 +68,8 @@ test('Black Smoked [G] · cursos, mapas e simulados com card preto e botoes tema
   for(const {name,rose,green} of actual){
     expect(rose.image).toBe('none');
     expect(green.image).toBe('none');
-    expect(rose.card).toBe(green.card);
+    if(name==='map')expect(rose.card).not.toBe(green.card);
+    else expect(rose.card).toBe(green.card);
     expect(rose.edge).not.toBe(green.edge);
     expect(rose.actionMatched).toBe(true);
     expect(rose.button,`Ação de ${name}: preenchimento ${rose.button} deve acompanhar a cor`).not.toBe(green.button);

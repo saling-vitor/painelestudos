@@ -1,14 +1,14 @@
 {
   "version": "15.48.164",
   "label": "V15.48.164-G",
-  "notes": "Black Smoked: todos os cards pretos; cor temática nas bordas e botões; menus ativos coloridos. Sem degradês.",
+  "notes": "Black Smoked uniforme: Meus Cursos e Simulados voltam ao preto; mapas e planejamento mantêm cor temática homogênea, sem degradês.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Todos os cards com fundo preto fumê uniforme, incluindo Meus Cursos, Todos os Mapas e Simulados",
-    "[G] Cores oficiais das capas preservadas em bordas, botões, indicadores e seleções de menu",
-    "[G] Removida a película cromática de fundo dos cards, sem alterar imagens, dados ou layouts",
-    "[G] Botões de ação com preenchimento temático uniforme; menus selecionados mantêm a cor da seção",
-    "[G] Compatibilidade Desktop/Tablet/Smartphone e cobertura de regressão para fundos e botões"
+    "[G] Meus Cursos e Simulados com fundo preto fumê uniforme, preservando as capas originais",
+    "[G] Cards dos mapas, retomada e planejamento preservam a cor temática homogênea, sem degradês",
+    "[G] Borda, botões e indicadores usam cores oficiais, sem tingir o fundo de Cursos e Simulados",
+    "[G] Menus e filtros ativos preservam cor temática; controles e dock mantêm transparência e acessibilidade",
+    "[G] Testes E2E para fundo preto em Cursos e Simulados e fundo colorido contextual nos mapas"
   ],
   "automation": {
     "enabled": true,

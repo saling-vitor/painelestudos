@@ -60,7 +60,8 @@ check(activeCssFiles.at(-1)==='assets/css/black-smoked-uniform-v15-48-163.css','
 const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
 check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(0,0,0,.92)'),'Black Smoked: tokens visuais sincronizados');
 check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
-check(!blackSmokedCss.includes('--mm-smoke-tint:'),'Cards pretos: camada tematica de fundo removida');
+check(blackSmokedCss.includes('--mm-smoke-tint:12%'),'Mapas e planejamento conservam cor tematica uniforme');
+check(blackSmokedCss.includes('--mm-card-surface:var(--mm-smoke-card-black)'),'Cursos e Simulados: fundo preto isolado por classe');
 check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
 
 check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
