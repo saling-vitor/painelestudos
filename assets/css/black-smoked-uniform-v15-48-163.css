@@ -151,8 +151,9 @@ html :is(.map-card,.course-card,.course-library-card,.simulation-card)
 }
 /* 04 · Navegacao: a secao ativa recebe uma camada uniforme. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
-html .bottom-nav>button[data-nav].active,
-html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]),
+html.is-ipad:not(.is-phone-layout) .app .bottom-nav>button[data-nav].active,
+html.is-phone-layout .app .bottom-nav>button[data-nav].active,
+html.is-phone-layout .app .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]),
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   --mm-uniform-tone:var(--nav-accent,#C8AF86);
   background:color-mix(in srgb,var(--mm-uniform-tone) 13%,var(--mm-smoke-ink))!important;
@@ -242,10 +243,8 @@ html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal
 
 /* Unificar também os fills internos de busca/sync, hoje vindos de
    camadas anteriores com seletores mais específicos. Sem gradientes. */
-html:not(.mm-reduced-transparency) .app .main .topbar .search,
-html:not(.mm-reduced-transparency) .app .main .topbar .search:focus-within,
-html:not(.mm-reduced-transparency) .app .main .topbar #syncTop,
-html:not(.mm-reduced-transparency) .app .main .topbar #installBtn,
+html:not(.mm-reduced-transparency) .app .main .topbar :is(.search,#syncTop,#installBtn),
+html:not(.mm-reduced-transparency) .app .main .topbar :is(.search,#syncTop,#installBtn):focus-within,
 html:not(.mm-reduced-transparency) .app .main .global-search-shell .search{
   background:rgba(0,0,0,.48)!important;
   background-image:none!important;
