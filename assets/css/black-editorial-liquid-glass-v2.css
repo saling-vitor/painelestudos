@@ -584,14 +584,5 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
   }
 }
 
-/* ==========================================================================
-   13 · HARD GUARD: CONTEÚDO NUNCA HERDA GLASS
-   ========================================================================== */
-.app .content :is(
-  .course-card,.course-library-card,.map-card,.simulation-card,
-  .progress-insight-card,.study-plan-item,.agenda-day,.panel,
-  .study-command-card,.continue-card,.home-review-section
-){
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
+/* V15.48.170-G: as superfícies principais são geridas exclusivamente
+   por black-smoked-uniform; não desativar aqui o filtro óptico dos cards. */
