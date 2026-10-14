@@ -6,7 +6,8 @@
 @media(min-width:1181px){
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
     --home-card-theme:var(--map-accent,#92979a)!important;
-    border-left:3px solid var(--home-card-theme)!important;
+    border-left:3px solid var(--map-accent,#92979a)!important;
+    border-left-color:var(--map-accent,#92979a)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .priority-now-card::before{
@@ -377,7 +378,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item.is-next{
   box-sizing:border-box!important;min-width:0!important;
   min-height:66px!important;margin:0!important;
   border:1px solid color-mix(in srgb,var(--mobile-plan-theme) 30%,#2b2d30)!important;
-  border-left:3px solid var(--mobile-plan-theme)!important;
+  border-left:1px solid var(--mobile-plan-theme)!important;
   border-radius:11px!important;
   background:linear-gradient(110deg,color-mix(in srgb,var(--mobile-plan-theme) 7%,#101114),#101114 75%)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
