@@ -1,13 +1,13 @@
 {
-  "version": "15.48.168",
-  "label": "V15.48.168-G",
-  "notes": "Black Editorial: publicação certificada com verificador de Pages atualizado para fundo preto, tingimento zero e tipografia marfim; visual V15.48.167-G preservado.",
+  "version": "15.48.169",
+  "label": "V15.48.169-G",
+  "notes": "Liquid Glass Black Smoked: vidro fumê preto translúcido em todos os cards e sidebar, cores apenas nas bordas, textos marfim e fallback acessível. Layout e capas preservados.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Preto uniforme em todos os cards de Mapas, Cursos, Simulados e Home, sem tint cromático",
-    "[G] Sidebar matte preta, com bordas e ícones temáticos",
-    "[G] Tipografia marfim e navegação neutra em Desktop, Tablet e Smartphone",
-    "[G] Corrigida a verificação automática do CSS publicado no GitHub Pages"
+    "[G] Todos os cards de Mapas, Cursos, Simulados e Home em vidro fumê preto translúcido",
+    "[G] Sidebar com o mesmo vidro fumê dos cards, item ativo preto e borda temática",
+    "[G] Cores temáticas restritas às bordas, símbolos e barras; texto marfim suave",
+    "[G] Desfoque real com fallback opaco para redução de transparência e testes E2E"
   ],
   "automation": {
     "enabled": true,
