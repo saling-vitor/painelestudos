@@ -397,6 +397,7 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current)
 /* V15.48.169-G · Acessibilidade e compatibilidade: nas preferências que
    reduzem transparência, os mesmos cards e sidebar tornam-se opacos. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  html.is-phone-layout #homeStudyDashboard .study-command-card,
   html .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
   html:not(.is-phone-layout) .app .side{
     background:#080808!important;
@@ -404,6 +405,7 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current)
     backdrop-filter:none!important;
   }
 }
+html.mm-reduced-transparency.is-phone-layout #homeStudyDashboard .study-command-card,
 html.mm-reduced-transparency .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
 html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
   background:#080808!important;
@@ -411,6 +413,7 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
   backdrop-filter:none!important;
 }
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  html.is-phone-layout #homeStudyDashboard .study-command-card,
   html .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
   html:not(.is-phone-layout) .app .side{
     background:#080808!important;
