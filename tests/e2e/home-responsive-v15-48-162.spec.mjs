@@ -37,9 +37,9 @@ test('Prioridade Desktop [D] · uma única borda cromática, sem faixa amarela',
   const result=await page.locator(selector).evaluate(el=>{
     el.style.setProperty('--map-accent','#c88469');
     const s=getComputedStyle(el),pseudo=getComputedStyle(el,'::before');
-    return{before:pseudo.content,display:pseudo.display,border:s.borderLeftColor,borderWidth:s.borderLeftWidth,boxShadow:s.boxShadow};
+    return{before:pseudo.content,display:pseudo.display,border:s.borderLeftColor,borderWidth:s.borderLeftWidth,boxShadow:s.boxShadow,mapAccent:s.getPropertyValue('--map-accent'),theme:s.getPropertyValue('--home-card-theme'),classes:document.documentElement.className,viewport:innerWidth,inline:el.getAttribute('style'),matchesDesktop:el.matches('html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card'),cssLoaded:[...document.styleSheets].some(x=>String(x.href||'').includes('home-responsive-v15-48-162.css'))};
   });
   expect(result.display).toBe('none');
-  expect(result.border).toBe('rgb(200, 132, 105)');
+  expect(result.border,JSON.stringify(result)).toBe('rgb(200, 132, 105)');
   expect(parseFloat(result.borderWidth)).toBeGreaterThanOrEqual(3);
 });
