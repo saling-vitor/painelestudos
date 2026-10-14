@@ -58,19 +58,20 @@ test('Black Smoked [G] · cursos, mapas e simulados com card preto e botoes tema
       slot.append(button);el.append(slot);host.append(el);
       const read=()=>{
         const c=getComputedStyle(el),b=getComputedStyle(button);
-        return{card:c.backgroundColor,image:c.backgroundImage,edge:c.borderTopColor,button:b.backgroundColor,ink:b.color};
+        return{card:c.backgroundColor,image:c.backgroundImage,edge:c.borderTopColor,button:b.backgroundColor,ink:b.color,buttonBorder:b.borderTopColor,actionMatched:button.matches('html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item) :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation])')};
       };
       el.style.setProperty(token,'#B8829E');const rose=read();
       el.style.setProperty(token,'#79A98B');const green=read();el.remove();
       return{name,rose,green};
     });
   });
-  for(const {rose,green} of actual){
+  for(const {name,rose,green} of actual){
     expect(rose.image).toBe('none');
     expect(green.image).toBe('none');
     expect(rose.card).toBe(green.card);
     expect(rose.edge).not.toBe(green.edge);
-    expect(rose.button).not.toBe(green.button);
+    expect(rose.actionMatched).toBe(true);
+    expect(rose.button,`Ação de ${name}: preenchimento ${rose.button} deve acompanhar a cor`).not.toBe(green.button);
     expect(rose.ink).not.toBe(green.ink);
   }
 });
