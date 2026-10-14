@@ -382,7 +382,7 @@ html.is-phone-layout #homeReviewSection .study-plan-item.is-next{
   border:1px solid color-mix(in srgb,var(--mobile-plan-theme) 30%,#2b2d30)!important;
   border-left:1px solid var(--mobile-plan-theme)!important;
   border-radius:11px!important;
-  background:linear-gradient(110deg,color-mix(in srgb,var(--mobile-plan-theme) 7%,#101114),#101114 75%)!important;
+  background:var(--mm-smoke-card-black)!important;
   box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
 }
 html.is-phone-layout #homeReviewSection .study-plan-cover img{
