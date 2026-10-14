@@ -211,6 +211,8 @@ test('V15.48.170-G [G] · reduzir transparência restaura fundo opaco nos cards'
    Executado em desktop, iPad Chromium, iPad WebKit e iPhone WebKit.
    Capturas são anexadas para revisão visual do acabamento em cada viewport. */
 test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e capas intactas',async({page},testInfo)=>{
+  // Capturas e rolagens de três telas reais são intencionalmente mais custosas no WebKit.
+  test.setTimeout(120000);
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   // Ambiente E2E sem conta: alimenta o ESTADO REAL do app com mapas do catálogo,
   // sem injetar cards artificiais, sem gravar no banco e sem alterar dados pessoais.
