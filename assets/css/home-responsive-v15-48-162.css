@@ -9,6 +9,8 @@
     border-left:3px solid var(--map-accent,#92979a)!important;
     border-left-color:var(--map-accent,#92979a)!important;
     box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
+    /* Nunca interpolar a cor de borda legada: a cor deve ser a do mapa imediatamente. */
+    transition:none!important;animation:none!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .priority-now-card::before{
     content:none!important;display:none!important;background:none!important;
