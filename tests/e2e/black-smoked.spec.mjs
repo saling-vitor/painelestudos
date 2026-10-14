@@ -20,12 +20,15 @@ test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor c
     const green=capture();
     map.remove();
     const top=getComputedStyle(document.querySelector('.topbar'));
-    const active=document.querySelector('.side .nav-btn.active,.bottom-nav>button.active');
+    // No smartphone a sidebar continua no DOM, mas fica oculta.
+    // O teste deve medir o item que o usuário efetivamente visualiza.
+    const active=[...document.querySelectorAll('.side .nav-btn.active,.bottom-nav>button.active')]
+      .find(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
     const nav=active?getComputedStyle(active):null;
     const source=[...document.styleSheets].some(sheet=>{
       try{return !!sheet.href&&sheet.href.includes('black-smoked-uniform-v15-48-163.css')}catch{return false}
     });
-    return{rose,green,topColor:top.backgroundColor,topImage:top.backgroundImage,navImage:nav?.backgroundImage,source};
+    return{rose,green,topColor:top.backgroundColor,topImage:top.backgroundImage,navImage:nav?.backgroundImage,navFill:nav?.backgroundColor,hasActive:!!active,source};
   });
   expect(data.source).toBeTruthy();
   expect(data.rose.backgroundImage).toBe('none');
@@ -33,5 +36,7 @@ test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor c
   expect(data.rose.backgroundColor).not.toBe(data.green.backgroundColor);
   expect(data.topImage).not.toContain('gradient');
   expect(data.topColor).toBeTruthy();
-  if(data.navImage!==undefined)expect(data.navImage).not.toContain('gradient');
+  expect(data.hasActive).toBe(true);
+  expect(data.navImage).not.toContain('gradient');
+  expect(data.navFill).not.toBe('rgba(0, 0, 0, 0)');
 });
