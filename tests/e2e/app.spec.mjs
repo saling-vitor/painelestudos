@@ -5439,7 +5439,7 @@ test('V15.48.155 [D] popovers herdam a cor do mapa selecionado',async({page},tes
   expect(priority.blur).toContain('blur(');
   await modal.locator('[data-priority-why-close]').click();
 });
-test('V15.48.155 [D] plano diário usa capa inteira e cor individual por mapa',async({page},testInfo)=>{
+test('V15.48.170 [D] plano diário preserva capas e bordas sem gradiente no fundo',async({page},testInfo)=>{
   test.skip(testInfo.project.name!=='desktop-chromium','Cores e miniaturas específicas do Desktop');
   await page.setViewportSize({width:1600,height:900});
   await page.goto('/#home');
@@ -5459,7 +5459,7 @@ test('V15.48.155 [D] plano diário usa capa inteira e cor individual por mapa',a
       before,after,bg:getComputedStyle(el).backgroundImage};
   }));
   expect(results.every(x=>x.fit==='contain')).toBe(true);
-  expect(results.every(x=>!!x.cover&&x.bg.includes('gradient'))).toBe(true);
+  expect(results.every(x=>!!x.cover&&x.bg==='none')).toBe(true);
   expect(results.every(x=>x.before!==x.after)).toBe(true);
   expect(results[0].after).not.toBe(results[1].after);
 });
