@@ -40,6 +40,10 @@ test('Prioridade Desktop [D] · uma única borda cromática, sem faixa amarela',
     return{before:pseudo.content,display:pseudo.display,border:s.borderLeftColor,borderWidth:s.borderLeftWidth,boxShadow:s.boxShadow,mapAccent:s.getPropertyValue('--map-accent'),theme:s.getPropertyValue('--home-card-theme'),classes:document.documentElement.className,viewport:innerWidth,inline:el.getAttribute('style'),matchesDesktop:el.matches('html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card'),cssLoaded:[...document.styleSheets].some(x=>String(x.href||'').includes('home-responsive-v15-48-162.css'))};
   });
   expect(result.display).toBe('none');
-  expect(result.border,JSON.stringify(result)).toBe('rgb(200, 132, 105)');
+  // Verifica a cor efetivamente pintada (não apenas o token), após estabilizar a cascata.
+  // Um border-color legado transiente não deve prevalecer sobre a identidade do mapa.
+  await expect.poll(async()=>page.locator(selector).evaluate(el=>getComputedStyle(el).borderLeftColor),{
+    timeout:5000,message:'Borda temática Desktop: '+JSON.stringify(result)
+  }).toBe('rgb(200, 132, 105)');
   expect(parseFloat(result.borderWidth)).toBeGreaterThanOrEqual(3);
 });
