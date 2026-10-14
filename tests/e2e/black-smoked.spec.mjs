@@ -232,6 +232,8 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
   await expect(priority).toBeVisible();
   await expect(today).toBeVisible();
   await expect(rows.first()).toBeVisible();
+  // O WebKit pode montar os cards antes de concluir a imagem após o seed.
+  await expect.poll(()=>today.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0),{timeout:12000}).toBe(true);
   const home=await page.evaluate(()=>{
     const surface=node=>{
       const style=getComputedStyle(node);
