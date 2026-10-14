@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 
-/* V15.48.167-G · Conjunto optico global sem depender de login ou dados locais.
+/* V15.48.169-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
 test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
@@ -38,6 +38,7 @@ test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async(
   expect(data.rose.backgroundColor).toBe(data.green.backgroundColor);
   expect(data.rose.backgroundColor).toMatch(/rgba?\(0,\s*0,\s*0/);
   expect(data.rose.border).not.toBe(data.green.border);
+  expect(data.rose.filter).toContain('blur(');
   expect(data.topImage).not.toContain('gradient');
   expect(data.topColor).toBeTruthy();
   expect(data.hasActive).toBe(true);
@@ -67,7 +68,7 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
       slot.append(button);el.append(slot);host.append(el);
       const read=()=>{
         const c=getComputedStyle(el),b=getComputedStyle(button);
-        return{card:c.backgroundColor,image:c.backgroundImage,edge:c.borderTopColor,button:b.backgroundColor,ink:b.color,buttonBorder:b.borderTopColor,actionMatched:button.matches('html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item) :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation])')};
+        return{card:c.backgroundColor,image:c.backgroundImage,blur:c.backdropFilter||c.webkitBackdropFilter,edge:c.borderTopColor,button:b.backgroundColor,ink:b.color,buttonBorder:b.borderTopColor,actionMatched:button.matches('html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item) :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation])')};
       };
       el.style.setProperty(token,'#B8829E');const rose=read();
       el.style.setProperty(token,'#79A98B');const green=read();el.remove();
@@ -76,6 +77,7 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
   });
   for(const {name,rose,green} of actual){
     expect(rose.image).toBe('none');
+    expect(rose.blur,name+' deve ser vidro fumê').toContain('blur(');
     expect(green.image).toBe('none');
     expect(rose.card).toBe(green.card);
     expect(rose.card).toMatch(/rgba?\(0,\s*0,\s*0/);
@@ -87,7 +89,7 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
 });
 
 
-test('V15.48.166-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
+test('V15.48.169-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof courseCard==='function'&&typeof simulationCard==='function');
   const result=await page.evaluate(()=>{
@@ -126,13 +128,13 @@ test('V15.48.166-G [G] · renderizadores reais de curso e simulado usam fundo pr
     expect(item.rose.bg,item.name+' deve permanecer preto').toBe(item.green.bg);
     expect(item.rose.image,item.name+' não pode ter degradê').toBe('none');
     expect(item.green.image,item.name+' não pode ter degradê').toBe('none');
-    expect(item.rose.blur,item.name+' deve ser MATTE, não empilhar filtros').toBe('none');
+    expect(item.rose.blur,item.name+' usa vidro fumê real').toContain('blur(');
     if(item.innerImage!==null)expect(item.innerImage,item.name+' chip interno').toBe('none');
   }
 });
 
 
-test('V15.48.166-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
+test('V15.48.169-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const result=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -146,7 +148,7 @@ test('V15.48.166-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
       const style=getComputedStyle(node);
       const h=getComputedStyle(node.querySelector('h3'));
       const p=getComputedStyle(node.querySelector('p'));
-      const output={background:style.backgroundColor,image:style.backgroundImage,
+      const output={background:style.backgroundColor,image:style.backgroundImage,blur:style.backdropFilter||style.webkitBackdropFilter,
         border:style.borderTopColor,title:h.color,body:p.color};
       node.remove();return output;
     };
@@ -157,12 +159,13 @@ test('V15.48.166-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
     const side=getComputedStyle(document.querySelector('.side'));
     const nav=document.querySelector('.side .nav-btn[data-nav].active');
     const selected=nav?getComputedStyle(nav):null;
-    return{cards,side:{bg:side.backgroundColor,image:side.backgroundImage},
+    return{cards,side:{bg:side.backgroundColor,image:side.backgroundImage,blur:side.backdropFilter||side.webkitBackdropFilter},
       selected:selected?{bg:selected.backgroundColor,image:selected.backgroundImage}:null,
       isPhone:document.documentElement.classList.contains('is-phone-layout')};
   });
   for(const {name,rose,green} of result.cards){
     expect(rose.background,name+' precisa ser preto').toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(rose.blur,name+' precisa usar blur no vidro fumê').toContain('blur(');
     expect(rose.background,name+' preto não depende do HEX').toBe(green.background);
     expect(rose.image,name+' sem gradiente de cor').toBe('none');
     expect(green.image,name+' sem gradiente de cor').toBe('none');
@@ -171,10 +174,30 @@ test('V15.48.166-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
   }
   if(!result.isPhone){
     expect(result.side.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(result.side.blur).toContain('blur(');
     expect(result.side.image).toBe('none');
     if(result.selected){
       expect(result.selected.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
       expect(result.selected.image).toBe('none');
     }
   }
+});
+
+
+test('V15.48.169-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  const data=await page.evaluate(()=>{
+    const node=document.createElement('article');node.className='map-card';
+    document.querySelector('.app .content').append(node);
+    document.documentElement.classList.add('mm-reduced-transparency');
+    const card=getComputedStyle(node),side=getComputedStyle(document.querySelector('.side'));
+    const result={cardBg:card.backgroundColor,cardBlur:card.backdropFilter||card.webkitBackdropFilter,
+      sideBg:side.backgroundColor,sideBlur:side.backdropFilter||side.webkitBackdropFilter};
+    node.remove();document.documentElement.classList.remove('mm-reduced-transparency');
+    return result;
+  });
+  expect(data.cardBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
+  expect(data.cardBlur).toBe('none');
+  expect(data.sideBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
+  expect(data.sideBlur).toBe('none');
 });
