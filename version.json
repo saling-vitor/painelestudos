@@ -1,13 +1,13 @@
 {
-  "version": "15.48.167",
-  "label": "V15.48.167-G",
-  "notes": "Preto uniforme em todos os cards e sidebar; marfim suave consistente também na navegação Desktop/iPad/iPhone, mantendo cores temáticas apenas nas bordas, símbolos e indicadores.",
+  "version": "15.48.168",
+  "label": "V15.48.168-G",
+  "notes": "Black Editorial: publicação certificada com verificador de Pages atualizado para fundo preto, tingimento zero e tipografia marfim; visual V15.48.167-G preservado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cards de Mapas, Cursos, Simulados e Home em preto uniforme, sem fundo tingido",
-    "[G] Sidebar matte preta e item ativo com borda e ícone temáticos",
-    "[G] Tipografia marfim, incluindo opções inativas da navegação em todos os dispositivos",
-    "[G] Testes automatizados compatíveis com o novo padrão Black Editorial"
+    "[G] Preto uniforme em todos os cards de Mapas, Cursos, Simulados e Home, sem tint cromático",
+    "[G] Sidebar matte preta, com bordas e ícones temáticos",
+    "[G] Tipografia marfim e navegação neutra em Desktop, Tablet e Smartphone",
+    "[G] Corrigida a verificação automática do CSS publicado no GitHub Pages"
   ],
   "automation": {
     "enabled": true,
