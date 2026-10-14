@@ -4,14 +4,14 @@
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
 :root{
   --mm-smoke-opacity:.84;
-  --mm-smoke-card-black:rgba(0,0,0,.78);
+  --mm-smoke-card-black:rgba(0,0,0,.58);
   --mm-smoke-tint:0%;
   --mm-smoke-ink:rgba(0,0,0,var(--mm-smoke-opacity));
-  --mm-smoke-neutral:rgba(0,0,0,.78);
+  --mm-smoke-neutral:rgba(0,0,0,.34);
   --mm-smoke-edge:rgba(255,255,255,.20);
-  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.13);
+  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.16);
   --mm-smoke-filter:blur(18px) saturate(112%) contrast(105%);
-  --mm-smoke-card-filter:blur(12px) saturate(108%);
+  --mm-smoke-card-filter:blur(12px) saturate(105%);
   --mm-smoke-default:#A8A8A8;
   --mm-ivory-strong:#EEE9E0;
   --mm-ivory-body:#CFC8BC;
@@ -53,8 +53,9 @@ html .app .content :is(.study-command-card,.study-now-card,.forecast-home-card){
 html .app .content :is(.progress-course,.progress-global-panel,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel){
   --mm-uniform-tone:var(--course-accent,var(--map-accent,var(--mm-smoke-default)));
 }
-/* 02 · Um preenchimento solido e uniforme. Nunca pintar um gradiente
-   tematico por cima da imagem, nem substituir as capas originais. */
+/* 02 · Um único material preto fumê de 58%: sem gradiente temático.
+   Painéis estruturantes usam 34% para evitar glass sobre glass escuro.
+   Não alterar capas e seus overlays fotográficos de legibilidade. */
 html .app .content :is(
   .study-plan-item,.study-command-card,.study-now-card,.priority-now-card,
   .forecast-home-card,.continue-card,.simulation-recent-item,
@@ -394,7 +395,7 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current)
 }
 
 
-/* V15.48.169-G · Acessibilidade e compatibilidade: nas preferências que
+/* V15.48.170-G · Acessibilidade e compatibilidade: nas preferências que
    reduzem transparência, os mesmos cards e sidebar tornam-se opacos. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
   html.is-phone-layout #homeStudyDashboard .study-command-card,
