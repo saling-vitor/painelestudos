@@ -1,8 +1,8 @@
 import {test,expect} from '@playwright/test';
 
-/* V15.48.164-G · Conjunto optico global sem depender de login ou dados locais.
+/* V15.48.166-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
-test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor contextual',async({page})=>{
+test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await expect(page.locator('.topbar')).toBeVisible();
   const data=await page.evaluate(()=>{
@@ -33,7 +33,8 @@ test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor c
   expect(data.source).toBeTruthy();
   expect(data.rose.backgroundImage).toBe('none');
   expect(data.green.backgroundImage).toBe('none');
-  expect(data.rose.backgroundColor).not.toBe(data.green.backgroundColor);
+  expect(data.rose.backgroundColor).toBe(data.green.backgroundColor);
+  expect(data.rose.backgroundColor).toMatch(/rgba?\(0,\s*0,\s*0/);
   expect(data.rose.border).not.toBe(data.green.border);
   expect(data.topImage).not.toContain('gradient');
   expect(data.topColor).toBeTruthy();
@@ -42,7 +43,7 @@ test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor c
   expect(data.navFill).not.toBe('rgba(0, 0, 0, 0)');
 });
 
-test('Black Smoked [G] · cursos e simulados pretos, mapas coloridos, todos com botoes tematicos',async({page})=>{
+test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const actual=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -68,17 +69,17 @@ test('Black Smoked [G] · cursos e simulados pretos, mapas coloridos, todos com 
   for(const {name,rose,green} of actual){
     expect(rose.image).toBe('none');
     expect(green.image).toBe('none');
-    if(name==='map')expect(rose.card).not.toBe(green.card);
-    else expect(rose.card).toBe(green.card);
+    expect(rose.card).toBe(green.card);
+    expect(rose.card).toMatch(/rgba?\(0,\s*0,\s*0/);
     expect(rose.edge).not.toBe(green.edge);
     expect(rose.actionMatched).toBe(true);
-    expect(rose.button,`Ação de ${name}: preenchimento ${rose.button} deve acompanhar a cor`).not.toBe(green.button);
+    expect(rose.button,`Ação de ${name}: fundo preto invariável`).toBe(green.button);
     expect(rose.ink).not.toBe(green.ink);
   }
 });
 
 
-test('V15.48.165-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
+test('V15.48.166-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof courseCard==='function'&&typeof simulationCard==='function');
   const result=await page.evaluate(()=>{
@@ -119,5 +120,53 @@ test('V15.48.165-G [G] · renderizadores reais de curso e simulado usam fundo pr
     expect(item.green.image,item.name+' não pode ter degradê').toBe('none');
     expect(item.rose.blur,item.name+' deve ser MATTE, não empilhar filtros').toBe('none');
     if(item.innerImage!==null)expect(item.innerImage,item.name+' chip interno').toBe('none');
+  }
+});
+
+
+test('V15.48.166-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  const result=await page.evaluate(()=>{
+    const host=document.querySelector('.app .content');
+    const sample=(cls,tone)=>{
+      const node=document.createElement('article');node.className=cls;
+      node.innerHTML='<h3>Texto principal</h3><p>Texto secundário</p>';
+      node.style.setProperty('--map-accent',tone);
+      node.style.setProperty('--continue-accent',tone);
+      node.style.setProperty('--home-card-theme',tone);
+      host.append(node);
+      const style=getComputedStyle(node);
+      const h=getComputedStyle(node.querySelector('h3'));
+      const p=getComputedStyle(node.querySelector('p'));
+      const output={background:style.backgroundColor,image:style.backgroundImage,
+        border:style.borderTopColor,title:h.color,body:p.color};
+      node.remove();return output;
+    };
+    const names=['map-card','study-plan-item','priority-now-card','study-now-card','forecast-home-card','continue-card'];
+    const cards=names.map(name=>({
+      name,rose:sample(name,'#b8829e'),green:sample(name,'#79a98b')
+    }));
+    const side=getComputedStyle(document.querySelector('.side'));
+    const nav=document.querySelector('.side .nav-btn[data-nav].active');
+    const selected=nav?getComputedStyle(nav):null;
+    return{cards,side:{bg:side.backgroundColor,image:side.backgroundImage},
+      selected:selected?{bg:selected.backgroundColor,image:selected.backgroundImage}:null,
+      isPhone:document.documentElement.classList.contains('is-phone-layout')};
+  });
+  for(const {name,rose,green} of result.cards){
+    expect(rose.background,name+' precisa ser preto').toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(rose.background,name+' preto não depende do HEX').toBe(green.background);
+    expect(rose.image,name+' sem gradiente de cor').toBe('none');
+    expect(green.image,name+' sem gradiente de cor').toBe('none');
+    expect(rose.border,name+' precisa conservar cor temática').not.toBe(green.border);
+    expect(rose.title,name+' texto não muda com o HEX').toBe(green.title);
+  }
+  if(!result.isPhone){
+    expect(result.side.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(result.side.image).toBe('none');
+    if(result.selected){
+      expect(result.selected.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+      expect(result.selected.image).toBe('none');
+    }
   }
 });
