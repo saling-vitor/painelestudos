@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
+import {mkdirSync} from 'node:fs';
 
-/* V15.48.169-G · Conjunto optico global sem depender de login ou dados locais.
+/* V15.48.170-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
 test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
@@ -89,7 +90,7 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
 });
 
 
-test('V15.48.169-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
+test('V15.48.170-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof courseCard==='function'&&typeof simulationCard==='function');
   const result=await page.evaluate(()=>{
@@ -134,7 +135,7 @@ test('V15.48.169-G [G] · renderizadores reais de curso e simulado usam fundo pr
 });
 
 
-test('V15.48.169-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
+test('V15.48.170-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const result=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -185,7 +186,7 @@ test('V15.48.169-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
 });
 
 
-test('V15.48.169-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
+test('V15.48.170-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const data=await page.evaluate(()=>{
     const node=document.createElement('article');node.className='map-card';
@@ -203,4 +204,126 @@ test('V15.48.169-G [G] · reduzir transparência restaura fundo opaco nos cards'
     expect(data.sideBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
     expect(data.sideBlur).toBe('none');
   }
+});
+
+
+/* V15.48.170-G · Auditoria dos elementos VISÍVEIS e não apenas cards artificiais.
+   Executado em desktop, iPad Chromium, iPad WebKit e iPhone WebKit.
+   Capturas são anexadas para revisão visual do acabamento em cada viewport. */
+test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e capas intactas',async({page},testInfo)=>{
+  // Capturas e rolagens de três telas reais são intencionalmente mais custosas no WebKit.
+  test.setTimeout(120000);
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  // Ambiente E2E sem conta: alimenta o ESTADO REAL do app com mapas do catálogo,
+  // sem injetar cards artificiais, sem gravar no banco e sem alterar dados pessoais.
+  await page.evaluate(async()=>{
+    const response=await fetch('./data/catalog.json',{cache:'no-store'});
+    if(!response.ok)throw new Error('Catálogo local indisponível no teste');
+    const catalog=await response.json();
+    const maps=(catalog.maps||[]).filter(m=>m.courseId==='porto-alegre').slice(0,5);
+    if(maps.length<3)throw new Error('Catálogo precisa fornecer mapas reais ao teste');
+    state.catalog.maps=catalog.maps;
+    state.cloudCourses=[{id:'porto-alegre',title:'DEMHAB',subtitle:'Arquiteto e Urbanista',board:'FUNDATEC',status:'active',maps:maps.length}];
+    state.cloudMaps=maps.map(m=>({...m,_key:mapKey(m)}));
+    StudyCloud.session=()=>({user:{id:'visual-audit-e2e'}});
+    renderHome();
+    if(window.StudyCoach?.renderHome)StudyCoach.renderHome();
+    // A modal de novidades não deve ocultar a auditoria do conteúdo real.
+    if(typeof dismissWhatsNew==='function')dismissWhatsNew();
+    else document.querySelector('#whatsNewModal')?.classList.remove('open');
+    localStorage.setItem('studyapp.lastSeenVersion',APP_VERSION);
+  });
+  await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
+  const priority=page.locator('#homeStudyDashboard .priority-now-card');
+  const today=page.locator('#homeStudyDashboard .study-command-card');
+  const rows=page.locator('#homeReviewSection .study-plan-item.has-map-accent');
+  await expect(priority).toBeVisible();
+  await expect(today).toBeVisible();
+  await expect(rows.first()).toBeVisible();
+  // O WebKit pode montar os cards antes de concluir a imagem após o seed.
+  await expect.poll(()=>today.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0),{timeout:12000}).toBe(true);
+  const home=await page.evaluate(()=>{
+    const surface=node=>{
+      const style=getComputedStyle(node);
+      const background=style.backgroundColor;
+      const image=style.backgroundImage;
+      const blur=style.backdropFilter||style.webkitBackdropFilter||'none';
+      const edge=style.borderLeftColor;
+      const alpha=Number((background.match(/rgba?\(\s*\d+,\s*\d+,\s*\d+,\s*([\d.]+)\)/)||[])[1]||1);
+      return{background,image,blur,edge,alpha};
+    };
+    const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
+    const today=document.querySelector('#homeStudyDashboard .study-command-card');
+    const rows=[...document.querySelectorAll('#homeReviewSection .study-plan-item.has-map-accent')].slice(0,3);
+    const probe=node=>{
+      const previous=node.style.getPropertyValue('--map-accent');
+      const first=surface(node);
+      node.style.setProperty('--map-accent','#73AC91');
+      const second=surface(node);
+      if(previous)node.style.setProperty('--map-accent',previous);
+      else node.style.removeProperty('--map-accent');
+      return{first,second};
+    };
+    const image=today.querySelector('.study-command-art img');
+    return{priority:probe(priority),today:surface(today),rows:rows.map(probe),
+      cover:image?{complete:image.complete,naturalWidth:image.naturalWidth}:null,
+      panel:surface(document.querySelector('#homeReviewSection'))};
+  });
+  const assertNeutral=(entry,name)=>{
+    expect(entry.image,name+' deve ser preenchimento uniforme').toBe('none');
+    expect(entry.background,name+' deve ser preto neutro').toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(entry.alpha,name+' deve deixar o fundo visível').toBeLessThan(.72);
+    expect(entry.blur,name+' precisa de vidro óptico').toContain('blur(');
+  };
+  assertNeutral(home.priority.first,'Prioridade agora');
+  assertNeutral(home.today,'Hoje · Estude agora');
+  // O foco é impedir que o HEX invada o fundo; reatividade da borda em E2E isolado
+  // já é verificada pelos testes de acento e pode completar assincronamente no WebKit.
+  expect(home.priority.first.background).toBe(home.priority.second.background);
+  expect(home.rows.length).toBeGreaterThanOrEqual(2);
+  for(const [index,row] of home.rows.entries()){
+    assertNeutral(row.first,'Plano diário '+(index+1));
+    expect(row.first.background).toBe(row.second.background);
+  }
+  expect(home.panel.alpha).toBeLessThan(.50);
+  expect(home.cover?.naturalWidth,'a imagem do card Hoje deve carregar').toBeGreaterThan(0);
+  mkdirSync('visual-audit',{recursive:true});
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-home.png',animations:'disabled'});
+  await rows.first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-plano.png',animations:'disabled'});
+
+  await page.evaluate(()=>nav('maps'));
+  const maps=page.locator('#allMaps .map-card');
+  await expect(maps.first()).toBeVisible({timeout:12000});
+  const library=await maps.first().evaluate(node=>{
+    const style=getComputedStyle(node);
+    const cover=node.querySelector('.map-cover img');
+    return{background:style.backgroundColor,image:style.backgroundImage,
+      blur:style.backdropFilter||style.webkitBackdropFilter||'none',
+      coverPresent:!!cover,coverSrc:cover?.getAttribute('src')||''};
+  });
+  expect(library.background).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(library.image).toBe('none');
+  expect(library.blur).toContain('blur(');
+  expect(library.coverPresent).toBe(true);
+  expect(library.coverSrc).not.toBe('');
+  await maps.first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-mapas.png',animations:'disabled'});
+
+  await page.evaluate(()=>openCourse('porto-alegre'));
+  const inCourse=page.locator('#courseMaps .map-card.has-cover');
+  await expect(inCourse.first()).toBeVisible({timeout:12000});
+  const courseStyle=await inCourse.first().evaluate(node=>{
+    const css=getComputedStyle(node);
+    const cover=node.querySelector('.map-cover img');
+    return{bg:css.backgroundColor,image:css.backgroundImage,
+      blur:css.backdropFilter||css.webkitBackdropFilter||'none',
+      coverSrc:cover?.getAttribute('src')||''};
+  });
+  expect(courseStyle.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(courseStyle.image).toBe('none');
+  expect(courseStyle.blur).toContain('blur(');
+  expect(courseStyle.coverSrc).not.toBe('');
+  await inCourse.first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-curso.png',animations:'disabled'});
 });

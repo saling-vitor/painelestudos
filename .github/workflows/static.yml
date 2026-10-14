@@ -87,6 +87,15 @@ jobs:
       - name: Browser E2E — Desktop Chromium
         run: npx playwright test --project=desktop-chromium
 
+      - name: Upload visual audit screenshots — Desktop
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: black-smoked-visual-desktop-${{ github.run_id }}
+          path: visual-audit/*.png
+          if-no-files-found: error
+          retention-days: 10
+
       - name: Upload Playwright failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -126,6 +135,15 @@ jobs:
 
       - name: Browser E2E — iPad
         run: npx playwright test --project=ipad
+
+      - name: Upload visual audit screenshots — iPad
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: black-smoked-visual-ipad-${{ github.run_id }}
+          path: visual-audit/*.png
+          if-no-files-found: error
+          retention-days: 10
 
       - name: Upload Playwright failure artifacts
         if: failure()
@@ -167,6 +185,15 @@ jobs:
       - name: Browser E2E — iPad WebKit
         run: npx playwright test --project=ipad-webkit
 
+      - name: Upload visual audit screenshots — iPad WebKit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: black-smoked-visual-ipad-webkit-${{ github.run_id }}
+          path: visual-audit/*.png
+          if-no-files-found: error
+          retention-days: 10
+
       - name: Upload Playwright failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -206,6 +233,15 @@ jobs:
 
       - name: Browser E2E — iPhone WebKit
         run: npx playwright test --project=iphone-webkit
+
+      - name: Upload visual audit screenshots — iPhone
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: black-smoked-visual-iphone-${{ github.run_id }}
+          path: visual-audit/*.png
+          if-no-files-found: error
+          retention-days: 10
 
       - name: Upload Playwright failure artifacts
         if: failure()
@@ -288,12 +324,12 @@ jobs:
             # Confere o CSS efetivamente servido, não apenas o número da versão.
             glass_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/button-glass-v15-36-15.css?v=$expected&t=$stamp" || true)"
             smoked_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/black-smoked-uniform-v15-48-163.css?v=$expected&t=$stamp" || true)"
-            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"black-smoked-uniform-v15-48-163.css?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.78)"* ]] && [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-filter:blur(12px) saturate(108%)"* ]] && [[ "$smoked_css" == *"--mm-ivory-strong:#EEE9E0"* ]]; then
+            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"black-smoked-uniform-v15-48-163.css?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.58)"* ]] && [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-filter:blur(12px) saturate(105%)"* ]] && [[ "$smoked_css" == *"--mm-ivory-strong:#EEE9E0"* ]]; then
               echo "✓ GitHub Pages público está em $actual"
               echo "✓ Black Editorial: vidro fume real, preto neutro, tingimento zero e marfim publicados"
               exit 0
             fi
-            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível} | html=$( [[ "$index_body" == *"app.js?v=$expected"* ]] && echo ok || echo pendente ) | css=$( [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.78)"* ]] && echo ok || echo pendente )"
+            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível} | html=$( [[ "$index_body" == *"app.js?v=$expected"* ]] && echo ok || echo pendente ) | css=$( [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(0,0,0,.58)"* ]] && echo ok || echo pendente )"
             sleep 10
           done
           echo "::error::O GitHub Pages não serviu a versão $expected dentro do prazo."

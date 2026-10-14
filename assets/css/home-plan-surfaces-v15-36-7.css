@@ -76,8 +76,7 @@
 .home-review-section .study-plan-item.is-next{
   margin:0!important;
   border-radius:8px!important;
-  background:
-    linear-gradient(90deg,color-mix(in srgb,var(--map-accent,var(--plan-accent)) 7%,transparent),rgba(255,255,255,.010) 58%,transparent)!important;
+  background:var(--mm-smoke-card-black)!important;
   box-shadow:
     inset 2px 0 color-mix(in srgb,var(--map-accent,var(--plan-accent)) 54%,transparent),
     inset 0 1px rgba(255,255,255,.012)!important;
@@ -185,9 +184,7 @@ html.is-phone-layout .home-review-section .study-plan-item{
 html.is-phone-layout .home-review-section .study-plan-item.is-next{
   border-color:rgba(255,255,255,.072)!important;
   border-color:color-mix(in srgb,var(--map-accent,var(--plan-accent)) 24%,rgba(255,255,255,.065))!important;
-  background:
-    radial-gradient(280px 100px at 0 0,color-mix(in srgb,var(--map-accent,var(--plan-accent)) 6%,transparent),transparent 76%),
-    linear-gradient(145deg,rgba(255,255,255,.017),rgba(255,255,255,.006))!important;
+  background:var(--mm-smoke-card-black)!important;
   box-shadow:
     inset 2px 0 color-mix(in srgb,var(--map-accent,var(--plan-accent)) 48%,transparent),
     inset 0 1px rgba(255,255,255,.012)!important;
