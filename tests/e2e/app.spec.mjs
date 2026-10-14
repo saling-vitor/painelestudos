@@ -980,6 +980,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
       syncing,
       activeBackground:getComputedStyle(active).backgroundImage,
       activeColor:getComputedStyle(active).backgroundColor,
+      sidebarFill:getComputedStyle(document.querySelector('.side')).backgroundColor,
       activeMarkerWidth:activeBefore.width,
       countDisplay:getComputedStyle(count).display,
       searchHeight:search.getBoundingClientRect().height,
@@ -998,7 +999,8 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.synced.bg).not.toMatch(/114,\s*201,\s*149/);
   expect(visual.syncing.animation).toContain('cloudSyncStatusPulse');
   expect(visual.activeBackground).not.toContain('gradient');
-  expect(visual.activeColor).not.toBe('rgba(0, 0, 0, 0)');
+  // O item ativo pode ser transparente: o preto visivel vem da sidebar.
+  expect(visual.activeColor==='rgba(0, 0, 0, 0)'?visual.sidebarFill:visual.activeColor).toMatch(/rgba?\(0,\s*0,\s*0/);
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.topbarBackdrop).not.toBe('none');
