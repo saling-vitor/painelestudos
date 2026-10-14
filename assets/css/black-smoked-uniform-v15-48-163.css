@@ -115,8 +115,11 @@ html .global-search-shell .search{
 /* Precedencia explicita sobre os seletores responsivos anteriores.
    Nenhuma camada acinzentada nem gradiente no shell principal. */
 html:not(.is-ipad):not(.is-phone-layout) .topbar,
-html:is(.is-ipad,.is-phone-layout) .topbar,
-html:is(.is-ipad,.is-phone-layout) .bottom-nav,
+html.is-ipad:not(.is-phone-layout) .topbar,
+html.mobile-topbar-compact.is-phone-layout .topbar,
+html.is-phone-layout .topbar,
+html.is-ipad:not(.is-phone-layout) .bottom-nav,
+html.is-phone-layout .bottom-nav,
 html #globalSearchPanel{
   background:rgba(0,0,0,.84)!important;
   background-image:none!important;
