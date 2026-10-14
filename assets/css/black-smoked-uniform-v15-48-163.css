@@ -112,6 +112,19 @@ html .global-search-shell .search{
   background-image:none!important;
   border-color:rgba(255,255,255,.15)!important;
 }
+/* Precedencia explicita sobre os seletores responsivos anteriores.
+   Nenhuma camada acinzentada nem gradiente no shell principal. */
+html:not(.is-ipad):not(.is-phone-layout) .topbar,
+html:is(.is-ipad,.is-phone-layout) .topbar,
+html:is(.is-ipad,.is-phone-layout) .bottom-nav,
+html #globalSearchPanel{
+  background:rgba(0,0,0,.84)!important;
+  background-image:none!important;
+  border-color:var(--mm-smoke-edge)!important;
+  box-shadow:var(--mm-smoke-rim),0 12px 32px rgba(0,0,0,.25)!important;
+  -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
+  backdrop-filter:var(--mm-smoke-filter)!important;
+}
 /* Menu flutuante contextual com a mesma cor da capa do cartao. */
 html :is(.map-card,.course-card,.course-library-card,.simulation-card)
   :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
@@ -122,7 +135,7 @@ html :is(.map-card,.course-card,.course-library-card,.simulation-card)
   box-shadow:inset 0 1px rgba(255,255,255,.20)!important;
 }
 /* 04 · Navegacao: a secao ativa recebe uma camada uniforme. */
-html .side .nav-btn[data-nav].active,
+html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
 html .bottom-nav>button[data-nav].active,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]),
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
@@ -133,18 +146,18 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
-html .side .nav-btn[data-nav].active::before,
+html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before,
 html .bottom-nav>button[data-nav].active::before,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before{
   background:var(--nav-accent,#C8AF86)!important;
   background-image:none!important;
 }
-html .side .nav-btn[data-nav].active :is(.ui-icon,.txt),
+html:not(.is-phone-layout) .side .nav-btn[data-nav].active :is(.ui-icon,.txt),
 html .bottom-nav>button[data-nav].active :is(.ui-icon,.bottom-nav-label),
 html.is-phone-layout .mobile-menu-option.is-current :is(.ui-icon,b){
   color:var(--nav-accent,#D1B58D)!important;
 }
-html .side .nav-btn[data-nav]:not(.active):is(:hover,:focus-visible),
+html:not(.is-phone-layout) .side .nav-btn[data-nav]:not(.active):is(:hover,:focus-visible),
 html .bottom-nav>button[data-nav]:not(.active):is(:hover,:focus-visible){
   background:rgba(255,255,255,.028)!important;
   background-image:none!important;
