@@ -4307,7 +4307,7 @@ test('V15.48.169 [G] conteúdo em vidro fumê e fallbacks de acessibilidade exis
 
 
 /* PASSO 3 · Dynamic Liquid Glass V2 · Optical Interaction */
-test('V15.44 [G] PASSO 3 · runtime óptico, Inter e orçamento de glass estão ativos',async({page},testInfo)=>{
+test('V15.48.169 [G] PASSO 3 · runtime óptico, Inter e vidro fumê nos cards estão ativos',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>window.MMDynamicGlass&&typeof window.MMDynamicGlass.snapshot==='function');
   await expect(page.locator('link[href*="dynamic-liquid-glass-v2.css"]')).toHaveCount(1);
@@ -4334,7 +4334,7 @@ test('V15.44 [G] PASSO 3 · runtime óptico, Inter e orçamento de glass estão 
   expect(data.opticalSurfaces).toBeLessThan(120);
   expect(data.topbarFilter).not.toBe('none');
   expect(data.searchFilter).toBe('none');
-  if(data.cardFilter!=='missing')expect(data.cardFilter).toBe('none');
+  if(data.cardFilter!=='missing')expect(data.cardFilter).toContain('blur(');
   expect(data.flags).toContain('mm-optics-supported');
   if(testInfo.project.name==='desktop-chromium')expect(data.flags).toContain('mm-pointer-fine');
   if(testInfo.project.name==='iphone-webkit')expect(data.flags).toContain('mm-touch');
