@@ -239,3 +239,32 @@ html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal
     transition:none!important;animation:none!important;
   }
 }
+
+/* A preferencia de transparencia reduzida prevalece sobre variantes
+   responsivas do Black Smoked, sem backdrop-filter residual. */
+html.mm-reduced-transparency .app .topbar,
+html.mm-reduced-transparency .app .bottom-nav,
+html.mm-reduced-transparency .app .global-search-panel,
+html.mm-reduced-transparency .app .course-sticky-bar,
+html.mm-reduced-transparency .app .modal-card,
+html.mm-reduced-transparency .app .planner-modal-card,
+html.mm-reduced-transparency .app .study-doubt-card{
+  background:#080808!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  html .app .topbar,
+  html .app .bottom-nav,
+  html .app .global-search-panel,
+  html .app .course-sticky-bar,
+  html .app .modal-card,
+  html .app .planner-modal-card,
+  html .app .study-doubt-card{
+    background:#080808!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}

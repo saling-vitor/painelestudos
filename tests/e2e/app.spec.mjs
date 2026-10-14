@@ -974,6 +974,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
       synced,
       syncing,
       activeBackground:getComputedStyle(active).backgroundImage,
+      activeColor:getComputedStyle(active).backgroundColor,
       activeMarkerWidth:activeBefore.width,
       countDisplay:getComputedStyle(count).display,
       searchHeight:search.getBoundingClientRect().height,
@@ -991,16 +992,18 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.synced.icon).not.toBe(visual.synced.text);
   expect(visual.synced.bg).not.toMatch(/114,\s*201,\s*149/);
   expect(visual.syncing.animation).toContain('cloudSyncStatusPulse');
-  expect(visual.activeBackground).not.toBe('none');
+  expect(visual.activeBackground).not.toContain('gradient');
+  expect(visual.activeColor).not.toBe('rgba(0, 0, 0, 0)');
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.topbarBackdrop).not.toBe('none');
   // Apple HIG: a topbar é o único material; controles internos usam fill/vibrancy.
   expect(visual.searchBackdrop).toBe('none');
   expect(visual.syncBackdrop).toBe('none');
-  expect(visual.topbarBackground).toContain('gradient');
-  expect(visual.searchBackground).toContain('gradient');
-  expect(visual.syncBackground).toContain('gradient');
+  // V15.48.163-G: o shell e os controles usam preenchimento uniforme.
+  expect(visual.topbarBackground).not.toContain('gradient');
+  expect(visual.searchBackground).not.toContain('gradient');
+  expect(visual.syncBackground).not.toContain('gradient');
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
   if(testInfo.project.name==='ipad'){
     expect(Math.round(visual.syncHeight)).toBeGreaterThanOrEqual(44);
@@ -1489,6 +1492,7 @@ test('sistema glass mantém cards e controles na mesma família visual',async({p
     return{
       metricBg:metric.backgroundImage,
       panelBg:panel.backgroundImage,
+      panelColor:panel.backgroundColor,
       metricRadius:parseFloat(metric.borderTopLeftRadius)||0,
       panelRadius:parseFloat(panel.borderTopLeftRadius)||0,
       secondaryRadius:parseFloat(secondary.borderTopLeftRadius)||0,
@@ -1497,7 +1501,9 @@ test('sistema glass mantém cards e controles na mesma família visual',async({p
     };
   });
   expect(glass.metricBg).toContain('linear-gradient');
-  expect(glass.panelBg).toContain('linear-gradient');
+  // Painel fosco uniforme da identidade Black Smoked.
+  expect(glass.panelBg).not.toContain('gradient');
+  expect(glass.panelColor).not.toBe('rgba(0, 0, 0, 0)');
   expect(glass.metricRadius).toBeGreaterThanOrEqual(9);
   expect(glass.panelRadius).toBeGreaterThanOrEqual(10);
   expect(Math.abs(glass.secondaryRadius-glass.primaryRadius)).toBeLessThanOrEqual(1);
@@ -4339,8 +4345,9 @@ test('V15.48.1 [G] seleção do dock é estática e mantém navegação acessív
   await expect(page.locator('[data-view="maps"]')).toHaveClass(/active/);
   await expect(target).toHaveClass(/active/);
   if(!useSide){
-    const glass=await target.evaluate(el=>({background:getComputedStyle(el).backgroundImage,color:getComputedStyle(el).color}));
-    expect(glass.background).not.toBe('none');
+    const glass=await target.evaluate(el=>({background:getComputedStyle(el).backgroundImage,fill:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color}));
+    expect(glass.background).not.toContain('gradient');
+    expect(glass.fill).not.toBe('rgba(0, 0, 0, 0)');
     expect(glass.color).not.toBe('');
   }
 });

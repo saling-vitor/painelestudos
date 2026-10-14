@@ -31,7 +31,7 @@ test('Smoked Liquid Glass das capas [G] · preenchimento uniforme, preto e cor c
   expect(data.rose.backgroundImage).toBe('none');
   expect(data.green.backgroundImage).toBe('none');
   expect(data.rose.backgroundColor).not.toBe(data.green.backgroundColor);
-  expect(data.topImage).toBe('none');
+  expect(data.topImage).not.toContain('gradient');
   expect(data.topColor).toBeTruthy();
-  if(data.navImage!==undefined)expect(data.navImage).toBe('none');
+  if(data.navImage!==undefined)expect(data.navImage).not.toContain('gradient');
 });
