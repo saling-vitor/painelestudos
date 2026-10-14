@@ -117,7 +117,7 @@ test('[G] V15.45 aplica ambiente topográfico raster contínuo sem transformar c
   expect(visual.topoFilter).toBe('none');
   expect(visual.topoOpacity).toBeGreaterThan(0);
   expect(visual.mapBackdrop).toBe('none');
-  if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).not.toBe('none');
+  if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).toBe('none');
 });
 
 test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({page},testInfo)=>{
@@ -164,9 +164,9 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     await expect(activeNav).toBeVisible();
     const sideGlass=await glass(side);
     const navLens=await glass(activeNav);
-    expect(sideGlass.backdrop).not.toBe('none');
+    expect(sideGlass.backdrop).toBe('none');
     expect(sideGlass.filled).toBe(true);
-    // V15.42: sidebar é o material; item ativo é apenas uma lente interna.
+    // V15.48.166-G: sidebar fosca como cards; item ativo também fosco.
     expect(navLens.backdrop).toBe('none');
     expect(navLens.filled).toBe(true);
   }
@@ -4576,7 +4576,7 @@ test('V15.45 [G] PASSO 4 · Liquid Glass preserva material existente sobre o nov
   });
   expect(data.topo).toContain('topographic-lines-v15-48-1.svg');
   expect(data.topbarFilter).not.toBe('none');
-  if(await page.locator('.side').isVisible())expect(data.sideFilter).not.toBe('none');
+  if(await page.locator('.side').isVisible())expect(data.sideFilter).toBe('none');
   expect(data.dynamic.opticalSurfaces).toBeGreaterThan(0);
 });
 
