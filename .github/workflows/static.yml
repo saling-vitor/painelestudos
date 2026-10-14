@@ -182,7 +182,7 @@ jobs:
     name: E2E iPhone
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 22
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
       options: --user 1001
@@ -287,9 +287,10 @@ jobs:
             index_body="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/?t=$stamp" || true)"
             # Confere o CSS efetivamente servido, não apenas o número da versão.
             glass_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/button-glass-v15-36-15.css?v=$expected&t=$stamp" || true)"
-            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]]; then
+            smoked_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/black-smoked-uniform-v15-48-163.css?v=$expected&t=$stamp" || true)"
+            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"black-smoked-uniform-v15-48-163.css?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-real:rgba(0,0,0,.96)"* ]]; then
               echo "✓ GitHub Pages público está em $actual"
-              echo "✓ Material grafite dos botões •••/★ presente no CSS público"
+              echo "✓ CSS Black Smoked dos cards reais e material grafite presentes no site público"
               exit 0
             fi
             echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível}"
