@@ -76,3 +76,48 @@ test('Black Smoked [G] · cursos e simulados pretos, mapas coloridos, todos com 
     expect(rose.ink).not.toBe(green.ink);
   }
 });
+
+
+test('V15.48.165-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>typeof courseCard==='function'&&typeof simulationCard==='function');
+  const result=await page.evaluate(()=>{
+    const course={id:'e2e-smoke-course',title:'Concurso E2E',subtitle:'Arquiteto',
+      board:'FUNDATEC',status:'active',examDate:'2026-10-18',maps:1};
+    const sim={id:'e2e-smoke-sim',code:'SIM01',title:'Simulado E2E',
+      questions:60,board:'FUNDATEC',courseId:course.id,source:'bundled'};
+    document.querySelector('#coursesGrid').innerHTML=courseCard(course);
+    document.querySelector('#homeCourses').innerHTML=courseCard(course,{home:true});
+    document.querySelector('#simulationGrid').innerHTML=simulationCard(sim);
+    // Mesmo seletor e estrutura externa dos cards de retomada de simulados.
+    document.querySelector('#homeSimulations').innerHTML=
+      '<div class="simulation-recent-list"><article class="simulation-recent-item" style="--simulation-accent:#b8829e">'+
+      '<div class="simulation-recent-cover">SIM</div><div class="simulation-recent-copy">Simulado</div></article></div>';
+    const cases=[
+      ['curso','#coursesGrid .course-card','--course-accent'],
+      ['curso-home','#homeCourses .course-card','--course-accent'],
+      ['simulado','#simulationGrid .simulation-card','--simulation-accent'],
+      ['simulado-home','#homeSimulations .simulation-recent-item','--simulation-accent']
+    ];
+    return cases.map(([name,selector,token])=>{
+      const el=document.querySelector(selector);
+      if(!el)throw new Error(name+': o componente real não foi renderizado');
+      const color=()=>{const css=getComputedStyle(el);return{
+        bg:css.backgroundColor,image:css.backgroundImage,
+        edge:css.borderTopColor,blur:css.backdropFilter||css.webkitBackdropFilter}};
+      el.style.setProperty(token,'#b8829e');const rose=color();
+      el.style.setProperty(token,'#79a98b');const green=color();
+      const chip=el.querySelector('.course-status-pill,.course-exam-info,.simulation-meta-item');
+      const innerImage=chip?getComputedStyle(chip).backgroundImage:null;
+      return{name,rose,green,innerImage};
+    });
+  });
+  for(const item of result){
+    expect(item.rose.bg,item.name+' deve ter fundo preto').toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(item.rose.bg,item.name+' deve permanecer preto').toBe(item.green.bg);
+    expect(item.rose.image,item.name+' não pode ter degradê').toBe('none');
+    expect(item.green.image,item.name+' não pode ter degradê').toBe('none');
+    expect(item.rose.blur,item.name+' deve ser MATTE, não empilhar filtros').toBe('none');
+    if(item.innerImage!==null)expect(item.innerImage,item.name+' chip interno').toBe('none');
+  }
+});
