@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {mkdirSync} from 'node:fs';
 
-/* V15.48.170-G · Conjunto optico global sem depender de login ou dados locais.
+/* V15.48.171-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
 test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
@@ -37,7 +37,7 @@ test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async(
   expect(data.rose.backgroundImage).toBe('none');
   expect(data.green.backgroundImage).toBe('none');
   expect(data.rose.backgroundColor).toBe(data.green.backgroundColor);
-  expect(data.rose.backgroundColor).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(data.rose.backgroundColor).toMatch(/rgba?\(20,\s*20,\s*21/);
   expect(data.rose.border).not.toBe(data.green.border);
   expect(data.rose.filter).toContain('blur(');
   expect(data.topImage).not.toContain('gradient');
@@ -47,9 +47,9 @@ test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async(
   // No iPhone o item pode ser transparente: a barra preta já é o fundo.
   // Em todos os casos a superficie visível deve continuar preta, nunca tingida.
   if(data.navFill==='rgba(0, 0, 0, 0)'){
-    expect(data.dockFill).toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(data.dockFill).toMatch(/rgba?\((?:18|20),\s*(?:18|20),\s*(?:19|21)/);
   }else{
-    expect(data.navFill).toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(data.navFill).toMatch(/rgba?\(20,\s*20,\s*21/);
   }
 });
 
@@ -81,7 +81,7 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
     expect(rose.blur,name+' deve ser vidro fumê').toContain('blur(');
     expect(green.image).toBe('none');
     expect(rose.card).toBe(green.card);
-    expect(rose.card).toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(rose.card).toMatch(/rgba?\(20,\s*20,\s*21/);
     expect(rose.edge).not.toBe(green.edge);
     expect(rose.actionMatched).toBe(true);
     expect(rose.button,`Ação de ${name}: fundo preto invariável`).toBe(green.button);
@@ -90,7 +90,7 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
 });
 
 
-test('V15.48.170-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
+test('V15.48.171-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof courseCard==='function'&&typeof simulationCard==='function');
   const result=await page.evaluate(()=>{
@@ -125,7 +125,7 @@ test('V15.48.170-G [G] · renderizadores reais de curso e simulado usam fundo pr
     });
   });
   for(const item of result){
-    expect(item.rose.bg,item.name+' deve ter fundo preto').toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(item.rose.bg,item.name+' deve ter fundo preto').toMatch(/rgba?\(20,\s*20,\s*21/);
     expect(item.rose.bg,item.name+' deve permanecer preto').toBe(item.green.bg);
     expect(item.rose.image,item.name+' não pode ter degradê').toBe('none');
     expect(item.green.image,item.name+' não pode ter degradê').toBe('none');
@@ -135,7 +135,7 @@ test('V15.48.170-G [G] · renderizadores reais de curso e simulado usam fundo pr
 });
 
 
-test('V15.48.170-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
+test('V15.48.171-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const result=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -166,7 +166,7 @@ test('V15.48.170-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
       isPhone};
   });
   for(const {name,rose,green} of result.cards){
-    expect(rose.background,name+' precisa ser preto').toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(rose.background,name+' precisa ser preto').toMatch(/rgba?\(20,\s*20,\s*21/);
     expect(rose.blur,name+' precisa usar blur no vidro fumê').toContain('blur(');
     expect(rose.background,name+' preto não depende do HEX').toBe(green.background);
     expect(rose.image,name+' sem gradiente de cor').toBe('none');
@@ -175,18 +175,18 @@ test('V15.48.170-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
     expect(rose.title,name+' texto não muda com o HEX').toBe(green.title);
   }
   if(!result.isPhone){
-    expect(result.side.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+    expect(result.side.bg).toMatch(/rgba?\(20,\s*20,\s*21/);
     expect(result.side.blur).toContain('blur(');
     expect(result.side.image).toBe('none');
     if(result.selected){
-      expect(result.selected.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+      expect(result.selected.bg).toMatch(/rgba?\(20,\s*20,\s*21/);
       expect(result.selected.image).toBe('none');
     }
   }
 });
 
 
-test('V15.48.170-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
+test('V15.48.171-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const data=await page.evaluate(()=>{
     const node=document.createElement('article');node.className='map-card';
@@ -207,7 +207,7 @@ test('V15.48.170-G [G] · reduzir transparência restaura fundo opaco nos cards'
 });
 
 
-/* V15.48.170-G · Auditoria dos elementos VISÍVEIS e não apenas cards artificiais.
+/* V15.48.171-G · Auditoria dos elementos VISÍVEIS e não apenas cards artificiais.
    Executado em desktop, iPad Chromium, iPad WebKit e iPhone WebKit.
    Capturas são anexadas para revisão visual do acabamento em cada viewport. */
 test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e capas intactas',async({page},testInfo)=>{
@@ -271,8 +271,8 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
   });
   const assertNeutral=(entry,name)=>{
     expect(entry.image,name+' deve ser preenchimento uniforme').toBe('none');
-    expect(entry.background,name+' deve ser preto neutro').toMatch(/rgba?\(0,\s*0,\s*0/);
-    expect(entry.alpha,name+' deve deixar o fundo visível').toBeLessThan(.72);
+    expect(entry.background,name+' deve ser preto neutro').toMatch(/rgba?\(20,\s*20,\s*21/);
+    expect(entry.alpha,name+' deve ocultar topografia interna').toBeGreaterThanOrEqual(.90);
     expect(entry.blur,name+' precisa de vidro óptico').toContain('blur(');
   };
   assertNeutral(home.priority.first,'Prioridade agora');
@@ -285,7 +285,7 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
     assertNeutral(row.first,'Plano diário '+(index+1));
     expect(row.first.background).toBe(row.second.background);
   }
-  expect(home.panel.alpha).toBeLessThan(.50);
+  expect(home.panel.alpha).toBeGreaterThanOrEqual(.90);
   expect(home.cover?.naturalWidth,'a imagem do card Hoje deve carregar').toBeGreaterThan(0);
   mkdirSync('visual-audit',{recursive:true});
   await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-home.png',animations:'disabled'});
@@ -302,7 +302,7 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
       blur:style.backdropFilter||style.webkitBackdropFilter||'none',
       coverPresent:!!cover,coverSrc:cover?.getAttribute('src')||''};
   });
-  expect(library.background).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(library.background).toMatch(/rgba?\(20,\s*20,\s*21/);
   expect(library.image).toBe('none');
   expect(library.blur).toContain('blur(');
   expect(library.coverPresent).toBe(true);
@@ -320,10 +320,33 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
       blur:css.backdropFilter||css.webkitBackdropFilter||'none',
       coverSrc:cover?.getAttribute('src')||''};
   });
-  expect(courseStyle.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(courseStyle.bg).toMatch(/rgba?\(20,\s*20,\s*21/);
   expect(courseStyle.image).toBe('none');
   expect(courseStyle.blur).toContain('blur(');
   expect(courseStyle.coverSrc).not.toBe('');
   await inCourse.first().scrollIntoViewIfNeeded();
   await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-curso.png',animations:'disabled'});
+});
+
+/* V15.48.171-G · Regressão de cores em componentes reais e layout. */
+test('Grafite [G] · painéis reais sem preto chapado ou gradientes de fundo',async({page})=>{
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  const rows=await page.evaluate(()=>{
+    const selectors=['#homeReviewSection','#homeStudyDashboard .study-command-card',
+      '#coursesGrid .course-card','#simulationGrid .simulation-card',
+      '.progress-global-panel','.progress-course','.study-rhythm-kpis>article'];
+    return selectors.map(selector=>{
+      const el=document.querySelector(selector);if(!el)return null;
+      const css=getComputedStyle(el),m=css.backgroundColor.match(/rgba?\(([^)]+)\)/);
+      return{selector,channels:m?.[1].split(',').map(x=>parseFloat(x.trim()))||[],
+        image:css.backgroundImage};
+    }).filter(Boolean);
+  });
+  expect(rows.length).toBeGreaterThan(0);
+  for(const x of rows){
+    expect(x.channels[0],x.selector+' sem preto puro').toBeGreaterThanOrEqual(17);
+    expect(x.channels[0],x.selector+' preenchimento neutro').toBe(x.channels[1]);
+    expect(x.channels[3]??1,x.selector+' bloqueia textura interna').toBeGreaterThanOrEqual(.90);
+    expect(x.image,x.selector+' sem gradiente no card').toBe('none');
+  }
 });

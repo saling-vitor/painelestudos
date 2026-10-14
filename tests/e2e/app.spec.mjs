@@ -1005,7 +1005,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.syncing.animation).toContain('cloudSyncStatusPulse');
   expect(visual.activeBackground).not.toContain('gradient');
   // O item ativo pode ser transparente: o preto visivel vem da sidebar.
-  expect(visual.activeColor==='rgba(0, 0, 0, 0)'?visual.sidebarFill:visual.activeColor).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(visual.activeColor==='rgba(0, 0, 0, 0)'?visual.sidebarFill:visual.activeColor).toMatch(/rgba?\(20,\s*20,\s*21/);
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.topbarBackdrop).not.toBe('none');
