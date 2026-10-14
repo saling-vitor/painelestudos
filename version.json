@@ -1,13 +1,13 @@
 {
-  "version": "15.48.167",
-  "label": "V15.48.167-G",
-  "notes": "Preto uniforme em todos os cards e sidebar; marfim suave consistente também na navegação Desktop/iPad/iPhone, mantendo cores temáticas apenas nas bordas, símbolos e indicadores.",
+  "version": "15.48.168",
+  "label": "V15.48.168-G",
+  "notes": "Verificação corrigida do GitHub Pages: tokens canônicos de preto, tingimento zero e marfim; visual aprovado da V15.48.167-G preservado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cards de Mapas, Cursos, Simulados e Home em preto uniforme, sem fundo tingido",
-    "[G] Sidebar matte preta e item ativo com borda e ícone temáticos",
-    "[G] Tipografia marfim, incluindo opções inativas da navegação em todos os dispositivos",
-    "[G] Testes automatizados compatíveis com o novo padrão Black Editorial"
+    "[G] Visual Black Editorial preservado: cards e sidebar em preto uniforme",
+    "[G] Bordas e indicadores conservam as cores temáticas",
+    "[G] Tipografia marfim em Desktop, iPad e iPhone",
+    "[G] Auditoria do GitHub Pages sincronizada com os tokens reais do CSS"
   ],
   "automation": {
     "enabled": true,
