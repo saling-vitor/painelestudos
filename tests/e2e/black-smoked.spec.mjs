@@ -45,9 +45,9 @@ test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async(
   // No iPhone o item pode ser transparente: a barra preta já é o fundo.
   // Em todos os casos a superficie visível deve continuar preta, nunca tingida.
   if(data.navFill==='rgba(0, 0, 0, 0)'){
-    expect(data.dockFill).toMatch(/rgba?\(10,\s*10,\s*11/);
+    expect(data.dockFill).toMatch(/rgba?\((?:0,\s*0,\s*0|10,\s*10,\s*11)/);
   }else{
-    expect(data.navFill).toMatch(/rgba?\(10,\s*10,\s*11/);
+    expect(data.navFill).toMatch(/rgba?\((?:0,\s*0,\s*0|10,\s*10,\s*11)/);
   }
 });
 
