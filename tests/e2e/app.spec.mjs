@@ -3559,7 +3559,7 @@ test('etapa 1 [G] identidade dos mapas propaga accent e tags nos blocos mobile',
   const resume=page.locator('#continueBox .continue-card');
   await expect(resume).toBeVisible();
   if(testInfo.project.name==='iphone-webkit'){
-    await expect(resume.locator('.continue-thumb')).toBeHidden();
+    await expect(resume.locator('.continue-thumb img')).toBeVisible();
     await expect(resume.locator('.continue-map-code')).toBeVisible();
   }else{
     await expect(resume.locator('.continue-thumb img')).toBeVisible();
