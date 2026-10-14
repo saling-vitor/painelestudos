@@ -354,7 +354,7 @@ html.is-phone-layout [data-view="home"]>#homeReviewSection{
   margin-top:12px!important;padding:12px!important;
   border-radius:14px!important;
   border:1px solid rgba(255,255,255,.11)!important;
-  background:#0b0c0e!important;
+  background:var(--mm-smoke-neutral)!important;
 }
 html.is-phone-layout #homeReviewSection .section-head{
   box-sizing:border-box!important;min-width:0!important;
