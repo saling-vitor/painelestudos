@@ -62,6 +62,8 @@ check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes
 check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
 check(blackSmokedCss.includes('--mm-smoke-tint:0%')&&blackSmokedCss.includes('--mm-ivory-strong:#EEE9E0'),'Black Editorial: zero tingimento cromatico e texto marfim');
 check(blackSmokedCss.includes('--mm-card-surface:var(--mm-smoke-card-black)')&&blackSmokedCss.includes('html:not(.is-phone-layout) .app .side'),'Todos os cards e sidebar: superficie preta canonica');
+const liveWorkflow=read('.github/workflows/static.yml');
+check(liveWorkflow.includes('--mm-smoke-card-real:var(--mm-smoke-card-black)')&&liveWorkflow.includes('--mm-smoke-tint:0%')&&liveWorkflow.includes('--mm-ivory-strong:#EEE9E0'),'Pages: validador público alinhado ao CSS Black Editorial');
 check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
 
 check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
