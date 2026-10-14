@@ -565,6 +565,12 @@
       '<article class="forecast-home-card"><div class="home-command-label"><span class="ui-icon icon-chart-bars home-command-symbol" aria-hidden="true"></span><span class="ui-icon icon-chevron-right forecast-nav-hint" aria-hidden="true"></span><span class="kicker">Ritmo atual</span></div><h3>'+fc.remainingTopics+' tópicos restantes</h3><p class="forecast-date-row">Planejamento até '+esc(finishLabel)+'</p><p class="forecast-detail-row">'+esc(fmtSeconds(fc.remainingSeconds))+' estimadas'+(fc.marginDays!==null?' · '+(fc.marginDays>=0?fc.marginDays+' dias antes da prova':Math.abs(fc.marginDays)+' dias após a prova'):'')+'</p><div class="forecast-week-chart" role="img" aria-label="Tempo de estudo por dia da semana">'+graphHtml+'</div><div class="forecast-home-actions"><button type="button" class="secondary" data-home-matrix><span class="ui-icon icon-grid" aria-hidden="true"></span>Abrir matriz</button>'+(due?'<button type="button" class="secondary" data-home-topic-review><span class="ui-icon icon-sync" aria-hidden="true"></span>'+due+' revisar</button>':'<span class="forecast-clear">Sem revisões vencidas</span>')+'</div></article>';
     // Mesma cor derivada da capa aplicada nas miniaturas e cards da biblioteca.
     if(top?.map&&typeof applyMapCoverAccent==='function')applyMapCoverAccent(panel.querySelector('.priority-now-card'));
+    // [D] Uma única borda esquerda em HEX do mapa: supera o amarelo legado
+    // sem afetar as regras próprias de Tablet e Smartphone.
+    const priorityCard=panel.querySelector('.priority-now-card');
+    if(priorityCard&&!document.documentElement.classList.contains('is-ipad')&&!document.documentElement.classList.contains('is-phone-layout')&&window.innerWidth>=1181){
+      priorityCard.style.setProperty('border-left','3px solid var(--map-accent,#92979a)','important');
+    }
     panel.querySelectorAll('[data-time-now]').forEach(button=>button.onclick=()=>{
       homeQuickMinutes=Number(button.dataset.timeNow);
       panel.querySelectorAll('[data-time-now]').forEach(item=>{const selected=item===button;item.classList.toggle('is-selected',selected);item.setAttribute('aria-pressed',String(selected))});

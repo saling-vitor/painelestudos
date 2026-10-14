@@ -52,7 +52,9 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===47,'auditoria: build ativo usa 47 CSS, incluindo iconografia sólida e estados vazios');
+check(activeCssFiles.length===48,'auditoria: build ativo usa 48 CSS, incluindo Home responsiva');
+check(index.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
+check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
 check(index.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
 check(sw.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
 check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
@@ -99,11 +101,15 @@ for(const file of v13BrandLegacy)check(!exists(file),'auditoria: duplicata V13 r
 const activeCssText=activeCssFiles.filter(exists).map(read).join('\n');
 check(!activeCssText.includes('../ui-icons/sf-black-filled/'),'auditoria: CSS ativo sem dependência de PNG antigo');
 check(/const UI_ICONS=\[\]/.test(sw),'PWA pré-cacheia SVG sólido via CSS sem PNG legado');
-const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/solid-lucide-v15-48-159.css'].includes(file)).filter(exists).map(read).join('\n');
+const newHomeCss='assets/css/home-responsive-v15-48-162.css';
+const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/solid-lucide-v15-48-159.css',newHomeCss].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
-check(importantCount<=6694,'auditoria: !important não regrediu ('+importantCount+')');
+check(importantCount<=6694,'auditoria: !important legado não regrediu ('+importantCount+')');
+const homeImportantCount=(read(newHomeCss).match(/!important/g)||[]).length;
+check(homeImportantCount<=450,'auditoria: overrides da Home responsiva <=450 ('+homeImportantCount+')');
+check(importantCount+homeImportantCount<=7144,'auditoria: total de overrides controlado ('+(importantCount+homeImportantCount)+')');
 const navGlassImportant=(read('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
 check(navGlassImportant<=90,'auditoria: V2 preserva limite próprio de overrides ('+navGlassImportant+')');
 const ipadLayoutCss=read('assets/css/ipad-portrait-nav-v15-36-17.css');
