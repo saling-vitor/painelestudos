@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {mkdirSync} from 'node:fs';
 
 /* V15.48.170-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
@@ -279,9 +280,10 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
   }
   expect(home.panel.alpha).toBeLessThan(.50);
   expect(home.cover?.naturalWidth,'a imagem do card Hoje deve carregar').toBeGreaterThan(0);
-  await testInfo.attach('visual-home-'+testInfo.project.name+'.png',{
-    body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
-  });
+  mkdirSync('visual-audit',{recursive:true});
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-home.png',animations:'disabled'});
+  await rows.first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-plano.png',animations:'disabled'});
 
   await page.evaluate(()=>nav('maps'));
   const maps=page.locator('#allMaps .map-card');
@@ -298,9 +300,8 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
   expect(library.blur).toContain('blur(');
   expect(library.coverPresent).toBe(true);
   expect(library.coverSrc).not.toBe('');
-  await testInfo.attach('visual-mapas-'+testInfo.project.name+'.png',{
-    body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
-  });
+  await maps.first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-mapas.png',animations:'disabled'});
 
   await page.evaluate(()=>openCourse('porto-alegre'));
   const inCourse=page.locator('#courseMaps .map-card.has-cover');
@@ -316,7 +317,6 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
   expect(courseStyle.image).toBe('none');
   expect(courseStyle.blur).toContain('blur(');
   expect(courseStyle.coverSrc).not.toBe('');
-  await testInfo.attach('visual-curso-'+testInfo.project.name+'.png',{
-    body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
-  });
+  await inCourse.first().scrollIntoViewIfNeeded();
+  await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-curso.png',animations:'disabled'});
 });
