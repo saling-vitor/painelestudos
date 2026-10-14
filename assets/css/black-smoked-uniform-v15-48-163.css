@@ -52,7 +52,7 @@ html .app .content :is(
   .study-automation-panel,.settings-control-panel,.settings-panel
 ):not(.mm-smoke-opt-out){
   background:var(--mm-card-surface,color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink)))!important;
-  background-image:none!important;
+  
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(255,255,255,.11))!important;
   box-shadow:var(--mm-smoke-rim),0 10px 26px rgba(0,0,0,.12)!important;
   /* Cards repetidos nao criam dezenas de camadas caras de blur. */
@@ -68,19 +68,19 @@ html .app .content #homeStudyDashboard .priority-now-card,
 html .app .content .home-continue-section .continue-card,
 html .app .content #homeSimulations .simulation-recent-item{
   background:var(--mm-card-surface,color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) var(--mm-smoke-tint),var(--mm-smoke-ink)))!important;
-  background-image:none!important;
+  
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 43%,rgba(255,255,255,.09))!important;
 }
 /* Painel estruturante preto, sem tirar a cor de cada linha. */
 html .app .content :is(.home-review-section,.study-intelligence-panel,.study-plan-footer,.study-command-metrics){
   background:var(--mm-smoke-neutral)!important;
-  background-image:none!important;
+  
   border-color:rgba(255,255,255,.085)!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 html .app .content #homeStudyDashboard .priority-now-card::before{
   background:var(--mm-uniform-tone,var(--map-accent,#A8A8A8))!important;
-  background-image:none!important;
+  
 }
 html .app .content :is(.study-plan-item,.continue-card,.simulation-recent-item,.course-card,.map-card):is(:hover,:active){
   filter:none!important;
@@ -322,42 +322,25 @@ html.mm-reduced-transparency .app .study-doubt-card{
 }
 
 
+
 /* V15.48.165-G · GUARDA VISUAL NOS CARDS REAIS [G]
-   A cor da capa permanece nas bordas, indicadores e ações, jamais no
-   preenchimento das bibliotecas de Cursos e Simulados. Mantém as capas. */
+   As capas seguem intactas. Apenas a superficie dos cards reais de
+   cursos e simulados usa preto uniforme; HEX ainda colore ações/bordas. */
 :root{--mm-smoke-card-real:rgba(0,0,0,.96)}
 html .app .content :is(#coursesGrid,#homeCourses)>.course-card.course-library-card,
 html .app .content #simulationGrid>.simulation-card,
 html .app .content #homeSimulations .simulation-recent-item{
-  --mm-card-surface:var(--mm-smoke-card-real)!important;
+  --mm-card-surface:var(--mm-smoke-card-real);
   background:var(--mm-smoke-card-real)!important;
-  background-image:none!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
 }
-html .app .content :is(#coursesGrid,#homeCourses)>.course-card.course-library-card:is(:hover,:focus-within,:active),
-html .app .content #simulationGrid>.simulation-card:is(:hover,:focus-within,:active),
-html .app .content #homeSimulations .simulation-recent-item:is(:hover,:focus-within,:active){
-  background:var(--mm-smoke-card-real)!important;
-  background-image:none!important;
-  filter:none!important;
-  transform:none!important;
-}
-/* Remover os degradês legados também dos chips internos, sem afetar imagens. */
+/* A precedencia inclui o id do grid: supera o legado com !important
+   sem substituir capa, layout ou repetir regras de hover responsivas. */
 html .app .content :is(#coursesGrid,#homeCourses) .course-card.course-library-card :is(
   .course-status-pill,.course-exam-info,.course-card-meta-item,.course-edital-btn
-){
-  background:rgba(0,0,0,.72)!important;
-  background-image:none!important;
-}
+){background:rgba(0,0,0,.72)!important}
 html .app .content #simulationGrid .simulation-card :is(
   .simulation-meta-item,.simulation-result-summary>div
-){
-  background:rgba(0,0,0,.5)!important;
-  background-image:none!important;
-}
+){background:rgba(0,0,0,.5)!important}
 html .app .content #homeSimulations .simulation-recent-cover{
   background:#080808!important;
-  background-image:none!important;
 }
-/* A faixa temática e as barras de progresso continuam intencionais. */
