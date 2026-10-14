@@ -192,7 +192,7 @@ test('V15.48.169-G [G] · reduzir transparência restaura fundo opaco nos cards'
     document.querySelector('.app .content').append(node);
     document.documentElement.classList.add('mm-reduced-transparency');
     const card=getComputedStyle(node),side=getComputedStyle(document.querySelector('.side'));
-    const result={cardBg:card.backgroundColor,cardBlur:card.backdropFilter||card.webkitBackdropFilter,
+    const result={isPhone:document.documentElement.classList.contains('is-phone-layout'),cardBg:card.backgroundColor,cardBlur:card.backdropFilter||card.webkitBackdropFilter,
       sideBg:side.backgroundColor,sideBlur:side.backdropFilter||side.webkitBackdropFilter};
     node.remove();document.documentElement.classList.remove('mm-reduced-transparency');
     return result;
