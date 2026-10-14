@@ -284,4 +284,22 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
   await testInfo.attach('visual-mapas-'+testInfo.project.name+'.png',{
     body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
   });
+
+  await page.goto('/#course/porto-alegre',{waitUntil:'domcontentloaded'});
+  const inCourse=page.locator('#courseMaps .map-card.has-cover');
+  await expect(inCourse.first()).toBeVisible({timeout:12000});
+  const courseStyle=await inCourse.first().evaluate(node=>{
+    const css=getComputedStyle(node);
+    const cover=node.querySelector('.map-cover img');
+    return{bg:css.backgroundColor,image:css.backgroundImage,
+      blur:css.backdropFilter||css.webkitBackdropFilter||'none',
+      coverSrc:cover?.getAttribute('src')||''};
+  });
+  expect(courseStyle.bg).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(courseStyle.image).toBe('none');
+  expect(courseStyle.blur).toContain('blur(');
+  expect(courseStyle.coverSrc).not.toBe('');
+  await testInfo.attach('visual-curso-'+testInfo.project.name+'.png',{
+    body:await page.screenshot({animations:'disabled'}),contentType:'image/png'
+  });
 });
