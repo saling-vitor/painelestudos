@@ -73,6 +73,9 @@ test('[G] parser multi-layout cobre Objetiva, FUNDATEC, DEMHAB e AOCP',async({pa
 });
 
 test('[G] Novo concurso continua exigindo confirmação explícita',async({page})=>{
+  // Isola o fluxo de criação do aviso de versão, que chega de forma assíncrona.
+  // O comportamento do modal de novidades é testado separadamente.
+  await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.48.172'));
   await page.goto('/#courses');
   // Aguarda a inicialização da Home antes de dispensar o modal de novidades:
   // no iPad o modal pode abrir depois do primeiro frame.
