@@ -203,20 +203,19 @@
   }
   const historyKey=()=>{const uid=safe(()=>StudyCloud.session()?.user?.id,'offline')||'offline';return 'studyapp.pranchaProgress.v1::'+uid};
   function recordHistory(s){
-    // Sem preenchimento retroativo: cria somente a observação real do dia corrente.
-    if(!s.ms.length)return;
-    const key=historyKey(),rows=safe(()=>JSON.parse(localStorage.getItem(key)||'[]'),[]);
-    if(!Array.isArray(rows))return;
-    const today=dayKey(new Date()),entry={day:today,marked:s.all.marked,total:s.all.total,at:new Date().toISOString()};
-    const pos=rows.findIndex(x=>x.day===today);
-    if(pos>=0)rows[pos]=entry;else rows.push(entry);
-    try{localStorage.setItem(key,JSON.stringify(rows.slice(-366)))}catch{}
+    // Integra com o modelo StudyDashboard já usado na sincronização e nos backups.
+    // Snapshot só existe a partir de observações reais, sem retroagir dados fictícios.
+    if(!s.ms.length||!window.StudyDashboard?.recordProgressSnapshot)return;
+    const key=historyKey(),legacy=safe(()=>JSON.parse(localStorage.getItem(key)||'[]'),[]);
+    const migrated=Array.isArray(legacy)?legacy:[];
+    const rows=StudyDashboard.recordProgressSnapshot(s.all.marked,s.all.total,migrated);
+    if(migrated.length&&rows.length)try{localStorage.removeItem(key)}catch{}
   }
   function renderProgressEditorial(){
     const node=cardContainer('progress','editorialProgress');if(!node)return;
     const s=stateData();recordHistory(s);
     const cs=s.cs,choice=cs.find(c=>c.id===selectedProgress);
-    const rows=choice?getCourseMaps(s,choice):s.ms,p=totals(rows),hist=safe(()=>JSON.parse(localStorage.getItem(historyKey())||'[]'),[]),actual=Array.isArray(hist)?hist:[];
+    const rows=choice?getCourseMaps(s,choice):s.ms,p=totals(rows),hist=safe(()=>StudyDashboard.progressHistory(),[]),actual=Array.isArray(hist)?hist:[];
     const selector='<div class="pr-switch" role="group" aria-label="Selecionar concurso"><button data-pr-progress="" aria-pressed="'+(!choice)+'" class="pr-switch-btn">Todos</button>'+cs.map(c=>'<button class="pr-switch-btn" aria-pressed="'+(choice?.id===c.id)+'" data-pr-progress="'+escapeHtml(c.id)+'">'+escapeHtml(c.title||'Concurso')+'</button>').join('')+'</div>';
     node.innerHTML=selector+header('Progresso · Acompanhamento','Cobertura do edital','O histórico começa na primeira observação real registrada; não são criados dias fictícios.',
       fragment('Cobertura',percent(p),p.marked+' de '+p.total)+
