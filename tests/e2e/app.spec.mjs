@@ -1022,7 +1022,8 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.searchBackdrop).toBe('none');
   expect(visual.syncBackdrop).toBe('none');
   // V15.48.163-G: o shell e os controles usam preenchimento uniforme.
-  expect(visual.topbarBackground).not.toContain('gradient');
+  // O vidro Nanquim aplica uma lente sutil apenas na barra flutuante.
+  expect(visual.topbarBackground).toContain('gradient');
   expect(visual.searchBackground).not.toContain('gradient');
   expect(visual.syncBackground).not.toContain('gradient');
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
@@ -3162,7 +3163,8 @@ test('iPad preserva estrutura do curso fora da etapa 1 de smartphone',async({pag
   });
   expect(data.phone).toBe(false);
   expect(data.border).toBeGreaterThan(0);
-  expect(data.background).not.toBe('none');
+  // Course hero foi convertido em superfície opaca de estudo.
+  expect(data.background).toBe('none');
 });
 
 
@@ -3296,8 +3298,9 @@ test('iPhone etapa 4 unifica o sistema visual geral',async({page},testInfo)=>{
   expect(visual.bodyBackground).toContain('radial-gradient');
   expect(parseFloat(visual.cardRadius)).toBeGreaterThanOrEqual(13);
   expect(visual.cardShadow).not.toBe('none');
-  expect(visual.cardBackdrop).toContain('blur(');
-  expect(visual.primaryBackground).toContain('linear-gradient');
+  // Cards de leitura são opacos; ações em latão são sólidas, não gradientes.
+  expect(visual.cardBackdrop).toBe('none');
+  expect(visual.primaryBackground).toBe('none');
   expect(visual.primaryShadow).toBe('none');
 });
 
@@ -4310,7 +4313,7 @@ test('V15.48.169 [G] conteúdo em vidro fumê e fallbacks de acessibilidade exis
       hasFocusRule:css.includes(':focus-visible')
     };
   });
-  if(data.cardFilter!=='missing')expect(data.cardFilter).toContain('blur(');
+  if(data.cardFilter!=='missing')expect(data.cardFilter).toBe('none');
   expect(data.reducedTransparency).toBe(true);
   expect(data.moreContrast).toBe(true);
   expect(data.reducedMotion).toBe(true);
@@ -4347,7 +4350,7 @@ test('V15.48.169 [G] PASSO 3 · runtime óptico, Inter e vidro fumê nos cards e
   expect(data.opticalSurfaces).toBeLessThan(120);
   expect(data.topbarFilter).not.toBe('none');
   expect(data.searchFilter).toBe('none');
-  if(data.cardFilter!=='missing')expect(data.cardFilter).toContain('blur(');
+  if(data.cardFilter!=='missing')expect(data.cardFilter).toBe('none');
   expect(data.flags).toContain('mm-optics-supported');
   if(testInfo.project.name==='desktop-chromium')expect(data.flags).toContain('mm-pointer-fine');
   if(testInfo.project.name==='iphone-webkit')expect(data.flags).toContain('mm-touch');
@@ -4751,12 +4754,12 @@ test('V15.48.2 [T+M] vidro de dock e topbar é translúcido, sem tarja',async({p
   expect(visual.wrapBackground).toBe('rgba(0, 0, 0, 0)');
   if(!visual.reduced){
     const alpha=color=>Number((color.match(/rgba?\([^)]+\)/)||[''])[0].split(',').at(-1).replace(')','').trim());
-    // iPhone: o material óptico existente usa --mm-bar-alpha=.54–.66
-    // durante a rolagem; a garantia é translucidez real, não alpha <.5.
-    // iPad mantém seu limite anterior mais restritivo.
-    const maxAlpha=testInfo.project.name==='iphone-webkit'?.70:.50;
-    expect(alpha(visual.dockBackground)).toBeLessThan(maxAlpha);
-    expect(alpha(visual.topbarBackground)).toBeLessThan(maxAlpha);
+    // O novo material Nanquim define a topbar em .58 (normal) e .78 (rolagem).
+    // O dock conserva seu limite por dispositivo; ambos seguem translúcidos, com blur real.
+    const dockMaxAlpha=testInfo.project.name==='iphone-webkit'?.70:.50;
+    expect(alpha(visual.dockBackground)).toBeLessThan(dockMaxAlpha);
+    expect(alpha(visual.topbarBackground)).toBeGreaterThan(0);
+    expect(alpha(visual.topbarBackground)).toBeLessThan(.80);
     expect(visual.dockFilter).toContain('blur(');
     expect(visual.topbarFilter).toContain('blur(');
   }
@@ -4771,31 +4774,31 @@ test('V15.48.167-G [G] menu ativo tem cor temática; inativos marfim em Desktop/
   const icon=id=>menu(id).locator(':scope > .ui-icon');
   const label=id=>menu(id).locator(':scope > :is(.txt,.bottom-nav-label)');
   await expect(menu('home')).toHaveClass(/active/);
-  await expect(icon('home')).not.toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(icon('courses')).toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(label('courses')).toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(icon('maps')).toHaveCSS('color','rgb(207, 200, 188)');
+  await expect(icon('home')).not.toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(icon('courses')).toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(label('courses')).toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(icon('maps')).toHaveCSS('color','rgb(185, 178, 165)');
   if(testInfo.project.name==='desktop-chromium'){
     await menu('courses').hover();
-    await expect(icon('courses')).toHaveCSS('color','rgb(207, 200, 188)');
-    await expect(label('courses')).toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(icon('courses')).toHaveCSS('color','rgb(185, 178, 165)');
+    await expect(label('courses')).toHaveCSS('color','rgb(185, 178, 165)');
   }
   await menu('maps').click();
   await expect(menu('maps')).toHaveClass(/active/);
-  await expect(icon('maps')).not.toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(label('maps')).not.toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(icon('home')).toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(label('home')).toHaveCSS('color','rgb(207, 200, 188)');
+  await expect(icon('maps')).not.toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(label('maps')).not.toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(icon('home')).toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(label('home')).toHaveCSS('color','rgb(185, 178, 165)');
   if(testInfo.project.name==='iphone-webkit'){
     const more=page.locator('#mobileMenuBtn');
     await expect(more).toBeVisible();
-    await expect(more.locator(':scope > .ui-icon')).toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(more.locator(':scope > .ui-icon')).toHaveCSS('color','rgb(185, 178, 165)');
     await more.click();
     await expect(more).toHaveAttribute('aria-expanded','true');
-    await expect(more.locator(':scope > .ui-icon')).not.toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(more.locator(':scope > .ui-icon')).not.toHaveCSS('color','rgb(185, 178, 165)');
     const option=page.locator('.mobile-menu-option[data-mobile-sheet-nav="agenda"]');
-    await expect(option.locator('.ui-icon')).toHaveCSS('color','rgb(207, 200, 188)');
-    await expect(option.locator('b')).toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(option.locator('.ui-icon')).toHaveCSS('color','rgb(185, 178, 165)');
+    await expect(option.locator('b')).toHaveCSS('color','rgb(185, 178, 165)');
   }
 });
 

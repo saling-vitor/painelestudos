@@ -326,7 +326,7 @@ html:not(.is-phone-layout) .continue-states .study-time-inline{color:#8b9199}
   min-width:0;
   overflow:hidden;
   color:#e2e4e8!important;
-  font:800 10.5px var(--mono)!important;
+  font:800 var(--fs-caption,12px) var(--mono)!important;
   letter-spacing:.025em!important;
   text-overflow:ellipsis;
   white-space:nowrap;

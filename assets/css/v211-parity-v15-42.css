@@ -78,7 +78,7 @@
   text-transform:uppercase;
   pointer-events:none;
 }
-.hero-copy{padding:44px 44px 40px!important}
+.hero-copy{padding:44px 44px 40px}
 .eyebrow{
   border:1px solid rgba(216,197,158,.22)!important;
   border-radius:9px!important;
@@ -346,11 +346,12 @@
 /* Desktop: preserva a densidade aprovada da Home enquanto mantém a linguagem V211. */
 @media(min-width:900px){
   .hero{min-height:315px!important}
-  .hero-copy{padding:32px 42px 28px!important}
+  .hero-copy{padding:32px 42px 28px}
 }
 
 /* iPad estreito/Split View: mantém o hero dentro da densidade aprovada. */
 @media(min-width:481px) and (max-width:899px){
   html.is-ipad:not(.is-phone-layout) .hero{min-height:285px!important}
-  html.is-ipad:not(.is-phone-layout) .hero-copy{padding:20px 28px!important}
+  /* Espaçamento óptico reduzido para acomodar legendas legíveis (>=11px) sem aumentar o hero retrato. */
+  html.is-ipad:not(.is-phone-layout) .hero-copy{padding:14px 28px!important}
 }

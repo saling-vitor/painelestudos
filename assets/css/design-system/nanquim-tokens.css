@@ -1,0 +1,26 @@
+/* MEUS MAPAS · base proposta global · Nanquim / Papel / Latão.
+   Tokens semanticamente separados das cores próprias de capas e conteúdo. */
+:root{
+ --nq-nanquim:#000000;--nq-grafite-0:#050505;--nq-grafite-1:#0a0a09;
+ --nq-grafite-2:#111110;--nq-grafite-3:#191817;--nq-linha:#242320;
+ --nq-linha-suave:rgba(236,226,208,.06);
+ --nq-papel:#ece6da;--nq-papel-2:#b9b2a5;--nq-papel-3:#857e72;
+ --nq-latao:#c3aa84;--nq-latao-claro:#d8c59e;--nq-latao-escuro:#8a7756;
+ --nq-oxido:#b8614e;--nq-musgo:#8c9a6c;
+ --nq-terracota:#c08a6e;--nq-salvia:#a3ad8a;--nq-argila:#b98a8a;
+ --nq-ametista:#a294b4;--nq-ardosia:#8fa1b3;--nq-pedra:#a8a29a;
+ --nq-font-sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+ --nq-font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
+ --nq-surface-page:var(--nq-nanquim);
+ --nq-surface-shell:var(--nq-grafite-0);
+ --nq-surface-card:var(--nq-grafite-1);
+ --nq-surface-inset:var(--nq-grafite-2);
+ --nq-surface-control:var(--nq-grafite-3);
+ --nq-color-text:var(--nq-papel);
+ --nq-color-subtle:var(--nq-papel-2);
+ --nq-color-muted:var(--nq-papel-3);
+ --nq-color-action:var(--nq-latao);
+ --nq-color-danger:var(--nq-oxido);
+ --nq-color-success:var(--nq-musgo);
+ color-scheme:dark;
+}

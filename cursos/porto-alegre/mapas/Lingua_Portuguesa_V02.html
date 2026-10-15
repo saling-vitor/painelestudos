@@ -4135,5 +4135,80 @@ html:not(.touch-performance) body.mindmap-app .toolbar #closeFileBtn{display:non
 <script src="../../../assets/js/config.js"></script>
 <script src="../../../assets/js/cloud-core.js"></script>
 <script src="../../../assets/js/map-cloud-bridge.js"></script>
+
+<style id="mm-nanquim-v211-standard" data-offline="true">
+/* MEUS MAPAS · Study V211 · Nanquim/Latão
+   Standalone/offline stylesheet source. Embed verbatim into each published map;
+   do not turn it into a network dependency for reader content. */
+:root{
+ --nq-bg:#000000;--nq-panel:#050505;--nq-card:#0a0a09;
+ --nq-inset:#111110;--nq-control:#191817;--nq-line:#242320;
+ --nq-paper:#ece6da;--nq-paper-2:#b9b2a5;--nq-paper-3:#857e72;
+ --nq-brass:#c3aa84;--nq-brass-light:#d8c59e;--nq-rust:#b8614e;--nq-moss:#8c9a6c;
+ --fs-display:3.5rem;--fs-h1:2rem;--fs-h2:1.5rem;--fs-h3:1.125rem;
+ --fs-title:1rem;--fs-body:.9375rem;--fs-body-sm:.875rem;--fs-label:.875rem;
+ --fs-input:.9375rem;--fs-caption:.75rem;--fs-eyebrow:.6875rem;
+ --fs-tabbar:.75rem;--fs-kpi:2rem;--fs-kpi-sm:1.25rem;
+ --bg:var(--nq-bg);--surface:var(--nq-panel);--surface2:var(--nq-card);
+ --surface3:var(--nq-inset);--text:var(--nq-paper);--text2:var(--nq-paper-2);
+ --muted:var(--nq-paper-3);--muted2:var(--nq-paper-3);
+ --gold:var(--nq-brass);--champagne:var(--nq-brass-light);
+}
+@media (min-width:701px) and (max-width:1180px){
+ :root{--fs-display:2.75rem;--fs-h1:1.875rem;--fs-h2:1.375rem;
+ --fs-body:1rem;--fs-label:.9375rem;--fs-input:1rem;--fs-caption:.8125rem;--fs-kpi:1.875rem}
+}
+@media (max-width:700px){
+ :root{--fs-display:2rem;--fs-h1:1.625rem;--fs-h2:1.25rem;
+ --fs-h3:1.0625rem;--fs-body:1rem;--fs-label:.9375rem;
+ --fs-input:1rem;--fs-caption:.8125rem;--fs-kpi:1.75rem;--fs-kpi-sm:1.125rem}
+}
+body.mindmap-app{background-color:var(--nq-bg)!important;color:var(--nq-paper);
+ font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+body.mindmap-app :is(.branch-card,.topic-card,.v134-question,.v135-session-question){
+ background:var(--nq-card)!important;background-image:none!important;
+ border-color:var(--nq-line)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:inset 0 1px 0 rgba(236,226,208,.04),0 8px 22px rgba(0,0,0,.35)!important;
+}
+body.mindmap-app :is(.branch-card,.topic-card):hover{
+ background:var(--nq-inset)!important;border-color:var(--nq-line)!important;
+}
+body.mindmap-app :is(.topic-card,.branch-card,.v134-question) :is(p,li,dd){
+ font-size:var(--fs-body);line-height:1.55;
+}
+body.mindmap-app :is(.toolbar,.toolbar-dock .toolbar){
+ background:radial-gradient(120% 80% at 18% -10%,rgba(216,197,158,.07),transparent 60%),rgba(5,5,5,.58)!important;
+ border-color:rgba(236,226,208,.08)!important;
+ box-shadow:inset 0 1px 0 rgba(236,226,208,.10),0 10px 30px rgba(0,0,0,.45)!important;
+ -webkit-backdrop-filter:blur(22px) saturate(140%)!important;
+ backdrop-filter:blur(22px) saturate(140%)!important;
+}
+body.mindmap-app :is(.toolbar,.toolbar-dock .toolbar) :is(input,select,button){
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+body.mindmap-app :is(.toolbar,.toolbar-dock .toolbar) input{
+ font-size:var(--fs-input)!important;min-height:36px;
+}
+body.mindmap-app :is(.topic-card,.branch-card,.v134-question) :is(button,[role="button"]){
+ font-size:var(--fs-label);min-height:32px;
+}
+body.mindmap-app :is(.progress-state.ok,.status-ok,.is-complete){color:var(--nq-moss)!important}
+body.mindmap-app :is(.progress-state.dif,.status-dif,.is-risk){color:var(--nq-rust)!important}
+body.mindmap-app :is(.progress-state.rev,.status-rev,.is-review){color:var(--nq-brass)!important}
+body.mindmap-app :focus-visible{outline-color:var(--nq-brass-light)!important}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ body.mindmap-app :is(.toolbar,.toolbar-dock .toolbar){
+  background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+ body.mindmap-app :is(.toolbar,.toolbar-dock .toolbar){background:#0b0a09!important}
+}
+@media (prefers-reduced-motion:reduce){
+ body.mindmap-app :is(.toolbar,.toolbar-dock .toolbar,.topic-card,.branch-card){transition:none!important;animation:none!important}
+}
+
+</style>
 </body>
 </html>

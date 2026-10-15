@@ -3,7 +3,7 @@ import {mkdirSync} from 'node:fs';
 
 /* V15.48.173-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
-test('Black Editorial [G] · fundo preto e contorno neutro dos mapas',async({page})=>{
+test('Nanquim Editorial [G] · fundo preto e contorno neutro dos mapas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await expect(page.locator('.topbar')).toBeVisible();
   const data=await page.evaluate(()=>{
@@ -37,10 +37,10 @@ test('Black Editorial [G] · fundo preto e contorno neutro dos mapas',async({pag
   expect(data.rose.backgroundImage).toBe('none');
   expect(data.green.backgroundImage).toBe('none');
   expect(data.rose.backgroundColor).toBe(data.green.backgroundColor);
-  expect(data.rose.backgroundColor).toMatch(/rgba?\(20,\s*20,\s*21/);
+  expect(data.rose.backgroundColor).toMatch(/rgba?\(10,\s*10,\s*9/);
   expect(data.rose.border).toBe(data.green.border);
-  expect(data.rose.filter).toContain('blur(');
-  expect(data.topImage).not.toContain('gradient');
+  expect(data.rose.filter).toBe('none');
+  expect(data.topImage).toContain('gradient');
   expect(data.topColor).toBeTruthy();
   expect(data.hasActive).toBe(true);
   expect(data.navImage).not.toContain('gradient');
@@ -49,7 +49,7 @@ test('Black Editorial [G] · fundo preto e contorno neutro dos mapas',async({pag
   expect(data.navFill).not.toBe(data.topColor);
 });
 
-test('Black Editorial [G] · cards pretos, bordas neutras e botões temáticos',async({page})=>{
+test('Nanquim Editorial [G] · cards pretos, bordas neutras e botões temáticos',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const actual=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -62,10 +62,19 @@ test('Black Editorial [G] · cards pretos, bordas neutras e botões temáticos',
       const el=document.createElement('article');el.className=cls;
       const slot=document.createElement('div');slot.className=slotClass;
       const button=document.createElement('button');button.className=buttonClass;button.textContent='Abrir';
+      // Elimina transicoes so neste fixture: cores sao verificadas no estado final.
+      el.style.setProperty('transition','none','important');
+      button.style.setProperty('transition','none','important');
       slot.append(button);el.append(slot);host.append(el);
       const read=()=>{
         const c=getComputedStyle(el),b=getComputedStyle(button);
-        return{card:c.backgroundColor,image:c.backgroundImage,blur:c.backdropFilter||c.webkitBackdropFilter,edge:c.borderTopColor,button:b.backgroundColor,ink:b.color,buttonBorder:b.borderTopColor,actionMatched:button.matches('html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item) :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation])')};
+        const rgbaPixel=color=>{
+          const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
+          const context=canvas.getContext('2d');context.clearRect(0,0,1,1);
+          context.fillStyle=color;context.fillRect(0,0,1,1);
+          return [...context.getImageData(0,0,1,1).data];
+        };
+        return{card:c.backgroundColor,image:c.backgroundImage,blur:c.backdropFilter||c.webkitBackdropFilter,edge:c.borderTopColor,button:b.backgroundColor,ink:b.color,buttonPixel:rgbaPixel(b.backgroundColor),inkPixel:rgbaPixel(b.color),buttonBorder:b.borderTopColor,actionMatched:button.matches('html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item) :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation])')};
       };
       el.style.setProperty(token,'#B8829E');const rose=read();
       el.style.setProperty(token,'#79A98B');const green=read();el.remove();
@@ -74,21 +83,21 @@ test('Black Editorial [G] · cards pretos, bordas neutras e botões temáticos',
   });
   for(const {name,rose,green} of actual){
     expect(rose.image).toBe('none');
-    expect(rose.blur,name+' deve ser vidro fumê').toContain('blur(');
+    expect(rose.blur,name+' deve ser sólido').toBe('none');
     expect(green.image).toBe('none');
     expect(rose.card).toBe(green.card);
-    expect(rose.card).toMatch(/rgba?\(20,\s*20,\s*21/);
-    if(name==='simulation') expect(rose.edge).not.toBe(green.edge);
-    else expect(rose.edge).toBe(green.edge);
+    expect(rose.card).toMatch(/rgba?\(10,\s*10,\s*9/);
+    expect(rose.edge).toBe(green.edge);
     expect(rose.actionMatched).toBe(true);
-    if(name==='course') expect(rose.button,`Entrar de ${name}: preencher com a cor do curso`).not.toBe(green.button);
-    else expect(rose.button).toBe(green.button);
-    expect(rose.ink).not.toBe(green.ink);
+    // CSS Color 4 pode serializar a mesma cor em oklab() ou color(srgb) conforme a variável.
+    // Comparamos pixels renderizados, sem permitir mudança cromática perceptível entre acentos.
+    expect(rose.buttonPixel).toEqual(green.buttonPixel);
+    expect(rose.inkPixel).toEqual(green.inkPixel);
   }
 });
 
 
-test('V15.48.171-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
+test('V15.48.174-G [G] · renderizadores reais de curso e simulado usam fundo preto invariável',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>typeof courseCard==='function'&&typeof simulationCard==='function');
   const result=await page.evaluate(()=>{
@@ -124,17 +133,17 @@ test('V15.48.171-G [G] · renderizadores reais de curso e simulado usam fundo pr
     });
   });
   for(const item of result){
-    expect(item.rose.bg,item.name+' deve ter fundo preto').toMatch(/rgba?\(20,\s*20,\s*21/);
+    expect(item.rose.bg,item.name+' deve ter fundo preto').toMatch(/rgba?\(10,\s*10,\s*9/);
     expect(item.rose.bg,item.name+' deve permanecer preto').toBe(item.green.bg);
     expect(item.rose.image,item.name+' não pode ter degradê').toBe('none');
     expect(item.green.image,item.name+' não pode ter degradê').toBe('none');
-    expect(item.rose.blur,item.name+' usa vidro fumê real').toContain('blur(');
+    expect(item.rose.blur,item.name+' é sólido').toBe('none');
     if(item.innerImage!==null)expect(item.innerImage,item.name+' chip interno').toBe('none');
   }
 });
 
 
-test('V15.48.171-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
+test('V15.48.174-G [G] · sidebar, mapa, planejamento e textos seguem o contrato preto + marfim',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const result=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -165,19 +174,18 @@ test('V15.48.171-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
       isPhone};
   });
   for(const {name,rose,green} of result.cards){
-    expect(rose.background,name+' precisa ser preto').toMatch(/rgba?\(20,\s*20,\s*21/);
-    expect(rose.blur,name+' precisa usar blur no vidro fumê').toContain('blur(');
+    expect(rose.background,name+' precisa ser preto').toMatch(/rgba?\(10,\s*10,\s*9/);
+    expect(rose.blur,name+' é superfície sólida').toBe('none');
     expect(rose.background,name+' preto não depende do HEX').toBe(green.background);
     expect(rose.image,name+' sem gradiente de cor').toBe('none');
     expect(green.image,name+' sem gradiente de cor').toBe('none');
-    if(name==='map-card')expect(rose.border,name+' borda neutra').toBe(green.border);
-    else expect(rose.border,name+' cor semântica').not.toBe(green.border);
+    expect(rose.border,name+' borda neutra').toBe(green.border);
     expect(rose.title,name+' texto não muda com o HEX').toBe(green.title);
   }
   if(!result.isPhone){
-    expect(result.side.bg).toMatch(/rgba?\(20,\s*20,\s*21/);
+    expect(result.side.bg).toMatch(/rgba?\(8,\s*8,\s*7/);
     expect(result.side.blur).toContain('blur(');
-    expect(result.side.image).toBe('none');
+    expect(result.side.image).toContain('gradient');
     if(result.selected){
       expect(result.selected.bg).not.toBe('rgba(0, 0, 0, 0)');
       expect(result.selected.image).toBe('none');
@@ -186,7 +194,7 @@ test('V15.48.171-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
 });
 
 
-test('V15.48.171-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
+test('V15.48.174-G [G] · reduzir transparência restaura fundo opaco nos cards',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const data=await page.evaluate(()=>{
     const node=document.createElement('article');node.className='map-card';
@@ -198,19 +206,19 @@ test('V15.48.171-G [G] · reduzir transparência restaura fundo opaco nos cards'
     node.remove();document.documentElement.classList.remove('mm-reduced-transparency');
     return result;
   });
-  expect(data.cardBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
+  expect(data.cardBg).toMatch(/rgb\(10,\s*10,\s*9\)/);
   expect(data.cardBlur).toBe('none');
   if(!data.isPhone){
-    expect(data.sideBg).toMatch(/rgb\(8,\s*8,\s*8\)/);
+    expect(data.sideBg).toMatch(/rgb\(11,\s*10,\s*9\)/);
     expect(data.sideBlur).toBe('none');
   }
 });
 
 
-/* V15.48.171-G · Auditoria dos elementos VISÍVEIS e não apenas cards artificiais.
+/* V15.48.174-G · Auditoria dos elementos VISÍVEIS e não apenas cards artificiais.
    Executado em desktop, iPad Chromium, iPad WebKit e iPhone WebKit.
    Capturas são anexadas para revisão visual do acabamento em cada viewport. */
-test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e capas intactas',async({page},testInfo)=>{
+test('Nanquim sólido real [G][T+M] · Home e Biblioteca com superficies neutras e capas intactas',async({page},testInfo)=>{
   // Capturas e rolagens de três telas reais são intencionalmente mais custosas no WebKit.
   test.setTimeout(120000);
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
@@ -271,9 +279,9 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
   });
   const assertNeutral=(entry,name)=>{
     expect(entry.image,name+' deve ser preenchimento uniforme').toBe('none');
-    expect(entry.background,name+' deve ser preto neutro').toMatch(/rgba?\(20,\s*20,\s*21/);
+    expect(entry.background,name+' deve ser preto neutro').toMatch(/rgba?\(10,\s*10,\s*9/);
     expect(entry.alpha,name+' deve ocultar topografia interna').toBeGreaterThanOrEqual(.90);
-    expect(entry.blur,name+' precisa de vidro óptico').toContain('blur(');
+    expect(entry.blur,name+' usa material sólido').toBe('none');
   };
   assertNeutral(home.priority.first,'Prioridade agora');
   assertNeutral(home.today,'Hoje · Estude agora');
@@ -302,9 +310,9 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
       blur:style.backdropFilter||style.webkitBackdropFilter||'none',
       coverPresent:!!cover,coverSrc:cover?.getAttribute('src')||''};
   });
-  expect(library.background).toMatch(/rgba?\(20,\s*20,\s*21/);
+  expect(library.background).toMatch(/rgba?\(10,\s*10,\s*9/);
   expect(library.image).toBe('none');
-  expect(library.blur).toContain('blur(');
+  expect(library.blur).toBe('none');
   expect(library.coverPresent).toBe(true);
   expect(library.coverSrc).not.toBe('');
   await maps.first().scrollIntoViewIfNeeded();
@@ -320,15 +328,15 @@ test('Black Smoked real [G][T+M] · Home e Biblioteca com superficies neutras e 
       blur:css.backdropFilter||css.webkitBackdropFilter||'none',
       coverSrc:cover?.getAttribute('src')||''};
   });
-  expect(courseStyle.bg).toMatch(/rgba?\(20,\s*20,\s*21/);
+  expect(courseStyle.bg).toMatch(/rgba?\(10,\s*10,\s*9/);
   expect(courseStyle.image).toBe('none');
-  expect(courseStyle.blur).toContain('blur(');
+  expect(courseStyle.blur).toBe('none');
   expect(courseStyle.coverSrc).not.toBe('');
   await inCourse.first().scrollIntoViewIfNeeded();
   await page.screenshot({path:'visual-audit/'+testInfo.project.name+'-curso.png',animations:'disabled'});
 });
 
-/* V15.48.171-G · Regressão de cores em componentes reais e layout. */
+/* V15.48.174-G · Regressão de cores em componentes reais e layout. */
 test('Grafite [G] · painéis reais sem preto chapado ou gradientes de fundo',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const rows=await page.evaluate(()=>{
@@ -344,7 +352,9 @@ test('Grafite [G] · painéis reais sem preto chapado ou gradientes de fundo',as
   });
   expect(rows.length).toBeGreaterThan(0);
   for(const x of rows){
-    expect(x.channels[0],x.selector+' sem preto puro').toBeGreaterThanOrEqual(17);
+    // O painel estrutural usa o token Nanquim --nq-grafite-0 (#050505).
+    // Cards de estudo continuam obrigatoriamente em --nq-grafite-1 (#0a0a09).
+    expect(x.channels[0],x.selector+' sem preto puro').toBeGreaterThanOrEqual(x.selector==='#homeReviewSection'?5:10);
     expect(x.channels[0],x.selector+' preenchimento neutro').toBe(x.channels[1]);
     expect(x.channels[3]??1,x.selector+' bloqueia textura interna').toBeGreaterThanOrEqual(.90);
     expect(x.image,x.selector+' sem gradiente no card').toBe('none');

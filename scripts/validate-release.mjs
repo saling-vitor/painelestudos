@@ -52,11 +52,28 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===49,'auditoria: build ativo usa 49 CSS, incluindo Black Smoked Uniforme');
+check(activeCssFiles.length===53,'auditoria: 53 CSS durante a migração Nanquim');
 check(index.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
 check(index.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS final conectado');
 check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
-check(activeCssFiles.at(-1)==='assets/css/black-smoked-uniform-v15-48-163.css','Black Smoked Uniforme: CSS tem ultima precedencia');
+check(activeCssFiles.at(-1)==='assets/css/design-system/nanquim-application.css','Nanquim: CSS final conectado');
+const nanquimSheets=["assets/css/design-system/nanquim-tokens.css","assets/css/design-system/nanquim-typography.css","assets/css/design-system/nanquim-materials.css","assets/css/design-system/nanquim-application.css"];
+for(const file of nanquimSheets){check(exists(file),'Nanquim CSS: '+file);check(index.includes(file+`?v=${expected}`),'Nanquim index: '+file);check(sw.includes(file+`?v=${expected}`),'Nanquim PWA: '+file)}
+// Nanquim PWA: testar metadados de todas as entradas escuras, inclusive a página offline.
+const readerEntry=read('reader.html'),offlineEntry=read('offline.html');
+const darkManifest=parseJson('manifest-v15.23.6.webmanifest');
+check(index.includes('name="theme-color" content="#000000"'),'Nanquim: metadado do portal');
+check(readerEntry.includes('name="theme-color" content="#000000"'),'Nanquim: metadado do leitor');
+check(offlineEntry.includes('name="theme-color" content="#000000"'),'Nanquim: metadado offline');
+check(offlineEntry.includes('manifest-v15.23.6.webmanifest?v='+expected),'Nanquim: offline manifesto versionado');
+check(darkManifest.theme_color==='#000000'&&darkManifest.background_color==='#000000','Nanquim: manifesto escuro e splash PWA');
+const genericManifest=parseJson('manifest.webmanifest');
+check(genericManifest.theme_color==='#000000'&&genericManifest.background_color==='#000000','Nanquim: manifesto genérico sem tema legado');
+const nanquimTypography=read(nanquimSheets[1]);
+for(const t of ['display','h1','h2','h3','title','body','body-sm','label','input','caption','eyebrow','tabbar','kpi','kpi-sm'])check(nanquimTypography.includes('--fs-'+t+':'),'token '+t);
+const nanquimApp=read(nanquimSheets[3]);
+check(nanquimApp.includes('prefers-reduced-transparency')&&nanquimApp.includes('prefers-reduced-motion'),'fallback de acessibilidade');
+check(!nanquimApp.includes('html *{'),'sem reset global de cores temáticas');
 const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
 check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(20,20,21,.94)'),'Black Editorial: grafite fumê neutro oficial sincronizado');
 check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
@@ -123,7 +140,7 @@ check(stateModule.includes('assets/capas/padroes/padrao-novo-curso.png')&&stateM
 check(allJs.includes("key:'padrao'")&&allJs.includes('padrao-simulado.png'),'Padrão simulado ativo sem eliminar capas específicas');
 const newHomeCss='assets/css/home-responsive-v15-48-162.css';
 const smokedCss='assets/css/black-smoked-uniform-v15-48-163.css';
-const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/lucide-png-v15-48-172.css',newHomeCss,smokedCss].includes(file)).filter(exists).map(read).join('\n');
+const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/lucide-png-v15-48-172.css',newHomeCss,smokedCss,'assets/css/design-system/nanquim-application.css'].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
@@ -266,6 +283,17 @@ const coreMatch=sw.match(/const CORE=\[(.*?)\];/s);
 if(!coreMatch){fail('CORE não encontrado em sw.js')}else{
  const refs=[...coreMatch[1].matchAll(/['"]([^'"]+)['"]/g)].map(match=>match[1]);
  for(const ref of refs){if(ref==='./'){ok('CORE ./');continue}const file=cleanAsset(ref);check(exists(file),'CORE '+file)}
+}
+// V211: preserve the authored inline standard and provide an offline-only reader fallback for imported maps.
+const v211ThemeSource=read('assets/css/design-system/nanquim-study-v211.css').trim();
+check(readerEntry.includes('mmNanquimReaderStyle')&&readerEntry.includes('mm-nanquim-(?:v211-standard|map-theme|reader-theme)')&&readerEntry.includes('mindmap-app'),'V211: reader offline skips duplicate inline theme');
+const bundledV211Maps=(catalog.maps||[]).filter(map=>String(map.href||'').startsWith('cursos/porto-alegre/mapas/')&&/\.html$/i.test(map.href));
+check(bundledV211Maps.length>=14,'V211: 14 estudos integrados disponíveis');
+for(const map of bundledV211Maps){
+ const file=cleanAsset(map.href);
+ const html=read(file);
+ check((html.match(/id="mm-nanquim-v211-standard"/g)||[]).length===1,'V211: tema offline único '+file);
+ check(html.includes(v211ThemeSource),'V211: CSS canônico embutido '+file);
 }
 for(const map of catalog.maps||[]){
  if(map.href){const file=cleanAsset(map.href);check(exists(file),'Mapa '+file);if(/\.html$/i.test(file))check(nonEmpty(file),'Mapa não vazio '+file)}
