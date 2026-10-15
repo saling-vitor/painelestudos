@@ -354,7 +354,7 @@
   };
   const agendaClock=minutes=>String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');
   function agendaConflictData(items){
-    const periods=items.map(row=>{
+    const periods=items.filter(row=>/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(row.start||''))).map(row=>{
       const start=agendaMinutes(row.start),duration=Math.max(5,num(row.minutes)||30);
       return{row,start,end:start+duration};
     }).sort((a,b)=>a.start-b.start);
@@ -385,7 +385,7 @@
     const end=new Date(start.getFullYear(),start.getMonth(),start.getDate()+7);
     const all=(s.dashboard.agenda||[]).filter(item=>!item.deleted&&item.date);
     const week=all.filter(item=>item.date>=dayKey(start)&&item.date<dayKey(end)),planned=week.reduce((a,row)=>a+num(row.minutes),0);
-    const day=all.filter(item=>item.date===focus),conf=agendaConflictData(day);
+    const day=all.filter(item=>item.date===focus),conf=agendaConflictData(day),unscheduled=day.filter(item=>!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(item.start||'')));
     const completed=(s.dashboard.sessions||[]).filter(row=>!row.deleted&&row.startedAt&&dayKey(new Date(row.startedAt))===focus);
     const examination=s.rank.filter(x=>x.date&&dayKey(x.date)===focus);
     const reviews=s.reviews?.due||[];
@@ -456,6 +456,7 @@
        (examination.length?'<p class="pr-note">Prova: '+examination.map(x=>escapeHtml(x.course.title||'Concurso')).join(' · ')+'</p>':'')+
        (reviewRows.length?'<p class="pr-note">Revisões previstas: '+reviewRows.map(x=>escapeHtml(mapName(x.map))).join(' · ')+'</p>':'')+
        (completed.length?'<p class="pr-note">Sessões realizadas: '+completed.map(x=>escapeHtml(x.label||'Estudo')+' · '+minText(x.durationSeconds)).join(' · ')+'</p>':'')+
+       (unscheduled.length?'<p class="pr-note">Sem horário registrado: '+unscheduled.map(x=>escapeHtml(x.title||'Sessão')+' · '+num(x.minutes)+' min').join(' · ')+'. Defina o horário na Agenda antes de encaixar na régua.</p>':'')+
        (!day.length?blank('Nenhum bloco de estudo agendado para este dia. O cronograma abaixo continua disponível.'):'')+'</div>';
     node.innerHTML=header('Agenda · Cronograma','Semana de '+shortDate(start)+' a '+shortDate(new Date(end.getTime()-86400000)),
       'Horários de estudo reais; conflitos não são resolvidos sem confirmação.',
@@ -524,6 +525,7 @@
       const start=agendaMinutes(hour),end=start+recommendation.duration;
       if(end>1440)return safe(()=>toast('A duração ultrapassa o fim do dia.'),null);
       const agendas=safe(()=>StudyDashboard.exportData().agenda,[]).filter(x=>!x.deleted&&x.date===recommendation.date);
+      if(agendas.some(x=>!x.start))return safe(()=>toast('Existem sessões sem horário neste dia. Defina os horários primeiro.'),null);
       if(agendas.some(x=>{
         const a=agendaMinutes(x.start||'19:00'),b=a+num(x.minutes);
         return start<b&&end>a;
