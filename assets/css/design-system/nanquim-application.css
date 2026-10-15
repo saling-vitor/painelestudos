@@ -1,0 +1,187 @@
+/* MEUS MAPAS · Nanquim/Latão + Vidro · layer of integration for V15.48.174-G
+   Only UI surfaces; never override pixels/text inside authored cover artwork.
+   Preserve card media assets, feature logic, progress data and reader content.
+   Material hierarchy: opaque study cards; translucent floating chrome. */
+:root{
+ --bg:var(--nq-nanquim);--surface:var(--nq-grafite-0);--surface2:var(--nq-grafite-1);
+ --surface3:var(--nq-grafite-2);--line:var(--nq-linha);
+ --text:var(--nq-papel);--text2:var(--nq-papel-2);
+ --muted:var(--nq-papel-3);--muted2:var(--nq-papel-3);
+ --mm-ivory-strong:var(--nq-papel);--mm-ivory-body:var(--nq-papel-2);
+ --mm-ivory-muted:var(--nq-papel-3);
+ --mm-text-strong:var(--nq-papel);--mm-text:var(--nq-papel-2);
+ --mm-text-secondary:var(--nq-papel-3);
+ --mm-smoke-card-black:var(--nq-grafite-1);
+ --mm-smoke-neutral:var(--nq-grafite-0);
+ --mm-smoke-inset:var(--nq-grafite-2);
+ --mm-smoke-shell:var(--nq-glass-panel);
+ --mm-smoke-edge:var(--nq-glass-border);
+ --mm-smoke-rim:inset 0 1px 0 var(--nq-glass-rim);
+ --mm-smoke-card-filter:none;
+ --ui-focus:var(--nq-latao-claro);
+}
+html,body{background-color:var(--nq-nanquim)!important}
+html .app{color:var(--nq-papel);font-family:var(--nq-font-sans)}
+/* Typography: 14 semantic tokens, matching the reference across three widths. */
+html .app .hero h1{font-size:var(--fs-display)!important;line-height:1;letter-spacing:-.02em}
+html .app :is(.course-hero h1,.section-head.courses-head h2,.view[data-view="maps"]>.section-head h2){font-size:var(--fs-h1)!important;line-height:1.1}
+html .app .section-head h2,html .app .section h2{font-size:var(--fs-h2)!important;line-height:1.2}
+html .app .content :is(.course-card,.course-library-card,.map-card,.simulation-card,.continue-card,.priority-now-card,.study-command-card) h3{font-size:var(--fs-h3)!important;line-height:1.25}
+html .app .content :is(.study-plan-item,.study-command-card,.progress-insight-card,.study-analytics-grid>.panel) :is(h3,.title){font-size:var(--fs-title)!important}
+html .app .content :is(.section-head p,.hero p,.course-hero>p,.home-review-section p,.empty-state-copy p,.study-plan-item p){font-size:var(--fs-body)!important;line-height:1.55}
+html .app .content :is(.course-card,.map-card,.simulation-card,.continue-card,.priority-now-card,.study-command-card) :is(.meta,.sub,.description,.card-meta,.map-meta){font-size:var(--fs-body-sm)!important;line-height:1.5}
+html .app :is(.nav-btn .txt,.bottom-nav-label,.primary,.secondary,.category-btn,.course-study-filter,.progress-filter,.maps-filter-toggle,.maps-sort-option,.ui-select-trigger){font-size:var(--fs-label)!important;line-height:1.2}
+html .app :is(input[type="search"],input[type="text"],input[type="number"],select,textarea){font-size:var(--fs-input)!important;line-height:1.2}
+html .app :is(.kicker,.eyebrow,.nav-label){font-size:var(--fs-eyebrow)!important;line-height:1.2;text-transform:uppercase;letter-spacing:.08em}
+html .app :is(.map-code,.progress-state,.map-study-status,.chip,.course-status-pill,.simulation-recent-board,.simulation-recent-status){font-size:var(--fs-caption)!important;line-height:1.35}
+html .app .bottom-nav-label{font-size:var(--fs-tabbar)!important}
+html .app .hero-stats .stat b{font-size:var(--fs-kpi)!important;line-height:1}
+html .app :is(.study-command-metrics,.study-rhythm-kpis) b{font-size:var(--fs-kpi-sm)!important}
+html .app :is(.nav-label,.map-code,.kicker,.eyebrow,.progress-state,.map-study-status){font-family:var(--nq-font-mono)}
+/* Opaque content: cards and reading surfaces must not be blurred. */
+html .app .content :is(
+ .study-plan-item,.study-command-card,.study-now-card,.priority-now-card,
+ .forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,
+ .course-card,.course-library-card,.map-card,.progress-insight-card,
+ .progress-insights,.progress-attention,.progress-course,.progress-global-panel,
+ .study-heatmap-card,.study-heatmap-primary,.study-agenda-calendar,.study-agenda-side,
+ .study-automation-panel,.settings-control-panel,.settings-control-summary,
+ .settings-panel,.study-rhythm-details,.study-intelligence-row>article,
+ .study-analytics-grid>.panel,.account-connected-card,.app-update-compact,
+ .diagnostic-row,.restore-point-item,.simulation-manage-section,
+ .map-file-panel,.cover-editor,.version-panel,.panel
+):not(.mm-smoke-opt-out){
+ background:var(--nq-grafite-1)!important;
+ background-image:none!important;border-color:var(--nq-linha)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:inset 0 1px 0 rgba(236,226,208,.04),0 8px 22px rgba(0,0,0,.36)!important;
+}
+html .app .content :is(.home-review-section,.study-intelligence-panel,.study-plan-footer,.study-command-metrics,.course-hero,.course-header,.course-status,.course-automation){
+ background:var(--nq-grafite-0)!important;background-image:none!important;
+ border-color:var(--nq-linha)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html .app .content :is(.course-status-metric,.stat,.metric,.study-command-metrics>*,.study-rhythm-kpis>article){
+ background:var(--nq-grafite-2)!important;border-color:var(--nq-linha-suave)!important;
+}
+html .app .content :is(.study-plan-item,.continue-card,.simulation-recent-item,.course-card,.map-card):is(:hover,:focus-within){
+ background:var(--nq-grafite-2)!important;
+ border-color:var(--nq-linha)!important;
+}
+/* Navigation: pastel pigments belong only to selected destinations. */
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="home"]{--nq-nav:var(--nq-latao)}
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="courses"]{--nq-nav:var(--nq-terracota)}
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="maps"]{--nq-nav:var(--nq-salvia)}
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"]{--nq-nav:var(--nq-argila)}
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"]{--nq-nav:var(--nq-ametista)}
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"]{--nq-nav:var(--nq-ardosia)}
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"]{--nq-nav:var(--nq-pedra)}
+html:not(.is-phone-layout) .app .side .nav-btn[data-nav].active,
+html .bottom-nav>button[data-nav].active,
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
+ --nq-nav-active:var(--nq-nav,var(--nq-latao));
+ background:color-mix(in srgb,var(--nq-nav-active) 15%,var(--nq-grafite-2))!important;
+ border-color:color-mix(in srgb,var(--nq-nav-active) 45%,transparent)!important;
+ color:var(--nq-nav-active)!important;box-shadow:inset 0 1px 0 rgba(236,226,208,.07)!important;
+}
+html:not(.is-phone-layout) .app .side .nav-btn[data-nav].active :is(.ui-icon,.txt),
+html .bottom-nav>button[data-nav].active :is(.ui-icon,.bottom-nav-label){color:var(--nq-nav,var(--nq-latao))!important}
+html .app .side .nav-btn[data-nav]:not(.active) :is(.ui-icon,.txt){color:var(--nq-papel-2)!important}
+/* Chrome: four optical materials; avoid double blur within glass containers. */
+html:not(.is-phone-layout) .app .side,
+html .app .main .topbar,
+html .bottom-nav,
+html .app .course-sticky-bar{
+ background:var(--nq-glass-lens),var(--nq-glass-bar)!important;
+ border-color:var(--nq-glass-border)!important;
+ box-shadow:inset 0 1px 0 var(--nq-glass-rim),inset 0 -1px 0 rgba(0,0,0,.55),0 10px 30px rgba(0,0,0,.45)!important;
+ -webkit-backdrop-filter:var(--nq-glass-bar-filter)!important;
+ backdrop-filter:var(--nq-glass-bar-filter)!important;
+}
+html:not(.is-phone-layout) .app .side{
+ background:var(--nq-glass-lens),var(--nq-glass-panel)!important;
+ -webkit-backdrop-filter:var(--nq-glass-panel-filter)!important;
+ backdrop-filter:var(--nq-glass-panel-filter)!important;
+}
+html.mm-scrolled .app .main .topbar,html.mm-scrolled .bottom-nav,html.mm-scrolled .app .course-sticky-bar{
+ background:var(--nq-glass-lens),var(--nq-glass-bar-scrolled)!important;
+}
+html .app :is(.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.mobile-menu-sheet,.popover,.context-menu,.modal-card,.planner-modal-card,.study-doubt-card,.study-timer-idle-menu,.progress-sort-sheet){
+ background:var(--nq-glass-lens),var(--nq-glass-panel)!important;
+ border-color:var(--nq-glass-border)!important;
+ box-shadow:inset 0 1px 0 var(--nq-glass-rim),0 24px 60px rgba(0,0,0,.6)!important;
+ -webkit-backdrop-filter:var(--nq-glass-panel-filter)!important;
+ backdrop-filter:var(--nq-glass-panel-filter)!important;
+}
+html .app .course-primary-actions{
+ background:var(--nq-glass-lens),var(--nq-glass-controls)!important;
+ border-color:var(--nq-glass-border)!important;
+ -webkit-backdrop-filter:var(--nq-glass-controls-filter)!important;
+ backdrop-filter:var(--nq-glass-controls-filter)!important;
+}
+html .app :is(.topbar,.bottom-nav,.course-sticky-bar,.course-primary-actions) :is(.search,#syncTop,#installBtn,input,select,.ui-select-trigger,button){
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html .app :is(.map-card,.course-card,.course-library-card,.simulation-card)
+ :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
+ background:var(--nq-glass-micro)!important;
+ border-color:var(--nq-glass-rim-strong)!important;
+ -webkit-backdrop-filter:var(--nq-glass-micro-filter)!important;
+ backdrop-filter:var(--nq-glass-micro-filter)!important;
+ box-shadow:inset 0 1px 0 rgba(236,226,208,.22),0 4px 12px rgba(0,0,0,.35)!important;
+}
+/* Buttons: brass actions, matte inside glass; covers and artwork untouched. */
+html .app .content :is(.study-plan-item,.continue-card,.priority-now-card,.study-command-card,.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item)
+ :is(.primary,.secondary,.course-footer .enter,[data-study-plan-open],button[data-open-simulation])
+ :not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav){
+ background:var(--nq-nanquim)!important;
+ border-color:color-mix(in srgb,var(--nq-latao) 50%,transparent)!important;
+ color:var(--nq-latao-claro)!important;
+}
+html .app .content :is(.study-plan-item,.continue-card,.priority-now-card,.study-command-card,.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item)
+ :is(.primary,.secondary,.course-footer .enter,[data-study-plan-open],button[data-open-simulation]):hover{
+ background:var(--nq-grafite-2)!important;border-color:var(--nq-latao)!important;
+}
+html .app :is(.primary):not(.course-footer .enter):not(.simulation-card-actions .primary){
+ background:var(--nq-latao);border-color:var(--nq-latao);color:var(--nq-nanquim);
+}
+html .app :is(.primary):not(.course-footer .enter):hover{background:var(--nq-latao-claro)}
+/* Selection and informational state remain semantically distinct. */
+html .app :is(.category-btn.active,.course-study-filter.active,.progress-filter.active,.maps-filter-chip.active,.maps-sort-option.active,.progress-sort-option.active,.ui-select-option[aria-selected="true"]){
+ background:var(--nq-grafite-2)!important;
+ border-color:color-mix(in srgb,var(--nq-latao) 50%,transparent)!important;
+ color:var(--nq-latao-claro)!important;
+}
+html .app .progress-state{background:var(--nq-grafite-1)!important;color:var(--nq-papel-3)!important;border-color:var(--nq-linha)!important}
+html .app :is(.progress-state.ok,.map-study-status-completed,.course-health-badge.is-ok,.course-health-badge.is-healthy,.agenda-completed-badge){color:var(--nq-musgo)!important}
+html .app :is(.progress-state.rev,.progress-state.review,.map-study-status-review,.course-health-badge.is-attention){color:var(--nq-latao)!important}
+html .app :is(.progress-state.dif,.progress-state.difficult,.course-health-badge.is-risk){color:var(--nq-oxido)!important}
+html .app :is(.heat-0){background:var(--nq-grafite-3)!important}
+html .app .heat-1{background:rgba(195,170,132,.22)!important}
+html .app .heat-2{background:rgba(195,170,132,.42)!important}
+html .app .heat-3{background:rgba(195,170,132,.66)!important}
+html .app .heat-4{background:var(--nq-latao)!important}
+/* Technical/accessibility fallbacks outrank all optical component rules. */
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ html:not(.is-phone-layout) .app .side,html .app .main .topbar,html .bottom-nav,html .app .course-sticky-bar,
+ html .app :is(.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.mobile-menu-sheet,.popover,.context-menu,.modal-card,.planner-modal-card,.study-doubt-card,.study-timer-idle-menu,.progress-sort-sheet,.course-primary-actions),
+ html .app :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
+ background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+html.mm-reduced-transparency :is(.topbar,.bottom-nav,.side,.course-sticky-bar,.course-primary-actions,.global-search-panel,.modal-card,.planner-modal-card){
+ background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+ html:not(.is-phone-layout) .app .side,html .app .main .topbar,html .bottom-nav,
+ html .app :is(.global-search-panel,.modal-card,.course-primary-actions){
+ background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
+@media (prefers-reduced-motion:reduce){
+ html .app :is(.topbar,.bottom-nav,.side,.nav-btn,.course-card,.map-card,.simulation-card){transition:none!important;animation:none!important}
+}
+@media (max-width:700px){
+ html .app :is(input[type="search"],input[type="text"],input[type="number"],select,textarea){font-size:var(--fs-input)!important}
+ html .app :is(.bottom-nav>button,.mobile-menu-option,.primary,.secondary){min-height:40px}
+}
