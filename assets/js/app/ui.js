@@ -2,6 +2,7 @@
   const source=mapById(sourceKey),target=courseById(targetCourseId);
   if(!source||!target)throw new Error('Mapa ou concurso não encontrado.');
   if(source.courseId===target.id||target.status==='archived')throw new Error('Escolha outro concurso ativo.');
+  if(mapContentSource(source)!=='cloud')throw new Error('Para vincular este conteúdo, ative primeiro a versão personalizada da nuvem no gerenciador do mapa.');
   if(!StudyCloud.configured()||!StudyCloud.session())throw new Error('Conecte-se à conta para vincular mapas.');
   const me=await StudyCloud.me(),path=String(source.cloudStoragePath||source.storage_path||'');
   if(!me?.id||!path.startsWith(String(me.id)+'/'))throw new Error('O mapa não possui arquivo privado vinculado à sua conta.');
@@ -19,12 +20,16 @@
   // recebe um namespace de progresso distinto, mesmo quando o HTML é igual.
   await StudyCloud.insert('maps',row);
   await loadCloud();
+  // Quando existe versão empacotada com o mesmo código, abrir o HTML
+  // compartilhado (e não voltar silenciosamente para a versão do pacote).
+  setMapContentSource(mapKey({courseId:target.id,code}),'cloud');
   refreshActiveView();
   toast('Mapa vinculado a '+target.title+'. O progresso deste concurso começa independente.');
   return row;
 }
 function requestLinkMap(key){
   const source=mapById(key);if(!source)return;
+  if(mapContentSource(source)!=='cloud')return toast('Abra Gerenciar e ative a versão personalizada da nuvem antes de vincular.');
   const options=combinedCourses().filter(c=>c.id!==source.courseId&&c.status!=='archived'&&!combinedMaps().some(m=>m.courseId===c.id&&String(m.code).toLowerCase()===String(source.code).toLowerCase()));
   if(!options.length)return toast('Não há outro concurso ativo disponível sem este mapa.');
   const available=options.map((c,i)=>(i+1)+'. '+c.title).join('\n');
