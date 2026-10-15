@@ -286,7 +286,7 @@ if(!coreMatch){fail('CORE não encontrado em sw.js')}else{
 }
 // V211: preserve the authored inline standard and provide an offline-only reader fallback for imported maps.
 const v211ThemeSource=read('assets/css/design-system/nanquim-study-v211.css').trim();
-check(readerEntry.includes('mmNanquimReaderStyle')&&readerEntry.includes('mm-nanquim-v211-standard')&&readerEntry.includes('mindmap-app'),'V211: reader offline skips duplicate inline theme');
+check(readerEntry.includes('mmNanquimReaderStyle')&&readerEntry.includes('mm-nanquim-(?:v211-standard|map-theme|reader-theme)')&&readerEntry.includes('mindmap-app'),'V211: reader offline skips duplicate inline theme');
 const bundledV211Maps=(catalog.maps||[]).filter(map=>String(map.href||'').startsWith('cursos/porto-alegre/mapas/')&&/\.html$/i.test(map.href));
 check(bundledV211Maps.length>=14,'V211: 14 estudos integrados disponíveis');
 for(const map of bundledV211Maps){
