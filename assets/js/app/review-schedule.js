@@ -25,5 +25,32 @@ function postponeScheduledReview(map,days=1){
   if(typeof syncPreferencesCloud==='function')void syncPreferencesCloud().catch(()=>{});
   return schedule[key];
 }
+function postponeExamDayReviews(courseId,at=new Date(),days=1){
+  // Somente por confirmação explícita. Não apaga eventos nem altera o estado dos tópicos.
+  const n=Math.min(7,Math.max(1,Math.floor(Number(days)||1)));
+  const now=at instanceof Date?at:new Date(at);
+  if(!Number.isFinite(now.getTime()))throw new Error('Data da prova inválida.');
+  const dayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime();
+  const courseMaps=combinedMaps().filter(map=>String(map.courseId)===String(courseId));
+  if(!courseMaps.length)return{count:0,courseId};
+  const allSchedule=syncReviewSchedules();
+  let changed=0;
+  for(const map of courseMaps){
+    const key=map._key||mapKey(map),entry=allSchedule[key];
+    const due=reviewScheduleDueTimestamp(entry?.dueAt,now);
+    if(!entry||!due||due>=dayEnd)continue;
+    const from=new Date(due),next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+n,
+      from.getHours(),from.getMinutes(),from.getSeconds());
+    const stamp=new Date().toISOString();
+    allSchedule[key]={...entry,dueAt:next.toISOString(),postponedAt:stamp,updatedAt:stamp};
+    changed++;
+  }
+  if(changed){
+    writeReviewSchedule(allSchedule);
+    if(typeof touchPreferences==='function')touchPreferences();
+    if(typeof syncPreferencesCloud==='function')void syncPreferencesCloud().catch(()=>{});
+  }
+  return{count:changed,courseId};
+}
 function completeScheduledReview(map,at=new Date()){if(!map)return null;const key=map._key||mapKey(map),progress=mapProgress(map),delay=reviewDelayDays(progress),schedule=readReviewSchedule();if(!delay){delete schedule[key];writeReviewSchedule(schedule);return null}const modifiedAt=reviewMapModifiedAt(map),stamp=(at instanceof Date?at:new Date(at)).toISOString();schedule[key]={dueAt:reviewAddDays(at,delay).toISOString(),reason:reviewReason(progress),lastReviewedAt:stamp,sourceModifiedAt:modifiedAt||schedule[key]?.sourceModifiedAt||'',updatedAt:stamp};writeReviewSchedule(schedule);return schedule[key]}
 function mergeReviewSchedule(incoming,replace=false){if(replace)return writeReviewSchedule(incoming||{});const current=readReviewSchedule(),out={...current};for(const[key,value]of Object.entries(incoming||{})){if(!value||typeof value!=='object')continue;const cur=out[key],incomingTs=Math.max(activityTimestamp(value.sourceModifiedAt),activityTimestamp(value.lastReviewedAt),activityTimestamp(value.updatedAt)),currentTs=Math.max(activityTimestamp(cur?.sourceModifiedAt),activityTimestamp(cur?.lastReviewedAt),activityTimestamp(cur?.updatedAt));if(!cur||incomingTs>=currentTs)out[key]={...value}}return writeReviewSchedule(out)}
