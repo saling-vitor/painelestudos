@@ -1,0 +1,35 @@
+name: Generate Lucide PNG Assets
+on:
+  push:
+    branches:
+      - feat/v15.48.172-g-png-lucide-capas
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generate-png:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Lucide and PNG renderer
+        run: npm install --no-save --no-package-lock --no-audit --no-fund lucide-static sharp
+      - name: Rasterize official Lucide drawings to transparent PNG
+        run: node scripts/generate-lucide-png.mjs
+      - name: Commit PNG files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/ui-icons/lucide
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: rasterizar ícones originais Lucide para PNG"
+            git push origin HEAD:$GITHUB_REF_NAME
+          fi
