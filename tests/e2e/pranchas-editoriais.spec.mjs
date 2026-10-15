@@ -316,3 +316,11 @@ test('Backup [G] · novos estados entram na exportação sem quebrar formato ant
   });
   expect(report).toEqual({valid:true,schema:1,exam:true,goal:true,review:true,dashboard:true,courseLayout:true,sort:true});
 });
+
+test('Agenda [M] · abre em Dia e usa ícones Lucide PNG na navegação',async({page},info)=>{
+  test.skip(info.project.name!=='iphone-webkit','Validação do padrão inicial de smartphone.');
+  await enter(page,'agenda');
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-mode="dia"]')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-day="-1"] .ui-icon')).toHaveCount(1);
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-day="+1"] .ui-icon')).toHaveCount(1);
+});

@@ -433,7 +433,7 @@
       box('Planta do edital',weightedEdital(rows,40)+mapRows(rows,40))+
       box('Próximas prioridades',safe(()=>StudyPlanner.priorityRows(),[]).slice(0,3).map(row=>'<div class="pr-course-line"><div><b>'+escapeHtml(mapName(row.map))+'</b><small>'+escapeHtml((row.reasons||[]).join(' · ')||'Prioridade do planejamento')+'</small></div>'+action('Estudar','map',mapId(row.map))+'</div>').join('')||blank('Sem recomendações calculadas.'));
   }
-  let agendaFocusDay=new Date(),agendaPresentation='semana';
+  let agendaFocusDay=new Date(),agendaPresentation=window.matchMedia('(max-width:700px)').matches?'dia':'semana';
   const agendaMinutes=value=>{
     const m=/^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(value||'19:00'));
     return m?Number(m[1])*60+Number(m[2]):19*60;
@@ -537,7 +537,7 @@
       agendaPresentation==='mes'?
       box('Mês · '+escapeHtml(monthStart.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})),'<div class="pr-agenda-month">'+monthCalendar+'</div>'):
       '';
-    const nav='<div class="pr-agenda-datebar"><button data-pr-agenda-day="-1" aria-label="Dia anterior">←</button><button data-pr-agenda-day="today">Hoje</button><strong>'+escapeHtml(agendaFocusDay.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'}))+'</strong><button data-pr-agenda-day="+1" aria-label="Próximo dia">→</button></div>';
+    const nav='<div class="pr-agenda-datebar"><button data-pr-agenda-day="-1" aria-label="Dia anterior">'+uiIcon('chevron-left','ui-icon-xs')+'</button><button data-pr-agenda-day="today">Hoje</button><strong>'+escapeHtml(agendaFocusDay.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'}))+'</strong><button data-pr-agenda-day="+1" aria-label="Próximo dia">'+uiIcon('chevron-right','ui-icon-xs')+'</button></div>';
     const info='<div class="pr-agenda-bands">'+
        (examination.length?'<p class="pr-note">Prova: '+examination.map(x=>escapeHtml(x.course.title||'Concurso')).join(' · ')+'</p>':'')+
        (reviewRows.length?'<p class="pr-note">Revisões previstas: '+reviewRows.map(x=>escapeHtml(mapName(x.map))).join(' · ')+'</p>':'')+
@@ -565,7 +565,7 @@
       fragment('Conta',session?'Conectada':'Desconectada')+
       fragment('Rede',online?'Online':'Offline')+
       fragment('Saúde da nuvem',last))+
-      box('Índice de folhas',list.map(x=>'<button class="pr-index-row" data-pr-action="setting" data-pr-id="'+x[3]+'"><span class="pr-folio">'+x[0]+'</span><strong>'+escapeHtml(x[1])+'</strong><small>'+escapeHtml(x[2])+'</small><span aria-hidden="true">↗</span></button>').join(''))+
+      box('Índice de folhas',list.map(x=>'<button class="pr-index-row" data-pr-action="setting" data-pr-id="'+x[3]+'"><span class="pr-folio">'+x[0]+'</span><strong>'+escapeHtml(x[1])+'</strong><small>'+escapeHtml(x[2])+'</small><span aria-hidden="true">'+uiIcon('chevron-right','ui-icon-xs')+'</span></button>').join(''))+
       '<p class="pr-note">Zona de risco: exclusões e restaurações continuam protegidas pelos controles e confirmações originais.</p>';
   }
   function renderActive(){
