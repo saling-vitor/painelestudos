@@ -313,13 +313,7 @@ html:not(.is-phone-layout) .app .side{
 }
 /* Eliminar halo cromatico que tingia o painel abaixo da capa. */
 html .app .content .map-card.has-cover::after{opacity:0}
-/* O item selecionado identifica a secao pelas bordas e icones apenas. */
-html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
-html.is-ipad:not(.is-phone-layout) .bottom-nav>button[data-nav].active,
-html .bottom-nav>button[data-nav].active,
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
-  background:var(--mm-smoke-card-black)!important;
-}
+/* Estados ativos consolidados na regra principal de navegação acima. */
 /* V15.48.171-G · SUPERFICIES CONTINUAS GRAFITE FUME.
    A topografia pertence ao ambiente, nunca ao preenchimento dos cards.
    Níveis uniformes: card principal, painel estrutural, item interno.
@@ -468,5 +462,5 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
    sem alterar borda ou cor temática dos ícones. */
 html.is-phone-layout body .bottom-nav > button[data-nav].active {
   background-color:var(--mm-smoke-card-black)!important;
-  background-image:none!important;
+  background-image:none;
 }
