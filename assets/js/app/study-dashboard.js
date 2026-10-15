@@ -32,7 +32,7 @@
     goals.pomodoroBreak=clamp(goals.pomodoroBreak,1,60)||5;
     goals.autoFocus=false;
     const rows=name=>Array.isArray(value[name])?value[name].filter(item=>item&&typeof item==='object').map(item=>({...item})):[];
-    return{version:VERSION,updatedAt:value.updatedAt||'',goals,sessions:rows('sessions').slice(-750),agenda:rows('agenda').slice(-750),doubts:rows('doubts').slice(-750)};
+    return{version:VERSION,updatedAt:value.updatedAt||'',goals,sessions:rows('sessions').slice(-750),agenda:rows('agenda').slice(-750),doubts:rows('doubts').slice(-750),progressHistory:rows('progressHistory').filter(row=>/^\d{4}-\d{2}-\d{2}$/.test(String(row.day||''))).slice(-366)};
   }
   function readData(){return normalizeData(safeJson(localStorage.getItem(DATA_KEY)||'{}',{}))}
   function writeData(value,{touch=true}={}){const data=normalizeData(value);if(touch)data.updatedAt=isoNow();try{localStorage.setItem(DATA_KEY,JSON.stringify(data))}catch{}if(touch&&typeof touchPreferences==='function')touchPreferences();return data}
@@ -45,9 +45,34 @@
     }
     return[...by.values()].sort((a,b)=>(Date.parse(a.createdAt||a.startedAt||a.date||0)||0)-(Date.parse(b.createdAt||b.startedAt||b.date||0)||0)).slice(-750);
   }
+  function mergeProgressHistory(localRows=[],incomingRows=[]){
+    const by=new Map();
+    for(const item of [...localRows,...incomingRows]){
+      const day=String(item?.day||'');
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(day))continue;
+      const marked=Math.max(0,Math.floor(Number(item.marked)||0)),total=Math.max(marked,Math.floor(Number(item.total)||0));
+      const row={id:'progress-'+day,day,marked,total,at:item.at||item.updatedAt||isoNow()};
+      const current=by.get(day),ts=Date.parse(row.at)||0,prior=Date.parse(current?.at||0)||0;
+      if(!current||ts>=prior)by.set(day,row);
+    }
+    return[...by.values()].sort((a,b)=>a.day.localeCompare(b.day)).slice(-366);
+  }
+  function recordProgressSnapshot(marked,total,legacy=[]){
+    const data=readData(),day=dateKey(),n=Math.max(0,Math.floor(Number(marked)||0)),t=Math.max(n,Math.floor(Number(total)||0));
+    const merged=mergeProgressHistory(data.progressHistory,Array.isArray(legacy)?legacy:[]);
+    const current=merged.find(row=>row.day===day);
+    if(!current||current.marked!==n||current.total!==t){
+      const i=merged.findIndex(row=>row.day===day),entry={id:'progress-'+day,day,marked:n,total:t,at:isoNow()};
+      if(i>=0)merged[i]=entry;else merged.push(entry);
+    }
+    merged.sort((a,b)=>a.day.localeCompare(b.day));
+    const old=JSON.stringify(data.progressHistory),next=JSON.stringify(merged);
+    if(old!==next){data.progressHistory=merged;writeData(data)}
+    return merged;
+  }
   function mergeData(localValue,incomingValue){
     const local=normalizeData(localValue),incoming=normalizeData(incomingValue),localTs=Date.parse(local.updatedAt||0)||0,incomingTs=Date.parse(incoming.updatedAt||0)||0;
-    return normalizeData({version:VERSION,updatedAt:new Date(Math.max(localTs,incomingTs)||Date.now()).toISOString(),goals:incomingTs>localTs?incoming.goals:local.goals,sessions:mergeRows(local.sessions,incoming.sessions),agenda:mergeRows(local.agenda,incoming.agenda),doubts:mergeRows(local.doubts,incoming.doubts)});
+    return normalizeData({version:VERSION,updatedAt:new Date(Math.max(localTs,incomingTs)||Date.now()).toISOString(),goals:incomingTs>localTs?incoming.goals:local.goals,sessions:mergeRows(local.sessions,incoming.sessions),agenda:mergeRows(local.agenda,incoming.agenda),doubts:mergeRows(local.doubts,incoming.doubts),progressHistory:mergeProgressHistory(local.progressHistory,incoming.progressHistory)});
   }
   function importData(value,{merge=true,silent=true}={}){const next=merge?mergeData(readData(),value):normalizeData(value);writeData(next,{touch:false});if(!silent)toast('Dados de estudo restaurados.');renderAll();return next}
 
@@ -621,7 +646,7 @@ function ensureAgendaView(){
     exportData:()=>readData(),
     importData,
     mergeData,
-    hasData:()=>{const d=readData();return!!(d.sessions.length||d.agenda.length||d.doubts.length||d.updatedAt)},
+    hasData:()=>{const d=readData();return!!(d.sessions.length||d.agenda.length||d.doubts.length||d.progressHistory.length||d.updatedAt)},
     render:renderAll,
     renderAgenda,
     start:startSession,
@@ -632,6 +657,8 @@ function ensureAgendaView(){
     active:readActive,
     elapsed:()=>activeElapsed(readActive()),
     addAgenda:addAgendaItem,
+    recordProgressSnapshot,
+    progressHistory:()=>readData().progressHistory,
     removeAgenda:requestDeleteAgendaItem,
     removeSession:requestDeleteSessionRecord,
     goals:()=>({...readData().goals}),
