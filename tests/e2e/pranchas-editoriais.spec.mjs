@@ -79,8 +79,8 @@ test('Progresso [G][T+M] · observação sem histórico inventado',async({page})
       return !c||!last?null:{byCourse:last.byCourse?.[c.id],mapTotal:combinedMaps().filter(m=>m.courseId===c.id).reduce((sum,m)=>sum+mapProgress(m).total,0)};
     });
     if(scoped?.byCourse)expect(scoped.byCourse.total).toBe(scoped.mapTotal);
+    expect(report.rows.every(x=>x.marked>=0&&x.total>=x.marked)).toBe(true);
   }
-  else expect(report.rows.every(x=>x.marked>=0&&x.total>=x.marked)).toBe(true);
 });
 
 
