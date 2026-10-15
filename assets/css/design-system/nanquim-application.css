@@ -466,3 +466,7 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .pr-root .pr-course-entry .pr-edital-lot{min-height:78px}
 .pr-root .pr-course-entry .pr-edital-lot small{font-size:10px}
 @media(max-width:680px){.pr-root .pr-edital-lot,.pr-root .pr-day-block{min-width:104px;min-height:100px}.pr-root .pr-course-entry .pr-edital-lot{min-width:90px}}
+
+/* Índice editorial: duas leituras operacionais sem duplicar cartões. */
+.view[data-view="courses"][data-pr-courses-layout="lista"] #coursesGrid{display:none!important}
+.pr-root #editorialCourses{min-width:0}

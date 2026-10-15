@@ -290,3 +290,17 @@ test('Home [G][D+T+M] · régua do dia não inventa horários',async({page})=>{
   await expect(page.locator('#editorialHome')).toContainText('Sem horário no plano do dia E2E');
   await expect(page.locator('#editorialHome')).toContainText('Sem horário registrado');
 });
+
+test('Cursos [G][T+M] · alternar Capas e Lista sem duplicar a grade original',async({page})=>{
+  await enter(page,'courses');
+  const root=page.locator('#editorialCourses'),grid=page.locator('#coursesGrid');
+  await expect(root).toBeVisible();
+  await expect(root.locator('[data-pr-courses-layout]')).toHaveCount(2);
+  await root.locator('[data-pr-courses-layout="lista"]').click();
+  await expect(page.locator('[data-view="courses"]')).toHaveAttribute('data-pr-courses-layout','lista');
+  await expect(grid).toBeHidden();
+  await expect(root.locator('.pr-card')).toContainText('Concursos por prioridade');
+  await root.locator('[data-pr-courses-layout="capas"]').click();
+  await expect(page.locator('[data-view="courses"]')).toHaveAttribute('data-pr-courses-layout','capas');
+  await expect(grid).toBeVisible();
+});

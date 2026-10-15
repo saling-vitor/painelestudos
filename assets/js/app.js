@@ -108,7 +108,7 @@
     if(!target){target=document.createElement('div');target.id=id;target.className='pr-root';if(placement==='last')node.appendChild(target);else node.prepend(target)}
     return target;
   };
-  let screen='hoje',manualHome=false,coursePresentation='lista',libPresentation='grade',simPresentation='lista',selectedProgress='';
+  let screen='hoje',manualHome=false,coursesPresentation=safe(()=>localStorage.getItem('studyapp.prCoursesLayout'),'capas')==='lista'?'lista':'capas',coursePresentation='lista',libPresentation='grade',simPresentation='lista',selectedProgress='';
   let lastHomeContext=null;
   const expandedSimErrors=new Set();
   const homeScreens=[['hoje','Hoje'],['todos','Todos'],['revisoes','Revisões'],['sessao','Em sessão'],['pos','Pós-prova']];
@@ -242,11 +242,23 @@
         .sort((a,b)=>(a.c.status==='archived')-(b.c.status==='archived')||
           (priority.get(a.c.id)??Infinity)-(priority.get(b.c.id)??Infinity)||
           String(a.c.title||'').localeCompare(String(b.c.title||''),'pt-BR'));
-    node.innerHTML=header('Índice · Concursos','Meus Cursos','A ordem segue a data de cada prova; os dados vêm dos concursos e mapas já cadastrados.',
+    node.closest('.view').dataset.prCoursesLayout=coursesPresentation;
+    const choices='<div class="pr-switch" role="group" aria-label="Visualização do índice dos concursos">'+
+      [['capas','Capas'],['lista','Lista e plantas do edital']].map(([id,label])=>
+      '<button type="button" class="pr-switch-btn" data-pr-courses-layout="'+id+'" aria-pressed="'+(coursesPresentation===id)+'">'+label+'</button>').join('')+'</div>';
+    const detail=box('Concursos por prioridade',list.map(row=>
+      '<div class="pr-course-entry"><div class="pr-course-line"><div><strong>'+escapeHtml(row.c.title||'Concurso')+
+      '</strong><small>'+escapeHtml(row.date?shortDate(row.date):'Sem data de prova')+' · '+
+      escapeHtml(row.c.status==='archived'?'Arquivado':statusText(row.p))+'</small></div>'+
+      '<span class="pr-line"><i style="width:'+pct(row.p)+'%"></i></span><b>'+percent(row.p)+'</b>'+
+      action('Entrar','course',row.c.id)+'</div>'+weightedEdital(getCourseMaps(s,row.c),40)+'</div>'
+    ).join('')||blank('Entre na conta ou crie um concurso para começar.'));
+    node.innerHTML=choices+header('Índice · Concursos','Meus Cursos',
+      'A ordem segue a data de cada prova; os dados vêm dos concursos e mapas já cadastrados.',
       fragment('Concursos',String(s.cs.length))+
       fragment('Mapas',String(s.ms.length))+
       fragment('Cobertura total',percent(s.all),s.all.marked+' de '+s.all.total+' tópicos'))+
-      box('Concursos por prioridade',list.map(row=>'<div class="pr-course-entry"><div class="pr-course-line"><div><strong>'+escapeHtml(row.c.title||'Concurso')+'</strong><small>'+escapeHtml(row.date?shortDate(row.date):'Sem data de prova')+' · '+escapeHtml(row.c.status==='archived'?'Arquivado':statusText(row.p))+'</small></div><span class="pr-line"><i style="width:'+pct(row.p)+'%"></i></span><b>'+percent(row.p)+'</b>'+action('Entrar','course',row.c.id)+'</div>'+weightedEdital(getCourseMaps(s,row.c),40)+'</div>').join('')||blank('Entre na conta ou crie um concurso para começar.'));
+      (coursesPresentation==='lista'?detail:'');
   }
   function renderCourseEditorial(){
     const node=cardContainer('course','editorialCourse','last');if(!node)return;
@@ -681,7 +693,7 @@
     if(d.open)expandedSimErrors.add(id);else expandedSimErrors.delete(id);
   },true);
   document.addEventListener('click',event=>{
-    const b=event.target.closest('[data-pr-agenda-mode],[data-pr-agenda-pick],[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
+    const b=event.target.closest('[data-pr-agenda-mode],[data-pr-agenda-pick],[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-courses-layout],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
     if(!b)return;
     event.preventDefault();
     if(b.hasAttribute('data-pr-agenda-mode')){
@@ -697,7 +709,11 @@
       else{date.setDate(date.getDate()+(value==='+1'?1:-1));agendaFocusDay=date}
       schedule();
     }else if(b.hasAttribute('data-pr-home')){screen=b.dataset.prHome;manualHome=true;schedule()}
-    else if(b.hasAttribute('data-pr-course-layout')){
+    else if(b.hasAttribute('data-pr-courses-layout')){
+      coursesPresentation=b.dataset.prCoursesLayout;
+      safe(()=>localStorage.setItem('studyapp.prCoursesLayout',coursesPresentation),null);
+      schedule();
+    }else if(b.hasAttribute('data-pr-course-layout')){
       coursePresentation=b.dataset.prCourseLayout;
       state.mapLayout=coursePresentation==='capas'?'grid':'list';
       safe(()=>localStorage.setItem('studyapp.mapLayout',state.mapLayout),null);
