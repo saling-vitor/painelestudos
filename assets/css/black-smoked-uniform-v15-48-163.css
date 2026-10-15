@@ -160,8 +160,8 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   background:var(--mm-active-fill,color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(10,10,11,.78)))!important;
   border-color:color-mix(in srgb,var(--mm-uniform-tone) 52%,rgba(255,255,255,.18))!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.15)!important;
-  -webkit-backdrop-filter:blur(16px) saturate(118%)!important;
-  backdrop-filter:blur(16px) saturate(118%)!important;
+  -webkit-backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
+  backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before,
 html .bottom-nav>button[data-nav].active::before,
@@ -237,10 +237,16 @@ html .app .content .course-card .course-footer .enter:is(:hover,:focus-visible){
   html .bottom-nav>button[data-nav].active,
   html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
     --mm-active-fill:color-mix(in srgb,var(--nav-accent,#C3AA84) 36%,#131313);
+    --mm-active-blur:none;
   }
   html .app .content .course-card .course-footer .enter{
     --mm-action-fill:color-mix(in srgb,var(--enter-tone,#C3AA84) 47%,#171717);
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
   }
+}
+html.mm-reduced-transparency{
+  --mm-active-blur:none;
 }
 html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal-card,.planner-modal-card,.study-doubt-card){
   background:#080808!important;
