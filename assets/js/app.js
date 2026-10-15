@@ -75,7 +75,9 @@
     const segments=visible.map((m,i)=>{
       const p=progress(m),w=hasWeight?Math.max(1,num(m.topics)||p.total||1):1;
       const label=m.code||mapName(m),states=[p.done,p.review,p.difficult].map(v=>Math.max(0,num(v)));
-      return '<button type="button" class="pr-edital-lot" data-pr-action="map" data-pr-id="'+escapeHtml(mapId(m))+'" style="flex-grow:'+w+'">'+
+      const color=safe(()=>mapAccentValue(m),'');
+      const thematic=/^#[0-9a-f]{6}$/i.test(color)?color:'#C3AA84';
+      return '<button type="button" class="pr-edital-lot" data-pr-action="map" data-pr-id="'+escapeHtml(mapId(m))+'" style="flex-grow:'+w+';--pr-lot-accent:'+thematic+'">'+
         '<span class="pr-lot-index">'+String(i+1).padStart(2,'0')+'</span><b>'+escapeHtml(label)+'</b>'+
         '<span class="pr-lot-state" aria-hidden="true"><i style="width:'+pct(p)+'%"></i></span>'+
         '<small>'+escapeHtml(num(p.total||m.topics)+' tópicos · '+percent(p))+'</small>'+

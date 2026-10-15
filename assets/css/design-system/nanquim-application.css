@@ -455,7 +455,7 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .pr-root .pr-edital-lot b,.pr-root .pr-day-block b{font:700 12px/1.25 Archivo,Inter,sans-serif;overflow-wrap:anywhere}
 .pr-root .pr-edital-lot small,.pr-root .pr-day-block small{font:500 11px/1.32 "IBM Plex Mono",monospace;color:var(--pr-paper-2);overflow-wrap:anywhere}
 .pr-root .pr-lot-state{display:block;width:100%;height:4px;background:var(--pr-g3);border-radius:4px;overflow:hidden}
-.pr-root .pr-lot-state i{display:block;height:100%;border-radius:4px;background:var(--pr-brass)}
+.pr-root .pr-lot-state i{display:block;height:100%;border-radius:4px;background:var(--pr-lot-accent,var(--pr-brass))}
 .pr-root .pr-lot-tooltip{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 .pr-root .pr-edital-legend{font:500 11px/1.6 "IBM Plex Mono",monospace;color:var(--pr-paper-3);margin:0}
 .pr-root .pr-day-ruler{gap:8px}
@@ -470,3 +470,6 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 /* Índice editorial: duas leituras operacionais sem duplicar cartões. */
 .view[data-view="courses"][data-pr-courses-layout="lista"] #coursesGrid{display:none!important}
 .pr-root #editorialCourses{min-width:0}
+
+/* Cor temática identifica cada folha; a superfície continua neutra. */
+.pr-root .pr-edital-lot{border-left-color:var(--pr-lot-accent,var(--pr-brass))}
