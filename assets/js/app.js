@@ -171,7 +171,11 @@
   }
   function renderCoursesEditorial(){
     const node=cardContainer('courses','editorialCourses');if(!node)return;
-    const s=stateData(),list=s.cs.map(c=>({c,p:totals(getCourseMaps(s,c)),date:courseDate(c)})).sort((a,b)=>(a.date?.getTime()??Infinity)-(b.date?.getTime()??Infinity));
+    const s=stateData(),priority=new Map(s.rank.map((entry,i)=>[entry.course.id,i])),
+      list=s.cs.map(c=>({c,p:totals(getCourseMaps(s,c)),date:courseDate(c)}))
+        .sort((a,b)=>(a.c.status==='archived')-(b.c.status==='archived')||
+          (priority.get(a.c.id)??Infinity)-(priority.get(b.c.id)??Infinity)||
+          String(a.c.title||'').localeCompare(String(b.c.title||''),'pt-BR'));
     node.innerHTML=header('Índice · Concursos','Meus Cursos','A ordem segue a data de cada prova; os dados vêm dos concursos e mapas já cadastrados.',
       fragment('Concursos',String(s.cs.length))+
       fragment('Mapas',String(s.ms.length))+
@@ -244,11 +248,11 @@
         const benchmark='<div class="pr-sim-benchmark">'+
           '<div><span>Meta pessoal</span><b>'+(goal==null?'Não configurada':goal+'%')+'</b>'+action('Alterar meta','goal',x.key)+'</div>'+
           '<div><span>Corte oficial</span><b>'+(official==null?'Não informado':official+'%')+'</b><small>'+(official==null?'Sem fonte oficial cadastrada':escapeHtml(sim.officialCutoffSource))+'</small></div></div>';
-        return '<article class="pr-sim-report"><div class="pr-sim-report-head"><div><strong>'+escapeHtml(sim.title||sim.code||'Simulado')+'</strong>'+
+        return '<article class="pr-sim-report" data-pr-sim-key="'+escapeHtml(x.key)+'"><div class="pr-sim-report-head"><div><strong>'+escapeHtml(sim.title||sim.code||'Simulado')+'</strong>'+
           '<small>'+escapeHtml(r.finishedAt?new Date(r.finishedAt).toLocaleDateString('pt-BR'):'Data indisponível')+' · '+x.attempts.length+' tentativa(s)</small></div>'+
           action('Histórico completo','simulation-history',x.key)+'</div>'+metrics+benchmark+
           '<h4>Desempenho por disciplina</h4>'+disciplines+'<h4>Evolução observada</h4>'+trend+
-          '<h4>Erros que geram recuperação</h4>'+errorHtml+action('Abrir caderno de erros','review-errors',x.key)+'</article>';
+          '<h4>Erros que geram recuperação</h4>'+errorHtml+(errors.length?action('Ver questões erradas','review-errors',x.key):'')+'</article>';
       }).join(''):blank('Nenhum resultado registrado. Conclua um simulado para visualizar tentativas, erros e desempenho.'));
     }else{
       body+=box('Simulados por concurso',ss.length?ss.slice(0,40).map(sim=>{
@@ -268,14 +272,20 @@
     if(!s.ms.length||!window.StudyDashboard?.recordProgressSnapshot)return;
     const key=historyKey(),legacy=safe(()=>JSON.parse(localStorage.getItem(key)||'[]'),[]);
     const migrated=Array.isArray(legacy)?legacy:[];
-    const rows=StudyDashboard.recordProgressSnapshot(s.all.marked,s.all.total,migrated);
+    const byCourse={};
+    for(const course of s.cs){
+      const p=totals(getCourseMaps(s,course));
+      byCourse[course.id]={marked:p.marked,total:p.total};
+    }
+    const rows=StudyDashboard.recordProgressSnapshot(s.all.marked,s.all.total,migrated,byCourse);
     if(migrated.length&&rows.length)try{localStorage.removeItem(key)}catch{}
   }
   function renderProgressEditorial(){
     const node=cardContainer('progress','editorialProgress');if(!node)return;
     const s=stateData();recordHistory(s);
     const cs=s.cs,choice=cs.find(c=>c.id===selectedProgress);
-    const rows=choice?getCourseMaps(s,choice):s.ms,p=totals(rows),hist=safe(()=>StudyDashboard.progressHistory(),[]),actual=Array.isArray(hist)?hist:[];
+    const rows=choice?getCourseMaps(s,choice):s.ms,p=totals(rows),hist=safe(()=>StudyDashboard.progressHistory(),[]),
+      actual=Array.isArray(hist)?(choice?hist.filter(x=>x.byCourse?.[choice.id]).map(x=>({...x,...x.byCourse[choice.id]})):hist):[];
     const selector='<div class="pr-switch" role="group" aria-label="Selecionar concurso"><button data-pr-progress="" aria-pressed="'+(!choice)+'" class="pr-switch-btn">Todos</button>'+cs.map(c=>'<button class="pr-switch-btn" aria-pressed="'+(choice?.id===c.id)+'" data-pr-progress="'+escapeHtml(c.id)+'">'+escapeHtml(c.title||'Concurso')+'</button>').join('')+'</div>';
     node.innerHTML=selector+header('Progresso · Acompanhamento','Cobertura do edital','O histórico começa na primeira observação real registrada; não são criados dias fictícios.',
       fragment('Cobertura',percent(p),p.marked+' de '+p.total)+
@@ -435,7 +445,12 @@
       const apply=()=>{postponeScheduledReview(map,1);schedule();safe(()=>toast('Revisão adiada por 1 dia.'),null)};
       if(typeof askConfirm==='function')askConfirm('Adiar revisão?','A próxima revisão de '+(map.title||map.code)+' será movida 1 dia. O progresso e os apontamentos serão mantidos.',apply,'Adiar');
     }
-    else if(kind==='review-errors')nav('errors');
+    else if(kind==='review-errors'){
+      const report=[...document.querySelectorAll('#editorialSimulations .pr-sim-report')].find(el=>el.dataset.prSimKey===id);
+      const details=report?.querySelector('details.pr-sim-errors');
+      if(details){details.open=true;details.scrollIntoView({block:'center',behavior:'smooth'});details.querySelector('summary')?.focus({preventScroll:true})}
+      else if(typeof openSimulationHistory==='function')openSimulationHistory(id);
+    }
     else if(kind==='move-agenda'){
       const row=StudyDashboard?.exportData?.().agenda?.find(item=>item.id===id&&!item.deleted);
       if(!row)return;
