@@ -210,22 +210,16 @@ html .app .content :is(.study-plan-item,.continue-card,.priority-now-card)
    botoes flutuantes ... e estrela continuam neutros. */
 html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item,#coursesGrid>.course-card.course-library-card,#homeCourses>.course-card.course-library-card,#simulationGrid>.simulation-card)
   :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav):not(#mm-smoke-action-exclude){
-  background:var(--mm-action-fill,rgba(0,0,0,.86))!important;
-  border-color:var(--mm-action-border,color-mix(in srgb,var(--mm-action-tone,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8)))) 55%,rgba(255,255,255,.15)))!important;
-  color:var(--mm-action-ink,color-mix(in srgb,var(--mm-action-tone,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8)))) 74%,white))!important;
+  /* V15.48.174-G: cor editorial invariavel; pigmentos so nas capas/navegacao ativa. */
+  background:var(--nq-nanquim,rgba(0,0,0,1))!important;
+  border-color:color-mix(in srgb,var(--nq-latao,#C3AA84) 50%,transparent)!important;
+  color:var(--nq-latao-claro,#D8C59E)!important;
 }
-/* O mesmo contrato optico da ação, parametrizado apenas no Entrar. */
+/* Entrar: nenhum vidro cromatico antigo ou matiz herdado da capa. */
 html .app .content .course-card .course-footer .enter{
-  --enter-tone:var(--course-accent,var(--cover-accent,#C3AA84));
-  --mm-action-fill:color-mix(in srgb,var(--enter-tone) 43%,rgba(18,18,19,.68));
-  --mm-action-border:color-mix(in srgb,var(--enter-tone) 64%,rgba(255,255,255,.16));
-  --mm-action-ink:color-mix(in srgb,var(--enter-tone) 45%,#fff);
-  -webkit-backdrop-filter:blur(15px) saturate(118%);
-  backdrop-filter:blur(15px) saturate(118%);
-  box-shadow:inset 0 1px rgba(255,255,255,.19),0 2px 8px rgba(0,0,0,.14);
-}
-html .app .content .course-card .course-footer .enter:is(:hover,:focus-visible){
-  --mm-action-fill:color-mix(in srgb,var(--enter-tone) 49%,rgba(18,18,19,.72));
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  box-shadow:none;
 }
 /* 06 · Estados acessiveis e fallback estavel no Safari/iPadOS/Chrome. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
@@ -245,7 +239,6 @@ html .app .content .course-card .course-footer .enter:is(:hover,:focus-visible){
     --mm-active-blur:none;
   }
   html .app .content .course-card .course-footer .enter{
-    --mm-action-fill:color-mix(in srgb,var(--enter-tone,#C3AA84) 47%,#171717);
     -webkit-backdrop-filter:none;
     backdrop-filter:none;
   }
