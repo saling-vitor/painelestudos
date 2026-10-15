@@ -42,9 +42,13 @@ jobs:
       - name: Validate JavaScript
         run: |
           node --check assets/js/app.js
+          node --check assets/js/cloud-core.js
           for file in assets/js/app/*.js; do node --check "$file"; done
           node --check tests/e2e/app.spec.mjs
           node --check sw.js
+
+      - name: Test large-map private storage (51+ MB and offline)
+        run: node --test tests/large-map-storage.test.mjs
 
       - name: Build search index
         run: node scripts/build-search-index.mjs
