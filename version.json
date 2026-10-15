@@ -1,14 +1,13 @@
 {
-  "version": "15.48.173",
-  "label": "V15.48.173-G",
-  "notes": "Liquid Glass temático em navegação e botões Entrar; bordas neutras, TAGs na Home, vidro Black Smoked sem azulado e limpeza segura de estilos legados.",
+  "version": "15.48.174",
+  "label": "V15.48.174-G",
+  "notes": "Integração inicial Nanquim/Latão, tipografia e materiais Vidro Nanquim nas três plataformas; validação em branch.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Menu ativo e botão Entrar com vidro temático uniforme",
-    "[G] Bordas externas neutras em cards de cursos e mapas",
-    "[G] TAGs no plano diário e Prioridade agora, sem miniaturas pequenas",
-    "[G] Modais, tooltips e hero em Black Smoked neutro",
-    "[G] Limpeza de seletores legados e testes E2E atualizados"
+    "[G] Paleta Nanquim/Papel/Latão para superfícies e controles",
+    "[G] 14 tokens tipográficos Desktop, Tablet e Smartphone",
+    "[G] Vidro Nanquim funcional em navegação e controles",
+    "[G] PWA sincronizado com novas folhas de estilo"
   ],
   "automation": {
     "enabled": true,
