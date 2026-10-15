@@ -1,13 +1,14 @@
 {
-  "version": "15.48.172",
-  "label": "V15.48.172-G",
-  "notes": "Padrões oficiais de capa (curso, mapa e simulado), ícones Lucide exclusivamente PNG e correções de proporção em desktop, tablet e smartphone.",
+  "version": "15.48.173",
+  "label": "V15.48.173-G",
+  "notes": "Liquid Glass temático em navegação e botões Entrar; bordas neutras, TAGs na Home, vidro Black Smoked sem azulado e limpeza segura de estilos legados.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Três capas padrão originais PNG sem alterar capas personalizadas",
-    "[G] 47 ícones Lucide originais rasterizados como PNG alpha, sem SVG nos controles",
-    "[G] Cores via currentColor no alpha do PNG e proporção estável em todas as telas",
-    "[G] Cache PWA e auditoria E2E Desktop/iPad/iPhone sincronizados"
+    "[G] Menu ativo e botão Entrar com vidro temático uniforme",
+    "[G] Bordas externas neutras em cards de cursos e mapas",
+    "[G] TAGs no plano diário e Prioridade agora, sem miniaturas pequenas",
+    "[G] Modais, tooltips e hero em Black Smoked neutro",
+    "[G] Limpeza de seletores legados e testes E2E atualizados"
   ],
   "automation": {
     "enabled": true,
