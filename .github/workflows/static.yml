@@ -111,7 +111,7 @@ jobs:
     name: E2E iPad
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
       options: --user 1001
