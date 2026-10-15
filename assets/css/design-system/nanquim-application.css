@@ -209,3 +209,33 @@ html:not(.mm-reduced-transparency).mm-scrolled.mobile-topbar-compact.is-phone-la
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
  }
 }
+
+/* Regression hardening: legacy Black Smoked rules carry high specificity.
+   Enforce semantic Nanquim action color and glass panel after those layers,
+   without changing course artwork or its authored palette. */
+html:not(.is-phone-layout) .app .side,
+html:not(.is-phone-layout).mm-optics-supported .app .side{
+ background:var(--nq-glass-lens),var(--nq-glass-panel)!important;
+ border-color:var(--nq-glass-border)!important;
+ -webkit-backdrop-filter:var(--nq-glass-panel-filter)!important;
+ backdrop-filter:var(--nq-glass-panel-filter)!important;
+}
+html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item,#coursesGrid>.course-card.course-library-card,#homeCourses>.course-card.course-library-card,#simulationGrid>.simulation-card)
+ :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav){
+ background:var(--nq-nanquim)!important;
+ border-color:color-mix(in srgb,var(--nq-latao) 50%,transparent)!important;
+ color:var(--nq-latao-claro)!important;
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ html:not(.is-phone-layout) .app .side,
+ html:not(.is-phone-layout).mm-optics-supported .app .side{
+  background:#0b0a09!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+ }
+}
+html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
+ background:#0b0a09!important;
+ -webkit-backdrop-filter:none!important;
+ backdrop-filter:none!important;
+}
