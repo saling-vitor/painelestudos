@@ -62,6 +62,9 @@ test('Nanquim Editorial [G] · cards pretos, bordas neutras e botões temáticos
       const el=document.createElement('article');el.className=cls;
       const slot=document.createElement('div');slot.className=slotClass;
       const button=document.createElement('button');button.className=buttonClass;button.textContent='Abrir';
+      // Elimina transicoes so neste fixture: cores sao verificadas no estado final.
+      el.style.setProperty('transition','none','important');
+      button.style.setProperty('transition','none','important');
       slot.append(button);el.append(slot);host.append(el);
       const read=()=>{
         const c=getComputedStyle(el),b=getComputedStyle(button);

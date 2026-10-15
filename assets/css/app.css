@@ -1821,7 +1821,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* ========================================
    V13.3.0 · REFINAMENTO GERAL DE UX
    ======================================== */
-.hero{min-height:270px}.hero-copy{padding:30px 34px 28px}.hero h1{margin-top:13px;font-size:clamp(36px,4.2vw,56px)}.hero p{margin-top:11px}.hero-actions{margin-top:16px}.hero-stats{margin-top:16px}
+.hero{min-height:270px}.hero-copy{padding:30px 34px 28px}@media(min-width:1181px){[data-view="home"] .hero-copy{padding:22px 34px 18px}}.hero h1{margin-top:13px;font-size:clamp(36px,4.2vw,56px)}.hero p{margin-top:11px}.hero-actions{margin-top:16px}.hero-stats{margin-top:16px}
 .cloud-side-meta{margin-top:6px;color:#666d76;font:700 8px var(--mono);line-height:1.35}
 .reader-more-wrap{position:relative;flex:0 0 auto}.reader-more-wrap>#readerMoreBtn{width:40px;height:40px;padding:0}.reader-more-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:230;min-width:185px;padding:5px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:rgba(12,12,13,.98);box-shadow:0 18px 50px rgba(0,0,0,.55)}.reader-more-menu[hidden],.reader-more-menu button[hidden]{display:none!important}.reader-more-menu button{display:flex;align-items:center;gap:8px;width:100%;min-height:38px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#adb1b8;text-align:left;cursor:pointer}.reader-more-menu button:hover{background:rgba(255,255,255,.045);color:#e2e3e5}.reader-save-status{white-space:nowrap}
 @keyframes save-confirm{0%{opacity:.55}45%{opacity:1;transform:scale(1.035)}100%{transform:none}}.reader-save-status.is-synced{animation:save-confirm .25s ease}

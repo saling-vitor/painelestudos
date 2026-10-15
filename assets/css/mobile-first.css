@@ -3254,9 +3254,9 @@
     color:#b9bec5!important;
   }
   html.is-phone-layout .primary{
-    border-color:rgba(216,197,158,.19)!important;
-    background:linear-gradient(180deg,rgba(216,197,158,.085),rgba(216,197,158,.035))!important;
-    color:#ded4c0!important;
+    border-color:var(--nq-latao,#c3aa84)!important;
+    background:var(--nq-latao,#c3aa84)!important;
+    color:var(--nq-nanquim,#000)!important;
   }
   html.is-phone-layout .danger{
     border-color:rgba(201,104,114,.18)!important;
@@ -3270,7 +3270,7 @@
     background:var(--phone-surface-soft-2)!important;
   }
   html.is-phone-layout .primary:active{
-    background:rgba(216,197,158,.065)!important;
+    background:var(--nq-latao-escuro,#8a7756)!important;
   }
 
   /* Filtros/chips: estado neutro leve; ativo ganha apenas um acento. */
