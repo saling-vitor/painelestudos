@@ -79,6 +79,7 @@
     return target;
   };
   let screen='hoje',manualHome=false,coursePresentation='lista',libPresentation='grade',simPresentation='lista',selectedProgress='';
+  let lastHomeContext=null;
   const expandedSimErrors=new Set();
   const homeScreens=[['hoje','Hoje'],['todos','Todos'],['revisoes','Revisões'],['sessao','Em sessão'],['pos','Pós-prova']];
   function homeHtml(s){
@@ -163,10 +164,18 @@
     const s=stateData();
     // Eventos prioritários têm precedência sobre a escolha manual anterior:
     // a sessão em andamento e o primeiro dia após a prova não devem ficar escondidos.
-    const examJustFinished=s.rank.some(x=>daysTo(x.date)===-1&&!safe(()=>readExamStatuses()[x.course.id]?.completed,false));
-    if(s.session?.running||s.session?.active)screen='sessao';
-    else if(examJustFinished)screen='pos';
-    else if(!manualHome)screen='hoje';
+    const examJustFinished=s.rank.filter(x=>daysTo(x.date)===-1&&!safe(()=>readExamStatuses()[x.course.id]?.completed,false));
+    const activeSession=!!(s.session?.running||s.session?.active);
+    const homeContext=activeSession?'session':examJustFinished.length?'post:'+examJustFinished.map(x=>x.course.id).join(','):'normal';
+    // O contexto altera a tela inicial SOMENTE quando muda. Uma seleção
+    // manual continua operante, mesmo durante o timer ou no pós-prova.
+    if(lastHomeContext!==homeContext){
+      if(activeSession){screen='sessao';manualHome=false}
+      else if(examJustFinished.length){screen='pos';manualHome=false}
+      else if(lastHomeContext==='session'||lastHomeContext?.startsWith('post:')){screen='hoje';manualHome=false}
+      else if(!manualHome)screen='hoje';
+      lastHomeContext=homeContext;
+    }else if(!manualHome&&homeContext==='normal')screen='hoje';
     node.closest('.view').dataset.editorialMode=screen;
     node.innerHTML=homeHtml(s);
   }

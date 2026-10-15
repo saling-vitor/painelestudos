@@ -258,3 +258,20 @@ test('Agenda [G][T+M] · evento antigo sem horário não ganha 19h fictícias',a
   await expect(page.locator('#editorialAgenda')).toContainText('Sem horário registrado');
   expect(await page.locator('#editorialAgenda .pr-collision').filter({hasText:'Evento histórico E2E sem horário'}).count()).toBe(0);
 });
+
+
+test('Home [G][D+T+M] · a sessão automática não bloqueia escolha manual',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  await page.evaluate(()=>{
+    StudyDashboard.start({mode:'free',label:'Troca de contexto E2E',minutes:15});
+    MeusMapasPranchas.refresh();
+  });
+  await expect(page.locator('#editorialHome [data-pr-home="sessao"]')).toHaveAttribute('aria-pressed','true');
+  await page.locator('#editorialHome [data-pr-home="todos"]').click();
+  await expect(page.locator('#editorialHome [data-pr-home="todos"]')).toHaveAttribute('aria-pressed','true');
+  await page.evaluate(()=>MeusMapasPranchas.refresh());
+  await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-editorial-mode','todos');
+  await page.evaluate(()=>StudyDashboard.finish());
+  await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toHaveAttribute('aria-pressed','true');
+});
