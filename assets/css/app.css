@@ -2941,10 +2941,14 @@ html.is-ipad .topbar{
 }
 .icon-btn,.secondary,.close{border-radius:var(--radius-control)!important}
 .category-btn{border-radius:var(--ui-radius-xs)!important}
+/* V15.48.174-G · Acoes primarias usam Latão opaco com tinta Nanquim.
+   Evita texto preto sobre o gradiente fumê histórico. */
 .primary{
-  border-color:rgba(216,197,158,.34)!important;
-  background:linear-gradient(180deg,rgba(216,197,158,.155),rgba(216,197,158,.052))!important;
-  box-shadow:inset 0 1px rgba(255,255,255,.035),0 8px 20px rgba(0,0,0,.14);
+  border-color:var(--nq-latao,#C3AA84)!important;
+  background:var(--nq-latao,#C3AA84)!important;
+  background-image:none!important;
+  color:var(--nq-nanquim,#000000)!important;
+  box-shadow:none;
 }
 .danger{
   background:linear-gradient(180deg,rgba(217,103,115,.105),rgba(217,103,115,.045))!important;

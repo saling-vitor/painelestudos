@@ -45,3 +45,16 @@ test('Nanquim [G][T+M] · contraste reforçado sem vidro e com menos movimento',
  expect(r.filter).toBe('none');
  expect(r.background).toMatch(/rgba?\(11,\s*10,\s*9/);
 });
+
+test('Nanquim [G] · CTA da Home mantém contraste legível Latão sobre Nanquim',async({page})=>{
+ await page.goto('/#home',{waitUntil:'domcontentloaded'});
+ const cta=page.locator('[data-view="home"] .hero-actions .primary').first();
+ await expect(cta).toBeVisible();
+ const s=await cta.evaluate(el=>{
+  const c=getComputedStyle(el);
+  return {background:c.backgroundColor,image:c.backgroundImage,ink:c.color};
+ });
+ expect(s.image,'CTA não pode manter gradiente escuro legado').toBe('none');
+ expect(s.background,'CTA deve ter preenchimento sólido Latão').toMatch(/rgb\(195,\s*170,\s*132\)/);
+ expect(s.ink,'texto escuro só sobre o fundo Latão sólido').toMatch(/rgb\(0,\s*0,\s*0\)/);
+});
