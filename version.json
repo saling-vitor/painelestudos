@@ -1,13 +1,13 @@
 {
-  "version": "15.48.174",
-  "label": "V15.48.174-G",
-  "notes": "Integração inicial Nanquim/Latão, tipografia e materiais Vidro Nanquim nas três plataformas; validação em branch.",
+  "version": "15.48.175",
+  "label": "V15.48.175-G",
+  "notes": "Mapas HTML grandes: upload segmentado privado sem limite de 50 MB por objeto, leitura fiel, offline e compatibilidade com mapas antigos.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Paleta Nanquim/Papel/Latão para superfícies e controles",
-    "[G] 14 tokens tipográficos Desktop, Tablet e Smartphone",
-    "[G] Vidro Nanquim funcional em navegação e controles",
-    "[G] PWA sincronizado com novas folhas de estilo"
+    "[G] Importacao e atualizacao de mapas grandes em partes de 8 MB",
+    "[G] Leitura integral do HTML em desktop, iPad e celular",
+    "[G] Remontagem offline e limpeza de partes ao excluir mapas",
+    "[G] Preservacao dos mapas antigos, versoes e progresso"
   ],
   "automation": {
     "enabled": true,
