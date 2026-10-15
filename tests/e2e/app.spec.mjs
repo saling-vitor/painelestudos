@@ -972,8 +972,17 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   await expect(page.locator('#coursesCount')).toBeVisible();
   await expect(page.locator('#coursesCount')).toContainText(/concurso/);
   await expect(page.locator('.side')).toBeVisible();
+  // O HTML nasce com "Início" ativo. A navegação por hash e os estilos
+  // responsivos do iPad terminam assincronamente após a página aparecer.
+  // Inspecionar apenas o botão "Meus Cursos" já selecionado/estabilizado.
+  const activeCourseNav=page.locator('.side .nav-btn[data-nav="courses"]');
+  await expect(activeCourseNav).toHaveClass(/active/);
+  await expect.poll(
+    ()=>activeCourseNav.evaluate(el=>getComputedStyle(el).backgroundColor),
+    {timeout:10000,message:'O menu Meus Cursos deve receber o fill temático no iPad'}
+  ).not.toMatch(/^(?:rgba?\(0,\s*0,\s*0,\s*0\)|oklab\(0 0 0 \/ 0\))$/);
   const visual=await page.evaluate(()=>{
-    const sync=document.querySelector('#syncTop'),icon=sync.querySelector('.ui-icon'),active=document.querySelector('.side .nav-btn.active'),count=document.querySelector('#coursesCount'),search=document.querySelector('.search'),newCourse=document.querySelector('#newCourseBtn2'),topbar=document.querySelector('.topbar');
+    const sync=document.querySelector('#syncTop'),icon=sync.querySelector('.ui-icon'),active=document.querySelector('.side .nav-btn[data-nav="courses"].active'),count=document.querySelector('#coursesCount'),search=document.querySelector('.search'),newCourse=document.querySelector('#newCourseBtn2'),topbar=document.querySelector('.topbar');
     sync.dataset.syncState='synced';
     const synced={text:getComputedStyle(sync).color,icon:getComputedStyle(icon).color,bg:getComputedStyle(sync).backgroundColor};
     sync.dataset.syncState='syncing';
