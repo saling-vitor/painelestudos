@@ -38,6 +38,8 @@ html .app :is(.kicker,.eyebrow,.nav-label){font-size:var(--fs-eyebrow)!important
 html .app :is(.map-code,.progress-state,.map-study-status,.chip,.course-status-pill,.simulation-recent-board,.simulation-recent-status){font-size:var(--fs-caption)!important;line-height:1.35}
 html .app .bottom-nav-label{font-size:var(--fs-tabbar)!important}
 html .app .hero-stats .stat b{font-size:var(--fs-kpi)!important;line-height:1}
+/* Hero de retorno: KPI compacto original preservado sem ultrapassar a altura editorial. */
+html .app [data-view="home"].home-returning .hero-stats .stat b{font-size:var(--fs-title)!important;line-height:1}
 html .app :is(.study-command-metrics,.study-rhythm-kpis) b{font-size:var(--fs-kpi-sm)!important}
 html .app :is(.nav-label,.map-code,.kicker,.eyebrow,.progress-state,.map-study-status){font-family:var(--nq-font-mono)}
 /* Opaque content: cards and reading surfaces must not be blurred. */
