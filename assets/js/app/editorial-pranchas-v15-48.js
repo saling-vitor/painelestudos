@@ -253,7 +253,7 @@
       '<p class="pr-note">Zona de risco: exclusões e restaurações continuam protegidas pelos controles e confirmações originais.</p>';
   }
   function renderActive(){
-    if(!window.state||!document.documentElement.classList.contains('app-ready'))return;
+    if(typeof state==='undefined'||!document.documentElement.classList.contains('app-ready'))return;
     const view=state.view;
     try{
       if(view==='home')renderHomeEditorial();
