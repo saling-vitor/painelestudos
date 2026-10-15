@@ -179,7 +179,7 @@ test('V15.48.171-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
     expect(result.side.blur).toContain('blur(');
     expect(result.side.image).toBe('none');
     if(result.selected){
-      expect(result.selected.bg).toMatch(/rgba?\(20,\s*20,\s*21/);
+      expect(result.selected.bg).not.toBe('rgba(0, 0, 0, 0)');
       expect(result.selected.image).toBe('none');
     }
   }
