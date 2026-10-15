@@ -224,19 +224,82 @@
       box('Planta do edital',rows.length?mapRows(rows,40):blank('Nenhum mapa disponível.'))+
       box('Próximas prioridades',safe(()=>StudyPlanner.priorityRows(),[]).slice(0,3).map(row=>'<div class="pr-course-line"><div><b>'+escapeHtml(mapName(row.map))+'</b><small>'+escapeHtml((row.reasons||[]).join(' · ')||'Prioridade do planejamento')+'</small></div>'+action('Estudar','map',mapId(row.map))+'</div>').join('')||blank('Sem recomendações calculadas.'));
   }
+  let agendaFocusDay=new Date();
+  const agendaMinutes=value=>{
+    const m=/^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(value||'19:00'));
+    return m?Number(m[1])*60+Number(m[2]):19*60;
+  };
+  const agendaClock=minutes=>String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0');
+  function agendaConflictData(items){
+    const periods=items.map(row=>{
+      const start=agendaMinutes(row.start),duration=Math.max(5,num(row.minutes)||30);
+      return{row,start,end:start+duration};
+    }).sort((a,b)=>a.start-b.start);
+    const conflicts=new Set();
+    for(let i=0;i<periods.length;i++){
+      for(let j=i+1;j<periods.length&&periods[j].start<periods[i].end;j++){
+        conflicts.add(periods[i].row.id);conflicts.add(periods[j].row.id);
+      }
+    }
+    const settings=safe(()=>StudyPlanner.settings(),{});
+    const available=Array.isArray(settings?.availableDays)?settings.availableDays:null;
+    const day=new Date(dayKey(agendaFocusDay)+'T12:00:00');
+    function suggest(row){
+      if(available&&!available.includes(day.getDay()))return null;
+      const duration=Math.max(5,num(row.minutes)||30),others=periods.filter(p=>p.row.id!==row.id);
+      const original=agendaMinutes(row.start);
+      for(let t=Math.max(7*60,Math.ceil((original+15)/15)*15);t+duration<=23*60;t+=15){
+        if(others.every(p=>t+duration<=p.start||t>=p.end))return agendaClock(t);
+      }
+      return null;
+    }
+    return{periods,conflicts,suggest};
+  }
   function renderAgendaEditorial(){
     const node=cardContainer('agenda','editorialAgenda');if(!node)return;
-    const s=stateData(),today=new Date(),start=new Date(today.getFullYear(),today.getMonth(),today.getDate()-((today.getDay()+6)%7));
+    const s=stateData(),today=new Date(),focus=dayKey(agendaFocusDay);
+    const start=new Date(today.getFullYear(),today.getMonth(),today.getDate()-((today.getDay()+6)%7));
     const end=new Date(start.getFullYear(),start.getMonth(),start.getDate()+7);
-    const agenda=(s.dashboard.agenda||[]).filter(a=>!a.deleted&&a.date&&new Date(a.date)>=start&&new Date(a.date)<end);
-    const seconds=safe(()=>StudyTime.week(),0),planned=agenda.reduce((a,row)=>a+num(row.minutes||row.durationMinutes||row.duration),0);
+    const all=(s.dashboard.agenda||[]).filter(item=>!item.deleted&&item.date);
+    const week=all.filter(item=>item.date>=dayKey(start)&&item.date<dayKey(end)),planned=week.reduce((a,row)=>a+num(row.minutes),0);
+    const day=all.filter(item=>item.date===focus),conf=agendaConflictData(day);
+    const completed=(s.dashboard.sessions||[]).filter(row=>!row.deleted&&row.startedAt&&dayKey(new Date(row.startedAt))===focus);
+    const examination=s.rank.filter(x=>x.date&&dayKey(x.date)===focus);
+    const reviews=s.reviews?.due||[];
+    const reviewRows=reviews.filter(x=>x.schedule?.dueAt&&dayKey(new Date(x.schedule.dueAt))===focus);
+    const scheduled=new Map();
+    for(const item of conf.periods){
+      const slot=Math.floor(item.start/60);if(!scheduled.has(slot))scheduled.set(slot,[]);
+      scheduled.get(slot).push(item);
+    }
+    let rows='';
+    for(let hour=7;hour<=22;hour++){
+      const events=scheduled.get(hour)||[];
+      rows+='<div class="pr-hour-row"><span class="pr-hour-label">'+String(hour).padStart(2,'0')+':00</span>'+
+      '<div class="pr-hour-content">'+(events.map(item=>{
+        const x=item.row,collision=conf.conflicts.has(x.id),suggestion=collision?conf.suggest(x):null;
+        return '<div class="pr-agenda-slot'+(collision?' pr-collision':'')+'"><div><b>'+escapeHtml(x.start||'19:00')+' · '+escapeHtml(x.title||'Sessão de estudo')+'</b><small>'+num(x.minutes)+' min'+(collision?' · conflito de horário':'')+'</small></div>'+
+        (suggestion?action('Mover para '+suggestion,'move-agenda',x.id):'')+
+        (suggestion?'<input type="hidden" class="pr-proposal" value="'+escapeHtml(suggestion)+'">':'')+
+        '</div>';
+      }).join('')||'')+'</div></div>';
+    }
+    const outside=conf.periods.filter(item=>item.start<7*60||item.start>=23*60);
+    if(outside.length)rows+='<div class="pr-note">Fora da régua: '+outside.map(x=>escapeHtml((x.row.start||'19:00')+' · '+(x.row.title||'Estudo'))).join(' · ')+'</div>';
+    const nav='<div class="pr-agenda-datebar"><button data-pr-agenda-day="-1" aria-label="Dia anterior">←</button><button data-pr-agenda-day="today">Hoje</button><strong>'+escapeHtml(agendaFocusDay.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'}))+'</strong><button data-pr-agenda-day="+1" aria-label="Próximo dia">→</button></div>';
+    const info='<div class="pr-agenda-bands">'+
+       (examination.length?'<p class="pr-note">Prova: '+examination.map(x=>escapeHtml(x.course.title||'Concurso')).join(' · ')+'</p>':'')+
+       (reviewRows.length?'<p class="pr-note">Revisões previstas: '+reviewRows.map(x=>escapeHtml(mapName(x.map))).join(' · ')+'</p>':'')+
+       (completed.length?'<p class="pr-note">Sessões realizadas: '+completed.map(x=>escapeHtml(x.label||'Estudo')+' · '+minText(x.durationSeconds)).join(' · ')+'</p>':'')+
+       (!day.length?blank('Nenhum bloco de estudo agendado para este dia. O cronograma abaixo continua disponível.'):'')+'</div>';
     node.innerHTML=header('Agenda · Cronograma','Semana de '+shortDate(start)+' a '+shortDate(new Date(end.getTime()-86400000)),
-      'Dia, Semana e Mês são os três modos do calendário existente. Os compromissos não são duplicados.',
-      fragment('Realizado',minText(seconds),'Nesta semana')+
-      fragment('Planejado',String(Math.round(planned))+' min',agenda.length+' sessões/agendamentos')+
+      'Horários de estudo reais; conflitos não são resolvidos sem confirmação.',
+      fragment('Realizado',minText(safe(()=>StudyTime.week(),0)),'Nesta semana')+
+      fragment('Planejado',String(Math.round(planned))+' min',week.length+' eventos')+
       fragment('Próxima prova',s.current?shortDate(s.current.date):'—')+
-      fragment('Pendências',String(agenda.filter(x=>!x.done&&!x.completed).length),'Sem assumir execução'))+
-      '<div class="pr-note">Para modificar sessões e horários, utilize o calendário e o painel de planejamento abaixo. Sugestões não ocupam horários automaticamente.</div>';
+      fragment('Conflitos',String(conf.conflicts.size),'No dia selecionado'))+
+      box('Régua de tempo · 07h–23h',nav+info+'<div class="pr-timeline">'+rows+'</div>')+
+      '<div class="pr-note">O calendário original abaixo permanece disponível em Dia, Semana e Mês. Sugestões de horário exigem sua confirmação e respeitam os dias configurados.</div>';
   }
   function renderSettingsEditorial(){
     const node=cardContainer('settings','editorialSettings');if(!node)return;
@@ -280,14 +343,30 @@
     else if(kind==='manage-course'&&typeof openCourseAdminFor==='function')openCourseAdminFor(id);
     else if(kind==='simulation'&&typeof openSimulation==='function')openSimulation(id);
     else if(kind==='simulation-history'&&typeof openSimulationHistory==='function')openSimulationHistory(id);
+    else if(kind==='move-agenda'){
+      const row=StudyDashboard?.exportData?.().agenda?.find(item=>item.id===id&&!item.deleted);
+      if(!row)return;
+      const day=StudyDashboard.exportData().agenda.filter(x=>x.date===row.date&&!x.deleted);
+      const suggested=agendaConflictData(day).suggest(row);
+      if(!suggested)return safe(()=>toast('Sem faixa livre válida neste dia.'),null);
+      const apply=()=>{StudyDashboard.updateAgenda(id,{start:suggested});safe(()=>toast('Sessão movida para '+suggested+'.'),null);schedule()};
+      if(typeof askConfirm==='function')askConfirm('Reagendar sessão?',(row.title||'Sessão')+' será movida para '+suggested+'.',apply,'Reagendar');
+      else if(window.confirm('Mover '+(row.title||'Sessão')+' para '+suggested+'?'))apply();
+    }
     else if(kind==='setting'){const target=document.getElementById(id);if(target&&!target.closest('[hidden]')){target.scrollIntoView({block:'center',behavior:'smooth'});if(target.matches('button'))target.focus({preventScroll:true})}else safe(()=>toast('Controle disponível na ficha técnica abaixo.'),null)}
     schedule();
   }
   document.addEventListener('click',event=>{
-    const b=event.target.closest('[data-pr-home],[data-pr-action],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
+    const b=event.target.closest('[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
     if(!b)return;
     event.preventDefault();
-    if(b.hasAttribute('data-pr-home')){screen=b.dataset.prHome;manualHome=true;schedule()}
+    if(b.hasAttribute('data-pr-agenda-day')){
+      const value=b.dataset.prAgendaDay;
+      const date=new Date(agendaFocusDay);
+      if(value==='today')agendaFocusDay=new Date();
+      else{date.setDate(date.getDate()+(value==='+1'?1:-1));agendaFocusDay=date}
+      schedule();
+    }else if(b.hasAttribute('data-pr-home')){screen=b.dataset.prHome;manualHome=true;schedule()}
     else if(b.hasAttribute('data-pr-course-layout')){
       coursePresentation=b.dataset.prCourseLayout;
       state.mapLayout=coursePresentation==='capas'?'grid':'list';
