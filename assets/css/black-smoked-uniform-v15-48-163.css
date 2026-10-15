@@ -458,9 +458,3 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
   }
 }
 
-/* V15.48.172-G — dock ativo: superfície fumê real no iPhone/WebKit,
-   sem alterar borda ou cor temática dos ícones. */
-html body .bottom-nav > button[data-nav].active {
-  background-color:rgba(20,20,21,.94)!important;
-  background-image:none;
-}
