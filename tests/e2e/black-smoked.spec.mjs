@@ -119,7 +119,8 @@ test('V15.48.171-G [G] · renderizadores reais de curso e simulado usam fundo pr
         edge:css.borderTopColor,blur:css.backdropFilter||css.webkitBackdropFilter}};
       el.style.setProperty(token,'#b8829e');const rose=color();
       el.style.setProperty(token,'#79a98b');const green=color();
-      const chip=el.querySelector('.course-status-pill,.course-exam-info,.simulation-meta-item');
+      // Selos de status com verde ou vermelho sao indicadores semanticos, nao fundos neutros.
+      const chip=el.querySelector('.course-exam-info,.course-card-meta-item,.simulation-meta-item');
       const innerImage=chip?getComputedStyle(chip).backgroundImage:null;
       return{name,rose,green,innerImage};
     });

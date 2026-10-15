@@ -405,6 +405,37 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current)
 }
 
 
+/* V15.48.171-G · Contrato de material acessivel.
+   Transparencia reduzida converte a origem dos tokens em superficie opaca.
+   Isso evita uma nova disputa de especificidade nos componentes reais. */
+html.mm-reduced-transparency{
+  --mm-smoke-card-black:#080808;
+  --mm-smoke-neutral:#080808;
+  --mm-smoke-inset:#080808;
+  --mm-smoke-shell:#080808;
+  --mm-smoke-card-filter:none;
+  --mm-smoke-filter:none;
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  :root{
+    --mm-smoke-card-black:#080808;
+    --mm-smoke-neutral:#080808;
+    --mm-smoke-inset:#080808;
+    --mm-smoke-shell:#080808;
+    --mm-smoke-card-filter:none;
+    --mm-smoke-filter:none;
+  }
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root{
+    --mm-smoke-card-black:#080808;
+    --mm-smoke-neutral:#080808;
+    --mm-smoke-inset:#080808;
+    --mm-smoke-shell:#080808;
+    --mm-smoke-card-filter:none;
+    --mm-smoke-filter:none;
+  }
+}
 /* V15.48.170-G · Acessibilidade e compatibilidade: nas preferências que
    reduzem transparência, os mesmos cards e sidebar tornam-se opacos. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){

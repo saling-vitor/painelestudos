@@ -5393,7 +5393,7 @@ test('V15.48.154 [D] card Hoje apresenta capa full-bleed e métricas em vidro ú
   expect(v.imageFit).toBe('cover');
   expect(v.overlay).toContain('linear-gradient');
   expect(v.gap).toBe('0px');
-  expect(v.metricsBackground).toContain('linear-gradient');
+  expect(v.metricsBackground).toBe('none'); // Fundo das metricas agora e grafite neutro.
   expect(v.metricsBlur).toContain('blur(');
   expect(v.bottomBlur).toContain('blur(');
   expect(v.ctaBlur).toContain('blur(');
