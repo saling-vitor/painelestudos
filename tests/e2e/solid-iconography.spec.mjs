@@ -7,13 +7,13 @@ test('[G] Interface Lucide — somente PNG transparente, geometria e cores CSS',
     await expect(icon).toHaveCount(1);
     const result=await icon.evaluate(el=>{
       const cs=getComputedStyle(el);
-      return {mask:cs.webkitMaskImage||cs.maskImage,w:parseFloat(cs.width),h:parseFloat(cs.height)};
+      return {mask:cs.webkitMaskImage||cs.maskImage,maskSize:cs.webkitMaskSize||cs.maskSize,w:parseFloat(cs.width),h:parseFloat(cs.height)};
     });
     expect(result.mask,'máscara PNG '+name).toContain('/assets/ui-icons/lucide/'+name+'.png');
     expect(result.mask,'não usar SVG embutido').not.toContain('svg+xml');
     expect(result.w,'largura '+name).toBeGreaterThanOrEqual(14);
     expect(result.h,'altura '+name).toBeGreaterThanOrEqual(14);
-    expect(Math.abs(result.w-result.h),'proporção quadrada '+name).toBeLessThan(2);
+    expect(result.maskSize,'PNG preserva geometria no CSS sem distorção '+name).toContain('contain');
     const response=await request.get('/assets/ui-icons/lucide/'+name+'.png');
     expect(response.ok()).toBeTruthy();
     expect(response.headers()['content-type']).toContain('image/png');

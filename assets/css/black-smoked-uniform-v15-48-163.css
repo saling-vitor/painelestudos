@@ -463,3 +463,10 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
     backdrop-filter:none!important;
   }
 }
+
+/* V15.48.172-G — seleção do dock: preenchimento fumê real (inclusive Safari/iPhone).
+   Estilo explícito, sem SVG, sem gradiente e independente do modo de layout. */
+html .bottom-nav>button[data-nav].active{
+  background:rgba(20,20,21,.94)!important;
+  border-color:color-mix(in srgb,var(--nav-accent,#C8AF86) 32%,rgba(255,255,255,.1))!important;
+}

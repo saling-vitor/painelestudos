@@ -5335,12 +5335,12 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
   await expect(root.locator('.forecast-home-actions .ui-icon')).toHaveCount(reviewAvailable?2:1);
   await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
   const imgs=['bolt','target','chart-bars','clock','book-open','play','help'];
-  const solid=await page.request.get('/assets/css/solid-lucide-v15-48-159.css');
+  const solid=await page.request.get('/assets/css/lucide-png-v15-48-172.css');
   expect(solid.ok()).toBe(true);
   const css=await solid.text();
-  for(const name of imgs)expect(css).toContain('.ui-icon.icon-'+name+'{--ui-icon:url("data:image/svg+xml,');
+  for(const name of imgs)expect(css).toContain('--solid-'+name+':url("../ui-icons/lucide/'+name+'.png")');
   const masks=await root.locator('.home-command-symbol').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).maskImage||getComputedStyle(el).webkitMaskImage));
-  expect(masks.every(v=>v.includes('data:image/svg+xml'))).toBe(true);
+  expect(masks.every(v=>v.includes('/assets/ui-icons/lucide/')&&v.includes('.png'))).toBe(true);
   if(testInfo.project.name==='desktop-chromium'){
     const geometry=await page.evaluate(()=>{
       const c=document.querySelector('#homeStudyDashboard .study-command-card').getBoundingClientRect();
@@ -5449,7 +5449,7 @@ test('V15.48.170 [D] plano diário preserva capas e bordas sem gradiente no fund
   await page.goto('/#home');
   await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
   const icon=await page.locator('#homeReviewSection .home-review-icon .icon-book-open').evaluate(el=>getComputedStyle(el).maskImage||getComputedStyle(el).webkitMaskImage);
-  expect(icon).toContain('data:image/svg+xml');
+  expect(icon).toContain('/assets/ui-icons/lucide/book-open.png');
   const rows=page.locator('#homeStudyPlan .study-plan-item.has-map-accent');
   await expect(rows.first()).toBeVisible();
   expect(await rows.count()).toBeGreaterThanOrEqual(2);
