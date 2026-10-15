@@ -308,13 +308,42 @@
     const cs=s.cs,choice=cs.find(c=>c.id===selectedProgress);
     const rows=choice?getCourseMaps(s,choice):s.ms,p=totals(rows),hist=safe(()=>StudyDashboard.progressHistory(),[]),
       actual=Array.isArray(hist)?(choice?hist.filter(x=>x.byCourse?.[choice.id]).map(x=>({...x,...x.byCourse[choice.id]})):hist):[];
+    const byCategory=new Map();
+    for(const m of rows){
+      const category=m.category||'Sem categoria',list=byCategory.get(category)||[];
+      list.push(m);byCategory.set(category,list);
+    }
+    const categories=[...byCategory.entries()].map(([name,list])=>({name,progress:totals(list),count:list.length}))
+      .sort((a,b)=>b.progress.pending-a.progress.pending||a.name.localeCompare(b.name,'pt-BR'));
+    const categoryHtml=categories.map(item=>
+      '<div class="pr-progress-category"><div><strong>'+escapeHtml(item.name)+'</strong><small>'+item.count+' mapa(s) · '+item.progress.marked+' de '+item.progress.total+' tópicos</small></div>'+
+      '<span class="pr-line"><i style="width:'+pct(item.progress)+'%"></i></span><b>'+percent(item.progress)+'</b></div>'
+    ).join('')||blank('Nenhuma categoria cadastrada.');
+    const weekly=Array.isArray(actual)?actual.reduce((acc,item)=>{
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(item.day||''))return acc;
+      const d=new Date(item.day+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));
+      acc.set(dayKey(d),item);return acc;
+    },new Map()):new Map();
+    const weeklyRows=[...weekly.entries()].slice(-12);
+    const weekStartDate=new Date();weekStartDate.setDate(weekStartDate.getDate()-((weekStartDate.getDay()+6)%7));
+    const weekKey=dayKey(weekStartDate),weekEnd=new Date(weekStartDate);weekEnd.setDate(weekEnd.getDate()+7);
+    const plannedRows=(s.dashboard.agenda||[]).filter(x=>!x.deleted&&x.date>=weekKey&&x.date<dayKey(weekEnd));
+    const plannedMinutes=plannedRows.reduce((total,row)=>total+num(row.minutes),0);
+    const actualMinutes=Math.floor(num(safe(()=>StudyPlanner.weeklySnapshot().seconds,0))/60);
+    const doubts=(s.dashboard.doubts||[]).filter(x=>!x.deleted);
     const selector='<div class="pr-switch" role="group" aria-label="Selecionar concurso"><button data-pr-progress="" aria-pressed="'+(!choice)+'" class="pr-switch-btn">Todos</button>'+cs.map(c=>'<button class="pr-switch-btn" aria-pressed="'+(choice?.id===c.id)+'" data-pr-progress="'+escapeHtml(c.id)+'">'+escapeHtml(c.title||'Concurso')+'</button>').join('')+'</div>';
     node.innerHTML=selector+header('Progresso · Acompanhamento','Cobertura do edital','O histórico começa na primeira observação real registrada; não são criados dias fictícios.',
       fragment('Cobertura',percent(p),p.marked+' de '+p.total)+
       fragment('Concluídos',String(p.done),'Tópicos OK')+
       fragment('Revisão',String(p.review),'Tópicos REV')+
       fragment('Dificuldades',String(p.difficult),'Tópicos DIF'))+
-      box('Evolução histórica observada',actual.length?'<ol class="pr-history">'+actual.slice(-12).map(x=>'<li><time>'+escapeHtml(x.day)+'</time><div class="pr-line"><i style="width:'+(x.total?Math.round(100*x.marked/x.total):0)+'%"></i></div><strong>'+escapeHtml(x.marked)+' / '+escapeHtml(x.total)+'</strong></li>').join('')+'</ol>':blank('Ainda não há histórico de observações.'))+
+      box('Evolução histórica · semanas observadas',weeklyRows.length?'<ol class="pr-history">'+weeklyRows.map(([week,x])=>'<li><time>'+escapeHtml(week)+'</time><div class="pr-line"><i style="width:'+(x.total?Math.round(100*x.marked/x.total):0)+'%"></i></div><strong>'+escapeHtml(x.marked)+' / '+escapeHtml(x.total)+'</strong></li>').join('')+'</ol>':blank('Ainda não há histórico semanal observado. O primeiro registro será feito a partir dos dados atuais, sem recriar o passado.'))+
+      box('Cobertura por disciplina e categoria','<div class="pr-progress-categories">'+categoryHtml+'</div>')+
+      box('Carga semanal · planejamento e execução',
+        fragment('Planejado',Math.round(plannedMinutes)+' min',plannedRows.length+' atividades')+
+        fragment('Realizado',actualMinutes+' min','Tempo de estudo registrado · todos os concursos')+
+        fragment('Diferença',Math.round(plannedMinutes-actualMinutes)+' min','Planejado menos realizado · sem projetar sessões')+
+        fragment('Dúvidas registradas',String(doubts.length),'No diário de dúvidas do aplicativo'))+
       box('Planta do edital',rows.length?mapRows(rows,40):blank('Nenhum mapa disponível.'))+
       box('Próximas prioridades',safe(()=>StudyPlanner.priorityRows(),[]).slice(0,3).map(row=>'<div class="pr-course-line"><div><b>'+escapeHtml(mapName(row.map))+'</b><small>'+escapeHtml((row.reasons||[]).join(' · ')||'Prioridade do planejamento')+'</small></div>'+action('Estudar','map',mapId(row.map))+'</div>').join('')||blank('Sem recomendações calculadas.'));
   }
