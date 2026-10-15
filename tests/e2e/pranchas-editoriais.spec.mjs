@@ -62,3 +62,21 @@ test('Progresso [G][T+M] · observação sem histórico inventado',async({page})
   if(report.total===0)expect(report.rows.length).toBe(0);
   else expect(report.rows.every(x=>x.marked>=0&&x.total>=x.marked)).toBe(true);
 });
+
+
+test('Agenda [G][T+M] · horário persistente e compatibilidade dos itens antigos',async({page})=>{
+  await page.goto('/#agenda');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  const detail=await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    const item=StudyDashboard.addAgenda({date,title:'Sessão com horário E2E',minutes:35,start:'08:35'});
+    const saved=StudyDashboard.exportData().agenda.find(x=>x.id===item.id);
+    const root=document.getElementById('agendaQuickForm');
+    return {start:saved?.start,hasField:!!root?.querySelector('[name="start"]')};
+  });
+  expect(detail.start).toBe('08:35');
+  expect(detail.hasField).toBe(true);
+  const label=page.locator('#agendaDayDetail');
+  await expect(label).toContainText('08:35');
+  await expect(label).toContainText('Sessão com horário E2E');
+});
