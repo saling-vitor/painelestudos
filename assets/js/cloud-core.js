@@ -18,7 +18,8 @@ async function uploadRaw(path,blob,contentType='text/html',upsertFile=true){
  return t?j(t,t):true;
 }
 async function objectResponse(path,method='GET'){
- const r=await fetch(objectUrl(path,true),{method,headers:storageHeaders()});
+ const auth=session();
+ const r=await fetch(objectUrl(path,true),{method,headers:{apikey:CFG().supabaseAnonKey,Authorization:'Bearer '+auth.access_token}});
  if(!r.ok)throw new Error(method==='HEAD'?'Arquivo nao disponivel':(await r.text())||String(r.status));
  return r;
 }
@@ -45,7 +46,6 @@ async function tinyManifest(path){
 async function deleteObjectPaths(paths){
  const list=[...new Set((paths||[]).filter(Boolean))];
  if(!list.length)return[];
- const s=session();
  // Supabase Storage aceita ate 1000 chaves por requisicao de remocao.
  let result=[];
  for(let i=0;i<list.length;i+=200){
@@ -82,6 +82,7 @@ async function upload(path,blob,contentType='text/html',upsertFile=true){
  const nonce=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)).replace(/[^a-zA-Z0-9-]/g,'');
  const prefix=path+'.parts/'+nonce+'/';
  const parts=[];
+ let manifestAttempted=false;
  try{
   for(let offset=0;offset<blob.size;offset+=MAP_PART_BYTES){
    const item=prefix+String(parts.length).padStart(5,'0')+'.bin';
@@ -89,11 +90,14 @@ async function upload(path,blob,contentType='text/html',upsertFile=true){
    parts.push(item);
   }
   const manifest=MAP_PARTS_TAG+JSON.stringify({schema:1,bytes:blob.size,parts});
+  manifestAttempted=true;
   const result=await uploadRaw(path,new Blob([manifest],{type:'text/html'}),'text/html',upsertFile);
   if(previous)await deleteObjectPaths(previous.parts).catch(e=>console.warn('Limpeza das partes anteriores:',e));
   return result;
  }catch(e){
-  await deleteObjectPaths(parts).catch(cleanupError=>console.warn('Falha ao limpar envio incompleto:',cleanupError));
+  // Se o servidor gravou o manifesto mas a resposta caiu, apagar as partes
+  // corromperia o mapa. Manter partes nesse caso de resultado ambiguo.
+  if(!manifestAttempted)await deleteObjectPaths(parts).catch(cleanupError=>console.warn('Falha ao limpar envio incompleto:',cleanupError));
   throw e;
  }
 }
