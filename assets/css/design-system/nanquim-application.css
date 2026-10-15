@@ -423,3 +423,14 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .pr-root .pr-month-date small{font:500 10.5px/1.2 "IBM Plex Mono",monospace;color:var(--pr-paper-3)}
 @media(max-width:920px){.pr-root .pr-agenda-week{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:560px){.pr-root .pr-agenda-week{grid-template-columns:repeat(2,minmax(0,1fr))}.pr-root .pr-agenda-week-day{min-height:125px}.pr-root .pr-agenda-month{gap:2px}.pr-root .pr-month-date{min-height:64px;padding:4px}.pr-root .pr-month-date b{font-size:11px}.pr-root .pr-month-date span,.pr-root .pr-month-date small{font-size:9px}}
+
+
+/* Progresso — legenda por categoria com cobertura efetivamente marcada */
+.pr-root .pr-progress-categories{display:grid;gap:9px}
+.pr-root .pr-progress-category{display:grid;grid-template-columns:minmax(120px,1.5fr) minmax(80px,1fr) 55px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--pr-line)}
+.pr-root .pr-progress-category:last-child{border-bottom:0}
+.pr-root .pr-progress-category>div{display:grid;gap:4px;min-width:0}
+.pr-root .pr-progress-category strong{font:700 13px/1.3 Archivo,Inter,sans-serif;color:var(--pr-paper);overflow-wrap:anywhere}
+.pr-root .pr-progress-category small{font:500 11px/1.35 "IBM Plex Mono",monospace;color:var(--pr-paper-3)}
+.pr-root .pr-progress-category b{font:700 12px/1.2 "IBM Plex Mono",monospace;color:var(--pr-brass-light);text-align:right}
+@media(max-width:560px){.pr-root .pr-progress-category{grid-template-columns:minmax(0,1fr) 64px}.pr-root .pr-progress-category .pr-line{display:none}}
