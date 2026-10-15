@@ -201,6 +201,30 @@
     const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),start:/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(payload.start||''))?String(payload.start):'19:00',mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
     data.agenda.push(row);writeData(data);renderAgenda();renderHomeDashboard();return row;
   }
+  function updateAgendaItem(id,patch={}){
+    // Alteração explícita: nunca reprogramar atividades só porque uma sugestão foi exibida.
+    const data=readData(),row=data.agenda.find(item=>item.id===id&&!item.deleted);
+    if(!row)return null;
+    if(patch.date!=null){
+      const date=String(patch.date);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(date+'T12:00:00')))throw new Error('Data de estudo inválida.');
+      row.date=date;
+    }
+    if(patch.start!=null){
+      const time=String(patch.start);
+      if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time))throw new Error('Horário de início inválido.');
+      row.start=time;
+    }
+    if(patch.minutes!=null){
+      const minutes=Number(patch.minutes);
+      if(!Number.isFinite(minutes)||minutes<0||minutes>1440)throw new Error('Duração de estudo inválida.');
+      row.minutes=Math.round(minutes);
+    }
+    row.updatedAt=isoNow();
+    writeData(data);
+    renderAgenda();renderHomeDashboard();
+    return {...row};
+  }
   function deleteAgendaItem(id){
     const data=readData(),row=data.agenda.find(item=>item.id===id);
     if(!row)return false;
@@ -657,6 +681,7 @@ function ensureAgendaView(){
     active:readActive,
     elapsed:()=>activeElapsed(readActive()),
     addAgenda:addAgendaItem,
+    updateAgenda:updateAgendaItem,
     recordProgressSnapshot,
     progressHistory:()=>readData().progressHistory,
     removeAgenda:requestDeleteAgendaItem,
