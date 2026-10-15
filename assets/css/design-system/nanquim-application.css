@@ -370,3 +370,35 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .pr-root .pr-agenda-slot small{font-size:12px;color:var(--pr-paper-2)}
 .pr-root .pr-agenda-slot .pr-action{min-height:36px}
 @media(max-width:560px){.pr-root .pr-hour-row{grid-template-columns:50px minmax(0,1fr)}.pr-root .pr-hour-label{font-size:10.5px;padding-left:6px}.pr-root .pr-agenda-slot{padding:8px}.pr-root .pr-agenda-slot .pr-action{width:100%}}
+
+
+/* Resultados editoriais de simulados — componentes não invasivos */
+.pr-root .pr-sim-report{border:1px solid var(--pr-line);border-radius:11px;padding:17px;display:grid;gap:12px;min-width:0;background:var(--pr-g0)}
+.pr-root .pr-sim-report h4{font:700 13px/1.25 Archivo,Inter,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--pr-paper-2);margin:6px 0 0}
+.pr-root .pr-sim-report-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.pr-root .pr-sim-report-head>div{display:grid;gap:3px;min-width:0;flex:1 1 190px}
+.pr-root .pr-sim-report-head strong{font:800 17px/1.2 Archivo,Inter,sans-serif;overflow-wrap:anywhere}
+.pr-root .pr-sim-report-head small{font:500 12px/1.4 "IBM Plex Mono",monospace;color:var(--pr-paper-3)}
+.pr-root .pr-sim-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--pr-g1);border:1px solid var(--pr-line);border-radius:9px}
+.pr-root .pr-sim-metrics .pr-stat{border-right:1px solid var(--pr-line);border-bottom:0}
+.pr-root .pr-sim-metrics .pr-stat:last-child{border-right:0}
+.pr-root .pr-sim-sections{display:grid;gap:8px}
+.pr-root .pr-sim-section{display:grid;grid-template-columns:minmax(80px,1fr) minmax(60px,2fr) 60px;gap:12px;align-items:center;min-width:0;font-size:13px}
+.pr-root .pr-sim-section>span:first-child{color:var(--pr-paper-2)}
+.pr-root .pr-sim-section b{font-family:"IBM Plex Mono",monospace;color:var(--pr-brass-light);text-align:right}
+.pr-root .pr-sim-benchmark{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pr-root .pr-sim-benchmark>div{min-width:0;padding:12px;border:1px solid var(--pr-line);border-radius:8px;display:flex;gap:8px;align-items:flex-start;flex-direction:column}
+.pr-root .pr-sim-benchmark span{color:var(--pr-paper-3);font-size:12px}
+.pr-root .pr-sim-benchmark b{font-size:16px;color:var(--pr-paper);overflow-wrap:anywhere}
+.pr-root .pr-sim-benchmark small{font-size:11px;color:var(--pr-paper-3);overflow-wrap:anywhere}
+.pr-root .pr-sim-trend{display:flex;gap:7px;align-items:end;height:126px;overflow-x:auto;padding:8px 2px 18px;border-bottom:1px solid var(--pr-line)}
+.pr-root .pr-sim-trend>div{height:100%;width:32px;min-width:32px;display:flex;align-items:center;justify-content:flex-end;flex-direction:column;position:relative}
+.pr-root .pr-sim-trend i{display:block;width:100%;background:var(--pr-brass);min-height:2px;border-radius:3px 3px 0 0}
+.pr-root .pr-sim-trend small{position:absolute;top:100%;left:50%;transform:translateX(-50%);font:500 9px/1.2 "IBM Plex Mono",monospace;color:var(--pr-paper-2)}
+.pr-root .pr-sim-errors{border:1px solid var(--pr-line);border-radius:8px;padding:9px;color:var(--pr-paper)}
+.pr-root .pr-sim-errors summary{cursor:pointer;font-size:13px;min-height:28px;padding:5px}
+.pr-root .pr-sim-error{display:grid;gap:4px;padding:11px 0;border-bottom:1px solid var(--pr-line)}
+.pr-root .pr-sim-error:last-child{border-bottom:0}
+.pr-root .pr-sim-error p{font-size:12px;line-height:1.5;color:var(--pr-paper-2)}
+.pr-root .pr-sim-error small{font-size:12px;color:var(--pr-brass-light)}
+@media(max-width:620px){.pr-root .pr-sim-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.pr-root .pr-sim-metrics .pr-stat:nth-child(2){border-right:0}.pr-root .pr-sim-metrics .pr-stat:nth-child(-n+2){border-bottom:1px solid var(--pr-line)}.pr-root .pr-sim-benchmark{grid-template-columns:1fr}.pr-root .pr-sim-section{grid-template-columns:minmax(0,1fr) 70px}.pr-root .pr-sim-section .pr-line{display:none}}
