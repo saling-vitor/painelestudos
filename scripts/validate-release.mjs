@@ -67,6 +67,8 @@ check(readerEntry.includes('name="theme-color" content="#000000"'),'Nanquim: met
 check(offlineEntry.includes('name="theme-color" content="#000000"'),'Nanquim: metadado offline');
 check(offlineEntry.includes('manifest-v15.23.6.webmanifest?v='+expected),'Nanquim: offline manifesto versionado');
 check(darkManifest.theme_color==='#000000'&&darkManifest.background_color==='#000000','Nanquim: manifesto escuro e splash PWA');
+const genericManifest=parseJson('manifest.webmanifest');
+check(genericManifest.theme_color==='#000000'&&genericManifest.background_color==='#000000','Nanquim: manifesto genérico sem tema legado');
 const nanquimTypography=read(nanquimSheets[1]);
 for(const t of ['display','h1','h2','h3','title','body','body-sm','label','input','caption','eyebrow','tabbar','kpi','kpi-sm'])check(nanquimTypography.includes('--fs-'+t+':'),'token '+t);
 const nanquimApp=read(nanquimSheets[3]);
