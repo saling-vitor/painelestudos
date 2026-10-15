@@ -125,11 +125,14 @@
       const tip=exam?(days===0?'A prova acontece hoje.':days>0?'Faltam '+days+' dias para a próxima prova.':'A prova já passou; consulte o fechamento.'):'Cadastre uma data de prova para priorizar seus estudos.';
       const plan=safe(()=>StudyCoach.snapshot(),null);
       const items=Array.isArray(plan?.items)?plan.items:[];
-      content=header('01 · Planejamento de hoje',exam?exam.course.title||'Próxima prova':'Seu estudo de hoje',tip,
-        fragment('Até a prova',days==null?'—':days===0?'Hoje':days+' dias',shortDate(exam?.date))+
+      content=header('01 · Planejamento de hoje · '+(exam?.course?.title||'Próxima prova'),
+        days==null?'—':days===0?'Hoje':days>0?days+' dias':'Prova passada',tip,
+        fragment('Data da prova',shortDate(exam?.date),exam?.course?.title||'Sem concurso')+
         fragment('Cobertura',percent(cp||s.all),(cp||s.all).marked+' de '+(cp||s.all).total+' tópicos')+
-        fragment('Hoje',minText(todaySeconds()),'Tempo registrado')+
-        fragment('Revisões',due+' mapas',reviewTopics+' tópicos marcados REV'));
+        fragment('Estudo hoje',minText(todaySeconds()),'Tempo registrado')+
+        fragment('Revisões',due+' mapas',reviewTopics+' tópicos marcados REV')+
+        fragment('Meta diária',num(s.dashboard.goals?.dailyMinutes)?num(s.dashboard.goals.dailyMinutes)+' min':'—','Configuração atual')+
+        fragment('Plano de hoje',items.length?items.reduce((a,x)=>a+num(x.minutes),0)+' min':'—','Duração sugerida, não realizada'));
       content+=box('Próxima ação',items.length?'<p>'+escapeHtml(items[0].title||items[0].label||'Estudo planejado')+'</p><p class="pr-muted">'+escapeHtml(items[0].reason||'Sugerido pelo planejamento existente')+'</p>'+action('Iniciar estudo','study','','pr-primary'):blank('Sem ação planejada. Use a Agenda ou abra um mapa para começar.'));
       // A régua só lê atividades cadastradas; eventos legados sem início
       // não recebem horário estimado.
@@ -157,7 +160,7 @@
       content+=box('Planta do edital',exam&&getCourseMaps(s,exam.course).length?weightedEdital(getCourseMaps(s,exam.course),35)+action('Abrir concurso','course',exam.course.id):blank('Nenhum mapa disponível para este concurso.'));
       content+=box('Continuidade',action('Abrir Agenda','nav','agenda')+' '+action('Consultar revisões','home','revisoes')+' '+action('Ver meus cursos','nav','courses'));
     }else if(screen==='todos'){
-      content=header('02 · Visão geral','Todos os concursos',s.cs.length+' concursos e '+s.ms.length+' mapas, calculados a partir da biblioteca cadastrada.',
+      content=header('02 · Todos os concursos',percent(s.all),s.cs.length+' concursos e '+s.ms.length+' mapas; '+s.all.marked+' de '+s.all.total+' tópicos estudados.',
         fragment('Cobertura total',percent(s.all),s.all.marked+' de '+s.all.total+' tópicos')+
         fragment('Concursos',String(s.cs.length),'Inclui arquivados')+
         fragment('Mapas',String(s.ms.length),'Biblioteca atual')+
@@ -167,7 +170,7 @@
         return '<div class="pr-course-line"><div><strong>'+escapeHtml(x.course.title||'Concurso')+'</strong><small>'+escapeHtml(n==null?'Sem data':n<0?'Prova realizada':n===0?'Hoje':n+' dias')+'</small></div><span class="pr-line"><i style="width:'+pct(p)+'%"></i></span><b>'+percent(p)+'</b>'+action('Entrar','course',x.course.id)+'</div>';
       }).join(''):blank('Nenhum concurso ativo. Configure seus concursos para visualizar os prazos.'));
     }else if(screen==='revisoes'){
-      content=header('03 · Fila de revisões','Revisões previstas',due?'Há '+due+' mapas com revisão vencida ou para hoje.':'Não há revisões vencidas registradas.',
+      content=header('03 · Revisões previstas',String(due),due?'Há '+due+' mapas com revisão vencida ou para hoje.':'Não há revisões vencidas registradas.',
         fragment('Mapas a revisar',String(due),'Hoje e vencidos')+
         fragment('Tópicos em REV',String(reviewTopics),'Estados reais')+
         fragment('Próximos',String(upcoming),'Mapas com revisão futura'));
@@ -190,7 +193,7 @@
         mapStats=activeMap?progress(activeMap):null,
         futurePlan=safe(()=>StudyCoach.snapshot()?.items||[],[]),
         nextBlock=futurePlan.find(item=>item.key&&item.key!==active?.mapKey);
-      content=header('04 · Em sessão','Cronômetro de estudo',active?'Sessão real do aplicativo. O tempo é registrado pelo cronômetro já existente.':'Nenhuma sessão ativa. Inicie pelo plano ou por um mapa.',
+      content=header('04 · Cronômetro de estudo',clockText(elapsed),active?'Em sessão · '+(active.label||'Estudo')+'. O tempo é registrado pelo cronômetro original.':'Nenhuma sessão ativa. Inicie pelo plano ou por um mapa.',
         '<div class="pr-stat"><span>Duração</span><b data-pr-clock>'+clockText(elapsed)+'</b><small>Contabilizada pelo cronômetro original</small></div>'+
         fragment('Estado',active?(active.running?'Em curso':'Pausado'):'Parado')+
         fragment('Mapa',active?.mapKey?mapName(safe(()=>mapById(active.mapKey),null)):'—'));
@@ -205,7 +208,7 @@
       }
     }else{
       const past=completed;
-      content=header('05 · Encerramento de prova','Pós-prova',past.length?'Mantenha o histórico dos concursos realizados. O arquivamento não elimina mapas nem resultados.':'Ainda não há uma prova passada entre os concursos ativos.',
+      content=header('05 · Pós-prova',past.length+' '+(past.length===1?'prova':'provas'),past.length?'Mantenha o histórico dos concursos realizados. O arquivamento não elimina mapas nem resultados.':'Ainda não há uma prova passada entre os concursos ativos.',
         fragment('Provas passadas',String(past.length),'Não arquivadas')+
         fragment('Arquivados',String(done.length),'Histórico preservado')+
         fragment('Próxima prova',exam&&daysTo(exam.date)>=0?shortDate(exam.date):'—'));
@@ -771,7 +774,15 @@
   const timerNode=document.getElementById('studyTimerFloat');
   if(timerNode)new MutationObserver(()=>{
     const label=document.querySelector('#editorialHome [data-pr-clock]');
-    if(label&&typeof StudyDashboard!=='undefined')label.textContent=clockText(safe(()=>StudyDashboard.elapsed(),0));
+    if(label&&typeof StudyDashboard!=='undefined'){
+      const live=clockText(safe(()=>StudyDashboard.elapsed(),0));
+      label.textContent=live;
+      const root=document.getElementById('editorialHome');
+      if(root?.closest('.view')?.dataset.editorialMode==='sessao'){
+        const heading=root.querySelector('.pr-stamp h2');
+        if(heading)heading.textContent=live;
+      }
+    }
   }).observe(timerNode,{subtree:true,childList:true,characterData:true});
   const observe=new MutationObserver(()=>{if(document.documentElement.classList.contains('app-ready')){schedule();observe.disconnect()}});
   observe.observe(document.documentElement,{attributes:true,attributeFilter:['class']});

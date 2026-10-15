@@ -473,3 +473,19 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 
 /* Cor temática identifica cada folha; a superfície continua neutra. */
 .pr-root .pr-edital-lot{border-left-color:var(--pr-lot-accent,var(--pr-brass))}
+
+/* Carimbos próprios do Início: números monumentais sem sacrificar o leitor. */
+.view[data-view="home"] #editorialHome .pr-stamp-copy h2{
+  font:400 clamp(58px,7.4vw,116px)/.97 Anton,Archivo,Impact,sans-serif;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums;
+  text-wrap:balance;overflow-wrap:anywhere;color:var(--pr-paper)
+}
+.view[data-view="home"][data-editorial-mode="sessao"] #editorialHome .pr-stamp-copy h2{
+  font-size:clamp(42px,5.6vw,82px);font-variant-numeric:tabular-nums
+}
+.view[data-view="home"] #editorialHome .pr-stamp-copy{gap:15px}
+.view[data-view="home"] #editorialHome .pr-stamp-copy .pr-kicker{font-size:12px;line-height:1.6}
+@media(max-width:700px){
+ .view[data-view="home"] #editorialHome .pr-stamp-copy h2{font-size:clamp(58px,13vw,86px)}
+ .view[data-view="home"][data-editorial-mode="sessao"] #editorialHome .pr-stamp-copy h2{font-size:clamp(37px,9vw,65px)}
+}
