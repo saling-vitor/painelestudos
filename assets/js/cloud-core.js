@@ -27,13 +27,13 @@ function unpackManifest(text,path){
  let data;
  try{data=JSON.parse(text.slice(MAP_PARTS_TAG.length))}catch{throw new Error('Manifesto do mapa esta corrompido.')}
  const prefix=path+'.parts/';
- if(data?.schema!==1||!Array.isArray(data.parts)||!data.parts.length||!Number.isSafeInteger(data.bytes)||data.bytes<0||data.parts.length>5000||data.parts.some(p=>typeof p!=='string'||!p.startsWith(prefix)||!/^[-\\w./]+$/.test(p)||p.includes('..'))){
+ if(data?.schema!==1||!Array.isArray(data.parts)||!data.parts.length||!Number.isSafeInteger(data.bytes)||data.bytes<0||data.parts.length>5000||data.parts.some(p=>typeof p!=='string'||!p.startsWith(prefix)||!/^[-\w./]+$/.test(p)||p.includes('..'))){
   throw new Error('Manifesto das partes do mapa e invalido.');
  }
  return data;
 }
 async function tinyManifest(path){
- if(!/\\.html?$/i.test(path))return null;
+ if(!/\.html?$/i.test(path))return null;
  try{
   const r=await objectResponse(path,'HEAD');
   const bytes=Number(r.headers.get('content-length'));
@@ -70,7 +70,7 @@ async function removeFiles(paths){
 async function upload(path,blob,contentType='text/html',upsertFile=true){
  await ensure();
  if(!blob||typeof blob.size!=='number')blob=new Blob([blob],{type:contentType});
- const eligible=/^text\\/html(?:;|$)/i.test(contentType)&&/\\.html?$/i.test(path);
+ const eligible=/^text\/html(?:;|$)/i.test(contentType)&&/\.html?$/i.test(path);
  const previous=eligible&&upsertFile?await tinyManifest(path):null;
  if(!eligible||blob.size<=MAP_SPLIT_THRESHOLD){
   const result=await uploadRaw(path,blob,contentType,upsertFile);
