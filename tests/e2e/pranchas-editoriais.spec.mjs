@@ -243,3 +243,18 @@ test('Home [G][T+M] · abrir plano não inicia sessão paralela',async({page})=>
   });
   if(report.hasButton)expect(report.n).toBe(0);
 });
+
+
+test('Agenda [G][T+M] · evento antigo sem horário não ganha 19h fictícias',async({page})=>{
+  await enter(page,'agenda');
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
+  await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    StudyDashboard.importData({agenda:[{id:'legacy-sem-horario-e2e',date,title:'Evento histórico E2E sem horário',kind:'study',minutes:22}]},{merge:true});
+    renderStudyAgenda();MeusMapasPranchas.refresh();
+  });
+  const row=page.locator('#agendaDayDetail .agenda-entry').filter({hasText:'Evento histórico E2E sem horário'});
+  await expect(row).toContainText('Sem horário');
+  await expect(page.locator('#editorialAgenda')).toContainText('Sem horário registrado');
+  expect(await page.locator('#editorialAgenda .pr-collision').filter({hasText:'Evento histórico E2E sem horário'}).count()).toBe(0);
+});
