@@ -52,20 +52,27 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===49,'auditoria: build ativo usa 49 CSS, incluindo Black Smoked Uniforme');
-check(index.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
-check(index.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS final conectado');
-check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
-check(activeCssFiles.at(-1)==='assets/css/black-smoked-uniform-v15-48-163.css','Black Smoked Uniforme: CSS tem ultima precedencia');
-const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
-check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(20,20,21,.94)'),'Black Editorial: grafite fumê neutro oficial sincronizado');
-check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
-check(blackSmokedCss.includes('--mm-smoke-inset:rgba(27,27,28,.96)')&&blackSmokedCss.includes('.study-rhythm-kpis>article'),'Cards e componentes internos usam material neutro compartilhado');
-check(blackSmokedCss.includes('--mm-smoke-tint:0%')&&blackSmokedCss.includes('--mm-ivory-strong:#EEE9E0'),'Black Editorial: zero tingimento cromatico e texto marfim');
-check(blackSmokedCss.includes('--mm-smoke-card-filter:blur(12px) saturate(105%)')&&blackSmokedCss.includes('backdrop-filter:var(--mm-smoke-card-filter)!important'),'Vidro fume aplicado aos cards com filtro real');
-check(blackSmokedCss.includes('--mm-card-surface:var(--mm-smoke-card-black)')&&blackSmokedCss.includes('html:not(.is-phone-layout) .app .side'),'Todos os cards e sidebar: superficie grafite canonica');
-check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
-
+check(activeCssFiles.length===49,'auditoria: 49 CSS ativos; última folha canônica substitui Black Smoked antigo');
+const nqPath='assets/css/design-system-nanquim-v15-48-174.css';
+check(index.includes(nqPath+'?v='+expected),'Design System Nanquim: conectado no index');
+check(sw.includes(nqPath+'?v='+expected),'Design System Nanquim: precache PWA');
+check(activeCssFiles.at(-1)===nqPath,'Design System Nanquim: última folha de CSS');
+check(!activeCssFiles.includes('assets/css/black-smoked-uniform-v15-48-163.css'),'Black Smoked legado não está ativo');
+const nqCss=read(nqPath);
+for(const token of ['--nq-nanquim:#000000','--nq-grafite-1:#0a0a09','--nq-latao:#c3aa84',
+  '--nq-papel:#ece6da','--nq-oxido:#b8614e','--nq-musgo:#8c9a6c',
+  '--lg-barra-fundo','--lg-painel-fundo','--lg-controles-fundo','--lg-micro-fundo',
+  '--fs-display','--fs-h1','--fs-h2','--fs-h3','--fs-title','--fs-body',
+  '--fs-body-sm','--fs-label','--fs-input','--fs-caption','--fs-eyebrow',
+  '--fs-tabbar','--fs-kpi','--fs-kpi-sm']){
+  check(nqCss.includes(token),'Design System token presente: '+token);
+}
+check(!/html\\s+\\*/.test(nqCss),'Sem !important global que recolore as capas');
+check(nqCss.includes('--lg-micro-fundo:rgba(0,0,0,.80)'),'Micro sobre capas claras tem proteção de contraste');
+check(nqCss.includes('prefers-reduced-transparency')&&nqCss.includes('forced-colors'),'Vidro acessível com fallback opaco');
+check(nqCss.includes('backdrop-filter:none!important'),'Cards de leitura sólidos');
+check(read('reader.html').includes('mm-nanquim-reader-theme'),'Reader injeta paleta também em mapas importados');
+check(read('reader.html').includes('font-size:16px!important'),'Barra compacta do reader mantém inputs legíveis no toque');
 check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
 check(index.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
 check(sw.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
@@ -122,7 +129,7 @@ for(const cover of ['assets/capas/padroes/padrao-simulado.png','assets/capas/pad
 check(stateModule.includes('assets/capas/padroes/padrao-novo-curso.png')&&stateModule.includes('assets/capas/padroes/padrao-novo-mapa.png'),'Defaults curso/mapa apontam para capas oficiais');
 check(allJs.includes("key:'padrao'")&&allJs.includes('padrao-simulado.png'),'Padrão simulado ativo sem eliminar capas específicas');
 const newHomeCss='assets/css/home-responsive-v15-48-162.css';
-const smokedCss='assets/css/black-smoked-uniform-v15-48-163.css';
+const smokedCss='assets/css/design-system-nanquim-v15-48-174.css';
 const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/lucide-png-v15-48-172.css',newHomeCss,smokedCss].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
@@ -131,7 +138,7 @@ check(importantCount<=6694,'auditoria: !important legado não regrediu ('+import
 const homeImportantCount=(read(newHomeCss).match(/!important/g)||[]).length;
 check(homeImportantCount<=450,'auditoria: overrides da Home responsiva <=450 ('+homeImportantCount+')');
 const smokedImportantCount=(read(smokedCss).match(/!important/g)||[]).length;
-check(smokedImportantCount<=110,'Black Smoked: limite de overrides do modulo <=110 ('+smokedImportantCount+')');
+check(smokedImportantCount<=110,'Nanquim: limite de overrides do módulo <=110 ('+smokedImportantCount+')');
 check(importantCount+homeImportantCount+smokedImportantCount<=7144,'auditoria: total de overrides controlado ('+(importantCount+homeImportantCount+smokedImportantCount)+')');
 const navGlassImportant=(read('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
 check(navGlassImportant<=90,'auditoria: V2 preserva limite próprio de overrides ('+navGlassImportant+')');
