@@ -72,6 +72,17 @@ html .app .content :is(
   -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
   backdrop-filter:var(--mm-smoke-card-filter)!important;
 }
+/* Cards de curso e mapa: contornos neutros; identidade cromática fica nas capas, TAGs e indicadores. */
+html .app .content :is(.course-card,.course-library-card,.map-card),
+html .app .content :is(#coursesGrid,#homeCourses)>.course-card.course-library-card,
+html .app .content #courseMaps .map-card{
+  border-color:rgba(255,255,255,.135)!important;
+  border-left-color:rgba(255,255,255,.135)!important;
+}
+html .app .content :is(.course-card,.course-library-card,.map-card):is(:hover,:focus-within){
+  border-color:rgba(255,255,255,.19)!important;
+  border-left-color:rgba(255,255,255,.19)!important;
+}
 /* Painel estruturante preto, sem tirar a cor de cada linha. */
 html .app .content :is(.home-review-section,.study-intelligence-panel,.study-plan-footer,.study-command-metrics){
   background:var(--mm-smoke-neutral)!important;
@@ -156,10 +167,11 @@ html .bottom-nav>button[data-nav].active,
 html.is-phone-layout body>.bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]),
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   --mm-uniform-tone:var(--nav-accent,#C8AF86);
-  background:var(--mm-smoke-card-black)!important;
-  border-color:color-mix(in srgb,var(--mm-uniform-tone) 52%,rgba(255,255,255,.1))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14)!important;
-  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  background:color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(10,10,11,.78))!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone) 52%,rgba(255,255,255,.18))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.15)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(118%)!important;
+  backdrop-filter:blur(16px) saturate(118%)!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before,
 html .bottom-nav>button[data-nav].active::before,
@@ -202,10 +214,26 @@ html .app .content :is(.study-plan-item,.continue-card,.priority-now-card)
 /* Acoes coloridas por HEX contextual, mantendo os cards pretos;
    botoes flutuantes ... e estrela continuam neutros. */
 html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item,#coursesGrid>.course-card.course-library-card,#homeCourses>.course-card.course-library-card,#simulationGrid>.simulation-card)
-  :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav):not(#mm-smoke-action-exclude){
+  :is(.simulation-card-actions .primary,.primary,button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav):not(#mm-smoke-action-exclude){
   background:rgba(0,0,0,.86)!important;
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 55%,rgba(255,255,255,.15))!important;
   color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 74%,white)!important;
+}
+/* Botão Entrar: vidro temático translúcido, sem contaminar o preenchimento dos cards. */
+html .app .content :is(#homeCourses,#coursesGrid) .course-card.course-library-card .course-footer .enter,
+html .app .content .course-card .course-footer .enter{
+  --enter-tone:var(--course-accent,var(--cover-accent,var(--mm-uniform-tone,#C3AA84)));
+  background:color-mix(in srgb,var(--enter-tone) 43%,rgba(18,18,19,.68))!important;
+  border:1px solid color-mix(in srgb,var(--enter-tone) 64%,rgba(255,255,255,.16))!important;
+  color:color-mix(in srgb,var(--enter-tone) 45%,#fff)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.19),0 2px 8px rgba(0,0,0,.14)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(118%)!important;
+  backdrop-filter:blur(15px) saturate(118%)!important;
+  background-image:none!important;
+}
+html .app .content .course-card .course-footer .enter:is(:hover,:focus-visible){
+  filter:none!important;transform:none!important;
+  background:color-mix(in srgb,var(--enter-tone) 49%,rgba(18,18,19,.72))!important;
 }
 /* 06 · Estados acessiveis e fallback estavel no Safari/iPadOS/Chrome. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
@@ -214,6 +242,18 @@ html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-c
     .mobile-menu-sheet,.modal-card,.planner-modal-card,.study-doubt-card,.course-sticky-bar,
     .study-timer-idle-menu,.progress-sort-sheet){
     background:#080808!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
+  html .bottom-nav>button[data-nav].active,
+  html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
+    background:color-mix(in srgb,var(--nav-accent,#C3AA84) 36%,#131313)!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+  html .app .content .course-card .course-footer .enter{
+    background:color-mix(in srgb,var(--enter-tone,#C3AA84) 47%,#171717)!important;
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   }
 }
