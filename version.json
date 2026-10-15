@@ -1,13 +1,13 @@
 {
-  "version": "15.48.174",
-  "label": "V15.48.174-G",
-  "notes": "Integração inicial Nanquim/Latão, tipografia e materiais Vidro Nanquim nas três plataformas; validação em branch.",
+  "version": "15.48.176",
+  "label": "V15.48.176-G",
+  "notes": "Integração em branch das sete pranchas editoriais com carimbos, cinco estados da Home e contratos de dados reais; publicação sujeita à auditoria e QA.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Paleta Nanquim/Papel/Latão para superfícies e controles",
-    "[G] 14 tokens tipográficos Desktop, Tablet e Smartphone",
-    "[G] Vidro Nanquim funcional em navegação e controles",
-    "[G] PWA sincronizado com novas folhas de estilo"
+    "[G] Estrutura editorial das sete áreas",
+    "[G] Home com cinco vistas de operação",
+    "[G] Carimbos calculados do catálogo, progresso e sessões reais",
+    "[G] Componentes responsivos Desktop, Tablet e Smartphone"
   ],
   "automation": {
     "enabled": true,
