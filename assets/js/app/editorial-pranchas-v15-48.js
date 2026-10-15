@@ -11,7 +11,7 @@
   const num=n=>Number.isFinite(Number(n))?Number(n):0;
   const pct=p=>p&&p.total?Math.min(100,Math.max(0,Math.round(100*num(p.marked)/num(p.total)))):0;
   const percent=p=>p&&p.total?pct(p)+'%':'—';
-  const shortDate=d=>d?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}):'Sem data';
+  const shortDate=d=>d instanceof Date&&Number.isFinite(d.getTime())?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}):'Sem data';
   const dayKey=d=>new Date(d).toLocaleDateString('sv-SE');
   const courseDate=c=>{
     const raw=String(c?.examDate||c?.exam_date||'');
@@ -187,7 +187,7 @@
       fragment('Disponíveis',String(ss.length))+
       fragment('Com resultado',String(done.length))+
       fragment('Tentativas',String(attempts))+
-      fragment('Último resultado',current&&Number.isFinite(num(current.result.score))?escapeHtml(String(current.result.score)):'—','Conforme registro original'));
+      fragment('Último resultado',current&&current.result.score!=null&&Number.isFinite(Number(current.result.score))?String(current.result.score):'—','Conforme registro original'));
     if(simPresentation==='resultado'){
       body+=box('Histórico real',done.length?done.map(x=>{
         const r=x.result;
@@ -299,6 +299,12 @@
     else if(b.hasAttribute('data-pr-progress')){selectedProgress=b.dataset.prProgress;schedule()}
     else if(b.hasAttribute('data-pr-action'))goAction(b.dataset.prAction,b.dataset.prId);
   });
+  // A atualização de uma métrica pelas funções existentes precisa atualizar também os carimbos.
+  for(const key of ['renderHome','renderCoursesPage','renderCurrentMaps','renderAllMaps','renderSimulations','renderProgress','renderSettings','renderStudyAgenda']){
+    const original=window[key];
+    if(typeof original!=='function')continue;
+    window[key]=function(){const result=original.apply(this,arguments);schedule();return result};
+  }
   window.addEventListener('studyapp:navigation',schedule);
   window.addEventListener('storage',schedule);
   window.addEventListener('online',schedule);
