@@ -300,14 +300,14 @@ html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-titl
   display:flex!important;min-width:0!important;flex-wrap:wrap!important;
 }
 html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-title-row b{
-  min-width:0!important;font-size:11px!important;line-height:1.25!important;
+  min-width:0!important;font-size:var(--fs-body-sm,14px)!important;line-height:1.25!important;
   overflow-wrap:anywhere!important;
 }
 html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-board{
-  font-size:7px!important;
+  font-size:var(--fs-caption,12px)!important;
 }
 html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-meta{
-  font-size:8.5px!important;line-height:1.3!important;
+  font-size:var(--fs-caption,12px)!important;line-height:1.3!important;
 }
 html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-state-row{
   gap:5px!important;min-width:0!important;

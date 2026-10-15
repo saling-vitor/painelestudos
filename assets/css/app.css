@@ -2387,7 +2387,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .view[data-view="home"].home-returning .hero-copy{
     width:min(690px,55%);
     max-width:690px;
-    padding:19px 29px 14px;
+    padding:13px 29px 7px;
     display:block;
   }
   .view[data-view="home"].home-returning .eyebrow{
