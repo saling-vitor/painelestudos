@@ -82,3 +82,63 @@ test('Agenda [G][T+M] · horário persistente e compatibilidade dos itens antigo
   await expect(label).toContainText('08:35');
   await expect(label).toContainText('Sessão com horário E2E');
 });
+
+
+test('Agenda [G][T+M] · conflitos são somente sugeridos até confirmação',async({page})=>{
+  await page.goto('/#agenda');
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
+  const ids=await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    const a=StudyDashboard.addAgenda({date,title:'Conflito A E2E',minutes:60,start:'19:00'});
+    const b=StudyDashboard.addAgenda({date,title:'Conflito B E2E',minutes:30,start:'19:30'});
+    MeusMapasPranchas.refresh();
+    return[a.id,b.id];
+  });
+  await expect(page.locator('#editorialAgenda .pr-collision')).toHaveCount(2);
+  const initial=await page.evaluate(ids=>ids.map(id=>StudyDashboard.exportData().agenda.find(r=>r.id===id)?.start),ids);
+  expect(initial).toEqual(['19:00','19:30']);
+  const proposal=page.locator('#editorialAgenda [data-pr-action="move-agenda"]').first();
+  await proposal.click();
+  await expect(page.locator('#confirmModal')).toBeVisible();
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(ids=>ids.map(id=>StudyDashboard.exportData().agenda.find(r=>r.id===id)?.start),ids)).not.toEqual(initial);
+});
+test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',async({page})=>{
+  await page.goto('/#simulations');
+  await expect(page.locator('#editorialSimulations')).toBeVisible();
+  const exists=await page.evaluate(()=>{
+    const s=combinedSimulations()[0];if(!s)return false;
+    const key=simulationKey(s);
+    const result={score:75,correct:45,wrong:10,blank:5,total:60,finishedAt:'2026-10-15T12:00:00.000Z',sections:{'Projeto Arquitetônico':{correct:8,total:10}},mistakes:[{number:6,topic:'Normas',stem:'Item de teste sem dados reais de produção',answer:'B'}]};
+    state.simResults[key]=result;state.simAttempts[key]=[result];MeusMapasPranchas.refresh();return true;
+  });
+  if(!exists){await expect(page.locator('#editorialSimulations')).toContainText('Nenhum simulado');return}
+  await page.locator('#editorialSimulations [data-pr-sim="resultado"]').click();
+  await expect(page.locator('#editorialSimulations .pr-sim-report')).toHaveCount(1);
+  await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('Projeto Arquitetônico');
+  await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('45');
+  await expect(page.locator('#editorialSimulations .pr-sim-benchmark')).toContainText('Não informado');
+});
+test('Mapas [G][T+M] · vínculo mantém HTML e isola namespace por concurso',async({page})=>{
+  await page.goto('/#maps');
+  await expect(page.locator('#editorialMaps')).toBeVisible();
+  const data=await page.evaluate(async()=>{
+    const source=combinedMaps().find(x=>x.storage_path);if(!source)return null;
+    const to='teste-vinculo-e2e',originalInsert=StudyCloud.insert,originalRows=StudyCloud.rows,originalLoad=loadCloud,originalMe=StudyCloud.me;
+    state.cloudCourses.push({id:to,title:'Concurso de teste de vínculo',status:'active'});
+    let inserted=null,uploads=0;
+    const oldUpload=StudyCloud.upload;
+    StudyCloud.me=async()=>({id:'e2e-user'});
+    StudyCloud.rows=async()=>[];
+    StudyCloud.upload=async()=>{uploads++;throw Error('upload duplicado proibido')};
+    StudyCloud.insert=async(table,row)=>{inserted=row;return[{id:'linked-row-e2e',...row}]};
+    loadCloud=async()=>{};
+    try{await linkMapToCourse(mapKey(source),to)}finally{
+      StudyCloud.insert=originalInsert;StudyCloud.rows=originalRows;StudyCloud.upload=oldUpload;StudyCloud.me=originalMe;loadCloud=originalLoad;
+    }
+    return{samePath:source.storage_path===inserted?.storage_path,otherId:source.storageId!==inserted?.storage_id,
+      differentCourse:source.courseId!==inserted?.course_id,uploads,readerParam:readerHref({...source,storageId:inserted.storage_id}).includes('storage-id=')};
+  });
+  if(!data)return;
+  expect(data).toEqual({samePath:true,otherId:true,differentCourse:true,uploads:0,readerParam:true});
+});
