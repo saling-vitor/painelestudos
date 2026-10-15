@@ -1,0 +1,4 @@
+Lucide Icons (https://lucide.dev)
+Copyright (c) 2026 Lucide Icons and Contributors.
+Lucide uses ISC and Feather-derived MIT licenses. See https://lucide.dev/license
+Rendered original Lucide drawings to PNG for MEUS MAPAS; website UI loads only PNG files.
