@@ -115,7 +115,7 @@
         fragment('Próximos',String(upcoming),'Mapas com revisão futura'));
       content+=box('Fila de prioridade',due?(s.reviews.due||[]).slice(0,30).map(r=>{
         const m=r.map,p=progress(m);
-        return '<div class="pr-course-line"><div><b>'+escapeHtml(m.code||mapName(m))+'</b><small>'+escapeHtml(safe(()=>reviewDueLabel(r),'Revisão prevista'))+' · '+p.review+' REV · '+p.difficult+' DIF</small></div>'+action('Abrir','map',mapId(m))+'</div>';
+        return '<div class="pr-course-line"><div><b>'+escapeHtml(m.code||mapName(m))+'</b><small>'+escapeHtml(safe(()=>reviewDueLabel(r),'Revisão prevista'))+' · '+p.review+' REV · '+p.difficult+' DIF</small></div>'+action('Abrir','map',mapId(m))+action('Adiar 1 dia','postpone-review',mapId(m))+'</div>';
       }).join('')+action('Iniciar fila','review','', 'pr-primary'):blank('Fila em dia. Novas revisões surgem quando o agendamento existente marcar vencimento.'));
       content+=box('Próximos sete dias',(s.reviews.upcoming||[]).slice(0,20).map(r=>'<div class="pr-course-line"><span>'+escapeHtml(r.map.code||mapName(r.map))+'</span><small>'+escapeHtml(shortDate(new Date(r.schedule?.dueAt)))+'</small></div>').join('')||blank('Nenhum agendamento futuro encontrado.'));
     }else if(screen==='sessao'){
@@ -378,7 +378,7 @@
     if(kind==='nav'&&typeof nav==='function')nav(id);
     else if(kind==='course'&&typeof openCourse==='function')openCourse(id);
     else if(kind==='map'&&typeof openMap==='function')Promise.resolve(openMap(id)).catch(err=>safe(()=>toast(err.message),null));
-    else if(kind==='study')safe(()=>StudyDashboard.start?StudyDashboard.start():StudyPlanner?.showTimePlan?.(30),null);
+    else if(kind==='study')safe(()=>StudyPlanner?.showTimePlan?.(30)||StudyDashboard?.start?.(),null);
     else if(kind==='review'&&typeof startReviewQueue==='function')startReviewQueue();
     else if(kind==='pause')StudyDashboard?.pause?.();
     else if(kind==='resume')StudyDashboard?.resume?.();
@@ -397,6 +397,12 @@
       patchSimulationOverride(simulation,{targetScore:Number(raw)});
       safe(()=>touchPreferences(),null);
       schedule();
+    }
+    else if(kind==='postpone-review'){
+      const map=safe(()=>mapById(id),null);
+      if(!map)return;
+      const apply=()=>{postponeScheduledReview(map,1);schedule();safe(()=>toast('Revisão adiada por 1 dia.'),null)};
+      if(typeof askConfirm==='function')askConfirm('Adiar revisão?','A próxima revisão de '+(map.title||map.code)+' será movida 1 dia. O progresso e os apontamentos serão mantidos.',apply,'Adiar');
     }
     else if(kind==='review-errors')nav('errors');
     else if(kind==='move-agenda'){
