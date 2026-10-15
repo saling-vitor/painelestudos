@@ -282,3 +282,18 @@ html.mm-reduced-transparency :is(.topbar,.bottom-nav,.side,
     forced-color-adjust:auto!important;border:1px solid CanvasText!important;
   }
 }
+
+/* Item não ativo: Papel secundário, sem disputar com o pigmento ativo. */
+html .side .nav-btn:not(.active) :is(.ui-icon,.txt),
+html .bottom-nav>button:not(.active) :is(.ui-icon,.bottom-nav-label),
+html .mobile-menu-option:not(.is-current) :is(.ui-icon,b){
+  color:var(--nq-papel-2)!important;
+}
+/* Evitar mudança de material no hover de botões Micro sobre capas. */
+html :is(.map-card,.course-card,.course-library-card,.simulation-card)
+ :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn):is(:hover,:focus-visible){
+ background:var(--lg-micro-fundo)!important;
+ border-color:var(--lg-rim-forte)!important;
+ color:var(--nq-papel)!important;
+ filter:none!important;
+}
