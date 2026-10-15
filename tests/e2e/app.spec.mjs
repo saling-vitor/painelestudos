@@ -4359,7 +4359,9 @@ test('V15.48.1 [G] seleção do dock é estática e mantém navegação acessív
   if(!useSide){
     const glass=await target.evaluate(el=>({background:getComputedStyle(el).backgroundImage,fill:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color}));
     expect(glass.background).not.toContain('gradient');
-    expect(glass.fill).not.toBe('rgba(0, 0, 0, 0)');
+    // Aguarda a transição CSS do WebKit antes de validar o preenchimento efetivo.
+    // A asserção continua falhando se o dock permanecer transparente.
+    await expect.poll(()=>target.evaluate(el=>getComputedStyle(el).backgroundColor),{timeout:5000}).not.toBe('rgba(0, 0, 0, 0)');
     expect(glass.color).not.toBe('');
   }
 });
