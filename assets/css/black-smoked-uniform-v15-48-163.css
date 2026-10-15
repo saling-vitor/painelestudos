@@ -152,7 +152,7 @@ html :is(.map-card,.course-card,.course-library-card,.simulation-card)
 /* 04 · Navegacao: a secao ativa recebe uma camada uniforme. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
 html.is-ipad:not(.is-phone-layout) body>.bottom-nav>button[data-nav].active,
-html.is-phone-layout body>.bottom-nav>button[data-nav].active,
+html .bottom-nav>button[data-nav].active,
 html.is-phone-layout body>.bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]),
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   --mm-uniform-tone:var(--nav-accent,#C8AF86);
@@ -316,7 +316,7 @@ html .app .content .map-card.has-cover::after{opacity:0}
 /* O item selecionado identifica a secao pelas bordas e icones apenas. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
 html.is-ipad:not(.is-phone-layout) .bottom-nav>button[data-nav].active,
-html.is-phone-layout .bottom-nav>button[data-nav].active,
+html .bottom-nav>button[data-nav].active,
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   background:var(--mm-smoke-card-black)!important;
 }
@@ -462,11 +462,4 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
-}
-
-/* V15.48.172-G — seleção do dock: preenchimento fumê real (inclusive Safari/iPhone).
-   Estilo explícito, sem SVG, sem gradiente e independente do modo de layout. */
-html .bottom-nav>button[data-nav].active{
-  background:rgba(20,20,21,.94)!important;
-  border-color:color-mix(in srgb,var(--nav-accent,#C8AF86) 32%,rgba(255,255,255,.1))!important;
 }
