@@ -59,6 +59,14 @@ check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`
 check(activeCssFiles.at(-1)==='assets/css/design-system/nanquim-application.css','Nanquim: CSS final conectado');
 const nanquimSheets=["assets/css/design-system/nanquim-tokens.css","assets/css/design-system/nanquim-typography.css","assets/css/design-system/nanquim-materials.css","assets/css/design-system/nanquim-application.css"];
 for(const file of nanquimSheets){check(exists(file),'Nanquim CSS: '+file);check(index.includes(file+`?v=${expected}`),'Nanquim index: '+file);check(sw.includes(file+`?v=${expected}`),'Nanquim PWA: '+file)}
+// Nanquim PWA: testar metadados de todas as entradas escuras, inclusive a página offline.
+const readerEntry=read('reader.html'),offlineEntry=read('offline.html');
+const darkManifest=parseJson('manifest-v15.23.6.webmanifest');
+check(index.includes('name="theme-color" content="#000000"'),'Nanquim: metadado do portal');
+check(readerEntry.includes('name="theme-color" content="#000000"'),'Nanquim: metadado do leitor');
+check(offlineEntry.includes('name="theme-color" content="#000000"'),'Nanquim: metadado offline');
+check(offlineEntry.includes('manifest-v15.23.6.webmanifest?v='+expected),'Nanquim: offline manifesto versionado');
+check(darkManifest.theme_color==='#000000'&&darkManifest.background_color==='#000000','Nanquim: manifesto escuro e splash PWA');
 const nanquimTypography=read(nanquimSheets[1]);
 for(const t of ['display','h1','h2','h3','title','body','body-sm','label','input','caption','eyebrow','tabbar','kpi','kpi-sm'])check(nanquimTypography.includes('--fs-'+t+':'),'token '+t);
 const nanquimApp=read(nanquimSheets[3]);
