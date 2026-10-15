@@ -51,18 +51,34 @@
       const day=String(item?.day||'');
       if(!/^\d{4}-\d{2}-\d{2}$/.test(day))continue;
       const marked=Math.max(0,Math.floor(Number(item.marked)||0)),total=Math.max(marked,Math.floor(Number(item.total)||0));
-      const row={id:'progress-'+day,day,marked,total,at:item.at||item.updatedAt||isoNow()};
+      const byCourse={};
+      if(item?.byCourse&&typeof item.byCourse==='object'&&!Array.isArray(item.byCourse)){
+        for(const [courseId,values] of Object.entries(item.byCourse)){
+          if(!courseId||courseId.length>180||!values||typeof values!=='object')continue;
+          const n=Math.max(0,Math.floor(Number(values.marked)||0));
+          byCourse[courseId]={marked:n,total:Math.max(n,Math.floor(Number(values.total)||0))};
+        }
+      }
+      const row={id:'progress-'+day,day,marked,total,at:item.at||item.updatedAt||isoNow(),byCourse};
       const current=by.get(day),ts=Date.parse(row.at)||0,prior=Date.parse(current?.at||0)||0;
-      if(!current||ts>=prior)by.set(day,row);
+      if(!current)by.set(day,row);
+      else if(ts>=prior)by.set(day,{...row,byCourse:{...current.byCourse,...byCourse}});
+      else by.set(day,{...current,byCourse:{...byCourse,...current.byCourse}});
     }
     return[...by.values()].sort((a,b)=>a.day.localeCompare(b.day)).slice(-366);
   }
-  function recordProgressSnapshot(marked,total,legacy=[]){
+  function recordProgressSnapshot(marked,total,legacy=[],courseTotals={}){
     const data=readData(),day=dateKey(),n=Math.max(0,Math.floor(Number(marked)||0)),t=Math.max(n,Math.floor(Number(total)||0));
     const merged=mergeProgressHistory(data.progressHistory,Array.isArray(legacy)?legacy:[]);
-    const current=merged.find(row=>row.day===day);
-    if(!current||current.marked!==n||current.total!==t){
-      const i=merged.findIndex(row=>row.day===day),entry={id:'progress-'+day,day,marked:n,total:t,at:isoNow()};
+    const current=merged.find(row=>row.day===day),byCourse={...current?.byCourse};
+    for(const [courseId,values] of Object.entries(courseTotals||{})){
+      if(!courseId||courseId.length>180||!values||typeof values!=='object')continue;
+      const m=Math.max(0,Math.floor(Number(values.marked)||0));
+      byCourse[courseId]={marked:m,total:Math.max(m,Math.floor(Number(values.total)||0))};
+    }
+    const changed=!current||current.marked!==n||current.total!==t||JSON.stringify(current.byCourse||{})!==JSON.stringify(byCourse);
+    if(changed){
+      const i=merged.findIndex(row=>row.day===day),entry={id:'progress-'+day,day,marked:n,total:t,byCourse,at:isoNow()};
       if(i>=0)merged[i]=entry;else merged.push(entry);
     }
     merged.sort((a,b)=>a.day.localeCompare(b.day));
