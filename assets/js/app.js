@@ -148,9 +148,10 @@
       const targetText=dailyTarget?
         'Meta: '+dailyTarget+' min · registrados: '+actualMinutes+' min · faltam '+Math.max(0,dailyTarget-actualMinutes)+' min.':
         'Tempo registrado hoje: '+actualMinutes+' min. Não há meta diária configurada.';
-      content+=box('Régua do dia',ruler+'<p class="pr-note">'+escapeHtml(targetText)+'</p>'+timeline+
+      content+=box('Régua do dia',
+        ruler+'<p class="pr-note">'+escapeHtml(targetText)+'</p>'+
+        (dayEvents.length?timeline:dailyBlocks(s))+
         action('Abrir Agenda','nav','agenda'));
-      content+=box('Régua do dia',dailyBlocks(s));
       content+=box('Planta do edital',exam&&getCourseMaps(s,exam.course).length?weightedEdital(getCourseMaps(s,exam.course),35)+action('Abrir concurso','course',exam.course.id):blank('Nenhum mapa disponível para este concurso.'));
       content+=box('Continuidade',action('Abrir Agenda','nav','agenda')+' '+action('Consultar revisões','home','revisoes')+' '+action('Ver meus cursos','nav','courses'));
     }else if(screen==='todos'){
