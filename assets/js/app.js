@@ -41,7 +41,15 @@
   },{total:0,marked:0,done:0,review:0,difficult:0,pending:0});
   const stateData=()=>{
     const cs=courses(),ms=maps(),rank=cs.filter(c=>c.status!=='archived').map(c=>({course:c,date:courseDate(c)}))
-      .sort((a,b)=>(a.date?.getTime()??Infinity)-(b.date?.getTime()??Infinity));
+      .sort((a,b)=>{
+        const deltaA=daysTo(a.date),deltaB=daysTo(b.date);
+        const band=x=>x==null?1:x>=0?0:2;
+        const pa=band(deltaA),pb=band(deltaB);
+        if(pa!==pb)return pa-pb;
+        if(pa===0)return deltaA-deltaB;
+        if(pa===2)return deltaB-deltaA;
+        return String(a.course.title||'').localeCompare(String(b.course.title||''),'pt-BR');
+      });
     const current=rank.find(x=>daysTo(x.date)>=0)||rank[0]||null;
     const reviews=safe(()=>reviewScheduleSummary(ms),{due:[],upcoming:[],dueCount:0});
     const session=safe(()=>StudyDashboard.active(),null);
@@ -341,7 +349,7 @@
     const session=safe(()=>StudyCloud.session(),null),online=navigator.onLine!==false,
       synced=!!session&&!state.cloudSyncError,meta=safe(()=>JSON.parse(localStorage.getItem('studyapp.cloudHealth')||'null'),null),
       goals=safe(()=>StudyDashboard.goals(),{}),last=meta?.at?new Date(meta.at).toLocaleString('pt-BR'):'Sem diagnóstico';
-    const list=[['01','Conta e nuvem',session?'Conta conectada':'Sem sessão ativa','accountSignedIn'],['02','Rotina de estudo','Meta: '+(num(goals.dailyMinutes)||'não configurada')+' min/dia','studyGoalSettings'],['03','Planejamento adaptativo','Prioridades e disponibilidade','studyPlannerSettings'],['04','Automação','Regras do planejamento','studyAutomationSettings'],['05','Backup e restauração','Cópias e restauração de dados','downloadBackupBtn'],['06','Aparelho e aplicativo',online?'Conectado à rede':'Sem conexão','appDiagnostic'],['07','Administração','Operações protegidas','courseManageModal']];
+    const list=[['01','Conta e nuvem',session?'Conta conectada':'Sem sessão ativa','authStatus'],['02','Rotina de estudo','Meta: '+(num(goals.dailyMinutes)||'não configurada')+' min/dia','studyGoalsForm'],['03','Planejamento adaptativo','Prioridades e disponibilidade','plannerSettingsForm'],['04','Automação','Regras do planejamento','studyAutomationPanel'],['05','Backup e restauração','Cópias e restauração de dados','downloadBackupBtn'],['06','Aparelho e aplicativo',online?'Conectado à rede':'Sem conexão','appDiagnosticPanel'],['07','Administração','Operações protegidas','newCourseBtn2']];
     node.innerHTML=header('Configurações · Ficha técnica','Meus Mapas · Sistema','Os estados de nuvem e backup não são simulados. Consulte os diagnósticos reais nos controles abaixo.',
       fragment('Versão',safe(()=>APP_VERSION_LABEL,'—'))+
       fragment('Conta',session?'Conectada':'Desconectada')+
@@ -401,7 +409,17 @@
       if(typeof askConfirm==='function')askConfirm('Reagendar sessão?',(row.title||'Sessão')+' será movida para '+suggested+'.',apply,'Reagendar');
       else if(window.confirm('Mover '+(row.title||'Sessão')+' para '+suggested+'?'))apply();
     }
-    else if(kind==='setting'){const target=document.getElementById(id);if(target&&!target.closest('[hidden]')){target.scrollIntoView({block:'center',behavior:'smooth'});if(target.matches('button'))target.focus({preventScroll:true})}else safe(()=>toast('Controle disponível na ficha técnica abaixo.'),null)}
+    else if(kind==='setting'){
+      const target=document.getElementById(id);
+      if(target){
+        for(let parent=target.parentElement;parent;parent=parent.parentElement){
+          if(parent.tagName==='DETAILS')parent.open=true;
+        }
+        const destination=target.closest('.panel,.settings-section')||target;
+        destination.scrollIntoView({block:'center',behavior:'smooth'});
+        if(target.matches('button'))target.focus({preventScroll:true});
+      }else safe(()=>toast('Esta configuração depende de um módulo ainda não carregado.'),null);
+    }
     schedule();
   }
   document.addEventListener('click',event=>{
