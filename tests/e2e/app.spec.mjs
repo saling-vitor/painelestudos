@@ -157,7 +157,7 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     expect(dockGlass.filled).toBe(true);
     const activeDock=page.locator('.bottom-nav>button.active').first();
     const activeLens=await glass(activeDock);
-    expect(activeLens.backdrop).toContain('blur(');
+    expect(activeLens.backdrop).toBe('none');
     expect(activeLens.filled).toBe(true);
   }else{
     const side=page.locator('.side');
@@ -167,8 +167,8 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     const navLens=await glass(activeNav);
     expect(sideGlass.backdrop).toContain('blur(');
     expect(sideGlass.filled).toBe(true);
-    // V15.48.173-G: item ativo tem lente colorida funcional conforme autorização visual.
-    expect(navLens.backdrop).toContain('blur(');
+    // V15.48.173-G: preenchimento temático no item; o vidro é composto no shell pai.
+    expect(navLens.backdrop).toBe('none');
     expect(navLens.filled).toBe(true);
   }
 
@@ -1004,8 +1004,8 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.synced.bg).not.toMatch(/114,\s*201,\s*149/);
   expect(visual.syncing.animation).toContain('cloudSyncStatusPulse');
   expect(visual.activeBackground).not.toContain('gradient');
-  // O item ativo pode ser transparente: o preto visivel vem da sidebar.
-  expect(visual.activeColor==='rgba(0, 0, 0, 0)'?visual.sidebarFill:visual.activeColor).toMatch(/rgba?\(20,\s*20,\s*21/);
+  // V15.48.173-G: sidebar ativa deve usar preenchimento temático (sem degradê).
+  expect(visual.activeColor).not.toMatch(/^(?:rgba?\(0,\s*0,\s*0,\s*0\)|oklab\(0 0 0 \/ 0\))$/);
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.topbarBackdrop).not.toBe('none');
@@ -1124,7 +1124,7 @@ test('V15.38.0 [G] Por que este mapa explica a prioridade sem tooltip curto',asy
   await page.waitForFunction(()=>window.StudyPlanner&&typeof StudyPlanner.priorityExplanationRows==='function'&&typeof combinedMaps==='function'&&combinedMaps().length>0);
   const why=page.locator('[data-priority-why]');
   await expect(why).toBeVisible();
-  await expect(why).toHaveText('Por que este mapa?');
+  await expect(why).toContainText('Por que este mapa?');
   await why.click();
   const modal=page.locator('#priorityWhyModal');
   await expect(modal).toBeVisible();

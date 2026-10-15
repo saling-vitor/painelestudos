@@ -29,7 +29,7 @@
 
 /* 01 · Cor contextual. A cascata acompanha automaticamente a cor da capa,
    mesmo quando a extracao assincrona do HEX atualiza as custom properties. */
-html .app .content .map-card{--mm-uniform-tone:var(--mm-smoke-default)}
+html .app .content .map-card{--mm-uniform-tone:var(--mm-smoke-default);--mm-action-tone:var(--map-accent,var(--cover-accent,#A8A8A8))}
 html .app .content :is(.progress-map-row,.progress-insight-card){
   --mm-uniform-tone:var(--map-accent,var(--cover-accent,var(--accent,var(--mm-smoke-default))));
 }
@@ -163,6 +163,10 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   -webkit-backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
   backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
 }
+/* No iPad em paisagem, a sidebar ativa prevalece sobre o fundo transparente do dock legado. */
+html.is-ipad:not(.is-phone-layout) .side .nav-btn[data-nav].active{
+  background:var(--mm-active-fill,color-mix(in srgb,var(--nav-accent,#C3AA84) 34%,rgba(10,10,11,.78)))!important;
+}
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before,
 html .bottom-nav>button[data-nav].active::before,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before{
@@ -206,8 +210,8 @@ html .app .content :is(.study-plan-item,.continue-card,.priority-now-card)
 html .app .content :is(.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item,#coursesGrid>.course-card.course-library-card,#homeCourses>.course-card.course-library-card,#simulationGrid>.simulation-card)
   :is(.course-footer .enter,.simulation-card-actions .primary,.primary,button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav):not(#mm-smoke-action-exclude){
   background:var(--mm-action-fill,rgba(0,0,0,.86))!important;
-  border-color:var(--mm-action-border,color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 55%,rgba(255,255,255,.15)))!important;
-  color:var(--mm-action-ink,color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8))) 74%,white))!important;
+  border-color:var(--mm-action-border,color-mix(in srgb,var(--mm-action-tone,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8)))) 55%,rgba(255,255,255,.15)))!important;
+  color:var(--mm-action-ink,color-mix(in srgb,var(--mm-action-tone,var(--mm-uniform-tone,var(--map-accent,var(--simulation-accent,#A8A8A8)))) 74%,white))!important;
 }
 /* O mesmo contrato optico da ação, parametrizado apenas no Entrar. */
 html .app .content .course-card .course-footer .enter{
