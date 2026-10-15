@@ -304,3 +304,15 @@ test('Cursos [G][T+M] · alternar Capas e Lista sem duplicar a grade original',a
   await expect(page.locator('[data-view="courses"]')).toHaveAttribute('data-pr-courses-layout','capas');
   await expect(grid).toBeVisible();
 });
+
+test('Backup [G] · novos estados entram na exportação sem quebrar formato anterior',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(()=>{
+    const backup=buildStudyBackup(),data=backup.data||{},pref=data.preferences||{};
+    return {valid:validateStudyBackup(backup),schema:backup.schemaVersion,
+      exam:Object.hasOwn(data,'examStatuses'),goal:Object.hasOwn(data,'simulationOverrides'),
+      review:Object.hasOwn(data,'reviewSchedule'),dashboard:Object.hasOwn(data,'studyDashboard'),
+      courseLayout:Object.hasOwn(pref,'prCoursesLayout'),sort:Object.hasOwn(pref,'allMapsSort')};
+  });
+  expect(report).toEqual({valid:true,schema:1,exam:true,goal:true,review:true,dashboard:true,courseLayout:true,sort:true});
+});
