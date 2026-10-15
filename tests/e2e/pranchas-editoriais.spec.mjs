@@ -142,3 +142,38 @@ test('Mapas [G][T+M] · vínculo mantém HTML e isola namespace por concurso',as
   if(!data)return;
   expect(data).toEqual({samePath:true,otherId:true,differentCourse:true,uploads:0,readerParam:true});
 });
+
+
+test('Home [G][T+M] · sessão usa cronômetro original e um único estado',async({page})=>{
+  await page.goto('/#home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  const before=await page.evaluate(()=>{
+    StudyDashboard.start({mode:'free',label:'Cronômetro E2E',minutes:15});
+    MeusMapasPranchas.refresh();
+    return document.querySelectorAll('#studyTimerFloat').length;
+  });
+  await page.locator('#editorialHome [data-pr-home="sessao"]').click();
+  await expect(page.locator('#editorialHome [data-pr-clock]')).toHaveText(/^\d{2}:\d{2}:\d{2}$/);
+  expect(before).toBeLessThanOrEqual(1);
+  await expect(page.locator('#editorialHome')).toContainText('Cronômetro de estudo');
+});
+test('Home [G][T+M] · marcação pós-prova persiste sem arquivar concurso',async({page})=>{
+  await page.goto('/#home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  const course=await page.evaluate(()=>{
+    const current=state.cloudCourses[0];if(!current)return null;
+    current.examDate='2026-10-14';current.exam_date='2026-10-14';
+    MeusMapasPranchas.refresh();return current.id;
+  });
+  if(!course)return;
+  await page.locator('#editorialHome [data-pr-home="pos"]').click();
+  const mark=page.locator('#editorialHome [data-pr-action="exam-status"][data-pr-id="'+course+'"]');
+  await expect(mark).toBeVisible();
+  await mark.click();
+  await expect(page.locator('#confirmModal')).toBeVisible();
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(id=>readExamStatuses()[id]?.completed,course)).toBe(true);
+  const saved=await page.evaluate(id=>({status:localPreferences().examStatuses[id],archived:courseById(id)?.status==='archived'}),course);
+  expect(saved.status.completed).toBe(true);
+  expect(saved.archived).toBe(false);
+});
