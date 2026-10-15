@@ -7,7 +7,7 @@
   const ACTIVE_KEY='studyapp.studySession.active';
   const VERSION=1;
   const DEFAULT_GOALS={dailyMinutes:120,weeklyMinutes:600,pomodoroWork:25,pomodoroBreak:5,autoFocus:false};
-  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode='month',goalDraft=null,studyCommandHelpOpen=false;
+  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode=window.matchMedia?.('(max-width:600px)')?.matches?'today':'month',goalDraft=null,studyCommandHelpOpen=false;
 
   const safeJson=(value,fallback)=>{try{return JSON.parse(value)}catch{return fallback}};
   const isoNow=()=>new Date().toISOString();
@@ -173,7 +173,7 @@
   }
   function addAgendaItem(payload={}){
     const data=readData(),now=isoNow();
-    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
+    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),start:/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(payload.start||''))?String(payload.start):'19:00',mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
     data.agenda.push(row);writeData(data);renderAgenda();renderHomeDashboard();return row;
   }
   function deleteAgendaItem(id){
@@ -310,7 +310,7 @@ function ensureAgendaView(){
     view=document.createElement('section');
     view.className='view study-agenda-view';
     view.dataset.view='agenda';
-    view.innerHTML='<div class="section-head study-agenda-head"><div><div class="kicker">Planejamento</div><h2>Agenda de estudos</h2><p>Provas, revisões, sessões planejadas e histórico em um só calendário.</p></div><div class="study-agenda-modes"><button type="button" data-agenda-mode="today">Dia</button><button type="button" data-agenda-mode="week">Semana</button><button type="button" data-agenda-mode="month" class="active">Mês</button></div></div><div class="study-agenda-layout"><section class="panel study-agenda-calendar"><div class="study-agenda-toolbar"><button type="button" class="secondary" data-agenda-prev>‹</button><button type="button" class="secondary" data-agenda-today>Hoje</button><strong id="agendaPeriodLabel"></strong><button type="button" class="secondary" data-agenda-next>›</button></div><div id="agendaCalendarGrid"></div></section><aside class="panel study-agenda-side"><div id="agendaDayDetail"></div><form id="agendaQuickForm" class="study-agenda-form"><div class="panel-kicker">Planejar</div><label>Data<input type="date" name="date" required></label><label>Título<input type="text" name="title" maxlength="100" placeholder="Ex.: Revisar Acessibilidade" required></label><div class="row"><label>Tipo<select name="kind"><option value="study">Estudo</option><option value="simulation">Simulado</option></select></label><label>Minutos<input type="number" name="minutes" min="0" max="480" step="5" value="30"></label></div><button class="primary" type="submit">Adicionar à agenda</button></form></aside></div>';
+    view.innerHTML='<div class="section-head study-agenda-head"><div><div class="kicker">Planejamento</div><h2>Agenda de estudos</h2><p>Provas, revisões, sessões planejadas e histórico em um só calendário.</p></div><div class="study-agenda-modes"><button type="button" data-agenda-mode="today">Dia</button><button type="button" data-agenda-mode="week">Semana</button><button type="button" data-agenda-mode="month" class="active">Mês</button></div></div><div class="study-agenda-layout"><section class="panel study-agenda-calendar"><div class="study-agenda-toolbar"><button type="button" class="secondary" data-agenda-prev>‹</button><button type="button" class="secondary" data-agenda-today>Hoje</button><strong id="agendaPeriodLabel"></strong><button type="button" class="secondary" data-agenda-next>›</button></div><div id="agendaCalendarGrid"></div></section><aside class="panel study-agenda-side"><div id="agendaDayDetail"></div><form id="agendaQuickForm" class="study-agenda-form"><div class="panel-kicker">Planejar</div><label>Data<input type="date" name="date" required></label><label>Início<input type="time" name="start" value="19:00" required></label><label>Título<input type="text" name="title" maxlength="100" placeholder="Ex.: Revisar Acessibilidade" required></label><div class="row"><label>Tipo<select name="kind"><option value="study">Estudo</option><option value="simulation">Simulado</option></select></label><label>Minutos<input type="number" name="minutes" min="0" max="480" step="5" value="30"></label></div><button class="primary" type="submit">Adicionar à agenda</button></form></aside></div>';
     document.querySelector('.content')?.appendChild(view);
     view.querySelectorAll('[data-agenda-mode]').forEach(button=>button.onclick=()=>{agendaMode=button.dataset.agendaMode;view.querySelectorAll('[data-agenda-mode]').forEach(b=>b.classList.toggle('active',b===button));renderAgenda()});
     view.querySelector('[data-agenda-prev]').onclick=()=>{if(agendaMode==='month')agendaCursor=new Date(agendaCursor.getFullYear(),agendaCursor.getMonth()-1,1);else agendaCursor=addDays(agendaCursor,agendaMode==='week'?-7:-1);renderAgenda()};
@@ -318,7 +318,7 @@ function ensureAgendaView(){
     view.querySelector('[data-agenda-today]').onclick=()=>{agendaCursor=new Date();renderAgenda()};
     const form=view.querySelector('#agendaQuickForm');
     form.elements.date.value=dateKey();
-    form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form);addAgendaItem({date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes')});form.elements.title.value='';form.elements.minutes.value='30'};
+    form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form);addAgendaItem({date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes'),start:fd.get('start')});form.elements.title.value='';form.elements.minutes.value='30'};
     return view;
   }
   function agendaDotClass(kind){return 'agenda-dot '+(kind||'study')}
@@ -346,7 +346,7 @@ function ensureAgendaView(){
     const root=document.getElementById('agendaDayDetail');
     if(!root)return;
     const entries=entriesForDate(agendaCursor);
-    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover da agenda"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':item.kind==='session'&&item.sessionId?'<button type="button" class="agenda-delete" data-session-delete="'+escape(item.sessionId)+'" aria-label="Remover registro de estudo"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':'')+'</article>').join(''):emptyStateHtml({title:'Dia livre',text:'Nada planejado para este dia.',art:'agenda-day',compact:true,className:'agenda-empty-state'}))+'</div>';
+    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(!item.computed&&item.kind!=='session'?(String(item.start||'19:00')+' · '+(item.meta||((item.minutes||0)?item.minutes+' min':'Sessão planejada'))):(item.meta||((item.minutes||0)?item.minutes+' min':'')))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover da agenda"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':item.kind==='session'&&item.sessionId?'<button type="button" class="agenda-delete" data-session-delete="'+escape(item.sessionId)+'" aria-label="Remover registro de estudo"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':'')+'</article>').join(''):emptyStateHtml({title:'Dia livre',text:'Nada planejado para este dia.',art:'agenda-day',compact:true,className:'agenda-empty-state'}))+'</div>';
     root.querySelectorAll('[data-agenda-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.agendaOpen,{topicId:button.dataset.agendaTopic||''}));
     root.querySelectorAll('[data-agenda-delete]').forEach(button=>button.onclick=()=>requestDeleteAgendaItem(button.dataset.agendaDelete));
     root.querySelectorAll('[data-session-delete]').forEach(button=>button.onclick=()=>requestDeleteSessionRecord(button.dataset.sessionDelete));
@@ -356,6 +356,11 @@ function ensureAgendaView(){
     const view=ensureAgendaView(),grid=view.querySelector('#agendaCalendarGrid'),label=view.querySelector('#agendaPeriodLabel');
     if(!grid||!label)return;
     view.dataset.agendaDisplayMode=agendaMode;
+    view.querySelectorAll('[data-agenda-mode]').forEach(button=>{
+      const active=button.dataset.agendaMode===agendaMode;
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
     let agendaEmpty=false;
     if(agendaMode==='today')agendaEmpty=entriesForDate(agendaCursor).length===0;
     else if(agendaMode==='week'){const d=startOfDay(agendaCursor),start=addDays(d,-((d.getDay()+6)%7));agendaEmpty=!Array.from({length:7},(_,i)=>entriesForDate(addDays(start,i))).some(rows=>rows.length)}
