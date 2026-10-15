@@ -73,6 +73,13 @@ test('Progresso [G][T+M] · observação sem histórico inventado',async({page})
   });
   expect(report.hasView).toBe(true);
   if(report.total===0)expect(report.rows.length).toBe(0);
+  else {
+    const scoped=await page.evaluate(()=>{
+      const c=combinedCourses()[0],last=StudyDashboard.progressHistory().at(-1);
+      return !c||!last?null:{byCourse:last.byCourse?.[c.id],mapTotal:combinedMaps().filter(m=>m.courseId===c.id).reduce((sum,m)=>sum+mapProgress(m).total,0)};
+    });
+    if(scoped?.byCourse)expect(scoped.byCourse.total).toBe(scoped.mapTotal);
+  }
   else expect(report.rows.every(x=>x.marked>=0&&x.total>=x.marked)).toBe(true);
 });
 
@@ -130,6 +137,9 @@ test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',as
   await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('Projeto Arquitetônico');
   await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('45');
   await expect(page.locator('#editorialSimulations .pr-sim-benchmark')).toContainText('Não informado');
+  await page.locator('#editorialSimulations [data-pr-action="review-errors"]').first().click();
+  await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toHaveAttribute('open','');
+  await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toContainText('Normas');
 });
 test('Mapas [G][T+M] · vínculo mantém HTML e isola namespace por concurso',async({page})=>{
   await enter(page,'maps');
