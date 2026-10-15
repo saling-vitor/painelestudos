@@ -157,7 +157,7 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     expect(dockGlass.filled).toBe(true);
     const activeDock=page.locator('.bottom-nav>button.active').first();
     const activeLens=await glass(activeDock);
-    expect(activeLens.backdrop).toBe('none');
+    expect(activeLens.backdrop).toContain('blur(');
     expect(activeLens.filled).toBe(true);
   }else{
     const side=page.locator('.side');
@@ -167,8 +167,8 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     const navLens=await glass(activeNav);
     expect(sideGlass.backdrop).toContain('blur(');
     expect(sideGlass.filled).toBe(true);
-    // V15.48.169-G: sidebar e cards em vidro fumê; item ativo sem segunda lente.
-    expect(navLens.backdrop).toBe('none');
+    // V15.48.173-G: item ativo tem lente colorida funcional conforme autorização visual.
+    expect(navLens.backdrop).toContain('blur(');
     expect(navLens.filled).toBe(true);
   }
 
