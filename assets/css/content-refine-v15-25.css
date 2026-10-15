@@ -630,7 +630,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseMapCount{
   html.is-phone-layout [data-view="home"] .eyebrow{
     max-width:100%!important;
     padding:4px 6px!important;
-    font-size:6.4px!important;
+    font-size:var(--fs-eyebrow,11px)!important;
     letter-spacing:.095em!important;
   }
   html.is-phone-layout [data-view="home"] .hero h1{
@@ -646,7 +646,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseMapCount{
     height:38px!important;
     min-height:38px!important;
     padding-inline:10px!important;
-    font-size:9.5px!important;
+    font-size:var(--fs-label,14px)!important;
   }
   html.is-phone-layout [data-view="home"] .hero-stats{
     left:9px!important;
@@ -663,7 +663,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseMapCount{
   }
   html.is-phone-layout [data-view="home"] .hero-stats .stat span{
     margin-top:3px!important;
-    font-size:6.4px!important;
+    font-size:var(--fs-eyebrow,11px)!important;
   }
 }
 @media(max-width:390px){

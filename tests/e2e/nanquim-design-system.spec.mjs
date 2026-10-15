@@ -70,6 +70,8 @@ test('Nanquim [G] · legendas essenciais da Home respeitam tipografia mínima',a
   }).map(el=>({text:el.textContent.trim().slice(0,35),px:parseFloat(getComputedStyle(el).fontSize)}));
   return {
    stat:sample('[data-view="home"] .hero-stats .stat span'),
+   eyebrow:sample('[data-view="home"] .hero .eyebrow'),
+   heroAction:sample('[data-view="home"] .hero-actions .primary'),
    descriptions:sample('#homeStudyDashboard .study-command-head p'),
    simulationMeta:sample('#homeSimulations .simulation-recent-meta'),
    simulationStatus:sample('#homeSimulations .simulation-recent-status'),
@@ -78,6 +80,8 @@ test('Nanquim [G] · legendas essenciais da Home respeitam tipografia mínima',a
  });
  expect(result.stat.length).toBeGreaterThan(0);
  for(const x of result.stat)expect(x.px,'hero label '+x.text).toBeGreaterThanOrEqual(11);
+ for(const x of result.eyebrow)expect(x.px,'hero eyebrow '+x.text).toBeGreaterThanOrEqual(11);
+ for(const x of result.heroAction)expect(x.px,'hero CTA '+x.text).toBeGreaterThanOrEqual(12);
  for(const key of ['descriptions','simulationMeta','simulationStatus','simulationBoard']){
   for(const x of result[key])expect(x.px,key+': '+x.text).toBeGreaterThanOrEqual(12);
  }
