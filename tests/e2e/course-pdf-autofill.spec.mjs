@@ -73,9 +73,13 @@ test('[G] parser multi-layout cobre Objetiva, FUNDATEC, DEMHAB e AOCP',async({pa
 });
 
 test('[G] Novo concurso continua exigindo confirmação explícita',async({page})=>{
-  // Isola o fluxo de criação do aviso de versão, que chega de forma assíncrona.
-  // O comportamento do modal de novidades é testado separadamente.
-  await page.addInitScript(()=>localStorage.setItem('studyapp.lastSeenVersion','15.48.172'));
+  // O teste cobre a criação, não a apresentação das novidades. Use a versão
+  // corrente para evitar que o modal assíncrono intercepte o botão de criar.
+  const versionResponse=await page.request.get('/version.json');
+  expect(versionResponse.ok()).toBeTruthy();
+  const {version}=await versionResponse.json();
+  expect(version).toMatch(/^\d+\.\d+\.\d+$/);
+  await page.addInitScript(value=>localStorage.setItem('studyapp.lastSeenVersion',value),version);
   await page.goto('/#courses');
   // Aguarda a inicialização da Home antes de dispensar o modal de novidades:
   // no iPad o modal pode abrir depois do primeiro frame.
