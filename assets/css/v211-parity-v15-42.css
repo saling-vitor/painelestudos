@@ -352,5 +352,6 @@
 /* iPad estreito/Split View: mantém o hero dentro da densidade aprovada. */
 @media(min-width:481px) and (max-width:899px){
   html.is-ipad:not(.is-phone-layout) .hero{min-height:285px!important}
-  html.is-ipad:not(.is-phone-layout) .hero-copy{padding:20px 28px!important}
+  /* Espaçamento óptico reduzido para acomodar legendas legíveis (>=11px) sem aumentar o hero retrato. */
+  html.is-ipad:not(.is-phone-layout) .hero-copy{padding:14px 28px!important}
 }
