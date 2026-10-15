@@ -173,6 +173,14 @@
         const m=r.map,p=progress(m);
         return '<div class="pr-course-line"><div><b>'+escapeHtml(m.code||mapName(m))+'</b><small>'+escapeHtml(safe(()=>reviewDueLabel(r),'Revisão prevista'))+' · '+p.review+' REV · '+p.difficult+' DIF</small></div>'+action('Abrir','map',mapId(m))+action('Adiar 1 dia','postpone-review',mapId(m))+'</div>';
       }).join('')+action('Iniciar fila','review','', 'pr-primary'):blank('Fila em dia. Novas revisões surgem quando o agendamento existente marcar vencimento.'));
+      const examsToday=s.rank.filter(x=>daysTo(x.date)===0);
+      const examReviews=examsToday.map(x=>({
+        course:x.course,count:(s.reviews.due||[]).filter(r=>String(r.map?.courseId)===String(x.course.id)).length
+      })).filter(x=>x.count);
+      if(examReviews.length)content+=box('Revisões em dia de prova',
+        '<p class="pr-note">Estas revisões não serão apagadas nem remarcadas automaticamente. Confirme cada concurso antes de redistribuir.</p>'+
+        examReviews.map(x=>'<div class="pr-course-line"><div><b>'+escapeHtml(x.course.title||'Concurso')+'</b><small>Prova hoje · '+x.count+' mapa(s) com revisão vencida</small></div>'+
+          action('Adiar para amanhã','exam-review-delay',x.course.id)+'</div>').join(''));
       content+=box('Próximos sete dias',(s.reviews.upcoming||[]).slice(0,20).map(r=>'<div class="pr-course-line"><span>'+escapeHtml(r.map.code||mapName(r.map))+'</span><small>'+escapeHtml(shortDate(new Date(r.schedule?.dueAt)))+'</small></div>').join('')||blank('Nenhum agendamento futuro encontrado.'));
     }else if(screen==='sessao'){
       const active=s.session,elapsed=safe(()=>StudyDashboard.elapsed(),0),
@@ -644,6 +652,19 @@
         (c.title||'Concurso')+(archived?' voltará à lista de cursos ativos.':' deixará a lista ativa.')+
         ' O histórico, os mapas, as respostas e os arquivos permanecem preservados.',
         apply,archived?'Reativar':'Arquivar');
+    }
+    else if(kind==='exam-review-delay'){
+      const course=safe(()=>courseById(id),null),date=courseDate(course);
+      if(!course||daysTo(date)!==0)return safe(()=>toast('A ação só está disponível no dia da prova.'),null);
+      const count=(safe(()=>reviewScheduleSummary(combinedMaps()).due,[])||[]).filter(x=>String(x.map?.courseId)===String(id)).length;
+      if(!count)return safe(()=>toast('Não há revisões pendentes neste concurso.'),null);
+      const apply=()=>{
+        const result=postponeExamDayReviews(id,new Date(),1);
+        safe(()=>toast(result.count+' revisão(ões) remarcada(s) para amanhã.'),null);
+        schedule();
+      };
+      if(typeof askConfirm==='function')askConfirm('Reagendar revisões de dia de prova?',
+        'A prova de '+(course.title||'Concurso')+' é hoje. As '+count+' revisões vencidas serão adiadas para amanhã, sem remover estados, mapas ou notas.',apply,'Adiar revisões');
     }
     else if(kind==='postpone-review'){
       const map=safe(()=>mapById(id),null);
