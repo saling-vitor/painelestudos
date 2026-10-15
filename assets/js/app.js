@@ -434,7 +434,7 @@
     else if(kind==='nav'&&typeof nav==='function')nav(id);
     else if(kind==='course'&&typeof openCourse==='function')openCourse(id);
     else if(kind==='map'&&typeof openMap==='function')Promise.resolve(openMap(id)).catch(err=>safe(()=>toast(err.message),null));
-    else if(kind==='study')safe(()=>StudyPlanner?.showTimePlan?.(30)||StudyDashboard?.start?.(),null);
+    else if(kind==='study')safe(()=>{if(typeof StudyPlanner?.showTimePlan==='function')StudyPlanner.showTimePlan(30,{focusOnStart:true});else StudyDashboard?.start?.()},null);
     else if(kind==='review'&&typeof startReviewQueue==='function')startReviewQueue();
     else if(kind==='pause')StudyDashboard?.pause?.();
     else if(kind==='resume')StudyDashboard?.resume?.();
