@@ -463,3 +463,10 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
     backdrop-filter:none!important;
   }
 }
+
+/* V15.48.172-G — dock ativo: superfície fumê real no iPhone/WebKit,
+   sem alterar borda ou cor temática dos ícones. */
+html.is-phone-layout body .bottom-nav > button[data-nav].active {
+  background-color:var(--mm-smoke-card-black)!important;
+  background-image:none!important;
+}
