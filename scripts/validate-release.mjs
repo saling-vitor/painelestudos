@@ -284,6 +284,17 @@ if(!coreMatch){fail('CORE não encontrado em sw.js')}else{
  const refs=[...coreMatch[1].matchAll(/['"]([^'"]+)['"]/g)].map(match=>match[1]);
  for(const ref of refs){if(ref==='./'){ok('CORE ./');continue}const file=cleanAsset(ref);check(exists(file),'CORE '+file)}
 }
+// V211: preserve the authored inline standard and provide an offline-only reader fallback for imported maps.
+const v211ThemeSource=read('assets/css/design-system/nanquim-study-v211.css').trim();
+check(readerEntry.includes('mmNanquimReaderStyle')&&readerEntry.includes('mm-nanquim-v211-standard')&&readerEntry.includes('mindmap-app'),'V211: reader offline skips duplicate inline theme');
+const bundledV211Maps=(catalog.maps||[]).filter(map=>String(map.href||'').startsWith('cursos/porto-alegre/mapas/')&&/\.html$/i.test(map.href));
+check(bundledV211Maps.length>=14,'V211: 14 estudos integrados disponíveis');
+for(const map of bundledV211Maps){
+ const file=cleanAsset(map.href);
+ const html=read(file);
+ check((html.match(/id="mm-nanquim-v211-standard"/g)||[]).length===1,'V211: tema offline único '+file);
+ check(html.includes(v211ThemeSource),'V211: CSS canônico embutido '+file);
+}
 for(const map of catalog.maps||[]){
  if(map.href){const file=cleanAsset(map.href);check(exists(file),'Mapa '+file);if(/\.html$/i.test(file))check(nonEmpty(file),'Mapa não vazio '+file)}
  if(map.cover)check(exists(cleanAsset(map.cover)),'Capa '+cleanAsset(map.cover));
