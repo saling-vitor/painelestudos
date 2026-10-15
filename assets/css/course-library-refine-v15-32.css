@@ -186,9 +186,7 @@ html.is-phone-layout .map-card{
 
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info{
   border:1px solid color-mix(in srgb,var(--course-accent,#9aa1aa) 34%,rgba(255,255,255,.08))!important;
-  background:linear-gradient(180deg,
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 11%,rgba(255,255,255,.018)),
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 6%,rgba(7,7,7,.94)))!important;
+  background:var(--mm-smoke-inset,rgba(27,27,28,.96))!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info b{
   color:color-mix(in srgb,var(--course-accent,#9aa1aa) 78%,white)!important;
