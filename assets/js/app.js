@@ -69,6 +69,7 @@
   }).join('');
   const todaySeconds=()=>safe(()=>StudyTime.today(),0);
   const minText=seconds=>Math.round(num(seconds)/60)+' min';
+  const clockText=seconds=>{const v=Math.max(0,Math.floor(num(seconds))),h=Math.floor(v/3600),m=Math.floor(v/60)%60,x=v%60;return[h,m,x].map(n=>String(n).padStart(2,'0')).join(':')};
   const getCourseMaps=(s,c)=>s.ms.filter(m=>m.courseId===c?.id);
   const cardContainer=(view,id,placement='first')=>{
     const node=$('[data-view="'+view+'"]');
@@ -119,22 +120,40 @@
       }).join('')+action('Iniciar fila','review','', 'pr-primary'):blank('Fila em dia. Novas revisões surgem quando o agendamento existente marcar vencimento.'));
       content+=box('Próximos sete dias',(s.reviews.upcoming||[]).slice(0,20).map(r=>'<div class="pr-course-line"><span>'+escapeHtml(r.map.code||mapName(r.map))+'</span><small>'+escapeHtml(shortDate(new Date(r.schedule?.dueAt)))+'</small></div>').join('')||blank('Nenhum agendamento futuro encontrado.'));
     }else if(screen==='sessao'){
-      const active=s.session,elapsed=safe(()=>StudyDashboard.elapsed(),0);
+      const active=s.session,elapsed=safe(()=>StudyDashboard.elapsed(),0),
+        activeMap=active?.mapKey?safe(()=>mapById(active.mapKey),null):null,
+        mapStats=activeMap?progress(activeMap):null,
+        futurePlan=safe(()=>StudyCoach.snapshot()?.items||[],[]),
+        nextBlock=futurePlan.find(item=>item.key&&item.key!==active?.mapKey);
       content=header('04 · Em sessão','Cronômetro de estudo',active?'Sessão real do aplicativo. O tempo é registrado pelo cronômetro já existente.':'Nenhuma sessão ativa. Inicie pelo plano ou por um mapa.',
-        fragment('Duração',minText(elapsed),'Contabilizada no cronômetro')+
+        '<div class="pr-stat"><span>Duração</span><b data-pr-clock>'+clockText(elapsed)+'</b><small>Contabilizada pelo cronômetro original</small></div>'+
         fragment('Estado',active?(active.running?'Em curso':'Pausado'):'Parado')+
         fragment('Mapa',active?.mapKey?mapName(safe(()=>mapById(active.mapKey),null)):'—'));
       content+=box('Controle da sessão',active?
         action(active.running?'Pausar':'Retomar',active.running?'pause':'resume','','pr-primary')+' '+action('Finalizar','finish','')+(active.mapKey?action('Abrir mapa','map',active.mapKey):''):
         action('Iniciar pelo plano','study','','pr-primary'));
+      if(activeMap){
+        content+=box('Tópicos da sessão',fragment('Marcados',mapStats.marked+' / '+mapStats.total)+
+          fragment('Revisão',String(mapStats.review))+
+          fragment('Difíceis',String(mapStats.difficult))+
+          (nextBlock?.key?action('Próximo bloco · '+(nextBlock.title||'Estudo'),'map',nextBlock.key):blank('Sem próximo bloco identificado no planejamento atual.')));
+      }
     }else{
       const past=completed;
       content=header('05 · Encerramento de prova','Pós-prova',past.length?'Mantenha o histórico dos concursos realizados. O arquivamento não elimina mapas nem resultados.':'Ainda não há uma prova passada entre os concursos ativos.',
         fragment('Provas passadas',String(past.length),'Não arquivadas')+
         fragment('Arquivados',String(done.length),'Histórico preservado')+
         fragment('Próxima prova',exam&&daysTo(exam.date)>=0?shortDate(exam.date):'—'));
-      content+=box('Conferência e arquivamento',past.length?past.map(x=>'<div class="pr-course-line"><div><strong>'+escapeHtml(x.course.title||'Concurso')+'</strong><small>Prova em '+escapeHtml(shortDate(x.date))+' · confira o gabarito oficial externamente</small></div>'+action('Gerenciar','manage-course',x.course.id)+'</div>').join(''):blank('Quando a data de uma prova passar, o concurso aparecerá aqui.'));
-      content+=box('Retomar o planejamento',action('Próximo concurso','nav','courses')+' '+action('Abrir Agenda','nav','agenda'));
+      content+=box('Conferência e arquivamento',past.length?past.map(x=>{
+        const registered=!!safe(()=>readExamStatuses()[x.course.id]?.completed,false);
+        return '<div class="pr-course-line"><div><strong>'+escapeHtml(x.course.title||'Concurso')+'</strong><small>Prova em '+escapeHtml(shortDate(x.date))+
+          ' · '+(registered?'Marcada como realizada':'Conferência pendente')+' · gabarito oficial deve ser conferido na fonte da banca</small></div>'+
+          action(registered?'Desmarcar realizada':'Marcar realizada','exam-status',x.course.id)+
+          action('Gerenciar','manage-course',x.course.id)+'</div>';
+      }).join(''):blank('Quando a data de uma prova passar, o concurso aparecerá aqui.'));
+      if(done.length)content+=box('Concursos arquivados',done.map(c=>'<div class="pr-course-line"><strong>'+escapeHtml(c.title||'Concurso')+'</strong>'+
+        action('Reativar','archive-course',c.id)+'</div>').join(''));
+      content+=box('Retomar o planejamento',s.current&&daysTo(s.current.date)>=0?action('Próximo concurso','course',s.current.course.id):action('Ver concursos','nav','courses')+' '+action('Abrir Agenda','nav','agenda'));
     }
     return tab+content;
   }
@@ -398,6 +417,18 @@
       safe(()=>touchPreferences(),null);
       schedule();
     }
+    else if(kind==='exam-status'){
+      const c=safe(()=>courseById(id),null);
+      if(!c)return;
+      const registered=!!safe(()=>readExamStatuses()[id]?.completed,false);
+      const apply=()=>{setExamStatus(id,!registered);schedule();safe(()=>toast(registered?'Prova desmarcada.':'Prova marcada como realizada.'),null)};
+      if(typeof askConfirm==='function')askConfirm(registered?'Desmarcar prova?':'Marcar prova realizada?',(c.title||'Concurso')+' · a informação será registrada na sua conta, sem arquivamento e sem apagar dados.',apply,'Confirmar');
+    }
+    else if(kind==='archive-course'){
+      const c=safe(()=>cloudCourseById(id),null);if(!c)return;
+      const apply=async()=>{state.adminCourseId=id;await toggleCourseArchive();schedule()};
+      if(typeof askConfirm==='function')askConfirm('Reativar concurso?',(c.title||'Concurso')+' voltará à lista de cursos ativos, preservando o histórico.',apply,'Reativar');
+    }
     else if(kind==='postpone-review'){
       const map=safe(()=>mapById(id),null);
       if(!map)return;
@@ -470,6 +501,11 @@
   window.addEventListener('online',schedule);
   window.addEventListener('offline',schedule);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()});
+  const timerNode=document.getElementById('studyTimerFloat');
+  if(timerNode)new MutationObserver(()=>{
+    const label=document.querySelector('#editorialHome [data-pr-clock]');
+    if(label&&typeof StudyDashboard!=='undefined')label.textContent=clockText(safe(()=>StudyDashboard.elapsed(),0));
+  }).observe(timerNode,{subtree:true,childList:true,characterData:true});
   const observe=new MutationObserver(()=>{if(document.documentElement.classList.contains('app-ready')){schedule();observe.disconnect()}});
   observe.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
   if(document.documentElement.classList.contains('app-ready'))schedule();
