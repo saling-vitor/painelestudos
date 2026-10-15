@@ -1,0 +1,284 @@
+/* MEUS MAPAS · V15.48.174-G · DESIGN SYSTEM NANQUIM / LATÃO / VIDRO
+   Fonte canônica: Escala Tipográfica + Paleta Grafite e Latão + Vidro Nanquim.
+   Superfícies sólidas de leitura. Vidro somente em elementos sobrepostos.
+   Preserva capas e suas cores; preserva PNG Lucide e interações existentes. */
+:root{
+  color-scheme:dark;
+  --nq-nanquim:#000000;--nq-grafite-0:#050505;--nq-grafite-1:#0a0a09;
+  --nq-grafite-2:#111110;--nq-grafite-3:#191817;--nq-linha:#242320;
+  --nq-linha-suave:rgba(236,226,208,.06);
+  --nq-papel:#ece6da;--nq-papel-2:#b9b2a5;--nq-papel-3:#857e72;
+  --nq-latao:#c3aa84;--nq-latao-claro:#d8c59e;--nq-latao-escuro:#8a7756;
+  --nq-oxido:#b8614e;--nq-musgo:#8c9a6c;
+  --nq-terracota:#c08a6e;--nq-salvia:#a3ad8a;--nq-argila:#b98a8a;
+  --nq-ametista:#a294b4;--nq-ardosia:#8fa1b3;--nq-pedra:#a8a29a;
+  --nq-sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --nq-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
+  --fs-display:3.5rem;--fs-h1:2rem;--fs-h2:1.5rem;--fs-h3:1.125rem;
+  --fs-title:1rem;--fs-body:.9375rem;--fs-body-sm:.875rem;
+  --fs-label:.875rem;--fs-input:.9375rem;--fs-caption:.75rem;
+  --fs-eyebrow:.6875rem;--fs-tabbar:.75rem;--fs-kpi:2rem;--fs-kpi-sm:1.25rem;
+  --lg-rim:rgba(236,226,208,.10);--lg-rim-forte:rgba(236,226,208,.16);
+  --lg-borda:rgba(236,226,208,.08);--lg-lente:radial-gradient(120% 80% at 18% -10%,rgba(216,197,158,.07),transparent 60%);
+  --lg-barra-fundo:rgba(5,5,5,.58);--lg-barra-fundo-rolado:rgba(5,5,5,.78);
+  --lg-painel-fundo:rgba(8,8,7,.74);--lg-controles-fundo:rgba(10,10,9,.62);
+  /* Fundo Micro adaptado para garantir contraste com capas claras. */
+  --lg-micro-fundo:rgba(0,0,0,.80);
+  --lg-barra-filtro:blur(22px) saturate(140%);
+  --lg-painel-filtro:blur(28px) saturate(130%);
+  --lg-controles-filtro:blur(16px) saturate(135%);
+  --lg-micro-filtro:blur(10px) saturate(110%);
+  --lg-tempo:180ms;--lg-curva:cubic-bezier(.2,.8,.2,1);
+  /* Aliases de migração; não substituir variáveis de cores próprias de capas. */
+  --bg:var(--nq-nanquim);--surface:var(--nq-grafite-0);
+  --surface2:var(--nq-grafite-1);--surface3:var(--nq-grafite-2);
+  --line:var(--nq-linha);--text:var(--nq-papel);
+  --text2:var(--nq-papel-2);--muted:var(--nq-papel-3);
+  --muted2:var(--nq-papel-3);
+  --mm-text-strong:var(--nq-papel);--mm-text:var(--nq-papel-2);
+  --mm-text-secondary:var(--nq-papel-3);
+  --mm-ivory-strong:var(--nq-papel);--mm-ivory-body:var(--nq-papel-2);
+  --mm-ivory-muted:var(--nq-papel-3);
+  --mm-smoke-card-black:var(--nq-grafite-1);
+  --mm-smoke-neutral:var(--nq-grafite-0);
+  --mm-smoke-inset:var(--nq-grafite-2);
+  --mm-smoke-shell:var(--lg-barra-fundo);
+  --mm-smoke-edge:var(--lg-borda);
+  --mm-smoke-card-filter:none;
+  --mm-smoke-filter:var(--lg-barra-filtro);
+  --ui-focus:var(--nq-latao-claro);
+}
+@media (min-width:701px) and (max-width:1180px){
+  :root{--fs-display:2.75rem;--fs-h1:1.875rem;--fs-h2:1.375rem;
+    --fs-body:1rem;--fs-label:.9375rem;--fs-input:1rem;
+    --fs-caption:.8125rem;--fs-kpi:1.875rem;}
+}
+@media (max-width:700px){
+  :root{--fs-display:2rem;--fs-h1:1.625rem;--fs-h2:1.25rem;
+    --fs-h3:1.0625rem;--fs-body:1rem;--fs-label:.9375rem;
+    --fs-input:1rem;--fs-caption:.8125rem;--fs-kpi:1.75rem;
+    --fs-kpi-sm:1.125rem;}
+}
+html,body{background-color:var(--nq-nanquim)!important;color:var(--nq-papel)}
+body,.app,.app input,.app button,.app select,.app textarea{
+  font-family:var(--nq-sans);
+}
+.app :is(h1,h2,h3,h4,b,strong){color:inherit}
+.app .hero-copy h1{font-size:var(--fs-display)!important;line-height:1.04!important}
+.app .view>.section-head h2,.app .section-head h2{font-size:var(--fs-h2)!important;line-height:1.2!important}
+.app .view h1:not(.hero-copy h1){font-size:var(--fs-h1)!important}
+.app .content :is(.course-card,.map-card,.simulation-card,.study-plan-item,.continue-card) h3,
+.app .content .section h3{font-size:var(--fs-h3)!important;line-height:1.25}
+.app .content :is(p,.description,.desc,.sub,.section-sub,.course-desc,.map-desc){
+  font-size:var(--fs-body)!important;line-height:1.55;
+}
+.app :is(.nav-btn,.primary,.secondary,.btn,.icon-btn,.tool-btn,
+  .maps-filter-toggle,.category-btn,.course-study-filter,.progress-filter,
+  .filter-btn,.course-footer .enter){font-size:var(--fs-label)!important}
+.app :is(input,textarea,select,#globalSearch,#courseSearch,#allMapsSearch,.study-duration-input){
+  font-size:var(--fs-input)!important;
+}
+.app :is(.kicker,.eyebrow,.nav-label,.panel-kicker,.stat-label){
+  font-size:var(--fs-eyebrow)!important;line-height:1.25;
+  font-family:var(--nq-mono);font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+}
+.app :is(.chip,.map-code,.map-category-chip,.courses-count,.progress-state,
+  .simulation-recent-board,.simulation-recent-status,.course-filter-label){
+  font-size:var(--fs-caption)!important;
+}
+.app :is(.bottom-nav-label,.mobile-menu-option b){font-size:var(--fs-tabbar)!important}
+.app :is(.hero-stats b,.study-command-metrics .value){font-size:var(--fs-kpi)!important}
+.app :is(.stat b,.metric b,.kpi-sm){font-size:var(--fs-kpi-sm)}
+.app .content :is(.caption,.small-description,.support-copy){font-size:var(--fs-body-sm)!important}
+@media (max-width:1180px){
+  .app input,.app textarea,.app select{font-size:max(1rem,var(--fs-input))!important}
+}
+@media (pointer:coarse){
+  .app :is(button,[role="button"],.ui-select-trigger){min-height:40px}
+  .app :is(input,select,textarea){min-height:40px}
+}
+/* Conteúdo: superfícies opacas; não remover fundos artísticos das capas. */
+html .app .content :is(
+  .study-plan-item,.study-command-card,.study-now-card,.priority-now-card,
+  .forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,
+  .course-card,.course-library-card,.map-card,.progress-insight-card,
+  .progress-insights,.progress-attention,.progress-course,.progress-global-panel,
+  .study-heatmap-card,.study-heatmap-primary,.study-agenda-calendar,.study-agenda-side,
+  .study-automation-panel,.settings-control-panel,.settings-control-summary,
+  .settings-panel,.study-rhythm-details,.study-intelligence-row>article,
+  .study-analytics-grid>.panel,.account-connected-card,.app-update-compact,
+  .diagnostic-row,.restore-point-item,.simulation-manage-section,.map-file-panel,
+  .cover-editor,.version-panel,.panel
+):not(.mm-smoke-opt-out){
+  background:var(--nq-grafite-1)!important;background-image:none!important;
+  border-color:var(--nq-linha)!important;
+  box-shadow:inset 0 1px rgba(236,226,208,.04),0 8px 22px rgba(0,0,0,.35)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html .app .content :is(.home-review-section,.study-intelligence-panel,
+  .study-plan-footer,.study-command-metrics,.course-status,.course-automation,
+  .course-hero,.course-header){
+  background:var(--nq-grafite-0)!important;background-image:none!important;
+  border-color:var(--nq-linha)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html .app .content :is(.course-status-metric,.stat,.metric,
+  .study-command-metrics>*,.review-date-summary span){
+  background:var(--nq-grafite-2)!important;border-color:var(--nq-linha-suave)!important;
+}
+/* Navegação: somente o item ativo mantém seu pastel próprio. */
+html :is(.side .nav-btn,.bottom-nav>button)[data-nav="home"]{--nq-nav-pigment:var(--nq-latao)}
+html :is(.side .nav-btn,.bottom-nav>button)[data-nav="courses"]{--nq-nav-pigment:var(--nq-terracota)}
+html :is(.side .nav-btn,.bottom-nav>button)[data-nav="maps"]{--nq-nav-pigment:var(--nq-salvia)}
+html :is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"]{--nq-nav-pigment:var(--nq-argila)}
+html :is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"]{--nq-nav-pigment:var(--nq-ametista)}
+html :is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"]{--nq-nav-pigment:var(--nq-ardosia)}
+html :is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"]{--nq-nav-pigment:var(--nq-pedra)}
+html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
+html .bottom-nav>button[data-nav].active,
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
+  background:var(--nq-grafite-2)!important;
+  color:var(--nq-nav-pigment,var(--nq-latao))!important;
+  border-color:color-mix(in srgb,var(--nq-nav-pigment,var(--nq-latao)) 50%,transparent)!important;
+  box-shadow:inset 2px 0 0 var(--nq-nav-pigment,var(--nq-latao))!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html :is(.side .nav-btn.active,.bottom-nav>button.active,.mobile-menu-option.is-current)
+  :is(.ui-icon,.txt,.bottom-nav-label,b){
+  color:var(--nq-nav-pigment,var(--nq-latao))!important;
+}
+html .app .content :is(.category-btn.active,.course-study-filter.active,
+  .progress-filter.active,.maps-filter-chip.active,.maps-sort-option.active,
+  .agenda-day.selected,.ui-select-option[aria-selected="true"]){
+  background:var(--nq-grafite-2)!important;
+  border-color:color-mix(in srgb,var(--nq-latao) 50%,transparent)!important;
+  color:var(--nq-latao-claro)!important;
+}
+html .app .content :is(.course-footer .enter,.study-plan-item .primary,
+  .continue-card .primary,.map-card .primary,.simulation-card .primary,
+  .study-command-card .primary){
+  background:var(--nq-nanquim)!important;
+  border-color:color-mix(in srgb,var(--nq-latao) 50%,transparent)!important;
+  color:var(--nq-latao-claro)!important;
+  background-image:none!important;
+}
+html .app .content :is(.hero-actions .primary,.modal-card .primary,
+  .planner-modal-card .primary){
+  background:var(--nq-latao)!important;color:var(--nq-nanquim)!important;
+  border-color:var(--nq-latao)!important;
+}
+html .app .content :is(.progress-state,.map-study-status){
+  background:var(--nq-grafite-1)!important;border-color:var(--nq-linha)!important;
+  color:var(--nq-papel-3)!important;
+}
+html .app .content :is(.progress-state.ok,.map-study-status-completed,
+  .course-health-badge.is-healthy,.agenda-completed-badge){
+  color:var(--nq-musgo)!important;
+  border-color:color-mix(in srgb,var(--nq-musgo) 40%,transparent)!important;
+}
+html .app .content :is(.progress-state.rev,.progress-state.review,
+  .map-study-status-review,.course-health-badge.is-attention){
+  color:var(--nq-latao)!important;
+  border-color:color-mix(in srgb,var(--nq-latao) 40%,transparent)!important;
+}
+html .app .content :is(.progress-state.dif,.progress-state.difficult,
+  .course-health-badge.is-risk){
+  color:var(--nq-oxido)!important;
+  border-color:color-mix(in srgb,var(--nq-oxido) 40%,transparent)!important;
+}
+html :is(.heat-0){background:var(--nq-grafite-3)!important}
+html :is(.heat-1){background:rgba(195,170,132,.22)!important}
+html :is(.heat-2){background:rgba(195,170,132,.42)!important}
+html :is(.heat-3){background:rgba(195,170,132,.66)!important}
+html :is(.heat-4){background:var(--nq-latao)!important}
+/* Vidro 1: barras; lente sutil quente, sem camadas duplas. */
+html .app .topbar,html .bottom-nav,
+html .app .content .course-sticky-bar{
+  background:var(--lg-lente),var(--lg-barra-fundo)!important;
+  border-color:var(--lg-borda)!important;
+  box-shadow:inset 0 1px 0 var(--lg-rim),inset 0 -1px rgba(0,0,0,.55),
+    0 10px 30px rgba(0,0,0,.45)!important;
+  -webkit-backdrop-filter:var(--lg-barra-filtro)!important;
+  backdrop-filter:var(--lg-barra-filtro)!important;
+}
+html.mm-scrolled .app .topbar,html.mm-scrolled .bottom-nav,
+html.mm-scrolled .app .content .course-sticky-bar{
+  background:var(--lg-lente),var(--lg-barra-fundo-rolado)!important;
+}
+/* Vidro 2: painel lateral e elementos flutuantes. */
+html:not(.is-phone-layout) .app .side,
+html :is(#globalSearchPanel,.global-search-panel,.course-more-menu,
+  .reader-more-menu,.simulation-card-action-menu,.map-actions-menu,
+  .maps-filter-panel,.ui-select-popover,.mobile-menu-sheet,.popover,
+  .context-menu,.modal-card,.planner-modal-card,.study-doubt-card,
+  .study-timer-idle-menu,.progress-sort-sheet){
+  background:var(--lg-lente),var(--lg-painel-fundo)!important;
+  border-color:var(--lg-borda)!important;
+  box-shadow:inset 0 1px 0 var(--lg-rim),inset 0 -1px rgba(0,0,0,.55),
+    0 24px 60px rgba(0,0,0,.60)!important;
+  -webkit-backdrop-filter:var(--lg-painel-filtro)!important;
+  backdrop-filter:var(--lg-painel-filtro)!important;
+}
+/* Vidro 3: grupos de ações flutuantes. */
+html .app .content .course-primary-actions{
+  background:var(--lg-lente),var(--lg-controles-fundo)!important;
+  border-color:var(--lg-borda)!important;
+  -webkit-backdrop-filter:var(--lg-controles-filtro)!important;
+  backdrop-filter:var(--lg-controles-filtro)!important;
+}
+/* Vidro 4: Micro com opacidade segura sobre capas claras. */
+html :is(.map-card,.course-card,.course-library-card,.simulation-card)
+  :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
+  background:var(--lg-micro-fundo)!important;
+  border-color:var(--lg-rim-forte)!important;
+  color:var(--nq-papel)!important;
+  box-shadow:inset 0 1px rgba(236,226,208,.22),0 4px 12px rgba(0,0,0,.35)!important;
+  -webkit-backdrop-filter:var(--lg-micro-filtro)!important;
+  backdrop-filter:var(--lg-micro-filtro)!important;
+}
+html :is(.topbar,.bottom-nav,.course-sticky-bar,.course-primary-actions)
+  :is(.search,#syncTop,#installBtn,input,select,.ui-select-trigger){
+  background:rgba(236,226,208,.035)!important;
+  border-color:var(--lg-borda)!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html [data-mm-open]{transform-origin:var(--mm-source-x,50%) var(--mm-source-y,0%);
+  animation:nq-glass-open var(--lg-tempo) var(--lg-curva);}
+@keyframes nq-glass-open{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+html :is(.bottom-nav>button,.side .nav-btn,.course-primary-actions button):active{
+  transform:scale(.98);transition:transform 90ms var(--lg-curva);
+}
+html :focus-visible{outline:2px solid var(--nq-latao-claro)!important;outline-offset:2px}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  html :is(.topbar,.bottom-nav,.course-sticky-bar,.side,
+    .course-primary-actions,.global-search-panel,#globalSearchPanel,
+    .course-more-menu,.reader-more-menu,.simulation-card-action-menu,
+    .map-actions-menu,.maps-filter-panel,.ui-select-popover,
+    .mobile-menu-sheet,.popover,.context-menu,.modal-card,.planner-modal-card,
+    .study-doubt-card,.study-timer-idle-menu,.progress-sort-sheet){
+    background:#0b0a09!important;-webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;border-color:#2b2824!important;
+  }
+}
+html.mm-reduced-transparency :is(.topbar,.bottom-nav,.side,
+  .course-primary-actions,.course-sticky-bar,.global-search-panel,#globalSearchPanel,
+  .modal-card,.planner-modal-card,.study-doubt-card){
+  background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  html :is(.topbar,.bottom-nav,.side,.course-sticky-bar,.course-primary-actions,
+  .global-search-panel,.modal-card,.planner-modal-card){
+    background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  html [data-mm-open]{animation:none!important}
+  html :is(.bottom-nav>button,.side .nav-btn,.course-primary-actions button):active{
+    transform:none!important;transition:none!important;
+  }
+}
+@media (forced-colors:active){
+  html :is(.side .nav-btn.active,.bottom-nav>button.active,.course-card,.map-card){
+    forced-color-adjust:auto!important;border:1px solid CanvasText!important;
+  }
+}
