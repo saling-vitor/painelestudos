@@ -214,7 +214,7 @@
   }
   function addAgendaItem(payload={}){
     const data=readData(),now=isoNow();
-    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),start:/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(payload.start||''))?String(payload.start):'19:00',mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
+    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),start:/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(payload.start||''))?String(payload.start):'',mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
     data.agenda.push(row);writeData(data);renderAgenda();renderHomeDashboard();return row;
   }
   function updateAgendaItem(id,patch={}){
