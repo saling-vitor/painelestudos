@@ -132,8 +132,7 @@ html .app :is(.map-card,.course-card,.course-library-card,.simulation-card)
 }
 /* Buttons: brass actions, matte inside glass; covers and artwork untouched. */
 html .app .content :is(.study-plan-item,.continue-card,.priority-now-card,.study-command-card,.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item)
- :is(.primary,.secondary,.course-footer .enter,[data-study-plan-open],button[data-open-simulation])
- :not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav){
+ :is(.primary,.secondary,.course-footer .enter,[data-study-plan-open],button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav){
  background:var(--nq-nanquim)!important;
  border-color:color-mix(in srgb,var(--nq-latao) 50%,transparent)!important;
  color:var(--nq-latao-claro)!important;
