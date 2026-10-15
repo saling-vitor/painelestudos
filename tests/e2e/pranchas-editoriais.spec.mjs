@@ -213,3 +213,33 @@ test('Home [G][T+M] · atalho para revisões não permanece inerte',async({page}
   await page.locator('#editorialHome [data-pr-action="home"][data-pr-id="revisoes"]').click();
   await expect(page.locator('#editorialHome [data-pr-home="revisoes"]')).toHaveAttribute('aria-pressed','true');
 });
+
+
+test('Agenda [G][T+M] · Dia/Semana/Mês contam eventos reais e sinalizam datas de prova',async({page})=>{
+  await enter(page,'agenda');
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-mode]')).toHaveCount(3);
+  await page.locator('#editorialAgenda [data-pr-agenda-mode="semana"]').click();
+  await expect(page.locator('#editorialAgenda .pr-agenda-week-day')).toHaveCount(7);
+  await page.locator('#editorialAgenda [data-pr-agenda-mode="mes"]').click();
+  await expect(page.locator('#editorialAgenda .pr-month-date')).toHaveCount(42);
+  const day=await page.locator('#editorialAgenda .pr-month-date').filter({hasText:'15'}).first().getAttribute('data-pr-agenda-pick');
+  if(day){await page.locator('#editorialAgenda [data-pr-agenda-pick="'+day+'"]').first().click();
+    await expect(page.locator('#editorialAgenda .pr-agenda-datebar')).toBeVisible();}
+  await page.locator('#editorialAgenda [data-pr-agenda-mode="dia"]').click();
+  await expect(page.locator('#editorialAgenda .pr-hour-row')).toHaveCount(16);
+});
+test('Home [G][T+M] · abrir plano não inicia sessão paralela',async({page})=>{
+  await enter(page,'home');
+  const report=await page.evaluate(()=>{
+    let n=0;
+    const old=StudyDashboard.start,original=StudyPlanner.showTimePlan;
+    StudyDashboard.start=()=>{n++;return null};
+    StudyPlanner.showTimePlan=()=>undefined;
+    const button=document.querySelector('#editorialHome [data-pr-action="study"]');
+    if(button)button.click();
+    StudyDashboard.start=old;StudyPlanner.showTimePlan=original;
+    return{n,hasButton:!!button};
+  });
+  if(report.hasButton)expect(report.n).toBe(0);
+});
