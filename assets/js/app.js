@@ -79,6 +79,7 @@
     return target;
   };
   let screen='hoje',manualHome=false,coursePresentation='lista',libPresentation='grade',simPresentation='lista',selectedProgress='';
+  const expandedSimErrors=new Set();
   const homeScreens=[['hoje','Hoje'],['todos','Todos'],['revisoes','Revisões'],['sessao','Em sessão'],['pos','Pós-prova']];
   function homeHtml(s){
     const exam=s.current,cp=exam?totals(getCourseMaps(s,exam.course)):null,days=daysTo(exam?.date);
@@ -235,7 +236,7 @@
           return '<div class="pr-sim-section"><span>'+escapeHtml(name)+'</span><span class="pr-line"><i style="width:'+Math.round(correct/total*100)+'%"></i></span><b>'+correct+'/'+total+'</b></div>';
         }).join('')+'</div>':blank('A última tentativa não possui divisão por disciplina registrada.');
         const errors=Array.isArray(r.mistakes)?r.mistakes:[];
-        const errorHtml=errors.length?'<details class="pr-sim-errors"><summary>'+errors.length+' questões registradas para recuperar</summary>'+
+        const errorHtml=errors.length?'<details class="pr-sim-errors"'+(expandedSimErrors.has(x.key)?' open':'')+'><summary>'+errors.length+' questões registradas para recuperar</summary>'+
           errors.slice(0,15).map(item=>'<div class="pr-sim-error"><b>Questão '+escapeHtml(item.number||'—')+' · '+escapeHtml(item.topic||item.section||'Sem categoria')+'</b><p>'+escapeHtml(item.stem||'Enunciado indisponível')+'</p>'+(item.answer?'<small>Gabarito registrado: '+escapeHtml(item.answer)+'</small>':'')+'</div>').join('')+
           '</details>':blank('Nenhuma questão errada individualizada nesta tentativa.');
         const validAttempts=x.attempts.filter(a=>Number.isFinite(Number(a.score))).slice(0,10).reverse();
@@ -448,7 +449,12 @@
     else if(kind==='review-errors'){
       const report=[...document.querySelectorAll('#editorialSimulations .pr-sim-report')].find(el=>el.dataset.prSimKey===id);
       const details=report?.querySelector('details.pr-sim-errors');
-      if(details){details.open=true;details.scrollIntoView({block:'center',behavior:'smooth'});details.querySelector('summary')?.focus({preventScroll:true})}
+      if(details){
+        expandedSimErrors.add(id);
+        details.open=true;
+        details.scrollIntoView({block:'center',behavior:'smooth'});
+        details.querySelector('summary')?.focus({preventScroll:true});
+      }
       else if(typeof openSimulationHistory==='function')openSimulationHistory(id);
     }
     else if(kind==='move-agenda'){
@@ -474,6 +480,14 @@
     }
     schedule();
   }
+  // Sincroniza a expansão nativa dos detalhes com o estado da prancha.
+  document.addEventListener('toggle',event=>{
+    const d=event.target;
+    if(!d?.matches?.('#editorialSimulations details.pr-sim-errors')||!event.isTrusted)return;
+    const id=d.closest('[data-pr-sim-key]')?.dataset.prSimKey;
+    if(!id)return;
+    if(d.open)expandedSimErrors.add(id);else expandedSimErrors.delete(id);
+  },true);
   document.addEventListener('click',event=>{
     const b=event.target.closest('[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
     if(!b)return;
