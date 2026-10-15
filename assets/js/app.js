@@ -62,11 +62,11 @@
   const todaySeconds=()=>safe(()=>StudyTime.today(),0);
   const minText=seconds=>Math.round(num(seconds)/60)+' min';
   const getCourseMaps=(s,c)=>s.ms.filter(m=>m.courseId===c?.id);
-  const cardContainer=(view,id)=>{
+  const cardContainer=(view,id,placement='first')=>{
     const node=$('[data-view="'+view+'"]');
     if(!node)return null;
     let target=node.querySelector('#'+id);
-    if(!target){target=document.createElement('div');target.id=id;target.className='pr-root';node.prepend(target)}
+    if(!target){target=document.createElement('div');target.id=id;target.className='pr-root';if(placement==='last')node.appendChild(target);else node.prepend(target)}
     return target;
   };
   let screen='hoje',manualHome=false,coursePresentation='lista',libPresentation='grade',simPresentation='lista',selectedProgress='';
@@ -131,7 +131,7 @@
     return tab+content;
   }
   function renderHomeEditorial(){
-    const node=cardContainer('home','editorialHome');if(!node)return;
+    const node=cardContainer('home','editorialHome','last');if(!node)return;
     const s=stateData();
     if(!manualHome){
       const past=s.rank.filter(x=>daysTo(x.date)<0);
@@ -152,7 +152,7 @@
       box('Concursos por prioridade',list.map(row=>'<div class="pr-course-line"><div><strong>'+escapeHtml(row.c.title||'Concurso')+'</strong><small>'+escapeHtml(row.date?shortDate(row.date):'Sem data de prova')+' · '+escapeHtml(row.c.status==='archived'?'Arquivado':statusText(row.p))+'</small></div><span class="pr-line"><i style="width:'+pct(row.p)+'%"></i></span><b>'+percent(row.p)+'</b>'+action('Entrar','course',row.c.id)+'</div>').join('')||blank('Entre na conta ou crie um concurso para começar.'));
   }
   function renderCourseEditorial(){
-    const node=cardContainer('course','editorialCourse');if(!node)return;
+    const node=cardContainer('course','editorialCourse','last');if(!node)return;
     const s=stateData(),c=s.cs.find(x=>x.id===state.courseId),list=getCourseMaps(s,c),p=totals(list),date=courseDate(c);
     const switcher='<div class="pr-switch" role="group" aria-label="Visualização dos mapas do curso">'+['lista','capas'].map(k=>'<button class="pr-switch-btn" data-pr-course-layout="'+k+'" aria-pressed="'+(coursePresentation===k)+'">'+(k==='lista'?'Lista':'Capas')+'</button>').join('')+'</div>';
     node.closest('.view').dataset.prCourseLayout=coursePresentation;
@@ -175,10 +175,8 @@
       fragment('Estudados',String(s.all.marked),percent(s.all))+
       fragment('Categorias',String(groups.length)));
     const root=$('#allMaps');if(root)root.classList.toggle('pr-list-view',libPresentation==='lista');
-    const group=$('#allMapsGroup');if(group){
-      const desired=libPresentation==='agrupado'?'category':'';
-      if(group.value!==desired&&[...group.options].some(o=>o.value===desired)){group.value=desired;state.allMapsGroup=desired;safe(()=>renderAllMaps(),null)}
-    }
+    // O seletor editorial não modifica filtros nativos durante render.
+    // Alterações em filtros/agrupamentos são feitas apenas por ação explícita do usuário.
   }
   function renderSimulationsEditorial(){
     const node=cardContainer('simulations','editorialSimulations');if(!node)return;
@@ -296,7 +294,16 @@
       safe(()=>localStorage.setItem('studyapp.mapLayout',state.mapLayout),null);
       if(state.view==='course')safe(()=>renderCurrentMaps(),null);
       schedule();
-    }else if(b.hasAttribute('data-pr-library')){libPresentation=b.dataset.prLibrary;schedule()}
+    }else if(b.hasAttribute('data-pr-library')){
+      libPresentation=b.dataset.prLibrary;
+      if(libPresentation==='agrupado'){
+        if(!state.allMapsGroup)state.allMapsGroup='category';
+      }else if(state.allMapsGroup){
+        state.allMapsGroup='';
+      }
+      safe(()=>renderAllMaps(),null);
+      schedule();
+    }
     else if(b.hasAttribute('data-pr-sim')){simPresentation=b.dataset.prSim;schedule()}
     else if(b.hasAttribute('data-pr-progress')){selectedProgress=b.dataset.prProgress;schedule()}
     else if(b.hasAttribute('data-pr-action'))goAction(b.dataset.prAction,b.dataset.prId);
