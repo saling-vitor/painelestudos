@@ -318,7 +318,7 @@
       box('Planta do edital',rows.length?mapRows(rows,40):blank('Nenhum mapa disponível.'))+
       box('Próximas prioridades',safe(()=>StudyPlanner.priorityRows(),[]).slice(0,3).map(row=>'<div class="pr-course-line"><div><b>'+escapeHtml(mapName(row.map))+'</b><small>'+escapeHtml((row.reasons||[]).join(' · ')||'Prioridade do planejamento')+'</small></div>'+action('Estudar','map',mapId(row.map))+'</div>').join('')||blank('Sem recomendações calculadas.'));
   }
-  let agendaFocusDay=new Date();
+  let agendaFocusDay=new Date(),agendaPresentation='semana';
   const agendaMinutes=value=>{
     const m=/^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(value||'19:00'));
     return m?Number(m[1])*60+Number(m[2]):19*60;
@@ -352,7 +352,7 @@
   function renderAgendaEditorial(){
     const node=cardContainer('agenda','editorialAgenda');if(!node)return;
     const s=stateData(),today=new Date(),focus=dayKey(agendaFocusDay);
-    const start=new Date(today.getFullYear(),today.getMonth(),today.getDate()-((today.getDay()+6)%7));
+    const start=new Date(agendaFocusDay.getFullYear(),agendaFocusDay.getMonth(),agendaFocusDay.getDate()-((agendaFocusDay.getDay()+6)%7));
     const end=new Date(start.getFullYear(),start.getMonth(),start.getDate()+7);
     const all=(s.dashboard.agenda||[]).filter(item=>!item.deleted&&item.date);
     const week=all.filter(item=>item.date>=dayKey(start)&&item.date<dayKey(end)),planned=week.reduce((a,row)=>a+num(row.minutes),0);
@@ -380,6 +380,48 @@
     }
     const outside=conf.periods.filter(item=>item.start<7*60||item.start>=23*60);
     if(outside.length)rows+='<div class="pr-note">Fora da régua: '+outside.map(x=>escapeHtml((x.row.start||'19:00')+' · '+(x.row.title||'Estudo'))).join(' · ')+'</div>';
+    const calSwitch='<div class="pr-switch" role="group" aria-label="Visualização editorial da agenda">'+
+      [['dia','Dia'],['semana','Semana'],['mes','Mês']].map(([k,t])=>
+        '<button class="pr-switch-btn" type="button" data-pr-agenda-mode="'+k+'" aria-pressed="'+(agendaPresentation===k)+'">'+t+'</button>').join('')+'</div>';
+    const minuteGoal=Math.max(0,num(s.dashboard.goals?.weeklyMinutes));
+    const weekMinutes=safe(()=>StudyTime.week(),0);
+    const verdict=minuteGoal>0?
+      (weekMinutes/60>=minuteGoal?'Meta semanal já atingida pelas sessões registradas.':'Faltam '+Math.max(0,Math.ceil(minuteGoal-weekMinutes/60))+' min registrados para atingir a meta semanal.')+
+      ' A agenda soma '+Math.round(planned)+' min planejados nesta semana.':
+      'Há '+week.length+' compromissos somando '+Math.round(planned)+' min nesta semana. Defina uma meta semanal para comparar a carga.';
+    const weekSchedule=Array.from({length:7},(_,i)=>{
+      const date=new Date(start);date.setDate(date.getDate()+i);
+      const key=dayKey(date),scheduled=all.filter(x=>x.date===key),minutes=scheduled.reduce((n,x)=>n+num(x.minutes),0),
+        exams=s.rank.filter(x=>x.date&&dayKey(x.date)===key),
+        sessions=(s.dashboard.sessions||[]).filter(x=>!x.deleted&&x.startedAt&&dayKey(new Date(x.startedAt))===key),
+        realSeconds=sessions.reduce((n,x)=>n+num(x.durationSeconds),0);
+      const maxWeek=Math.max(1,...Array.from({length:7},(_,j)=>{
+        const d=new Date(start);d.setDate(d.getDate()+j);
+        return all.filter(x=>x.date===dayKey(d)).reduce((n,x)=>n+num(x.minutes),0);
+      }));
+      const percentLoad=minutes?Math.min(100,Math.round(minutes/maxWeek*100)):0;
+      return '<button type="button" class="pr-agenda-week-day'+(focus===key?' is-selected':'')+'" data-pr-agenda-pick="'+key+'"><b>'+escapeHtml(date.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'}))+'</b>'+
+        '<small>'+Math.round(minutes)+' min planejados</small><span class="pr-line"><i style="width:'+percentLoad+'%"></i></span><small>'+Math.round(realSeconds/60)+' min realizados</small>'+
+        (exams.length?'<strong class="pr-exam-day">PROVA · '+exams.map(x=>escapeHtml(x.course.title||'Concurso')).join(', ')+'</strong>':'')+
+        (scheduled.length?'<span class="pr-agenda-day-subjects">'+scheduled.slice(0,3).map(x=>escapeHtml(x.title||x.kind||'Estudo')).join(' · ')+'</span>':'')+'</button>';
+    }).join('');
+    const monthStart=new Date(agendaFocusDay.getFullYear(),agendaFocusDay.getMonth(),1);
+    const gridStart=new Date(monthStart);gridStart.setDate(1-((gridStart.getDay()+6)%7));
+    const monthCalendar=Array.from({length:42},(_,i)=>{
+      const date=new Date(gridStart);date.setDate(date.getDate()+i);
+      const key=dayKey(date),scheduled=all.filter(x=>x.date===key),exams=s.rank.filter(x=>x.date&&dayKey(x.date)===key),
+        dayLoad=scheduled.reduce((n,x)=>n+num(x.minutes),0);
+      return '<button type="button" data-pr-agenda-pick="'+key+'" class="pr-month-date'+(key===focus?' is-selected':'')+
+        (date.getMonth()!==agendaFocusDay.getMonth()?' outside':'')+(exams.length?' has-exam':'')+'"><b>'+date.getDate()+'</b>'+
+        (exams.length?'<span>PROVA · '+exams.map(x=>escapeHtml(x.course.title||'')).join(' · ')+'</span>':'')+
+        (dayLoad?'<small>'+Math.round(dayLoad)+' min</small>':'')+
+        (scheduled.length?'<small>'+scheduled.length+' bloco(s)</small>':'')+'</button>';
+    }).join('');
+    const perspective=agendaPresentation==='semana'?
+      box('Semana · Carga por dia','<div class="pr-agenda-week">'+weekSchedule+'</div>'):
+      agendaPresentation==='mes'?
+      box('Mês · '+escapeHtml(monthStart.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})),'<div class="pr-agenda-month">'+monthCalendar+'</div>'):
+      '';
     const nav='<div class="pr-agenda-datebar"><button data-pr-agenda-day="-1" aria-label="Dia anterior">←</button><button data-pr-agenda-day="today">Hoje</button><strong>'+escapeHtml(agendaFocusDay.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'}))+'</strong><button data-pr-agenda-day="+1" aria-label="Próximo dia">→</button></div>';
     const info='<div class="pr-agenda-bands">'+
        (examination.length?'<p class="pr-note">Prova: '+examination.map(x=>escapeHtml(x.course.title||'Concurso')).join(' · ')+'</p>':'')+
@@ -392,6 +434,7 @@
       fragment('Planejado',String(Math.round(planned))+' min',week.length+' eventos')+
       fragment('Próxima prova',s.current?shortDate(s.current.date):'—')+
       fragment('Conflitos',String(conf.conflicts.size),'No dia selecionado'))+
+      box('Leitura da semana','<p class="pr-agenda-verdict">'+escapeHtml(verdict)+'</p>'+calSwitch)+perspective+
       box('Régua de tempo · 07h–23h',nav+info+'<div class="pr-timeline">'+rows+'</div>')+
       '<div class="pr-note">O calendário original abaixo permanece disponível em Dia, Semana e Mês. Sugestões de horário exigem sua confirmação e respeitam os dias configurados.</div>';
   }
@@ -537,10 +580,16 @@
     if(d.open)expandedSimErrors.add(id);else expandedSimErrors.delete(id);
   },true);
   document.addEventListener('click',event=>{
-    const b=event.target.closest('[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
+    const b=event.target.closest('[data-pr-agenda-mode],[data-pr-agenda-pick],[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
     if(!b)return;
     event.preventDefault();
-    if(b.hasAttribute('data-pr-agenda-day')){
+    if(b.hasAttribute('data-pr-agenda-mode')){
+      agendaPresentation=b.dataset.prAgendaMode;schedule();
+    }else if(b.hasAttribute('data-pr-agenda-pick')){
+      const selected=b.dataset.prAgendaPick;
+      if(/^\d{4}-\d{2}-\d{2}$/.test(selected))agendaFocusDay=new Date(selected+'T12:00:00');
+      schedule();
+    }else if(b.hasAttribute('data-pr-agenda-day')){
       const value=b.dataset.prAgendaDay;
       const date=new Date(agendaFocusDay);
       if(value==='today')agendaFocusDay=new Date();
