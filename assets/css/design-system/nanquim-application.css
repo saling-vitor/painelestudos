@@ -442,3 +442,26 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .pr-root .pr-day-tick b{position:absolute;top:12px;left:0;transform:translateX(-50%);color:#857E72;font:500 11px/1.3 "IBM Plex Mono",monospace;white-space:nowrap}
 .pr-root .pr-day-tick:first-of-type b{transform:none}
 .pr-root .pr-day-tick:last-of-type b{transform:translateX(-100%)}
+
+
+/* Planta do edital e régua do dia: dados reais, lotes proporcionais */
+.pr-root .pr-edital-wrap{display:grid;gap:9px;min-width:0}
+.pr-root .pr-edital-planta,.pr-root .pr-day-ruler{display:flex;gap:4px;align-items:stretch;width:100%;min-width:0;overflow-x:auto;padding:4px 1px 8px;scrollbar-width:thin;scrollbar-color:var(--pr-brass-dark) var(--pr-g0)}
+.pr-root .pr-edital-lot,.pr-root .pr-day-block{flex:1 1 0;min-width:82px;min-height:116px;display:flex;flex-direction:column;justify-content:space-between;gap:7px;padding:11px 9px;border:1px solid rgba(236,230,218,.14);border-left:2px solid var(--pr-brass);border-radius:7px;background:var(--pr-g0);color:var(--pr-paper);text-align:left;position:relative;overflow:hidden}
+.pr-root .pr-edital-lot{cursor:pointer;touch-action:manipulation}
+.pr-root .pr-edital-lot:hover{border-color:var(--pr-brass)}
+.pr-root .pr-lot-index{font:500 10px/1.15 "IBM Plex Mono",ui-monospace,monospace;color:var(--pr-brass);letter-spacing:.04em}
+.pr-root .pr-edital-lot b,.pr-root .pr-day-block b{font:700 12px/1.25 Archivo,Inter,sans-serif;overflow-wrap:anywhere}
+.pr-root .pr-edital-lot small,.pr-root .pr-day-block small{font:500 11px/1.32 "IBM Plex Mono",monospace;color:var(--pr-paper-2);overflow-wrap:anywhere}
+.pr-root .pr-lot-state{display:block;width:100%;height:4px;background:var(--pr-g3);border-radius:4px;overflow:hidden}
+.pr-root .pr-lot-state i{display:block;height:100%;border-radius:4px;background:var(--pr-brass)}
+.pr-root .pr-lot-tooltip{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.pr-root .pr-edital-legend{font:500 11px/1.6 "IBM Plex Mono",monospace;color:var(--pr-paper-3);margin:0}
+.pr-root .pr-day-ruler{gap:8px}
+.pr-root .pr-day-block{min-height:110px;border-left:3px solid var(--pr-brass);background:var(--pr-g1)}
+.pr-root .pr-course-entry{border-bottom:1px solid var(--pr-line);padding:6px 0 15px;display:grid;gap:9px;min-width:0}
+.pr-root .pr-course-entry:last-child{border-bottom:0}
+.pr-root .pr-course-entry>.pr-course-line{border:0;padding-bottom:0}
+.pr-root .pr-course-entry .pr-edital-lot{min-height:78px}
+.pr-root .pr-course-entry .pr-edital-lot small{font-size:10px}
+@media(max-width:680px){.pr-root .pr-edital-lot,.pr-root .pr-day-block{min-width:104px;min-height:100px}.pr-root .pr-course-entry .pr-edital-lot{min-width:90px}}
