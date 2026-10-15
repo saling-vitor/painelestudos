@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {mkdirSync} from 'node:fs';
 // Respeita a janela de novidades da aplicação em vez de desligá-la ou forçar cliques
 // através de um modal. O teste confirma seu controle de encerramento real.
 async function enter(page,view){
@@ -29,6 +30,8 @@ test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({
     await expect(page.locator('[data-view="'+view+'"]')).toHaveClass(/active/);
     await expect(page.locator('#'+id+' .pr-stamp')).toHaveCount(1);
     await expect(page.locator('#'+id+' .pr-stamp')).toBeVisible();
+    mkdirSync('visual-audit',{recursive:true});
+    await page.screenshot({path:'visual-audit/prancha-'+test.info().project.name+'-'+view+'.png',animations:'disabled'});
   }
 });
 test('Cinco telas da Home [G][T+M] · seleção não cria sessão paralela',async({page})=>{
@@ -41,6 +44,8 @@ test('Cinco telas da Home [G][T+M] · seleção não cria sessão paralela',asyn
     await button.click();
     await expect(button).toHaveAttribute('aria-pressed','true');
     await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-editorial-mode',key);
+    mkdirSync('visual-audit',{recursive:true});
+    await page.screenshot({path:'visual-audit/home-'+test.info().project.name+'-'+key+'.png',animations:'disabled'});
   }
   const consistency=await page.evaluate(()=>({
     total:MeusMapasPranchas.snapshot().ms.length,
@@ -198,4 +203,13 @@ test('Home [G][T+M] · marcação pós-prova persiste sem arquivar concurso',asy
   const saved=await page.evaluate(id=>({status:localPreferences().examStatuses[id],archived:courseById(id)?.status==='archived'}),course);
   expect(saved.status.completed).toBe(true);
   expect(saved.archived).toBe(false);
+});
+
+
+test('Home [G][T+M] · atalho para revisões não permanece inerte',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  await page.locator('#editorialHome [data-pr-home="hoje"]').click();
+  await page.locator('#editorialHome [data-pr-action="home"][data-pr-id="revisoes"]').click();
+  await expect(page.locator('#editorialHome [data-pr-home="revisoes"]')).toHaveAttribute('aria-pressed','true');
 });
