@@ -1,13 +1,13 @@
 {
-  "version": "15.48.170",
-  "label": "V15.48.170-G",
-  "notes": "Auditoria visual: vidro fumê perceptível sem tingimentos na Home e bibliotecas; CSS legado consolidado, cache PWA renovado e QA real.",
+  "version": "15.48.171",
+  "label": "V15.48.171-G",
+  "notes": "Auditoria profunda: grafite fumê unificado na Home, Cursos, Mapas, Simulados e Progresso; legado MATTE BLACK removido e PWA atualizado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cards de Mapas, Cursos, Simulados e Home com preenchimento preto fumê mais translúcido",
-    "[G] Prioridade agora e Seu estudo de hoje sem gradientes temáticos de fundo",
-    "[G] HEX oficiais preservados em bordas, ícones, códigos e barras; capas intactas",
-    "[G] Cache PWA renovado, verificação E2E em componentes reais"
+    "[G] Cards grafite fumê sem preto chapado",
+    "[G] Elementos internos neutros e topografia somente no fundo global",
+    "[G] Remoção das regras MATTE BLACK legadas preservando as capas",
+    "[G] Testes E2E e versão PWA atualizados"
   ],
   "automation": {
     "enabled": true,

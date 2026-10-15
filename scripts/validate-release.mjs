@@ -58,11 +58,12 @@ check(index.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expecte
 check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
 check(activeCssFiles.at(-1)==='assets/css/black-smoked-uniform-v15-48-163.css','Black Smoked Uniforme: CSS tem ultima precedencia');
 const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
-check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(0,0,0,.58)'),'Black Editorial: fundo preto oficial sincronizado');
+check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(20,20,21,.94)'),'Black Editorial: grafite fumê neutro oficial sincronizado');
 check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
+check(blackSmokedCss.includes('--mm-smoke-inset:rgba(27,27,28,.96)')&&blackSmokedCss.includes('.study-rhythm-kpis>article'),'Cards e componentes internos usam material neutro compartilhado');
 check(blackSmokedCss.includes('--mm-smoke-tint:0%')&&blackSmokedCss.includes('--mm-ivory-strong:#EEE9E0'),'Black Editorial: zero tingimento cromatico e texto marfim');
 check(blackSmokedCss.includes('--mm-smoke-card-filter:blur(12px) saturate(105%)')&&blackSmokedCss.includes('backdrop-filter:var(--mm-smoke-card-filter)!important'),'Vidro fume aplicado aos cards com filtro real');
-check(blackSmokedCss.includes('--mm-card-surface:var(--mm-smoke-card-black)')&&blackSmokedCss.includes('html:not(.is-phone-layout) .app .side'),'Todos os cards e sidebar: superficie preta canonica');
+check(blackSmokedCss.includes('--mm-card-surface:var(--mm-smoke-card-black)')&&blackSmokedCss.includes('html:not(.is-phone-layout) .app .side'),'Todos os cards e sidebar: superficie grafite canonica');
 check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
 
 check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');

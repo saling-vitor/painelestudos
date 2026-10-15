@@ -20,9 +20,9 @@ async function verifyGraphite(page) {
     };
   });
   expect(result.bottom).toContain('linear-gradient');
-  expect(result.metrics).toContain('linear-gradient');
+  expect(result.metrics).toBe('none');
   expect(result.cta).toContain('gradient');
-  expect(result.colors.length).toBeGreaterThanOrEqual(4);
+  expect(result.colors.length).toBeGreaterThanOrEqual(2);
   for(const [r,g,b] of result.colors){
     expect(Math.abs(r-g)).toBeLessThanOrEqual(2);
     expect(Math.abs(b-g)).toBeLessThanOrEqual(2);

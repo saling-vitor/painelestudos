@@ -1530,7 +1530,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>a
   box-sizing:border-box!important;min-width:0!important;
   height:190px!important;min-height:190px!important;max-height:none!important;
   padding:12px!important;
-  background:linear-gradient(145deg,rgba(255,255,255,.025),transparent 65%),#0a0c0f!important;
+  background:var(--mm-smoke-card-black,rgba(20,20,21,.94))!important;
   border:1px solid rgba(255,255,255,.13)!important;
   border-radius:11px!important;
   box-shadow:inset 0 1px rgba(255,255,255,.045)!important;
@@ -1574,7 +1574,7 @@ html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .priority-now-actions .pr
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-now-card,
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .forecast-home-card{
-  background:linear-gradient(145deg,rgba(255,255,255,.026),transparent 65%),#0a0c0f!important;
+  background:var(--mm-smoke-card-black,rgba(20,20,21,.94))!important;
 }
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-now-buttons button:hover,
 html.is-ipad:not(.is-phone-layout) #homeStudyDashboard .study-now-focus:hover,
@@ -1684,13 +1684,13 @@ html.is-ipad:not(.is-phone-layout) #priorityWhyModal button:hover{
 }
 .simulation-card .simulation-card-actions .primary{
  border-color:color-mix(in srgb,var(--simulation-accent) 43%,#313136)!important;
- background:color-mix(in srgb,var(--simulation-accent) 9%,#0b0b0d)!important;
+ background:var(--mm-smoke-inset,rgba(27,27,28,.96))!important;
  color:color-mix(in srgb,var(--simulation-accent) 77%,#fff)!important;
 }
 .simulation-recent-item{
  border:1px solid color-mix(in srgb,var(--simulation-accent) 30%,#2d2d32)!important;
  border-left:3px solid var(--simulation-accent)!important;
- background:linear-gradient(135deg,color-mix(in srgb,var(--simulation-accent) 8%,#09090b),#080809 86%)!important;
+ background:var(--mm-smoke-card-black,rgba(20,20,21,.94))!important;
 }
 .simulation-recent-item .simulation-recent-title-row b{color:color-mix(in srgb,var(--simulation-accent) 73%,#fff)!important}
 

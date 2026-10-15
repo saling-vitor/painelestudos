@@ -1005,7 +1005,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.syncing.animation).toContain('cloudSyncStatusPulse');
   expect(visual.activeBackground).not.toContain('gradient');
   // O item ativo pode ser transparente: o preto visivel vem da sidebar.
-  expect(visual.activeColor==='rgba(0, 0, 0, 0)'?visual.sidebarFill:visual.activeColor).toMatch(/rgba?\(0,\s*0,\s*0/);
+  expect(visual.activeColor==='rgba(0, 0, 0, 0)'?visual.sidebarFill:visual.activeColor).toMatch(/rgba?\(20,\s*20,\s*21/);
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.topbarBackdrop).not.toBe('none');
@@ -5393,7 +5393,7 @@ test('V15.48.154 [D] card Hoje apresenta capa full-bleed e métricas em vidro ú
   expect(v.imageFit).toBe('cover');
   expect(v.overlay).toContain('linear-gradient');
   expect(v.gap).toBe('0px');
-  expect(v.metricsBackground).toContain('linear-gradient');
+  expect(v.metricsBackground).toBe('none'); // Fundo das metricas agora e grafite neutro.
   expect(v.metricsBlur).toContain('blur(');
   expect(v.bottomBlur).toContain('blur(');
   expect(v.ctaBlur).toContain('blur(');

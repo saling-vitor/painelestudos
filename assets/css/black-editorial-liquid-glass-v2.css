@@ -238,59 +238,8 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
 }
 
-/* ==========================================================================
-   5 · CONTEÚDO PERMANENTE = MATTE BLACK
-   ========================================================================== */
-.app .content :is(
-  .map-card,
-  .course-card,
-  .course-library-card,
-  .simulation-card,
-  .continue-card,
-  .study-command-card,
-  .study-intelligence-row>article,
-  .study-intelligence-panel,
-  .priority-now-card,
-  .forecast-home-card,
-  .home-review-section,
-  .progress-insights,
-  .progress-insight-card,
-  .progress-attention,
-  .progress-global-panel,
-  .progress-course,
-  .study-agenda-calendar,
-  .study-agenda-side,
-  .agenda-day,
-  .study-analytics-grid>.panel,
-  .study-heatmap-card,
-  .settings-control-panel,
-  .settings-control-summary,
-  .study-time-manage,
-  .study-automation-panel,
-  .account-connected-card,
-  .app-update-compact,
-  .diagnostic-row,
-  .restore-point-item,
-  .simulation-manage-section,
-  .map-file-panel,
-  .cover-editor,
-  .version-panel,
-  .panel
-){
-  border-color:var(--mm-line)!important;
-  background:linear-gradient(180deg,var(--mm-surface-2),var(--mm-surface-1))!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-  box-shadow:var(--mm-shadow-surface)!important;
-}
-
-/* Cards principais um pouco mais sólidos/escuros. */
-.app .content :is(.map-card,.course-card,.course-library-card,.simulation-card){
-  background:linear-gradient(180deg,#0D0D0D,#090909)!important;
-}
-.app .content .map-card:hover{
-  box-shadow:0 17px 38px rgba(0,0,0,.42)!important;
-}
+/* V15.48.171-G · Removido legado MATTE BLACK: gradientes e fills de cards
+   foram consolidados na camada final black-smoked-uniform. */
 
 /* Curso/hero: editorial sólido; sem glow azul. */
 .app .content .course-hero{

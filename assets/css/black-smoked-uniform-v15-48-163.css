@@ -1,15 +1,17 @@
-/* MEUS MAPAS · V15.48.169-G · BLACK EDITORIAL · VIDRO FUME PRETO + MARFIM
+/* MEUS MAPAS · V15.48.171-G · BLACK EDITORIAL · VIDRO FUME PRETO + MARFIM
    Somente a camada optica/tematica. Preserva capas, layout, tipografia,
    interacoes e superficies de leitura. Sem gradientes cromaticos.
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
 :root{
   --mm-smoke-opacity:.84;
-  --mm-smoke-card-black:rgba(0,0,0,.58);
+  --mm-smoke-card-black:rgba(20,20,21,.94);
   --mm-smoke-tint:0%;
   --mm-smoke-ink:rgba(0,0,0,var(--mm-smoke-opacity));
-  --mm-smoke-neutral:rgba(0,0,0,.34);
-  --mm-smoke-edge:rgba(255,255,255,.20);
-  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.16);
+  --mm-smoke-neutral:rgba(17,17,18,.93);
+  --mm-smoke-inset:rgba(27,27,28,.96);
+  --mm-smoke-shell:rgba(18,18,19,.88);
+  --mm-smoke-edge:rgba(255,255,255,.13);
+  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.085);
   --mm-smoke-filter:blur(18px) saturate(112%) contrast(105%);
   --mm-smoke-card-filter:blur(12px) saturate(105%);
   --mm-smoke-default:#A8A8A8;
@@ -35,7 +37,7 @@ html .app .content :is(.course-card,.course-library-card,.home-course-card){
 }
 /* Todos os cards usam a mesma superficie preta. A cor contextual apenas
    identifica as bordas, barras e detalhes: nunca pinta o preenchimento. */
-html .app .content :is(.course-card,.course-library-card,.simulation-card,.simulation-recent-item,.map-card,.study-plan-item,.continue-card,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.progress-insight-card,.progress-course,.progress-global-panel,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel){
+html .app .content :is(.course-card,.course-library-card,.simulation-card,.simulation-recent-item,.map-card,.study-plan-item,.continue-card,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.progress-insight-card,.progress-insights,.progress-attention,.progress-course,.progress-global-panel,.study-heatmap-card,.study-heatmap-primary,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-control-summary,.settings-panel,.study-rhythm-details,.study-intelligence-row>article,.study-analytics-grid>.panel,.account-connected-card,.app-update-compact,.diagnostic-row,.restore-point-item,.simulation-manage-section,.map-file-panel,.cover-editor,.version-panel,.panel){
   --mm-card-surface:var(--mm-smoke-card-black);
 }
 html .app .content :is(.simulation-card,.simulation-recent-item){
@@ -53,36 +55,22 @@ html .app .content :is(.study-command-card,.study-now-card,.forecast-home-card){
 html .app .content :is(.progress-course,.progress-global-panel,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel){
   --mm-uniform-tone:var(--course-accent,var(--map-accent,var(--mm-smoke-default)));
 }
-/* 02 · Um único material preto fumê de 58%: sem gradiente temático.
+/* 02 · Material grafite fumê neutro; sem gradiente temático.
    Painéis estruturantes usam 34% para evitar glass sobre glass escuro.
    Não alterar capas e seus overlays fotográficos de legibilidade. */
 html .app .content :is(
   .study-plan-item,.study-command-card,.study-now-card,.priority-now-card,
   .forecast-home-card,.continue-card,.simulation-recent-item,
   .simulation-card,.course-card,.course-library-card,.map-card,
-  .progress-insight-card,.progress-global-panel,.progress-course,
-  .study-heatmap-card,.study-agenda-calendar,.study-agenda-side,
-  .study-automation-panel,.settings-control-panel,.settings-panel
+  .progress-insight-card,.progress-insights,.progress-attention,.progress-course,.progress-global-panel,.study-heatmap-card,.study-heatmap-primary,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-control-summary,.settings-panel,.study-rhythm-details,.study-intelligence-row>article,.study-analytics-grid>.panel,.account-connected-card,.app-update-compact,.diagnostic-row,.restore-point-item,.simulation-manage-section,.map-file-panel,.cover-editor,.version-panel,.panel
 ):not(.mm-smoke-opt-out){
   background:var(--mm-smoke-card-black)!important;
   
   border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(255,255,255,.11))!important;
-  box-shadow:var(--mm-smoke-rim),0 10px 26px rgba(0,0,0,.12)!important;
+  box-shadow:var(--mm-smoke-rim),0 6px 18px rgba(0,0,0,.10)!important;
   /* Camada unica de vidro fume por card, sem tingimento cromatico. */
   -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
   backdrop-filter:var(--mm-smoke-card-filter)!important;
-}
-/* Superficies da Home e Mapas: preto uniforme em vez de tingimento tematico.
-   Bordas, indicadores e barras mantem os HEX oficiais. */
-html .app .content #homeReviewSection .study-plan-item,
-html .app .content #homeReviewSection .study-plan-item.is-next,
-html .app .content #homeStudyDashboard .study-command-card,
-html .app .content #homeStudyDashboard .priority-now-card,
-html .app .content .home-continue-section .continue-card,
-html .app .content #homeSimulations .simulation-recent-item{
-  background:var(--mm-smoke-card-black)!important;
-  
-  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 43%,rgba(255,255,255,.09))!important;
 }
 /* Painel estruturante preto, sem tirar a cor de cada linha. */
 html .app .content :is(.home-review-section,.study-intelligence-panel,.study-plan-footer,.study-command-metrics){
@@ -112,7 +100,7 @@ html :is(
   .course-primary-actions,.course-sticky-bar,
   .study-timer-idle-menu,.progress-sort-sheet
 ){
-  background:rgba(0,0,0,.84)!important;
+  background:var(--mm-smoke-shell)!important;
   border-color:var(--mm-smoke-edge)!important;
   box-shadow:var(--mm-smoke-rim),0 14px 34px rgba(0,0,0,.27)!important;
   -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
@@ -125,7 +113,7 @@ html :is(.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar)
 }
 html .topbar :is(.search,#syncTop,#installBtn),
 html .global-search-shell .search{
-  background:rgba(0,0,0,.48)!important;
+  background:var(--mm-smoke-inset)!important;
   border-color:rgba(255,255,255,.15)!important;
 }
 /* Precedencia explicita sobre os seletores responsivos anteriores.
@@ -137,7 +125,7 @@ html.is-phone-layout .topbar,
 html.is-ipad:not(.is-phone-layout) .bottom-nav,
 html.is-phone-layout .bottom-nav,
 html #globalSearchPanel{
-  background:rgba(0,0,0,.84)!important;
+  background:var(--mm-smoke-shell)!important;
   border-color:var(--mm-smoke-edge)!important;
   box-shadow:var(--mm-smoke-rim),0 12px 32px rgba(0,0,0,.25)!important;
   -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
@@ -147,17 +135,17 @@ html #globalSearchPanel{
    vidro PRETO sobre fundo preto, mas opacidade abaixo de 50% no iPad
    e de 70% no iPhone para a topografia continuar visivel. */
 html.is-ipad:not(.is-phone-layout) :is(.topbar,.bottom-nav){
-  background:rgba(0,0,0,.42)!important;
+  background:rgba(18,18,19,.42)!important;
 }
 html.mobile-topbar-compact.is-phone-layout .topbar,
 html.is-phone-layout :is(.topbar,.bottom-nav){
-  background:rgba(0,0,0,.58)!important;
+  background:rgba(18,18,19,.58)!important;
 }
 /* Menu flutuante neutro; a cor da capa fica nas bordas e simbolos. */
 html :is(.map-card,.course-card,.course-library-card,.simulation-card)
   :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
   --mm-uniform-tone:var(--map-accent,var(--course-accent,var(--simulation-accent,var(--cover-accent,#B0B0B0))));
-  background:rgba(0,0,0,.85)!important;
+  background:var(--mm-smoke-shell)!important;
   border-color:color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(255,255,255,.25))!important;
   box-shadow:inset 0 1px rgba(255,255,255,.20)!important;
 }
@@ -259,20 +247,20 @@ html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal
 html:not(.mm-reduced-transparency) .app .main .topbar :is(.search,#syncTop,#installBtn),
 html:not(.mm-reduced-transparency) .app .main .topbar :is(.search,#syncTop,#installBtn):focus-within,
 html:not(.mm-reduced-transparency) .app .main .global-search-shell .search{
-  background:rgba(0,0,0,.48)!important;
+  background:var(--mm-smoke-inset)!important;
   border-color:rgba(255,255,255,.15)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
 html:not(.mm-reduced-transparency).is-phone-layout .app .main .topbar,
 html:not(.mm-reduced-transparency).mobile-topbar-compact.is-phone-layout .app .main .topbar{
-  background:rgba(0,0,0,.58)!important;
+  background:rgba(18,18,19,.58)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 7px 20px rgba(0,0,0,.16)!important;
   -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
   backdrop-filter:var(--mm-smoke-filter)!important;
 }
 html:not(.mm-reduced-transparency).is-ipad:not(.is-phone-layout) .app .main .topbar{
-  background:rgba(0,0,0,.42)!important;
+  background:rgba(18,18,19,.42)!important;
 }
 /* Na preferência do usuário, não reintroduzir blur por uma regra responsiva. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
@@ -316,29 +304,6 @@ html.mm-reduced-transparency .app .study-doubt-card{
 
 
 
-/* V15.48.166-G · GUARDA VISUAL NOS CARDS REAIS [G]
-   As capas seguem intactas. Apenas a superficie dos cards reais de
-   cursos e simulados usa preto uniforme; HEX ainda colore ações/bordas. */
-:root{--mm-smoke-card-real:var(--mm-smoke-card-black)}
-html .app .content :is(#coursesGrid,#homeCourses)>.course-card.course-library-card,
-html .app .content #simulationGrid>.simulation-card,
-html .app .content #homeSimulations .simulation-recent-item{
-  --mm-card-surface:var(--mm-smoke-card-black);
-  background:var(--mm-smoke-card-black)!important;
-}
-/* A precedencia inclui o id do grid: supera o legado com !important
-   sem substituir capa, layout ou repetir regras de hover responsivas. */
-html .app .content :is(#coursesGrid,#homeCourses) .course-card.course-library-card :is(
-  .course-status-pill,.course-exam-info,.course-card-meta-item,.course-edital-btn
-){background:rgba(0,0,0,.72)!important}
-html .app .content #simulationGrid .simulation-card :is(
-  .simulation-meta-item,.simulation-result-summary>div
-){background:rgba(0,0,0,.5)!important}
-html .app .content #homeSimulations .simulation-recent-cover{
-  background:#080808!important;
-}
-
-
 /* V15.48.169-G · SIDEBAR EM VIDRO FUME IGUAL AOS CARDS [D+T / G]
    Mesmo preto translúcido e reflexão discreta. Preserva logo e layout. */
 html:not(.is-phone-layout) .app .side{
@@ -355,6 +320,51 @@ html.is-phone-layout .bottom-nav>button[data-nav].active,
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   background:var(--mm-smoke-card-black)!important;
 }
+/* V15.48.171-G · SUPERFICIES CONTINUAS GRAFITE FUME.
+   A topografia pertence ao ambiente, nunca ao preenchimento dos cards.
+   Níveis uniformes: card principal, painel estrutural, item interno.
+   Capas, overlays fotográficos e cores semânticas preservados. */
+html .app .content :is(.study-plan-item,.study-command-card,.study-now-card,
+.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,
+.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,
+.progress-insights,.progress-attention,.progress-global-panel,.progress-course,
+.study-heatmap-card,.study-heatmap-primary,.study-agenda-calendar,.study-agenda-side,
+.study-automation-panel,.settings-control-panel,.settings-control-summary,
+.settings-panel,.study-intelligence-row>article,.study-rhythm-details,
+.study-analytics-grid>.panel,.account-connected-card,.app-update-compact,
+.diagnostic-row,.restore-point-item,.simulation-manage-section,.map-file-panel,
+.cover-editor,.version-panel,.panel),
+html .app .content :is(#homeStudyDashboard .study-intelligence-row>article,
+#homeReviewSection .study-plan-item.has-map-accent,
+#homeReviewSection .study-plan-item.has-map-accent.is-next,
+#coursesGrid>.course-card.course-library-card,
+#homeCourses>.course-card.course-library-card,
+#simulationGrid>.simulation-card,#homeSimulations .simulation-recent-item,
+#courseMaps .map-card.has-cover){
+  background:var(--mm-smoke-card-black)!important;
+  background-image:none!important;
+  box-shadow:var(--mm-smoke-rim),0 6px 18px rgba(0,0,0,.10)!important;
+  -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
+  backdrop-filter:var(--mm-smoke-card-filter)!important;
+}
+html .app .content :is(#homeReviewSection,.home-review-section,
+#homeStudyDashboard .study-command-metrics,.study-intelligence-panel){
+  background:var(--mm-smoke-neutral)!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.085)!important;
+}
+html .app .content :is(.study-command-metrics>button,
+.study-rhythm-kpis>article,.study-rhythm-distribution>div,.study-rhythm-empty,
+.progress-map-row,.intelligence-primary-actions>article,
+.course-card .course-exam-info,.course-card .course-card-meta-item,
+.simulation-card .simulation-meta-item,.simulation-card .simulation-result-summary>div,
+.study-plan-footer,.study-doubt-inbox.is-empty){
+  background:var(--mm-smoke-inset)!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.095)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+/* Cards com capas e botões continuam sendo elementos independentes do vidro. */
 /* Todos os titulos estruturais adotam o marfim da identidade, sem retirar
    cores semanticas de status, codigo, chips ou barra de progresso. */
 html .app .content :is(
@@ -395,6 +405,37 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current)
 }
 
 
+/* V15.48.171-G · Contrato de material acessivel.
+   Transparencia reduzida converte a origem dos tokens em superficie opaca.
+   Isso evita uma nova disputa de especificidade nos componentes reais. */
+html.mm-reduced-transparency{
+  --mm-smoke-card-black:#080808;
+  --mm-smoke-neutral:#080808;
+  --mm-smoke-inset:#080808;
+  --mm-smoke-shell:#080808;
+  --mm-smoke-card-filter:none;
+  --mm-smoke-filter:none;
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  :root{
+    --mm-smoke-card-black:#080808;
+    --mm-smoke-neutral:#080808;
+    --mm-smoke-inset:#080808;
+    --mm-smoke-shell:#080808;
+    --mm-smoke-card-filter:none;
+    --mm-smoke-filter:none;
+  }
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root{
+    --mm-smoke-card-black:#080808;
+    --mm-smoke-neutral:#080808;
+    --mm-smoke-inset:#080808;
+    --mm-smoke-shell:#080808;
+    --mm-smoke-card-filter:none;
+    --mm-smoke-filter:none;
+  }
+}
 /* V15.48.170-G · Acessibilidade e compatibilidade: nas preferências que
    reduzem transparência, os mesmos cards e sidebar tornam-se opacos. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
