@@ -489,3 +489,33 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
  .view[data-view="home"] #editorialHome .pr-stamp-copy h2{font-size:clamp(58px,13vw,86px)}
  .view[data-view="home"][data-editorial-mode="sessao"] #editorialHome .pr-stamp-copy h2{font-size:clamp(37px,9vw,65px)}
 }
+
+/* Hierarquia editorial transversal: carimbo numérico, enquanto o contexto
+   permanece no kicker acessível em todas as sete áreas. */
+.view[data-view="courses"] #editorialCourses .pr-stamp-copy h2,
+.view[data-view="maps"] #editorialMaps .pr-stamp-copy h2,
+.view[data-view="simulations"] #editorialSimulations .pr-stamp-copy h2,
+.view[data-view="progress"] #editorialProgress .pr-stamp-copy h2,
+.view[data-view="agenda"] #editorialAgenda .pr-stamp-copy h2,
+.view[data-view="settings"] #editorialSettings .pr-stamp-copy h2{
+  font:400 clamp(50px,6.8vw,105px)/.96 Anton,Archivo,Impact,sans-serif;
+  letter-spacing:-.035em;font-variant-numeric:tabular-nums;
+  color:var(--pr-paper);overflow-wrap:anywhere;
+}
+.view[data-view="settings"] #editorialSettings .pr-stamp-copy h2{
+  font-size:clamp(32px,4vw,66px)
+}
+.view[data-view="courses"] #editorialCourses .pr-stamp-copy p,
+.view[data-view="maps"] #editorialMaps .pr-stamp-copy p,
+.view[data-view="simulations"] #editorialSimulations .pr-stamp-copy p,
+.view[data-view="progress"] #editorialProgress .pr-stamp-copy p,
+.view[data-view="agenda"] #editorialAgenda .pr-stamp-copy p,
+.view[data-view="settings"] #editorialSettings .pr-stamp-copy p{max-width:56ch}
+@media(max-width:700px){
+ .view[data-view="courses"] #editorialCourses .pr-stamp-copy h2,
+ .view[data-view="maps"] #editorialMaps .pr-stamp-copy h2,
+ .view[data-view="simulations"] #editorialSimulations .pr-stamp-copy h2,
+ .view[data-view="progress"] #editorialProgress .pr-stamp-copy h2,
+ .view[data-view="agenda"] #editorialAgenda .pr-stamp-copy h2{font-size:clamp(58px,12vw,86px)}
+ .view[data-view="settings"] #editorialSettings .pr-stamp-copy h2{font-size:clamp(31px,6.7vw,55px)}
+}

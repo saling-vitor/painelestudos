@@ -267,7 +267,7 @@
       '<span class="pr-line"><i style="width:'+pct(row.p)+'%"></i></span><b>'+percent(row.p)+'</b>'+
       action('Entrar','course',row.c.id)+'</div>'+weightedEdital(getCourseMaps(s,row.c),40)+'</div>'
     ).join('')||blank('Entre na conta ou crie um concurso para começar.'));
-    node.innerHTML=choices+header('Índice · Concursos','Meus Cursos',
+    node.innerHTML=choices+header('Índice · Meus Cursos',percent(s.all),
       'A ordem segue a data de cada prova; os dados vêm dos concursos e mapas já cadastrados.',
       fragment('Concursos',String(s.cs.length))+
       fragment('Mapas',String(s.ms.length))+
@@ -292,7 +292,7 @@
     const s=stateData(),groups=[...new Set(s.ms.map(m=>m.category||'Outros'))];
     const switcher='<div class="pr-switch" role="group" aria-label="Visualizar acervo">'+[['grade','Grade'],['lista','Lista'],['agrupado','Agrupado']].map(([k,l])=>'<button class="pr-switch-btn" data-pr-library="'+k+'" aria-pressed="'+(libPresentation===k)+'">'+l+'</button>').join('')+'</div>';
     node.closest('.view').dataset.prLibraryLayout=libPresentation;
-    node.innerHTML=switcher+header('Biblioteca · Índice de pranchas','Todos os Mapas','Localize materiais com os filtros existentes ou mude a forma de apresentação.',
+    node.innerHTML=switcher+header('Biblioteca · Todos os Mapas',String(s.ms.length),'Localize materiais com os filtros existentes ou mude a forma de apresentação.',
       fragment('Mapas',String(s.ms.length))+
       fragment('Tópicos',String(s.all.total))+
       fragment('Estudados',String(s.all.marked),percent(s.all))+
@@ -326,7 +326,7 @@
     const done=results.filter(x=>x.result),attempts=results.reduce((a,x)=>a+x.attempts.length,0);
     const current=done.slice().sort((a,b)=>Date.parse(b.result.finishedAt||0)-Date.parse(a.result.finishedAt||0))[0];
     const sw='<div class="pr-switch" role="group" aria-label="Simulados: lista ou resultado">'+[['lista','Lista'],['resultado','Resultado']].map(([key,label])=>'<button class="pr-switch-btn" data-pr-sim="'+key+'" aria-pressed="'+(simPresentation===key)+'">'+label+'</button>').join('')+'</div>';
-    let body=sw+header('Simulados · Ensaio de prova','Treino e resultados','Respostas e tentativas efetivamente registradas; meta pessoal nunca é apresentada como corte oficial.',
+    let body=sw+header('Simulados · Treino e resultados',String(done.length)+' de '+ss.length,'Respostas e tentativas efetivamente registradas; meta pessoal nunca é apresentada como corte oficial.',
       fragment('Disponíveis',String(ss.length))+
       fragment('Com resultado',String(done.length))+
       fragment('Tentativas',String(attempts))+
@@ -423,7 +423,7 @@
     const actualMinutes=Math.floor(num(safe(()=>StudyPlanner.weeklySnapshot().seconds,0))/60);
     const doubts=(s.dashboard.doubts||[]).filter(x=>!x.deleted);
     const selector='<div class="pr-switch" role="group" aria-label="Selecionar concurso"><button data-pr-progress="" aria-pressed="'+(!choice)+'" class="pr-switch-btn">Todos</button>'+cs.map(c=>'<button class="pr-switch-btn" aria-pressed="'+(choice?.id===c.id)+'" data-pr-progress="'+escapeHtml(c.id)+'">'+escapeHtml(c.title||'Concurso')+'</button>').join('')+'</div>';
-    node.innerHTML=selector+header('Progresso · Acompanhamento','Cobertura do edital','O histórico começa na primeira observação real registrada; não são criados dias fictícios.',
+    node.innerHTML=selector+header('Progresso · Cobertura do edital',percent(p),'O histórico começa na primeira observação real registrada; não são criados dias fictícios.',
       fragment('Cobertura',percent(p),p.marked+' de '+p.total)+
       fragment('Concluídos',String(p.done),'Tópicos OK')+
       fragment('Revisão',String(p.review),'Tópicos REV')+
@@ -549,7 +549,7 @@
        (completed.length?'<p class="pr-note">Sessões realizadas: '+completed.map(x=>escapeHtml(x.label||'Estudo')+' · '+minText(x.durationSeconds)).join(' · ')+'</p>':'')+
        (unscheduled.length?'<p class="pr-note">Sem horário registrado: '+unscheduled.map(x=>escapeHtml(x.title||'Sessão')+' · '+num(x.minutes)+' min').join(' · ')+'. Defina o horário na Agenda antes de encaixar na régua.</p>':'')+
        (!day.length?blank('Nenhum bloco de estudo agendado para este dia. O cronograma abaixo continua disponível.'):'')+'</div>';
-    node.innerHTML=header('Agenda · Cronograma','Semana de '+shortDate(start)+' a '+shortDate(new Date(end.getTime()-86400000)),
+    node.innerHTML=header('Agenda · Semana de '+shortDate(start)+' a '+shortDate(new Date(end.getTime()-86400000)),minText(safe(()=>StudyTime.week(),0)),
       'Horários de estudo reais; conflitos não são resolvidos sem confirmação.',
       fragment('Realizado',minText(safe(()=>StudyTime.week(),0)),'Nesta semana')+
       fragment('Planejado',String(Math.round(planned))+' min',week.length+' eventos')+
@@ -565,7 +565,7 @@
       synced=!!session&&!state.cloudSyncError,meta=safe(()=>JSON.parse(localStorage.getItem('studyapp.cloudHealth')||'null'),null),
       goals=safe(()=>StudyDashboard.goals(),{}),last=meta?.at?new Date(meta.at).toLocaleString('pt-BR'):'Sem diagnóstico';
     const list=[['01','Conta e nuvem',session?'Conta conectada':'Sem sessão ativa','authStatus'],['02','Rotina de estudo','Meta: '+(num(goals.dailyMinutes)||'não configurada')+' min/dia','studyGoalsForm'],['03','Planejamento adaptativo','Prioridades e disponibilidade','plannerSettingsForm'],['04','Automação','Regras do planejamento','studyAutomationPanel'],['05','Backup e restauração','Cópias e restauração de dados','downloadBackupBtn'],['06','Aparelho e aplicativo',online?'Conectado à rede':'Sem conexão','appDiagnosticPanel'],['07','Administração','Operações protegidas','newCourseBtn2']];
-    node.innerHTML=header('Configurações · Ficha técnica','Meus Mapas · Sistema','Os estados de nuvem e backup não são simulados. Consulte os diagnósticos reais nos controles abaixo.',
+    node.innerHTML=header('Configurações · Meus Mapas · Sistema',safe(()=>APP_VERSION_LABEL,'—'),'Os estados de nuvem e backup não são simulados. Consulte os diagnósticos reais nos controles abaixo.',
       fragment('Versão',safe(()=>APP_VERSION_LABEL,'—'))+
       fragment('Conta',session?'Conectada':'Desconectada')+
       fragment('Rede',online?'Online':'Offline')+

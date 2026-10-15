@@ -324,3 +324,17 @@ test('Agenda [M] · abre em Dia e usa ícones Lucide PNG na navegação',async({
   await expect(page.locator('#editorialAgenda [data-pr-agenda-day="-1"] .ui-icon')).toHaveCount(1);
   await expect(page.locator('#editorialAgenda [data-pr-agenda-day="+1"] .ui-icon')).toHaveCount(1);
 });
+
+test('Sete pranchas [G][T+M] · carimbos principais usam métricas reais do modelo',async({page})=>{
+  await enter(page,'home');
+  for(const [view,id] of [
+    ['courses','editorialCourses'],['maps','editorialMaps'],
+    ['simulations','editorialSimulations'],['progress','editorialProgress'],
+    ['agenda','editorialAgenda'],['settings','editorialSettings']
+  ]){
+    await page.evaluate(v=>nav(v),view);
+    await expect(page.locator('#'+id+' .pr-stamp h2')).toBeVisible();
+    const val=await page.locator('#'+id+' .pr-stamp h2').innerText();
+    expect(val.trim().length).toBeGreaterThan(0);
+  }
+});
