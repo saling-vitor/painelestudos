@@ -102,8 +102,8 @@
   }
   html.is-phone-layout [data-view="home"] .hero-stats .stat span{
     margin-top:4px;
-    font-size:6px;
-    letter-spacing:.08em;
+    font-size:var(--fs-eyebrow,11px);
+    letter-spacing:.06em;
   }
   html.is-phone-layout .home-study-dashboard{
     margin-top:10px;
@@ -1151,8 +1151,8 @@
     font-size:13px!important;
   }
   html.is-phone-layout [data-view="home"] .hero-stats .stat span{
-    font-size:7px!important;
-    color:#9aa0a8!important;
+    font-size:var(--fs-eyebrow,11px)!important;
+    color:var(--nq-papel-2,#b9b2a5)!important;
   }
   html.is-phone-layout .study-command-card{
     padding:11px!important;
