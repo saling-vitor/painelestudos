@@ -54,8 +54,7 @@ test('Progresso [G][T+M] · observação sem histórico inventado',async({page})
   await page.goto('/#progress');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
   const report=await page.evaluate(()=>{
-    const key='studyapp.pranchaProgress.v1::'+(StudyCloud.session()?.user?.id||'offline');
-    const rows=JSON.parse(localStorage.getItem(key)||'[]');
+    const rows=StudyDashboard.progressHistory();
     return {rows,total:MeusMapasPranchas.snapshot().ms.length,hasView:!!document.querySelector('#editorialProgress')};
   });
   expect(report.hasView).toBe(true);
