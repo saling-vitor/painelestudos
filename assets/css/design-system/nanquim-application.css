@@ -184,3 +184,28 @@ html.mm-reduced-transparency :is(.topbar,.bottom-nav,.side,.course-sticky-bar,.c
  html .app :is(input[type="search"],input[type="text"],input[type="number"],select,textarea){font-size:var(--fs-input)!important}
  html .app :is(.bottom-nav>button,.mobile-menu-option,.primary,.secondary){min-height:40px}
 }
+
+/* NANQUIM WEBKIT PRIORITY PATCH · replaces highly specific historical
+   Black Smoked tablet/phone dock selectors without altering desktop geometry. */
+html:not(.mm-reduced-transparency).is-ipad:not(.is-phone-layout) .app .main .topbar,
+html:not(.mm-reduced-transparency).is-phone-layout .app .main .topbar,
+html:not(.mm-reduced-transparency).mobile-topbar-compact.is-phone-layout .app .main .topbar{
+ background:var(--nq-glass-lens),var(--nq-glass-bar)!important;
+ border-color:var(--nq-glass-border)!important;
+ box-shadow:inset 0 1px 0 var(--nq-glass-rim),0 10px 30px rgba(0,0,0,.45)!important;
+ -webkit-backdrop-filter:var(--nq-glass-bar-filter)!important;
+ backdrop-filter:var(--nq-glass-bar-filter)!important;
+}
+html:not(.mm-reduced-transparency).mm-scrolled.is-ipad:not(.is-phone-layout) .app .main .topbar,
+html:not(.mm-reduced-transparency).mm-scrolled.is-phone-layout .app .main .topbar,
+html:not(.mm-reduced-transparency).mm-scrolled.mobile-topbar-compact.is-phone-layout .app .main .topbar{
+ background:var(--nq-glass-lens),var(--nq-glass-bar-scrolled)!important;
+}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ html:not(.mm-reduced-transparency).is-ipad:not(.is-phone-layout) .app .main .topbar,
+ html:not(.mm-reduced-transparency).is-phone-layout .app .main .topbar,
+ html:not(.mm-reduced-transparency).mobile-topbar-compact.is-phone-layout .app .main .topbar{
+  background:#0b0a09!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ }
+}
