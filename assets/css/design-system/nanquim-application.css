@@ -23,7 +23,9 @@
 html,body{background-color:var(--nq-nanquim)!important}
 html .app{color:var(--nq-papel);font-family:var(--nq-font-sans)}
 /* Typography: 14 semantic tokens, matching the reference across three widths. */
-html .app .hero h1{font-size:var(--fs-display)!important;line-height:1;letter-spacing:-.02em}
+/* O hero recorrente preserva suas medidas compactas responsivas.
+   Evitar !important aqui: ele anulava h1 específicos da Home e fazia o hero crescer ~60px. */
+html .app .hero h1{font-size:var(--fs-display);line-height:1;letter-spacing:-.02em}
 html .app :is(.course-hero h1,.section-head.courses-head h2,.view[data-view="maps"]>.section-head h2){font-size:var(--fs-h1)!important;line-height:1.1}
 html .app .section-head h2,html .app .section h2{font-size:var(--fs-h2)!important;line-height:1.2}
 html .app .content :is(.course-card,.course-library-card,.map-card,.simulation-card,.continue-card,.priority-now-card,.study-command-card) h3{font-size:var(--fs-h3)!important;line-height:1.25}
@@ -162,7 +164,7 @@ html .app .heat-3{background:rgba(195,170,132,.66)!important}
 html .app .heat-4{background:var(--nq-latao)!important}
 /* Technical/accessibility fallbacks outrank all optical component rules. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
- html:not(.is-phone-layout) .app .side,html .app .main .topbar,html .bottom-nav,html .app .course-sticky-bar,
+ html:not(.is-phone-layout) .app .side,html .app .main .topbar,html.mm-optics-supported .app .main .topbar,html.mm-scrolled.mm-optics-supported .app .main .topbar,html .bottom-nav,html .app .course-sticky-bar,
  html .app :is(.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.mobile-menu-sheet,.popover,.context-menu,.modal-card,.planner-modal-card,.study-doubt-card,.study-timer-idle-menu,.progress-sort-sheet,.course-primary-actions),
  html .app :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
  background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
