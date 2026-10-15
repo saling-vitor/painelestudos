@@ -163,9 +163,10 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
   -webkit-backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
   backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
 }
-/* No iPad em paisagem, a sidebar ativa prevalece sobre o fundo transparente do dock legado. */
-html.is-ipad:not(.is-phone-layout) .side .nav-btn[data-nav].active{
-  background:var(--mm-active-fill,color-mix(in srgb,var(--nav-accent,#C3AA84) 34%,rgba(10,10,11,.78)))!important;
+/* A sidebar visível em Desktop/iPad possui fill próprio e inequívoco.
+   O valor não depende de --mm-active-fill herdado do dock no iPad. */
+html:not(.is-phone-layout) body .app .side .nav-btn[data-nav].active{
+  background:color-mix(in srgb,var(--nav-accent,#C3AA84) 36%,#141414)!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before,
 html .bottom-nav>button[data-nav].active::before,
