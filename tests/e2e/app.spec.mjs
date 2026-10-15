@@ -167,7 +167,7 @@ test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({pag
     const navLens=await glass(activeNav);
     expect(sideGlass.backdrop).toContain('blur(');
     expect(sideGlass.filled).toBe(true);
-    // V15.48.169-G: sidebar e cards em vidro fumê; item ativo sem segunda lente.
+    // V15.48.173-G: preenchimento temático no item; o vidro é composto no shell pai.
     expect(navLens.backdrop).toBe('none');
     expect(navLens.filled).toBe(true);
   }
@@ -972,8 +972,17 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   await expect(page.locator('#coursesCount')).toBeVisible();
   await expect(page.locator('#coursesCount')).toContainText(/concurso/);
   await expect(page.locator('.side')).toBeVisible();
+  // O HTML nasce com "Início" ativo. A navegação por hash e os estilos
+  // responsivos do iPad terminam assincronamente após a página aparecer.
+  // Inspecionar apenas o botão "Meus Cursos" já selecionado/estabilizado.
+  const activeCourseNav=page.locator('.side .nav-btn[data-nav="courses"]');
+  await expect(activeCourseNav).toHaveClass(/active/);
+  await expect.poll(
+    ()=>activeCourseNav.evaluate(el=>getComputedStyle(el).backgroundColor),
+    {timeout:10000,message:'O menu Meus Cursos deve receber o fill temático no iPad'}
+  ).not.toMatch(/^(?:rgba?\(0,\s*0,\s*0,\s*0\)|oklab\(0 0 0 \/ 0\))$/);
   const visual=await page.evaluate(()=>{
-    const sync=document.querySelector('#syncTop'),icon=sync.querySelector('.ui-icon'),active=document.querySelector('.side .nav-btn.active'),count=document.querySelector('#coursesCount'),search=document.querySelector('.search'),newCourse=document.querySelector('#newCourseBtn2'),topbar=document.querySelector('.topbar');
+    const sync=document.querySelector('#syncTop'),icon=sync.querySelector('.ui-icon'),active=document.querySelector('.side .nav-btn[data-nav="courses"].active'),count=document.querySelector('#coursesCount'),search=document.querySelector('.search'),newCourse=document.querySelector('#newCourseBtn2'),topbar=document.querySelector('.topbar');
     sync.dataset.syncState='synced';
     const synced={text:getComputedStyle(sync).color,icon:getComputedStyle(icon).color,bg:getComputedStyle(sync).backgroundColor};
     sync.dataset.syncState='syncing';
@@ -1004,8 +1013,8 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.synced.bg).not.toMatch(/114,\s*201,\s*149/);
   expect(visual.syncing.animation).toContain('cloudSyncStatusPulse');
   expect(visual.activeBackground).not.toContain('gradient');
-  // O item ativo pode ser transparente: o preto visivel vem da sidebar.
-  expect(visual.activeColor==='rgba(0, 0, 0, 0)'?visual.sidebarFill:visual.activeColor).toMatch(/rgba?\(20,\s*20,\s*21/);
+  // V15.48.173-G: sidebar ativa deve usar preenchimento temático (sem degradê).
+  expect(visual.activeColor).not.toMatch(/^(?:rgba?\(0,\s*0,\s*0,\s*0\)|oklab\(0 0 0 \/ 0\))$/);
   expect(parseFloat(visual.activeMarkerWidth)).toBeGreaterThanOrEqual(1);
   expect(['flex','inline-flex']).toContain(visual.countDisplay);
   expect(visual.topbarBackdrop).not.toBe('none');
@@ -1124,7 +1133,7 @@ test('V15.38.0 [G] Por que este mapa explica a prioridade sem tooltip curto',asy
   await page.waitForFunction(()=>window.StudyPlanner&&typeof StudyPlanner.priorityExplanationRows==='function'&&typeof combinedMaps==='function'&&combinedMaps().length>0);
   const why=page.locator('[data-priority-why]');
   await expect(why).toBeVisible();
-  await expect(why).toHaveText('Por que este mapa?');
+  await expect(why).toContainText('Por que este mapa?');
   await why.click();
   const modal=page.locator('#priorityWhyModal');
   await expect(modal).toBeVisible();
@@ -5425,7 +5434,7 @@ test('V15.48.155 [D] popovers herdam a cor do mapa selecionado',async({page},tes
     return{before,after,bg:getComputedStyle(detail).backgroundImage,blur:getComputedStyle(detail).backdropFilter};
   });
   expect(pop.after).not.toBe(pop.before);
-  expect(pop.bg).toContain('gradient');
+  expect(pop.bg).toBe('none');
   expect(pop.blur).toContain('blur(');
   await command.locator('[data-dashboard-help]').click();
   await page.locator('#homeStudyDashboard [data-priority-why]').click();
@@ -5441,12 +5450,12 @@ test('V15.48.155 [D] popovers herdam a cor do mapa selecionado',async({page},tes
   });
   expect(priority.old).toBeTruthy();
   expect(priority.after).not.toBe(priority.before);
-  expect(priority.bg).toContain('gradient');
+  expect(priority.bg).toBe('none');
   expect(priority.blur).toContain('blur(');
   await modal.locator('[data-priority-why-close]').click();
 });
-test('V15.48.170 [D] plano diário preserva capas e bordas sem gradiente no fundo',async({page},testInfo)=>{
-  test.skip(testInfo.project.name!=='desktop-chromium','Cores e miniaturas específicas do Desktop');
+test('V15.48.173 [D] plano diário usa TAGs e bordas temáticas, sem gradiente no fundo',async({page},testInfo)=>{
+  test.skip(testInfo.project.name!=='desktop-chromium','Cores e TAGs específicas do Desktop');
   await page.setViewportSize({width:1600,height:900});
   await page.goto('/#home');
   await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
@@ -5456,45 +5465,42 @@ test('V15.48.170 [D] plano diário preserva capas e bordas sem gradiente no fund
   await expect(rows.first()).toBeVisible();
   expect(await rows.count()).toBeGreaterThanOrEqual(2);
   const results=await rows.evaluateAll(nodes=>nodes.slice(0,3).map((el,i)=>{
-    const img=el.querySelector('.study-plan-cover img'),style=getComputedStyle(el);
+    const tag=el.querySelector('.study-plan-cover--tag'),style=getComputedStyle(el);
     const before=style.borderLeftColor,stored=el.style.getPropertyValue('--map-accent');
     el.style.setProperty('--map-accent',i===0?'#1e83fa':'#ec6b38');
     const after=getComputedStyle(el).borderLeftColor;
     if(stored)el.style.setProperty('--map-accent',stored);else el.style.removeProperty('--map-accent');
-    return{fit:img?getComputedStyle(img).objectFit:'',cover:img?.getAttribute('src'),
+    return{tag:tag?.textContent?.trim()||'',hasImage:!!el.querySelector('.study-plan-cover img'),
       before,after,bg:getComputedStyle(el).backgroundImage};
   }));
-  expect(results.every(x=>x.fit==='contain')).toBe(true);
-  expect(results.every(x=>!!x.cover&&x.bg==='none')).toBe(true);
+  expect(results.every(x=>!!x.tag&&!x.hasImage)).toBe(true);
+  expect(results.every(x=>x.bg==='none')).toBe(true);
   expect(results.every(x=>x.before!==x.after)).toBe(true);
   expect(results[0].after).not.toBe(results[1].after);
 });
 
-test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prioridade',async({page})=>{
+test('V15.48.173 [G] Home preserva a capa Hoje, cor real e TAG da prioridade',async({page})=>{
   await page.goto('/#home');
   const root=page.locator('#homeStudyDashboard'),main=root.locator('.study-command-card'),priority=root.locator('.priority-now-card');
   await expect(main).toBeVisible();
   await expect(priority).toBeVisible();
   // Extrator cromático assíncrono: aguardar as imagens reais do mapa.
   await expect.poll(()=>main.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
-  const thumb=priority.locator('.priority-why-tile img');
-  if(await thumb.count())await expect.poll(()=>thumb.evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+  await expect(priority.locator('.priority-why-tile img')).toHaveCount(0);
   const verify=await page.evaluate(()=>{
     const main=document.querySelector('#homeStudyDashboard .study-command-card');
     const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
     const next=window.StudyCoach?.snapshot?.().items?.[0]||null,
       current=next?.kind==='map'&&next.key?mapById(next.key):null,
       priorityCode=priority.querySelector('.priority-now-code')?.textContent?.trim()||'';
-    const src=priority.querySelector('.priority-why-tile img')?.getAttribute('src')||'';
-    const matched=combinedMaps().find(m=>mapCover(m)===src&&(!priorityCode||m.code===priorityCode))
-      ||combinedMaps().find(m=>m.code===priorityCode);
+    const matched=combinedMaps().find(m=>m.code===priorityCode);
     const mainCover=current?mapCover(current):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
     const mainAccent=current?mapAccentValue(current):'';
     const priorityAccent=matched?mapAccentValue(matched):'';
     const derivedMainAccent=current?cachedCoverAccent(mainCover):'';
     const derivedPriorityAccent=matched?cachedCoverAccent(mapCover(matched)):'';
     const image=main.querySelector('.study-command-art img');
-    const priorityImage=priority.querySelector('.priority-why-tile img');
+    const priorityTag=priority.querySelector('.priority-why-tile .priority-why-code');
     const accent=(node)=>node.style.getPropertyValue('--map-accent').trim();
     const getColor=node=>getComputedStyle(node).borderTopColor;
     const renderedMainAccent=accent(main),renderedPriorityAccent=accent(priority);
@@ -5507,7 +5513,7 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
       mainAccent,renderedMainAccent,derivedMainAccent,
       priorityAccent,renderedPriorityAccent,derivedPriorityAccent,
       priorityCover:matched?mapCover(matched):'',
-      renderedPriorityCover:priorityImage?.getAttribute('src')||'',
+      renderedPriorityTag:priorityTag?.textContent?.trim()||'',priorityCode,
       hasPlannedMap:!!current,hasPriorityMap:!!matched,
       borderReactive:before!==after,priorityReactive:beforePriority!==afterPriority,
       mainProgressColor:getComputedStyle(main.querySelector('.study-command-progress>i')).backgroundColor,
@@ -5522,7 +5528,7 @@ test('V15.48.151 [G] Home usa a capa e a cor reais do mapa nos cards Hoje e Prio
   if(verify.hasPriorityMap){
     expect(verify.renderedPriorityAccent).toBe(verify.priorityAccent);
     if(verify.derivedPriorityAccent)expect(verify.renderedPriorityAccent).toBe(verify.derivedPriorityAccent);
-    expect(verify.renderedPriorityCover).toBe(verify.priorityCover);
+    expect(verify.renderedPriorityTag).toBe(verify.priorityCode);
   }
   expect(verify.borderReactive).toBe(true);
   expect(verify.priorityReactive).toBe(true);

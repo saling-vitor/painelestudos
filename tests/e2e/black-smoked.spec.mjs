@@ -1,9 +1,9 @@
 import {test,expect} from '@playwright/test';
 import {mkdirSync} from 'node:fs';
 
-/* V15.48.171-G · Conjunto optico global sem depender de login ou dados locais.
+/* V15.48.173-G · Conjunto optico global sem depender de login ou dados locais.
    Usa CSS computado em todas as plataformas Playwright, inclusive WebKit. */
-test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async({page})=>{
+test('Black Editorial [G] · fundo preto e contorno neutro dos mapas',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   await expect(page.locator('.topbar')).toBeVisible();
   const data=await page.evaluate(()=>{
@@ -38,22 +38,18 @@ test('Black Editorial [G] · fundo preto invariavel com bordas tematicas',async(
   expect(data.green.backgroundImage).toBe('none');
   expect(data.rose.backgroundColor).toBe(data.green.backgroundColor);
   expect(data.rose.backgroundColor).toMatch(/rgba?\(20,\s*20,\s*21/);
-  expect(data.rose.border).not.toBe(data.green.border);
+  expect(data.rose.border).toBe(data.green.border);
   expect(data.rose.filter).toContain('blur(');
   expect(data.topImage).not.toContain('gradient');
   expect(data.topColor).toBeTruthy();
   expect(data.hasActive).toBe(true);
   expect(data.navImage).not.toContain('gradient');
-  // No iPhone o item pode ser transparente: a barra preta já é o fundo.
-  // Em todos os casos a superficie visível deve continuar preta, nunca tingida.
-  if(data.navFill==='rgba(0, 0, 0, 0)'){
-    expect(data.dockFill).toMatch(/rgba?\((?:18|20),\s*(?:18|20),\s*(?:19|21)/);
-  }else{
-    expect(data.navFill).toMatch(/rgba?\(20,\s*20,\s*21/);
-  }
+  // O item ativo recebe a cor da seção em vidro; a barra/dock segue preta.
+  expect(data.navFill).not.toBe('rgba(0, 0, 0, 0)');
+  expect(data.navFill).not.toBe(data.topColor);
 });
 
-test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',async({page})=>{
+test('Black Editorial [G] · cards pretos, bordas neutras e botões temáticos',async({page})=>{
   await page.goto('/#home',{waitUntil:'domcontentloaded'});
   const actual=await page.evaluate(()=>{
     const host=document.querySelector('.app .content');
@@ -82,9 +78,11 @@ test('Black Editorial [G] · todos os cards pretos, cores nas bordas e botoes',a
     expect(green.image).toBe('none');
     expect(rose.card).toBe(green.card);
     expect(rose.card).toMatch(/rgba?\(20,\s*20,\s*21/);
-    expect(rose.edge).not.toBe(green.edge);
+    if(name==='simulation') expect(rose.edge).not.toBe(green.edge);
+    else expect(rose.edge).toBe(green.edge);
     expect(rose.actionMatched).toBe(true);
-    expect(rose.button,`Ação de ${name}: fundo preto invariável`).toBe(green.button);
+    if(name==='course') expect(rose.button,`Entrar de ${name}: preencher com a cor do curso`).not.toBe(green.button);
+    else expect(rose.button).toBe(green.button);
     expect(rose.ink).not.toBe(green.ink);
   }
 });
@@ -172,7 +170,8 @@ test('V15.48.171-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
     expect(rose.background,name+' preto não depende do HEX').toBe(green.background);
     expect(rose.image,name+' sem gradiente de cor').toBe('none');
     expect(green.image,name+' sem gradiente de cor').toBe('none');
-    expect(rose.border,name+' precisa conservar cor temática').not.toBe(green.border);
+    if(name==='map-card')expect(rose.border,name+' borda neutra').toBe(green.border);
+    else expect(rose.border,name+' cor semântica').not.toBe(green.border);
     expect(rose.title,name+' texto não muda com o HEX').toBe(green.title);
   }
   if(!result.isPhone){
@@ -180,7 +179,7 @@ test('V15.48.171-G [G] · sidebar, mapa, planejamento e textos seguem o contrato
     expect(result.side.blur).toContain('blur(');
     expect(result.side.image).toBe('none');
     if(result.selected){
-      expect(result.selected.bg).toMatch(/rgba?\(20,\s*20,\s*21/);
+      expect(result.selected.bg).not.toBe('rgba(0, 0, 0, 0)');
       expect(result.selected.image).toBe('none');
     }
   }
