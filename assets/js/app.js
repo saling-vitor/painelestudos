@@ -161,12 +161,12 @@
   function renderHomeEditorial(){
     const node=cardContainer('home','editorialHome','last');if(!node)return;
     const s=stateData();
-    if(!manualHome){
-      const past=s.rank.filter(x=>daysTo(x.date)<0);
-      if(s.session?.running)screen='sessao';
-      else if(past.length&&!s.rank.some(x=>daysTo(x.date)>=0))screen='pos';
-      else screen='hoje';
-    }
+    // Eventos prioritários têm precedência sobre a escolha manual anterior:
+    // a sessão em andamento e o primeiro dia após a prova não devem ficar escondidos.
+    const examJustFinished=s.rank.some(x=>daysTo(x.date)===-1&&!safe(()=>readExamStatuses()[x.course.id]?.completed,false));
+    if(s.session?.running||s.session?.active)screen='sessao';
+    else if(examJustFinished)screen='pos';
+    else if(!manualHome)screen='hoje';
     node.closest('.view').dataset.editorialMode=screen;
     node.innerHTML=homeHtml(s);
   }
@@ -405,7 +405,12 @@
   let pending=0;
   function schedule(){if(pending)return;pending=requestAnimationFrame(()=>{pending=0;renderActive()})}
   function goAction(kind,id){
-    if(kind==='nav'&&typeof nav==='function')nav(id);
+    if(kind==='home'){
+      const target=homeScreens.some(([key])=>key===id)?id:'hoje';
+      screen=target;manualHome=true;
+      if(state.view!=='home')nav('home');
+    }
+    else if(kind==='nav'&&typeof nav==='function')nav(id);
     else if(kind==='course'&&typeof openCourse==='function')openCourse(id);
     else if(kind==='map'&&typeof openMap==='function')Promise.resolve(openMap(id)).catch(err=>safe(()=>toast(err.message),null));
     else if(kind==='study')safe(()=>StudyPlanner?.showTimePlan?.(30)||StudyDashboard?.start?.(),null);
