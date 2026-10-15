@@ -160,7 +160,10 @@
     return tab+content;
   }
   function renderHomeEditorial(){
-    const node=cardContainer('home','editorialHome','last');if(!node)return;
+    const node=cardContainer('home','editorialHome');if(!node)return;
+    // A ficha editorial é a porta de entrada do Início; a Home operacional
+    // continua disponível abaixo dela, preservando controles e dados atuais.
+    if(node.parentElement?.firstElementChild!==node)node.parentElement?.prepend(node);
     const s=stateData();
     // Eventos prioritários têm precedência sobre a escolha manual anterior:
     // a sessão em andamento e o primeiro dia após a prova não devem ficar escondidos.
