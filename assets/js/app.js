@@ -99,6 +99,27 @@
         fragment('Hoje',minText(todaySeconds()),'Tempo registrado')+
         fragment('Revisões',due+' mapas',reviewTopics+' tópicos marcados REV'));
       content+=box('Próxima ação',items.length?'<p>'+escapeHtml(items[0].title||items[0].label||'Estudo planejado')+'</p><p class="pr-muted">'+escapeHtml(items[0].reason||'Sugerido pelo planejamento existente')+'</p>'+action('Iniciar estudo','study','','pr-primary'):blank('Sem ação planejada. Use a Agenda ou abra um mapa para começar.'));
+      // A régua só lê atividades cadastradas; eventos legados sem início
+      // não recebem horário estimado.
+      const todayKey=dayKey(new Date()),dayEvents=(s.dashboard.agenda||[])
+        .filter(x=>!x.deleted&&x.date===todayKey)
+        .sort((a,b)=>(a.start||'99:99').localeCompare(b.start||'99:99'));
+      const dailyTarget=Math.max(0,num(s.dashboard.goals?.dailyMinutes));
+      const actualMinutes=Math.floor(Math.max(0,num(todaySeconds()))/60);
+      const now=new Date(),currentHour=now.getHours()+now.getMinutes()/60;
+      const ruler='<div class="pr-day-ruler" aria-label="Linha horária de 0 a 24 horas">'+
+        '<span class="pr-day-ruler-fill" style="width:'+Math.max(0,Math.min(100,Math.round(currentHour/24*100)))+'%"></span>'+
+        Array.from({length:7},(_,i)=>'<span class="pr-day-tick"><b>'+String(i*4).padStart(2,'0')+'h</b></span>').join('')+'</div>';
+      const timeline=dayEvents.length?dayEvents.map(x=>
+        '<div class="pr-course-line"><div><strong>'+escapeHtml(x.title||'Estudo previsto')+'</strong><small>'+
+        (x.start?escapeHtml(x.start)+' · ':'Sem horário registrado · ')+
+        num(x.minutes)+' min planejados</small></div></div>'
+      ).join(''):blank('Nenhum estudo com horário cadastrado para hoje.');
+      const targetText=dailyTarget?
+        'Meta: '+dailyTarget+' min · registrados: '+actualMinutes+' min · faltam '+Math.max(0,dailyTarget-actualMinutes)+' min.':
+        'Tempo registrado hoje: '+actualMinutes+' min. Não há meta diária configurada.';
+      content+=box('Régua do dia',ruler+'<p class="pr-note">'+escapeHtml(targetText)+'</p>'+timeline+
+        action('Abrir Agenda','nav','agenda'));
       content+=box('Planta do edital',exam&&getCourseMaps(s,exam.course).length?mapRows(getCourseMaps(s,exam.course),30)+action('Abrir concurso','course',exam.course.id):blank('Nenhum mapa disponível para este concurso.'));
       content+=box('Continuidade',action('Abrir Agenda','nav','agenda')+' '+action('Consultar revisões','home','revisoes')+' '+action('Ver meus cursos','nav','courses'));
     }else if(screen==='todos'){
@@ -151,7 +172,7 @@
         return '<div class="pr-course-line"><div><strong>'+escapeHtml(x.course.title||'Concurso')+'</strong><small>Prova em '+escapeHtml(shortDate(x.date))+
           ' · '+(registered?'Marcada como realizada':'Conferência pendente')+' · gabarito oficial deve ser conferido na fonte da banca</small></div>'+
           action(registered?'Desmarcar realizada':'Marcar realizada','exam-status',x.course.id)+
-          action('Gerenciar','manage-course',x.course.id)+'</div>';
+          action('Arquivar','archive-course',x.course.id)+action('Gerenciar','manage-course',x.course.id)+'</div>';
       }).join(''):blank('Quando a data de uma prova passar, o concurso aparecerá aqui.'));
       if(done.length)content+=box('Concursos arquivados',done.map(c=>'<div class="pr-course-line"><strong>'+escapeHtml(c.title||'Concurso')+'</strong>'+
         action('Reativar','archive-course',c.id)+'</div>').join(''));
@@ -571,8 +592,13 @@
     }
     else if(kind==='archive-course'){
       const c=safe(()=>cloudCourseById(id),null);if(!c)return;
+      const archived=c.status==='archived';
       const apply=async()=>{state.adminCourseId=id;await toggleCourseArchive();schedule()};
-      if(typeof askConfirm==='function')askConfirm('Reativar concurso?',(c.title||'Concurso')+' voltará à lista de cursos ativos, preservando o histórico.',apply,'Reativar');
+      if(typeof askConfirm==='function')askConfirm(
+        archived?'Reativar concurso?':'Arquivar concurso?',
+        (c.title||'Concurso')+(archived?' voltará à lista de cursos ativos.':' deixará a lista ativa.')+
+        ' O histórico, os mapas, as respostas e os arquivos permanecem preservados.',
+        apply,archived?'Reativar':'Arquivar');
     }
     else if(kind==='postpone-review'){
       const map=safe(()=>mapById(id),null);

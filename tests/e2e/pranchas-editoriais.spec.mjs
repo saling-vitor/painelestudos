@@ -275,3 +275,18 @@ test('Home [G][D+T+M] · a sessão automática não bloqueia escolha manual',asy
   await page.evaluate(()=>StudyDashboard.finish());
   await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toHaveAttribute('aria-pressed','true');
 });
+
+test('Home [G][D+T+M] · régua do dia não inventa horários',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#editorialHome')).toContainText('Régua do dia');
+  const lines=page.locator('#editorialHome .pr-day-tick');
+  await expect(lines).toHaveCount(7);
+  await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    StudyDashboard.addAgenda({date,title:'Sem horário no plano do dia E2E',minutes:25});
+    MeusMapasPranchas.refresh();
+  });
+  await expect(page.locator('#editorialHome')).toContainText('Sem horário no plano do dia E2E');
+  await expect(page.locator('#editorialHome')).toContainText('Sem horário registrado');
+});
