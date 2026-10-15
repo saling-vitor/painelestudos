@@ -180,22 +180,57 @@
   }
   function renderSimulationsEditorial(){
     const node=cardContainer('simulations','editorialSimulations');if(!node)return;
-    const s=stateData(),ss=simulations(),results=ss.map(sim=>({sim,result:safe(()=>simulationResult(sim),null),attempts:safe(()=>simulationAttemptsFor(sim),[])}));
+    const s=stateData(),ss=simulations();
+    const results=ss.map(sim=>({sim,key:safe(()=>simulationKey(sim),''),result:safe(()=>simulationResult(sim),null),attempts:safe(()=>simulationAttemptsFor(sim),[])}));
     const done=results.filter(x=>x.result),attempts=results.reduce((a,x)=>a+x.attempts.length,0);
     const current=done.slice().sort((a,b)=>Date.parse(b.result.finishedAt||0)-Date.parse(a.result.finishedAt||0))[0];
     const sw='<div class="pr-switch" role="group" aria-label="Simulados: lista ou resultado">'+[['lista','Lista'],['resultado','Resultado']].map(([key,label])=>'<button class="pr-switch-btn" data-pr-sim="'+key+'" aria-pressed="'+(simPresentation===key)+'">'+label+'</button>').join('')+'</div>';
-    let body=sw+header('Simulados · Ensaio de prova','Treino e resultados','Contabilização de tentativas efetivamente registradas no sistema.',
+    let body=sw+header('Simulados · Ensaio de prova','Treino e resultados','Respostas e tentativas efetivamente registradas; meta pessoal nunca é apresentada como corte oficial.',
       fragment('Disponíveis',String(ss.length))+
       fragment('Com resultado',String(done.length))+
       fragment('Tentativas',String(attempts))+
-      fragment('Último resultado',current&&current.result.score!=null&&Number.isFinite(Number(current.result.score))?String(current.result.score):'—','Conforme registro original'));
+      fragment('Última nota',current&&current.result.score!=null?String(current.result.score)+'%':'—','Registrada, sem estimativas'));
     if(simPresentation==='resultado'){
-      body+=box('Histórico real',done.length?done.map(x=>{
-        const r=x.result;
-        return '<div class="pr-course-line"><div><strong>'+escapeHtml(x.sim.title||x.sim.code||'Simulado')+'</strong><small>'+escapeHtml(r.finishedAt?new Date(r.finishedAt).toLocaleDateString('pt-BR'):'Data indisponível')+'</small></div><b>'+escapeHtml(r.correct!=null?String(r.correct)+' acertos':'Resultado salvo')+'</b>'+action('Histórico','simulation-history',safe(()=>simulationKey(x.sim),''))+'</div>';
-      }).join(''):blank('Nenhum resultado registrado. O gráfico de evolução ficará disponível após tentativas reais.'));
+      body+=box('Histórico real e disciplinas',done.length?done.map(x=>{
+        const r=x.result,sim=x.sim;
+        const metrics='<div class="pr-sim-metrics">'+
+          fragment('Nota',r.score!=null?Math.max(0,Math.min(100,num(r.score)))+'%':'—')+
+          fragment('Acertos',r.correct!=null?String(r.correct):'—')+
+          fragment('Erros',r.wrong!=null?String(r.wrong):'—')+
+          fragment('Em branco',r.blank!=null?String(r.blank):'—')+'</div>';
+        const sections=r.sections&&typeof r.sections==='object'?Object.entries(r.sections).filter(([_,v])=>num(v?.total)>0):[];
+        const disciplines=sections.length?'<div class="pr-sim-sections">'+sections.map(([name,raw])=>{
+          const total=Math.max(0,num(raw.total)),correct=Math.min(total,Math.max(0,num(raw.correct)));
+          return '<div class="pr-sim-section"><span>'+escapeHtml(name)+'</span><span class="pr-line"><i style="width:'+Math.round(correct/total*100)+'%"></i></span><b>'+correct+'/'+total+'</b></div>';
+        }).join('')+'</div>':blank('A última tentativa não possui divisão por disciplina registrada.');
+        const errors=Array.isArray(r.mistakes)?r.mistakes:[];
+        const errorHtml=errors.length?'<details class="pr-sim-errors"><summary>'+errors.length+' questões registradas para recuperar</summary>'+
+          errors.slice(0,15).map(item=>'<div class="pr-sim-error"><b>Questão '+escapeHtml(item.number||'—')+' · '+escapeHtml(item.topic||item.section||'Sem categoria')+'</b><p>'+escapeHtml(item.stem||'Enunciado indisponível')+'</p>'+(item.answer?'<small>Gabarito registrado: '+escapeHtml(item.answer)+'</small>':'')+'</div>').join('')+
+          '</details>':blank('Nenhuma questão errada individualizada nesta tentativa.');
+        const validAttempts=x.attempts.filter(a=>Number.isFinite(Number(a.score))).slice(0,10).reverse();
+        const trend=validAttempts.length?'<div class="pr-sim-trend" aria-label="Evolução de '+validAttempts.length+' tentativas">'+validAttempts.map((a,i)=>{
+          const v=Math.min(100,Math.max(0,num(a.score)));
+          return '<div title="Tentativa '+(i+1)+': '+v+'%"><i style="height:'+Math.max(2,v)+'%"></i><small>'+v+'%</small></div>';
+        }).join('')+'</div>':blank('Sem resultados suficientes para a evolução.');
+        const override=safe(()=>simulationOverride(sim),null),goal=override?.targetScore!=null&&Number.isFinite(Number(override.targetScore))?num(override.targetScore):null;
+        const official=sim.officialCutoff!=null&&sim.officialCutoffSource?num(sim.officialCutoff):null;
+        const benchmark='<div class="pr-sim-benchmark">'+
+          '<div><span>Meta pessoal</span><b>'+(goal==null?'Não configurada':goal+'%')+'</b>'+action('Alterar meta','goal',x.key)+'</div>'+
+          '<div><span>Corte oficial</span><b>'+(official==null?'Não informado':official+'%')+'</b><small>'+(official==null?'Sem fonte oficial cadastrada':escapeHtml(sim.officialCutoffSource))+'</small></div></div>';
+        return '<article class="pr-sim-report"><div class="pr-sim-report-head"><div><strong>'+escapeHtml(sim.title||sim.code||'Simulado')+'</strong>'+
+          '<small>'+escapeHtml(r.finishedAt?new Date(r.finishedAt).toLocaleDateString('pt-BR'):'Data indisponível')+' · '+x.attempts.length+' tentativa(s)</small></div>'+
+          action('Histórico completo','simulation-history',x.key)+'</div>'+metrics+benchmark+
+          '<h4>Desempenho por disciplina</h4>'+disciplines+'<h4>Evolução observada</h4>'+trend+
+          '<h4>Erros que geram recuperação</h4>'+errorHtml+action('Abrir caderno de erros','review-errors',x.key)+'</article>';
+      }).join(''):blank('Nenhum resultado registrado. Conclua um simulado para visualizar tentativas, erros e desempenho.'));
     }else{
-      body+=box('Próximas provas e simulados',ss.length?ss.slice(0,30).map(sim=>'<div class="pr-course-line"><div><strong>'+escapeHtml(sim.code||'SIM')+' · '+escapeHtml(sim.title||'Simulado')+'</strong><small>'+escapeHtml(sim.board||'Banca não informada')+' · '+escapeHtml(safe(()=>simulationDurationLabel(sim.durationMinutes||sim.duration),''))+'</small></div>'+action('Abrir','simulation',safe(()=>simulationKey(sim),''))+'</div>').join(''):blank('Nenhum simulado disponível para os concursos cadastrados.'));
+      body+=box('Simulados por concurso',ss.length?ss.slice(0,40).map(sim=>{
+        const key=safe(()=>simulationKey(sim),''),
+          latest=safe(()=>simulationResult(sim),null);
+        return '<div class="pr-course-line"><div><strong>'+escapeHtml(sim.code||'SIM')+' · '+escapeHtml(sim.title||'Simulado')+'</strong><small>'+escapeHtml(sim.board||'Banca não informada')+
+         (latest?' · '+escapeHtml(latest.correct!=null?latest.correct+' acertos registrados':'Concluído'):' · A iniciar')+'</small></div>'+
+         action(latest?'Consultar':'Iniciar','simulation',key)+'</div>';
+      }).join(''):blank('Nenhum simulado disponível para os concursos cadastrados.'));
     }
     node.innerHTML=body;
   }
@@ -343,6 +378,19 @@
     else if(kind==='manage-course'&&typeof openCourseAdminFor==='function')openCourseAdminFor(id);
     else if(kind==='simulation'&&typeof openSimulation==='function')openSimulation(id);
     else if(kind==='simulation-history'&&typeof openSimulationHistory==='function')openSimulationHistory(id);
+    else if(kind==='goal'){
+      const simulation=safe(()=>simulationByKey(id),null);
+      if(!simulation)return;
+      const current=safe(()=>simulationOverride(simulation)?.targetScore,null);
+      const answer=window.prompt('Meta pessoal de acerto (0–100%). Não é nota de corte oficial.',current==null?'80':String(current));
+      if(answer===null)return;
+      const raw=answer.trim().replace(',','.');
+      if(!/^(?:100(?:\.0+)?|\d{1,2}(?:\.\d+)?)$/.test(raw))return safe(()=>toast('Digite uma meta entre 0 e 100%.'),null);
+      patchSimulationOverride(simulation,{targetScore:Number(raw)});
+      safe(()=>touchPreferences(),null);
+      schedule();
+    }
+    else if(kind==='review-errors')nav('errors');
     else if(kind==='move-agenda'){
       const row=StudyDashboard?.exportData?.().agenda?.find(item=>item.id===id&&!item.deleted);
       if(!row)return;
