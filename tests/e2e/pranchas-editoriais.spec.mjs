@@ -1,7 +1,19 @@
 import {test,expect} from '@playwright/test';
+// Respeita a janela de novidades da aplicação em vez de desligá-la ou forçar cliques
+// através de um modal. O teste confirma seu controle de encerramento real.
+async function enter(page,view){
+  await page.goto('/#'+view);
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  const modal=page.locator('#whatsNewModal');
+  if(await modal.evaluate(el=>el.classList.contains('open'))){
+    await page.locator('#whatsNewAccept').click();
+    await expect(modal).not.toHaveClass(/open/);
+  }
+}
+
 /* Contrato E2E das sete pranchas, executável sem dados de demonstração. */
 test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({page})=>{
-  await page.goto('/#home');
+  await enter(page,'home');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
   const sections=[
     ['home','editorialHome'],
@@ -20,7 +32,7 @@ test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({
   }
 });
 test('Cinco telas da Home [G][T+M] · seleção não cria sessão paralela',async({page})=>{
-  await page.goto('/#home');
+  await enter(page,'home');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
   const buttons=page.locator('#editorialHome [data-pr-home]');
   await expect(buttons).toHaveCount(5);
@@ -39,7 +51,7 @@ test('Cinco telas da Home [G][T+M] · seleção não cria sessão paralela',asyn
   expect(consistency.timer).toBeLessThanOrEqual(1);
 });
 test('Biblioteca [G][T+M] · visualizações mantêm filtros existentes',async({page})=>{
-  await page.goto('/#maps');
+  await enter(page,'maps');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
   await expect(page.locator('#editorialMaps')).toBeVisible();
   for(const kind of ['lista','agrupado','grade']){
@@ -51,7 +63,7 @@ test('Biblioteca [G][T+M] · visualizações mantêm filtros existentes',async({
   await expect(page.locator('#allMaps')).toBeAttached();
 });
 test('Progresso [G][T+M] · observação sem histórico inventado',async({page})=>{
-  await page.goto('/#progress');
+  await enter(page,'progress');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
   await expect(page.locator('[data-view="progress"]')).toHaveClass(/active/);
   await expect(page.locator('#editorialProgress')).toBeVisible();
@@ -66,7 +78,7 @@ test('Progresso [G][T+M] · observação sem histórico inventado',async({page})
 
 
 test('Agenda [G][T+M] · horário persistente e compatibilidade dos itens antigos',async({page})=>{
-  await page.goto('/#agenda');
+  await enter(page,'agenda');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
   await expect(page.locator('#editorialAgenda')).toBeVisible();
   const detail=await page.evaluate(()=>{
@@ -85,7 +97,7 @@ test('Agenda [G][T+M] · horário persistente e compatibilidade dos itens antigo
 
 
 test('Agenda [G][T+M] · conflitos são somente sugeridos até confirmação',async({page})=>{
-  await page.goto('/#agenda');
+  await enter(page,'agenda');
   await expect(page.locator('#editorialAgenda')).toBeVisible();
   const ids=await page.evaluate(()=>{
     const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
@@ -104,7 +116,7 @@ test('Agenda [G][T+M] · conflitos são somente sugeridos até confirmação',as
   await expect.poll(()=>page.evaluate(ids=>ids.map(id=>StudyDashboard.exportData().agenda.find(r=>r.id===id)?.start),ids)).not.toEqual(initial);
 });
 test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',async({page})=>{
-  await page.goto('/#simulations');
+  await enter(page,'simulations');
   await expect(page.locator('#editorialSimulations')).toBeVisible();
   const exists=await page.evaluate(()=>{
     const s=combinedSimulations()[0];if(!s)return false;
@@ -120,7 +132,7 @@ test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',as
   await expect(page.locator('#editorialSimulations .pr-sim-benchmark')).toContainText('Não informado');
 });
 test('Mapas [G][T+M] · vínculo mantém HTML e isola namespace por concurso',async({page})=>{
-  await page.goto('/#maps');
+  await enter(page,'maps');
   await expect(page.locator('#editorialMaps')).toBeVisible();
   const data=await page.evaluate(async()=>{
     const source=combinedMaps().find(x=>x.storage_path);if(!source)return null;
@@ -145,7 +157,7 @@ test('Mapas [G][T+M] · vínculo mantém HTML e isola namespace por concurso',as
 
 
 test('Home [G][T+M] · sessão usa cronômetro original e um único estado',async({page})=>{
-  await page.goto('/#home');
+  await enter(page,'home');
   await expect(page.locator('#editorialHome')).toBeVisible();
   const before=await page.evaluate(()=>{
     StudyDashboard.start({mode:'free',label:'Cronômetro E2E',minutes:15});
@@ -158,7 +170,7 @@ test('Home [G][T+M] · sessão usa cronômetro original e um único estado',asyn
   await expect(page.locator('#editorialHome')).toContainText('Cronômetro de estudo');
 });
 test('Home [G][T+M] · marcação pós-prova persiste sem arquivar concurso',async({page})=>{
-  await page.goto('/#home');
+  await enter(page,'home');
   await expect(page.locator('#editorialHome')).toBeVisible();
   const course=await page.evaluate(()=>{
     const current=state.cloudCourses[0];if(!current)return null;
