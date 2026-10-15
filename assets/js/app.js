@@ -223,15 +223,16 @@
     const examJustFinished=s.rank.filter(x=>daysTo(x.date)===-1&&!safe(()=>readExamStatuses()[x.course.id]?.completed,false));
     const activeSession=!!(s.session?.running||s.session?.active);
     const homeContext=activeSession?'session':examJustFinished.length?'post:'+examJustFinished.map(x=>x.course.id).join(','):'normal';
+    const defaultHomeScreen=s.rank.some(x=>x.date)?'hoje':'todos';
     // O contexto altera a tela inicial SOMENTE quando muda. Uma seleção
     // manual continua operante, mesmo durante o timer ou no pós-prova.
     if(lastHomeContext!==homeContext){
       if(activeSession){screen='sessao';manualHome=false}
       else if(examJustFinished.length){screen='pos';manualHome=false}
-      else if(lastHomeContext==='session'||lastHomeContext?.startsWith('post:')){screen='hoje';manualHome=false}
-      else if(!manualHome)screen='hoje';
+      else if(lastHomeContext==='session'||lastHomeContext?.startsWith('post:')){screen=defaultHomeScreen;manualHome=false}
+      else if(!manualHome)screen=defaultHomeScreen;
       lastHomeContext=homeContext;
-    }else if(!manualHome&&homeContext==='normal')screen='hoje';
+    }else if(!manualHome&&homeContext==='normal')screen=defaultHomeScreen;
     node.closest('.view').dataset.editorialMode=screen;
     node.innerHTML=homeHtml(s);
   }
