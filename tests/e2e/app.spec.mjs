@@ -94,7 +94,7 @@ test('filtros de progresso não geram erro',async({page})=>{await page.goto('/#p
 test('simulados renderizam',async({page})=>{await page.goto('/#simulations');await expect(page.locator('#simulationGrid')).not.toBeEmpty()});
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
-test('[G] Black Smoked mantém topografia contínua sob cards translúcidos',async({page})=>{
+test('[G] Nanquim mantém topografia contínua sob cards sólidos',async({page})=>{
   await expect(page.locator('link[href*="topographic-environment-v15-43.css"]')).toHaveCount(1);
   await expect(page.locator('link[href*="design-system-v15-42.css"]')).toHaveCount(1);
   const visual=await page.evaluate(()=>{
@@ -116,7 +116,7 @@ test('[G] Black Smoked mantém topografia contínua sob cards translúcidos',asy
   expect(visual.topoRepeat).toBe('no-repeat');
   expect(visual.topoFilter).toBe('none');
   expect(visual.topoOpacity).toBeGreaterThan(0);
-  if(await page.locator('.map-card').count())expect(visual.mapBackdrop).toContain('blur(');
+  if(await page.locator('.map-card').count())expect(visual.mapBackdrop).toBe('none');
   else expect(visual.mapBackdrop).toBe('none');
   if(await page.locator('.side').isVisible())expect(visual.sideBackdrop).toContain('blur(');
 });
@@ -1022,7 +1022,7 @@ test('Etapa 3 [D+T] refina cabeçalho, sidebar e sincronização sem afetar o sm
   expect(visual.searchBackdrop).toBe('none');
   expect(visual.syncBackdrop).toBe('none');
   // V15.48.163-G: o shell e os controles usam preenchimento uniforme.
-  expect(visual.topbarBackground).not.toContain('gradient');
+  expect(visual.topbarBackground).toContain('radial-gradient');
   expect(visual.searchBackground).not.toContain('gradient');
   expect(visual.syncBackground).not.toContain('gradient');
   expect(visual.searchHeight).toBeLessThanOrEqual(40);
@@ -1521,7 +1521,7 @@ test('sistema glass mantém cards e controles na mesma família visual',async({p
       panelShadow:panel.boxShadow
     };
   });
-  expect(glass.metricBg).toContain('linear-gradient');
+  expect(glass.metricBg).toBe('none');
   // Painel fosco uniforme da identidade Black Smoked.
   expect(glass.panelBg).not.toContain('gradient');
   expect(glass.panelColor).not.toBe('rgba(0, 0, 0, 0)');
@@ -4231,6 +4231,9 @@ test('V15.48 [G] Black Editorial neutro aplica tokens e evita glass-on-glass',as
     const activeDock=document.querySelector('.bottom-nav>button.active');
     const readFilter=el=>el?(getComputedStyle(el).backdropFilter||getComputedStyle(el).webkitBackdropFilter||'none'):'missing';
     return{
+      nanquim:root.getPropertyValue('--nq-nanquim').trim(),
+      grafite:root.getPropertyValue('--nq-grafite-1').trim(),
+      latao:root.getPropertyValue('--nq-latao').trim(),
       bg:root.getPropertyValue('--mm-bg').trim().toUpperCase(),
       bgDeep:root.getPropertyValue('--mm-bg-deep').trim().toUpperCase(),
       surface1:root.getPropertyValue('--mm-surface-1').trim().toUpperCase(),
@@ -4244,12 +4247,9 @@ test('V15.48 [G] Black Editorial neutro aplica tokens e evita glass-on-glass',as
       dockActiveFilter:readFilter(activeDock)
     };
   });
-  expect(data.bg).toBe('#040404');
-  expect(data.bgDeep).toBe('#020202');
-  expect(data.surface1).toBe('#0B0B0B');
-  expect(data.regular).toBe('rgba(9,9,9,.60)');
-  expect(data.dense).toBe('rgba(8,8,8,.82)');
-  expect(data.clear).toBe('rgba(12,12,12,.24)');
+  expect(data.nanquim).toBe('#000000');
+  expect(data.grafite).toBe('#0a0a09');
+  expect(data.latao).toBe('#c3aa84');
   expect(data.searchFilter).toBe('none');
   expect(data.syncFilter).toBe('none');
   if(testInfo.project.name!=='iphone-webkit')expect(data.sideActiveFilter).toBe('none');
@@ -4310,7 +4310,7 @@ test('V15.48.169 [G] conteúdo em vidro fumê e fallbacks de acessibilidade exis
       hasFocusRule:css.includes(':focus-visible')
     };
   });
-  if(data.cardFilter!=='missing')expect(data.cardFilter).toContain('blur(');
+  if(data.cardFilter!=='missing')expect(data.cardFilter).toBe('none');
   expect(data.reducedTransparency).toBe(true);
   expect(data.moreContrast).toBe(true);
   expect(data.reducedMotion).toBe(true);
@@ -4754,7 +4754,7 @@ test('V15.48.2 [T+M] vidro de dock e topbar é translúcido, sem tarja',async({p
     // iPhone: o material óptico existente usa --mm-bar-alpha=.54–.66
     // durante a rolagem; a garantia é translucidez real, não alpha <.5.
     // iPad mantém seu limite anterior mais restritivo.
-    const maxAlpha=testInfo.project.name==='iphone-webkit'?.70:.50;
+    const maxAlpha=.79; // Vidro Nanquim: barra entre .58 e .78 inclusive durante scroll.
     expect(alpha(visual.dockBackground)).toBeLessThan(maxAlpha);
     expect(alpha(visual.topbarBackground)).toBeLessThan(maxAlpha);
     expect(visual.dockFilter).toContain('blur(');
@@ -4771,31 +4771,31 @@ test('V15.48.167-G [G] menu ativo tem cor temática; inativos marfim em Desktop/
   const icon=id=>menu(id).locator(':scope > .ui-icon');
   const label=id=>menu(id).locator(':scope > :is(.txt,.bottom-nav-label)');
   await expect(menu('home')).toHaveClass(/active/);
-  await expect(icon('home')).not.toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(icon('courses')).toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(label('courses')).toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(icon('maps')).toHaveCSS('color','rgb(207, 200, 188)');
+  await expect(icon('home')).not.toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(icon('courses')).toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(label('courses')).toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(icon('maps')).toHaveCSS('color','rgb(185, 178, 165)');
   if(testInfo.project.name==='desktop-chromium'){
     await menu('courses').hover();
-    await expect(icon('courses')).toHaveCSS('color','rgb(207, 200, 188)');
-    await expect(label('courses')).toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(icon('courses')).toHaveCSS('color','rgb(185, 178, 165)');
+    await expect(label('courses')).toHaveCSS('color','rgb(185, 178, 165)');
   }
   await menu('maps').click();
   await expect(menu('maps')).toHaveClass(/active/);
-  await expect(icon('maps')).not.toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(label('maps')).not.toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(icon('home')).toHaveCSS('color','rgb(207, 200, 188)');
-  await expect(label('home')).toHaveCSS('color','rgb(207, 200, 188)');
+  await expect(icon('maps')).not.toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(label('maps')).not.toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(icon('home')).toHaveCSS('color','rgb(185, 178, 165)');
+  await expect(label('home')).toHaveCSS('color','rgb(185, 178, 165)');
   if(testInfo.project.name==='iphone-webkit'){
     const more=page.locator('#mobileMenuBtn');
     await expect(more).toBeVisible();
-    await expect(more.locator(':scope > .ui-icon')).toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(more.locator(':scope > .ui-icon')).toHaveCSS('color','rgb(185, 178, 165)');
     await more.click();
     await expect(more).toHaveAttribute('aria-expanded','true');
-    await expect(more.locator(':scope > .ui-icon')).not.toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(more.locator(':scope > .ui-icon')).not.toHaveCSS('color','rgb(185, 178, 165)');
     const option=page.locator('.mobile-menu-option[data-mobile-sheet-nav="agenda"]');
-    await expect(option.locator('.ui-icon')).toHaveCSS('color','rgb(207, 200, 188)');
-    await expect(option.locator('b')).toHaveCSS('color','rgb(207, 200, 188)');
+    await expect(option.locator('.ui-icon')).toHaveCSS('color','rgb(185, 178, 165)');
+    await expect(option.locator('b')).toHaveCSS('color','rgb(185, 178, 165)');
   }
 });
 
@@ -5198,10 +5198,10 @@ test('[G] Smoked Liquid Glass das capas: teste DOM real em curso, mapa e favorit
       };
     });
     const base=await read();
-    expect(base.rgb[0], 'Controle real deve ter cor grafite, não preta').toBeGreaterThanOrEqual(42);
-    expect(base.rgb[0], 'Material grafite não deve ficar cinza claro').toBeLessThanOrEqual(58);
-    expect(base.alpha,'Controle real deve ter fundo com corpo').toBeGreaterThanOrEqual(backdropSupported?0.85:0.92);
-    expect(base.image,'Material conserva reflexo em gradiente').toContain('radial-gradient');
+    expect(base.rgb[0], 'Micro sobre capa usa nanquim preto').toBe(0);
+    expect(base.rgb[1], 'Micro sem desvio cromático').toBe(0);
+    expect(base.alpha,'Micro tem contraste adaptado para capas claras').toBeGreaterThanOrEqual(.78);
+    expect(base.image,'Micro não colore ou obscurece a capa com gradiente').toBe('none');
     expect(base.width,'Área do controle não reduzida').toBeGreaterThanOrEqual(36);
     expect(base.height,'Área do controle não reduzida').toBeGreaterThanOrEqual(36);
     if(finePointer){
