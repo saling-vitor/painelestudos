@@ -1,0 +1,40 @@
+/* MEUS MAPAS · Vidro Nanquim · materiais sem sobrescrever capas.
+   Uma camada óptica por superfície; conteúdo permanece sólido. */
+:root{
+ --nq-glass-rim:rgba(236,226,208,.10);
+ --nq-glass-rim-strong:rgba(236,226,208,.16);
+ --nq-glass-border:rgba(236,226,208,.08);
+ --nq-glass-lens:radial-gradient(120% 80% at 18% -10%,rgba(216,197,158,.07),transparent 60%);
+ --nq-glass-bar:rgba(5,5,5,.58);--nq-glass-bar-scrolled:rgba(5,5,5,.78);
+ --nq-glass-panel:rgba(8,8,7,.74);--nq-glass-controls:rgba(10,10,9,.62);
+ --nq-glass-micro:rgba(0,0,0,.40);
+ --nq-glass-bar-filter:blur(22px) saturate(140%);
+ --nq-glass-panel-filter:blur(28px) saturate(130%);
+ --nq-glass-controls-filter:blur(16px) saturate(135%);
+ --nq-glass-micro-filter:blur(10px) saturate(160%);
+ --nq-glass-ease:cubic-bezier(.2,.8,.2,1);
+ --nq-glass-duration:180ms;
+}
+/* Material classes; the portal’s existing selectors need migration before enabling.
+   .nq-material-bar: topbar, bottom-nav, reader toolbar.
+   .nq-material-panel: sidebar, modal, popover.
+   .nq-material-controls: floating grouped controls.
+   .nq-material-micro: cover actions only. */
+.nq-material-bar,.nq-material-panel,.nq-material-controls,.nq-material-micro{
+ border:1px solid var(--nq-glass-border);
+ box-shadow:inset 0 1px 0 var(--nq-glass-rim),inset 0 -1px 0 rgba(0,0,0,.55),0 10px 30px rgba(0,0,0,.45);
+}
+.nq-material-bar{background:var(--nq-glass-lens),var(--nq-glass-bar);-webkit-backdrop-filter:var(--nq-glass-bar-filter);backdrop-filter:var(--nq-glass-bar-filter)}
+.mm-scrolled .nq-material-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scrolled)}
+.nq-material-panel{background:var(--nq-glass-lens),var(--nq-glass-panel);-webkit-backdrop-filter:var(--nq-glass-panel-filter);backdrop-filter:var(--nq-glass-panel-filter)}
+.nq-material-controls{background:var(--nq-glass-lens),var(--nq-glass-controls);-webkit-backdrop-filter:var(--nq-glass-controls-filter);backdrop-filter:var(--nq-glass-controls-filter)}
+.nq-material-micro{background:var(--nq-glass-micro);border-color:var(--nq-glass-rim-strong);-webkit-backdrop-filter:var(--nq-glass-micro-filter);backdrop-filter:var(--nq-glass-micro-filter)}
+.nq-material-solid{background:var(--nq-surface-card);border:1px solid var(--nq-linha);-webkit-backdrop-filter:none;backdrop-filter:none}
+.nq-material-bar :is(input,select,button),.nq-material-controls :is(input,select,button){-webkit-backdrop-filter:none;backdrop-filter:none}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ .nq-material-bar,.nq-material-panel,.nq-material-controls,.nq-material-micro{background:#0b0a09;-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+ .nq-material-bar,.nq-material-panel,.nq-material-controls,.nq-material-micro{background:#0b0a09}
+}
+@media (prefers-reduced-motion:reduce){.nq-material-bar,.nq-material-panel,.nq-material-controls,.nq-material-micro{transition:none;animation:none}}
