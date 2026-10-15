@@ -77,6 +77,8 @@ test('[G] Novo concurso continua exigindo confirmação explícita',async({page}
   // Aguarda a inicialização da Home antes de dispensar o modal de novidades:
   // no iPad o modal pode abrir depois do primeiro frame.
   await expect(page.locator('#newCourseBtn2')).toBeVisible();
+  // Espera o bootstrap concluir: em dispositivos lentos a novidade pode abrir depois do primeiro frame.
+  await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
   await page.evaluate(()=>{const modal=document.querySelector('#whatsNewModal');if(modal?.classList.contains('open'))closeModal('whatsNewModal')});
   const whatsNew=page.locator('#whatsNewModal');
   await expect(whatsNew).not.toHaveClass(/open/);
