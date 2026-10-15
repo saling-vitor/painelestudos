@@ -67,6 +67,36 @@
     const p=progress(m);
     return '<button class="pr-map-row" data-pr-action="map" data-pr-id="'+escapeHtml(mapId(m))+'"><span class="pr-folio">F'+String(i+1).padStart(2,'0')+'</span><span class="pr-map-title"><strong>'+escapeHtml(m.code||mapName(m))+'</strong><small>'+escapeHtml(mapName(m))+'</small></span><span class="pr-map-meter"><i style="width:'+pct(p)+'%"></i></span><b>'+escapeHtml(percent(p))+'</b></button>';
   }).join('');
+  const weightedEdital=(rows,limit=80)=>{
+    const visible=(rows||[]).slice(0,limit);
+    const count=visible.length;
+    if(!count)return blank('Nenhum mapa ou tópico cadastrado neste concurso.');
+    const hasWeight=visible.some(m=>num(m.topics)>0);
+    const segments=visible.map((m,i)=>{
+      const p=progress(m),w=hasWeight?Math.max(1,num(m.topics)||p.total||1):1;
+      const label=m.code||mapName(m),states=[p.done,p.review,p.difficult].map(v=>Math.max(0,num(v)));
+      return '<button type="button" class="pr-edital-lot" data-pr-action="map" data-pr-id="'+escapeHtml(mapId(m))+'" style="flex-grow:'+w+'">'+
+        '<span class="pr-lot-index">'+String(i+1).padStart(2,'0')+'</span><b>'+escapeHtml(label)+'</b>'+
+        '<span class="pr-lot-state" aria-hidden="true"><i style="width:'+pct(p)+'%"></i></span>'+
+        '<small>'+escapeHtml(num(p.total||m.topics)+' tópicos · '+percent(p))+'</small>'+
+        '<span class="pr-lot-tooltip">'+escapeHtml(mapName(m))+' · '+states.join('/')+' OK/REV/DIF</span></button>';
+    }).join('');
+    return '<div class="pr-edital-wrap"><div class="pr-edital-planta" role="group" aria-label="Planta do edital: cada lote proporcional ao número de tópicos">'+segments+'</div>'+
+      '<p class="pr-edital-legend">A largura de cada folha representa o número de tópicos. A barra indica a cobertura real de estudo; toque para abrir o mapa.</p></div>';
+  };
+  function dailyBlocks(s){
+    const day=dayKey(new Date()),real=(s.dashboard.agenda||[]).filter(x=>!x.deleted&&x.date===day);
+    const auto=real.length===0?(safe(()=>StudyCoach.snapshot().items,[])||[]):[];
+    const items=real.length?real.map(x=>({title:x.title||'Atividade',minutes:Math.max(0,num(x.minutes)),start:x.start||'',mapKey:x.mapKey,kind:x.kind||'study'})):
+      auto.map(x=>({title:x.title||x.map?.title||x.simulation?.title||x.reason||'Bloco de estudo',minutes:Math.max(0,num(x.minutes)),start:'',mapKey:x.key||'',kind:x.kind||'study'}));
+    const total=items.reduce((sum,item)=>sum+item.minutes,0);
+    if(!items.length)return blank('Ainda não há blocos planejados para hoje. Use a Agenda ou o planejamento para organizar seu tempo.');
+    return '<div class="pr-day-ruler" role="list">'+items.slice(0,12).map((item,i)=>
+      '<div class="pr-day-block" role="listitem" style="flex-grow:'+Math.max(1,item.minutes)+'"><span class="pr-lot-index">'+String(i+1).padStart(2,'0')+'</span>'+
+      '<b>'+escapeHtml(item.start?item.start+' · '+item.title:item.title)+'</b><small>'+Math.round(item.minutes)+' min'+(real.length?' · Agenda':' · Plano sugerido')+'</small></div>'
+    ).join('')+'</div><p class="pr-edital-legend">'+Math.round(total)+' minutos '+(real.length?'cadastrados na Agenda':'sugeridos pelo planejamento')+
+      '. Blocos sem horário definido não recebem horas artificiais.</p>';
+  };
   const todaySeconds=()=>safe(()=>StudyTime.today(),0);
   const minText=seconds=>Math.round(num(seconds)/60)+' min';
   const clockText=seconds=>{const v=Math.max(0,Math.floor(num(seconds))),h=Math.floor(v/3600),m=Math.floor(v/60)%60,x=v%60;return[h,m,x].map(n=>String(n).padStart(2,'0')).join(':')};
@@ -120,7 +150,8 @@
         'Tempo registrado hoje: '+actualMinutes+' min. Não há meta diária configurada.';
       content+=box('Régua do dia',ruler+'<p class="pr-note">'+escapeHtml(targetText)+'</p>'+timeline+
         action('Abrir Agenda','nav','agenda'));
-      content+=box('Planta do edital',exam&&getCourseMaps(s,exam.course).length?mapRows(getCourseMaps(s,exam.course),30)+action('Abrir concurso','course',exam.course.id):blank('Nenhum mapa disponível para este concurso.'));
+      content+=box('Régua do dia',dailyBlocks(s));
+      content+=box('Planta do edital',exam&&getCourseMaps(s,exam.course).length?weightedEdital(getCourseMaps(s,exam.course),35)+action('Abrir concurso','course',exam.course.id):blank('Nenhum mapa disponível para este concurso.'));
       content+=box('Continuidade',action('Abrir Agenda','nav','agenda')+' '+action('Consultar revisões','home','revisoes')+' '+action('Ver meus cursos','nav','courses'));
     }else if(screen==='todos'){
       content=header('02 · Visão geral','Todos os concursos',s.cs.length+' concursos e '+s.ms.length+' mapas, calculados a partir da biblioteca cadastrada.',
@@ -214,7 +245,7 @@
       fragment('Concursos',String(s.cs.length))+
       fragment('Mapas',String(s.ms.length))+
       fragment('Cobertura total',percent(s.all),s.all.marked+' de '+s.all.total+' tópicos'))+
-      box('Concursos por prioridade',list.map(row=>'<div class="pr-course-line"><div><strong>'+escapeHtml(row.c.title||'Concurso')+'</strong><small>'+escapeHtml(row.date?shortDate(row.date):'Sem data de prova')+' · '+escapeHtml(row.c.status==='archived'?'Arquivado':statusText(row.p))+'</small></div><span class="pr-line"><i style="width:'+pct(row.p)+'%"></i></span><b>'+percent(row.p)+'</b>'+action('Entrar','course',row.c.id)+'</div>').join('')||blank('Entre na conta ou crie um concurso para começar.'));
+      box('Concursos por prioridade',list.map(row=>'<div class="pr-course-entry"><div class="pr-course-line"><div><strong>'+escapeHtml(row.c.title||'Concurso')+'</strong><small>'+escapeHtml(row.date?shortDate(row.date):'Sem data de prova')+' · '+escapeHtml(row.c.status==='archived'?'Arquivado':statusText(row.p))+'</small></div><span class="pr-line"><i style="width:'+pct(row.p)+'%"></i></span><b>'+percent(row.p)+'</b>'+action('Entrar','course',row.c.id)+'</div>'+weightedEdital(getCourseMaps(s,row.c),40)+'</div>').join('')||blank('Entre na conta ou crie um concurso para começar.'));
   }
   function renderCourseEditorial(){
     const node=cardContainer('course','editorialCourse','last');if(!node)return;
@@ -226,7 +257,7 @@
       fragment('Prova',shortDate(date),date?(daysTo(date)<0?'Realizada':daysTo(date)+' dias'):'Data não cadastrada')+
       fragment('Mapas',String(list.length),list.filter(m=>progress(m).pending===0&&progress(m).total>0).length+' concluídos')+
       fragment('Revisões',String(p.review),'Estados REV'))+
-      box('Planta do edital e número das folhas',list.length?mapRows(list,100):blank('Nenhum mapa associado.'))+
+      box('Planta do edital e número das folhas',weightedEdital(list,100)+mapRows(list,100)) +
       '<div class="pr-course-controls">'+switcher+'</div>';
   }
   function renderMapsEditorial(){
@@ -377,7 +408,7 @@
         fragment('Realizado',actualMinutes+' min','Tempo de estudo registrado · todos os concursos')+
         fragment('Diferença',Math.round(plannedMinutes-actualMinutes)+' min','Planejado menos realizado · sem projetar sessões')+
         fragment('Dúvidas registradas',String(doubts.length),'No diário de dúvidas do aplicativo'))+
-      box('Planta do edital',rows.length?mapRows(rows,40):blank('Nenhum mapa disponível.'))+
+      box('Planta do edital',weightedEdital(rows,40)+mapRows(rows,40))+
       box('Próximas prioridades',safe(()=>StudyPlanner.priorityRows(),[]).slice(0,3).map(row=>'<div class="pr-course-line"><div><b>'+escapeHtml(mapName(row.map))+'</b><small>'+escapeHtml((row.reasons||[]).join(' · ')||'Prioridade do planejamento')+'</small></div>'+action('Estudar','map',mapId(row.map))+'</div>').join('')||blank('Sem recomendações calculadas.'));
   }
   let agendaFocusDay=new Date(),agendaPresentation='semana';
