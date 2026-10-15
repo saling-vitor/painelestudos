@@ -210,6 +210,24 @@
     // O seletor editorial não modifica filtros nativos durante render.
     // Alterações em filtros/agrupamentos são feitas apenas por ação explícita do usuário.
   }
+  function recommendedSimDay(sim){
+    const duration=Math.max(0,Math.round(num(sim.durationMinutes||sim.duration_minutes)));
+    const exam=courseDate(safe(()=>courseById(sim.courseId),null));
+    if(!duration||!exam||daysTo(exam)==null||daysTo(exam)<1)return null;
+    const cfg=safe(()=>StudyPlanner.settings(),{}),
+      allowed=Array.isArray(cfg.availableDays)?cfg.availableDays:null,
+      maxDaily=Math.max(0,num(cfg.maxDailyMinutes)),
+      rows=safe(()=>StudyDashboard.exportData().agenda,[]).filter(x=>!x.deleted),
+      today=new Date();today.setHours(12,0,0,0);
+    for(let offset=0;offset<Math.min(100,Math.max(0,daysTo(exam)));offset++){
+      const day=new Date(today.getTime());day.setDate(day.getDate()+offset);
+      if(allowed&&!allowed.includes(day.getDay()))continue;
+      const date=dayKey(day),planned=rows.filter(x=>x.date===date).reduce((sum,x)=>sum+num(x.minutes),0);
+      if(maxDaily&&planned+duration>maxDaily)continue;
+      return{date,duration,planned,remaining:maxDaily?Math.max(0,maxDaily-planned-duration):null};
+    }
+    return null;
+  }
   function renderSimulationsEditorial(){
     const node=cardContainer('simulations','editorialSimulations');if(!node)return;
     const s=stateData(),ss=simulations();
@@ -258,10 +276,13 @@
     }else{
       body+=box('Simulados por concurso',ss.length?ss.slice(0,40).map(sim=>{
         const key=safe(()=>simulationKey(sim),''),
-          latest=safe(()=>simulationResult(sim),null);
+          latest=safe(()=>simulationResult(sim),null),
+          suggestion=!latest?recommendedSimDay(sim):null;
         return '<div class="pr-course-line"><div><strong>'+escapeHtml(sim.code||'SIM')+' · '+escapeHtml(sim.title||'Simulado')+'</strong><small>'+escapeHtml(sim.board||'Banca não informada')+
-         (latest?' · '+escapeHtml(latest.correct!=null?latest.correct+' acertos registrados':'Concluído'):' · A iniciar')+'</small></div>'+
-         action(latest?'Consultar':'Iniciar','simulation',key)+'</div>';
+         (latest?' · '+escapeHtml(latest.correct!=null?latest.correct+' acertos registrados':'Concluído'):' · A iniciar')+
+         (suggestion?' · cabe em '+escapeHtml(shortDate(new Date(suggestion.date+'T12:00:00')))+' ('+suggestion.duration+' min)':'')+
+         (!latest&&!suggestion?' · sem janela confirmada antes da prova':'')+'</small></div>'+
+         (suggestion?action('Agendar','plan-sim',key):'')+action(latest?'Consultar':'Iniciar','simulation',key)+'</div>';
       }).join(''):blank('Nenhum simulado disponível para os concursos cadastrados.'));
     }
     node.innerHTML=body;
@@ -421,6 +442,28 @@
     else if(kind==='manage-course'&&typeof openCourseAdminFor==='function')openCourseAdminFor(id);
     else if(kind==='simulation'&&typeof openSimulation==='function')openSimulation(id);
     else if(kind==='simulation-history'&&typeof openSimulationHistory==='function')openSimulationHistory(id);
+    else if(kind==='plan-sim'){
+      const sim=safe(()=>simulationByKey(id),null),recommendation=sim?recommendedSimDay(sim):null;
+      if(!sim||!recommendation)return safe(()=>toast('Não há dia livre confirmado para este simulado antes da prova.'),null);
+      const raw=window.prompt('Escolha o horário de início em '+shortDate(new Date(recommendation.date+'T12:00:00'))+' (HH:MM). Nenhum compromisso será criado sem confirmação.','');
+      if(raw==null)return;
+      const hour=raw.trim();
+      if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(hour))return safe(()=>toast('Horário inválido. Use HH:MM.'),null);
+      const start=agendaMinutes(hour),end=start+recommendation.duration;
+      if(end>1440)return safe(()=>toast('A duração ultrapassa o fim do dia.'),null);
+      const agendas=safe(()=>StudyDashboard.exportData().agenda,[]).filter(x=>!x.deleted&&x.date===recommendation.date);
+      if(agendas.some(x=>{
+        const a=agendaMinutes(x.start||'19:00'),b=a+num(x.minutes);
+        return start<b&&end>a;
+      }))return safe(()=>toast('Já há um evento nesse intervalo. Escolha outro horário.'),null);
+      const label=(sim.code||'Simulado')+' · '+(sim.title||'Treino');
+      if(agendas.some(x=>x.title===label))return safe(()=>toast('Este simulado já está agendado neste dia.'),null);
+      const apply=()=>{
+        StudyDashboard.addAgenda({date:recommendation.date,start:hour,kind:'simulation',title:label,minutes:recommendation.duration});
+        safe(()=>toast('Simulado agendado para '+hour+'.'),null);schedule();
+      };
+      if(typeof askConfirm==='function')askConfirm('Agendar simulado?',label+' · '+shortDate(new Date(recommendation.date+'T12:00:00'))+', '+hour+' · '+recommendation.duration+' min. O evento será registrado na Agenda.',apply,'Agendar');
+    }
     else if(kind==='goal'){
       const simulation=safe(()=>simulationByKey(id),null);
       if(!simulation)return;
