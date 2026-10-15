@@ -53,7 +53,8 @@ test('[G] Home editorial: capa discreta e prioridade com vidro fumê', async ({ 
       reduced: matchMedia('(prefers-reduced-transparency: reduce)').matches
     };
   });
-  expect(glass.background).toContain('gradient');
+  expect(glass.background).toBe('none');
+  expect(glass.overlay).toBeTruthy();
   expect(glass.matte).not.toBe('rgba(0, 0, 0, 0)');
   if (glass.supportsGlass && !glass.reduced) expect(glass.backdrop).toContain('blur(26px)');
   if (createdFixture) await page.locator('#priorityWhyModal').evaluate(el => el.remove());
