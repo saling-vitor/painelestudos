@@ -9,13 +9,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Meus Mapas">
-<link rel="manifest" href="manifest-v15.23.6.webmanifest?v=15.48.174">
+<link rel="manifest" href="manifest-v15.23.6.webmanifest?v=15.48.176">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/brand/topographic-editorial-v1/icons/apple-touch-icon.png">
 <link rel="icon" type="image/x-icon" href="assets/brand/topographic-editorial-v1/icons/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/brand/topographic-editorial-v1/icons/favicon-32.png">
 <title>Meus Mapas · Abrindo mapa</title>
-<link rel="stylesheet" href="assets/css/design-system/nanquim-tokens.css?v=15.48.174">
-<link rel="stylesheet" href="assets/css/design-system/nanquim-typography.css?v=15.48.174">
+<link rel="stylesheet" href="assets/css/design-system/nanquim-tokens.css?v=15.48.176">
+<link rel="stylesheet" href="assets/css/design-system/nanquim-typography.css?v=15.48.176">
 <style>
 :root{--nq-reader-ink:#ece6da;--nq-reader-muted:#b9b2a5;--nq-reader-bg:#000000;--nq-reader-card:#0a0a09;--nq-reader-action:#c3aa84}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--nq-reader-bg);color:var(--nq-reader-ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
@@ -119,7 +119,16 @@ async function load(){
        :'Carregando mapa do aplicativo…';
      html=await loadBundledHtml(href);
    }
-   const storageId=slug(meta(html,'mindmap-storage-id'));
+   // Referência cruzada: o arquivo HTML é compartilhado, mas o namespace do
+   // progresso pertence a cada concurso. A alteração existe só em memória.
+   const requestedId=slug(p.get('storage-id')||'');
+   const originalId=slug(meta(html,'mindmap-storage-id'));
+   const storageId=requestedId||originalId;
+   if(requestedId&&requestedId!==originalId){
+     const tag=/<meta\b(?=[^>]*\bname\s*=\s*["']mindmap-storage-id["'])[^>]*>/i;
+     if(!tag.test(html))throw new Error('HTML do mapa não declara namespace de progresso.');
+     html=html.replace(tag,'<meta name="mindmap-storage-id" content="'+storageId+'">');
+   }
    if(storageId&&window.StudyCloud?.configured()&&StudyCloud.session()){
      status.textContent='Restaurando progresso e notas…';
      await Promise.all([
