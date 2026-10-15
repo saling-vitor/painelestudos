@@ -402,3 +402,24 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .pr-root .pr-sim-error p{font-size:12px;line-height:1.5;color:var(--pr-paper-2)}
 .pr-root .pr-sim-error small{font-size:12px;color:var(--pr-brass-light)}
 @media(max-width:620px){.pr-root .pr-sim-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.pr-root .pr-sim-metrics .pr-stat:nth-child(2){border-right:0}.pr-root .pr-sim-metrics .pr-stat:nth-child(-n+2){border-bottom:1px solid var(--pr-line)}.pr-root .pr-sim-benchmark{grid-template-columns:1fr}.pr-root .pr-sim-section{grid-template-columns:minmax(0,1fr) 70px}.pr-root .pr-sim-section .pr-line{display:none}}
+
+
+/* Agenda — Semana/Mês: dados reais, pigmentos de referência, nenhuma imagem decorativa */
+.pr-root .pr-agenda-verdict{font:500 13px/1.55 Archivo,Inter,sans-serif;color:var(--pr-paper-2);max-width:75ch;margin:0 0 12px}
+.pr-root .pr-agenda-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.pr-root .pr-agenda-week-day{min-width:0;min-height:170px;display:flex;flex-direction:column;align-items:stretch;text-align:left;gap:9px;padding:11px 9px;border-radius:9px;border:1px solid var(--pr-line);background:var(--pr-g1);cursor:pointer;color:var(--pr-paper)}
+.pr-root .pr-agenda-week-day b{font:700 12px/1.2 Archivo,Inter,sans-serif}
+.pr-root .pr-agenda-week-day small{font:500 11px/1.3 "IBM Plex Mono",monospace;color:var(--pr-paper-3)}
+.pr-root .pr-agenda-week-day.is-selected,.pr-root .pr-month-date.is-selected{border-color:var(--pr-brass);background:rgba(195,170,132,.09)}
+.pr-root .pr-agenda-week-day .pr-line{height:6px}
+.pr-root .pr-agenda-week-day .pr-exam-day{font:700 11px/1.25 "IBM Plex Mono",monospace;color:var(--pr-rust);overflow-wrap:anywhere}
+.pr-root .pr-agenda-day-subjects{font:500 11px/1.4 Archivo,Inter,sans-serif;color:var(--pr-paper-2);overflow-wrap:anywhere}
+.pr-root .pr-agenda-month{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.pr-root .pr-month-date{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:81px;padding:9px;min-width:0;border:1px solid var(--pr-line);border-radius:7px;background:var(--pr-g1);color:var(--pr-paper);cursor:pointer;text-align:left}
+.pr-root .pr-month-date.outside{opacity:.44}
+.pr-root .pr-month-date.has-exam{border-color:var(--pr-rust);background:rgba(184,97,78,.08)}
+.pr-root .pr-month-date b{font:700 13px/1.2 "IBM Plex Mono",monospace}
+.pr-root .pr-month-date span{font:700 10px/1.3 "IBM Plex Mono",monospace;color:var(--pr-rust);overflow-wrap:anywhere}
+.pr-root .pr-month-date small{font:500 10.5px/1.2 "IBM Plex Mono",monospace;color:var(--pr-paper-3)}
+@media(max-width:920px){.pr-root .pr-agenda-week{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){.pr-root .pr-agenda-week{grid-template-columns:repeat(2,minmax(0,1fr))}.pr-root .pr-agenda-week-day{min-height:125px}.pr-root .pr-agenda-month{gap:2px}.pr-root .pr-month-date{min-height:64px;padding:4px}.pr-root .pr-month-date b{font-size:11px}.pr-root .pr-month-date span,.pr-root .pr-month-date small{font-size:9px}}
