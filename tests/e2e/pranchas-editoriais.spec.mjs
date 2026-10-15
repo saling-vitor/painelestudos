@@ -53,6 +53,8 @@ test('Biblioteca [G][T+M] · visualizações mantêm filtros existentes',async({
 test('Progresso [G][T+M] · observação sem histórico inventado',async({page})=>{
   await page.goto('/#progress');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('[data-view="progress"]')).toHaveClass(/active/);
+  await expect(page.locator('#editorialProgress')).toBeVisible();
   const report=await page.evaluate(()=>{
     const rows=StudyDashboard.progressHistory();
     return {rows,total:MeusMapasPranchas.snapshot().ms.length,hasView:!!document.querySelector('#editorialProgress')};
@@ -66,6 +68,7 @@ test('Progresso [G][T+M] · observação sem histórico inventado',async({page})
 test('Agenda [G][T+M] · horário persistente e compatibilidade dos itens antigos',async({page})=>{
   await page.goto('/#agenda');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
   const detail=await page.evaluate(()=>{
     const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
     const item=StudyDashboard.addAgenda({date,title:'Sessão com horário E2E',minutes:35,start:'08:35'});
