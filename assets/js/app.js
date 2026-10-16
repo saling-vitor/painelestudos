@@ -581,7 +581,9 @@
       '<p class="pr-note" role="status">Atenção: '+invalidStorageMaps.length+
       ' mapa(s) da nuvem sem identificador válido de progresso ('+
       invalidStorageMaps.slice(0,5).map(m=>escapeHtml(m.code||m.title||'Sem código')).join(', ')+
-      '). O progresso desses mapas pode não aparecer. Confirme o namespace no HTML antes de corrigir o cadastro; nenhuma migração é automática.</p>':'';
+      '). O progresso desses mapas pode não aparecer. Confirme o namespace no HTML antes de corrigir o cadastro; nenhuma migração é automática.</p>'+
+      '<div class="pr-namespace-actions">'+invalidStorageMaps.slice(0,5).map(m=>
+        action('Verificar '+(m.code||'mapa'),'repair-storage',m._key||mapKey(m))).join('')+'</div>':'';
     const list=[['01','Conta e nuvem',session?'Conta conectada':'Sem sessão ativa','authStatus'],['02','Rotina de estudo','Meta: '+(num(goals.dailyMinutes)||'não configurada')+' min/dia','studyGoalsForm'],['03','Planejamento adaptativo','Prioridades e disponibilidade','plannerSettingsForm'],['04','Automação','Regras do planejamento','studyAutomationPanel'],['05','Backup e restauração','Cópias e restauração de dados','downloadBackupBtn'],['06','Aparelho e aplicativo',online?'Conectado à rede':'Sem conexão','appDiagnosticPanel'],['07','Administração','Operações protegidas','newCourseBtn2']];
     node.innerHTML=header('Configurações · Meus Mapas · Sistema',safe(()=>APP_VERSION_LABEL,'—'),'Os estados de nuvem e backup não são simulados. Consulte os diagnósticos reais nos controles abaixo.',
       fragment('Versão',safe(()=>APP_VERSION_LABEL,'—'))+
@@ -716,6 +718,9 @@
       const apply=()=>{StudyDashboard.updateAgenda(id,{start:suggested});safe(()=>toast('Sessão movida para '+suggested+'.'),null);schedule()};
       if(typeof askConfirm==='function')askConfirm('Reagendar sessão?',(row.title||'Sessão')+' será movida para '+suggested+'.',apply,'Reagendar');
       else if(window.confirm('Mover '+(row.title||'Sessão')+' para '+suggested+'?'))apply();
+    }
+    else if(kind==='repair-storage'){
+      Promise.resolve(requestRepairInvalidCloudMapStorageId(id)).catch(error=>safe(()=>toast(error?.message||'Falha ao verificar o identificador.'),null));
     }
     else if(kind==='setting'){
       const target=document.getElementById(id);
