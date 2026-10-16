@@ -574,6 +574,14 @@
     const session=safe(()=>StudyCloud.session(),null),online=navigator.onLine!==false,
       synced=!!session&&!state.cloudSyncError,meta=safe(()=>JSON.parse(localStorage.getItem('studyapp.cloudHealth')||'null'),null),
       goals=safe(()=>StudyDashboard.goals(),{}),last=meta?.at?new Date(meta.at).toLocaleString('pt-BR'):'Sem diagnóstico';
+    // Um storage_id inválido pode ocultar progresso já sincronizado. Expor
+    // diagnóstico não destrutivo; jamais inferir/migrar a chave automaticamente.
+    const invalidStorageMaps=session?safe(()=>maps().filter(m=>m.source==='cloud'&&!mapStorageNs(m)),[]):[];
+    const storageWarning=invalidStorageMaps.length?
+      '<p class="pr-note" role="status">Atenção: '+invalidStorageMaps.length+
+      ' mapa(s) da nuvem sem identificador válido de progresso ('+
+      invalidStorageMaps.slice(0,5).map(m=>escapeHtml(m.code||m.title||'Sem código')).join(', ')+
+      '). O progresso desses mapas pode não aparecer. Confirme o namespace no HTML antes de corrigir o cadastro; nenhuma migração é automática.</p>':'';
     const list=[['01','Conta e nuvem',session?'Conta conectada':'Sem sessão ativa','authStatus'],['02','Rotina de estudo','Meta: '+(num(goals.dailyMinutes)||'não configurada')+' min/dia','studyGoalsForm'],['03','Planejamento adaptativo','Prioridades e disponibilidade','plannerSettingsForm'],['04','Automação','Regras do planejamento','studyAutomationPanel'],['05','Backup e restauração','Cópias e restauração de dados','downloadBackupBtn'],['06','Aparelho e aplicativo',online?'Conectado à rede':'Sem conexão','appDiagnosticPanel'],['07','Administração','Operações protegidas','newCourseBtn2']];
     node.innerHTML=header('Configurações · Meus Mapas · Sistema',safe(()=>APP_VERSION_LABEL,'—'),'Os estados de nuvem e backup não são simulados. Consulte os diagnósticos reais nos controles abaixo.',
       fragment('Versão',safe(()=>APP_VERSION_LABEL,'—'))+
@@ -581,6 +589,7 @@
       fragment('Rede',online?'Online':'Offline')+
       fragment('Saúde da nuvem',last))+
       box('Índice de folhas',list.map(x=>'<button class="pr-index-row" data-pr-action="setting" data-pr-id="'+x[3]+'"><span class="pr-folio">'+x[0]+'</span><strong>'+escapeHtml(x[1])+'</strong><small>'+escapeHtml(x[2])+'</small><span aria-hidden="true">'+uiIcon('chevron-right','ui-icon-xs')+'</span></button>').join(''))+
+      storageWarning+
       '<p class="pr-note">Zona de risco: exclusões e restaurações continuam protegidas pelos controles e confirmações originais.</p>';
   }
   function renderActive(){
