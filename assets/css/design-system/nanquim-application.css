@@ -327,6 +327,12 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .view[data-view="home"][data-pr-manual-home="true"][data-editorial-mode="revisoes"] > :not(#editorialHome),
 .view[data-view="home"][data-pr-manual-home="true"][data-editorial-mode="sessao"] > :not(#editorialHome),
 .view[data-view="home"][data-pr-manual-home="true"][data-editorial-mode="pos"] > :not(#editorialHome){display:none!important}
+
+/* A tela "Todos" substitui o hero legado e o índice duplicado de cursos,
+   inclusive quando é a escolha automática na ausência de datas de prova.
+   Painel de estudo, revisões, Retomar e Simulados mantêm sua operação. */
+.view[data-view="home"][data-editorial-mode="todos"] > .hero,
+.view[data-view="home"][data-editorial-mode="todos"] > .home-courses-section{display:none!important}
 .view[data-view="maps"][data-pr-library-layout="lista"] #allMaps{display:flex;flex-direction:column;gap:12px}
 .view[data-view="maps"][data-pr-library-layout="lista"] #allMaps .map-card{width:100%;max-width:none}
 @media(max-width:820px){
