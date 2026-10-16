@@ -566,6 +566,56 @@ test('Configurações [G] · alerta sobre storage_id cloud inválido sem inventa
   expect(await page.evaluate(()=>mapStorageNs(state.cloudMaps[0]))).toBe('');
 });
 
+test('Configurações [G] · reparo de namespace exige HTML real e confirmação sem migrar progresso',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='repair-owner-e2e',path=owner+'/casan/sin-e2e.html';
+    state.cloudCourses=[{id:'casan-e2e',title:'Curso para reparo E2E',status:'active'}];
+    state.cloudMaps=[{id:'sin-repair-e2e',courseId:'casan-e2e',code:'SIN',
+      title:'Sintaxe E2E',storageId:'—',storage_path:path}];
+    window.__repairCalls={download:0,patch:0,read:0};
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.configured=()=>true;
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async requested=>{
+      window.__repairCalls.download++;
+      if(requested!==path)throw Error('Caminho do arquivo mudou');
+      return '<!doctype html><meta name="mindmap-storage-id" content="SIN Sintaxe E2E">'+
+        '<meta name="study-short-code" content="SIN"><body class="mindmap-app"></body>';
+    };
+    StudyCloud.rows=async(table,query)=>{
+      window.__repairCalls.read++;
+      if(table==='maps')return[{storage_id:'—',storage_path:path}];
+      if(table==='study_snapshots')return query.includes('mindmap_state')?[{storage_key:'mindmap_state::sin-sintaxe-e2e'}]:[];
+      throw Error('Tabela inesperada');
+    };
+    StudyCloud.patch=async(table,query,changes)=>{
+      if(table!=='maps'||changes.storage_id!=='sin-sintaxe-e2e'||!query.includes('id=eq.sin-repair-e2e'))
+        throw Error('Mutação fora do cadastro do mapa');
+      window.__repairCalls.patch++;
+      return[{id:'sin-repair-e2e',storage_id:changes.storage_id}];
+    };
+    loadCloud=async()=>{};
+    MeusMapasPranchas.refresh();
+  });
+  const verify=page.locator('#editorialSettings [data-pr-action="repair-storage"]');
+  await expect(verify).toBeVisible();
+  await expect(verify).toContainText('SIN');
+  await verify.click();
+  const dialog=page.locator('#confirmModal');
+  await expect(dialog).toHaveClass(/open/);
+  await expect(page.locator('#confirmText')).toContainText('sin-sintaxe-e2e');
+  await expect(page.locator('#confirmText')).toContainText('progresso registrado');
+  expect(await page.evaluate(()=>window.__repairCalls.patch)).toBe(0);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__repairCalls.patch)).toBe(1);
+  expect(await page.evaluate(()=>({
+    storage:state.cloudMaps[0].storageId,
+    downloaded:window.__repairCalls.download,
+    patches:window.__repairCalls.patch
+  }))).toEqual({storage:'sin-sintaxe-e2e',downloaded:1,patches:1});
+});
+
 test('Backup [G] · novos estados entram na exportação sem quebrar formato anterior',async({page})=>{
   await enter(page,'settings');
   const report=await page.evaluate(()=>{
