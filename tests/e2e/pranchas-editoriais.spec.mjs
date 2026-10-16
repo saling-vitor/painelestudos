@@ -354,6 +354,40 @@ test('Backup [G] · novos estados entram na exportação sem quebrar formato ant
   expect(report).toEqual({valid:true,schema:1,exam:true,goal:true,review:true,dashboard:true,courseLayout:true,sort:true});
 });
 
+test('Backup [G] · mesclagem e substituição ignoram chaves fora dos namespaces de mapas',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(async()=>{
+    const sensitive='studyapp.config.override',original='{"safe":"preserved-e2e"}';
+    localStorage.setItem(sensitive,original);
+    const data={
+      mapStates:{'studyapp.config.override':'{"safe":"overwritten"}','mindmap_state::safe-backup-e2e':'{"progress":5}'},
+      mapNotes:{'studyapp.lastMap':'forged-map','mindmap_notes::safe-backup-e2e':'{"text":"valid"}'},
+      modified:{'studyapp.config.override':'2026-10-15T10:00:00.000Z','mindmap_state::safe-backup-e2e':'2026-10-15T10:00:00.000Z'}
+    };
+    const backup={type:'meus-mapas-backup',schemaVersion:1,data};
+    await restoreStudyBackup(backup,{silent:true});
+    const merged={
+      configUnchanged:localStorage.getItem(sensitive)===original,
+      lastMapNotForged:localStorage.getItem('studyapp.lastMap')!=='forged-map',
+      mapRestored:localStorage.getItem('mindmap_state::safe-backup-e2e')==='{"progress":5}',
+      notesRestored:localStorage.getItem('mindmap_notes::safe-backup-e2e')==='{"text":"valid"}',
+      maliciousTimestampIgnored:localStorage.getItem('studyapp.modified::studyapp.config.override')===null
+    };
+    await restoreStudyBackup(backup,{replace:true,silent:true});
+    const replaced={
+      configUnchanged:localStorage.getItem(sensitive)===original,
+      lastMapNotForged:localStorage.getItem('studyapp.lastMap')!=='forged-map',
+      mapRestored:localStorage.getItem('mindmap_state::safe-backup-e2e')==='{"progress":5}',
+      notesRestored:localStorage.getItem('mindmap_notes::safe-backup-e2e')==='{"text":"valid"}',
+      maliciousTimestampIgnored:localStorage.getItem('studyapp.modified::studyapp.config.override')===null
+    };
+    return{merged,replaced};
+  });
+  const accepted={configUnchanged:true,lastMapNotForged:true,mapRestored:true,notesRestored:true,maliciousTimestampIgnored:true};
+  expect(report.merged).toEqual(accepted);
+  expect(report.replaced).toEqual(accepted);
+});
+
 test('Agenda [M] · abre em Dia e usa ícones Lucide PNG na navegação',async({page},info)=>{
   test.skip(info.project.name!=='iphone-webkit','Validação do padrão inicial de smartphone.');
   await enter(page,'agenda');
