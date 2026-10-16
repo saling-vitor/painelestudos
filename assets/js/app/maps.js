@@ -12,7 +12,46 @@ async function inspectInvalidCloudMapStorageId(key){
     meta=doc.querySelector('meta[name="mindmap-storage-id"]'),
     namespace=slug(meta?.content||''),
     declaredCode=slug(doc.querySelector('meta[name="study-short-code"]')?.content||'');
-  if(!namespace)throw new Error('O HTML não declara um identificador de progresso válido.');
+  if(!namespace){
+    // Não corrigir só o cadastro: a meta do próprio arquivo é inválida.
+    // Permitir somente um plano assistido, com cópia nova do HTML e sem
+    // migrar/substituir estados ou notas de quaisquer concursos.
+    if(!meta||!declaredCode||declaredCode!==slug(cloud.code))
+      throw new Error('O HTML tem namespace inválido e não confirma a sigla do mapa. Nenhuma alteração foi feita.');
+    const filter='user_id=eq.'+encodeURIComponent(me.id);
+    const used=await StudyCloud.rows('maps',filter+'&select=id,storage_id');
+    if(!Array.isArray(used)||used.length>=1000)
+      throw new Error('Não foi possível verificar todos os namespaces desta conta.');
+    const occupied=new Set(used.filter(row=>String(row.id)!==String(cloud.id))
+      .map(row=>slug(row.storage_id)).filter(Boolean));
+    const base='study-'+slug(cloud.code)+'-'+slug(cloud.courseId||cloud.course_id||'curso');
+    const snapshotFilter=filter+'&storage_key=eq.';
+    let proposed='';
+    for(let suffix=1;suffix<=50;suffix++){
+      const candidate=suffix===1?base:base+'-'+suffix;
+      if(!candidate||occupied.has(candidate)||
+        localStorage.getItem('mindmap_state::'+candidate)!==null||
+        localStorage.getItem('mindmap_notes::'+candidate)!==null)continue;
+      const [states,notes]=await Promise.all([
+        StudyCloud.rows('study_snapshots',snapshotFilter+encodeURIComponent('mindmap_state::'+candidate)+'&select=storage_key'),
+        StudyCloud.rows('study_snapshots',snapshotFilter+encodeURIComponent('mindmap_notes::'+candidate)+'&select=storage_key')
+      ]);
+      if(!Array.isArray(states)||!Array.isArray(notes))throw new Error('Não foi possível verificar os snapshots do namespace.');
+      if(!states.length&&!notes.length){proposed=candidate;break}
+    }
+    if(!proposed)throw new Error('Não há identificador livre confirmado. Nenhum arquivo foi alterado.');
+    // Um HTML V211 legado com meta inválida pode ter gravado progresso em
+    // "mapa-mental". Não atribuir esse estado genérico a um curso arbitrário.
+    const fallbackKeys=['mindmap_state::mapa-mental','mindmap_notes::mapa-mental'];
+    const generic=await Promise.all(fallbackKeys.map(storageKey=>
+      StudyCloud.rows('study_snapshots',filter+'&storage_key=eq.'+encodeURIComponent(storageKey)+'&select=storage_key')));
+    if(generic.some(rows=>!Array.isArray(rows)||rows.length)||
+      fallbackKeys.some(key=>localStorage.getItem(key)!==null))
+      throw new Error('Há estado legado com namespace genérico. Faça um backup e reconcilie os dados antes de corrigir este HTML.');
+    return{ownerId:me.id,mapId:cloud.id,path,previousId:String(cloud.storageId||''),
+      namespace:proposed,hasState:false,hasNotes:false,code:String(cloud.code||''),
+      html,repairHtml:true};
+  }
   if(declaredCode&&declaredCode!==slug(cloud.code))throw new Error('Código do HTML diverge do mapa cadastrado.');
   if(state.cloudMaps.some(row=>String(row.id)!==String(cloud.id)&&mapStorageNs(row)===namespace))
     throw new Error('O identificador já pertence a outro mapa. Nenhum progresso foi mesclado.');
