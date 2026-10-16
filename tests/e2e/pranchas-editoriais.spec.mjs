@@ -273,11 +273,23 @@ test('Home [G][D+T+M] · a sessão automática não bloqueia escolha manual',asy
   await page.evaluate(()=>MeusMapasPranchas.refresh());
   await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-editorial-mode','todos');
   await page.evaluate(()=>StudyDashboard.finish());
-  await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toHaveAttribute('aria-pressed','true');
+  // Ao terminar a sessão, o foco volta ao contexto correto: pós-prova quando
+  // existe prova de ontem pendente; caso contrário Hoje ou Todos.
+  const expected=await page.evaluate(()=>{
+    const data=MeusMapasPranchas.snapshot(),today=new Date(),
+      yesterday=new Date(today.getFullYear(),today.getMonth(),today.getDate()-1),
+      key=d=>d&&[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+    return data.rank.some(x=>key(x.date)===key(yesterday)&&!readExamStatuses()[x.course.id]?.completed)?'pos':
+      data.rank.some(x=>x.date)?'hoje':'todos';
+  });
+  await expect(page.locator('#editorialHome [data-pr-home="'+expected+'"]')).toHaveAttribute('aria-pressed','true');
 });
 
 test('Home [G][D+T+M] · régua do dia não inventa horários',async({page})=>{
   await enter(page,'home');
+  // A prova de ontem pode abrir Pós-prova automaticamente; selecionar Hoje
+  // é uma ação legítima e não modifica a agenda nem a sessão.
+  await page.locator('#editorialHome [data-pr-home="hoje"]').click();
   await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toHaveAttribute('aria-pressed','true');
   await expect(page.locator('#editorialHome')).toContainText('Régua do dia');
   const lines=page.locator('#editorialHome .pr-day-tick');
