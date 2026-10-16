@@ -133,7 +133,7 @@ test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',as
   const exists=await page.evaluate(()=>{
     const s=combinedSimulations()[0];if(!s)return false;
     const key=simulationKey(s);
-    const result={score:75,correct:45,wrong:10,blank:5,total:60,finishedAt:'2026-10-15T12:00:00.000Z',sections:{'Projeto Arquitetônico':{correct:8,total:10}},mistakes:[{number:6,topic:'Normas',stem:'Item de teste sem dados reais de produção',answer:'B'}]};
+    const result={score:75,correct:45,wrong:10,blank:5,total:60,finishedAt:'2026-10-15T12:00:00.000Z',sections:{'Projeto Arquitetônico':{correct:8,total:10}},mistakes:[{number:6,topic:'Normas',stem:'Item de teste sem dados reais de produção',answer:'B'}],questionResults:Array.from({length:60},(_,i)=>({number:i+1,status:i<45?'correct':i<55?'wrong':'blank',userAnswer:i<55?'A':'',answer:i<45?'A':'B',section:'Projeto Arquitetônico'}))};
     state.simResults[key]=result;state.simAttempts[key]=[result];MeusMapasPranchas.refresh();return true;
   });
   if(!exists){await expect(page.locator('#editorialSimulations')).toContainText('Nenhum simulado');return}
@@ -142,6 +142,9 @@ test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',as
   await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('Projeto Arquitetônico');
   await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('45');
   await expect(page.locator('#editorialSimulations .pr-sim-benchmark')).toContainText('Não informado');
+  await expect(page.locator('#editorialSimulations .pr-answer-q')).toHaveCount(60);
+  await page.locator('#editorialSimulations .pr-answer-q[data-pr-answer-question="46"]').click();
+  await expect(page.locator('#editorialSimulations .pr-answer-detail')).toContainText('Questão 46 · errada');
   await page.locator('#editorialSimulations [data-pr-action="review-errors"]').first().click();
   await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toHaveAttribute('open','');
   await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toContainText('Normas');
