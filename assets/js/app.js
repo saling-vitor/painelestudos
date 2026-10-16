@@ -247,6 +247,7 @@
       lastHomeContext=homeContext;
     }else if(!manualHome&&homeContext==='normal')screen=defaultHomeScreen;
     node.closest('.view').dataset.editorialMode=screen;
+    node.closest('.view').dataset.prManualHome=manualHome?'true':'false';
     node.innerHTML=homeHtml(s);
   }
   function renderCoursesEditorial(){
@@ -782,6 +783,13 @@
         const heading=root.querySelector('.pr-stamp h2');
         if(heading)heading.textContent=live;
       }
+    }
+    // Sincronizar a mudança de CONTEXTO sem remontar a Home a cada segundo.
+    // A sessão e o pós-prova permanecem estados automáticos distintos.
+    if(state.view==='home'&&typeof StudyDashboard!=='undefined'){
+      const active=StudyDashboard.active();
+      const isSession=!!(active?.running||active?.active);
+      if(isSession!==(lastHomeContext==='session'))schedule();
     }
   }).observe(timerNode,{subtree:true,childList:true,characterData:true});
   const observe=new MutationObserver(()=>{if(document.documentElement.classList.contains('app-ready')){schedule();observe.disconnect()}});
