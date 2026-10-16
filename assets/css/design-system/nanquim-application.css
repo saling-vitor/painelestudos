@@ -521,3 +521,19 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
  .view[data-view="agenda"] #editorialAgenda .pr-stamp-copy h2{font-size:clamp(58px,12vw,86px)}
  .view[data-view="settings"] #editorialSettings .pr-stamp-copy h2{font-size:clamp(31px,6.7vw,55px)}
 }
+
+/* Gabarito real por questão: cores semânticas, estados de foco e toque. */
+.pr-root .pr-answers-legend{display:flex;flex-wrap:wrap;gap:12px;font:500 11px/1.4 "IBM Plex Mono",monospace;color:var(--pr-paper-2)}
+.pr-root .pr-answers-legend span{display:inline-flex;align-items:center;gap:6px}
+.pr-root .pr-q-key{display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--pr-g3);border:1px solid var(--pr-line)}
+.pr-root .pr-q-key.is-correct{background:var(--pr-moss)}
+.pr-root .pr-q-key.is-wrong{background:var(--pr-rust)}
+.pr-root .pr-q-key.is-blank{background:var(--pr-g3)}
+.pr-root .pr-answer-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;min-width:0}
+.pr-root .pr-answer-q{min-width:0;min-height:35px;padding:4px 0;border:1px solid rgba(236,230,218,.12);border-radius:5px;background:var(--pr-g2);color:var(--pr-paper);font:600 11px/1 "IBM Plex Mono",monospace;cursor:pointer;touch-action:manipulation}
+.pr-root .pr-answer-q.is-correct{border-color:rgba(140,154,108,.5);background:rgba(140,154,108,.20)}
+.pr-root .pr-answer-q.is-wrong{border-color:rgba(184,97,78,.5);background:rgba(184,97,78,.20)}
+.pr-root .pr-answer-q.is-blank{background:var(--pr-g3);color:var(--pr-paper-2)}
+.pr-root .pr-answer-q.is-selected{outline:2px solid var(--pr-brass);outline-offset:1px}
+.pr-root .pr-answer-detail{min-height:38px;padding:10px 11px;border:1px solid var(--pr-line);border-radius:7px;color:var(--pr-paper-2);background:var(--pr-g0);font-size:12px;line-height:1.55}
+@media(max-width:560px){.pr-root .pr-answer-grid{gap:3px}.pr-root .pr-answer-q{font-size:10px;min-height:34px}}
