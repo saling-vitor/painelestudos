@@ -340,6 +340,15 @@
           fragment('Acertos',r.correct!=null?String(r.correct):'—')+
           fragment('Erros',r.wrong!=null?String(r.wrong):'—')+
           fragment('Em branco',r.blank!=null?String(r.blank):'—')+'</div>';
+        const answers=Array.isArray(r.questionResults)?r.questionResults.filter(q=>Number.isInteger(Number(q.number))&&Number(q.number)>0).slice(0,200):[];
+        const answerGrid=answers.length?
+          '<div class="pr-answers-legend"><span><i class="pr-q-key is-correct"></i>Certa</span><span><i class="pr-q-key is-wrong"></i>Errada</span><span><i class="pr-q-key is-blank"></i>Em branco</span></div>'+
+          '<div class="pr-answer-grid" role="group" aria-label="Gabarito questão a questão">'+answers.map(q=>{
+            const number=Math.trunc(Number(q.number)),status=['correct','wrong','blank'].includes(q.status)?q.status:'blank',
+              title='Questão '+number+' · '+(status==='correct'?'certa':status==='wrong'?'errada':'em branco');
+            return '<button type="button" class="pr-answer-q is-'+status+'" data-pr-answer-sim="'+escapeHtml(x.key)+'" data-pr-answer-question="'+number+'" title="'+escapeHtml(title)+'" aria-label="'+escapeHtml(title)+'">'+String(number).padStart(2,'0')+'</button>';
+          }).join('')+'</div><div class="pr-answer-detail" aria-live="polite">Toque em uma questão para consultar sua resposta e o gabarito registrado.</div>':
+          blank('Esta tentativa não possui respostas por questão armazenadas. A visão detalhada começa nas novas provas finalizadas.');
         const sections=r.sections&&typeof r.sections==='object'?Object.entries(r.sections).filter(([_,v])=>num(v?.total)>0):[];
         const disciplines=sections.length?'<div class="pr-sim-sections">'+sections.map(([name,raw])=>{
           const total=Math.max(0,num(raw.total)),correct=Math.min(total,Math.max(0,num(raw.correct)));
@@ -362,7 +371,7 @@
         return '<article class="pr-sim-report" data-pr-sim-key="'+escapeHtml(x.key)+'"><div class="pr-sim-report-head"><div><strong>'+escapeHtml(sim.title||sim.code||'Simulado')+'</strong>'+
           '<small>'+escapeHtml(r.finishedAt?new Date(r.finishedAt).toLocaleDateString('pt-BR'):'Data indisponível')+' · '+x.attempts.length+' tentativa(s)</small></div>'+
           action('Histórico completo','simulation-history',x.key)+'</div>'+metrics+benchmark+
-          '<h4>Desempenho por disciplina</h4>'+disciplines+'<h4>Evolução observada</h4>'+trend+
+          '<h4>Gabarito por questão</h4>'+answerGrid+'<h4>Desempenho por disciplina</h4>'+disciplines+'<h4>Evolução observada</h4>'+trend+
           '<h4>Erros que geram recuperação</h4>'+errorHtml+(errors.length?action('Ver questões erradas','review-errors',x.key):'')+'</article>';
       }).join(''):blank('Nenhum resultado registrado. Conclua um simulado para visualizar tentativas, erros e desempenho.'));
     }else{
@@ -721,10 +730,20 @@
     if(d.open)expandedSimErrors.add(id);else expandedSimErrors.delete(id);
   },true);
   document.addEventListener('click',event=>{
-    const b=event.target.closest('[data-pr-agenda-mode],[data-pr-agenda-pick],[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-courses-layout],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
+    const b=event.target.closest('[data-pr-answer-question],[data-pr-agenda-mode],[data-pr-agenda-pick],[data-pr-agenda-day],[data-pr-home],[data-pr-action],[data-pr-courses-layout],[data-pr-course-layout],[data-pr-library],[data-pr-sim],[data-pr-progress]');
     if(!b)return;
     event.preventDefault();
-    if(b.hasAttribute('data-pr-agenda-mode')){
+    if(b.hasAttribute('data-pr-answer-question')){
+      const key=b.dataset.prAnswerSim,number=Number(b.dataset.prAnswerQuestion),
+        item=safe(()=>simulationResult(key)?.questionResults?.find(q=>Number(q.number)===number),null),
+        root=b.closest('.pr-sim-report'),detail=root?.querySelector('.pr-answer-detail');
+      if(!item||!detail)return;
+      root.querySelectorAll('.pr-answer-q').forEach(node=>node.classList.toggle('is-selected',node===b));
+      const status=item.status==='correct'?'certa':item.status==='wrong'?'errada':'em branco';
+      detail.textContent='Questão '+number+' · '+status+' · resposta: '+(item.userAnswer||'não marcada')+
+        ' · gabarito: '+(item.answer||'não informado')+(item.section?' · '+item.section:'');
+      detail.scrollIntoView({block:'nearest',behavior:'smooth'});
+    }else if(b.hasAttribute('data-pr-agenda-mode')){
       agendaPresentation=b.dataset.prAgendaMode;schedule();
     }else if(b.hasAttribute('data-pr-agenda-pick')){
       const selected=b.dataset.prAgendaPick;
