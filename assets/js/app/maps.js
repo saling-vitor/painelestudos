@@ -39,6 +39,12 @@ async function requestRepairInvalidCloudMapStorageId(key){
         throw new Error('O cadastro mudou durante a verificação. Revise o mapa novamente.');
       if(!StudyCloud.session()||String((await StudyCloud.me())?.id)!==check.ownerId)
         throw new Error('A conta conectada mudou. A operação foi cancelada.');
+      // Segunda defesa contra associação de dois mapas ao mesmo progresso:
+      // validar também contra o banco ATUAL, não apenas o catálogo carregado.
+      const namespaces=await StudyCloud.rows('maps','user_id=eq.'+encodeURIComponent(check.ownerId)+
+        '&select=id,storage_id');
+      if(namespaces?.some(row=>String(row.id)!==String(check.mapId)&&slug(row.storage_id)===check.namespace))
+        throw new Error('Outro mapa já utiliza este namespace. Nenhum cadastro foi alterado.');
       const updated=await StudyCloud.patch('maps','user_id=eq.'+encodeURIComponent(check.ownerId)+
         '&id=eq.'+encodeURIComponent(check.mapId)+
         '&storage_id=eq.'+encodeURIComponent(check.previousId),{storage_id:check.namespace});
