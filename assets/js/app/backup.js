@@ -2,7 +2,25 @@
 function safeBackupJson(value,fallback){try{return JSON.parse(JSON.stringify(value))}catch{return fallback}}
 function buildStudyBackup(){const mapStates={},mapNotes={},modified={};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i)||'';if(key.startsWith('mindmap_state::')){mapStates[key]=localStorage.getItem(key);const mk='studyapp.modified::'+key;if(localStorage.getItem(mk))modified[key]=localStorage.getItem(mk)}else if(key.startsWith('mindmap_notes::')){mapNotes[key]=localStorage.getItem(key);const mk='studyapp.modified::'+key;if(localStorage.getItem(mk))modified[key]=localStorage.getItem(mk)}}return{type:'meus-mapas-backup',schemaVersion:1,createdAt:new Date().toISOString(),appVersion:APP_VERSION,data:{mapStates,mapNotes,modified,favorites:[...favs],mapActivity:safeBackupJson(state.mapActivity,{}),simulationActivity:safeBackupJson(state.simActivity,{}),simulationAttempts:safeBackupJson(state.simAttempts,{}),simulationOverrides:safeBackupJson(state.simulationOverrides||{},{}),examStatuses:safeBackupJson(readExamStatuses(),{}),studyTime:safeBackupJson(readStudyTime(),{}),studyDashboard:safeBackupJson(window.StudyDashboard?.exportData?.()||{},{}),studyPlanner:safeBackupJson(window.StudyPlanner?.exportData?.()||{},{}),reviewSchedule:safeBackupJson(readReviewSchedule(),{}),preferences:{mapLayout:state.mapLayout,prCoursesLayout:localStorage.getItem('studyapp.prCoursesLayout')||'capas',allMapsSort:state.allMapsSort||'az',lastMap:localStorage.getItem('studyapp.lastMap')||'',mapContentSources:readMapContentSources()}}}}
 function downloadStudyBackup(){const backup=buildStudyBackup(),blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a'),d=new Date(),date=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');a.href=url;a.download='meus-mapas-backup-'+date+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);try{localStorage.setItem('studyapp.lastBackupRequestedAt',backup.createdAt)}catch{}window.SettingsControlCenter?.render?.();toast('Download do backup solicitado. Confirme o arquivo salvo na pasta Downloads.')}
-function validateStudyBackup(backup){return!!(backup&&backup.type==='meus-mapas-backup'&&Number(backup.schemaVersion)===1&&backup.data&&typeof backup.data==='object')}
+function validateStudyBackup(backup){
+  const record=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
+  if(!record(backup)||backup.type!=='meus-mapas-backup'||Number(backup.schemaVersion)!==1||!record(backup.data))return false;
+  const data=backup.data;
+  // O esquema V1 aceita campos opcionais de versões anteriores, mas nunca
+  // arrays ou valores primitivos onde a restauração espera um mapa de registros.
+  const groups=['mapStates','mapNotes','modified','mapActivity','simulationActivity',
+    'simulationAttempts','simulationOverrides','examStatuses','studyTime',
+    'studyDashboard','studyPlanner','reviewSchedule','preferences'];
+  if(!groups.some(key=>Object.prototype.hasOwnProperty.call(data,key)))return false;
+  for(const key of groups)if(data[key]!==undefined&&!record(data[key]))return false;
+  if(data.favorites!==undefined&&(!Array.isArray(data.favorites)||
+    !data.favorites.every(item=>typeof item==='string')))return false;
+  for(const key of ['mapStates','mapNotes','modified']){
+    if(data[key]&&Object.values(data[key]).some(value=>typeof value!=='string'))return false;
+  }
+  if(data.preferences?.mapContentSources!==undefined&&!record(data.preferences.mapContentSources))return false;
+  return true;
+}
 function mergeTimestampObject(current={},incoming={},timestampField=''){const out={...current};for(const[k,v]of Object.entries(incoming||{})){if(!timestampField){const incomingTs=activityTimestamp(v),currentTs=activityTimestamp(out[k]);if(incomingTs>currentTs)out[k]=v;continue}const incomingTs=activityTimestamp(v?.[timestampField]),currentTs=activityTimestamp(out[k]?.[timestampField]);if(incomingTs>currentTs)out[k]=v}return out}
 // Backups são arquivos externos: só podem escrever estados/notas dos mapas.
 // Impedir que uma chave arbitrária dentro do JSON sobrescreva configurações,
