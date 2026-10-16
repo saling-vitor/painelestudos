@@ -4,7 +4,12 @@ export default defineConfig({
   reporter:'line',
   timeout:30000,
   expect:{timeout:5000},
-  use:{baseURL:'http://127.0.0.1:4173',trace:'retain-on-failure',screenshot:'only-on-failure',video:'retain-on-failure'},
+  use:{baseURL:'http://127.0.0.1:4173',
+    // As suítes anteriores às pranchas exercitam a interface clássica (studyapp.prancha.off),
+    // que continua disponível em Configurações. A interface em pranchas é coberta por prancha.spec.mjs,
+    // que limpa este estado.
+    storageState:{cookies:[],origins:[{origin:'http://127.0.0.1:4173',localStorage:[{name:'studyapp.prancha.off',value:'1'}]}]},
+    trace:'retain-on-failure',screenshot:'only-on-failure',video:'retain-on-failure'},
   webServer:{command:'python3 -m http.server 4173 --bind 127.0.0.1',port:4173,reuseExistingServer:false},
   projects:[
     {name:'desktop-chromium',grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
