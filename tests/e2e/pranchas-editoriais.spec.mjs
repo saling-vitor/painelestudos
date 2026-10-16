@@ -38,6 +38,13 @@ test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({
       expect(geometry.width,'A prancha do Início deve ocupar as duas colunas do grid antigo').toBeGreaterThan(geometry.parent*.82);
       await expect(page.locator('#homeStudyDashboard .study-command-art img')).toHaveAttribute('loading','eager');
     }
+    // O painel de novidades pode abrir ao visitar Configurações. Fechá-lo
+    // pelo botão real antes da captura, sem falsificar estilos nem estados.
+    const news=page.locator('#whatsNewModal');
+    if(await news.isVisible()){
+      await page.locator('#whatsNewAccept').click();
+      await expect(news).not.toHaveClass(/open/);
+    }
     mkdirSync('visual-audit',{recursive:true});
     await page.screenshot({path:'visual-audit/prancha-'+test.info().project.name+'-'+view+'.png',animations:'disabled'});
   }
