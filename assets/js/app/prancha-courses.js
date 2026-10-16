@@ -1,0 +1,148 @@
+'use strict';
+/* MEUS MAPAS · Prancha · Cursos: quadro de concursos pela data da prova e o curso com a planta do edital como menu. */
+(() => {
+  const P = window.Prancha;
+  if (!P || P.pages.courses) return;
+  const U = P.util, ui = P.ui, { esc, fmtMin, fmtSec, fmtDay, fmtNum, plural, pct } = U;
+  const VKEY = 'studyapp.prancha.courseView';
+  let pickKey = '', showArchived = false;
+  const viewMode = () => { try { return localStorage.getItem(VKEY) || 'lista'; } catch { return 'lista'; } };
+
+  function statusChip(s) {
+    const ex = s.exam, h = s.health;
+    if (P.courses.isArchived(s.course)) return '<span class="pr-chip">arquivado</span>';
+    const cls = h?.status === 'risk' ? 'ox' : h?.status === 'healthy' ? 'ok' : h?.status === 'attention' ? 'l' : '';
+    const label = ex.phase === 'after' ? 'prova realizada' : ex.phase === 'nodate' ? 'sem data de prova' : (h?.label || 'sem dados').toLowerCase();
+    return '<span class="pr-chip ' + cls + '">' + esc(label) + '</span>';
+  }
+  function courseMenu(c) {
+    const archived = P.courses.isArchived(c);
+    return ui.menu('c-' + c.id, [
+      ['Gerenciar curso', ui.act('manage-course', c.id)],
+      typeof courseHasEdital === 'function' && courseHasEdital(c) ? ['Abrir edital', ui.act('course-edital', c.id)] : null,
+      [archived ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), archived ? '' : 'd']
+    ]);
+  }
+  function crRow(s, primary) {
+    const c = s.course, p = s.progress, ex = s.exam;
+    return '<div class="pr-cr' + (P.courses.isArchived(c) ? ' archived' : '') + '" style="--c:' + s.color + '">' + ui.courseCov(c) +
+      '<div style="display:grid;gap:6px;min-width:0"><div class="pr-row">' + statusChip(s) + '</div><h3>' + esc(c.title) + '</h3><span class="pr-mono">' + esc(P.courses.label(c) || c.city || '') + '</span>' +
+      '<div class="pr-cells"><div><span>Prova</span><b class="' + (ex.days !== null && ex.days >= 0 && ex.days < 15 ? 'ox' : '') + '">' + esc(ex.date ? U.fmtDayYear(ex.date) : 'sem data') + '</b></div><div><span>Progresso</span><b>' + pct(p.marked, p.total) + '%</b></div><div><span>Tópicos</span><b>' + fmtNum(p.marked) + '/' + fmtNum(p.total) + '</b></div><div><span>Mapas</span><b>' + s.maps.length + '</b></div></div></div>' +
+      ui.mini(s.maps) + '<div class="pr-row">' + ui.btn('Entrar', ui.act('open-course', c.id), primary ? 'p' : 'g') + courseMenu(c) + '</div></div>';
+  }
+
+  function renderList(root) {
+    const all = P.courses.list(), S = all.map((c) => P.courses.summary(c)), active = S.filter((s) => !P.courses.isArchived(s.course)), archived = S.filter((s) => P.courses.isArchived(s.course));
+    active.sort((a, b) => { const k = (x) => (x.exam.days === null ? 1e6 : x.exam.days < 0 ? 1e5 - x.exam.days : x.exam.days); return k(a) - k(b); });
+    const top = ui.top({ eyebrow: 'Cursos', title: 'Meus Cursos', desc: 'Concursos pela data da prova, cada um com a planta do seu edital.', right: ui.btn('+ Novo concurso', ui.act('new-course'), 'p') });
+    if (!all.length) { root.innerHTML = top + ui.card(ui.empty(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Nenhum concurso ainda' : 'Sua biblioteca está desconectada', typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Crie um concurso e importe os mapas do edital.' : 'Entre na sua conta em Configurações para carregar seus concursos.', ui.btn(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Novo concurso' : 'Abrir Configurações', ui.act(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'new-course' : 'nav', 'settings'), 'p'))); return; }
+    const maps = active.flatMap((s) => s.maps), gp = P.data.agg(maps);
+    const fut = active.filter((s) => s.exam.phase === 'before' || s.exam.phase === 'today');
+    const risk = active.filter((s) => s.health?.status === 'risk'), nod = active.filter((s) => s.exam.phase === 'nodate'), ok = active.filter((s) => s.health?.status === 'healthy');
+    const goals = P.time.goals();
+    const v = fut[0] ? ui.verdict(fut[0].health?.status === 'risk' ? '' : 'l', 'A próxima prova é ' + esc(fut[0].sigla) + (fut[0].exam.days === 0 ? ', hoje.' : ', em ' + fut[0].exam.days + ' ' + plural(fut[0].exam.days, 'dia') + '.'), 'Faltam ' + fmtNum(fut[0].progress.total - fut[0].progress.marked) + ' dos ' + fmtNum(fut[0].progress.total) + ' tópicos. ' + esc(fut[0].health?.message || '')) : ui.verdict('n', 'Nenhuma prova futura marcada.', 'Defina a data em Gerenciar curso para o plano calcular o ritmo.');
+    const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">Meus Cursos · ' + active.length + ' ' + plural(active.length, 'concurso') + ' · ' + maps.length + ' mapas</span><div class="pr-big"><span class="pr-pct pr-num">' + pct(gp.marked, gp.total) + '<small>%</small></span><span class="pr-sub">' + fmtNum(gp.marked) + ' de ' + fmtNum(gp.total) + ' tópicos marcados</span></div>' +
+      ui.states(active.map((s) => [s.sigla, s.progress.marked, s.color]).concat([['pend', gp.total - gp.marked, 'var(--pr-g3)']]), 'Progresso por concurso') + ui.legend(active.map((s) => [s.sigla, fmtNum(s.progress.marked) + '/' + fmtNum(s.progress.total), s.color])) + v + '</div><div class="pr-c-b">' +
+      ui.cell('Próxima prova', fut[0] ? esc(fmtDay(fut[0].exam.date)) : '—', fut[0] && fut[0].exam.days < 15 ? 'ox' : '', fut[0] ? esc(fut[0].sigla + ' · ' + (fut[0].course.board || '')) : 'sem data marcada') +
+      ui.cell('Em risco', risk.length, risk.length ? 'ox' : 'ok', risk.length ? esc(risk.map((s) => s.sigla).join(', ')) : 'nenhum') +
+      ui.cell('Sem data', nod.length, nod.length ? 'l' : 'mu', nod.length ? 'defina para o plano calcular' : 'todos com data') +
+      ui.cell('Em dia', ok.length, ok.length ? 'ok' : 'mu', ok.length ? esc(ok.map((s) => s.sigla).join(', ')) : '—') +
+      ui.cell('Mapas', maps.length, '', active.reduce((n, s) => n + s.mapsDone, 0) + ' concluídos') +
+      ui.cell('Hoje', fmtSec(P.time.today()), '', 'meta ' + fmtMin(goals.daily)) + '</div></section>';
+    const list = active.map((s, i) => crRow(s, i === 0)).join('') || ui.empty('Nenhum concurso ativo', 'Os concursos arquivados estão abaixo.');
+    const arch = archived.length ? ui.card(ui.head('Arquivados', archived.length + ' ' + plural(archived.length, 'concurso'), ui.btn(showArchived ? 'Ocultar' : 'Mostrar', ui.act('toggle-archived'), 'g sm')) + (showArchived ? '<div style="display:grid;gap:10px">' + archived.map((s) => crRow(s, false)).join('') + '</div>' : '<p style="font-size:13px">Mapas, progresso e histórico continuam guardados. Reative pelo menu ⋯ do curso.</p>')) : '';
+    root.innerHTML = top + carimbo + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + arch;
+  }
+
+  /* ---------- curso ---------- */
+  function topicsOf(m, limit = 6) {
+    const st = (typeof readMapState === 'function' ? readMapState(m).topicStates : null) || {}, key = P.data.keyOf(m);
+    const idx = ((typeof state !== 'undefined' && state.searchIndex?.items) || []).filter((it) => it.topicId && (it.mapKey === key || String(it.mapCode || '').toLowerCase() === String(m.code || '').toLowerCase()));
+    if (!idx.length) return '';
+    const rest = idx.length - limit;
+    return '<div class="pr-tps">' + idx.slice(0, limit).map((it, i) => { const s = st[it.topicId]; return '<div><i class="' + (s === 'done' ? 'ok' : s === 'review' ? 'rv' : s === 'difficult' ? 'df' : '') + '"></i><span>' + (i + 1) + '. ' + esc(it.title || it.label || it.topicId) + '</span></div>'; }).join('') + (rest > 0 ? '<div><i></i><span style="color:var(--pr-papel-3)">+ ' + rest + ' tópicos</span></div>' : '') + '</div>';
+  }
+  function actionLabel(p) { return p.total > 0 && p.marked >= p.total ? 'Revisar' : p.marked ? 'Continuar do tópico ' + (p.marked + 1) : 'Começar'; }
+  function pickPanel(m, course, folha) {
+    if (!m) return ui.card(ui.empty('Escolha um lote', 'Toque num mapa da planta para ver o detalhe.'), 'pr-pick');
+    const p = P.data.prog(m), k = P.data.keyOf(m), sec = Number(window.StudyTime?.mapSeconds?.(k) || 0);
+    const linked = P.links.courses(k), others = P.courses.list().filter((c) => String(c.id) !== String(m.courseId) && !P.courses.isArchived(c));
+    const origin = m._linkedFrom ? P.courses.byId(m._linkedFrom) : null;
+    const share = others.length ? '<details class="pr-add"><summary>Compartilhar com outro concurso</summary><form data-pr-submit="link" data-key="' + esc(k) + '"><p style="font-size:12.5px">O mapa aparece no outro concurso sem duplicar o HTML; o progresso continua um só, identificado pelo curso de origem.</p><label class="pr-field"><span>Concurso</span><select name="course">' + others.map((c) => '<option value="' + esc(c.id) + '"' + (linked.includes(String(c.id)) ? ' disabled' : '') + '>' + esc(P.courses.sigla(c) + ' · ' + c.title) + (linked.includes(String(c.id)) ? ' (já vinculado)' : '') + '</option>').join('') + '</select></label><button type="submit" class="pr-btn sm">Vincular</button>' + (linked.length ? '<div class="pr-list">' + linked.map((id) => { const c = P.courses.byId(id); return c ? '<div class="pr-li"><span class="pr-sig" style="--c:' + P.courses.color(c) + '">' + esc(P.courses.sigla(c)) + '</span><span>' + esc(c.title) + '</span>' + ui.btn('Desvincular', ui.act('unlink', k + '|' + id), 'g sm') + '</div>' : ''; }).join('') + '</div>' : '') + '</form></details>' : '';
+    return ui.card('<span class="pr-k">' + esc((folha || '') + ' · ' + (m.category || '')) + '</span>' + ui.mapCov(m) + '<h3>' + esc(m.title) + '</h3>' + ui.stbar(p, 6) + '<span class="pr-mono">' + p.marked + '/' + p.total + ' tópicos · ' + ui.mapState(p) + ' · ' + (sec ? fmtSec(sec) + ' de estudo' : 'ainda não estudado') + '</span>' + (origin ? '<span class="pr-chip l">compartilhado de ' + esc(P.courses.sigla(origin)) + '</span>' : '') + topicsOf(m) + '<div class="pr-row">' + ui.btn(actionLabel(p), ui.act('open-map', k), 'p') + (m._linkedFrom ? '' : ui.btn('Gerenciar', ui.act('manage-map', k), 'g sm')) + '</div>' + share, 'pr-pick');
+  }
+  function mapRowMenu(m) {
+    const k = P.data.keyOf(m), fav = typeof favs !== 'undefined' && favs.has(k);
+    return ui.menu('m-' + k, [['Abrir', ui.act('open-map', k)], [fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos', ui.act('fav-menu', k)], !m._linkedFrom && typeof mapCanUpdateHtml === 'function' && mapCanUpdateHtml(m) ? ['Atualizar HTML', ui.act('update-map', k)] : null, !m._linkedFrom ? ['Gerenciar mapa', ui.act('manage-map', k)] : null, m._linkedFrom ? ['Desvincular deste concurso', ui.act('unlink', k + '|' + m._linkedTo), 'd'] : null]);
+  }
+  function listTable(list, fol, course) {
+    if (!list.length) return ui.empty('Nada neste filtro', 'Troque o filtro de situação ou de conteúdo.');
+    return '<div class="pr-tbl"><table><thead><tr><th>Folha</th><th>Mapa</th><th class="hide-m"></th><th class="hide-m">Categoria</th><th>Tópicos</th><th>Estado</th><th class="hide-m">Última</th><th></th></tr></thead><tbody>' + list.map((m) => {
+      const p = P.data.prog(m), k = P.data.keyOf(m), origin = m._linkedFrom ? P.courses.byId(m._linkedFrom) : null;
+      return '<tr style="--c:' + P.mapColor(m) + '" data-pr-act="pick-row" data-arg="' + esc(k) + '"><td class="fn">' + esc(fol.get(k) || '') + '</td><td><span class="pr-sig">' + esc(m.code || '') + '</span></td><td class="hide-m"><b>' + esc(m.title) + '</b>' + (origin ? ' <span class="pr-chip l">de ' + esc(P.courses.sigla(origin)) + '</span>' : '') + '</td><td class="hide-m"><span class="pr-chip c">' + esc(m.category || 'Outros') + '</span></td><td class="pr-num">' + p.marked + '/' + p.total + '</td><td style="min-width:110px">' + ui.stbar(p) + '<span class="pr-mono">' + ui.mapState(p) + '</span></td><td class="pr-mono hide-m">' + ui.lastLabel(p.lastActivity) + '</td><td><span class="pr-row" style="flex-wrap:nowrap">' + ui.btn(p.total > 0 && p.marked >= p.total ? 'Revisar' : p.marked ? 'Continuar' : 'Começar', ui.act('open-map', k), p.total > 0 && p.marked >= p.total ? 'g sm' : 'sm') + mapRowMenu(m) + '</span></td></tr>';
+    }).join('') + '</tbody></table></div>';
+  }
+  function renderCourse(root) {
+    const c = typeof courseById === 'function' ? courseById(state.courseId) : null;
+    if (!c) { root.innerHTML = ui.card(ui.empty('Curso não encontrado', 'Ele pode ter sido removido ou ainda não sincronizou.', ui.btn('Meus Cursos', ui.act('nav', 'courses'), 'g'))); return; }
+    const s = P.courses.summary(c), p = s.progress, ex = s.exam, h = s.health, f = s.forecast;
+    const all = P.data.mapsForCourse(c.id), own = s.maps, linkedN = all.length - own.length;
+    const fol = P.data.folhas(all);
+    const filters = (typeof COURSE_STUDY_FILTERS !== 'undefined' ? COURSE_STUDY_FILTERS : [{ id: 'all', label: 'Todos' }]);
+    const match = (m, id) => (typeof matchesCourseStudyFilter === 'function' ? matchesCourseStudyFilter(m, id) : true);
+    const cur = state.courseStudyFilter || 'all', cat = state.category || 'Todos';
+    const shown = all.filter((m) => match(m, cur) && (cat === 'Todos' || m.category === cat));
+    const cats = typeof mapCategoriesFor === 'function' ? mapCategoriesFor(all) : [...new Set(all.map((m) => m.category))];
+    if (!pickKey || !all.some((m) => P.data.keyOf(m) === pickKey)) { const r = (typeof courseResumeMap === 'function' ? courseResumeMap(own) : null) || P.plan.priorities(1, c.id)[0]?.map || all[0]; pickKey = r ? P.data.keyOf(r) : ''; }
+    const pickMap = all.find((m) => P.data.keyOf(m) === pickKey);
+    const top1 = P.plan.priorities(1, c.id)[0];
+    const revCount = own.reduce((n, m) => { const q = P.data.prog(m); return n + (q.review || 0) + (q.difficult || 0); }, 0);
+    const timeCourse = own.reduce((n, m) => n + Number(window.StudyTime?.mapSeconds?.(P.data.keyOf(m)) || 0), 0);
+    const sim = P.sims.summary(c.id);
+    const rest = Math.max(0, p.total - p.marked);
+    let v;
+    if (ex.phase === 'archived') v = ui.verdict('n', 'Curso arquivado.', 'Ele está fora das prioridades automáticas. Reative pelo menu ⋯.');
+    else if (ex.phase === 'after') v = ui.verdict('l', 'A prova já passou.', 'O fechamento do curso fica na tela Pós-prova do Início.');
+    else if (ex.phase === 'nodate') v = ui.verdict('n', 'Sem data de prova.', 'Defina a data em Gerenciar curso para calcular o ritmo.');
+    else v = ui.verdict(h?.status === 'risk' ? '' : h?.status === 'healthy' ? 'm' : 'l', (ex.days === 0 ? 'Prova hoje' : 'Prova em ' + ex.days + ' ' + plural(ex.days, 'dia')) + ', ' + fmtNum(rest) + ' ' + plural(rest, 'tópico aberto', 'tópicos abertos') + '.', (f?.remainingSeconds ? 'O plano estima ' + fmtSec(f.remainingSeconds) + ' de leitura para o restante. ' : '') + (top1 ? 'Próximo agora: ' + esc(top1.map.code || top1.map.title) + ', ' + fmtMin(top1.minutes) + '.' : ''));
+    const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">' + esc(s.sigla + ' · ' + P.courses.label(c)) + '</span><div class="pr-big"><span class="pr-pct pr-num">' + pct(p.marked, p.total) + '<small>%</small></span><span class="pr-sub">' + fmtNum(p.marked) + ' de ' + fmtNum(p.total) + ' tópicos · ' + own.length + ' mapas' + (linkedN ? ' · +' + linkedN + ' ' + plural(linkedN, 'vinculado') : '') + '</span></div>' + ui.stateBar(p) + ui.stateLegend(p) + v +
+      '<div class="pr-row">' + (top1 ? ui.btn('Estudar agora · ' + esc(top1.map.code || ''), ui.act('study-now', top1.key, { 'data-min': top1.minutes }), 'p') : '') + (window.StudyAutomation?.run ? ui.btn('Atualizar plano', ui.act('replan'), 'g') : '') + '</div></div><div class="pr-c-b">' +
+      ui.cell('Prova', ex.date ? esc(fmtDay(ex.date)) : '—', ex.days !== null && ex.days >= 0 && ex.days <= 7 ? 'ox' : '', ex.date ? (ex.days > 0 ? 'em ' + ex.days + ' ' + plural(ex.days, 'dia') : ex.days === 0 ? 'hoje' : 'realizada') : 'sem data') +
+      ui.cell('Restam', fmtNum(rest), '', 'tópicos') + ui.cell('Mapas', s.mapsDone + ' / ' + own.length, s.mapsDone === own.length && own.length ? 'ok' : '', 'concluídos') +
+      ui.cell('Revisões', fmtNum(revCount), revCount ? 'l' : 'mu', 'tópicos REV e DIF') + ui.cell('Tempo no curso', fmtSec(timeCourse), '', p.lastActivity ? 'última atividade ' + ui.lastLabel(p.lastActivity) : 'sem atividade') +
+      ui.cell('Simulados', sim.done + ' / ' + sim.total, '', sim.total ? (sim.best !== null ? 'melhor ' + sim.best + '%' : 'nenhum feito') : 'nenhum importado') + '</div></section>';
+    const hasEdital = typeof courseHasEdital === 'function' && courseHasEdital(c);
+    const acts = '<div class="pr-acts" role="group" aria-label="Ações do curso"><button type="button" data-pr-act="course-edital" data-arg="' + esc(c.id) + '"' + (hasEdital ? '' : ' disabled title="Nenhum edital anexado"') + '>Edital</button><button type="button" data-pr-act="course-sims" data-arg="' + esc(c.id) + '">Simulados</button></div>' + ui.menu('course-' + c.id, [['Importar mapas', ui.act('import-maps')], ['Gerenciar curso', ui.act('manage-course', c.id)], [P.courses.isArchived(c) ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), P.courses.isArchived(c) ? '' : 'd']]);
+    const chips = '<div class="pr-chips" role="group" aria-label="Situação">' + filters.map((x) => ui.chipf(x.id, x.label, all.filter((m) => match(m, x.id)).length, cur === x.id, 'filter')).join('') + '</div>';
+    const catChips = '<div class="pr-chips" role="group" aria-label="Conteúdo">' + ui.chipf('Todos', 'Todo o conteúdo', undefined, cat === 'Todos', 'cat') + cats.map((x) => ui.chipf(x, x, all.filter((m) => m.category === x).length, cat === x, 'cat', P.categoryPigment(x))).join('') + '</div>';
+    const legendCats = ui.legend(cats.map((x) => [x, '', P.categoryPigment(x)]));
+    const planta = ui.card(ui.head('Planta do edital', 'Cada mapa é um lote, do tamanho dos seus tópicos', legendCats) + ui.tiles(all, { sel: pickKey }).replace(/class="pr-tile( on)?"([^>]*data-arg="([^"]+)")/g, (mm, on, rest, key) => 'class="pr-tile' + (on || '') + (shown.some((m) => P.data.keyOf(m) === key) ? '' : ' dim') + '"' + rest));
+    const mode = viewMode();
+    let listing;
+    if (mode === 'capas') {
+      listing = shown.length && typeof mapCard === 'function' ? '<div class="map-grid pr-legacy-grid" data-pr-legacy>' + shown.filter((m) => !m._linkedFrom).map(mapCard).join('') + '</div>' + (shown.some((m) => m._linkedFrom) ? '<p class="pr-mono">' + shown.filter((m) => m._linkedFrom).length + ' mapa(s) vinculado(s) aparecem na lista.</p>' : '') : ui.empty('Nada neste filtro', 'Troque o filtro de situação ou de conteúdo.');
+    } else listing = listTable(shown, fol, c);
+    const mapsCard = ui.card('<div class="pr-vw"><div><span class="pr-k">Mapas do curso</span><h3>' + shown.length + ' de ' + all.length + ' mapas · ' + shown.reduce((n, m) => n + P.data.prog(m).marked, 0) + '/' + shown.reduce((n, m) => n + P.data.prog(m).total, 0) + ' tópicos</h3></div>' + ui.seg([['lista', 'Lista'], ['capas', 'Capas']], mode, 'view-mode', 'Visualização') + '</div>' + listing);
+    root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' + (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') + ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' + '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' + esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') + '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + carimbo + '<div class="pr-vw">' + '<div class="pr-row">' + acts + '</div>' + chips + '</div>' + catChips + '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>' + mapsCard;
+    const legacy = root.querySelector('[data-pr-legacy]');
+    if (legacy && typeof bindMapCards === 'function') bindMapCards(legacy);
+  }
+
+  const shared = {
+    archive: (id) => P.archiveCourse?.(id),
+    'toggle-archived': () => { showArchived = !showArchived; P.schedule('courses'); },
+    filter: (id) => { state.courseStudyFilter = id; P.schedule('course'); },
+    cat: (id) => { state.category = id; P.schedule('course'); },
+    'view-mode': (id) => { try { localStorage.setItem(VKEY, id); } catch {} P.schedule('course'); },
+    'pick-map': (key) => { pickKey = key; P.schedule('course'); },
+    'pick-row': (key, el, root, e) => { if (e.target.closest('button,.pr-menu')) return; pickKey = key; P.renderNow('course'); root.querySelector('.pr-pick')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
+    'fav-menu': (key) => { P.actions.fav(key); P.schedule(state.view); },
+    'course-sims': (id) => { state.simulationCourseFilter = id; if (typeof nav === 'function') nav('simulations'); },
+    'study-now': async (key, el) => { const map = typeof mapById === 'function' ? mapById(key) : null; if (!window.StudyDashboard?.active?.()) window.StudyDashboard?.start?.({ map, mode: 'planned', minutes: Number(el?.dataset.min) || 20, label: map?.code || 'Sessão' }); if (map && typeof openMap === 'function') await openMap(key); },
+    replan: () => { try { window.StudyAutomation?.run?.(); if (typeof toast === 'function') toast('Plano atualizado.'); } catch (e) { console.warn(e); } P.schedule(state.view); },
+    link: (fd, form) => { const id = fd.get('course'); if (!id) return; P.links.link(form.dataset.key, id, true); if (typeof toast === 'function') toast('Mapa vinculado ao ' + P.courses.sigla(P.courses.byId(id)) + '.'); P.schedule(state.view); },
+    unlink: (arg) => { const [key, id] = String(arg).split('|'); P.confirm('Desvincular mapa?', 'O mapa deixa de aparecer neste concurso. O HTML, o progresso e o curso de origem não mudam.', () => { P.links.link(key, id, false); P.schedule(state.view); }, 'Desvincular'); }
+  };
+  P.pages.courses = { render: renderList, actions: shared };
+  P.pages.course = { render: renderCourse, actions: shared };
+})();

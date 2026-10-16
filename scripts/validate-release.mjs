@@ -52,11 +52,12 @@ check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===53,'auditoria: 53 CSS durante a migração Nanquim');
+check(activeCssFiles.length===54,'auditoria: 54 CSS (53 Nanquim + prancha.css)');
 check(index.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
 check(index.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS final conectado');
 check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
-check(activeCssFiles.at(-1)==='assets/css/design-system/nanquim-application.css','Nanquim: CSS final conectado');
+check(activeCssFiles.at(-2)==='assets/css/design-system/nanquim-application.css','Nanquim: camada de aplicação antes das pranchas');
+check(activeCssFiles.at(-1)==='assets/css/design-system/prancha.css','Pranchas: CSS final conectado');
 const nanquimSheets=["assets/css/design-system/nanquim-tokens.css","assets/css/design-system/nanquim-typography.css","assets/css/design-system/nanquim-materials.css","assets/css/design-system/nanquim-application.css"];
 for(const file of nanquimSheets){check(exists(file),'Nanquim CSS: '+file);check(index.includes(file+`?v=${expected}`),'Nanquim index: '+file);check(sw.includes(file+`?v=${expected}`),'Nanquim PWA: '+file)}
 // Nanquim PWA: testar metadados de todas as entradas escuras, inclusive a página offline.
@@ -86,7 +87,7 @@ check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.in
 check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
 check(index.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
 check(sw.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
-check(activeJsFiles.length===30,'auditoria: build ativo usa 30 scripts JS diretos após consolidação');
+check(activeJsFiles.length===40,'auditoria: build ativo usa 40 scripts JS diretos (30 + 10 módulos das pranchas)');
 check(index.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
 check(index.includes(`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG carregados na interface');
 check(sw.includes(`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG disponíveis no PWA offline');
@@ -140,7 +141,7 @@ check(stateModule.includes('assets/capas/padroes/padrao-novo-curso.png')&&stateM
 check(allJs.includes("key:'padrao'")&&allJs.includes('padrao-simulado.png'),'Padrão simulado ativo sem eliminar capas específicas');
 const newHomeCss='assets/css/home-responsive-v15-48-162.css';
 const smokedCss='assets/css/black-smoked-uniform-v15-48-163.css';
-const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/lucide-png-v15-48-172.css',newHomeCss,smokedCss,'assets/css/design-system/nanquim-application.css'].includes(file)).filter(exists).map(read).join('\n');
+const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/lucide-png-v15-48-172.css',newHomeCss,smokedCss,'assets/css/design-system/nanquim-application.css','assets/css/design-system/prancha.css'].includes(file)).filter(exists).map(read).join('\n');
 const importantCount=(baselineCssText.match(/!important/g)||[]).length;
 check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
@@ -208,6 +209,24 @@ check(!read('assets/css/nav-liquid-glass-v15-48-2.css').includes('--mm-topo-opac
 check(!read('assets/css/master-refinement-v15-48-1.css').includes('--mm-topo-opacity:.86'),'topografia sem override de brilho legado');
 check(dynamicGlassCss.includes('.mm-reduced-transparency'),'Dynamic Glass oferece fallback de transparência');
 check(dynamicGlassCss.includes('"Inter"')||dynamicGlassCss.includes('family=Inter'),'Inter configurada como tipografia principal');
+// Pranchas V15.49: módulos, CSS, fontes locais, PWA e orçamento de overrides próprio
+const pranchaModules=['data','ui','home','courses','maps','simulations','progress','agenda','settings','boot'].map(n=>'assets/js/app/prancha-'+n+'.js');
+for(const file of pranchaModules){check(exists(file),'Pranchas: '+file+' existe');check(index.includes(file+`?v=${expected}`),'Pranchas index: '+file);check(sw.includes(file+`?v=${expected}`),'Pranchas PWA: '+file)}
+const pranchaIdx=pranchaModules.map(f=>index.indexOf(f));
+check(pranchaIdx.every((v,i)=>v>0&&(i===0||v>pranchaIdx[i-1])),'Pranchas: ordem de carregamento data → ui → páginas → boot');
+check(index.indexOf('dynamic-liquid-glass-v2.js')<pranchaIdx[0],'Pranchas: carregadas depois do runtime existente');
+const pranchaCss=read('assets/css/design-system/prancha.css');
+check(sw.includes('assets/css/design-system/prancha.css?v='+expected),'Pranchas PWA: prancha.css');
+for(const font of ['archivo-latin-wght-normal.woff2','anton-latin-400-normal.woff2','ibm-plex-mono-latin-400-normal.woff2','ibm-plex-mono-latin-500-normal.woff2']){check(exists('assets/fonts/'+font),'Fonte local '+font);check(pranchaCss.includes('../../fonts/'+font),'Fonte declarada '+font);check(sw.includes('./assets/fonts/'+font),'Fonte offline '+font)}
+for(const lic of ['archivo','anton','ibm-plex-mono'])check(exists('assets/fonts/LICENSE-'+lic+'.txt'),'Licença OFL '+lic);
+for(const token of ['#ECE6DA','#C3AA84','#B8614E','#8C9A6C','"Archivo"','"Anton"','"IBM Plex Mono"'])check(pranchaCss.toLowerCase().includes(token.toLowerCase()),'Pranchas: token '+token);
+const pranchaImportant=(pranchaCss.match(/!important/g)||[]).length;
+check(pranchaImportant<=21,'Pranchas: !important limitado à camada de integração ('+pranchaImportant+')');
+check(!/fonts\.googleapis|fonts\.gstatic/.test(pranchaCss),'Pranchas: fontes sem dependência de rede');
+const pranchaJs=pranchaModules.map(read).join('\n');
+check(pranchaJs.includes("studyapp.prancha.off"),'Pranchas: interface clássica disponível');
+check(pranchaJs.includes('buildStudyBackup')&&pranchaJs.includes('restoreStudyBackup')&&pranchaJs.includes('localPreferences'),'Pranchas: dados no backup e na sincronização');
+
 const navGlassCss=read('assets/css/nav-liquid-glass-v15-48-2.css');
 const mobileGlassCss=read('assets/css/mobile-first.css');
 check(navGlassCss.includes('WebKit iPadOS/iOS'),'dock WebKit usa um único material');
