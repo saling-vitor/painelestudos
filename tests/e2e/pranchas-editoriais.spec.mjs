@@ -532,6 +532,23 @@ test('Configurações [G] · versão da nuvem segue versão global, sem V12.1 le
   expect(report.stored).toBe(report.expected);
 });
 
+test('Importação [G] · IDs formados só por sinais não criam mapas sem progresso',async({page})=>{
+  await enter(page,'courses');
+  const inputs=await page.evaluate(()=>({
+    empty:validStorageId(''),
+    spaces:validStorageId('   '),
+    dash:validStorageId('—'),
+    punctuation:validStorageId('---'),
+    placeholder:validStorageId('[[SIGLA-DO-ESTUDO]]'),
+    canonical:validStorageId('study-cf88-fundatec'),
+    legacy:validStorageId('CF88_V01')
+  }));
+  expect(inputs).toEqual({
+    empty:false,spaces:false,dash:false,punctuation:false,
+    placeholder:false,canonical:true,legacy:true
+  });
+});
+
 test('Configurações [G] · alerta sobre storage_id cloud inválido sem inventar progresso',async({page})=>{
   await enter(page,'settings');
   await page.evaluate(()=>{
