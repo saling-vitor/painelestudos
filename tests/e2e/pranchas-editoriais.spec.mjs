@@ -149,30 +149,44 @@ test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',as
   await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toHaveAttribute('open','');
   await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toContainText('Normas');
 });
-test('Mapas [G][T+M] · vínculo mantém HTML e isola namespace por concurso',async({page})=>{
+test('Mapas [G][T+M] · vínculo compartilha HTML mas isola progresso por concurso',async({page})=>{
   await enter(page,'maps');
   await expect(page.locator('#editorialMaps')).toBeVisible();
+  // Fixture local e isolada: nenhuma chamada de escrita ao Supabase real.
+  // Diferentemente da cobertura anterior, este teste NÃO passa sem executar o vínculo.
   const data=await page.evaluate(async()=>{
-    const source=combinedMaps().find(x=>x.storage_path);if(!source)return null;
-    const to='teste-vinculo-e2e',originalInsert=StudyCloud.insert,originalRows=StudyCloud.rows,originalLoad=loadCloud,originalMe=StudyCloud.me;
-    state.cloudCourses.push({id:to,title:'Concurso de teste de vínculo',status:'active'});
+    const from='e2e-curso-origem',to='e2e-curso-destino',owner='e2e-user',
+      source={id:'mapa-e2e-origem',courseId:from,code:'MAPA-E2E',title:'Mapa de teste',
+        storage_path:owner+'/'+from+'/mapa-e2e.html',storageId:'estudo-origem-e2e',hasBundled:false},
+      original={session:StudyCloud.session,configured:StudyCloud.configured,me:StudyCloud.me,
+        insert:StudyCloud.insert,rows:StudyCloud.rows,upload:StudyCloud.upload,loadCloud},
+      courses=state.cloudCourses,maps=state.cloudMaps;
+    state.cloudCourses=[{id:from,title:'Curso de origem E2E',status:'active'},{id:to,title:'Curso de destino E2E',status:'active'}];
+    state.cloudMaps=[source];
     let inserted=null,uploads=0;
-    const oldUpload=StudyCloud.upload;
-    StudyCloud.me=async()=>({id:'e2e-user'});
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.configured=()=>true;
+    StudyCloud.me=async()=>({id:owner});
     StudyCloud.rows=async()=>[];
     StudyCloud.upload=async()=>{uploads++;throw Error('upload duplicado proibido')};
-    StudyCloud.insert=async(table,row)=>{inserted=row;return[{id:'linked-row-e2e',...row}]};
+    StudyCloud.insert=async(table,row)=>{if(table!=='maps')throw Error('Tabela incorreta');inserted=row;return[{id:'linked-row-e2e',...row}]};
     loadCloud=async()=>{};
-    try{await linkMapToCourse(mapKey(source),to)}finally{
-      StudyCloud.insert=originalInsert;StudyCloud.rows=originalRows;StudyCloud.upload=oldUpload;StudyCloud.me=originalMe;loadCloud=originalLoad;
+    try{
+      await linkMapToCourse(mapKey(source),to);
+      return {samePath:source.storage_path===inserted.storage_path,
+        independentId:source.storageId!==inserted.storage_id,
+        differentCourse:source.courseId!==inserted.course_id,
+        uploads,readerParam:readerHref({...source,storageId:inserted.storage_id}).includes('storage-id='),
+        configuredSource:readMapContentSources()[mapKey({courseId:to,code:source.code})]};
+    }finally{
+      Object.assign(StudyCloud,{session:original.session,configured:original.configured,me:original.me,
+        insert:original.insert,rows:original.rows,upload:original.upload});
+      loadCloud=original.loadCloud;state.cloudCourses=courses;state.cloudMaps=maps;
     }
-    return{samePath:source.storage_path===inserted?.storage_path,otherId:source.storageId!==inserted?.storage_id,
-      differentCourse:source.courseId!==inserted?.course_id,uploads,readerParam:readerHref({...source,storageId:inserted.storage_id}).includes('storage-id=')};
   });
-  if(!data)return;
-  expect(data).toEqual({samePath:true,otherId:true,differentCourse:true,uploads:0,readerParam:true});
+  expect(data).toEqual({samePath:true,independentId:true,differentCourse:true,
+    uploads:0,readerParam:true,configuredSource:'cloud'});
 });
-
 
 test('Home [G][T+M] · sessão usa cronômetro original e um único estado',async({page})=>{
   await enter(page,'home');
