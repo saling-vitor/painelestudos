@@ -121,11 +121,11 @@ async function load(){
    }
    // Referência cruzada: o arquivo HTML é compartilhado, mas o namespace do
    // progresso pertence a cada concurso. A alteração existe só em memória.
+   // O bootstrap V134 usa slug(meta[name="mindmap-storage-id"]) ao montar
+   // MINDMAP_V134.stateKey/notesKey. O leitor deve usar EXATAMENTE a mesma
+   // chave canônica ao restaurar a nuvem, inclusive para IDs antigos com "_".
    const requestedId=slug(p.get('storage-id')||'');
-   // A chave original faz parte do contrato do HTML V211. Não normalizá-la:
-   // CF88_V01 e cf88-v01 são namespaces diferentes no localStorage e nuvem.
-   // Apenas vínculos explícitos recebem um novo identificador canônico.
-   const originalId=String(meta(html,'mindmap-storage-id')||'').trim();
+   const originalId=slug(meta(html,'mindmap-storage-id'));
    const storageId=requestedId||originalId;
    if(requestedId&&requestedId!==originalId){
      const tag=/<meta\b(?=[^>]*\bname\s*=\s*["']mindmap-storage-id["'])[^>]*>/i;
