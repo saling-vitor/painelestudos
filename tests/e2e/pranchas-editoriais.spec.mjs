@@ -80,6 +80,30 @@ test('Simulados [G] · mensagens exigem iframe esperado e origem do portal',asyn
 });
 
 
+test('Leitor offline [G][T+M] · usa HTML em cache e não requisita mapas ausentes',async({page})=>{
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  await page.evaluate(async()=>{
+    const link=new URL('offline-reader-e2e.html',location.href);
+    const cache=await caches.open('reader-e2e-test');
+    await cache.put(link.href,new Response(
+      '<!doctype html><html lang="pt-BR"><head><meta name="mindmap-storage-id" content="offline-e2e"></head>'+
+      '<body class="mindmap-app"><main id="offline-e2e-map">Conteúdo offline em cache</main></body></html>',
+      {headers:{'Content-Type':'text/html; charset=utf-8'}}));
+  });
+  await page.addInitScript(()=>Object.defineProperty(navigator,'onLine',{configurable:true,get:()=>false}));
+  let networkRequests=0;
+  await page.route('**/offline-reader-e2e.html',route=>{networkRequests++;return route.abort()});
+  await page.goto('/reader.html?mode=local&href=offline-reader-e2e.html');
+  await expect(page.locator('#offline-e2e-map')).toHaveText('Conteúdo offline em cache');
+  await expect(page.locator('meta[name="mindmap-storage-id"]')).toHaveAttribute('content','offline-e2e');
+  expect(networkRequests).toBe(0);
+
+  await page.route('**/offline-reader-missing-e2e.html',route=>{networkRequests++;return route.abort()});
+  await page.goto('/reader.html?mode=local&href=offline-reader-missing-e2e.html');
+  await expect(page.locator('.loading-card')).toContainText('não está disponível offline');
+  expect(networkRequests).toBe(0);
+});
+
 test('Leitor V211 [G] · bloqueia URL externa antes de executar HTML no portal',async({page})=>{
   let remoteRequests=0;
   await page.route('https://external.invalid/mapa.html',route=>{
