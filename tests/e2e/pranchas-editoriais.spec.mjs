@@ -80,6 +80,21 @@ test('Simulados [G] · mensagens exigem iframe esperado e origem do portal',asyn
 });
 
 
+test('Leitor V211 [G] · bloqueia URL externa antes de executar HTML no portal',async({page})=>{
+  let remoteRequests=0;
+  await page.route('https://external.invalid/mapa.html',route=>{
+    remoteRequests++;
+    return route.fulfill({status:200,contentType:'text/html',
+      body:'<script>window.__readerRemoteExecuted=true</script><p>não autorizado</p>'});
+  });
+  for(const href of ['https://external.invalid/mapa.html','data:text/html,<p>intruso</p>','javascript:alert(1)','/assets/js/cloud-core.js']){
+    await page.goto('/reader.html?mode=local&href='+encodeURIComponent(href));
+    await expect(page.locator('.loading-card')).toContainText('Caminho do mapa não permitido');
+    expect(await page.evaluate(()=>window.__readerRemoteExecuted===true)).toBe(false);
+  }
+  expect(remoteRequests,'O leitor não deve nem requisitar HTML externo').toBe(0);
+});
+
 test('Leitor V211 [G] · mesmo HTML aceita namespaces isolados e rejeita mapa sem metadado',async({page})=>{
   // Bootstrap mínimo equivalente à construção de ns/stateKey do V134 real:
   // o documento converte CF88_V01 em cf88-v01 antes de gravar localStorage.
