@@ -103,6 +103,17 @@ test('Cinco telas da Home [G][T+M] · seleção não cria sessão paralela',asyn
   await expect(page.locator('html')).toHaveClass(/app-ready/);
   const buttons=page.locator('#editorialHome [data-pr-home]');
   await expect(buttons).toHaveCount(5);
+  if(test.info().project.name==='iphone-webkit'){
+    const placement=await buttons.evaluateAll(elements=>elements.map(element=>{
+      const button=element.getBoundingClientRect();
+      const holder=element.closest('.pr-switch').getBoundingClientRect();
+      return{left:button.left>=holder.left-1,right:button.right<=holder.right+1,
+        viewportRight:button.right<=innerWidth+1};
+    }));
+    expect(placement,'As 5 telas do Início devem ficar visíveis no smartphone, sem recorte').toEqual(
+      Array.from({length:5},()=>({left:true,right:true,viewportRight:true}))
+    );
+  }
   for(const key of ['todos','revisoes','sessao','pos','hoje']){
     const button=page.locator('#editorialHome [data-pr-home="'+key+'"]');
     await button.click();
