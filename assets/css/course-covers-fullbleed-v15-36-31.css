@@ -13,7 +13,7 @@ html:not(.is-phone-layout) #coursesGrid .course-card.course-library-card>.course
   width:100%!important;
   margin:0!important;
   border:0!important;
-  border-bottom:1px solid rgba(255,255,255,.065)!important;
+  border-bottom:1px solid rgba(236,230,218,.065)!important;
   border-radius:0!important;
   box-shadow:none!important;
 }
@@ -30,7 +30,7 @@ html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card.course-library
   width:100%!important;
   margin:0!important;
   border:0!important;
-  border-bottom:1px solid rgba(255,255,255,.055)!important;
+  border-bottom:1px solid rgba(236,230,218,.055)!important;
   border-radius:0!important;
   box-shadow:none!important;
 }
@@ -45,7 +45,7 @@ html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-l
   box-shadow:none!important;
 }
 html:not(.is-ipad):not(.is-phone-layout) #homeCourses .home-course-card.course-library-card>.course-card-cover::after{
-  background:linear-gradient(180deg,transparent 0%,transparent 48%,rgba(2,2,2,.18) 100%)!important;
+  background:linear-gradient(180deg,transparent 0%,transparent 48%,rgba(0,0,0,.18) 100%)!important;
 }
 /* Reforço de especificidade: neutraliza padding legado da biblioteca sem tocar no conteúdo interno. */
 html:not(.is-phone-layout) body .app .main [data-view="courses"] #coursesGrid.course-grid>.course-card.course-library-card{

@@ -520,7 +520,7 @@
     const cover=typeof mapCover==='function'?mapCover(map):'';
     const extracted=typeof cachedCoverAccent==='function'&&cover?(cachedCoverAccent(cover)||''):'';
     const specified=typeof mapAccentValue==='function'?mapAccentValue(map):'';
-    modal.style.setProperty('--priority-theme',extracted||sourceTone||specified||'#8995a7');
+    modal.style.setProperty('--priority-theme',extracted||sourceTone||specified||'#a8a29a');
     const html=document.documentElement,isAnchored=!html.classList.contains('is-ipad')&&!html.classList.contains('is-phone-layout')&&innerWidth>=1181,card=modal.querySelector('.priority-why-card');
     modal.classList.toggle('is-anchored',isAnchored);
     if(isAnchored&&anchor&&card){
@@ -568,7 +568,7 @@
     // sem afetar as regras próprias de Tablet e Smartphone.
     const priorityCard=panel.querySelector('.priority-now-card');
     if(priorityCard&&!document.documentElement.classList.contains('is-ipad')&&!document.documentElement.classList.contains('is-phone-layout')&&window.innerWidth>=1181){
-      priorityCard.style.setProperty('border-left','3px solid var(--map-accent,#92979a)','important');
+      priorityCard.style.setProperty('border-left','3px solid var(--map-accent,#a8a29a)','important');
     }
     panel.querySelectorAll('[data-time-now]').forEach(button=>button.onclick=()=>{
       homeQuickMinutes=Number(button.dataset.timeNow);

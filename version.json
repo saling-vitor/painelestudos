@@ -1,19 +1,19 @@
 {
-  "version": "15.49.0",
-  "label": "V15.49.0-G",
-  "notes": "Interface em pranchas: Início (cinco telas), Cursos, Todos os Mapas, Simulados, Progresso, Agenda e Configurações redesenhados sobre os dados reais, com interface clássica preservada em Configurações.",
+  "version": "15.50.0",
+  "label": "V15.50.0-G",
+  "notes": "Conceitos Nanquim e Latão aplicados ao app inteiro: fontes Archivo, IBM Plex Mono e Anton locais; escala de 14 tokens nas três telas; paleta única nas 54 folhas; pigmentos por categoria e por seção; Vidro Nanquim no que flutua.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Início com cinco telas: Hoje, Todos, Revisões, Em sessão e Pós-prova",
-    "[G] Cursos, Todos os Mapas e Simulados com carimbo, planta e cortes oficial, meta e estimativa",
-    "[G] Progresso com histórico diário persistente e Agenda em Dia, Semana e Mês com horário de início",
-    "[G] Configurações em sete folhas numeradas com zona de risco e confirmação"
+    "[G] Archivo, IBM Plex Mono e Anton em todo o app, sem fonte da rede",
+    "[G] Escala tipográfica de 14 tokens: nada abaixo de 11px e campos com 16px no toque",
+    "[G] Paleta Nanquim e Latão em todas as superfícies, sem cinzas azulados",
+    "[G] Pigmento por categoria nas capas e por seção no menu ativo; Vidro Nanquim no leitor"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.49",
+    "series": "15.50",
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-15T17:51:38-03:00"
+  "releasedAt": "2026-10-16T12:16:59-03:00"
 }

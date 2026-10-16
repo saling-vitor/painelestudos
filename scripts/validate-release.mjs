@@ -76,10 +76,10 @@ const nanquimApp=read(nanquimSheets[3]);
 check(nanquimApp.includes('prefers-reduced-transparency')&&nanquimApp.includes('prefers-reduced-motion'),'fallback de acessibilidade');
 check(!nanquimApp.includes('html *{'),'sem reset global de cores temáticas');
 const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
-check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(20,20,21,.94)'),'Black Editorial: grafite fumê neutro oficial sincronizado');
+check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(17,17,16,.94)'),'Nanquim: card fumê em grafite quente (sem cinza azulado)');
 check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
-check(blackSmokedCss.includes('--mm-smoke-inset:rgba(27,27,28,.96)')&&blackSmokedCss.includes('.study-rhythm-kpis>article'),'Cards e componentes internos usam material neutro compartilhado');
-check(blackSmokedCss.includes('--mm-smoke-tint:0%')&&blackSmokedCss.includes('--mm-ivory-strong:#EEE9E0'),'Black Editorial: zero tingimento cromatico e texto marfim');
+check(blackSmokedCss.includes('--mm-smoke-inset:rgba(25,24,23,.96)')&&blackSmokedCss.includes('.study-rhythm-kpis>article'),'Cards e componentes internos usam grafite-3 compartilhado');
+check(blackSmokedCss.includes('--mm-smoke-tint:0%')&&blackSmokedCss.includes('--mm-ivory-strong:#ece6da'),'Nanquim: zero tingimento cromático e texto em papel');
 check(blackSmokedCss.includes('--mm-smoke-card-filter:blur(12px) saturate(105%)')&&blackSmokedCss.includes('backdrop-filter:var(--mm-smoke-card-filter)!important'),'Vidro fume aplicado aos cards com filtro real');
 check(blackSmokedCss.includes('--mm-card-surface:var(--mm-smoke-card-black)')&&blackSmokedCss.includes('html:not(.is-phone-layout) .app .side'),'Todos os cards e sidebar: superficie grafite canonica');
 check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
@@ -181,7 +181,7 @@ const settingsControlCss=read('assets/css/settings-control-center-v15-38-0.css')
 const v211Css=read('assets/css/v211-parity-v15-42.css');
 check(!settingsControlCss.includes('rgba(109,130,152'),'auditoria: configurações sem azul estrutural legacy');
 check(!v211Css.includes('--v211-blue'),'auditoria: token V211 azul não utilizado removido');
-check(automationCss.includes('.automation-issues span.is-info{border-left-color:rgba(109,130,152,.52)}'),'auditoria: azul semântico de informação preservado');
+check(automationCss.includes('.automation-issues span.is-info{border-left-color:rgba(133,126,114,.52)}'),'Nanquim: informação neutra em papel-3 (azul legado removido)');
 check(read('assets/css/button-glass-v15-36-15.css').includes('CONSOLIDADO V15.47 · NORMALIZAÇÃO DE BOTÕES'),'auditoria: button-depth consolidado');
 check(read('assets/css/ipad-stage2-v01.css').includes('CONSOLIDADO V15.47 · STATUS DA NUVEM NO iPAD'),'auditoria: nuvem iPad consolidada');
 check(read('assets/css/course-covers-fullbleed-v15-36-31.css').includes('CONSOLIDADO V15.47 · MAP CARD FOOT'),'auditoria: cleanup de map card consolidado');
@@ -208,7 +208,7 @@ check(!dynamicGlassJs.includes('ensureLens')&&!dynamicGlassJs.includes('pointerm
 check(!read('assets/css/nav-liquid-glass-v15-48-2.css').includes('--mm-topo-opacity'),'topografia sem override final de navegação');
 check(!read('assets/css/master-refinement-v15-48-1.css').includes('--mm-topo-opacity:.86'),'topografia sem override de brilho legado');
 check(dynamicGlassCss.includes('.mm-reduced-transparency'),'Dynamic Glass oferece fallback de transparência');
-check(dynamicGlassCss.includes('"Inter"')||dynamicGlassCss.includes('family=Inter'),'Inter configurada como tipografia principal');
+check(dynamicGlassCss.includes('--sans:"Archivo"')&&!dynamicGlassCss.includes('googleapis'),'Archivo local configurada como tipografia principal');
 // Pranchas V15.49: módulos, CSS, fontes locais, PWA e orçamento de overrides próprio
 const pranchaModules=['data','ui','home','courses','maps','simulations','progress','agenda','settings','boot'].map(n=>'assets/js/app/prancha-'+n+'.js');
 for(const file of pranchaModules){check(exists(file),'Pranchas: '+file+' existe');check(index.includes(file+`?v=${expected}`),'Pranchas index: '+file);check(sw.includes(file+`?v=${expected}`),'Pranchas PWA: '+file)}
@@ -217,9 +217,24 @@ check(pranchaIdx.every((v,i)=>v>0&&(i===0||v>pranchaIdx[i-1])),'Pranchas: ordem 
 check(index.indexOf('dynamic-liquid-glass-v2.js')<pranchaIdx[0],'Pranchas: carregadas depois do runtime existente');
 const pranchaCss=read('assets/css/design-system/prancha.css');
 check(sw.includes('assets/css/design-system/prancha.css?v='+expected),'Pranchas PWA: prancha.css');
-for(const font of ['archivo-latin-wght-normal.woff2','anton-latin-400-normal.woff2','ibm-plex-mono-latin-400-normal.woff2','ibm-plex-mono-latin-500-normal.woff2']){check(exists('assets/fonts/'+font),'Fonte local '+font);check(pranchaCss.includes('../../fonts/'+font),'Fonte declarada '+font);check(sw.includes('./assets/fonts/'+font),'Fonte offline '+font)}
+for(const font of ['archivo-latin-wght-normal.woff2','anton-latin-400-normal.woff2','ibm-plex-mono-latin-400-normal.woff2','ibm-plex-mono-latin-500-normal.woff2']){check(exists('assets/fonts/'+font),'Fonte local '+font);check(read('assets/css/design-system/nanquim-typography.css').includes('../../fonts/'+font),'Fonte declarada '+font);check(sw.includes('./assets/fonts/'+font),'Fonte offline '+font)}
 for(const lic of ['archivo','anton','ibm-plex-mono'])check(exists('assets/fonts/LICENSE-'+lic+'.txt'),'Licença OFL '+lic);
-for(const token of ['#ECE6DA','#C3AA84','#B8614E','#8C9A6C','"Archivo"','"Anton"','"IBM Plex Mono"'])check(pranchaCss.toLowerCase().includes(token.toLowerCase()),'Pranchas: token '+token);
+for(const token of ['#ECE6DA','#C3AA84','#B8614E','#8C9A6C'])check(pranchaCss.toLowerCase().includes(token.toLowerCase()),'Pranchas: token '+token);
+const nqTokens=read('assets/css/design-system/nanquim-tokens.css');
+for(const fam of ['"Archivo"','"IBM Plex Mono"','"Anton"'])check(nqTokens.includes(fam),'Família oficial '+fam+' nos tokens');
+/* Conceitos V15.50: travas de fonte, tamanho e cor em todo o CSS ativo */
+const activeCssAll=activeCssFiles.filter(exists).map(f=>[f,read(f)]);
+const pxFont=activeCssAll.flatMap(([f,t])=>[...t.matchAll(/font-size\s*:\s*[\d.]+(?:px|rem)\b|\bfont\s*:[^;{}]*?\s[\d.]+px[\s/]/g)].map(m=>f+': '+m[0]));
+check(pxFont.length===0,'Escala: nenhum font-size em px/rem fora dos tokens --fs ('+pxFont.slice(0,3).join(' | ')+')');
+const badFamily=activeCssAll.filter(([f,t])=>/["']?(Inter|JetBrains Mono|Bahnschrift)["']?\s*[,;]/.test(t)||/fonts\.googleapis|fonts\.gstatic/.test(t)).map(([f])=>f);
+check(badFamily.length===0,'Fontes: só Archivo, IBM Plex Mono e Anton locais ('+badFamily.join(', ')+')');
+const PALETTE_OK=new Set(['000000','050505','0a0a09','111110','191817','242320','ece6da','b9b2a5','857e72','c3aa84','d8c59e','8a7756','b8614e','8c9a6c','c08a6e','a3ad8a','b98a8a','a294b4','8fa1b3','8fafa6','cfa35e','a8a29a','ece2d0','0b0a09','2b2824','080807']);
+const offPalette=[];
+for(const [f,t0] of activeCssAll){const t=t0.replace(/url\([^)]*\)/g,'').replace(/\/\*[\s\S]*?\*\//g,'');for(const m of t.matchAll(/#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b|rgba?\(\s*(\d+)\s*[, ]\s*(\d+)\s*[, ]\s*(\d+)/g)){let h=m[1]?m[1].toLowerCase():[m[2],m[3],m[4]].map(n=>Number(n).toString(16).padStart(2,'0')).join('');if(h.length===3)h=[...h].map(c=>c+c).join('');if(!PALETTE_OK.has(h))offPalette.push(f.split('/').pop()+' '+h)}}
+check(offPalette.length===0,'Paleta: toda cor do CSS ativo é Nanquim/Papel/Latão/Óxido/Musgo/pigmento ('+[...new Set(offPalette)].slice(0,5).join(', ')+')');
+const stateJs=read('assets/js/app/state.js');
+check(stateJs.includes("'Obras, Gestão e Orçamento':'terracota'")&&stateJs.includes("'Infraestrutura e Mobilidade Urbana':'ocre'")&&stateJs.includes("'Acessibilidade e Segurança':'ametista'"),'Pigmentos: categorias seguem o conceito');
+check(read('assets/js/app/maps.js').includes('function applyMapCoverAccents(root=document){}'),'Pigmentos: cor do card vem da categoria, não da capa');
 const pranchaImportant=(pranchaCss.match(/!important/g)||[]).length;
 check(pranchaImportant<=21,'Pranchas: !important limitado à camada de integração ('+pranchaImportant+')');
 check(!/fonts\.googleapis|fonts\.gstatic/.test(pranchaCss),'Pranchas: fontes sem dependência de rede');
@@ -243,13 +258,13 @@ check(dynamicGlassJs.includes('prefers-reduced-motion'),'runtime detecta Reduce 
 check(dynamicGlassJs.includes('prefers-reduced-transparency'),'runtime detecta Reduce Transparency');
 check(!/getImageData|drawImage\s*\(/.test(dynamicGlassJs),'runtime não faz análise de pixel das capas');
 const blackEditorialCss=read('assets/css/black-editorial-liquid-glass-v2.css');
-check(blackEditorialCss.includes('--mm-bg-deep:#020202'),'Black Editorial token --mm-bg-deep neutro');
-check(blackEditorialCss.includes('--mm-glass-regular-bg:rgba(9,9,9,.60)'),'Liquid Glass Regular neutro');
-check(blackEditorialCss.includes('--mm-glass-dense-bg:rgba(8,8,8,.82)'),'Liquid Glass Dense neutro');
-check(blackEditorialCss.includes('--mm-glass-clear-bg:rgba(12,12,12,.24)'),'Liquid Glass Clear neutro');
+check(blackEditorialCss.includes('--mm-bg-deep:#000000'),'Nanquim: --mm-bg-deep em nanquim puro');
+check(blackEditorialCss.includes('--mm-glass-regular-bg:rgba(10,10,9,.60)'),'Vidro regular em grafite-1');
+check(blackEditorialCss.includes('--mm-glass-dense-bg:rgba(10,10,9,.82)'),'Vidro denso em grafite-1');
+check(blackEditorialCss.includes('--mm-glass-clear-bg:rgba(10,10,9,.24)'),'Vidro claro em grafite-1');
 check(!(new RegExp('\\b(?:blue|navy|cyan|teal)\\b','i')).test(blackEditorialCss),'tema final sem nomes estruturais blue/navy/cyan/teal');
 check(blackEditorialCss.includes('body :is(input,select,textarea):not([type="checkbox"]):not([type="radio"])'),'Black Editorial cobre formulários fora de .app');
-check(blackEditorialCss.includes('background:#0A0A0A!important'),'controles estruturais usam preto neutro');
+check(blackEditorialCss.includes('background:#0a0a09!important'),'controles estruturais usam grafite-1');
 for(const legacy of ['#101319','rgba(8,11,15','rgba(10,13,18','rgba(19,22,28','#a9c8e7','rgba(169,200,231','#030406','#06080b','rgba(39,50,64','rgba(54,59,66','rgba(8,14,22','#12151a']){
   check(!activeCssText.includes(legacy),'cromia estrutural fria removida: '+legacy);
 }

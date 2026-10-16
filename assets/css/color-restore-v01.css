@@ -4,7 +4,7 @@
 .nav-btn[data-nav="home"],.bottom-nav button[data-nav="home"]{--nav-accent:#c3aa84}
 .nav-btn[data-nav="courses"],.bottom-nav button[data-nav="courses"]{--nav-accent:#c3aa84}
 .nav-btn[data-nav="maps"],.bottom-nav button[data-nav="maps"]{--nav-accent:#c3aa84}
-.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:var(--brand-coral,#FF6B6B)}
+.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:var(--brand-coral,#b8614e)}
 .nav-btn[data-nav="progress"],.bottom-nav button[data-nav="progress"]{--nav-accent:#c3aa84}
 .nav-btn[data-nav="agenda"],.bottom-nav button[data-nav="agenda"],.bottom-nav .bottom-nav-agenda{--nav-accent:#c3aa84}
 .nav-btn[data-nav="settings"],.bottom-nav button[data-nav="settings"]{--nav-accent:#c3aa84}
@@ -12,19 +12,19 @@
 html:not(.is-phone-layout) .side{
   border-right-color:rgba(216,197,158,.095);
   background:
-    radial-gradient(310px 230px at 0% 0%,rgba(255,255,255,.028),transparent 72%),
+    radial-gradient(310px 230px at 0% 0%,rgba(236,230,218,.028),transparent 72%),
     radial-gradient(240px 260px at 100% 92%,rgba(216,197,158,.045),transparent 72%),
-    linear-gradient(180deg,rgba(7,7,7,.99),rgba(5,5,5,.99));
+    linear-gradient(180deg,rgba(5,5,5,.99),rgba(5,5,5,.99));
   box-shadow:14px 0 38px rgba(0,0,0,.20),inset -1px 0 rgba(216,197,158,.018)
 }
-html:not(.is-phone-layout) .nav-label{color:#766f62}
+html:not(.is-phone-layout) .nav-label{color:#857e72}
 html:not(.is-phone-layout) .nav-btn.active{
-  border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 34%,rgba(255,255,255,.055));
+  border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 34%,rgba(236,230,218,.055));
   background:
     radial-gradient(170px 68px at 0% 50%,color-mix(in srgb,var(--nav-accent,#c3aa84) 17%,transparent),transparent 76%),
-    linear-gradient(90deg,color-mix(in srgb,var(--nav-accent,#c3aa84) 11%,rgba(255,255,255,.012)),color-mix(in srgb,var(--nav-accent,#c3aa84) 4%,rgba(8,8,8,.84)) 70%,transparent);
+    linear-gradient(90deg,color-mix(in srgb,var(--nav-accent,#c3aa84) 11%,rgba(236,230,218,.012)),color-mix(in srgb,var(--nav-accent,#c3aa84) 4%,rgba(10,10,9,.84)) 70%,transparent);
   color:color-mix(in srgb,var(--nav-accent,#c3aa84) 82%,white);
-  box-shadow:inset 0 1px rgba(255,255,255,.022)
+  box-shadow:inset 0 1px rgba(236,230,218,.022)
 }
 html:not(.is-phone-layout) .nav-btn.active::before{
   width:3px;
@@ -37,30 +37,30 @@ html:not(.is-phone-layout) .nav-btn.active .ui-icon{
 }
 html:not(.is-phone-layout) .nav-btn:hover:not(.active){
   border-color:rgba(216,197,158,.08);
-  background:linear-gradient(90deg,rgba(255,255,255,.018),rgba(216,197,158,.014));
-  color:#d4d8de
+  background:linear-gradient(90deg,rgba(236,230,218,.018),rgba(216,197,158,.014));
+  color:#ece6da
 }
 
 html:not(.is-phone-layout) .topbar{
   border-color:rgba(216,197,158,.12);
   background:
-    radial-gradient(460px 120px at 0% 0%,rgba(255,255,255,.020),transparent 72%),
+    radial-gradient(460px 120px at 0% 0%,rgba(236,230,218,.020),transparent 72%),
     radial-gradient(360px 120px at 100% 0%,rgba(216,197,158,.035),transparent 74%),
-    linear-gradient(135deg,rgba(24,24,25,.72),rgba(13,13,14,.66) 52%,rgba(8,8,9,.74));
-  box-shadow:0 16px 42px rgba(0,0,0,.31),0 3px 12px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.07)
+    linear-gradient(135deg,rgba(25,24,23,.72),rgba(10,10,9,.66) 52%,rgba(10,10,9,.74));
+  box-shadow:0 16px 42px rgba(0,0,0,.31),0 3px 12px rgba(0,0,0,.16),inset 0 1px rgba(236,230,218,.07)
 }
 html:not(.is-phone-layout) .search:focus-within{
   border-color:rgba(216,197,158,.28);
-  box-shadow:0 0 0 3px rgba(216,197,158,.045),inset 0 1px rgba(255,255,255,.045)
+  box-shadow:0 0 0 3px rgba(216,197,158,.045),inset 0 1px rgba(236,230,218,.045)
 }
 
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card{
   border-color:rgba(216,197,158,.17)!important;
   background:
     radial-gradient(430px 205px at 0% 0%,rgba(216,197,158,.075),transparent 68%),
-    radial-gradient(340px 220px at 100% 0%,rgba(255,255,255,.024),transparent 70%),
-    linear-gradient(145deg,rgba(14,14,15,.985),rgba(9,9,10,.99) 48%,rgba(7,7,8,.997))!important;
-  box-shadow:0 17px 40px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.03)!important
+    radial-gradient(340px 220px at 100% 0%,rgba(236,230,218,.024),transparent 70%),
+    linear-gradient(145deg,rgba(17,17,16,.985),rgba(10,10,9,.99) 48%,rgba(5,5,5,.997))!important;
+  box-shadow:0 17px 40px rgba(0,0,0,.32),inset 0 1px rgba(236,230,218,.03)!important
 }
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-card.course-library-card::before{opacity:.58}
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-board-chip.accent{
@@ -69,34 +69,34 @@ html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-board-chip.acc
   color:#d8c59e!important
 }
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .course-exam-info{
-  border-color:rgba(216,184,88,.24);
-  background:rgba(216,184,88,.055)
+  border-color:rgba(195,170,132,.24);
+  background:rgba(195,170,132,.055)
 }
 html:not(.is-phone-layout) :is(#coursesGrid,#homeCourses) .enter{
   border-color:rgba(216,197,158,.22);
   background:rgba(216,197,158,.055);
-  color:#ead7af
+  color:#d8c59e
 }
 
 html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.ok{
-  border-color:rgba(98,169,120,.28);
-  background:rgba(98,169,120,.065);
-  color:#a8d9b5
+  border-color:rgba(140,154,108,.28);
+  background:rgba(140,154,108,.065);
+  color:#8c9a6c
 }
 html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.rev{
-  border-color:rgba(109,130,152,.30);
-  background:rgba(109,130,152,.07);
-  color:#b1c7da
+  border-color:rgba(133,126,114,.30);
+  background:rgba(133,126,114,.07);
+  color:#8fa1b3
 }
 html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.dif{
-  border-color:rgba(214,104,117,.30);
-  background:rgba(214,104,117,.065);
-  color:#eea5ae
+  border-color:rgba(184,97,78,.30);
+  background:rgba(184,97,78,.065);
+  color:#b8614e
 }
 html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.pending{
-  border-color:rgba(216,184,88,.25);
-  background:rgba(216,184,88,.06);
-  color:#ddc78e
+  border-color:rgba(195,170,132,.25);
+  background:rgba(195,170,132,.06);
+  color:#d8c59e
 }
 
 @media(max-width:480px){
@@ -104,8 +104,8 @@ html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.pe
     color:color-mix(in srgb,var(--nav-accent,#c3aa84) 86%,white)!important;
     border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 24%,transparent)!important;
     background:linear-gradient(180deg,
-      color-mix(in srgb,var(--nav-accent,#c3aa84) 14%,rgba(255,255,255,.022)),
-      color-mix(in srgb,var(--nav-accent,#c3aa84) 7%,rgba(7,7,7,.94))
+      color-mix(in srgb,var(--nav-accent,#c3aa84) 14%,rgba(236,230,218,.022)),
+      color-mix(in srgb,var(--nav-accent,#c3aa84) 7%,rgba(5,5,5,.94))
     )!important;
     box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--nav-accent,#c3aa84) 12%,transparent)!important
   }
@@ -115,9 +115,9 @@ html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.pe
     border-color:rgba(216,197,158,.13)!important;
     background:
       radial-gradient(330px 170px at 0% 0%,rgba(216,197,158,.065),transparent 70%),
-      radial-gradient(260px 170px at 100% 0%,rgba(255,255,255,.022),transparent 72%),
-      linear-gradient(145deg,rgba(14,14,14,.985),rgba(8,8,8,.995))!important;
-    box-shadow:0 11px 28px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.022)!important
+      radial-gradient(260px 170px at 100% 0%,rgba(236,230,218,.022),transparent 72%),
+      linear-gradient(145deg,rgba(17,17,16,.985),rgba(10,10,9,.995))!important;
+    box-shadow:0 11px 28px rgba(0,0,0,.28),inset 0 1px rgba(236,230,218,.022)!important
   }
   html.is-phone-layout .course-card.course-library-card::before{opacity:.55!important}
 
@@ -128,27 +128,27 @@ html:not(.is-phone-layout) #coursesGrid .course-progress-mini .progress-state.pe
   html.is-phone-layout .study-agenda-modes button.active{
     border-color:rgba(216,197,158,.22)!important;
     background:rgba(216,197,158,.06)!important;
-    color:#d7c49a!important
+    color:#d8c59e!important
   }
   html.is-phone-layout .progress-state.ok{
-    border-color:rgba(98,169,120,.26)!important;
-    background:rgba(98,169,120,.06)!important;
-    color:#a4d4b1!important
+    border-color:rgba(140,154,108,.26)!important;
+    background:rgba(140,154,108,.06)!important;
+    color:#8c9a6c!important
   }
   html.is-phone-layout .progress-state.rev{
-    border-color:rgba(109,130,152,.28)!important;
-    background:rgba(109,130,152,.065)!important;
-    color:#adc4d8!important
+    border-color:rgba(133,126,114,.28)!important;
+    background:rgba(133,126,114,.065)!important;
+    color:#8fa1b3!important
   }
   html.is-phone-layout .progress-state.dif{
-    border-color:rgba(214,104,117,.28)!important;
-    background:rgba(214,104,117,.06)!important;
-    color:#eba0aa!important
+    border-color:rgba(184,97,78,.28)!important;
+    background:rgba(184,97,78,.06)!important;
+    color:#b8614e!important
   }
   html.is-phone-layout .progress-state.pending{
-    border-color:rgba(216,184,88,.24)!important;
-    background:rgba(216,184,88,.055)!important;
-    color:#dac58b!important
+    border-color:rgba(195,170,132,.24)!important;
+    background:rgba(195,170,132,.055)!important;
+    color:#d8c59e!important
   }
 }
 
@@ -156,8 +156,8 @@ html.is-ipad:not(.is-phone-layout) .bottom-nav button.active{
   color:color-mix(in srgb,var(--nav-accent,#c3aa84) 86%,white);
   border-color:color-mix(in srgb,var(--nav-accent,#c3aa84) 25%,transparent);
   background:linear-gradient(180deg,
-    color-mix(in srgb,var(--nav-accent,#c3aa84) 14%,rgba(255,255,255,.022)),
-    color-mix(in srgb,var(--nav-accent,#c3aa84) 7%,rgba(7,7,7,.94))
+    color-mix(in srgb,var(--nav-accent,#c3aa84) 14%,rgba(236,230,218,.022)),
+    color-mix(in srgb,var(--nav-accent,#c3aa84) 7%,rgba(5,5,5,.94))
   )
 }
 html.is-ipad:not(.is-phone-layout) .bottom-nav button.active>.ui-icon{color:var(--nav-accent,#c3aa84)}

@@ -175,8 +175,8 @@ html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer
 .planner-errors-empty{
   min-height:156px!important;
   border-style:solid!important;
-  border-color:rgba(255,255,255,.08)!important;
-  background:linear-gradient(180deg,rgba(14,14,15,.72),rgba(7,7,8,.82))!important;
+  border-color:rgba(236,230,218,.08)!important;
+  background:linear-gradient(180deg,rgba(17,17,16,.72),rgba(5,5,5,.82))!important;
 }
 .planner-topic-review-empty .empty-state-graphic,
 .planner-errors-empty .empty-state-graphic{
@@ -191,7 +191,7 @@ html.is-ipad:not(.is-phone-layout) #homeCourses .home-course-card>.course-footer
 }
 .planner-topic-review-empty .empty-state-copy h3,
 .planner-errors-empty .empty-state-copy h3{
-  font-size:13px!important;
+  font-size:var(--fs-body-sm)!important;
 }
 .planner-topic-review-empty .empty-state-copy p,
 .planner-errors-empty .empty-state-copy p{

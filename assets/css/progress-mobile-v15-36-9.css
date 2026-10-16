@@ -25,9 +25,9 @@
   /* Visão geral: uma faixa curta, sem repetir estados já explicados abaixo. */
   html.is-phone-layout .progress-global-panel{
     padding:11px 12px!important;
-    border-color:rgba(255,255,255,.065)!important;
+    border-color:rgba(236,230,218,.065)!important;
     border-radius:12px!important;
-    background:rgba(8,8,9,.66)!important;
+    background:rgba(10,10,9,.66)!important;
     box-shadow:none!important;
   }
 
@@ -43,13 +43,13 @@
   }
 
   html.is-phone-layout .progress-global-head .kicker{
-    font-size:7px!important;
+    font-size:var(--fs-caption)!important;
     letter-spacing:.13em!important;
   }
 
   html.is-phone-layout .progress-global-head h3{
     margin-top:2px!important;
-    font-size:15px!important;
+    font-size:var(--fs-body)!important;
     line-height:1.15!important;
   }
 
@@ -64,12 +64,12 @@
   }
 
   html.is-phone-layout .progress-global-score b{
-    font-size:25px!important;
+    font-size:var(--fs-h2)!important;
     line-height:1!important;
   }
 
   html.is-phone-layout .progress-global-score span{
-    font-size:7px!important;
+    font-size:var(--fs-caption)!important;
     letter-spacing:.04em!important;
   }
 
@@ -116,7 +116,7 @@
     min-height:38px!important;
     padding:0 12px!important;
     border-radius:999px!important;
-    font-size:9px!important;
+    font-size:var(--fs-caption)!important;
     white-space:nowrap!important;
   }
 
@@ -140,13 +140,13 @@
     min-height:40px!important;
     padding:0 12px!important;
     border-radius:999px!important;
-    font:750 9px var(--mono)!important;
+    font:750 var(--fs-caption) var(--mono)!important;
     letter-spacing:.02em!important;
   }
 
   html.is-phone-layout .progress-sort-trigger>span:first-child{
-    color:#9298a0!important;
-    font-size:14px!important;
+    color:#857e72!important;
+    font-size:var(--fs-label)!important;
     line-height:1!important;
   }
 
@@ -158,9 +158,9 @@
 
   html.is-phone-layout .progress-course.progress-course-compact{
     margin-top:0!important;
-    border-color:rgba(255,255,255,.065)!important;
+    border-color:rgba(236,230,218,.065)!important;
     border-radius:12px!important;
-    background:rgba(7,7,8,.6)!important;
+    background:rgba(5,5,5,.6)!important;
     box-shadow:none!important;
   }
 
@@ -177,13 +177,13 @@
   }
 
   html.is-phone-layout .progress-course-title .kicker{
-    font-size:7px!important;
+    font-size:var(--fs-caption)!important;
     letter-spacing:.13em!important;
   }
 
   html.is-phone-layout .progress-course-title h3{
     margin-top:3px!important;
-    font-size:14px!important;
+    font-size:var(--fs-body-sm)!important;
     line-height:1.24!important;
     display:-webkit-box!important;
     -webkit-line-clamp:2;
@@ -193,7 +193,7 @@
 
   html.is-phone-layout .progress-course-title p{
     margin-top:4px!important;
-    font-size:8.5px!important;
+    font-size:var(--fs-caption)!important;
     line-height:1.3!important;
   }
 
@@ -209,7 +209,7 @@
   }
 
   html.is-phone-layout .progress-course-compact .progress-course-score b{
-    font-size:20px!important;
+    font-size:var(--fs-kpi-sm)!important;
     line-height:1!important;
   }
 
@@ -234,7 +234,7 @@
   }
 
   html.is-phone-layout .progress-course-toggle-icon{
-    font-size:15px!important;
+    font-size:var(--fs-label)!important;
     line-height:1!important;
   }
 
@@ -255,7 +255,7 @@
   }
 
   html.is-phone-layout .progress-course-compact.is-expanded .progress-course-summary{
-    border-bottom-color:rgba(255,255,255,.04)!important;
+    border-bottom-color:rgba(236,230,218,.04)!important;
   }
 
   /* Mapas: sem capa; a sigla colorida vira a identidade principal. */
@@ -276,7 +276,7 @@
     min-height:66px!important;
     padding:9px 2px!important;
     border:0!important;
-    border-bottom:1px solid rgba(255,255,255,.045)!important;
+    border-bottom:1px solid rgba(236,230,218,.045)!important;
     border-left:0!important;
     border-radius:0!important;
     background:transparent!important;
@@ -290,7 +290,7 @@
   }
 
   html.is-phone-layout .progress-map-row:active{
-    background:rgba(255,255,255,.025)!important;
+    background:rgba(236,230,218,.025)!important;
   }
 
   html.is-phone-layout .progress-map-row::after{
@@ -299,8 +299,8 @@
     grid-row:1;
     align-self:center;
     justify-self:end;
-    color:#727983;
-    font:500 24px/1 var(--sans);
+    color:#857e72;
+    font:500 var(--fs-h2)/1 var(--sans);
   }
 
   html.is-phone-layout .progress-map-thumb{
@@ -337,12 +337,12 @@
     height:30px!important;
     margin:0!important;
     padding:0 8px!important;
-    border:1px solid var(--accent,#78808a)!important;
+    border:1px solid var(--accent,#857e72)!important;
     border-radius:9px!important;
-    background:rgba(255,255,255,.022)!important;
-    color:var(--accent,#a8adb4)!important;
-    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,#78808a) 14%,transparent)!important;
-    font-size:9px!important;
+    background:rgba(236,230,218,.022)!important;
+    color:var(--accent,#b9b2a5)!important;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,#857e72) 14%,transparent)!important;
+    font-size:var(--fs-caption)!important;
     line-height:1!important;
     letter-spacing:.045em!important;
   }
@@ -356,8 +356,8 @@
     overflow:hidden!important;
     white-space:normal!important;
     text-overflow:clip!important;
-    color:#dedfe2!important;
-    font-size:11.5px!important;
+    color:#ece6da!important;
+    font-size:var(--fs-caption)!important;
     line-height:1.28!important;
   }
 
@@ -369,8 +369,8 @@
     overflow:hidden!important;
     text-overflow:ellipsis!important;
     white-space:nowrap!important;
-    color:#747b84!important;
-    font-size:8.5px!important;
+    color:#857e72!important;
+    font-size:var(--fs-caption)!important;
     line-height:1.3!important;
   }
 
@@ -388,7 +388,7 @@
     margin:0!important;
     min-height:20px!important;
     padding:0 6px!important;
-    font-size:7px!important;
+    font-size:var(--fs-caption)!important;
     line-height:18px!important;
   }
 
@@ -405,7 +405,7 @@
     width:100%!important;
     min-height:40px!important;
     border-radius:10px!important;
-    font-size:9px!important;
+    font-size:var(--fs-caption)!important;
   }
 
   /* Bottom sheet de ordenação, anexado ao body para evitar clipping no iOS. */
@@ -428,9 +428,9 @@
     z-index:1201!important;
     max-height:min(70dvh,520px)!important;
     padding:12px!important;
-    border:1px solid rgba(255,255,255,.09)!important;
+    border:1px solid rgba(236,230,218,.09)!important;
     border-radius:18px!important;
-    background:rgba(10,10,11,.97)!important;
+    background:rgba(10,10,9,.97)!important;
     box-shadow:0 24px 72px rgba(0,0,0,.62)!important;
     -webkit-backdrop-filter:blur(22px) saturate(112%);
     backdrop-filter:blur(22px) saturate(112%);
@@ -447,17 +447,17 @@
 
   html.is-phone-layout .progress-sort-sheet-head h3{
     margin-top:2px!important;
-    font-size:15px!important;
+    font-size:var(--fs-body)!important;
   }
 
   html.is-phone-layout .progress-sort-sheet-close{
     width:40px!important;
     height:40px!important;
-    border:1px solid rgba(255,255,255,.07)!important;
+    border:1px solid rgba(236,230,218,.07)!important;
     border-radius:12px!important;
-    background:rgba(255,255,255,.025)!important;
-    color:#aeb3ba!important;
-    font-size:20px!important;
+    background:rgba(236,230,218,.025)!important;
+    color:#b9b2a5!important;
+    font-size:var(--fs-h2)!important;
   }
 
   html.is-phone-layout .progress-sort-sheet-options{
@@ -469,28 +469,28 @@
     width:100%!important;
     min-height:48px!important;
     padding:0 12px!important;
-    border:1px solid rgba(255,255,255,.055)!important;
+    border:1px solid rgba(236,230,218,.055)!important;
     border-radius:11px!important;
-    background:rgba(255,255,255,.018)!important;
-    color:#c7cbd0!important;
+    background:rgba(236,230,218,.018)!important;
+    color:#b9b2a5!important;
     display:flex!important;
     align-items:center!important;
     justify-content:space-between!important;
     gap:12px!important;
     text-align:left!important;
-    font-size:11px!important;
+    font-size:var(--fs-label)!important;
   }
 
   html.is-phone-layout .progress-sort-option i{
     opacity:0;
-    color:#aeb3ba;
+    color:#b9b2a5;
     font-style:normal;
   }
 
   html.is-phone-layout .progress-sort-option.active{
-    border-color:rgba(255,255,255,.13)!important;
-    background:rgba(255,255,255,.04)!important;
-    color:#f0f1f2!important;
+    border-color:rgba(236,230,218,.13)!important;
+    background:rgba(236,230,218,.04)!important;
+    color:#ece6da!important;
   }
 
   html.is-phone-layout .progress-sort-option.active i{

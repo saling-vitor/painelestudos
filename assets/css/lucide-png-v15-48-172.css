@@ -98,7 +98,7 @@
 .ui-icon{flex-shrink:0;background-color:currentColor;-webkit-mask-image:var(--ui-icon);mask-image:var(--ui-icon);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;}
 .ui-icon.icon-play,.ui-icon.icon-list{ -webkit-mask:var(--ui-icon) center/contain no-repeat!important;mask:var(--ui-icon) center/contain no-repeat!important;}
 /* Nuvem na sidebar segue exatamente o estado real da sessão/sincronização. */
-.cloud-line[data-cloud-state="online"]>.ui-icon{--ui-icon:var(--solid-cloud-check)!important;color:#83d5a0;}
+.cloud-line[data-cloud-state="online"]>.ui-icon{--ui-icon:var(--solid-cloud-check)!important;color:#8c9a6c;}
 .cloud-line[data-cloud-state="syncing"]>.ui-icon{--ui-icon:var(--solid-cloud-upload)!important;}
 .cloud-line[data-cloud-state="offline"]>.ui-icon{--ui-icon:var(--solid-cloud-off)!important;}
 .cloud-line[data-cloud-state="error"]>.ui-icon{--ui-icon:var(--solid-cloud-alert)!important;}

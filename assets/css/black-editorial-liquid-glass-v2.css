@@ -9,44 +9,44 @@
   color-scheme:dark;
 
   /* Ambiente */
-  --mm-bg-deep:#020202;
-  --mm-bg:#040404;
-  --mm-bg-raised:#070707;
-  --mm-bg-soft:#0A0A0A;
+  --mm-bg-deep:#000000;
+  --mm-bg:#050505;
+  --mm-bg-raised:#050505;
+  --mm-bg-soft:#0a0a09;
 
   /* Superfícies permanentes */
-  --mm-surface-0:#080808;
-  --mm-surface-1:#0B0B0B;
-  --mm-surface-2:#0E0E0E;
-  --mm-surface-3:#111111;
+  --mm-surface-0:#0a0a09;
+  --mm-surface-1:#0a0a09;
+  --mm-surface-2:#111110;
+  --mm-surface-3:#111110;
 
   /* Texto */
-  --mm-text-strong:#F4F2ED;
-  --mm-text:#D5D3CE;
-  --mm-text-secondary:#A19F9A;
-  --mm-text-muted:#74736F;
+  --mm-text-strong:#ece6da;
+  --mm-text:#ece6da;
+  --mm-text-secondary:#b9b2a5;
+  --mm-text-muted:#857e72;
 
   /* Marca */
-  --mm-cream:#E8D7B1;
-  --mm-coral:#EF745F;
+  --mm-cream:#d8c59e;
+  --mm-coral:#b8614e;
 
   /* Linhas e sombras neutras */
-  --mm-line:rgba(255,255,255,.090);
-  --mm-line-soft:rgba(255,255,255,.055);
-  --mm-line-strong:rgba(255,255,255,.16);
+  --mm-line:rgba(236,230,218,.090);
+  --mm-line-soft:rgba(236,230,218,.055);
+  --mm-line-strong:rgba(236,230,218,.16);
   --mm-shadow-surface:0 14px 34px rgba(0,0,0,.34);
   --mm-shadow-float:0 28px 78px rgba(0,0,0,.62);
 
   /* Liquid Glass — uma superfície funcional = um backdrop-filter */
-  --mm-glass-regular-bg:rgba(9,9,9,.60);
+  --mm-glass-regular-bg:rgba(10,10,9,.60);
   --mm-glass-regular-filter:blur(20px) saturate(128%) contrast(104%);
-  --mm-glass-dense-bg:rgba(8,8,8,.82);
+  --mm-glass-dense-bg:rgba(10,10,9,.82);
   --mm-glass-dense-filter:blur(24px) saturate(122%) contrast(105%);
-  --mm-glass-clear-bg:rgba(12,12,12,.24);
+  --mm-glass-clear-bg:rgba(10,10,9,.24);
   --mm-glass-clear-filter:blur(11px) saturate(135%);
-  --mm-glass-border:rgba(255,255,255,.16);
-  --mm-glass-border-strong:rgba(255,255,255,.22);
-  --mm-glass-highlight:rgba(255,255,255,.14);
+  --mm-glass-border:rgba(236,230,218,.16);
+  --mm-glass-border-strong:rgba(236,230,218,.22);
+  --mm-glass-highlight:rgba(236,230,218,.14);
   --mm-glass-outer:rgba(0,0,0,.82);
 
   /* Compatibilidade com tokens legados */
@@ -61,8 +61,8 @@
   --lg-regular-bg:var(--mm-glass-regular-bg);
   --lg-dense-bg:var(--mm-glass-dense-bg);
   --lg-regular-border:var(--mm-glass-border);
-  --lg-separator:rgba(255,255,255,.075);
-  --lg-inner-fill-hover:rgba(255,255,255,.045);
+  --lg-separator:rgba(236,230,218,.075);
+  --lg-inner-fill-hover:rgba(236,230,218,.045);
 
 }
 
@@ -117,7 +117,7 @@ html:not(.is-phone-layout) .side,
 .course-sticky-bar{
   border:1px solid var(--mm-glass-border)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.008) 34%,transparent 58%),
+    linear-gradient(180deg,rgba(236,230,218,.032),rgba(236,230,218,.008) 34%,transparent 58%),
     var(--mm-glass-regular-bg)!important;
   -webkit-backdrop-filter:var(--mm-glass-regular-filter)!important;
   backdrop-filter:var(--mm-glass-regular-filter)!important;
@@ -131,16 +131,16 @@ html:not(.is-phone-layout) .side,
 /* Topbar: preto translúcido, sem leitura cromática fria. */
 html:not(.is-phone-layout) .topbar{
   background:
-    radial-gradient(115% 150% at 9% -72%,rgba(255,255,255,.10),transparent 58%),
-    linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.006) 40%,transparent 66%),
+    radial-gradient(115% 150% at 9% -72%,rgba(236,230,218,.10),transparent 58%),
+    linear-gradient(180deg,rgba(236,230,218,.025),rgba(236,230,218,.006) 40%,transparent 66%),
     var(--mm-glass-regular-bg)!important;
 }
 
 /* Sidebar: fumê quase preto; a topografia é percebida apenas através do vidro. */
 html:not(.is-phone-layout) .side{
   background:
-    linear-gradient(180deg,rgba(255,255,255,.022),transparent 38%),
-    rgba(7,8,9,.70)!important;
+    linear-gradient(180deg,rgba(236,230,218,.022),transparent 38%),
+    rgba(10,10,9,.70)!important;
 }
 
 /* ==========================================================================
@@ -159,29 +159,29 @@ html:not(.is-phone-layout) .side .nav-btn,
 
 /* Busca e Sincronizar = lentes internas, não superfícies de vidro independentes. */
 html:not(.is-phone-layout) .topbar .search{
-  border:1px solid rgba(255,255,255,.10)!important;
+  border:1px solid rgba(236,230,218,.10)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012)),
-    rgba(255,255,255,.020)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),inset 0 -1px 0 rgba(0,0,0,.18)!important;
+    linear-gradient(180deg,rgba(236,230,218,.032),rgba(236,230,218,.012)),
+    rgba(236,230,218,.020)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.055),inset 0 -1px 0 rgba(0,0,0,.18)!important;
 }
 html:not(.is-phone-layout) .topbar .search:focus-within{
-  border-color:rgba(255,255,255,.22)!important;
-  background:rgba(255,255,255,.036)!important;
+  border-color:rgba(236,230,218,.22)!important;
+  background:rgba(236,230,218,.036)!important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.075),
-    0 0 0 2px rgba(232,215,177,.10)!important;
+    inset 0 1px 0 rgba(236,230,218,.075),
+    0 0 0 2px rgba(216,197,158,.10)!important;
 }
 html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn){
-  border-color:rgba(255,255,255,.10)!important;
+  border-color:rgba(236,230,218,.10)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.040),rgba(255,255,255,.014)),
-    rgba(255,255,255,.020)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+    linear-gradient(180deg,rgba(236,230,218,.040),rgba(236,230,218,.014)),
+    rgba(236,230,218,.020)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.05)!important;
 }
 html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn):is(:hover,:focus-visible){
-  border-color:rgba(255,255,255,.18)!important;
-  background:rgba(255,255,255,.023)!important;
+  border-color:rgba(236,230,218,.18)!important;
+  background:rgba(236,230,218,.023)!important;
 }
 
 /* Sidebar: itens transparentes, hover discreto, ativo = lente interna. */
@@ -195,11 +195,11 @@ html:not(.is-phone-layout) .side .nav-btn:hover{
   box-shadow:none!important;
 }
 html:not(.is-phone-layout) .side .nav-btn.active{
-  border-color:rgba(255,255,255,.090)!important;
+  border-color:rgba(236,230,218,.090)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,.016)),
-    rgba(255,255,255,.012)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.075)!important;
+    linear-gradient(180deg,rgba(236,230,218,.050),rgba(236,230,218,.016)),
+    rgba(236,230,218,.012)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.075)!important;
 }
 
 /* Bottom dock: uma superfície; item ativo = lente sem blur. */
@@ -208,13 +208,13 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   background:transparent!important;
   box-shadow:none!important;
 }
-.bottom-nav>button:is(:hover,:focus-visible){background:rgba(255,255,255,.030)!important}
+.bottom-nav>button:is(:hover,:focus-visible){background:rgba(236,230,218,.030)!important}
 .bottom-nav>button.active{
-  border-color:rgba(255,255,255,.095)!important;
+  border-color:rgba(236,230,218,.095)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.050),rgba(255,255,255,.016)),
-    rgba(255,255,255,.012)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.075)!important;
+    linear-gradient(180deg,rgba(236,230,218,.050),rgba(236,230,218,.016)),
+    rgba(236,230,218,.012)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.075)!important;
 }
 
 /* Grupo de ações do curso: vidro apenas no invólucro. */
@@ -224,18 +224,18 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   box-shadow:none!important;
 }
 .course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn):is(:hover,:focus-visible){
-  background:rgba(255,255,255,.018)!important;
+  background:rgba(236,230,218,.018)!important;
 }
 
 /* Filtros e selects dentro de barras funcionais: fill, nunca glass aninhado. */
 :is(.course-study-filter.active,.category-btn.active,.simulation-toolbar select,.simulation-toolbar .ui-select-trigger){
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
-  border-color:rgba(255,255,255,.11)!important;
+  border-color:rgba(236,230,218,.11)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012)),
+    linear-gradient(180deg,rgba(236,230,218,.035),rgba(236,230,218,.012)),
     var(--mm-surface-1)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.055)!important;
 }
 
 /* V15.48.171-G · Removido legado MATTE BLACK: gradientes e fills de cards
@@ -243,17 +243,17 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 
 /* Curso/hero: editorial sólido; sem glow azul. */
 .app .content .course-hero{
-  border-color:rgba(255,255,255,.085)!important;
+  border-color:rgba(236,230,218,.085)!important;
   background:
-    radial-gradient(580px 290px at 0% 0%,rgba(232,215,177,.045),transparent 70%),
-    linear-gradient(110deg,#0E0E0E,#080808 62%,#060606)!important;
+    radial-gradient(580px 290px at 0% 0%,rgba(216,197,158,.045),transparent 70%),
+    linear-gradient(110deg,#111110,#0a0a09 62%,#050505)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
   box-shadow:0 22px 54px rgba(0,0,0,.38)!important;
 }
 .app .content .hero{
-  background-color:#050607!important;
-  box-shadow:0 34px 110px rgba(0,0,0,.66),inset 0 1px rgba(255,255,255,.04)!important;
+  background-color:#050505!important;
+  box-shadow:0 34px 110px rgba(0,0,0,.66),inset 0 1px rgba(236,230,218,.04)!important;
 }
 
 /* KPIs internos e pequenos agrupamentos permanecem sólidos. */
@@ -292,7 +292,7 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 ){
   border:1px solid var(--mm-glass-border-strong)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.036),rgba(255,255,255,.006) 42%,transparent 68%),
+    linear-gradient(180deg,rgba(236,230,218,.036),rgba(236,230,218,.006) 42%,transparent 68%),
     var(--mm-glass-dense-bg)!important;
   -webkit-backdrop-filter:var(--mm-glass-dense-filter)!important;
   backdrop-filter:var(--mm-glass-dense-filter)!important;
@@ -326,16 +326,16 @@ html:not(.is-phone-layout) .side .nav-btn.active{
   background-color:rgba(0,0,0,.58)!important;
 }
 :is(.modal-card,.planner-modal-card,.study-doubt-card,[role="dialog"].modal-card){
-  border:1px solid rgba(255,255,255,.18)!important;
+  border:1px solid rgba(236,230,218,.18)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.030),rgba(255,255,255,.005) 45%,transparent 70%),
-    rgba(8,8,8,.88)!important;
+    linear-gradient(180deg,rgba(236,230,218,.030),rgba(236,230,218,.005) 45%,transparent 70%),
+    rgba(10,10,9,.88)!important;
   -webkit-backdrop-filter:var(--mm-glass-dense-filter)!important;
   backdrop-filter:var(--mm-glass-dense-filter)!important;
   box-shadow:
     0 0 0 1px rgba(0,0,0,.86),
     0 36px 100px rgba(0,0,0,.72),
-    inset 0 1px 0 rgba(255,255,255,.13)!important;
+    inset 0 1px 0 rgba(236,230,218,.13)!important;
 }
 :is(.modal-card,.planner-modal-card,.study-doubt-card) :is(button,input,select,textarea){
   -webkit-backdrop-filter:none!important;
@@ -344,13 +344,13 @@ html:not(.is-phone-layout) .side .nav-btn.active{
 
 /* Toasts usam Dense Glass porque são overlays transitórios. */
 .toast{
-  border-color:rgba(255,255,255,.16)!important;
+  border-color:rgba(236,230,218,.16)!important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.030),transparent 64%),
-    rgba(9,9,9,.82)!important;
+    linear-gradient(180deg,rgba(236,230,218,.030),transparent 64%),
+    rgba(10,10,9,.82)!important;
   -webkit-backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
   backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
-  box-shadow:0 22px 58px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.11)!important;
+  box-shadow:0 22px 58px rgba(0,0,0,.62),inset 0 1px 0 rgba(236,230,218,.11)!important;
 }
 
 /* ==========================================================================
@@ -360,26 +360,26 @@ body :is(input,select,textarea,.ui-select-trigger){
   color:var(--mm-text)!important;
 }
 body :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
-  border-color:rgba(255,255,255,.10)!important;
-  background:#0A0A0A!important;
+  border-color:rgba(236,230,218,.10)!important;
+  background:#0a0a09!important;
   box-shadow:none!important;
 }
 body :is(input,select,textarea):focus,
 body :is(input,select,textarea):focus-visible{
-  border-color:rgba(232,215,177,.38)!important;
-  outline:1px solid rgba(232,215,177,.42)!important;
+  border-color:rgba(216,197,158,.38)!important;
+  outline:1px solid rgba(216,197,158,.42)!important;
   outline-offset:2px!important;
 }
 
 /* Focus keyboard visível também em botões e links. */
 body :is(button,a,[role="button"],[tabindex]):focus-visible{
-  outline:2px solid rgba(232,215,177,.62)!important;
+  outline:2px solid rgba(216,197,158,.62)!important;
   outline-offset:2px!important;
 }
 
 /* Rótulos auxiliares de 7.5–8px: contraste AA sobre surface-1. */
 .app .content .study-command-metrics small{
-  color:#7F7E79!important;
+  color:#857e72!important;
 }
 
 /* ==========================================================================
@@ -388,8 +388,8 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
 @media(min-width:900px){
   html.is-ipad:not(.is-phone-layout) .side{
     background:
-      linear-gradient(180deg,rgba(255,255,255,.020),transparent 40%),
-      rgba(8,8,8,.73)!important;
+      linear-gradient(180deg,rgba(236,230,218,.020),transparent 40%),
+      rgba(10,10,9,.73)!important;
   }
 }
 @media(max-width:899px){
@@ -404,16 +404,16 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
    ========================================================================== */
 @media(max-width:480px){
   html.is-phone-layout .topbar{
-    border-color:rgba(255,255,255,.13)!important;
+    border-color:rgba(236,230,218,.13)!important;
     background:
-      linear-gradient(180deg,rgba(255,255,255,.025),transparent 62%),
-      rgba(8,9,10,.72)!important;
+      linear-gradient(180deg,rgba(236,230,218,.025),transparent 62%),
+      rgba(10,10,9,.72)!important;
     -webkit-backdrop-filter:blur(18px) saturate(124%) contrast(104%)!important;
     backdrop-filter:blur(18px) saturate(124%) contrast(104%)!important;
     box-shadow:
       0 0 0 1px rgba(0,0,0,.78),
       0 14px 38px rgba(0,0,0,.42),
-      inset 0 1px 0 rgba(255,255,255,.10)!important;
+      inset 0 1px 0 rgba(236,230,218,.10)!important;
   }
   html.is-phone-layout .topbar :is(.search,#syncTop,#installBtn,.icon-btn,button,input){
     -webkit-backdrop-filter:none!important;
@@ -422,8 +422,8 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
 
   html.is-phone-layout .bottom-nav{
     background:
-      linear-gradient(180deg,rgba(255,255,255,.030),transparent 62%),
-      rgba(9,10,11,.68)!important;
+      linear-gradient(180deg,rgba(236,230,218,.030),transparent 62%),
+      rgba(10,10,9,.68)!important;
     -webkit-backdrop-filter:blur(20px) saturate(128%) contrast(104%)!important;
     backdrop-filter:blur(20px) saturate(128%) contrast(104%)!important;
   }
@@ -439,8 +439,8 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
   /* Sheets/popovers móveis usam Dense Glass, sem azul. */
   html.is-phone-layout :is(.mobile-menu-sheet,.maps-filter-panel,.ui-select-popover,.course-more-menu){
     background:
-      linear-gradient(180deg,rgba(255,255,255,.030),transparent 60%),
-      rgba(8,9,10,.88)!important;
+      linear-gradient(180deg,rgba(236,230,218,.030),transparent 60%),
+      rgba(10,10,9,.88)!important;
     -webkit-backdrop-filter:blur(21px) saturate(122%) contrast(104%)!important;
     backdrop-filter:blur(21px) saturate(122%) contrast(104%)!important;
   }
@@ -457,7 +457,7 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
     .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
     .study-doubt-card,.toast
   ){
-    background:#0B0B0B!important;
+    background:#0a0a09!important;
     background-image:none!important;
   }
 }
@@ -472,7 +472,7 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
     .map-card.has-cover>.fav,.map-card.has-cover>.map-admin-btn,
     .course-card-edit,.simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:#0B0B0B!important;
+    background:#0a0a09!important;
     background-image:none!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
@@ -487,11 +487,11 @@ body :is(button,a,[role="button"],[tabindex]):focus-visible{
     .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
     .study-doubt-card
   ){
-    border-color:rgba(255,255,255,.48)!important;
-    background-color:#070809!important;
+    border-color:rgba(236,230,218,.48)!important;
+    background-color:#0a0a09!important;
   }
   body :is(input,select,textarea,button,a,[role="button"]):focus-visible{
-    outline-color:#fff!important;
+    outline-color:#ece6da!important;
   }
 }
 

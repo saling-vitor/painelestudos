@@ -134,6 +134,53 @@ html .app :is(.map-card,.course-card,.course-library-card,.simulation-card)
  backdrop-filter:var(--nq-glass-micro-filter)!important;
  box-shadow:inset 0 1px 0 rgba(236,226,208,.22),0 4px 12px rgba(0,0,0,.35)!important;
 }
+/* Leitor do mapa: barra = material Barra; trilho lateral e menu = material Painel. O mapa continua sólido. */
+html:is(:root,#nq#nq) #reader .readerbar{
+ background:var(--nq-glass-lens),var(--nq-glass-bar)!important;
+ border-color:var(--nq-glass-border)!important;
+ box-shadow:inset 0 1px 0 var(--nq-glass-rim),inset 0 -1px 0 rgba(0,0,0,.55),0 10px 30px rgba(0,0,0,.45)!important;
+ -webkit-backdrop-filter:var(--nq-glass-bar-filter)!important;backdrop-filter:var(--nq-glass-bar-filter)!important;
+}
+html:is(:root,#nq#nq) #reader .readerbar :is(button,select,input,.ui-select-trigger){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html:is(:root,#nq#nq) #studyReaderRail.study-reader-rail{
+ background:var(--nq-glass-lens),var(--nq-glass-panel)!important;
+ border-color:var(--nq-glass-border)!important;
+ box-shadow:inset 0 1px 0 var(--nq-glass-rim),inset 0 -1px 0 rgba(0,0,0,.55),0 24px 60px rgba(0,0,0,.6)!important;
+ -webkit-backdrop-filter:var(--nq-glass-panel-filter)!important;backdrop-filter:var(--nq-glass-panel-filter)!important;
+}
+/* Menu: pigmento só no item ativo, com contorno e filete na cor da seção (vence as camadas antigas do iPad). */
+html:is(:root,#nq#nq):not(.is-phone-layout) .app .side .nav-btn[data-nav].active,
+html:is(:root,#nq#nq) .bottom-nav>button[data-nav].active{
+ border-color:color-mix(in srgb,var(--nq-nav,var(--nq-latao)) 50%,transparent)!important;
+}
+html:is(:root,#nq#nq):not(.is-phone-layout) .app .side .nav-btn[data-nav].active::before,
+html:is(:root,#nq#nq) .bottom-nav>button[data-nav].active::before{background:var(--nq-nav,var(--nq-latao))!important;box-shadow:none!important}
+/* Celular: o botão "Mais" usa o pigmento Pedra quando a seção aberta está dentro dele. */
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger{--nq-nav:var(--nq-pedra)}
+html:is(:root,#nq#nq).is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]){
+ background:color-mix(in srgb,var(--nq-pedra) 15%,var(--nq-grafite-2))!important;
+ border-color:color-mix(in srgb,var(--nq-pedra) 50%,transparent)!important;
+ color:var(--nq-pedra)!important;
+}
+html:is(:root,#nq#nq).is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]) :is(.ui-icon,.bottom-nav-label){color:var(--nq-pedra)!important}
+html:is(:root,#nq#nq).is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before,
+html:is(:root,#nq#nq).is-phone-layout .bottom-nav>.mobile-menu-trigger.active::before{background:var(--nq-pedra)!important;box-shadow:none!important}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"]{--nq-nav:var(--nq-argila)}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="progress"]{--nq-nav:var(--nq-ametista)}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"]{--nq-nav:var(--nq-ardosia)}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"]{--nq-nav:var(--nq-pedra)}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="maps"]{--nq-nav:var(--nq-salvia)}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="courses"]{--nq-nav:var(--nq-terracota)}
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="home"]{--nq-nav:var(--nq-latao)}
+html:is(:root,#nq#nq).is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current :is(.ui-icon,b){color:var(--nq-nav,var(--nq-latao))!important}
+/* Movimento: menus nascem do botão (96% → 100%, 180 ms); o vidro afunda ao toque (98%, 90 ms). */
+@keyframes nq-abrir{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+html [data-mm-open]{transform-origin:var(--mm-source-x,50%) var(--mm-source-y,0%);animation:nq-abrir var(--nq-glass-duration) var(--nq-glass-ease)}
+html :is(.course-primary-actions button,.bottom-nav>button,.side .nav-btn,.pr-acts button,.pr-bar .pr-tab):active{transform:scale(.98);transition:transform 90ms var(--nq-glass-ease)}
+@media (prefers-reduced-motion:reduce){
+ html [data-mm-open]{animation:none}
+ html :is(.course-primary-actions button,.bottom-nav>button,.side .nav-btn,.pr-acts button,.pr-bar .pr-tab):active{transform:none}
+}
 /* Buttons: brass actions, matte inside glass; covers and artwork untouched. */
 html .app .content :is(.study-plan-item,.continue-card,.priority-now-card,.study-command-card,.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item)
  :is(.primary,.secondary,.course-footer .enter,[data-study-plan-open],button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav){
@@ -176,6 +223,8 @@ html.mm-reduced-transparency .app .main .topbar,
 html.mm-reduced-transparency .bottom-nav,
 html.mm-reduced-transparency .app .side,
 html.mm-reduced-transparency .app .course-sticky-bar,
+html.mm-reduced-transparency #reader .readerbar,
+html.mm-reduced-transparency #studyReaderRail,
 html.mm-reduced-transparency .app :is(.course-primary-actions,.global-search-panel,.modal-card,.planner-modal-card){
  background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
@@ -247,3 +296,9 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
  -webkit-backdrop-filter:none!important;
  backdrop-filter:none!important;
 }
+
+/* Saída opaca do leitor e do menu do celular: mesma força dos seletores de vidro acima. */
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ html:is(:root,#nq#nq) :is(#reader .readerbar,#studyReaderRail.study-reader-rail){background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-color:#2b2824!important}
+}
+html:is(:root,#nq#nq).mm-reduced-transparency :is(#reader .readerbar,#studyReaderRail.study-reader-rail){background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}

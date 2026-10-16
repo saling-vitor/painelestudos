@@ -15,14 +15,14 @@ html.is-ipad:not(.is-phone-layout) .progress-insights-head{
 }
 html.is-ipad:not(.is-phone-layout) .progress-insights-head h3{
   margin-top:3px!important;
-  font-size:15px!important;
+  font-size:var(--fs-body)!important;
   line-height:1.15!important;
 }
 html.is-ipad:not(.is-phone-layout) .progress-insights-head>span{
   align-self:flex-end!important;
   padding-bottom:1px!important;
-  color:#7f858d!important;
-  font-size:8.5px!important;
+  color:#857e72!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.2!important;
   white-space:nowrap!important;
 }
@@ -74,7 +74,7 @@ html.is-ipad:not(.is-phone-layout) .progress-insight-copy{
 }
 html.is-ipad:not(.is-phone-layout) .progress-insight-kicker{
   margin-bottom:4px!important;
-  font-size:8px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.1!important;
 }
 html.is-ipad:not(.is-phone-layout) .progress-insight-title b{
@@ -83,7 +83,7 @@ html.is-ipad:not(.is-phone-layout) .progress-insight-title b{
   -webkit-line-clamp:2!important;
   overflow:hidden!important;
   white-space:normal!important;
-  font-size:14px!important;
+  font-size:var(--fs-body-sm)!important;
   line-height:1.2!important;
 }
 html.is-ipad:not(.is-phone-layout) .progress-insight-card p{
@@ -93,8 +93,8 @@ html.is-ipad:not(.is-phone-layout) .progress-insight-card p{
   overflow:hidden!important;
   min-height:0!important;
   margin:4px 0 0!important;
-  color:#90969f!important;
-  font-size:9.5px!important;
+  color:#857e72!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.35!important;
   white-space:normal!important;
 }
@@ -107,7 +107,7 @@ html.is-ipad:not(.is-phone-layout) .progress-insight-card>.secondary{
   min-height:44px!important;
   margin:0!important;
   padding:0 11px!important;
-  font-size:9.5px!important;
+  font-size:var(--fs-label)!important;
 }
 
 /* Paisagem: Retomar e Próximo mapa têm o mesmo peso; o terceiro card vira uma faixa compacta. */

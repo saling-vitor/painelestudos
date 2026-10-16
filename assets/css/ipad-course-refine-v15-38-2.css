@@ -24,14 +24,14 @@ html.is-ipad:not(.is-phone-layout) #syncTop{
 html.is-ipad:not(.is-phone-layout).ipad-topbar-compact .topbar-wrap{
   padding-top:3px!important;
   padding-bottom:5px!important;
-  background:rgba(3,3,3,.985)!important;
-  box-shadow:0 -24px 0 #030303,0 10px 24px rgba(0,0,0,.42),inset 0 -1px rgba(255,255,255,.045)!important;
+  background:rgba(5,5,5,.985)!important;
+  box-shadow:0 -24px 0 #050505,0 10px 24px rgba(0,0,0,.42),inset 0 -1px rgba(236,230,218,.045)!important;
 }
 html.is-ipad:not(.is-phone-layout).ipad-topbar-compact .topbar{
   padding:3px 6px!important;
   border-radius:12px!important;
-  background:linear-gradient(135deg,rgba(23,23,24,.92),rgba(9,9,10,.94))!important;
-  box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.045)!important;
+  background:linear-gradient(135deg,rgba(25,24,23,.92),rgba(10,10,9,.94))!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px rgba(236,230,218,.045)!important;
 }
 html.is-ipad:not(.is-phone-layout).ipad-topbar-compact .search,
 html.is-ipad:not(.is-phone-layout).ipad-topbar-compact .search input{
@@ -102,7 +102,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-category-wrap{
   min-width:0;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-filter-label{
-  font-size:8.5px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.2!important;
   letter-spacing:.12em!important;
 }
@@ -134,7 +134,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .category-btn{
   height:44px!important;
   padding:0 12px!important;
   border-radius:10px!important;
-  font-size:9.5px!important;
+  font-size:var(--fs-label)!important;
   line-height:1!important;
   white-space:nowrap!important;
   scroll-snap-align:start;
@@ -151,7 +151,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-study-filter sma
   height:19px!important;
   padding:0 4px!important;
   border-radius:6px!important;
-  font-size:8px!important;
+  font-size:var(--fs-caption)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter-wrap,.course-category-wrap)::after{
   content:"";
@@ -162,7 +162,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] :is(.course-study-filter
   bottom:2px;
   width:28px;
   pointer-events:none;
-  background:linear-gradient(90deg,rgba(3,3,3,0),rgba(3,3,3,.96));
+  background:linear-gradient(90deg,rgba(5,5,5,0),rgba(5,5,5,.96));
 }
 
 /* P1 · cabeçalho mais baixo e métricas em uma única linha no tablet. */
@@ -173,12 +173,12 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .breadcrumb{
   margin-bottom:7px!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseTitle{
-  font-size:clamp(28px,3.8vw,36px)!important;
+  font-size:var(--fs-h1)!important;
   line-height:.98!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseDesc{
   margin-top:4px!important;
-  font-size:10.5px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.35!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-progress-summary{
@@ -200,17 +200,17 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric{
   padding:7px 9px!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric b{
-  font-size:16px!important;
+  font-size:var(--fs-title)!important;
   line-height:1.05!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-metric span{
   margin-top:4px!important;
-  font-size:8.5px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.1!important;
   letter-spacing:.10em!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-exam-metric b{
-  font-size:12px!important;
+  font-size:var(--fs-caption)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-summary-bar{
   height:5px!important;
@@ -222,11 +222,11 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-status-footer{
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-last-activity,
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-offline-status{
-  font-size:9.5px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.3!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .progress-state{
-  font-size:8px!important;
+  font-size:var(--fs-caption)!important;
 }
 
 /* P1 · Automação passa de painel alto para resumo operacional compacto. */
@@ -241,16 +241,16 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-head{
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-head h3{
   margin:1px 0 2px!important;
-  font-size:13px!important;
+  font-size:var(--fs-body-sm)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-head p{
-  font-size:9.5px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.35!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-health-badge{
   min-height:24px!important;
   padding-inline:8px!important;
-  font-size:7.5px!important;
+  font-size:var(--fs-caption)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-metrics{
   grid-template-columns:repeat(3,minmax(0,1fr))!important;
@@ -265,12 +265,12 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-metri
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-metrics span,
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-metrics small{
-  font-size:9px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.25!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-metrics b{
   margin:3px 0 2px!important;
-  font-size:13px!important;
+  font-size:var(--fs-body-sm)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-next{
   grid-template-columns:minmax(0,1fr) auto auto!important;
@@ -279,14 +279,14 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-next{
   padding:7px 8px!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-next span{
-  font-size:8px!important;
+  font-size:var(--fs-caption)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-next b{
-  font-size:11.5px!important;
+  font-size:var(--fs-caption)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-next small,
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-next>strong{
-  font-size:9px!important;
+  font-size:var(--fs-caption)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-next>.primary{
   grid-column:auto!important;
@@ -302,7 +302,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-automation-actio
   min-height:40px!important;
   height:40px!important;
   padding-inline:10px!important;
-  font-size:8.5px!important;
+  font-size:var(--fs-caption)!important;
 }
 
 /* P1 · Retomar permanece destacado, alinhado e com ação estável. */
@@ -319,7 +319,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main>di
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main b{
   display:block!important;
   overflow:hidden!important;
-  font-size:12.5px!important;
+  font-size:var(--fs-caption)!important;
   text-overflow:ellipsis!important;
   white-space:nowrap!important;
 }
@@ -327,8 +327,8 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-continue-main sp
   display:block!important;
   margin-top:2px!important;
   overflow:hidden!important;
-  color:#8d939b!important;
-  font-size:10px!important;
+  color:#857e72!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.25!important;
   text-overflow:ellipsis!important;
   white-space:nowrap!important;
@@ -389,8 +389,8 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .map-card.has-cover .map
     animation-name:ipad-topbar-inner-compact;
   }
   @keyframes ipad-topbar-wrap-compact{
-    from{padding-top:6px;padding-bottom:7px;background-color:rgba(3,3,3,0)}
-    to{padding-top:3px;padding-bottom:5px;background-color:rgba(3,3,3,.985)}
+    from{padding-top:6px;padding-bottom:7px;background-color:rgba(5,5,5,0)}
+    to{padding-top:3px;padding-bottom:5px;background-color:rgba(5,5,5,.985)}
   }
   @keyframes ipad-topbar-inner-compact{
     from{padding-top:5px;padding-bottom:5px;border-radius:14px}

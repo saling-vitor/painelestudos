@@ -5,9 +5,9 @@
 :root{
   --mm-topo-opacity:.20;
 
-  --mm-bg-0:#020304;
-  --mm-bg-1:#040506;
-  --mm-bg-2:#070809;
+  --mm-bg-0:#050505;
+  --mm-bg-1:#050505;
+  --mm-bg-2:#0a0a09;
 
   --mm-topo-image:url("../ui/topographic-lines-v15-48-1.svg");
 }
@@ -23,7 +23,7 @@ body{
   background:
     radial-gradient(
       1200px 820px at 4% -8%,
-      rgba(52,52,50,.13),
+      rgba(36,35,32,.13),
       transparent 66%
     ),
     radial-gradient(
@@ -35,7 +35,7 @@ body{
       180deg,
       var(--mm-bg-1),
       var(--mm-bg-0) 48%,
-      #010202
+      #000000
     )!important;
 }
 
@@ -143,14 +143,14 @@ html.is-phone-layout body::before{
     background:
       radial-gradient(
         720px 520px at 8% -8%,
-        rgba(46,46,44,.10),
+        rgba(36,35,32,.10),
         transparent 68%
       ),
       linear-gradient(
         180deg,
-        #040506,
-        #020304 52%,
-        #010202
+        #050505,
+        #050505 52%,
+        #000000
       )!important;
   }
 

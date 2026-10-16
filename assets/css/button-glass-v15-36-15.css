@@ -31,7 +31,7 @@
   .icon-btn,.compact-icon-btn,
   .category-btn,.course-study-filter,.progress-filter,.close
 ):focus-visible{
-  outline:1px solid rgba(255,255,255,.24)!important;
+  outline:1px solid rgba(236,230,218,.24)!important;
   outline-offset:2px!important;
 }
 
@@ -44,12 +44,12 @@
    38 × 38 px, sem brilho branco opaco nem efeitos de movimento. */
 
 :root{
-  --cover-liquid-border:rgba(255,255,255,.52);
-  --cover-liquid-highlight:rgba(255,255,255,.32);
-  --cover-liquid-highlight-soft:rgba(255,255,255,.12);
+  --cover-liquid-border:rgba(236,230,218,.52);
+  --cover-liquid-highlight:rgba(236,230,218,.32);
+  --cover-liquid-highlight-soft:rgba(236,230,218,.12);
   --cover-liquid-shadow:rgba(0,0,0,.42);
-  --cover-liquid-icon:#fff;
-  --cover-liquid-plate:rgba(48,48,50,.88);
+  --cover-liquid-icon:#ece6da;
+  --cover-liquid-plate:rgba(36,35,32,.88);
 }
 
 /* Geometria canônica dos controles sobre capas. */
@@ -100,12 +100,12 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   border:1px solid var(--cover-liquid-border)!important;
   background:
     radial-gradient(120% 96% at 12% -18%,
-      rgba(255,255,255,.19) 0%,
-      rgba(255,255,255,.055) 28%,
+      rgba(236,230,218,.19) 0%,
+      rgba(236,230,218,.055) 28%,
       transparent 68%),
     linear-gradient(155deg,
-      rgba(255,255,255,.065) 0%,
-      rgba(255,255,255,.025) 45%,
+      rgba(236,230,218,.065) 0%,
+      rgba(236,230,218,.025) 45%,
       rgba(0,0,0,.12) 100%),
     var(--cover-liquid-plate)!important;
   background-blend-mode:normal!important;
@@ -157,8 +157,8 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 
 /* Favorito ativo: somente a estrela recebe a cor; o mesmo contorno preto permanece. */
 .map-card > .fav.on > .ui-icon{
-  color:#f2c94c!important;
-  background-color:#f2c94c!important;
+  color:#d8c59e!important;
+  background-color:#d8c59e!important;
   -webkit-filter:
     drop-shadow(0 0 .9px rgba(0,0,0,1))
     drop-shadow(0 0 .9px rgba(0,0,0,1))
@@ -171,13 +171,13 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
 
 /* Menu aberto: aumenta a definição do contorno, sem virar uma placa opaca. */
 .simulation-card.has-cover .simulation-card-menu-btn[aria-expanded="true"]{
-  border-color:rgba(255,255,255,.66)!important;
-  color:#fff!important;
+  border-color:rgba(236,230,218,.66)!important;
+  color:#ece6da!important;
   box-shadow:
     0 9px 22px rgba(0,0,0,.29),
-    inset 0 1px 1px rgba(255,255,255,.64),
-    inset 0 0 0 1px rgba(255,255,255,.11),
-    inset 0 0 13px rgba(255,255,255,.16)!important;
+    inset 0 1px 1px rgba(236,230,218,.64),
+    inset 0 0 0 1px rgba(236,230,218,.11),
+    inset 0 0 13px rgba(236,230,218,.16)!important;
 }
 
 /* Sem variação óptica ao pressionar: mantém o vidro estável. */
@@ -207,7 +207,7 @@ html .map-list .map-card.has-cover > .fav{
   .map-card.has-cover:not(.map-list .map-card) > .fav,
   .simulation-card.has-cover .simulation-card-menu-btn
 ):focus-visible{
-  outline:1px solid rgba(255,255,255,.62)!important;
+  outline:1px solid rgba(236,230,218,.62)!important;
   outline-offset:2px!important;
 }
 
@@ -220,8 +220,8 @@ html .map-list .map-card.has-cover > .fav{
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
     background:
-      linear-gradient(160deg,rgba(255,255,255,.085),transparent 58%),
-      rgba(43,43,45,.94)!important;
+      linear-gradient(160deg,rgba(236,230,218,.085),transparent 58%),
+      rgba(36,35,32,.94)!important;
   }
 }
 
@@ -233,11 +233,11 @@ html .map-list .map-card.has-cover > .fav{
     .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:rgba(38,38,39,.92)!important;
+    background:rgba(36,35,32,.92)!important;
     background-blend-mode:normal!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
-    border-color:rgba(255,255,255,.38)!important;
+    border-color:rgba(236,230,218,.38)!important;
   }
 }
 
@@ -249,9 +249,9 @@ html .map-list .map-card.has-cover > .fav{
     .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
-    color:#fff!important;
-    border-color:rgba(255,255,255,.68)!important;
-    background-color:rgba(16,16,17,.54)!important;
+    color:#ece6da!important;
+    border-color:rgba(236,230,218,.68)!important;
+    background-color:rgba(17,17,16,.54)!important;
   }
 }
 
