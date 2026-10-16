@@ -35,6 +35,33 @@ test('Novidades [G] · exibe uma vez e respeita confirmação real do usuário',
 });
 
 /* Contrato E2E das sete pranchas, executável sem dados de demonstração. */
+test('Simulados [G] · mensagens exigem iframe esperado e origem do portal',async({page})=>{
+  await enter(page,'simulations');
+  const results=await page.evaluate(()=>{
+    const frame=document.querySelector('#simulationFrame');
+    const key='e2e-simulation-message-origin';
+    const previous=state.simulationReaderKey;
+    state.simulationReaderKey=key;
+    const data={type:'MEUS_MAPAS_SIM_RESULT',payload:{
+      score:100,correct:1,wrong:0,blank:0,total:1,finishedAt:new Date().toISOString()
+    }};
+    const post=(origin,source)=>window.dispatchEvent(new MessageEvent('message',{origin,source,data}));
+    post('https://external.invalid',frame.contentWindow);
+    const foreignRejected=!Object.hasOwn(state.simResults,key);
+    post(location.origin,window);
+    const wrongFrameRejected=!Object.hasOwn(state.simResults,key);
+    post(location.origin,frame.contentWindow);
+    const trustedAccepted=state.simResults[key]?.correct===1;
+    delete state.simResults[key];
+    delete state.simAttempts[key];
+    localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults));
+    localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));
+    state.simulationReaderKey=previous;
+    return{foreignRejected,wrongFrameRejected,trustedAccepted};
+  });
+  expect(results).toEqual({foreignRejected:true,wrongFrameRejected:true,trustedAccepted:true});
+});
+
 test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({page})=>{
   await enter(page,'home');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
