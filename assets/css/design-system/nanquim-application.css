@@ -547,3 +547,23 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
   width:100%;
   align-self:stretch;
 }
+
+/* Cinco telas do Início no smartphone: nenhuma opção escondida fora do
+   viewport. Grid 3+2 com alvos de toque legíveis, sem rolagem horizontal. */
+@media(max-width:560px){
+  #editorialHome .pr-switch{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:4px;
+    overflow-x:visible;
+  }
+  #editorialHome .pr-switch-btn{
+    min-width:0;
+    width:100%;
+    min-height:44px;
+    padding:9px 5px;
+    text-align:center;
+    white-space:normal;
+    overflow-wrap:normal;
+  }
+}
