@@ -1619,8 +1619,14 @@ test('controles sobre capas usam o tamanho compacto uniforme de 38px',async({pag
   const course=await measure('#coursesGrid .course-card.course-library-card>.course-cover-controls .course-card-edit');
 
   await page.goto('/#maps');
-  const menu=await measure('.map-card.has-cover>.map-admin-btn');
-  const favorite=await measure('.map-card.has-cover>.fav');
+  await expect(page.locator('.map-card.has-cover>.map-admin-btn').first()).toBeVisible();
+  // mede ••• e favorito do mesmo card no mesmo instante, depois das animações de entrada
+  await page.evaluate(()=>Promise.race([Promise.all(document.getAnimations().filter(a=>a.playState==='running'&&a.effect?.getComputedTiming?.().endTime!==Infinity).map(a=>a.finished.catch(()=>null))),new Promise(r=>setTimeout(r,1500))]));
+  const pair=await page.locator('.map-card.has-cover').first().evaluate(card=>{
+    const box=node=>{const rect=node.getBoundingClientRect(),icon=node.querySelector('.ui-icon'),iconRect=icon?.getBoundingClientRect();return{width:rect.width,height:rect.height,left:rect.left,right:rect.right,top:rect.top,iconWidth:iconRect?.width||0,iconHeight:iconRect?.height||0}};
+    return{menu:box(card.querySelector(':scope>.map-admin-btn')),favorite:box(card.querySelector(':scope>.fav'))};
+  });
+  const menu=pair.menu,favorite=pair.favorite;
 
   await page.goto('/#simulations');
   const simulation=await measure('.simulation-card.has-cover .simulation-card-menu-btn');
