@@ -321,10 +321,12 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
 .pr-root .pr-index-row strong{font-size:13px;font-weight:700}
 .pr-root .pr-index-row small{font-size:12px;color:var(--pr-paper-2);overflow-wrap:anywhere}
 .pr-root .pr-course-controls{display:flex;justify-content:flex-end}
-.view[data-view="home"][data-editorial-mode="todos"] > :not(#editorialHome),
-.view[data-view="home"][data-editorial-mode="revisoes"] > :not(#editorialHome),
-.view[data-view="home"][data-editorial-mode="sessao"] > :not(#editorialHome),
-.view[data-view="home"][data-editorial-mode="pos"] > :not(#editorialHome){display:none!important}
+/* O foco automático conserva os painéis operacionais já existentes.
+   Apenas a troca MANUAL de tela isola o contexto editorial selecionado. */
+.view[data-view="home"][data-pr-manual-home="true"][data-editorial-mode="todos"] > :not(#editorialHome),
+.view[data-view="home"][data-pr-manual-home="true"][data-editorial-mode="revisoes"] > :not(#editorialHome),
+.view[data-view="home"][data-pr-manual-home="true"][data-editorial-mode="sessao"] > :not(#editorialHome),
+.view[data-view="home"][data-pr-manual-home="true"][data-editorial-mode="pos"] > :not(#editorialHome){display:none!important}
 .view[data-view="maps"][data-pr-library-layout="lista"] #allMaps{display:flex;flex-direction:column;gap:12px}
 .view[data-view="maps"][data-pr-library-layout="lista"] #allMaps .map-card{width:100%;max-width:none}
 @media(max-width:820px){
