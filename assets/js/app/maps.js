@@ -60,6 +60,8 @@ async function inspectInvalidCloudMapStorageId(key){
     StudyCloud.rows('study_snapshots',filter+encodeURIComponent('mindmap_state::'+namespace)+'&select=storage_key'),
     StudyCloud.rows('study_snapshots',filter+encodeURIComponent('mindmap_notes::'+namespace)+'&select=storage_key')
   ]);
+  if(!Array.isArray(states)||!Array.isArray(notes))
+    throw new Error('Não foi possível conferir os snapshots. Nenhuma alteração será permitida.');
   return{ownerId:me.id,mapId:cloud.id,path,previousId:String(cloud.storageId||''),namespace,
     hasState:!!states?.length,hasNotes:!!notes?.length,code:String(cloud.code||'')};
 }
@@ -142,7 +144,9 @@ async function requestRepairInvalidCloudMapStorageId(key){
       // validar também contra o banco ATUAL, não apenas o catálogo carregado.
       const namespaces=await StudyCloud.rows('maps','user_id=eq.'+encodeURIComponent(check.ownerId)+
         '&select=id,storage_id');
-      if(namespaces?.some(row=>String(row.id)!==String(check.mapId)&&slug(row.storage_id)===check.namespace))
+      if(!Array.isArray(namespaces)||namespaces.length>=1000)
+        throw new Error('Consulta de namespaces incompleta. Nenhum cadastro foi alterado.');
+      if(namespaces.some(row=>String(row.id)!==String(check.mapId)&&slug(row.storage_id)===check.namespace))
         throw new Error('Outro mapa já utiliza este namespace. Nenhum cadastro foi alterado.');
       const updated=await StudyCloud.patch('maps','user_id=eq.'+encodeURIComponent(check.ownerId)+
         '&id=eq.'+encodeURIComponent(check.mapId)+
