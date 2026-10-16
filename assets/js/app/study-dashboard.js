@@ -334,7 +334,7 @@
     // Usar sempre a capa resolvida do mapa (inclusive substituições locais), sem imagem genérica fixa.
     const selectedCover=nextMap&&typeof mapCover==='function'?mapCover(nextMap):'';
     const commandCover=selectedCover||'assets/brand/topographic-editorial-v1/covers/home-hero.png';
-    const coverHtml='<img src="'+escape(commandCover)+'" alt="" loading="lazy" decoding="async">';
+    const coverHtml='<img src="'+escape(commandCover)+'" alt="" loading="eager" fetchpriority="high" decoding="async">';
     const contextText=Number(review.dueCount||0)+' revisões'+(exam?' · prova em '+exam.days+' dia'+(exam.days===1?'':'s'):' · '+planned.length+' itens na agenda');
     root.innerHTML='<div class="study-command-card"'+commandStyle+'>'+
       '<div class="study-command-art" aria-hidden="true">'+coverHtml+'</div>'+
