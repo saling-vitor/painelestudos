@@ -409,6 +409,21 @@ test('Cursos [G][T+M] · alternar Capas e Lista sem duplicar a grade original',a
   await expect(grid).toBeVisible();
 });
 
+test('Configurações [G] · versão da nuvem segue versão global, sem V12.1 legado',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(()=>{
+    const previous=localStorage.getItem('studyapp.config.override');
+    const config={...window.STUDY_APP_CONFIG};
+    saveConfig();
+    const stored=JSON.parse(localStorage.getItem('studyapp.config.override')||'{}');
+    if(previous===null)localStorage.removeItem('studyapp.config.override');
+    else localStorage.setItem('studyapp.config.override',previous);
+    window.STUDY_APP_CONFIG=config;
+    return{expected:APP_VERSION_LABEL,stored:stored.appVersion};
+  });
+  expect(report.stored).toBe(report.expected);
+});
+
 test('Backup [G] · novos estados entram na exportação sem quebrar formato anterior',async({page})=>{
   await enter(page,'settings');
   const report=await page.evaluate(()=>{
