@@ -1,5 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+/* CTA e tipografia são contratos do estado Hoje; a Home automática pode
+   iniciar legitimamente em Todos, Sessão ou Pós-prova dependendo do usuário. */
+async function openHomeToday(page){
+ await page.goto('/#home',{waitUntil:'domcontentloaded'});
+ await expect(page.locator('html')).toHaveClass(/app-ready/);
+ const news=page.locator('#whatsNewModal');
+ if(await news.isVisible()){
+   await page.locator('#whatsNewAccept').click();
+   await expect(news).not.toHaveClass(/open/);
+ }
+ const today=page.locator('#editorialHome [data-pr-home="hoje"]');
+ await expect(today).toBeVisible();
+ await today.click();
+ await expect(today).toHaveAttribute('aria-pressed','true');
+ await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-editorial-mode','hoje');
+}
+
+
 /* Full cross-device visual contract. Does not depend on login/cloud data. */
 test('Nanquim [G][T+M] · materials, tokens and opaque cards',async({page})=>{
  await page.goto('/#home',{waitUntil:'domcontentloaded'});
@@ -47,7 +65,7 @@ test('Nanquim [G][T+M] · contraste reforçado sem vidro e com menos movimento',
 });
 
 test('Nanquim [G] · CTA da Home mantém contraste legível Latão sobre Nanquim',async({page})=>{
- await page.goto('/#home',{waitUntil:'domcontentloaded'});
+ await openHomeToday(page);
  const cta=page.locator('[data-view="home"] .hero-actions .primary').first();
  await expect(cta).toBeVisible();
  const s=await cta.evaluate(el=>{
@@ -61,7 +79,7 @@ test('Nanquim [G] · CTA da Home mantém contraste legível Latão sobre Nanquim
 
 /* Contract: computed, visible UI labels may not inherit historical 6–9px typography. */
 test('Nanquim [G] · legendas essenciais da Home respeitam tipografia mínima',async({page})=>{
- await page.goto('/#home',{waitUntil:'domcontentloaded'});
+ await openHomeToday(page);
  // Em iPad estreito, as estatísticas do hero podem ser ocultadas pelo layout responsivo.
  const result=await page.evaluate(()=>{
   const sample=(selector)=>[...document.querySelectorAll(selector)].filter(el=>{

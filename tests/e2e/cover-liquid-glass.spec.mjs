@@ -15,6 +15,14 @@ test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito 
   await page.goto('/#home');
   await expect(page.locator('#homeCourses')).toBeAttached();
   await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
+  // A nova Home abre automaticamente "Todos" quando não há concurso com
+  // data. Nessa tela, Meus cursos fica oculto por design. O ensaio dos
+  // controles de capa precisa da seção visível: selecionar Hoje pelo
+  // controle público, sem alterar CSS nem burlar a interação por toque.
+  await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toBeVisible();
+  await page.locator('#editorialHome [data-pr-home="hoje"]').click();
+  await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-editorial-mode','hoje');
 
   await page.evaluate(() => {
     document.querySelector('#glassAuditFixture')?.remove();

@@ -7,7 +7,7 @@
   const ACTIVE_KEY='studyapp.studySession.active';
   const VERSION=1;
   const DEFAULT_GOALS={dailyMinutes:120,weeklyMinutes:600,pomodoroWork:25,pomodoroBreak:5,autoFocus:false};
-  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode='month',goalDraft=null,studyCommandHelpOpen=false;
+  let tickHandle=null,flushHandle=null,agendaCursor=new Date(),agendaMode=window.matchMedia?.('(max-width:600px)')?.matches?'today':'month',goalDraft=null,studyCommandHelpOpen=false;
 
   const safeJson=(value,fallback)=>{try{return JSON.parse(value)}catch{return fallback}};
   const isoNow=()=>new Date().toISOString();
@@ -32,7 +32,7 @@
     goals.pomodoroBreak=clamp(goals.pomodoroBreak,1,60)||5;
     goals.autoFocus=false;
     const rows=name=>Array.isArray(value[name])?value[name].filter(item=>item&&typeof item==='object').map(item=>({...item})):[];
-    return{version:VERSION,updatedAt:value.updatedAt||'',goals,sessions:rows('sessions').slice(-750),agenda:rows('agenda').slice(-750),doubts:rows('doubts').slice(-750)};
+    return{version:VERSION,updatedAt:value.updatedAt||'',goals,sessions:rows('sessions').slice(-750),agenda:rows('agenda').slice(-750),doubts:rows('doubts').slice(-750),progressHistory:rows('progressHistory').filter(row=>/^\d{4}-\d{2}-\d{2}$/.test(String(row.day||''))).slice(-366)};
   }
   function readData(){return normalizeData(safeJson(localStorage.getItem(DATA_KEY)||'{}',{}))}
   function writeData(value,{touch=true}={}){const data=normalizeData(value);if(touch)data.updatedAt=isoNow();try{localStorage.setItem(DATA_KEY,JSON.stringify(data))}catch{}if(touch&&typeof touchPreferences==='function')touchPreferences();return data}
@@ -45,9 +45,50 @@
     }
     return[...by.values()].sort((a,b)=>(Date.parse(a.createdAt||a.startedAt||a.date||0)||0)-(Date.parse(b.createdAt||b.startedAt||b.date||0)||0)).slice(-750);
   }
+  function mergeProgressHistory(localRows=[],incomingRows=[]){
+    const by=new Map();
+    for(const item of [...localRows,...incomingRows]){
+      const day=String(item?.day||'');
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(day))continue;
+      const marked=Math.max(0,Math.floor(Number(item.marked)||0)),total=Math.max(marked,Math.floor(Number(item.total)||0));
+      const byCourse={};
+      if(item?.byCourse&&typeof item.byCourse==='object'&&!Array.isArray(item.byCourse)){
+        for(const [courseId,values] of Object.entries(item.byCourse)){
+          if(!courseId||courseId.length>180||!values||typeof values!=='object')continue;
+          const n=Math.max(0,Math.floor(Number(values.marked)||0));
+          byCourse[courseId]={marked:n,total:Math.max(n,Math.floor(Number(values.total)||0))};
+        }
+      }
+      const row={id:'progress-'+day,day,marked,total,at:item.at||item.updatedAt||isoNow(),byCourse};
+      const current=by.get(day),ts=Date.parse(row.at)||0,prior=Date.parse(current?.at||0)||0;
+      if(!current)by.set(day,row);
+      else if(ts>=prior)by.set(day,{...row,byCourse:{...current.byCourse,...byCourse}});
+      else by.set(day,{...current,byCourse:{...byCourse,...current.byCourse}});
+    }
+    return[...by.values()].sort((a,b)=>a.day.localeCompare(b.day)).slice(-366);
+  }
+  function recordProgressSnapshot(marked,total,legacy=[],courseTotals={}){
+    const data=readData(),day=dateKey(),n=Math.max(0,Math.floor(Number(marked)||0)),t=Math.max(n,Math.floor(Number(total)||0));
+    const merged=mergeProgressHistory(data.progressHistory,Array.isArray(legacy)?legacy:[]);
+    const current=merged.find(row=>row.day===day),byCourse={...current?.byCourse};
+    for(const [courseId,values] of Object.entries(courseTotals||{})){
+      if(!courseId||courseId.length>180||!values||typeof values!=='object')continue;
+      const m=Math.max(0,Math.floor(Number(values.marked)||0));
+      byCourse[courseId]={marked:m,total:Math.max(m,Math.floor(Number(values.total)||0))};
+    }
+    const changed=!current||current.marked!==n||current.total!==t||JSON.stringify(current.byCourse||{})!==JSON.stringify(byCourse);
+    if(changed){
+      const i=merged.findIndex(row=>row.day===day),entry={id:'progress-'+day,day,marked:n,total:t,byCourse,at:isoNow()};
+      if(i>=0)merged[i]=entry;else merged.push(entry);
+    }
+    merged.sort((a,b)=>a.day.localeCompare(b.day));
+    const old=JSON.stringify(data.progressHistory),next=JSON.stringify(merged);
+    if(old!==next){data.progressHistory=merged;writeData(data)}
+    return merged;
+  }
   function mergeData(localValue,incomingValue){
     const local=normalizeData(localValue),incoming=normalizeData(incomingValue),localTs=Date.parse(local.updatedAt||0)||0,incomingTs=Date.parse(incoming.updatedAt||0)||0;
-    return normalizeData({version:VERSION,updatedAt:new Date(Math.max(localTs,incomingTs)||Date.now()).toISOString(),goals:incomingTs>localTs?incoming.goals:local.goals,sessions:mergeRows(local.sessions,incoming.sessions),agenda:mergeRows(local.agenda,incoming.agenda),doubts:mergeRows(local.doubts,incoming.doubts)});
+    return normalizeData({version:VERSION,updatedAt:new Date(Math.max(localTs,incomingTs)||Date.now()).toISOString(),goals:incomingTs>localTs?incoming.goals:local.goals,sessions:mergeRows(local.sessions,incoming.sessions),agenda:mergeRows(local.agenda,incoming.agenda),doubts:mergeRows(local.doubts,incoming.doubts),progressHistory:mergeProgressHistory(local.progressHistory,incoming.progressHistory)});
   }
   function importData(value,{merge=true,silent=true}={}){const next=merge?mergeData(readData(),value):normalizeData(value);writeData(next,{touch:false});if(!silent)toast('Dados de estudo restaurados.');renderAll();return next}
 
@@ -173,8 +214,32 @@
   }
   function addAgendaItem(payload={}){
     const data=readData(),now=isoNow();
-    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
+    const row={id:uid('agenda'),date:payload.date||dateKey(),kind:payload.kind||'study',title:String(payload.title||'Sessão planejada').trim()||'Sessão planejada',minutes:Math.max(0,Number(payload.minutes)||0),start:/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(payload.start||''))?String(payload.start):'',mapKey:payload.mapKey||'',recurrence:payload.recurrence||'',createdAt:now,updatedAt:now};
     data.agenda.push(row);writeData(data);renderAgenda();renderHomeDashboard();return row;
+  }
+  function updateAgendaItem(id,patch={}){
+    // Alteração explícita: nunca reprogramar atividades só porque uma sugestão foi exibida.
+    const data=readData(),row=data.agenda.find(item=>item.id===id&&!item.deleted);
+    if(!row)return null;
+    if(patch.date!=null){
+      const date=String(patch.date);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(date+'T12:00:00')))throw new Error('Data de estudo inválida.');
+      row.date=date;
+    }
+    if(patch.start!=null){
+      const time=String(patch.start);
+      if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time))throw new Error('Horário de início inválido.');
+      row.start=time;
+    }
+    if(patch.minutes!=null){
+      const minutes=Number(patch.minutes);
+      if(!Number.isFinite(minutes)||minutes<0||minutes>1440)throw new Error('Duração de estudo inválida.');
+      row.minutes=Math.round(minutes);
+    }
+    row.updatedAt=isoNow();
+    writeData(data);
+    renderAgenda();renderHomeDashboard();
+    return {...row};
   }
   function deleteAgendaItem(id){
     const data=readData(),row=data.agenda.find(item=>item.id===id);
@@ -269,7 +334,7 @@
     // Usar sempre a capa resolvida do mapa (inclusive substituições locais), sem imagem genérica fixa.
     const selectedCover=nextMap&&typeof mapCover==='function'?mapCover(nextMap):'';
     const commandCover=selectedCover||'assets/brand/topographic-editorial-v1/covers/home-hero.png';
-    const coverHtml='<img src="'+escape(commandCover)+'" alt="" loading="lazy" decoding="async">';
+    const coverHtml='<img src="'+escape(commandCover)+'" alt="" loading="eager" fetchpriority="high" decoding="async">';
     const contextText=Number(review.dueCount||0)+' revisões'+(exam?' · prova em '+exam.days+' dia'+(exam.days===1?'':'s'):' · '+planned.length+' itens na agenda');
     root.innerHTML='<div class="study-command-card"'+commandStyle+'>'+
       '<div class="study-command-art" aria-hidden="true">'+coverHtml+'</div>'+
@@ -310,7 +375,7 @@ function ensureAgendaView(){
     view=document.createElement('section');
     view.className='view study-agenda-view';
     view.dataset.view='agenda';
-    view.innerHTML='<div class="section-head study-agenda-head"><div><div class="kicker">Planejamento</div><h2>Agenda de estudos</h2><p>Provas, revisões, sessões planejadas e histórico em um só calendário.</p></div><div class="study-agenda-modes"><button type="button" data-agenda-mode="today">Dia</button><button type="button" data-agenda-mode="week">Semana</button><button type="button" data-agenda-mode="month" class="active">Mês</button></div></div><div class="study-agenda-layout"><section class="panel study-agenda-calendar"><div class="study-agenda-toolbar"><button type="button" class="secondary" data-agenda-prev>‹</button><button type="button" class="secondary" data-agenda-today>Hoje</button><strong id="agendaPeriodLabel"></strong><button type="button" class="secondary" data-agenda-next>›</button></div><div id="agendaCalendarGrid"></div></section><aside class="panel study-agenda-side"><div id="agendaDayDetail"></div><form id="agendaQuickForm" class="study-agenda-form"><div class="panel-kicker">Planejar</div><label>Data<input type="date" name="date" required></label><label>Título<input type="text" name="title" maxlength="100" placeholder="Ex.: Revisar Acessibilidade" required></label><div class="row"><label>Tipo<select name="kind"><option value="study">Estudo</option><option value="simulation">Simulado</option></select></label><label>Minutos<input type="number" name="minutes" min="0" max="480" step="5" value="30"></label></div><button class="primary" type="submit">Adicionar à agenda</button></form></aside></div>';
+    view.innerHTML='<div class="section-head study-agenda-head"><div><div class="kicker">Planejamento</div><h2>Agenda de estudos</h2><p>Provas, revisões, sessões planejadas e histórico em um só calendário.</p></div><div class="study-agenda-modes"><button type="button" data-agenda-mode="today">Dia</button><button type="button" data-agenda-mode="week">Semana</button><button type="button" data-agenda-mode="month" class="active">Mês</button></div></div><div class="study-agenda-layout"><section class="panel study-agenda-calendar"><div class="study-agenda-toolbar"><button type="button" class="secondary" data-agenda-prev>‹</button><button type="button" class="secondary" data-agenda-today>Hoje</button><strong id="agendaPeriodLabel"></strong><button type="button" class="secondary" data-agenda-next>›</button></div><div id="agendaCalendarGrid"></div></section><aside class="panel study-agenda-side"><div id="agendaDayDetail"></div><form id="agendaQuickForm" class="study-agenda-form"><div class="panel-kicker">Planejar</div><label>Data<input type="date" name="date" required></label><label>Início<input type="time" name="start" value="19:00" required></label><label>Título<input type="text" name="title" maxlength="100" placeholder="Ex.: Revisar Acessibilidade" required></label><div class="row"><label>Tipo<select name="kind"><option value="study">Estudo</option><option value="simulation">Simulado</option></select></label><label>Minutos<input type="number" name="minutes" min="0" max="480" step="5" value="30"></label></div><button class="primary" type="submit">Adicionar à agenda</button></form></aside></div>';
     document.querySelector('.content')?.appendChild(view);
     view.querySelectorAll('[data-agenda-mode]').forEach(button=>button.onclick=()=>{agendaMode=button.dataset.agendaMode;view.querySelectorAll('[data-agenda-mode]').forEach(b=>b.classList.toggle('active',b===button));renderAgenda()});
     view.querySelector('[data-agenda-prev]').onclick=()=>{if(agendaMode==='month')agendaCursor=new Date(agendaCursor.getFullYear(),agendaCursor.getMonth()-1,1);else agendaCursor=addDays(agendaCursor,agendaMode==='week'?-7:-1);renderAgenda()};
@@ -318,7 +383,7 @@ function ensureAgendaView(){
     view.querySelector('[data-agenda-today]').onclick=()=>{agendaCursor=new Date();renderAgenda()};
     const form=view.querySelector('#agendaQuickForm');
     form.elements.date.value=dateKey();
-    form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form);addAgendaItem({date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes')});form.elements.title.value='';form.elements.minutes.value='30'};
+    form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form);addAgendaItem({date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes'),start:fd.get('start')});form.elements.title.value='';form.elements.minutes.value='30'};
     return view;
   }
   function agendaDotClass(kind){return 'agenda-dot '+(kind||'study')}
@@ -346,7 +411,7 @@ function ensureAgendaView(){
     const root=document.getElementById('agendaDayDetail');
     if(!root)return;
     const entries=entriesForDate(agendaCursor);
-    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(item.meta||((item.minutes||0)?item.minutes+' min':''))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover da agenda"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':item.kind==='session'&&item.sessionId?'<button type="button" class="agenda-delete" data-session-delete="'+escape(item.sessionId)+'" aria-label="Remover registro de estudo"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':'')+'</article>').join(''):emptyStateHtml({title:'Dia livre',text:'Nada planejado para este dia.',art:'agenda-day',compact:true,className:'agenda-empty-state'}))+'</div>';
+    root.innerHTML='<div class="study-agenda-day-head"><span class="kicker">Dia selecionado</span><h3>'+escape(agendaCursor.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'}))+'</h3></div><div class="study-agenda-day-list">'+(entries.length?entries.map(item=>'<article class="agenda-entry '+escape(item.kind)+'"><span class="'+agendaDotClass(item.kind)+'"></span><div><b>'+escape(item.title)+'</b><small>'+escape(!item.computed&&item.kind!=='session'?((item.start?String(item.start):'Sem horário')+' · '+(item.meta||((item.minutes||0)?item.minutes+' min':'Sessão planejada'))):(item.meta||((item.minutes||0)?item.minutes+' min':'')))+'</small></div>'+(item.mapKey?'<button type="button" class="secondary" data-agenda-open="'+escape(item.mapKey)+'"'+(item.topicId?' data-agenda-topic="'+escape(item.topicId)+'"':'')+'>Abrir</button>':'')+(!item.computed?'<button type="button" class="agenda-delete" data-agenda-delete="'+escape(item.id)+'" aria-label="Remover da agenda"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':item.kind==='session'&&item.sessionId?'<button type="button" class="agenda-delete" data-session-delete="'+escape(item.sessionId)+'" aria-label="Remover registro de estudo"><span class="ui-icon icon-trash ui-icon-xs" aria-hidden="true"></span><span>Remover</span></button>':'')+'</article>').join(''):emptyStateHtml({title:'Dia livre',text:'Nada planejado para este dia.',art:'agenda-day',compact:true,className:'agenda-empty-state'}))+'</div>';
     root.querySelectorAll('[data-agenda-open]').forEach(button=>button.onclick=()=>openMap(button.dataset.agendaOpen,{topicId:button.dataset.agendaTopic||''}));
     root.querySelectorAll('[data-agenda-delete]').forEach(button=>button.onclick=()=>requestDeleteAgendaItem(button.dataset.agendaDelete));
     root.querySelectorAll('[data-session-delete]').forEach(button=>button.onclick=()=>requestDeleteSessionRecord(button.dataset.sessionDelete));
@@ -356,6 +421,11 @@ function ensureAgendaView(){
     const view=ensureAgendaView(),grid=view.querySelector('#agendaCalendarGrid'),label=view.querySelector('#agendaPeriodLabel');
     if(!grid||!label)return;
     view.dataset.agendaDisplayMode=agendaMode;
+    view.querySelectorAll('[data-agenda-mode]').forEach(button=>{
+      const active=button.dataset.agendaMode===agendaMode;
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
     let agendaEmpty=false;
     if(agendaMode==='today')agendaEmpty=entriesForDate(agendaCursor).length===0;
     else if(agendaMode==='week'){const d=startOfDay(agendaCursor),start=addDays(d,-((d.getDay()+6)%7));agendaEmpty=!Array.from({length:7},(_,i)=>entriesForDate(addDays(start,i))).some(rows=>rows.length)}
@@ -616,7 +686,7 @@ function ensureAgendaView(){
     exportData:()=>readData(),
     importData,
     mergeData,
-    hasData:()=>{const d=readData();return!!(d.sessions.length||d.agenda.length||d.doubts.length||d.updatedAt)},
+    hasData:()=>{const d=readData();return!!(d.sessions.length||d.agenda.length||d.doubts.length||d.progressHistory.length||d.updatedAt)},
     render:renderAll,
     renderAgenda,
     start:startSession,
@@ -627,6 +697,9 @@ function ensureAgendaView(){
     active:readActive,
     elapsed:()=>activeElapsed(readActive()),
     addAgenda:addAgendaItem,
+    updateAgenda:updateAgendaItem,
+    recordProgressSnapshot,
+    progressHistory:()=>readData().progressHistory,
     removeAgenda:requestDeleteAgendaItem,
     removeSession:requestDeleteSessionRecord,
     goals:()=>({...readData().goals}),

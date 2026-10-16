@@ -13,5 +13,44 @@ function reviewScheduleCategory(entry,now=new Date()){const due=reviewScheduleDu
 function reviewScheduleSummary(maps=combinedMaps(),now=new Date()){const schedule=syncReviewSchedules(maps,now),today=[],overdue=[],upcoming=[];for(const map of maps||[]){const key=map._key||mapKey(map),entry=schedule[key];if(!entry?.dueAt)continue;const item={map,progress:mapProgress(map),schedule:entry,category:reviewScheduleCategory(entry,now)},bucket=item.category==='overdue'?overdue:item.category==='today'?today:upcoming;bucket.push(item)}const sort=(a,b)=>reviewScheduleDueTimestamp(a.schedule.dueAt,now)-reviewScheduleDueTimestamp(b.schedule.dueAt,now)||((b.progress.difficult||0)-(a.progress.difficult||0))||((b.progress.review||0)-(a.progress.review||0));today.sort(sort);overdue.sort(sort);upcoming.sort(sort);const due=[...overdue,...today],difficult=due.filter(item=>item.progress.difficult>0).length,review=due.filter(item=>item.progress.review>0).length;return{today,overdue,upcoming,due,dueCount:due.length,difficult,review,schedule}}
 function scheduledReviewQueue(maps=combinedMaps(),now=new Date()){return reviewScheduleSummary(maps,now).due}
 function reviewDueLabel(item,now=new Date()){const category=item?.category||reviewScheduleCategory(item?.schedule||item,now),dueAt=item?.schedule?.dueAt||item?.dueAt;if(category==='overdue')return'Atrasada';if(category==='today')return'Hoje';const due=reviewScheduleDueTimestamp(dueAt,now);if(!due)return'A programar';const today=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime(),days=Math.max(1,Math.ceil((due-today)/86400000));return'Em '+days+' dia'+(days===1?'':'s')}
-function completeScheduledReview(map,at=new Date()){if(!map)return null;const key=map._key||mapKey(map),progress=mapProgress(map),delay=reviewDelayDays(progress),schedule=readReviewSchedule();if(!delay){delete schedule[key];writeReviewSchedule(schedule);return null}const modifiedAt=reviewMapModifiedAt(map),stamp=(at instanceof Date?at:new Date(at)).toISOString();schedule[key]={dueAt:reviewAddDays(at,delay).toISOString(),reason:reviewReason(progress),lastReviewedAt:stamp,sourceModifiedAt:modifiedAt||schedule[key]?.sourceModifiedAt||''};writeReviewSchedule(schedule);return schedule[key]}
-function mergeReviewSchedule(incoming,replace=false){if(replace)return writeReviewSchedule(incoming||{});const current=readReviewSchedule(),out={...current};for(const[key,value]of Object.entries(incoming||{})){if(!value||typeof value!=='object')continue;const cur=out[key],incomingTs=Math.max(activityTimestamp(value.sourceModifiedAt),activityTimestamp(value.lastReviewedAt)),currentTs=Math.max(activityTimestamp(cur?.sourceModifiedAt),activityTimestamp(cur?.lastReviewedAt));if(!cur||incomingTs>=currentTs)out[key]={...value}}return writeReviewSchedule(out)}
+function postponeScheduledReview(map,days=1){
+  if(!map)return null;
+  const n=Math.min(14,Math.max(1,Math.floor(Number(days)||1)));
+  const key=map._key||mapKey(map),schedule=syncReviewSchedules(combinedMaps()),entry=schedule[key];
+  if(!entry)return null;
+  const current=reviewScheduleDueTimestamp(entry.dueAt)||Date.now(),base=new Date(Math.max(Date.now(),current)),stamp=new Date().toISOString();
+  schedule[key]={...entry,dueAt:reviewAddDays(base,n).toISOString(),postponedAt:stamp,updatedAt:stamp};
+  writeReviewSchedule(schedule);
+  if(typeof touchPreferences==='function')touchPreferences();
+  if(typeof syncPreferencesCloud==='function')void syncPreferencesCloud().catch(()=>{});
+  return schedule[key];
+}
+function postponeExamDayReviews(courseId,at=new Date(),days=1){
+  // Somente por confirmação explícita. Não apaga eventos nem altera o estado dos tópicos.
+  const n=Math.min(7,Math.max(1,Math.floor(Number(days)||1)));
+  const now=at instanceof Date?at:new Date(at);
+  if(!Number.isFinite(now.getTime()))throw new Error('Data da prova inválida.');
+  const dayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime();
+  const courseMaps=combinedMaps().filter(map=>String(map.courseId)===String(courseId));
+  if(!courseMaps.length)return{count:0,courseId};
+  const allSchedule=syncReviewSchedules();
+  let changed=0;
+  for(const map of courseMaps){
+    const key=map._key||mapKey(map),entry=allSchedule[key];
+    const due=reviewScheduleDueTimestamp(entry?.dueAt,now);
+    if(!entry||!due||due>=dayEnd)continue;
+    const from=new Date(due),next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+n,
+      from.getHours(),from.getMinutes(),from.getSeconds());
+    const stamp=new Date().toISOString();
+    allSchedule[key]={...entry,dueAt:next.toISOString(),postponedAt:stamp,updatedAt:stamp};
+    changed++;
+  }
+  if(changed){
+    writeReviewSchedule(allSchedule);
+    if(typeof touchPreferences==='function')touchPreferences();
+    if(typeof syncPreferencesCloud==='function')void syncPreferencesCloud().catch(()=>{});
+  }
+  return{count:changed,courseId};
+}
+function completeScheduledReview(map,at=new Date()){if(!map)return null;const key=map._key||mapKey(map),progress=mapProgress(map),delay=reviewDelayDays(progress),schedule=readReviewSchedule();if(!delay){delete schedule[key];writeReviewSchedule(schedule);return null}const modifiedAt=reviewMapModifiedAt(map),stamp=(at instanceof Date?at:new Date(at)).toISOString();schedule[key]={dueAt:reviewAddDays(at,delay).toISOString(),reason:reviewReason(progress),lastReviewedAt:stamp,sourceModifiedAt:modifiedAt||schedule[key]?.sourceModifiedAt||'',updatedAt:stamp};writeReviewSchedule(schedule);return schedule[key]}
+function mergeReviewSchedule(incoming,replace=false){if(replace)return writeReviewSchedule(incoming||{});const current=readReviewSchedule(),out={...current};for(const[key,value]of Object.entries(incoming||{})){if(!value||typeof value!=='object')continue;const cur=out[key],incomingTs=Math.max(activityTimestamp(value.sourceModifiedAt),activityTimestamp(value.lastReviewedAt),activityTimestamp(value.updatedAt)),currentTs=Math.max(activityTimestamp(cur?.sourceModifiedAt),activityTimestamp(cur?.lastReviewedAt),activityTimestamp(cur?.updatedAt));if(!cur||incomingTs>=currentTs)out[key]={...value}}return writeReviewSchedule(out)}

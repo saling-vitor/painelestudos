@@ -1,0 +1,1059 @@
+import {test,expect} from '@playwright/test';
+import {mkdirSync} from 'node:fs';
+// Os testes funcionais simulam um usuário que JÁ confirmou as novidades.
+// A confirmação é gravada ANTES do boot; assim a busca assíncrona do
+// version.json não abre uma janela sobre controles que estamos testando.
+// A funcionalidade real do modal é coberta separadamente logo abaixo.
+async function enter(page,view){
+  const response=await page.request.get('/version.json');
+  expect(response.ok()).toBeTruthy();
+  const release=await response.json();
+  await page.addInitScript(version=>{
+    try{localStorage.setItem('studyapp.lastSeenVersion',version)}catch{}
+  },release.version);
+  await page.goto('/#'+view);
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
+}
+
+test('Novidades [G] · exibe uma vez e respeita confirmação real do usuário',async({page})=>{
+  const response=await page.request.get('/version.json');
+  expect(response.ok()).toBeTruthy();
+  const release=await response.json();
+  await page.goto('/#home');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  if(!release.showWhatsNew)return;
+  const modal=page.locator('#whatsNewModal');
+  await expect(modal).toHaveClass(/open/,{timeout:15000});
+  await expect(page.locator('#whatsNewVersion')).toContainText(release.label);
+  await page.locator('#whatsNewAccept').click();
+  await expect(modal).not.toHaveClass(/open/);
+  expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(release.version);
+  await page.reload();
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(modal).not.toHaveClass(/open/);
+});
+
+test('Novidades [G][T+M] · consulta independente do registro do Service Worker',async({page})=>{
+  const response=await page.request.get('/version.json');
+  expect(response.ok()).toBeTruthy();
+  const release=await response.json();
+  test.skip(!release.showWhatsNew,'Versão sem janela de novidades');
+  // Interrompe deliberadamente o registro do SW: informações desta versão
+  // ainda precisam ser consultadas e apresentadas ao usuário.
+  await page.route('**/sw.js*',route=>route.abort());
+  await page.goto('/#home');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('#whatsNewModal')).toHaveClass(/open/,{timeout:15000});
+  await expect(page.locator('#whatsNewVersion')).toContainText(release.label);
+  await page.locator('#whatsNewAccept').click();
+  await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
+  expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(release.version);
+});
+
+/* Contrato E2E das sete pranchas, executável sem dados de demonstração. */
+test('Simulados [G] · mensagens exigem iframe esperado e origem do portal',async({page})=>{
+  await enter(page,'simulations');
+  const results=await page.evaluate(()=>{
+    const frame=document.querySelector('#simulationFrame');
+    const key='e2e-simulation-message-origin';
+    const previous=state.simulationReaderKey;
+    state.simulationReaderKey=key;
+    const data={type:'MEUS_MAPAS_SIM_RESULT',payload:{
+      score:100,correct:1,wrong:0,blank:0,total:1,finishedAt:new Date().toISOString()
+    }};
+    const post=(origin,source)=>window.dispatchEvent(new MessageEvent('message',{origin,source,data}));
+    post('https://external.invalid',frame.contentWindow);
+    const foreignRejected=!Object.hasOwn(state.simResults,key);
+    post(location.origin,window);
+    const wrongFrameRejected=!Object.hasOwn(state.simResults,key);
+    post(location.origin,frame.contentWindow);
+    const trustedAccepted=state.simResults[key]?.correct===1;
+    delete state.simResults[key];
+    delete state.simAttempts[key];
+    localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults));
+    localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));
+    state.simulationReaderKey=previous;
+    return{foreignRejected,wrongFrameRejected,trustedAccepted};
+  });
+  expect(results).toEqual({foreignRejected:true,wrongFrameRejected:true,trustedAccepted:true});
+});
+
+
+test('Leitor offline [G][T+M] · usa HTML em cache e não requisita mapas ausentes',async({page})=>{
+  await page.goto('/#home',{waitUntil:'domcontentloaded'});
+  await page.evaluate(async()=>{
+    const link=new URL('offline-reader-e2e.html',location.href);
+    const cache=await caches.open('reader-e2e-test');
+    await cache.put(link.href,new Response(
+      '<!doctype html><html lang="pt-BR"><head><meta name="mindmap-storage-id" content="offline-e2e"></head>'+
+      '<body class="mindmap-app"><main id="offline-e2e-map">Conteúdo offline em cache</main></body></html>',
+      {headers:{'Content-Type':'text/html; charset=utf-8'}}));
+  });
+  await page.addInitScript(()=>Object.defineProperty(navigator,'onLine',{configurable:true,get:()=>false}));
+  let networkRequests=0;
+  await page.route('**/offline-reader-e2e.html',route=>{networkRequests++;return route.abort()});
+  await page.goto('/reader.html?mode=local&href=offline-reader-e2e.html');
+  await expect(page.locator('#offline-e2e-map')).toHaveText('Conteúdo offline em cache');
+  await expect(page.locator('meta[name="mindmap-storage-id"]')).toHaveAttribute('content','offline-e2e');
+  expect(networkRequests).toBe(0);
+
+  await page.route('**/offline-reader-missing-e2e.html',route=>{networkRequests++;return route.abort()});
+  await page.goto('/reader.html?mode=local&href=offline-reader-missing-e2e.html');
+  await expect(page.locator('.loading-card')).toContainText('não está disponível offline');
+  expect(networkRequests).toBe(0);
+});
+
+test('Leitor V211 [G] · bloqueia URL externa antes de executar HTML no portal',async({page})=>{
+  let remoteRequests=0;
+  await page.route('https://external.invalid/mapa.html',route=>{
+    remoteRequests++;
+    return route.fulfill({status:200,contentType:'text/html',
+      body:'<script>window.__readerRemoteExecuted=true</script><p>não autorizado</p>'});
+  });
+  for(const href of ['https://external.invalid/mapa.html','data:text/html,<p>intruso</p>','javascript:alert(1)','/assets/js/cloud-core.js']){
+    await page.goto('/reader.html?mode=local&href='+encodeURIComponent(href));
+    await expect(page.locator('.loading-card')).toContainText('Caminho do mapa não permitido');
+    expect(await page.evaluate(()=>window.__readerRemoteExecuted===true)).toBe(false);
+  }
+  expect(remoteRequests,'O leitor não deve nem requisitar HTML externo').toBe(0);
+});
+
+test('Leitor V211 [G] · mesmo HTML aceita namespaces isolados e rejeita mapa sem metadado',async({page})=>{
+  // Bootstrap mínimo equivalente à construção de ns/stateKey do V134 real:
+  // o documento converte CF88_V01 em cf88-v01 antes de gravar localStorage.
+  const source='<!doctype html><html lang="pt-BR"><head><meta name="mindmap-storage-id" content="CF88_V01"><title>Mapa E2E</title></head><body class="mindmap-app"><main id="mapa-e2e">HTML compartilhado</main><script>const ns=document.querySelector("meta").content.toLowerCase().replace(/[^a-z0-9]+/g,"-");window.MINDMAP_V134={stateKey:"mindmap_state::"+ns,notesKey:"mindmap_notes::"+ns};</script></body></html>';
+  // Simula a ponte autenticada APENAS neste ensaio: verifica o nome exato
+  // das chaves solicitado ao backend, sem acesso às contas do usuário.
+  await page.route('**/assets/js/cloud-core.js*',route=>route.fulfill({
+    status:200,contentType:'application/javascript',
+    body:`window.StudyCloud={
+      configured:()=>true,session:()=>({user:{id:'reader-e2e'}}),
+      restoreStorageKey:async key=>{
+        const saved=JSON.parse(sessionStorage.getItem('reader-e2e-cloud-keys')||'[]');
+        saved.push(key);sessionStorage.setItem('reader-e2e-cloud-keys',JSON.stringify(saved));
+        return false;
+      },
+      syncStorageKey:async()=>true,reconcileAll:async()=>true
+    };`
+  }));
+  await page.route('**/reader-namespace-e2e.html',route=>route.fulfill({
+    status:200,contentType:'text/html; charset=utf-8',body:source
+  }));
+  const url=storageId=>'/reader.html?mode=local&href='+encodeURIComponent('/reader-namespace-e2e.html')+
+    (storageId?'&storage-id='+encodeURIComponent(storageId):'');
+  await page.goto(url(''));
+  await expect(page.locator('#mapa-e2e')).toHaveText('HTML compartilhado');
+  const original=await page.evaluate(()=>({
+    keys:JSON.parse(sessionStorage.getItem('reader-e2e-cloud-keys')||'[]'),
+    stateKey:window.MINDMAP_V134?.stateKey,
+    notesKey:window.MINDMAP_V134?.notesKey
+  }));
+  expect(original.stateKey).toBe('mindmap_state::cf88-v01');
+  expect(original.notesKey).toBe('mindmap_notes::cf88-v01');
+  expect(original.keys).toContain(original.stateKey);
+  expect(original.keys).toContain(original.notesKey);
+  await page.goto(url('concurso-origem-v01'));
+  await expect(page.locator('#mapa-e2e')).toHaveText('HTML compartilhado');
+  await expect(page.locator('meta[name="mindmap-storage-id"]')).toHaveAttribute('content','concurso-origem-v01');
+  await page.evaluate(()=>localStorage.setItem('mindmap_state::concurso-origem-v01','{"done":1}'));
+
+  await page.goto(url('concurso-destino-v01'));
+  await expect(page.locator('#mapa-e2e')).toHaveText('HTML compartilhado');
+  await expect(page.locator('meta[name="mindmap-storage-id"]')).toHaveAttribute('content','concurso-destino-v01');
+  const persisted=await page.evaluate(()=>({
+    original:localStorage.getItem('mindmap_state::concurso-origem-v01'),
+    copied:localStorage.getItem('mindmap_state::concurso-destino-v01')
+  }));
+  expect(persisted).toEqual({original:'{"done":1}',copied:null});
+
+  await page.route('**/reader-no-namespace-e2e.html',route=>route.fulfill({
+    status:200,contentType:'text/html; charset=utf-8',
+    body:'<!doctype html><html><body><main>Sem metadado</main></body></html>'
+  }));
+  await page.goto('/reader.html?mode=local&href='+encodeURIComponent('/reader-no-namespace-e2e.html')+
+    '&storage-id=destino-sem-namespace');
+  await expect(page.locator('.loading-card')).toContainText('HTML do mapa não declara namespace de progresso');
+});
+
+test('Leitor real V134 [G][T+M] · CF88 empacotada mantém namespace, conteúdo e toolbar',async({page})=>{
+  test.setTimeout(90000);
+  const href='cursos/porto-alegre/mapas/CF88_Constituicao_Federal_Estudo_V02.html';
+  const url='/reader.html?mode=local&href='+encodeURIComponent(href)+
+    '&storage-id=study-cf88-fundatec-arquiteto-poa';
+  await page.goto(url,{waitUntil:'domcontentloaded'});
+  await expect(page.locator('body.mindmap-app')).toBeVisible({timeout:45000});
+  const info=await expect.poll(()=>page.evaluate(()=>({
+    key:window.MINDMAP_V134?.stateKey||'',
+    notes:window.MINDMAP_V134?.notesKey||'',
+    title:document.title||'',
+    hasToolbar:!!document.querySelector('.toolbar'),
+    hasDoc:!!document.querySelector('main')
+  })),{timeout:45000});
+  await info.toMatchObject({
+    key:'mindmap_state::study-cf88-fundatec-arquiteto-poa',
+    notes:'mindmap_notes::study-cf88-fundatec-arquiteto-poa',
+    hasToolbar:true,hasDoc:true
+  });
+});
+
+test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  const sections=[
+    ['home','editorialHome'],
+    ['courses','editorialCourses'],
+    ['maps','editorialMaps'],
+    ['simulations','editorialSimulations'],
+    ['progress','editorialProgress'],
+    ['agenda','editorialAgenda'],
+    ['settings','editorialSettings']
+  ];
+  for(const [view,id] of sections){
+    await page.evaluate(v=>nav(v),view);
+    await expect(page.locator('[data-view="'+view+'"]')).toHaveClass(/active/);
+    await expect(page.locator('#'+id+' .pr-stamp')).toHaveCount(1);
+    await expect(page.locator('#'+id+' .pr-stamp')).toBeVisible();
+    if(view==='home'){
+      const geometry=await page.locator('#editorialHome').evaluate(el=>({
+        width:el.getBoundingClientRect().width,
+        parent:el.parentElement.getBoundingClientRect().width
+      }));
+      expect(geometry.width,'A prancha do Início deve ocupar as duas colunas do grid antigo').toBeGreaterThan(geometry.parent*.82);
+      await expect(page.locator('#homeStudyDashboard .study-command-art img')).toHaveAttribute('loading','eager');
+    }
+    // O painel de novidades pode abrir ao visitar Configurações. Fechá-lo
+    // pelo botão real antes da captura, sem falsificar estilos nem estados.
+    const news=page.locator('#whatsNewModal');
+    if(await news.isVisible()){
+      await page.locator('#whatsNewAccept').click();
+      await expect(news).not.toHaveClass(/open/);
+    }
+    mkdirSync('visual-audit',{recursive:true});
+    await page.screenshot({path:'visual-audit/prancha-'+test.info().project.name+'-'+view+'.png',animations:'disabled'});
+  }
+});
+test('Home [G][T+M] · Todos automático substitui banner e cursos legados',async({page})=>{
+  await enter(page,'home');
+  const auto=await page.locator('#editorialHome [data-pr-home="todos"]').getAttribute('aria-pressed');
+  // Sem prova cadastrada, "Todos" é a vista automática, sem seleção manual.
+  if(auto==='true'){
+    await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-pr-manual-home','false');
+    await expect(page.locator('[data-view="home"] > .hero')).toBeHidden();
+    await expect(page.locator('[data-view="home"] > .home-courses-section')).toBeHidden();
+    await expect(page.locator('#editorialHome .pr-stamp')).toBeVisible();
+  }
+});
+
+test('Cinco telas da Home [G][T+M] · seleção não cria sessão paralela',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  const buttons=page.locator('#editorialHome [data-pr-home]');
+  await expect(buttons).toHaveCount(5);
+  if(test.info().project.name==='iphone-webkit'){
+    const placement=await buttons.evaluateAll(elements=>elements.map(element=>{
+      const button=element.getBoundingClientRect();
+      const holder=element.closest('.pr-switch').getBoundingClientRect();
+      return{left:button.left>=holder.left-1,right:button.right<=holder.right+1,
+        viewportRight:button.right<=innerWidth+1};
+    }));
+    expect(placement,'As 5 telas do Início devem ficar visíveis no smartphone, sem recorte').toEqual(
+      Array.from({length:5},()=>({left:true,right:true,viewportRight:true}))
+    );
+  }
+  for(const key of ['todos','revisoes','sessao','pos','hoje']){
+    const button=page.locator('#editorialHome [data-pr-home="'+key+'"]');
+    await button.click();
+    await expect(button).toHaveAttribute('aria-pressed','true');
+    await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-editorial-mode',key);
+    mkdirSync('visual-audit',{recursive:true});
+    await page.screenshot({path:'visual-audit/home-'+test.info().project.name+'-'+key+'.png',animations:'disabled'});
+  }
+  const consistency=await page.evaluate(()=>({
+    total:MeusMapasPranchas.snapshot().ms.length,
+    visibleText:document.querySelector('#editorialHome')?.textContent||'',
+    timer:document.querySelectorAll('#studyTimerFloat').length
+  }));
+  expect(consistency.visibleText).toContain('Planejamento de hoje');
+  expect(consistency.timer).toBeLessThanOrEqual(1);
+});
+test('Biblioteca [G][T+M] · visualizações mantêm filtros existentes',async({page})=>{
+  await enter(page,'maps');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('#editorialMaps')).toBeVisible();
+  for(const kind of ['lista','agrupado','grade']){
+    const btn=page.locator('#editorialMaps [data-pr-library="'+kind+'"]');
+    await btn.click();
+    await expect(btn).toHaveAttribute('aria-pressed','true');
+    await expect(page.locator('[data-view="maps"]')).toHaveAttribute('data-pr-library-layout',kind);
+  }
+  await expect(page.locator('#allMaps')).toBeAttached();
+});
+test('Progresso [G][T+M] · observação sem histórico inventado',async({page})=>{
+  await enter(page,'progress');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('[data-view="progress"]')).toHaveClass(/active/);
+  await expect(page.locator('#editorialProgress')).toBeVisible();
+  const report=await page.evaluate(()=>{
+    const rows=StudyDashboard.progressHistory();
+    return {rows,total:MeusMapasPranchas.snapshot().ms.length,hasView:!!document.querySelector('#editorialProgress')};
+  });
+  expect(report.hasView).toBe(true);
+  if(report.total===0)expect(report.rows.length).toBe(0);
+  else {
+    const scoped=await page.evaluate(()=>{
+      const c=combinedCourses()[0],last=StudyDashboard.progressHistory().at(-1);
+      return !c||!last?null:{byCourse:last.byCourse?.[c.id],mapTotal:combinedMaps().filter(m=>m.courseId===c.id).reduce((sum,m)=>sum+mapProgress(m).total,0)};
+    });
+    if(scoped?.byCourse)expect(scoped.byCourse.total).toBe(scoped.mapTotal);
+    expect(report.rows.every(x=>x.marked>=0&&x.total>=x.marked)).toBe(true);
+  }
+});
+
+
+test('Agenda [G][T+M] · horário persistente e compatibilidade dos itens antigos',async({page})=>{
+  await enter(page,'agenda');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
+  const detail=await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    const item=StudyDashboard.addAgenda({date,title:'Sessão com horário E2E',minutes:35,start:'08:35'});
+    const saved=StudyDashboard.exportData().agenda.find(x=>x.id===item.id);
+    const root=document.getElementById('agendaQuickForm');
+    return {start:saved?.start,hasField:!!root?.querySelector('[name="start"]')};
+  });
+  expect(detail.start).toBe('08:35');
+  expect(detail.hasField).toBe(true);
+  const label=page.locator('#agendaDayDetail');
+  await expect(label).toContainText('08:35');
+  await expect(label).toContainText('Sessão com horário E2E');
+});
+
+
+test('Agenda [G][T+M] · conflitos são somente sugeridos até confirmação',async({page})=>{
+  await enter(page,'agenda');
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
+  const ids=await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    const a=StudyDashboard.addAgenda({date,title:'Conflito A E2E',minutes:60,start:'19:00'});
+    const b=StudyDashboard.addAgenda({date,title:'Conflito B E2E',minutes:30,start:'19:30'});
+    MeusMapasPranchas.refresh();
+    return[a.id,b.id];
+  });
+  await expect(page.locator('#editorialAgenda .pr-collision')).toHaveCount(2);
+  const initial=await page.evaluate(ids=>ids.map(id=>StudyDashboard.exportData().agenda.find(r=>r.id===id)?.start),ids);
+  expect(initial).toEqual(['19:00','19:30']);
+  const proposal=page.locator('#editorialAgenda [data-pr-action="move-agenda"]').first();
+  await proposal.click();
+  await expect(page.locator('#confirmModal')).toBeVisible();
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(ids=>ids.map(id=>StudyDashboard.exportData().agenda.find(r=>r.id===id)?.start),ids)).not.toEqual(initial);
+});
+test('Simulados [G][T+M] · relatório interpreta tentativas reais do estado',async({page})=>{
+  await enter(page,'simulations');
+  await expect(page.locator('#editorialSimulations')).toBeVisible();
+  const exists=await page.evaluate(()=>{
+    const s=combinedSimulations()[0];if(!s)return false;
+    const key=simulationKey(s);
+    const result={score:75,correct:45,wrong:10,blank:5,total:60,finishedAt:'2026-10-15T12:00:00.000Z',sections:{'Projeto Arquitetônico':{correct:8,total:10}},mistakes:[{number:6,topic:'Normas',stem:'Item de teste sem dados reais de produção',answer:'B'}],questionResults:Array.from({length:60},(_,i)=>({number:i+1,status:i<45?'correct':i<55?'wrong':'blank',userAnswer:i<55?'A':'',answer:i<45?'A':'B',section:'Projeto Arquitetônico'}))};
+    state.simResults[key]=result;state.simAttempts[key]=[result];MeusMapasPranchas.refresh();return true;
+  });
+  if(!exists){await expect(page.locator('#editorialSimulations')).toContainText('Nenhum simulado');return}
+  await page.locator('#editorialSimulations [data-pr-sim="resultado"]').click();
+  await expect(page.locator('#editorialSimulations .pr-sim-report')).toHaveCount(1);
+  await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('Projeto Arquitetônico');
+  await expect(page.locator('#editorialSimulations .pr-sim-report')).toContainText('45');
+  await expect(page.locator('#editorialSimulations .pr-sim-benchmark')).toContainText('Não informado');
+  await expect(page.locator('#editorialSimulations .pr-answer-q')).toHaveCount(60);
+  await page.locator('#editorialSimulations .pr-answer-q[data-pr-answer-question="46"]').click();
+  await expect(page.locator('#editorialSimulations .pr-answer-detail')).toContainText('Questão 46 · errada');
+  await page.locator('#editorialSimulations [data-pr-action="review-errors"]').first().click();
+  await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toHaveAttribute('open','');
+  await expect(page.locator('#editorialSimulations details.pr-sim-errors').first()).toContainText('Normas');
+});
+test('Mapas [G][T+M] · vínculo compartilha HTML mas isola progresso por concurso',async({page})=>{
+  await enter(page,'maps');
+  await expect(page.locator('#editorialMaps')).toBeVisible();
+  // Fixture local e isolada: nenhuma chamada de escrita ao Supabase real.
+  // Diferentemente da cobertura anterior, este teste NÃO passa sem executar o vínculo.
+  const data=await page.evaluate(async()=>{
+    const from='e2e-curso-origem',to='e2e-curso-destino',owner='e2e-user',
+      source={id:'mapa-e2e-origem',courseId:from,code:'MAPA-E2E',title:'Mapa de teste',
+        storage_path:owner+'/'+from+'/mapa-e2e.html',storageId:'estudo-origem-e2e',hasBundled:false},
+      original={session:StudyCloud.session,configured:StudyCloud.configured,me:StudyCloud.me,
+        insert:StudyCloud.insert,rows:StudyCloud.rows,upload:StudyCloud.upload,loadCloud},
+      courses=state.cloudCourses,maps=state.cloudMaps;
+    state.cloudCourses=[{id:from,title:'Curso de origem E2E',status:'active'},{id:to,title:'Curso de destino E2E',status:'active'}];
+    state.cloudMaps=[source];
+    let inserted=null,uploads=0;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.configured=()=>true;
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.rows=async()=>[];
+    StudyCloud.upload=async()=>{uploads++;throw Error('upload duplicado proibido')};
+    StudyCloud.insert=async(table,row)=>{if(table!=='maps')throw Error('Tabela incorreta');inserted=row;return[{id:'linked-row-e2e',...row}]};
+    loadCloud=async()=>{};
+    try{
+      await linkMapToCourse(mapKey(source),to);
+      return {samePath:source.storage_path===inserted.storage_path,
+        independentId:source.storageId!==inserted.storage_id,
+        differentCourse:source.courseId!==inserted.course_id,
+        uploads,readerParam:readerHref({...source,storageId:inserted.storage_id}).includes('storage-id='),
+        configuredSource:readMapContentSources()[mapKey({courseId:to,code:source.code})]};
+    }finally{
+      Object.assign(StudyCloud,{session:original.session,configured:original.configured,me:original.me,
+        insert:original.insert,rows:original.rows,upload:original.upload});
+      loadCloud=original.loadCloud;state.cloudCourses=courses;state.cloudMaps=maps;
+    }
+  });
+  expect(data).toEqual({samePath:true,independentId:true,differentCourse:true,
+    uploads:0,readerParam:true,configuredSource:'cloud'});
+});
+
+test('Home [G][T+M] · sessão usa cronômetro original e um único estado',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  const before=await page.evaluate(()=>{
+    StudyDashboard.start({mode:'free',label:'Cronômetro E2E',minutes:15});
+    MeusMapasPranchas.refresh();
+    return document.querySelectorAll('#studyTimerFloat').length;
+  });
+  await page.locator('#editorialHome [data-pr-home="sessao"]').click();
+  await expect(page.locator('#editorialHome [data-pr-clock]')).toHaveText(/^\d{2}:\d{2}:\d{2}$/);
+  expect(before).toBeLessThanOrEqual(1);
+  await expect(page.locator('#editorialHome')).toContainText('Cronômetro de estudo');
+});
+test('Home [G][T+M] · marcação pós-prova persiste sem arquivar concurso',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  const course=await page.evaluate(()=>{
+    const current=state.cloudCourses[0];if(!current)return null;
+    current.examDate='2026-10-14';current.exam_date='2026-10-14';
+    MeusMapasPranchas.refresh();return current.id;
+  });
+  if(!course)return;
+  await page.locator('#editorialHome [data-pr-home="pos"]').click();
+  const mark=page.locator('#editorialHome [data-pr-action="exam-status"][data-pr-id="'+course+'"]');
+  await expect(mark).toBeVisible();
+  await mark.click();
+  await expect(page.locator('#confirmModal')).toBeVisible();
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(id=>readExamStatuses()[id]?.completed,course)).toBe(true);
+  const saved=await page.evaluate(id=>({status:localPreferences().examStatuses[id],archived:courseById(id)?.status==='archived'}),course);
+  expect(saved.status.completed).toBe(true);
+  expect(saved.archived).toBe(false);
+});
+
+
+test('Home [G][T+M] · atalho para revisões não permanece inerte',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  await page.locator('#editorialHome [data-pr-home="hoje"]').click();
+  await page.locator('#editorialHome [data-pr-action="home"][data-pr-id="revisoes"]').click();
+  await expect(page.locator('#editorialHome [data-pr-home="revisoes"]')).toHaveAttribute('aria-pressed','true');
+});
+
+
+test('Agenda [G][T+M] · Dia/Semana/Mês contam eventos reais e sinalizam datas de prova',async({page})=>{
+  await enter(page,'agenda');
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-mode]')).toHaveCount(3);
+  await page.locator('#editorialAgenda [data-pr-agenda-mode="semana"]').click();
+  await expect(page.locator('#editorialAgenda .pr-agenda-week-day')).toHaveCount(7);
+  await page.locator('#editorialAgenda [data-pr-agenda-mode="mes"]').click();
+  await expect(page.locator('#editorialAgenda .pr-month-date')).toHaveCount(42);
+  const day=await page.locator('#editorialAgenda .pr-month-date').filter({hasText:'15'}).first().getAttribute('data-pr-agenda-pick');
+  if(day){await page.locator('#editorialAgenda [data-pr-agenda-pick="'+day+'"]').first().click();
+    await expect(page.locator('#editorialAgenda .pr-agenda-datebar')).toBeVisible();}
+  await page.locator('#editorialAgenda [data-pr-agenda-mode="dia"]').click();
+  await expect(page.locator('#editorialAgenda .pr-hour-row')).toHaveCount(16);
+});
+test('Home [G][T+M] · abrir plano não inicia sessão paralela',async({page})=>{
+  await enter(page,'home');
+  const report=await page.evaluate(()=>{
+    let n=0;
+    const old=StudyDashboard.start,original=StudyPlanner.showTimePlan;
+    StudyDashboard.start=()=>{n++;return null};
+    StudyPlanner.showTimePlan=()=>undefined;
+    const button=document.querySelector('#editorialHome [data-pr-action="study"]');
+    if(button)button.click();
+    StudyDashboard.start=old;StudyPlanner.showTimePlan=original;
+    return{n,hasButton:!!button};
+  });
+  if(report.hasButton)expect(report.n).toBe(0);
+});
+
+
+test('Agenda [G][T+M] · evento antigo sem horário não ganha 19h fictícias',async({page})=>{
+  await enter(page,'agenda');
+  await expect(page.locator('#editorialAgenda')).toBeVisible();
+  await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    StudyDashboard.importData({agenda:[{id:'legacy-sem-horario-e2e',date,title:'Evento histórico E2E sem horário',kind:'study',minutes:22}]},{merge:true});
+    renderStudyAgenda();MeusMapasPranchas.refresh();
+  });
+  const row=page.locator('#agendaDayDetail .agenda-entry').filter({hasText:'Evento histórico E2E sem horário'});
+  await expect(row).toContainText('Sem horário');
+  await expect(page.locator('#editorialAgenda')).toContainText('Sem horário registrado');
+  expect(await page.locator('#editorialAgenda .pr-collision').filter({hasText:'Evento histórico E2E sem horário'}).count()).toBe(0);
+});
+
+
+test('Home [G][D+T+M] · a sessão automática não bloqueia escolha manual',async({page})=>{
+  await enter(page,'home');
+  await expect(page.locator('#editorialHome')).toBeVisible();
+  await page.evaluate(()=>{
+    StudyDashboard.start({mode:'free',label:'Troca de contexto E2E',minutes:15});
+    MeusMapasPranchas.refresh();
+  });
+  await expect(page.locator('#editorialHome [data-pr-home="sessao"]')).toHaveAttribute('aria-pressed','true');
+  await page.locator('#editorialHome [data-pr-home="todos"]').click();
+  await expect(page.locator('#editorialHome [data-pr-home="todos"]')).toHaveAttribute('aria-pressed','true');
+  await page.evaluate(()=>MeusMapasPranchas.refresh());
+  await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-editorial-mode','todos');
+  await page.evaluate(()=>StudyDashboard.finish());
+  // Ao terminar a sessão, o foco volta ao contexto correto: pós-prova quando
+  // existe prova de ontem pendente; caso contrário Hoje ou Todos.
+  const expected=await page.evaluate(()=>{
+    const data=MeusMapasPranchas.snapshot(),today=new Date(),
+      yesterday=new Date(today.getFullYear(),today.getMonth(),today.getDate()-1),
+      key=d=>d&&[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+    return data.rank.some(x=>key(x.date)===key(yesterday)&&!readExamStatuses()[x.course.id]?.completed)?'pos':
+      data.rank.some(x=>x.date)?'hoje':'todos';
+  });
+  await expect(page.locator('#editorialHome [data-pr-home="'+expected+'"]')).toHaveAttribute('aria-pressed','true');
+});
+
+test('Home [G][D+T+M] · régua do dia não inventa horários',async({page})=>{
+  await enter(page,'home');
+  // A prova de ontem pode abrir Pós-prova automaticamente; selecionar Hoje
+  // é uma ação legítima e não modifica a agenda nem a sessão.
+  await page.locator('#editorialHome [data-pr-home="hoje"]').click();
+  await expect(page.locator('#editorialHome [data-pr-home="hoje"]')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#editorialHome')).toContainText('Régua do dia');
+  const lines=page.locator('#editorialHome .pr-day-tick');
+  await expect(lines).toHaveCount(7);
+  await page.evaluate(()=>{
+    const today=new Date(),date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    StudyDashboard.addAgenda({date,title:'Sem horário no plano do dia E2E',minutes:25});
+    MeusMapasPranchas.refresh();
+  });
+  await expect(page.locator('#editorialHome')).toContainText('Sem horário no plano do dia E2E');
+  await expect(page.locator('#editorialHome')).toContainText('Sem horário registrado');
+});
+
+test('Cursos [G][T+M] · alternar Capas e Lista sem duplicar a grade original',async({page})=>{
+  await enter(page,'courses');
+  const root=page.locator('#editorialCourses'),grid=page.locator('#coursesGrid');
+  await expect(root).toBeVisible();
+  await expect(root.locator('[data-pr-courses-layout]')).toHaveCount(2);
+  await root.locator('[data-pr-courses-layout="lista"]').click();
+  await expect(page.locator('[data-view="courses"]')).toHaveAttribute('data-pr-courses-layout','lista');
+  await expect(grid).toBeHidden();
+  await expect(root.locator('.pr-card')).toContainText('Concursos por prioridade');
+  await root.locator('[data-pr-courses-layout="capas"]').click();
+  await expect(page.locator('[data-view="courses"]')).toHaveAttribute('data-pr-courses-layout','capas');
+  await expect(grid).toBeVisible();
+});
+
+test('Configurações [G] · versão da nuvem segue versão global, sem V12.1 legado',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(()=>{
+    const previous=localStorage.getItem('studyapp.config.override');
+    const config={...window.STUDY_APP_CONFIG};
+    saveConfig();
+    const stored=JSON.parse(localStorage.getItem('studyapp.config.override')||'{}');
+    if(previous===null)localStorage.removeItem('studyapp.config.override');
+    else localStorage.setItem('studyapp.config.override',previous);
+    window.STUDY_APP_CONFIG=config;
+    return{expected:APP_VERSION_LABEL,stored:stored.appVersion};
+  });
+  expect(report.stored).toBe(report.expected);
+});
+
+test('Importação [G] · IDs formados só por sinais não criam mapas sem progresso',async({page})=>{
+  await enter(page,'courses');
+  const inputs=await page.evaluate(()=>({
+    empty:validStorageId(''),
+    spaces:validStorageId('   '),
+    dash:validStorageId('—'),
+    punctuation:validStorageId('---'),
+    placeholder:validStorageId('[[SIGLA-DO-ESTUDO]]'),
+    canonical:validStorageId('study-cf88-fundatec'),
+    legacy:validStorageId('CF88_V01')
+  }));
+  expect(inputs).toEqual({
+    empty:false,spaces:false,dash:false,punctuation:false,
+    placeholder:false,canonical:true,legacy:true
+  });
+});
+
+test('Configurações [G] · alerta sobre storage_id cloud inválido sem inventar progresso',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    // Fixture de catálogo em memória, sem login ou escrita na nuvem real.
+    state.cloudCourses=[{id:'curso-invalid-id-e2e',title:'Curso de diagnóstico',status:'active'}];
+    state.cloudMaps=[{id:'map-invalid-id-e2e',courseId:'curso-invalid-id-e2e',
+      code:'SIN',title:'Sintaxe e pontuação',storageId:'—',storage_path:'fixture/e2e.html'}];
+    StudyCloud.session=()=>({user:{id:'diagnostic-e2e'}});
+    MeusMapasPranchas.refresh();
+  });
+  const warning=page.locator('#editorialSettings p.pr-note[role="status"]');
+  await expect(warning).toBeVisible();
+  await expect(warning).toContainText('SIN');
+  await expect(warning).toContainText('nenhuma migração é automática');
+  expect(await page.evaluate(()=>mapStorageNs(state.cloudMaps[0]))).toBe('');
+});
+
+test('Importador [G] · mapas do mesmo lote recebem namespaces únicos',async({page})=>{
+  await enter(page,'courses');
+  const report=await page.evaluate(async()=>{
+    const owner='batch-owner-e2e',course='batch-course-e2e',reserved=new Set(),saved=[],uploads=[];
+    const originals={courses:state.cloudCourses,maps:state.cloudMaps,
+      session:StudyCloud.session,upload:StudyCloud.upload,upsert:StudyCloud.upsert,
+      forget:StudyCloud.forgetCached,cache:StudyCloud.cachePrivateBlob};
+    state.cloudCourses=[{id:course,title:'Curso lote E2E',status:'active'}];
+    state.cloudMaps=[];
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.upload=async(path,blob)=>{uploads.push({path,html:await blob.text()});return true};
+    StudyCloud.upsert=async(table,row)=>{if(table!=='maps')throw Error('Tabela incorreta');saved.push(row);return[{id:'batch-map-'+saved.length}]};
+    StudyCloud.forgetCached=async()=>{};
+    StudyCloud.cachePrivateBlob=async()=>{};
+    const make=(code,filename)=>({code,declaredCode:code,title:'Mapa '+code,
+      shortTitle:'Mapa '+code,version:'V01',board:'Banca',contest:'Concurso',
+      topics:1,branches:1,category:'Outros',filename,storageId:'shared-batch-e2e',
+      html:'<!doctype html><head><meta name="mindmap-storage-id" content="shared-batch-e2e">'+
+        '<meta name="study-short-code" content="'+code+'"></head><body class="mindmap-app"></body></html>'});
+    try{
+      await importOneMap(make('E2EA','batch-a.html'),course,{id:owner},reserved);
+      await importOneMap(make('E2EB','batch-b.html'),course,{id:owner},reserved);
+      const ids=saved.map(row=>row.storage_id),
+        metas=uploads.map(item=>new DOMParser().parseFromString(item.html,'text/html')
+          .querySelector('meta[name="mindmap-storage-id"]')?.content);
+      return{ids,metas,uploaded:uploads.length,distinct:new Set(ids.map(slug)).size===2};
+    }finally{
+      state.cloudCourses=originals.courses;state.cloudMaps=originals.maps;
+      StudyCloud.session=originals.session;StudyCloud.upload=originals.upload;
+      StudyCloud.upsert=originals.upsert;StudyCloud.forgetCached=originals.forget;
+      StudyCloud.cachePrivateBlob=originals.cache;
+    }
+  });
+  expect(report.uploaded).toBe(2);
+  expect(report.distinct).toBe(true);
+  expect(report.ids[0]).toBe('shared-batch-e2e');
+  expect(report.ids[1]).toMatch(/^study-e2eb-batch-course-e2e/);
+  expect(report.metas).toEqual(report.ids);
+});
+
+test('Importação [G] · catálogo desatualizado não reutiliza namespace de outro aparelho',async({page})=>{
+  await enter(page,'courses');
+  const report=await page.evaluate(async()=>{
+    const owner='remote-namespace-owner-e2e',course='remote-namespace-course-e2e',
+      id='shared-remote-e2e',uploads=[],saved=[];
+    const original={
+      maps:state.cloudMaps,courses:state.cloudCourses,
+      session:StudyCloud.session,rows:StudyCloud.rows,upload:StudyCloud.upload,
+      upsert:StudyCloud.upsert,forget:StudyCloud.forgetCached,
+      cache:StudyCloud.cachePrivateBlob
+    };
+    state.cloudCourses=[{id:course,title:'Curso de vínculo E2E',status:'active'}];
+    state.cloudMaps=[];
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.rows=async(table,filter)=>{
+      if(table!=='maps'||!filter.includes('user_id=eq.'+owner))
+        throw Error('Consulta inesperada');
+      return[{storage_id:id}];
+    };
+    StudyCloud.upload=async(path,blob)=>{uploads.push({path,html:await blob.text()});return true};
+    StudyCloud.upsert=async(table,row)=>{saved.push({table,...row});return[{id:'created-remote-namespace-e2e'}]};
+    StudyCloud.forgetCached=async()=>{};
+    StudyCloud.cachePrivateBlob=async()=>{};
+    const candidate={code:'E2ER',declaredCode:'E2ER',title:'Mapa isolado',
+      shortTitle:'Mapa isolado',version:'V01',board:'Banca',contest:'Concurso',
+      topics:1,branches:1,category:'Outros',filename:'remote-namespace-e2e.html',
+      storageId:id,html:'<!doctype html><head><meta name="mindmap-storage-id" content="'+id+'">'+
+        '<meta name="study-short-code" content="E2ER"></head><body class="mindmap-app"></body></html>'};
+    try{
+      const reserved=await reserveCloudMapNamespaces({id:owner},new Set());
+      await importOneMap(candidate,course,{id:owner},reserved);
+      const declared=new DOMParser().parseFromString(uploads[0].html,'text/html')
+        .querySelector('meta[name="mindmap-storage-id"]')?.content;
+      return{remoteReserved:reserved.has(id),oldIdUsed:saved[0].storage_id===id,
+        newId:saved[0].storage_id,declared,uploads:uploads.length};
+    }finally{
+      state.cloudMaps=original.maps;state.cloudCourses=original.courses;
+      StudyCloud.session=original.session;StudyCloud.rows=original.rows;
+      StudyCloud.upload=original.upload;StudyCloud.upsert=original.upsert;
+      StudyCloud.forgetCached=original.forget;StudyCloud.cachePrivateBlob=original.cache;
+    }
+  });
+  expect(report.remoteReserved).toBe(true);
+  expect(report.oldIdUsed).toBe(false);
+  expect(report.newId).toMatch(/^study-e2er-remote-namespace-course-e2e/);
+  expect(report.declared).toBe(report.newId);
+  expect(report.uploads).toBe(1);
+});
+
+test('Configurações [G] · SIN legado gera cópia HTML isolada sem tocar o progresso do outro concurso',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='owner-sin-namespaces-e2e',path=owner+'/curso-a/SIN_V01.html';
+    const source='<!doctype html><html><head><meta content="—" name="mindmap-storage-id">'+
+      '<meta content="SIN" name="study-short-code"></head><body class="mindmap-app">'+
+      '<main id="sin-legacy-e2e">Texto V211 original</main></body></html>';
+    state.cloudCourses=[{id:'curso-a',title:'Concurso A',status:'active'},
+      {id:'curso-b',title:'Concurso B',status:'active'}];
+    state.cloudMaps=[
+      {id:'sin-bad-e2e',courseId:'curso-a',code:'SIN',title:'SIN legado',storageId:'—',storage_path:path,version:'V01'},
+      {id:'sin-good-e2e',courseId:'curso-b',code:'SIN',title:'SIN original do outro concurso',
+        storageId:'sin-sintaxe-regencia-concordancia-pontuacao',
+        storage_path:owner+'/curso-b/SIN_V01.html',version:'V01'}
+    ];
+    const files=new Map([[path,source]]);
+    const report={uploads:[],patches:[],archives:[],original:path,source,files};
+    window.__sinRepairE2E=report;
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')return [];
+      if(table==='maps'&&query.includes('select=id,storage_id,storage_path'))
+        return[{id:'sin-bad-e2e',storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id'))
+        return[{id:'sin-bad-e2e',storage_id:'—'},
+          {id:'sin-good-e2e',storage_id:'sin-sintaxe-regencia-concordancia-pontuacao'}];
+      throw Error('Consulta de tabela não prevista: '+table);
+    };
+    StudyCloud.download=async p=>{if(!files.has(p))throw Error('HTML ausente: '+p);return files.get(p)};
+    StudyCloud.upload=async(p,blob,mime,upsert)=>{
+      if(upsert||files.has(p)||p===path)throw Error('Sobrescrita de arquivo bloqueada');
+      files.set(p,await blob.text());report.uploads.push({path:p,upsert});
+      return {path:p};
+    };
+    StudyCloud.insert=async(table,row)=>{
+      if(table!=='map_versions')throw Error('Insert em tabela não prevista');
+      report.archives.push(row);return [row];
+    };
+    StudyCloud.patch=async(table,filter,changes)=>{
+      if(table!=='maps'||!filter.includes('id=eq.sin-bad-e2e')||
+        !filter.includes('storage_id=eq.')||!filter.includes('storage_path=eq.')||
+        changes.storage_id!=='study-sin-curso-a'||changes.storage_path===path)
+        throw Error('Mutação insegura');
+      report.patches.push({...changes});
+      return[{id:'sin-bad-e2e',...changes}];
+    };
+    loadCloud=async()=>{};
+    MeusMapasPranchas.refresh();
+  });
+  const button=page.locator('#editorialSettings [data-pr-action="repair-storage"]');
+  await expect(button).toBeVisible();
+  await button.click();
+  const modal=page.locator('#confirmModal');
+  await expect(modal).toHaveClass(/open/);
+  await expect(page.locator('#confirmText')).toContainText('study-sin-curso-a');
+  expect(await page.evaluate(()=>window.__sinRepairE2E.uploads.length)).toBe(0);
+  expect(await page.evaluate(()=>window.__sinRepairE2E.patches.length)).toBe(0);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__sinRepairE2E.patches.length)).toBe(1);
+  const result=await page.evaluate(()=>{
+    const x=window.__sinRepairE2E;
+    const changed=x.patches[0],original=x.files.get(x.original),
+      copy=x.files.get(changed.storage_path);
+    return {originalUntouched:original===x.source,archive:x.archives.length,
+      distinctPath:changed.storage_path!==x.original,
+      newNs:changed.storage_id,
+      copiedMeta:/<meta name="mindmap-storage-id" content="study-sin-curso-a">/.test(copy),
+      otherCourse:state.cloudMaps.find(m=>m.id==='sin-good-e2e').storageId,
+      noOverwrite:x.uploads.every(u=>u.upsert===false)};
+  });
+  expect(result).toEqual({originalUntouched:true,archive:1,distinctPath:true,
+    newNs:'study-sin-curso-a',copiedMeta:true,
+    otherCourse:'sin-sintaxe-regencia-concordancia-pontuacao',noOverwrite:true});
+});
+
+test('Configurações [G] · reparo de namespace exige HTML real e confirmação sem migrar progresso',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='repair-owner-e2e',path=owner+'/casan/sin-e2e.html';
+    state.cloudCourses=[{id:'casan-e2e',title:'Curso para reparo E2E',status:'active'}];
+    state.cloudMaps=[{id:'sin-repair-e2e',courseId:'casan-e2e',code:'SIN',
+      title:'Sintaxe E2E',storageId:'—',storage_path:path}];
+    window.__repairCalls={download:0,patch:0,read:0};
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.configured=()=>true;
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async requested=>{
+      window.__repairCalls.download++;
+      if(requested!==path)throw Error('Caminho do arquivo mudou');
+      return '<!doctype html><meta name="mindmap-storage-id" content="SIN Sintaxe E2E">'+
+        '<meta name="study-short-code" content="SIN"><body class="mindmap-app"></body>';
+    };
+    StudyCloud.rows=async(table,query)=>{
+      window.__repairCalls.read++;
+      if(table==='maps'&&query.includes('select=id,storage_id'))return[{id:'sin-repair-e2e',storage_id:'—'}];
+      if(table==='maps')return[{storage_id:'—',storage_path:path}];
+      if(table==='study_snapshots')return query.includes('mindmap_state')?[{storage_key:'mindmap_state::sin-sintaxe-e2e'}]:[];
+      throw Error('Tabela inesperada');
+    };
+    StudyCloud.patch=async(table,query,changes)=>{
+      if(table!=='maps'||changes.storage_id!=='sin-sintaxe-e2e'||!query.includes('id=eq.sin-repair-e2e'))
+        throw Error('Mutação fora do cadastro do mapa');
+      window.__repairCalls.patch++;
+      return[{id:'sin-repair-e2e',storage_id:changes.storage_id}];
+    };
+    loadCloud=async()=>{};
+    MeusMapasPranchas.refresh();
+  });
+  const verify=page.locator('#editorialSettings [data-pr-action="repair-storage"]');
+  await expect(verify).toBeVisible();
+  await expect(verify).toContainText('SIN');
+  await verify.click();
+  const dialog=page.locator('#confirmModal');
+  await expect(dialog).toHaveClass(/open/);
+  await expect(page.locator('#confirmText')).toContainText('sin-sintaxe-e2e');
+  await expect(page.locator('#confirmText')).toContainText('progresso registrado');
+  expect(await page.evaluate(()=>window.__repairCalls.patch)).toBe(0);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__repairCalls.patch)).toBe(1);
+  expect(await page.evaluate(()=>({
+    storage:state.cloudMaps[0].storageId,
+    downloaded:window.__repairCalls.download,
+    patches:window.__repairCalls.patch
+  }))).toEqual({storage:'sin-sintaxe-e2e',downloaded:2,patches:1});
+});
+
+test('Configurações [G] · reparo aborta quando HTML muda entre inspeção e confirmação',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='stale-html-owner-e2e',path=owner+'/curso/SIN.html';
+    const first='<meta name="mindmap-storage-id" content="sin-v01-e2e">'+
+      '<meta name="study-short-code" content="SIN"><main>Versão inicial</main>';
+    state.cloudCourses=[{id:'curso-e2e',title:'Curso E2E',status:'active'}];
+    state.cloudMaps=[{id:'map-stale-e2e',courseId:'curso-e2e',code:'SIN',
+      title:'Sintaxe',storageId:'—',storage_path:path}];
+    window.__staleHtmlRepair={downloads:0,patches:0};
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async requested=>{
+      if(requested!==path)throw Error('Caminho diferente');
+      window.__staleHtmlRepair.downloads++;
+      return first+(window.__staleHtmlRepair.downloads>1?' revisado':'');
+    };
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')return [];
+      if(table==='maps'&&query.includes('select=storage_id,storage_path'))
+        return[{storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id'))
+        return[{id:'map-stale-e2e',storage_id:'—'}];
+      throw Error('Consulta inesperada');
+    };
+    StudyCloud.patch=async()=>{window.__staleHtmlRepair.patches++;throw Error('Proibido');};
+    loadCloud=async()=>{};
+  });
+  await page.evaluate(()=>requestRepairInvalidCloudMapStorageId(mapKey(state.cloudMaps[0])));
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__staleHtmlRepair.downloads)).toBe(2);
+  expect(await page.evaluate(()=>window.__staleHtmlRepair.patches)).toBe(0);
+});
+
+test('Configurações [G] · falha de leitura da nuvem nunca autoriza reparo do identificador',async({page})=>{
+  await enter(page,'settings');
+  const initial=await page.evaluate(async()=>{
+    const owner='audit-namespace-owner-e2e',path=owner+'/curso/sin-e2e.html';
+    state.cloudCourses=[{id:'curso-audit-e2e',title:'Curso isolado E2E',status:'active'}];
+    state.cloudMaps=[{id:'mapa-namespace-audit-e2e',courseId:'curso-audit-e2e',code:'SIN',
+      title:'Sintaxe E2E',storageId:'—',storage_path:path}];
+    window.__namespaceAudit={phase:'snapshots',patches:0};
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async()=>'<meta name="mindmap-storage-id" content="sin-audit-e2e">'+
+      '<meta name="study-short-code" content="SIN">';
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')
+        return window.__namespaceAudit.phase==='snapshots'?null:[];
+      if(table==='maps'&&query.includes('select=storage_id,storage_path'))
+        return[{storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id'))return null;
+      throw Error('Consulta inesperada');
+    };
+    StudyCloud.patch=async()=>{window.__namespaceAudit.patches++;throw Error('Mutação não autorizada');};
+    loadCloud=async()=>{};
+    const key=mapKey(state.cloudMaps[0]);
+    const inspection=await inspectInvalidCloudMapStorageId(key)
+      .then(()=>null,e=>String(e?.message||e));
+    window.__namespaceAudit.phase='namespaces';
+    await requestRepairInvalidCloudMapStorageId(key);
+    return inspection;
+  });
+  expect(initial).toContain('Não foi possível conferir os snapshots');
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__namespaceAudit.patches)).toBe(0);
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+});
+
+test('Configurações [G] · não mesclar namespaces ocupados no backend',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='collision-owner-e2e',path=owner+'/casan/sin.html';
+    state.cloudCourses=[{id:'casan-collision',title:'Curso teste',status:'active'}];
+    state.cloudMaps=[{id:'sin-collision-e2e',courseId:'casan-collision',code:'SIN',
+      title:'Sintaxe',storageId:'—',storage_path:path}];
+    window.__collisionRepair={checks:0,patches:0};
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async()=>'<meta name="mindmap-storage-id" content="sin-sintaxe-e2e">'+
+      '<meta name="study-short-code" content="SIN">';
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')return[];
+      if(table==='maps'&&query.includes('select=storage_id,storage_path'))
+        return[{storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id')){
+        window.__collisionRepair.checks++;
+        return[{id:'outro-mapa-e2e',storage_id:'SIN_SINTAXE_E2E'}];
+      }
+      throw Error('Consulta não prevista');
+    };
+    StudyCloud.patch=async()=>{window.__collisionRepair.patches++;throw Error('Nunca gravar');};
+    loadCloud=async()=>{};
+    MeusMapasPranchas.refresh();
+  });
+  const verify=page.locator('#editorialSettings [data-pr-action="repair-storage"]');
+  await expect(verify).toBeVisible();
+  await verify.click();
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__collisionRepair.checks)).toBe(1);
+  expect(await page.evaluate(()=>window.__collisionRepair.patches)).toBe(0);
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+});
+
+test('Backup [G] · novos estados entram na exportação sem quebrar formato anterior',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(()=>{
+    const backup=buildStudyBackup(),data=backup.data||{},pref=data.preferences||{};
+    return {valid:validateStudyBackup(backup),schema:backup.schemaVersion,
+      exam:Object.hasOwn(data,'examStatuses'),goal:Object.hasOwn(data,'simulationOverrides'),
+      review:Object.hasOwn(data,'reviewSchedule'),dashboard:Object.hasOwn(data,'studyDashboard'),
+      courseLayout:Object.hasOwn(pref,'prCoursesLayout'),sort:Object.hasOwn(pref,'allMapsSort')};
+  });
+  expect(report).toEqual({valid:true,schema:1,exam:true,goal:true,review:true,dashboard:true,courseLayout:true,sort:true});
+});
+
+test('Backup [G] · mesclar arquivo sem timestamp nunca sobrescreve progresso local',async({page})=>{
+  await enter(page,'settings');
+  const actual=await page.evaluate(async()=>{
+    const key='mindmap_state::e2e-backup-no-stamp',newKey='mindmap_notes::e2e-backup-new',
+      oldStamp=new Date(Date.now()-3*86400000).toISOString(),
+      recentStamp=new Date(Date.now()-86400000).toISOString();
+    localStorage.setItem(key,'{"done":99}');
+    localStorage.removeItem('studyapp.modified::'+key);
+    const base={type:'meus-mapas-backup',schemaVersion:1,data:{
+      mapStates:{[key]:'{"done":1}'},mapNotes:{[newKey]:'{"note":"backup"}'}
+    }};
+    await restoreStudyBackup(base,{silent:true});
+    const ambiguous={kept:localStorage.getItem(key)==='{"done":99}',
+      newNotes:localStorage.getItem(newKey)==='{"note":"backup"}'};
+    localStorage.setItem(key,'{"done":42}');
+    localStorage.setItem('studyapp.modified::'+key,recentStamp);
+    await restoreStudyBackup({...base,data:{...base.data,modified:{[key]:oldStamp}}},{silent:true});
+    const olderKept=localStorage.getItem(key)==='{"done":42}';
+    // Com carimbo comprovadamente mais novo, a mesclagem pode aplicar o backup.
+    const newest=new Date().toISOString();
+    await restoreStudyBackup({...base,data:{...base.data,modified:{[key]:newest}}},{silent:true});
+    const newerApplied=localStorage.getItem(key)==='{"done":1}'&&
+      localStorage.getItem('studyapp.modified::'+key)===newest;
+    return{...ambiguous,olderKept,newerApplied};
+  });
+  expect(actual).toEqual({kept:true,newNotes:true,olderKept:true,newerApplied:true});
+});
+
+test('Backup [G] · arquivo malformado é rejeitado antes de apagar progresso existente',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(async()=>{
+    const key='mindmap_state::backup-preflight-e2e';
+    const sentinel='{"topicStates":{"a":"done"}}';
+    localStorage.setItem(key,sentinel);
+    const exported=buildStudyBackup();
+    const base=exported.data;
+    const cases=[
+      {...exported,data:[]},
+      {...exported,data:{}},
+      {...exported,data:{...base,favorites:{a:true}}},
+      {...exported,data:{...base,mapStates:[]}},
+      {...exported,data:{...base,mapNotes:{[key]:{not:'serialized'}}}},
+      {...exported,data:{...base,preferences:{...base.preferences,mapContentSources:[]}}}
+    ];
+    const outcomes=[];
+    for(const backup of cases){
+      const valid=validateStudyBackup(backup);
+      let rejected=false;
+      try{await restoreStudyBackup(backup,{replace:true,silent:true})}
+      catch{rejected=true}
+      outcomes.push({valid,rejected,intact:localStorage.getItem(key)===sentinel});
+    }
+    return{normalValid:validateStudyBackup(exported),outcomes};
+  });
+  expect(report.normalValid).toBe(true);
+  expect(report.outcomes).toEqual(Array.from({length:6},()=>({valid:false,rejected:true,intact:true})));
+});
+
+test('Backup [G] · mesclagem e substituição ignoram chaves fora dos namespaces de mapas',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(async()=>{
+    const sensitive='studyapp.config.override',original='{"safe":"preserved-e2e"}';
+    localStorage.setItem(sensitive,original);
+    const data={
+      mapStates:{'studyapp.config.override':'{"safe":"overwritten"}','mindmap_state::safe-backup-e2e':'{"progress":5}'},
+      mapNotes:{'studyapp.lastMap':'forged-map','mindmap_notes::safe-backup-e2e':'{"text":"valid"}'},
+      modified:{'studyapp.config.override':'2026-10-15T10:00:00.000Z','mindmap_state::safe-backup-e2e':'2026-10-15T10:00:00.000Z'}
+    };
+    const backup={type:'meus-mapas-backup',schemaVersion:1,data};
+    await restoreStudyBackup(backup,{silent:true});
+    const merged={
+      configUnchanged:localStorage.getItem(sensitive)===original,
+      lastMapNotForged:localStorage.getItem('studyapp.lastMap')!=='forged-map',
+      mapRestored:localStorage.getItem('mindmap_state::safe-backup-e2e')==='{"progress":5}',
+      notesRestored:localStorage.getItem('mindmap_notes::safe-backup-e2e')==='{"text":"valid"}',
+      maliciousTimestampIgnored:localStorage.getItem('studyapp.modified::studyapp.config.override')===null
+    };
+    await restoreStudyBackup(backup,{replace:true,silent:true});
+    const replaced={
+      configUnchanged:localStorage.getItem(sensitive)===original,
+      lastMapNotForged:localStorage.getItem('studyapp.lastMap')!=='forged-map',
+      mapRestored:localStorage.getItem('mindmap_state::safe-backup-e2e')==='{"progress":5}',
+      notesRestored:localStorage.getItem('mindmap_notes::safe-backup-e2e')==='{"text":"valid"}',
+      maliciousTimestampIgnored:localStorage.getItem('studyapp.modified::studyapp.config.override')===null
+    };
+    return{merged,replaced};
+  });
+  const accepted={configUnchanged:true,lastMapNotForged:true,mapRestored:true,notesRestored:true,maliciousTimestampIgnored:true};
+  expect(report.merged).toEqual(accepted);
+  expect(report.replaced).toEqual(accepted);
+});
+
+test('Agenda [M] · abre em Dia e usa ícones Lucide PNG na navegação',async({page},info)=>{
+  test.skip(info.project.name!=='iphone-webkit','Validação do padrão inicial de smartphone.');
+  await enter(page,'agenda');
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-mode="dia"]')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-day="-1"] .ui-icon')).toHaveCount(1);
+  await expect(page.locator('#editorialAgenda [data-pr-agenda-day="+1"] .ui-icon')).toHaveCount(1);
+});
+
+test('Sete pranchas [G][T+M] · carimbos principais usam métricas reais do modelo',async({page})=>{
+  await enter(page,'home');
+  for(const [view,id] of [
+    ['courses','editorialCourses'],['maps','editorialMaps'],
+    ['simulations','editorialSimulations'],['progress','editorialProgress'],
+    ['agenda','editorialAgenda'],['settings','editorialSettings']
+  ]){
+    await page.evaluate(v=>nav(v),view);
+    await expect(page.locator('#'+id+' .pr-stamp h2')).toBeVisible();
+    const val=await page.locator('#'+id+' .pr-stamp h2').innerText();
+    expect(val.trim().length).toBeGreaterThan(0);
+  }
+});

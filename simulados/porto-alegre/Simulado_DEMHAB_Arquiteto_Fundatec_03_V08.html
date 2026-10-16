@@ -2425,8 +2425,20 @@
         if(userAnswer===answer)return;
         mistakes.push({number:q.number,section:sec.title||'',topic:q.topic||sec.title||'',stem:String(q.stem||q.body||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,420),userAnswer,answer,difficulty:q.difficulty||''});
       }));
+      // Resultado individual da tentativa recém-concluída.
+      // Não estima respostas de tentativas antigas nem inclui enunciados integrais.
+      const questionResults=[];
+      (state.data.sections||[]).forEach(sec=>(sec.questions||[]).forEach(q=>{
+        const number=Number(q.number)||0;
+        const userAnswer=String(state.answers[q.number]||'').trim().toUpperCase();
+        const answer=String(q.answer||'').trim().toUpperCase();
+        if(number>0)questionResults.push({
+          number,section:String(sec.title||''),userAnswer,answer,
+          status:!userAnswer?'blank':userAnswer===answer?'correct':'wrong'
+        });
+      }));
       if(window.parent&&window.parent!==window){
-        window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{score,correct,wrong,blank,total,sections,mistakes,finishedAt:new Date().toISOString()}},location.origin);
+        window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{score,correct,wrong,blank,total,sections,mistakes,questionResults,finishedAt:new Date().toISOString()}},location.origin);
       }
     }catch(_){}
   }
