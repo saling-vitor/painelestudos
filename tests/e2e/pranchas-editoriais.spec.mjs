@@ -81,12 +81,31 @@ test('Simulados [G] · mensagens exigem iframe esperado e origem do portal',asyn
 
 
 test('Leitor V211 [G] · mesmo HTML aceita namespaces isolados e rejeita mapa sem metadado',async({page})=>{
-  const source='<!doctype html><html lang="pt-BR"><head><meta name="mindmap-storage-id" content="base-original-v211"><title>Mapa E2E</title></head><body class="mindmap-app"><main id="mapa-e2e">HTML compartilhado</main></body></html>';
+  const source='<!doctype html><html lang="pt-BR"><head><meta name="mindmap-storage-id" content="CF88_V01"><title>Mapa E2E</title></head><body class="mindmap-app"><main id="mapa-e2e">HTML compartilhado</main></body></html>';
+  // Simula a ponte autenticada APENAS neste ensaio: verifica o nome exato
+  // das chaves solicitado ao backend, sem acesso às contas do usuário.
+  await page.route('**/assets/js/cloud-core.js*',route=>route.fulfill({
+    status:200,contentType:'application/javascript',
+    body:`window.StudyCloud={
+      configured:()=>true,session:()=>({user:{id:'reader-e2e'}}),
+      restoreStorageKey:async key=>{
+        const saved=JSON.parse(sessionStorage.getItem('reader-e2e-cloud-keys')||'[]');
+        saved.push(key);sessionStorage.setItem('reader-e2e-cloud-keys',JSON.stringify(saved));
+        return false;
+      },
+      syncStorageKey:async()=>true,reconcileAll:async()=>true
+    };`
+  }));
   await page.route('**/reader-namespace-e2e.html',route=>route.fulfill({
     status:200,contentType:'text/html; charset=utf-8',body:source
   }));
   const url=storageId=>'/reader.html?mode=local&href='+encodeURIComponent('/reader-namespace-e2e.html')+
-    '&storage-id='+encodeURIComponent(storageId);
+    (storageId?'&storage-id='+encodeURIComponent(storageId):'');
+  await page.goto(url(''));
+  await expect(page.locator('#mapa-e2e')).toHaveText('HTML compartilhado');
+  const originalKeys=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('reader-e2e-cloud-keys')||'[]'));
+  expect(originalKeys).toContain('mindmap_state::CF88_V01');
+  expect(originalKeys).toContain('mindmap_notes::CF88_V01');
   await page.goto(url('concurso-origem-v01'));
   await expect(page.locator('#mapa-e2e')).toHaveText('HTML compartilhado');
   await expect(page.locator('meta[name="mindmap-storage-id"]')).toHaveAttribute('content','concurso-origem-v01');
