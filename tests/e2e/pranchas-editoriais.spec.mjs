@@ -79,6 +79,37 @@ test('Simulados [G] · mensagens exigem iframe esperado e origem do portal',asyn
   expect(results).toEqual({foreignRejected:true,wrongFrameRejected:true,trustedAccepted:true});
 });
 
+
+test('Leitor V211 [G] · mesmo HTML aceita namespaces isolados e rejeita mapa sem metadado',async({page})=>{
+  const source='<!doctype html><html lang="pt-BR"><head><meta name="mindmap-storage-id" content="base-original-v211"><title>Mapa E2E</title></head><body class="mindmap-app"><main id="mapa-e2e">HTML compartilhado</main></body></html>';
+  await page.route('**/reader-namespace-e2e.html',route=>route.fulfill({
+    status:200,contentType:'text/html; charset=utf-8',body:source
+  }));
+  const url=storageId=>'/reader.html?mode=local&href='+encodeURIComponent('/reader-namespace-e2e.html')+
+    '&storage-id='+encodeURIComponent(storageId);
+  await page.goto(url('concurso-origem-v01'));
+  await expect(page.locator('#mapa-e2e')).toHaveText('HTML compartilhado');
+  await expect(page.locator('meta[name="mindmap-storage-id"]')).toHaveAttribute('content','concurso-origem-v01');
+  await page.evaluate(()=>localStorage.setItem('mindmap_state::concurso-origem-v01','{"done":1}'));
+
+  await page.goto(url('concurso-destino-v01'));
+  await expect(page.locator('#mapa-e2e')).toHaveText('HTML compartilhado');
+  await expect(page.locator('meta[name="mindmap-storage-id"]')).toHaveAttribute('content','concurso-destino-v01');
+  const persisted=await page.evaluate(()=>({
+    original:localStorage.getItem('mindmap_state::concurso-origem-v01'),
+    copied:localStorage.getItem('mindmap_state::concurso-destino-v01')
+  }));
+  expect(persisted).toEqual({original:'{"done":1}',copied:null});
+
+  await page.route('**/reader-no-namespace-e2e.html',route=>route.fulfill({
+    status:200,contentType:'text/html; charset=utf-8',
+    body:'<!doctype html><html><body><main>Sem metadado</main></body></html>'
+  }));
+  await page.goto('/reader.html?mode=local&href='+encodeURIComponent('/reader-no-namespace-e2e.html')+
+    '&storage-id=destino-sem-namespace');
+  await expect(page.locator('.loading-card')).toContainText('HTML do mapa não declara namespace de progresso');
+});
+
 test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({page})=>{
   await enter(page,'home');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
