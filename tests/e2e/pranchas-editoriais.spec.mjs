@@ -585,6 +585,7 @@ test('Configurações [G] · reparo de namespace exige HTML real e confirmação
     };
     StudyCloud.rows=async(table,query)=>{
       window.__repairCalls.read++;
+      if(table==='maps'&&query.includes('select=id,storage_id'))return[{id:'sin-repair-e2e',storage_id:'—'}];
       if(table==='maps')return[{storage_id:'—',storage_path:path}];
       if(table==='study_snapshots')return query.includes('mindmap_state')?[{storage_key:'mindmap_state::sin-sintaxe-e2e'}]:[];
       throw Error('Tabela inesperada');
