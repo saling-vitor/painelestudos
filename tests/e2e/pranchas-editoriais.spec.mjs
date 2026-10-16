@@ -783,6 +783,43 @@ test('Configurações [G] · reparo de namespace exige HTML real e confirmação
   }))).toEqual({storage:'sin-sintaxe-e2e',downloaded:1,patches:1});
 });
 
+test('Configurações [G] · falha de leitura da nuvem nunca autoriza reparo do identificador',async({page})=>{
+  await enter(page,'settings');
+  const initial=await page.evaluate(async()=>{
+    const owner='audit-namespace-owner-e2e',path=owner+'/curso/sin-e2e.html';
+    state.cloudCourses=[{id:'curso-audit-e2e',title:'Curso isolado E2E',status:'active'}];
+    state.cloudMaps=[{id:'mapa-namespace-audit-e2e',courseId:'curso-audit-e2e',code:'SIN',
+      title:'Sintaxe E2E',storageId:'—',storage_path:path}];
+    window.__namespaceAudit={phase:'snapshots',patches:0};
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async()=>'<meta name="mindmap-storage-id" content="sin-audit-e2e">'+
+      '<meta name="study-short-code" content="SIN">';
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')
+        return window.__namespaceAudit.phase==='snapshots'?null:[];
+      if(table==='maps'&&query.includes('select=storage_id,storage_path'))
+        return[{storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id'))return null;
+      throw Error('Consulta inesperada');
+    };
+    StudyCloud.patch=async()=>{window.__namespaceAudit.patches++;throw Error('Mutação não autorizada');};
+    loadCloud=async()=>{};
+    const key=mapKey(state.cloudMaps[0]);
+    const inspection=await inspectInvalidCloudMapStorageId(key)
+      .then(()=>null,e=>String(e?.message||e));
+    window.__namespaceAudit.phase='namespaces';
+    await requestRepairInvalidCloudMapStorageId(key);
+    return inspection;
+  });
+  expect(initial).toContain('Não foi possível conferir os snapshots');
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__namespaceAudit.patches)).toBe(0);
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+});
+
 test('Configurações [G] · não mesclar namespaces ocupados no backend',async({page})=>{
   await enter(page,'settings');
   await page.evaluate(()=>{
