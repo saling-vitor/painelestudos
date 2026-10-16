@@ -755,6 +755,36 @@ test('Backup [G] · novos estados entram na exportação sem quebrar formato ant
   expect(report).toEqual({valid:true,schema:1,exam:true,goal:true,review:true,dashboard:true,courseLayout:true,sort:true});
 });
 
+test('Backup [G] · arquivo malformado é rejeitado antes de apagar progresso existente',async({page})=>{
+  await enter(page,'settings');
+  const report=await page.evaluate(async()=>{
+    const key='mindmap_state::backup-preflight-e2e';
+    const sentinel='{"topicStates":{"a":"done"}}';
+    localStorage.setItem(key,sentinel);
+    const exported=buildStudyBackup();
+    const base=exported.data;
+    const cases=[
+      {...exported,data:[]},
+      {...exported,data:{}},
+      {...exported,data:{...base,favorites:{a:true}}},
+      {...exported,data:{...base,mapStates:[]}},
+      {...exported,data:{...base,mapNotes:{[key]:{not:'serialized'}}}},
+      {...exported,data:{...base,preferences:{...base.preferences,mapContentSources:[]}}}
+    ];
+    const outcomes=[];
+    for(const backup of cases){
+      const valid=validateStudyBackup(backup);
+      let rejected=false;
+      try{await restoreStudyBackup(backup,{replace:true,silent:true})}
+      catch{rejected=true}
+      outcomes.push({valid,rejected,intact:localStorage.getItem(key)===sentinel});
+    }
+    return{normalValid:validateStudyBackup(exported),outcomes};
+  });
+  expect(report.normalValid).toBe(true);
+  expect(report.outcomes).toEqual(Array.from({length:6},()=>({valid:false,rejected:true,intact:true})));
+});
+
 test('Backup [G] · mesclagem e substituição ignoram chaves fora dos namespaces de mapas',async({page})=>{
   await enter(page,'settings');
   const report=await page.evaluate(async()=>{
