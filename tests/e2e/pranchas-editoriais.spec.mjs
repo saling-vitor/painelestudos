@@ -655,6 +655,83 @@ test('Importação [G] · catálogo desatualizado não reutiliza namespace de ou
   expect(report.uploads).toBe(1);
 });
 
+test('Configurações [G] · SIN legado gera cópia HTML isolada sem tocar o progresso do outro concurso',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='owner-sin-namespaces-e2e',path=owner+'/curso-a/SIN_V01.html';
+    const source='<!doctype html><html><head><meta content="—" name="mindmap-storage-id">'+
+      '<meta content="SIN" name="study-short-code"></head><body class="mindmap-app">'+
+      '<main id="sin-legacy-e2e">Texto V211 original</main></body></html>';
+    state.cloudCourses=[{id:'curso-a',title:'Concurso A',status:'active'},
+      {id:'curso-b',title:'Concurso B',status:'active'}];
+    state.cloudMaps=[
+      {id:'sin-bad-e2e',courseId:'curso-a',code:'SIN',title:'SIN legado',storageId:'—',storage_path:path,version:'V01'},
+      {id:'sin-good-e2e',courseId:'curso-b',code:'SIN',title:'SIN original do outro concurso',
+        storageId:'sin-sintaxe-regencia-concordancia-pontuacao',
+        storage_path:owner+'/curso-b/SIN_V01.html',version:'V01'}
+    ];
+    const files=new Map([[path,source]]);
+    const report={uploads:[],patches:[],archives:[],original:path,source,files};
+    window.__sinRepairE2E=report;
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')return [];
+      if(table==='maps'&&query.includes('select=id,storage_id,storage_path'))
+        return[{id:'sin-bad-e2e',storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id'))
+        return[{id:'sin-bad-e2e',storage_id:'—'},
+          {id:'sin-good-e2e',storage_id:'sin-sintaxe-regencia-concordancia-pontuacao'}];
+      throw Error('Consulta de tabela não prevista: '+table);
+    };
+    StudyCloud.download=async p=>{if(!files.has(p))throw Error('HTML ausente: '+p);return files.get(p)};
+    StudyCloud.upload=async(p,blob,mime,upsert)=>{
+      if(upsert||files.has(p)||p===path)throw Error('Sobrescrita de arquivo bloqueada');
+      files.set(p,await blob.text());report.uploads.push({path:p,upsert});
+      return {path:p};
+    };
+    StudyCloud.insert=async(table,row)=>{
+      if(table!=='map_versions')throw Error('Insert em tabela não prevista');
+      report.archives.push(row);return [row];
+    };
+    StudyCloud.patch=async(table,filter,changes)=>{
+      if(table!=='maps'||!filter.includes('id=eq.sin-bad-e2e')||
+        !filter.includes('storage_id=eq.')||!filter.includes('storage_path=eq.')||
+        changes.storage_id!=='study-sin-curso-a'||changes.storage_path===path)
+        throw Error('Mutação insegura');
+      report.patches.push({...changes});
+      return[{id:'sin-bad-e2e',...changes}];
+    };
+    loadCloud=async()=>{};
+    MeusMapasPranchas.refresh();
+  });
+  const button=page.locator('#editorialSettings [data-pr-action="repair-storage"]');
+  await expect(button).toBeVisible();
+  await button.click();
+  const modal=page.locator('#confirmModal');
+  await expect(modal).toHaveClass(/open/);
+  await expect(page.locator('#confirmText')).toContainText('study-sin-curso-a');
+  expect(await page.evaluate(()=>window.__sinRepairE2E.uploads.length)).toBe(0);
+  expect(await page.evaluate(()=>window.__sinRepairE2E.patches.length)).toBe(0);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__sinRepairE2E.patches.length)).toBe(1);
+  const result=await page.evaluate(()=>{
+    const x=window.__sinRepairE2E;
+    const changed=x.patches[0],original=x.files.get(x.original),
+      copy=x.files.get(changed.storage_path);
+    return {originalUntouched:original===x.source,archive:x.archives.length,
+      distinctPath:changed.storage_path!==x.original,
+      newNs:changed.storage_id,
+      copiedMeta:/<meta name="mindmap-storage-id" content="study-sin-curso-a">/.test(copy),
+      otherCourse:state.cloudMaps.find(m=>m.id==='sin-good-e2e').storageId,
+      noOverwrite:x.uploads.every(u=>u.upsert===false)};
+  });
+  expect(result).toEqual({originalUntouched:true,archive:1,distinctPath:true,
+    newNs:'study-sin-curso-a',copiedMeta:true,
+    otherCourse:'sin-sintaxe-regencia-concordancia-pontuacao',noOverwrite:true});
+});
+
 test('Configurações [G] · reparo de namespace exige HTML real e confirmação sem migrar progresso',async({page})=>{
   await enter(page,'settings');
   await page.evaluate(()=>{
