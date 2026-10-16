@@ -566,6 +566,46 @@ test('Configurações [G] · alerta sobre storage_id cloud inválido sem inventa
   expect(await page.evaluate(()=>mapStorageNs(state.cloudMaps[0]))).toBe('');
 });
 
+test('Importador [G] · mapas do mesmo lote recebem namespaces únicos',async({page})=>{
+  await enter(page,'courses');
+  const report=await page.evaluate(async()=>{
+    const owner='batch-owner-e2e',course='batch-course-e2e',reserved=new Set(),saved=[],uploads=[];
+    const originals={courses:state.cloudCourses,maps:state.cloudMaps,
+      session:StudyCloud.session,upload:StudyCloud.upload,upsert:StudyCloud.upsert,
+      forget:StudyCloud.forgetCached,cache:StudyCloud.cachePrivateBlob};
+    state.cloudCourses=[{id:course,title:'Curso lote E2E',status:'active'}];
+    state.cloudMaps=[];
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.upload=async(path,blob)=>{uploads.push({path,html:await blob.text()});return true};
+    StudyCloud.upsert=async(table,row)=>{if(table!=='maps')throw Error('Tabela incorreta');saved.push(row);return[{id:'batch-map-'+saved.length}]};
+    StudyCloud.forgetCached=async()=>{};
+    StudyCloud.cachePrivateBlob=async()=>{};
+    const make=(code,filename)=>({code,declaredCode:code,title:'Mapa '+code,
+      shortTitle:'Mapa '+code,version:'V01',board:'Banca',contest:'Concurso',
+      topics:1,branches:1,category:'Outros',filename,storageId:'shared-batch-e2e',
+      html:'<!doctype html><head><meta name="mindmap-storage-id" content="shared-batch-e2e">'+
+        '<meta name="study-short-code" content="'+code+'"></head><body class="mindmap-app"></body></html>'});
+    try{
+      await importOneMap(make('E2EA','batch-a.html'),course,{id:owner},reserved);
+      await importOneMap(make('E2EB','batch-b.html'),course,{id:owner},reserved);
+      const ids=saved.map(row=>row.storage_id),
+        metas=uploads.map(item=>new DOMParser().parseFromString(item.html,'text/html')
+          .querySelector('meta[name="mindmap-storage-id"]')?.content);
+      return{ids,metas,uploaded:uploads.length,distinct:new Set(ids.map(slug)).size===2};
+    }finally{
+      state.cloudCourses=originals.courses;state.cloudMaps=originals.maps;
+      StudyCloud.session=originals.session;StudyCloud.upload=originals.upload;
+      StudyCloud.upsert=originals.upsert;StudyCloud.forgetCached=originals.forget;
+      StudyCloud.cachePrivateBlob=originals.cache;
+    }
+  });
+  expect(report.uploaded).toBe(2);
+  expect(report.distinct).toBe(true);
+  expect(report.ids[0]).toBe('shared-batch-e2e');
+  expect(report.ids[1]).toMatch(/^study-e2eb-batch-course-e2e/);
+  expect(report.metas).toEqual(report.ids);
+});
+
 test('Configurações [G] · reparo de namespace exige HTML real e confirmação sem migrar progresso',async({page})=>{
   await enter(page,'settings');
   await page.evaluate(()=>{
