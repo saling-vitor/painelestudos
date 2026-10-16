@@ -52,7 +52,8 @@ async function inspectInvalidCloudMapStorageId(key){
       namespace:proposed,hasState:false,hasNotes:false,code:String(cloud.code||''),
       html,repairHtml:true};
   }
-  if(declaredCode&&declaredCode!==slug(cloud.code))throw new Error('Código do HTML diverge do mapa cadastrado.');
+  if(!declaredCode||declaredCode!==slug(cloud.code))
+    throw new Error('O HTML não confirma a sigla deste mapa. Nenhuma alteração foi feita.');
   if(state.cloudMaps.some(row=>String(row.id)!==String(cloud.id)&&mapStorageNs(row)===namespace))
     throw new Error('O identificador já pertence a outro mapa. Nenhum progresso foi mesclado.');
   const filter='user_id=eq.'+encodeURIComponent(me.id)+'&storage_key=eq.';
@@ -63,7 +64,7 @@ async function inspectInvalidCloudMapStorageId(key){
   if(!Array.isArray(states)||!Array.isArray(notes))
     throw new Error('Não foi possível conferir os snapshots. Nenhuma alteração será permitida.');
   return{ownerId:me.id,mapId:cloud.id,path,previousId:String(cloud.storageId||''),namespace,
-    hasState:!!states?.length,hasNotes:!!notes?.length,code:String(cloud.code||'')};
+    hasState:!!states?.length,hasNotes:!!notes?.length,code:String(cloud.code||''),html};
 }
 async function requestRepairInvalidCloudMapStorageId(key){
   const check=await inspectInvalidCloudMapStorageId(key);
@@ -140,6 +141,11 @@ async function requestRepairInvalidCloudMapStorageId(key){
         throw new Error('O cadastro mudou durante a verificação. Revise o mapa novamente.');
       if(!StudyCloud.session()||String((await StudyCloud.me())?.id)!==check.ownerId)
         throw new Error('A conta conectada mudou. A operação foi cancelada.');
+      // A versão do HTML pode mudar mesmo que o caminho de Storage continue
+      // igual. Nunca vincular um namespace a conteúdo não inspecionado.
+      const freshHtml=await StudyCloud.download(check.path);
+      if(freshHtml!==check.html)
+        throw new Error('O HTML foi alterado após a inspeção. Verifique novamente antes de corrigir.');
       // Segunda defesa contra associação de dois mapas ao mesmo progresso:
       // validar também contra o banco ATUAL, não apenas o catálogo carregado.
       const namespaces=await StudyCloud.rows('maps','user_id=eq.'+encodeURIComponent(check.ownerId)+
@@ -150,7 +156,8 @@ async function requestRepairInvalidCloudMapStorageId(key){
         throw new Error('Outro mapa já utiliza este namespace. Nenhum cadastro foi alterado.');
       const updated=await StudyCloud.patch('maps','user_id=eq.'+encodeURIComponent(check.ownerId)+
         '&id=eq.'+encodeURIComponent(check.mapId)+
-        '&storage_id=eq.'+encodeURIComponent(check.previousId),{storage_id:check.namespace});
+        '&storage_id=eq.'+encodeURIComponent(check.previousId)+
+        '&storage_path=eq.'+encodeURIComponent(check.path),{storage_id:check.namespace});
       if(!Array.isArray(updated)||updated.length!==1)
         throw new Error('Não houve confirmação da atualização do cadastro.');
       const current=state.cloudMaps.find(row=>String(row.id)===String(check.mapId));
