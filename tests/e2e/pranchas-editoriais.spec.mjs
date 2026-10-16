@@ -617,6 +617,43 @@ test('Configurações [G] · reparo de namespace exige HTML real e confirmação
   }))).toEqual({storage:'sin-sintaxe-e2e',downloaded:1,patches:1});
 });
 
+test('Configurações [G] · não mesclar namespaces ocupados no backend',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='collision-owner-e2e',path=owner+'/casan/sin.html';
+    state.cloudCourses=[{id:'casan-collision',title:'Curso teste',status:'active'}];
+    state.cloudMaps=[{id:'sin-collision-e2e',courseId:'casan-collision',code:'SIN',
+      title:'Sintaxe',storageId:'—',storage_path:path}];
+    window.__collisionRepair={checks:0,patches:0};
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async()=>'<meta name="mindmap-storage-id" content="sin-sintaxe-e2e">'+
+      '<meta name="study-short-code" content="SIN">';
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')return[];
+      if(table==='maps'&&query.includes('select=storage_id,storage_path'))
+        return[{storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id')){
+        window.__collisionRepair.checks++;
+        return[{id:'outro-mapa-e2e',storage_id:'SIN_SINTAXE_E2E'}];
+      }
+      throw Error('Consulta não prevista');
+    };
+    StudyCloud.patch=async()=>{window.__collisionRepair.patches++;throw Error('Nunca gravar');};
+    loadCloud=async()=>{};
+    MeusMapasPranchas.refresh();
+  });
+  const verify=page.locator('#editorialSettings [data-pr-action="repair-storage"]');
+  await expect(verify).toBeVisible();
+  await verify.click();
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__collisionRepair.checks)).toBe(1);
+  expect(await page.evaluate(()=>window.__collisionRepair.patches)).toBe(0);
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+});
+
 test('Backup [G] · novos estados entram na exportação sem quebrar formato anterior',async({page})=>{
   await enter(page,'settings');
   const report=await page.evaluate(()=>{
