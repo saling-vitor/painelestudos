@@ -1,16 +1,38 @@
 import {test,expect} from '@playwright/test';
 import {mkdirSync} from 'node:fs';
-// Respeita a janela de novidades da aplicação em vez de desligá-la ou forçar cliques
-// através de um modal. O teste confirma seu controle de encerramento real.
+// Os testes funcionais simulam um usuário que JÁ confirmou as novidades.
+// A confirmação é gravada ANTES do boot; assim a busca assíncrona do
+// version.json não abre uma janela sobre controles que estamos testando.
+// A funcionalidade real do modal é coberta separadamente logo abaixo.
 async function enter(page,view){
+  const response=await page.request.get('/version.json');
+  expect(response.ok()).toBeTruthy();
+  const release=await response.json();
+  await page.addInitScript(version=>{
+    try{localStorage.setItem('studyapp.lastSeenVersion',version)}catch{}
+  },release.version);
   await page.goto('/#'+view);
   await expect(page.locator('html')).toHaveClass(/app-ready/);
-  const modal=page.locator('#whatsNewModal');
-  if(await modal.evaluate(el=>el.classList.contains('open'))){
-    await page.locator('#whatsNewAccept').click();
-    await expect(modal).not.toHaveClass(/open/);
-  }
+  await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
 }
+
+test('Novidades [G] · exibe uma vez e respeita confirmação real do usuário',async({page})=>{
+  const response=await page.request.get('/version.json');
+  expect(response.ok()).toBeTruthy();
+  const release=await response.json();
+  await page.goto('/#home');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  if(!release.showWhatsNew)return;
+  const modal=page.locator('#whatsNewModal');
+  await expect(modal).toHaveClass(/open/,{timeout:15000});
+  await expect(page.locator('#whatsNewVersion')).toContainText(release.label);
+  await page.locator('#whatsNewAccept').click();
+  await expect(modal).not.toHaveClass(/open/);
+  expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(release.version);
+  await page.reload();
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(modal).not.toHaveClass(/open/);
+});
 
 /* Contrato E2E das sete pranchas, executável sem dados de demonstração. */
 test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({page})=>{
