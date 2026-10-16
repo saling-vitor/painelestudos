@@ -33,7 +33,9 @@ function applyBackupStorageGroup(group={},modified={},prefix='mindmap_state::'){
   for(const[key,value]of backupMapEntries(group,prefix)){
     const current=localStorage.getItem(key),currentTs=activityTimestamp(localStorage.getItem('studyapp.modified::'+key)),
       incomingTs=activityTimestamp(modified?.[key]);
-    if(current===null||incomingTs>=currentTs){
+    // Em mesclagem, carimbo ausente NÃO torna o backup mais novo.
+    // Dois registros sem carimbo são ambíguos: preservar o progresso local.
+    if(current===null||(incomingTs>0&&incomingTs>=currentTs)){
       localStorage.setItem(key,value);
       if(incomingTs)localStorage.setItem('studyapp.modified::'+key,modified[key]);
     }
