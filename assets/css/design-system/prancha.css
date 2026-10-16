@@ -406,7 +406,8 @@
 
 /* ---------- Todos os Mapas ---------- */
 .pr-tool{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.pr-tool .grp{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pr-tool .grp{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0;max-width:100%}
+.pr-tool .grp>.pr-chips{min-width:0;max-width:100%}
 .pr-grpc{display:grid;gap:12px}
 .pr-grph{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 14px;border:1px solid var(--pr-linha);border-left:3px solid var(--c);border-radius:10px;background:var(--pr-g1)}
 .pr-grph>b{font-family:var(--pr-f-capa);font-weight:400;font-size:22px;line-height:1;color:var(--c)}
