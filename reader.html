@@ -122,7 +122,10 @@ async function load(){
    // Referência cruzada: o arquivo HTML é compartilhado, mas o namespace do
    // progresso pertence a cada concurso. A alteração existe só em memória.
    const requestedId=slug(p.get('storage-id')||'');
-   const originalId=slug(meta(html,'mindmap-storage-id'));
+   // A chave original faz parte do contrato do HTML V211. Não normalizá-la:
+   // CF88_V01 e cf88-v01 são namespaces diferentes no localStorage e nuvem.
+   // Apenas vínculos explícitos recebem um novo identificador canônico.
+   const originalId=String(meta(html,'mindmap-storage-id')||'').trim();
    const storageId=requestedId||originalId;
    if(requestedId&&requestedId!==originalId){
      const tag=/<meta\b(?=[^>]*\bname\s*=\s*["']mindmap-storage-id["'])[^>]*>/i;
