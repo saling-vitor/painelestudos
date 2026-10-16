@@ -5,10 +5,10 @@
 /* DESKTOP — eliminar a faixa decorativa extra: só uma marca lateral dinâmica. */
 @media(min-width:1181px){
   html:not(.is-ipad):not(.is-phone-layout) #homeStudyDashboard .study-intelligence-row>article.priority-now-card{
-    --home-card-theme:var(--map-accent,#92979a)!important;
-    border-left:3px solid var(--map-accent,#92979a)!important;
-    border-left-color:var(--map-accent,#92979a)!important;
-    box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
+    --home-card-theme:var(--map-accent,#857e72)!important;
+    border-left:3px solid var(--map-accent,#857e72)!important;
+    border-left-color:var(--map-accent,#857e72)!important;
+    box-shadow:inset 0 1px rgba(236,230,218,.035)!important;
     /* Nunca interpolar a cor de borda legada: a cor deve ser a do mapa imediatamente. */
     transition:none!important;animation:none!important;
   }
@@ -35,9 +35,9 @@ html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .co
   height:clamp(116px,16vw,182px)!important;min-height:116px!important;
   aspect-ratio:auto!important;margin:0 -12px 10px!important;padding:0!important;
   align-self:stretch!important;border:0!important;
-  border-bottom:1px solid rgba(255,255,255,.09)!important;
+  border-bottom:1px solid rgba(236,230,218,.09)!important;
   border-radius:12px 12px 0 0!important;
-  background:#080a0c!important;overflow:hidden!important;
+  background:#0a0a09!important;overflow:hidden!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .continue-thumb img{
   width:100%!important;height:100%!important;object-fit:contain!important;
@@ -49,10 +49,10 @@ html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .co
   gap:5px!important;padding:2px 0 50px!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .continue-content>b{
-  font-size:clamp(12px,1.7vw,15px)!important;line-height:1.3!important;
+  font-size:var(--fs-title)!important;line-height:1.3!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .continue-content>p{
-  font-size:10px!important;line-height:1.45!important;
+  font-size:var(--fs-caption)!important;line-height:1.45!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="home"] .home-continue-section .continue-progress{
   width:100%!important;max-width:none!important;
@@ -89,8 +89,8 @@ html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeSimulations .simulati
   display:grid!important;place-items:center!important;
   grid-column:1!important;grid-row:1!important;
   width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
-  border:0!important;border-right:1px solid rgba(255,255,255,.09)!important;
-  background:#08090b!important;
+  border:0!important;border-right:1px solid rgba(236,230,218,.09)!important;
+  background:#0a0a09!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeSimulations .simulation-recent-cover img{
   width:100%!important;height:100%!important;object-fit:contain!important;
@@ -111,13 +111,13 @@ html.is-phone-layout [data-view="home"] .home-study-dashboard{
 html.is-phone-layout [data-view="home"] .study-command-card{
   box-sizing:border-box!important;min-width:0!important;
   padding:14px!important;border-radius:15px!important;
-  background:#0b0c0e!important;
+  background:#0a0a09!important;
 }
 html.is-phone-layout [data-view="home"] .study-command-head h2{
-  font-size:16px!important;line-height:1.3!important;
+  font-size:var(--fs-title)!important;line-height:1.3!important;
 }
 html.is-phone-layout [data-view="home"] .study-command-head p{
-  font-size:11px!important;line-height:1.4!important;
+  font-size:var(--fs-caption)!important;line-height:1.4!important;
 }
 html.is-phone-layout [data-view="home"] .study-command-metrics{
   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
@@ -142,10 +142,10 @@ html.is-phone-layout [data-view="home"] .study-intelligence-row .home-command-la
   gap:8px!important;margin-bottom:7px!important;
 }
 html.is-phone-layout [data-view="home"] .study-intelligence-row h3{
-  font-size:14px!important;line-height:1.3!important;margin:4px 0 5px!important;
+  font-size:var(--fs-body-sm)!important;line-height:1.3!important;margin:4px 0 5px!important;
 }
 html.is-phone-layout [data-view="home"] .study-intelligence-row p{
-  font-size:10px!important;line-height:1.5!important;margin:0 0 9px!important;
+  font-size:var(--fs-caption)!important;line-height:1.5!important;margin:0 0 9px!important;
 }
 html.is-phone-layout [data-view="home"] .study-now-buttons{
   display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
@@ -160,10 +160,10 @@ html.is-phone-layout [data-view="home"] .study-now-focus{
   margin-top:9px!important;
 }
 html.is-phone-layout [data-view="home"] .priority-now-card{
-  --home-card-theme:var(--map-accent,#92979a)!important;
+  --home-card-theme:var(--map-accent,#857e72)!important;
   padding:10px!important;
   border-left:3px solid var(--home-card-theme)!important;
-  box-shadow:inset 0 1px rgba(255,255,255,.03)!important;
+  box-shadow:inset 0 1px rgba(236,230,218,.03)!important;
 }
 html.is-phone-layout [data-view="home"] .priority-now-card::before{
   content:none!important;display:none!important;
@@ -172,7 +172,7 @@ html.is-phone-layout [data-view="home"] .priority-now-main{
   align-items:center!important;gap:9px!important;
 }
 html.is-phone-layout [data-view="home"] .priority-now-main h3{
-  font-size:14px!important;
+  font-size:var(--fs-body-sm)!important;
 }
 html.is-phone-layout [data-view="home"] .priority-reason-list{
   display:flex!important;flex-wrap:wrap!important;gap:6px!important;
@@ -225,8 +225,8 @@ html.is-phone-layout [data-view="home"] .home-continue-section .continue-thumb{
   height:auto!important;aspect-ratio:16/9!important;max-height:200px!important;
   margin:0 -12px 10px!important;padding:0!important;
   align-self:start!important;border:0!important;
-  border-bottom:1px solid rgba(255,255,255,.09)!important;
-  border-radius:13px 13px 0 0!important;background:#08090c!important;
+  border-bottom:1px solid rgba(236,230,218,.09)!important;
+  border-radius:13px 13px 0 0!important;background:#0a0a09!important;
   overflow:hidden!important;
 }
 html.is-phone-layout [data-view="home"] .home-continue-section .continue-thumb img{
@@ -240,10 +240,10 @@ html.is-phone-layout [data-view="home"] .home-continue-section .continue-content
   padding:3px 0 51px!important;
 }
 html.is-phone-layout [data-view="home"] .home-continue-section .continue-content>b{
-  font-size:15px!important;line-height:1.35!important;overflow-wrap:anywhere!important;
+  font-size:var(--fs-body)!important;line-height:1.35!important;overflow-wrap:anywhere!important;
 }
 html.is-phone-layout [data-view="home"] .home-continue-section .continue-content>p{
-  margin:0!important;font-size:10.5px!important;line-height:1.45!important;
+  margin:0!important;font-size:var(--fs-caption)!important;line-height:1.45!important;
 }
 html.is-phone-layout [data-view="home"] .home-continue-section .continue-progress{
   box-sizing:border-box!important;width:100%!important;max-width:none!important;
@@ -283,8 +283,8 @@ html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-cove
   grid-column:1!important;grid-row:1!important;
   width:100%!important;height:100%!important;max-height:none!important;
   min-height:0!important;display:grid!important;place-items:center!important;
-  border:0!important;border-right:1px solid rgba(255,255,255,.08)!important;
-  background:#08090b!important;
+  border:0!important;border-right:1px solid rgba(236,230,218,.08)!important;
+  background:#0a0a09!important;
 }
 html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-cover img{
   width:100%!important;height:100%!important;
@@ -325,14 +325,14 @@ html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-item
   position:absolute!important;right:10px!important;top:50%!important;
   transform:translateY(-50%)!important;
   width:26px!important;height:26px!important;border-radius:50%!important;
-  background:color-mix(in srgb,var(--simulation-accent,#92979a) 12%,#161719)!important;
-  border:1px solid color-mix(in srgb,var(--simulation-accent,#92979a) 36%,#303033)!important;
-  color:color-mix(in srgb,var(--simulation-accent,#92979a) 67%,#f5f5f5)!important;
-  font:700 21px/1 var(--sans,Arial)!important;pointer-events:none!important;
+  background:color-mix(in srgb,var(--simulation-accent,#857e72) 12%,#191817)!important;
+  border:1px solid color-mix(in srgb,var(--simulation-accent,#857e72) 36%,#242320)!important;
+  color:color-mix(in srgb,var(--simulation-accent,#857e72) 67%,#ece6da)!important;
+  font:700 var(--fs-h2)/1 var(--sans,Arial)!important;pointer-events:none!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="home"] #homeSimulations .simulation-recent-item:focus-visible,
 html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-item:focus-visible{
-  outline:2px solid var(--simulation-accent,#92979a)!important;outline-offset:2px!important;
+  outline:2px solid var(--simulation-accent,#857e72)!important;outline-offset:2px!important;
 }
 html.is-phone-layout .toast:not([hidden]){
   bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
@@ -340,7 +340,7 @@ html.is-phone-layout .toast:not([hidden]){
 }
 /* Acessibilidade: alvo de toque e respeito à preferência de movimento. */
 @media(max-width:380px){
- html.is-phone-layout [data-view="home"] .home-continue-section .continue-content>b{font-size:14px!important}
+ html.is-phone-layout [data-view="home"] .home-continue-section .continue-content>b{font-size:var(--fs-body-sm)!important}
  html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-item,
  html.is-phone-layout [data-view="home"] #homeSimulations .simulation-recent-item:nth-child(3){height:84px!important;min-height:84px!important;max-height:84px!important}
 }
@@ -354,7 +354,7 @@ html.is-phone-layout [data-view="home"]>#homeReviewSection{
   box-sizing:border-box!important;min-width:0!important;
   margin-top:12px!important;padding:12px!important;
   border-radius:14px!important;
-  border:1px solid rgba(255,255,255,.11)!important;
+  border:1px solid rgba(236,230,218,.11)!important;
   background:var(--mm-smoke-neutral)!important;
 }
 html.is-phone-layout #homeReviewSection .section-head{
@@ -362,10 +362,10 @@ html.is-phone-layout #homeReviewSection .section-head{
   gap:8px!important;margin-bottom:9px!important;padding:8px 5px!important;
 }
 html.is-phone-layout #homeReviewSection .section-head h2{
-  font-size:16px!important;line-height:1.25!important;
+  font-size:var(--fs-title)!important;line-height:1.25!important;
 }
 html.is-phone-layout #homeReviewSection .section-head p{
-  color:#aeb5be!important;font-size:10px!important;line-height:1.4!important;
+  color:#b9b2a5!important;font-size:var(--fs-caption)!important;line-height:1.4!important;
 }
 html.is-phone-layout #homeReviewSection #homeReviewNowBtn{
   flex-shrink:0!important;min-height:40px!important;
@@ -377,14 +377,14 @@ html.is-phone-layout #homeReviewSection .study-plan-grid{
 }
 html.is-phone-layout #homeReviewSection .study-plan-item,
 html.is-phone-layout #homeReviewSection .study-plan-item.is-next{
-  --mobile-plan-theme:var(--map-accent,var(--plan-accent,#9aa1aa));
+  --mobile-plan-theme:var(--map-accent,var(--plan-accent,#b9b2a5));
   box-sizing:border-box!important;min-width:0!important;
   min-height:66px!important;margin:0!important;
-  border:1px solid color-mix(in srgb,var(--mobile-plan-theme) 30%,#2b2d30)!important;
+  border:1px solid color-mix(in srgb,var(--mobile-plan-theme) 30%,#242320)!important;
   border-left:1px solid var(--mobile-plan-theme)!important;
   border-radius:11px!important;
   background:var(--mm-smoke-card-black)!important;
-  box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
+  box-shadow:inset 0 1px rgba(236,230,218,.035)!important;
 }
 html.is-phone-layout #homeReviewSection .study-plan-cover--tag{
   height:32px!important;
@@ -393,10 +393,10 @@ html.is-phone-layout #homeReviewSection .study-plan-copy{
   min-width:0!important;
 }
 html.is-phone-layout #homeReviewSection .study-plan-copy b{
-  font-size:11px!important;line-height:1.3!important;
+  font-size:var(--fs-caption)!important;line-height:1.3!important;
 }
 html.is-phone-layout #homeReviewSection .study-plan-copy :is(small,p){
-  font-size:9px!important;line-height:1.3!important;
+  font-size:var(--fs-caption)!important;line-height:1.3!important;
 }
 html.is-phone-layout #homeReviewSection .study-plan-footer{
   box-sizing:border-box!important;min-width:0!important;

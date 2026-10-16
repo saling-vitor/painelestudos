@@ -28,7 +28,7 @@
   const mapTitle=m=>safeLabel(m?.title||m?.shortTitle||m?.code||'Mapa');
   const courseTitleFor=m=>safeLabel(courseById(m?.courseId)?.title||m?.contest||'Sem curso');
   const sortLabel=value=>SORTS.find(([id])=>id===value)?.[1]||'A–Z';
-  const categoryAccent=category=>accent[accentForCategory(category||'Outros')]||accent.gold||'#c3aa84';
+  const categoryAccent=category=>categoryPigment(category||'Outros');
   const optionHtml=(value,label,current)=>'<option value="'+ESC(value)+'"'+(value===current?' selected':'')+'>'+ESC(label)+'</option>';
 
   state.allMapsQuery=state.allMapsQuery||'';
@@ -152,7 +152,7 @@
     return [...grouped.entries()]
       .sort((a,b)=>a[0].localeCompare(b[0],'pt-BR',{sensitivity:'base',numeric:true}))
       .map(([label,maps])=>{
-        const sample=maps[0],accentValue=state.allMapsGroup==='category'?mapAccentValue(sample):'#8f96a0';
+        const sample=maps[0],accentValue=state.allMapsGroup==='category'?mapAccentValue(sample):PIGMENTS.pedra;
         return'<section class="maps-group-section" style="--group-accent:'+ESC(accentValue)+'"><div class="maps-group-head"><div><span class="maps-group-dot" aria-hidden="true"></span><h3>'+ESC(label)+'</h3></div><small>'+maps.length+' mapa'+(maps.length===1?'':'s')+'</small></div><div class="map-grid maps-group-grid">'+maps.map(mapCard).join('')+'</div></section>';
       }).join('');
   }

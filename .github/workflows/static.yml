@@ -45,6 +45,7 @@ jobs:
           for file in assets/js/app/*.js; do node --check "$file"; done
           node --check tests/e2e/app.spec.mjs
           node --check tests/e2e/prancha.spec.mjs
+          node --check tests/e2e/nanquim-conceitos.spec.mjs
           node --check tests/e2e/helpers/prancha-mock.mjs
           node --check sw.js
 
@@ -328,13 +329,16 @@ jobs:
             smoked_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/black-smoked-uniform-v15-48-163.css?v=$expected&t=$stamp" || true)"
             prancha_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/design-system/prancha.css?v=$expected&t=$stamp" || true)"
             prancha_js="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/js/app/prancha-ui.js?v=$expected&t=$stamp" || true)"
-            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"black-smoked-uniform-v15-48-163.css?v=$expected"* ]] && [[ "$glass_css" == *"rgba(48,48,50,.88)"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(20,20,21,.94)"* ]] && [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-filter:blur(12px) saturate(105%)"* ]] && [[ "$smoked_css" == *"--mm-ivory-strong:#EEE9E0"* ]] && [[ "$index_body" == *"prancha.css?v=$expected"* ]] && [[ "$index_body" == *"prancha-boot.js?v=$expected"* ]] && [[ "$prancha_css" == *"--pr-oxido:#b8614e"* ]] && [[ "$prancha_js" == *"studyapp.prancha.off"* ]]; then
+            type_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/design-system/nanquim-typography.css?v=$expected&t=$stamp" || true)"
+            font_status="$(curl -s -o /dev/null -w '%{http_code}' "$base/assets/fonts/archivo-latin-wght-normal.woff2?t=$stamp" || true)"
+            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"black-smoked-uniform-v15-48-163.css?v=$expected"* ]] && [[ "$glass_css" == *"--cover-liquid-plate:rgba(0,0,0,.40)"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(17,17,16,.94)"* ]] && [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && [[ "$smoked_css" == *"--mm-smoke-card-filter:blur(12px) saturate(105%)"* ]] && [[ "$smoked_css" == *"--mm-ivory-strong:#ece6da"* ]] && [[ "$index_body" == *"prancha.css?v=$expected"* ]] && [[ "$index_body" == *"prancha-boot.js?v=$expected"* ]] && [[ "$prancha_css" == *"--pr-oxido:#b8614e"* ]] && [[ "$prancha_js" == *"studyapp.prancha.off"* ]] && [[ "$type_css" == *"archivo-latin-wght-normal.woff2"* ]] && [ "$font_status" = "200" ]; then
               echo "✓ GitHub Pages público está em $actual"
-              echo "✓ Black Editorial: vidro fume grafite, tingimento zero e marfim publicados"
+              echo "✓ Nanquim: grafite quente, tingimento zero, papel e vidro Micro publicados"
               echo "✓ Pranchas: CSS, módulos e interface clássica publicados"
+              echo "✓ Conceitos: fontes locais Archivo/Plex/Anton e escala tipográfica publicadas"
               exit 0
             fi
-            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível} | html=$( [[ "$index_body" == *"app.js?v=$expected"* ]] && echo ok || echo pendente ) | css=$( [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(20,20,21,.94)"* ]] && echo ok || echo pendente ) | pranchas=$( [[ "$prancha_css" == *"--pr-oxido:#b8614e"* ]] && echo ok || echo pendente )"
+            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível} | html=$( [[ "$index_body" == *"app.js?v=$expected"* ]] && echo ok || echo pendente ) | css=$( [[ "$smoked_css" == *"--mm-smoke-card-black:rgba(17,17,16,.94)"* ]] && echo ok || echo pendente ) | pranchas=$( [[ "$prancha_css" == *"--pr-oxido:#b8614e"* ]] && echo ok || echo pendente )"
             sleep 10
           done
           echo "::error::O GitHub Pages não serviu a versão $expected dentro do prazo."

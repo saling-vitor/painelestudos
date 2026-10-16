@@ -2,8 +2,8 @@
    [D] composição da tela do curso · [G] accent consistente em Desktop, iPad e iPhone */
 
 .map-card{
-  --map-accent:var(--accent,#9aa1aa);
-  border-top-color:color-mix(in srgb,var(--map-accent) 34%,#292929)!important;
+  --map-accent:var(--accent,#b9b2a5);
+  border-top-color:color-mix(in srgb,var(--map-accent) 34%,#242320)!important;
 }
 .map-card::before{background:var(--map-accent)!important}
 .map-card .map-code,
@@ -12,23 +12,23 @@
 .map-card .map-open-label{color:var(--map-accent)!important}
 .map-card .map-code,
 .map-card .map-category-chip{
-  border-color:color-mix(in srgb,var(--map-accent) 50%,#343434)!important;
+  border-color:color-mix(in srgb,var(--map-accent) 50%,#242320)!important;
   background:color-mix(in srgb,var(--map-accent) 9%,transparent)!important;
 }
 .map-card .progress-track>span{background:var(--map-accent)!important}
-.map-card .foot{border-top-color:color-mix(in srgb,var(--map-accent) 22%,#232323)!important}
+.map-card .foot{border-top-color:color-mix(in srgb,var(--map-accent) 22%,#242320)!important}
 .map-card .map-open-label .ui-icon{color:inherit}
 @media(hover:hover){
   .map-card:hover{
-    border-color:color-mix(in srgb,var(--map-accent) 46%,#303030)!important;
+    border-color:color-mix(in srgb,var(--map-accent) 46%,#242320)!important;
     box-shadow:0 16px 34px rgba(0,0,0,.30),0 0 0 1px color-mix(in srgb,var(--map-accent) 10%,transparent)!important;
   }
 }
 html.is-ipad:not(.is-phone-layout) .map-card{
-  border-color:color-mix(in srgb,var(--map-accent) 24%,rgba(255,255,255,.08))!important;
+  border-color:color-mix(in srgb,var(--map-accent) 24%,rgba(236,230,218,.08))!important;
 }
 html.is-phone-layout .map-card{
-  border-color:color-mix(in srgb,var(--map-accent) 22%,rgba(255,255,255,.075))!important;
+  border-color:color-mix(in srgb,var(--map-accent) 22%,rgba(236,230,218,.075))!important;
   box-shadow:0 10px 24px rgba(0,0,0,.28),inset 2px 0 color-mix(in srgb,var(--map-accent) 58%,transparent)!important;
 }
 
@@ -48,8 +48,8 @@ html.is-phone-layout .map-card{
   }
   html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-search-box{
     padding-inline:12px!important;
-    border-color:rgba(255,255,255,.075)!important;
-    background:rgba(13,13,14,.88)!important;
+    border-color:rgba(236,230,218,.075)!important;
+    background:rgba(10,10,9,.88)!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-primary-actions{gap:6px!important}
   html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-study-filter-wrap,
@@ -114,13 +114,13 @@ html.is-phone-layout .map-card{
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
     min-height:40px!important;
     margin-top:9px!important;
-    font-size:17px!important;
+    font-size:var(--fs-h3)!important;
     line-height:1.22!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover>p{
     min-height:24px!important;
     margin-top:4px!important;
-    font-size:11px!important;
+    font-size:var(--fs-caption)!important;
     line-height:1.35!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover>.meta{
@@ -149,9 +149,9 @@ html.is-phone-layout .map-card{
   html:not(.is-ipad):not(.is-phone-layout) .home-simulations-section .section-head>.secondary{
     min-height:34px!important;
     padding-inline:11px!important;
-    border-color:rgba(255,255,255,.065)!important;
-    background:rgba(255,255,255,.012)!important;
-    color:#9da2aa!important;
+    border-color:rgba(236,230,218,.065)!important;
+    background:rgba(236,230,218,.012)!important;
+    color:#b9b2a5!important;
   }
 }
 
@@ -159,7 +159,7 @@ html.is-phone-layout .map-card{
 /* Biblioteca de cursos · pacote aprovado nesta branch
    [D+T] enquadramento alinhado ao mobile · [G] controles glass + cor derivada da capa */
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card{
-  border-color:color-mix(in srgb,var(--course-accent,#9aa1aa) 24%,rgba(255,255,255,.075))!important;
+  border-color:color-mix(in srgb,var(--course-accent,#b9b2a5) 24%,rgba(236,230,218,.075))!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-card-cover img{
   width:100%!important;
@@ -171,40 +171,40 @@ html.is-phone-layout .map-card{
 :is(#coursesGrid,#homeCourses) .course-card[data-course="tapera"]{--course-cover-position:center center}
 
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill{
-  border:1px solid rgba(255,255,255,.12)!important;
-  background:linear-gradient(180deg,rgba(58,58,57,.86),rgba(33,33,34,.84))!important;
-  box-shadow:0 8px 22px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.055)!important;
+  border:1px solid rgba(236,230,218,.12)!important;
+  background:linear-gradient(180deg,rgba(36,35,32,.86),rgba(36,35,32,.84))!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.34),inset 0 1px rgba(236,230,218,.055)!important;
   -webkit-backdrop-filter:blur(14px)!important;
   backdrop-filter:blur(14px)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill.is-active{
-  border-color:rgba(99,190,126,.28)!important;
-  background:linear-gradient(180deg,rgba(46,105,65,.86),rgba(29,68,43,.84))!important;
-  color:#b5e0bf!important;
+  border-color:rgba(140,154,108,.28)!important;
+  background:linear-gradient(180deg,rgba(140,154,108,.86),rgba(140,154,108,.84))!important;
+  color:#8c9a6c!important;
 }
-:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill.is-archived{color:#c0c5cb!important}
+:is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-status-pill.is-archived{color:#b9b2a5!important}
 
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info{
-  border:1px solid color-mix(in srgb,var(--course-accent,#9aa1aa) 34%,rgba(255,255,255,.08))!important;
-  background:var(--mm-smoke-inset,rgba(27,27,28,.96))!important;
+  border:1px solid color-mix(in srgb,var(--course-accent,#b9b2a5) 34%,rgba(236,230,218,.08))!important;
+  background:var(--mm-smoke-inset,rgba(25,24,23,.96))!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info b{
-  color:color-mix(in srgb,var(--course-accent,#9aa1aa) 78%,white)!important;
+  color:color-mix(in srgb,var(--course-accent,#b9b2a5) 78%,white)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-exam-info small{
-  color:color-mix(in srgb,var(--course-accent,#9aa1aa) 42%,#8e949c)!important;
+  color:color-mix(in srgb,var(--course-accent,#b9b2a5) 42%,#857e72)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .enter{
-  border-color:color-mix(in srgb,var(--course-accent,#9aa1aa) 48%,rgba(255,255,255,.10))!important;
+  border-color:color-mix(in srgb,var(--course-accent,#b9b2a5) 48%,rgba(236,230,218,.10))!important;
   background:linear-gradient(180deg,
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 16%,rgba(255,255,255,.022)),
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 9%,#0d0d0d))!important;
-  color:color-mix(in srgb,var(--course-accent,#9aa1aa) 80%,white)!important;
+    color-mix(in srgb,var(--course-accent,#b9b2a5) 16%,rgba(236,230,218,.022)),
+    color-mix(in srgb,var(--course-accent,#b9b2a5) 9%,#0a0a09))!important;
+  color:color-mix(in srgb,var(--course-accent,#b9b2a5) 80%,white)!important;
 }
 :is(#coursesGrid,#homeCourses) .course-card.course-library-card .course-progress-mini .progress-track>span{
   background:linear-gradient(90deg,
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 72%,#181818),
-    color-mix(in srgb,var(--course-accent,#9aa1aa) 94%,white))!important;
+    color-mix(in srgb,var(--course-accent,#b9b2a5) 72%,#191817),
+    color-mix(in srgb,var(--course-accent,#b9b2a5) 94%,white))!important;
 }
 
 @media(min-width:1181px){
@@ -260,13 +260,13 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-progress-mini{
     margin-top:8px!important;
     padding:8px 9px!important;
-    border-color:rgba(255,255,255,.055)!important;
+    border-color:rgba(236,230,218,.055)!important;
     box-shadow:none!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card .foot{
     bottom:8px!important;
     min-height:30px!important;
     padding-top:6px!important;
-    border-top-color:rgba(255,255,255,.05)!important;
+    border-top-color:rgba(236,230,218,.05)!important;
   }
 }

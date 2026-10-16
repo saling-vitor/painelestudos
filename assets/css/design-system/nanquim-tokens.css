@@ -9,8 +9,9 @@
  --nq-oxido:#b8614e;--nq-musgo:#8c9a6c;
  --nq-terracota:#c08a6e;--nq-salvia:#a3ad8a;--nq-argila:#b98a8a;
  --nq-ametista:#a294b4;--nq-ardosia:#8fa1b3;--nq-pedra:#a8a29a;
- --nq-font-sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
- --nq-font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
+ --nq-font-sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+ --nq-font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+ --nq-font-display:"Anton","Archivo Narrow",Impact,sans-serif;
  --nq-surface-page:var(--nq-nanquim);
  --nq-surface-shell:var(--nq-grafite-0);
  --nq-surface-card:var(--nq-grafite-1);

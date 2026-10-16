@@ -12,13 +12,13 @@
   height:18px;
   pointer-events:none;
   opacity:0;
-  background:linear-gradient(180deg,rgba(3,3,3,.72),rgba(3,3,3,.18) 58%,transparent);
+  background:linear-gradient(180deg,rgba(5,5,5,.72),rgba(5,5,5,.18) 58%,transparent);
   transition:opacity .16s ease;
 }
 html.topbar-scrolled:not(.is-phone-layout) .topbar-wrap::after{opacity:1}
 html.topbar-scrolled:not(.is-phone-layout) .topbar{
   transform:translateZ(0);
-  box-shadow:0 12px 32px rgba(0,0,0,.42),0 2px 8px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.055)!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.42),0 2px 8px rgba(0,0,0,.22),inset 0 1px rgba(236,230,218,.055)!important;
 }
 
 /* =========================================================
@@ -73,7 +73,7 @@ html.is-ipad.keyboard-open .bottom-nav{
     padding:6px 5px!important;
   }
   html.is-phone-layout [data-view="course"] .mobile-course-actions>button b{
-    font-size:8.5px!important;
+    font-size:var(--fs-caption)!important;
   }
   html.is-phone-layout [data-view="course"] .course-study-filter-wrap,
   html.is-phone-layout [data-view="course"] .course-category-wrap{
@@ -138,7 +138,7 @@ html.is-ipad.keyboard-open .bottom-nav{
   html.is-phone-layout .map-card.has-cover h3{
     min-height:32px!important;
     margin-top:7px!important;
-    font-size:14px!important;
+    font-size:var(--fs-body-sm)!important;
   }
   html.is-phone-layout .map-card.has-cover .map-progress-mini{
     margin-top:6px!important;
@@ -163,7 +163,7 @@ html.is-ipad.keyboard-open .bottom-nav{
     min-width:0!important;
     width:100%!important;
     min-height:42px!important;
-    font-size:10px!important;
+    font-size:var(--fs-input)!important;
   }
 
   /* Progresso: o grupo já se chama Atenção; evita o kicker repetido. */
@@ -187,7 +187,7 @@ html.is-ipad.keyboard-open .bottom-nav{
     height:38px!important;
   }
   html.is-phone-layout #studyGoalsForm .study-goal-human{
-    font-size:9px!important;
+    font-size:var(--fs-caption)!important;
   }
 }
 
@@ -233,18 +233,18 @@ html.is-ipad:not(.is-phone-layout) .course-card-role,
 html.is-ipad:not(.is-phone-layout) .course-card-institution,
 html.is-ipad:not(.is-phone-layout) .simulation-subtitle,
 html.is-ipad:not(.is-phone-layout) .study-agenda-day-list small{
-  font-size:10px!important;
+  font-size:var(--fs-caption)!important;
 }
 @media(max-width:480px){
   html.is-phone-layout .simulation-subtitle,
   html.is-phone-layout .course-exam-info small,
   html.is-phone-layout .study-agenda-day-list small{
-    font-size:10px!important;
+    font-size:var(--fs-caption)!important;
   }
 }
 
 /* Sincronização continua acionável, mas o estado sincronizado perde peso visual. */
 #syncTop[data-sync-state="synced"]{
-  border-color:rgba(98,169,120,.14)!important;
-  background:rgba(98,169,120,.025)!important;
+  border-color:rgba(140,154,108,.14)!important;
+  background:rgba(140,154,108,.025)!important;
 }

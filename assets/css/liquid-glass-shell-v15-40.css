@@ -5,9 +5,9 @@
    - sem alterar dimensões, posição ou hit-area dos controles. */
 
 :root{
-  --lg-shell-border:rgba(255,255,255,.34);
-  --lg-shell-border-strong:rgba(255,255,255,.52);
-  --lg-shell-highlight:rgba(255,255,255,.38);
+  --lg-shell-border:rgba(236,230,218,.34);
+  --lg-shell-border-strong:rgba(236,230,218,.52);
+  --lg-shell-highlight:rgba(236,230,218,.38);
   --lg-shell-shadow:rgba(0,0,0,.30);
   --lg-shell-icon-stroke:#050505;
 }
@@ -69,8 +69,8 @@
 
 /* Favorito ativo: frente dourada, contorno continua preto. */
 .map-card>.fav.on .cover-icon-fill.icon-star{
-  color:#f2c94c!important;
-  background-color:#f2c94c!important;
+  color:#d8c59e!important;
+  background-color:#d8c59e!important;
 }
 .map-card>.fav.on .cover-icon-stroke.icon-star{
   color:var(--lg-shell-icon-stroke)!important;
@@ -79,21 +79,21 @@
 
 /* ---------- Topbar Liquid Glass fumê [D+T] ---------- */
 html:not(.is-phone-layout) .topbar{
-  border-color:rgba(255,255,255,.22)!important;
+  border-color:rgba(236,230,218,.22)!important;
   background:
     radial-gradient(128% 175% at 8% -82%,
-      rgba(255,255,255,.13) 0%,
-      rgba(255,255,255,.036) 33%,
+      rgba(236,230,218,.13) 0%,
+      rgba(236,230,218,.036) 33%,
       transparent 60%),
     radial-gradient(96% 148% at 100% 126%,
-      rgba(255,255,255,.050) 0%,
+      rgba(236,230,218,.050) 0%,
       transparent 57%),
     linear-gradient(145deg,
-      rgba(255,255,255,.038) 0%,
-      rgba(255,255,255,.010) 38%,
-      rgba(7,7,7,.075) 69%,
-      rgba(255,255,255,.020) 100%),
-    rgba(9,9,9,.34)!important;
+      rgba(236,230,218,.038) 0%,
+      rgba(236,230,218,.010) 38%,
+      rgba(5,5,5,.075) 69%,
+      rgba(236,230,218,.020) 100%),
+    rgba(10,10,9,.34)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   -webkit-backdrop-filter:
     blur(13px)
@@ -108,9 +108,9 @@ html:not(.is-phone-layout) .topbar{
   box-shadow:
     0 14px 34px rgba(0,0,0,.26),
     0 2px 7px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.20),
-    inset 1px 0 0 rgba(255,255,255,.055),
-    inset -1px 0 0 rgba(255,255,255,.028),
+    inset 0 1px 0 rgba(236,230,218,.20),
+    inset 1px 0 0 rgba(236,230,218,.055),
+    inset -1px 0 0 rgba(236,230,218,.028),
     inset 0 -1px 0 rgba(0,0,0,.28)!important;
 }
 
@@ -119,8 +119,8 @@ html:not(.is-phone-layout) .topbar::before{
   border-radius:inherit!important;
   background:
     linear-gradient(112deg,
-      rgba(255,255,255,.085) 0%,
-      rgba(255,255,255,.024) 17%,
+      rgba(236,230,218,.085) 0%,
+      rgba(236,230,218,.024) 17%,
       transparent 34%,
       transparent 100%)!important;
   opacity:.82!important;
@@ -136,10 +136,10 @@ html:not(.is-phone-layout) .topbar::after{
   border-radius:inherit!important;
   background:
     radial-gradient(70% 180% at 16% 0%,
-      rgba(255,255,255,.050) 0%,
+      rgba(236,230,218,.050) 0%,
       transparent 46%),
     radial-gradient(60% 160% at 88% 100%,
-      rgba(255,255,255,.032) 0%,
+      rgba(236,230,218,.032) 0%,
       transparent 54%)!important;
   filter:none!important;
   opacity:.92!important;
@@ -148,23 +148,23 @@ html:not(.is-phone-layout) .topbar::after{
 /* Campo da busca: Liquid Glass fumê.
    Menos branco leitoso, mais grafite translúcido e highlight apenas nas bordas. */
 html:not(.is-phone-layout) .topbar .search{
-  border-color:rgba(255,255,255,.26)!important;
+  border-color:rgba(236,230,218,.26)!important;
   background:
     radial-gradient(150% 185% at 5% -92%,
-      rgba(255,255,255,.14) 0%,
-      rgba(255,255,255,.045) 30%,
-      rgba(255,255,255,.012) 47%,
+      rgba(236,230,218,.14) 0%,
+      rgba(236,230,218,.045) 30%,
+      rgba(236,230,218,.012) 47%,
       transparent 66%),
     radial-gradient(94% 145% at 100% 122%,
-      rgba(176,210,240,.08) 0%,
-      rgba(176,210,240,.022) 42%,
+      rgba(143,161,179,.08) 0%,
+      rgba(143,161,179,.022) 42%,
       transparent 64%),
     linear-gradient(145deg,
-      rgba(255,255,255,.038) 0%,
-      rgba(255,255,255,.010) 42%,
-      rgba(6,6,6,.070) 70%,
-      rgba(255,255,255,.020) 100%),
-    rgba(10,10,11,.30)!important;
+      rgba(236,230,218,.038) 0%,
+      rgba(236,230,218,.010) 42%,
+      rgba(5,5,5,.070) 70%,
+      rgba(236,230,218,.020) 100%),
+    rgba(10,10,9,.30)!important;
   background-blend-mode:screen,screen,normal,normal!important;
   -webkit-backdrop-filter:
     blur(10px)
@@ -178,9 +178,9 @@ html:not(.is-phone-layout) .topbar .search{
     brightness(102%)!important;
   box-shadow:
     0 3px 11px rgba(0,0,0,.17),
-    inset 0 1px 0 rgba(255,255,255,.20),
-    inset 1px 0 0 rgba(255,255,255,.055),
-    inset -1px 0 0 rgba(255,255,255,.025),
+    inset 0 1px 0 rgba(236,230,218,.20),
+    inset 1px 0 0 rgba(236,230,218,.055),
+    inset -1px 0 0 rgba(236,230,218,.025),
     inset 0 -1px 0 rgba(0,0,0,.22)!important;
 }
 
@@ -193,12 +193,12 @@ html:not(.is-phone-layout) .topbar .search::before{
   border-radius:inherit;
   background:
     linear-gradient(112deg,
-      rgba(255,255,255,.105) 0%,
-      rgba(255,255,255,.030) 17%,
+      rgba(236,230,218,.105) 0%,
+      rgba(236,230,218,.030) 17%,
       transparent 34%,
       transparent 100%),
     radial-gradient(72% 145% at 90% 110%,
-      rgba(255,255,255,.028) 0%,
+      rgba(236,230,218,.028) 0%,
       transparent 56%);
   opacity:.85;
 }
@@ -213,42 +213,42 @@ html:not(.is-phone-layout) .topbar .search input{
 
 html:not(.is-phone-layout) .topbar .search .search-icon{
   z-index:2;
-  color:rgba(214,221,230,.62)!important;
+  color:rgba(236,230,218,.62)!important;
   filter:drop-shadow(0 1px 1px rgba(0,0,0,.32));
 }
 
 html:not(.is-phone-layout) .topbar .search input::placeholder{
-  color:rgba(211,216,223,.60)!important;
+  color:rgba(236,230,218,.60)!important;
 }
 
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill,
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:hover,
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:focus,
 html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:active{
-  -webkit-text-fill-color:#e8ebef!important;
-  caret-color:#e8ebef!important;
-  -webkit-box-shadow:0 0 0 1000px rgba(11,11,12,.34) inset!important;
-  box-shadow:0 0 0 1000px rgba(11,11,12,.34) inset!important;
+  -webkit-text-fill-color:#ece6da!important;
+  caret-color:#ece6da!important;
+  -webkit-box-shadow:0 0 0 1000px rgba(10,10,9,.34) inset!important;
+  box-shadow:0 0 0 1000px rgba(10,10,9,.34) inset!important;
 }
 
 html:not(.is-phone-layout) .topbar .search:focus-within{
-  border-color:rgba(255,255,255,.46)!important;
+  border-color:rgba(236,230,218,.46)!important;
   background:
     radial-gradient(150% 188% at 5% -92%,
-      rgba(255,255,255,.19) 0%,
-      rgba(255,255,255,.060) 30%,
-      rgba(255,255,255,.016) 48%,
+      rgba(236,230,218,.19) 0%,
+      rgba(236,230,218,.060) 30%,
+      rgba(236,230,218,.016) 48%,
       transparent 67%),
     radial-gradient(94% 150% at 100% 122%,
-      rgba(176,210,240,.10) 0%,
-      rgba(176,210,240,.028) 43%,
+      rgba(143,161,179,.10) 0%,
+      rgba(143,161,179,.028) 43%,
       transparent 65%),
     linear-gradient(145deg,
-      rgba(255,255,255,.048) 0%,
-      rgba(255,255,255,.013) 42%,
-      rgba(6,6,6,.060) 70%,
-      rgba(255,255,255,.026) 100%),
-    rgba(10,10,11,.27)!important;
+      rgba(236,230,218,.048) 0%,
+      rgba(236,230,218,.013) 42%,
+      rgba(5,5,5,.060) 70%,
+      rgba(236,230,218,.026) 100%),
+    rgba(10,10,9,.27)!important;
   -webkit-backdrop-filter:
     blur(10px)
     saturate(175%)
@@ -260,26 +260,26 @@ html:not(.is-phone-layout) .topbar .search:focus-within{
     contrast(109%)
     brightness(104%)!important;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,.028),
+    0 0 0 1px rgba(236,230,218,.028),
     0 4px 14px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 1px 0 rgba(236,230,218,.28),
     inset 0 -1px 0 rgba(0,0,0,.20)!important;
 }
 
 /* Sincronizar integra-se à mesma família do vidro das capas. */
 html:not(.is-phone-layout) .topbar #syncTop{
-  border-color:rgba(255,255,255,.30)!important;
+  border-color:rgba(236,230,218,.30)!important;
   background:
     radial-gradient(140% 160% at 8% -70%,
-      rgba(255,255,255,.26) 0%,
-      rgba(255,255,255,.070) 39%,
+      rgba(236,230,218,.26) 0%,
+      rgba(236,230,218,.070) 39%,
       transparent 63%),
     linear-gradient(145deg,
-      rgba(255,255,255,.065) 0%,
-      rgba(255,255,255,.018) 55%,
-      rgba(255,255,255,.035) 100%),
-    rgba(8,8,9,.16)!important;
-  color:#f0f3f7!important;
+      rgba(236,230,218,.065) 0%,
+      rgba(236,230,218,.018) 55%,
+      rgba(236,230,218,.035) 100%),
+    rgba(10,10,9,.16)!important;
+  color:#ece6da!important;
   -webkit-backdrop-filter:
     blur(7px)
     saturate(195%)
@@ -292,7 +292,7 @@ html:not(.is-phone-layout) .topbar #syncTop{
     brightness(106%)!important;
   box-shadow:
     0 5px 14px rgba(0,0,0,.18),
-    inset 0 1px 1px rgba(255,255,255,.32),
+    inset 0 1px 1px rgba(236,230,218,.32),
     inset 0 -1px 1px rgba(0,0,0,.16)!important;
 }
 
@@ -301,37 +301,37 @@ html:not(.is-phone-layout) .topbar #syncTop{
     border-color:var(--lg-shell-border-strong)!important;
     background:
       radial-gradient(145% 165% at 8% -70%,
-        rgba(255,255,255,.34) 0%,
-        rgba(255,255,255,.095) 39%,
+        rgba(236,230,218,.34) 0%,
+        rgba(236,230,218,.095) 39%,
         transparent 64%),
       linear-gradient(145deg,
-        rgba(255,255,255,.082) 0%,
-        rgba(255,255,255,.023) 55%,
-        rgba(255,255,255,.045) 100%),
-      rgba(8,8,9,.14)!important;
-    color:#fff!important;
+        rgba(236,230,218,.082) 0%,
+        rgba(236,230,218,.023) 55%,
+        rgba(236,230,218,.045) 100%),
+      rgba(10,10,9,.14)!important;
+    color:#ece6da!important;
     box-shadow:
       0 7px 18px rgba(0,0,0,.21),
-      inset 0 1px 1px rgba(255,255,255,.42),
+      inset 0 1px 1px rgba(236,230,218,.42),
       inset 0 -1px 1px rgba(0,0,0,.14)!important;
   }
 }
 
 /* iPad preserva dimensões/touch targets; muda apenas o material. */
 html.is-ipad:not(.is-phone-layout) .topbar #syncTop{
-  border-color:rgba(255,255,255,.28)!important;
+  border-color:rgba(236,230,218,.28)!important;
 }
 
 /* Acessibilidade: densidade maior quando transparência é reduzida. */
 @media(prefers-reduced-transparency:reduce){
   html:not(.is-phone-layout) .topbar{
-    background:rgba(19,19,20,.94)!important;
+    background:rgba(17,17,16,.94)!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
   html:not(.is-phone-layout) .topbar .search,
   html:not(.is-phone-layout) .topbar #syncTop{
-    background:rgba(31,31,32,.94)!important;
+    background:rgba(36,35,32,.94)!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
@@ -358,44 +358,44 @@ html.is-ipad:not(.is-phone-layout) .topbar #syncTop{
 html:not(.is-phone-layout) .topbar .search{
   background:
     radial-gradient(145% 175% at 6% -88%,
-      rgba(255,255,255,.14) 0%,
-      rgba(255,255,255,.042) 31%,
-      rgba(255,255,255,.010) 48%,
+      rgba(236,230,218,.14) 0%,
+      rgba(236,230,218,.042) 31%,
+      rgba(236,230,218,.010) 48%,
       transparent 66%),
     linear-gradient(145deg,
-      rgba(255,255,255,.040) 0%,
-      rgba(255,255,255,.012) 44%,
-      rgba(3,3,4,.068) 100%),
-    rgba(10,10,11,.22)!important;
+      rgba(236,230,218,.040) 0%,
+      rgba(236,230,218,.012) 44%,
+      rgba(5,5,5,.068) 100%),
+    rgba(10,10,9,.22)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
 html:not(.is-phone-layout) .topbar .search:focus-within{
   background:
     radial-gradient(145% 178% at 6% -88%,
-      rgba(255,255,255,.18) 0%,
-      rgba(255,255,255,.055) 31%,
-      rgba(255,255,255,.014) 49%,
+      rgba(236,230,218,.18) 0%,
+      rgba(236,230,218,.055) 31%,
+      rgba(236,230,218,.014) 49%,
       transparent 67%),
     linear-gradient(145deg,
-      rgba(255,255,255,.050) 0%,
-      rgba(255,255,255,.016) 44%,
-      rgba(3,3,4,.060) 100%),
-    rgba(10,10,11,.20)!important;
+      rgba(236,230,218,.050) 0%,
+      rgba(236,230,218,.016) 44%,
+      rgba(5,5,5,.060) 100%),
+    rgba(10,10,9,.20)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
 html:not(.is-phone-layout) .topbar #syncTop{
   background:
     radial-gradient(140% 160% at 8% -70%,
-      rgba(255,255,255,.20) 0%,
-      rgba(255,255,255,.055) 39%,
+      rgba(236,230,218,.20) 0%,
+      rgba(236,230,218,.055) 39%,
       transparent 63%),
     linear-gradient(145deg,
-      rgba(255,255,255,.055) 0%,
-      rgba(255,255,255,.016) 55%,
-      rgba(255,255,255,.026) 100%),
-    rgba(8,8,9,.12)!important;
+      rgba(236,230,218,.055) 0%,
+      rgba(236,230,218,.016) 55%,
+      rgba(236,230,218,.026) 100%),
+    rgba(10,10,9,.12)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
@@ -403,30 +403,30 @@ html:not(.is-phone-layout) .topbar #syncTop{
   html:not(.is-phone-layout) .topbar #syncTop:hover{
     background:
       radial-gradient(145% 165% at 8% -70%,
-        rgba(255,255,255,.26) 0%,
-        rgba(255,255,255,.075) 39%,
+        rgba(236,230,218,.26) 0%,
+        rgba(236,230,218,.075) 39%,
         transparent 64%),
       linear-gradient(145deg,
-        rgba(255,255,255,.068) 0%,
-        rgba(255,255,255,.020) 55%,
-        rgba(255,255,255,.032) 100%),
-      rgba(8,8,9,.11)!important;
+        rgba(236,230,218,.068) 0%,
+        rgba(236,230,218,.020) 55%,
+        rgba(236,230,218,.032) 100%),
+      rgba(10,10,9,.11)!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
 }
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
   html:not(.is-phone-layout) .topbar{
-    background:rgba(18,18,19,.94)!important;
+    background:rgba(17,17,16,.94)!important;
   }
 }
 @media(prefers-contrast:more){
   html:not(.is-phone-layout) .topbar{
-    border-color:rgba(255,255,255,.46)!important;
-    background-color:rgba(7,7,8,.90)!important;
+    border-color:rgba(236,230,218,.46)!important;
+    background-color:rgba(5,5,5,.90)!important;
   }
   html:not(.is-phone-layout) .topbar :is(.search,#syncTop){
-    border-color:rgba(255,255,255,.40)!important;
+    border-color:rgba(236,230,218,.40)!important;
   }
 }
 @media(prefers-reduced-motion:reduce){

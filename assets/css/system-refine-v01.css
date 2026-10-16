@@ -27,7 +27,7 @@
   margin:2px 0 0!important;
   padding:14px 0 0!important;
   border:0!important;
-  border-top:1px solid rgba(255,255,255,.055)!important;
+  border-top:1px solid rgba(236,230,218,.055)!important;
   border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
@@ -35,23 +35,23 @@
 #appDiagnosticPanel.settings-diagnostic-embedded>.panel-kicker{display:none}
 #appDiagnosticPanel.settings-diagnostic-embedded>h2{
   margin:0;
-  font-size:12px;
+  font-size:var(--fs-caption);
 }
 #appDiagnosticPanel.settings-diagnostic-embedded>p{
   margin:4px 0 0;
-  font-size:8.5px;
+  font-size:var(--fs-caption);
 }
 #appDiagnosticPanel.settings-diagnostic-embedded .diagnostic-grid{
   margin-top:9px;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:1px;
   border:0;
-  background:rgba(255,255,255,.035);
+  background:rgba(236,230,218,.035);
 }
 #appDiagnosticPanel.settings-diagnostic-embedded .diagnostic-row{
   min-height:34px;
   border:0;
-  background:#0c0c0d;
+  background:#0a0a09;
 }
 #appDiagnosticPanel.settings-diagnostic-embedded .admin-actions{
   margin-top:9px;
@@ -59,7 +59,7 @@
 .settings-diagnostic-disclosure[open] .settings-cloud-diagnostics{gap:14px}
 
 /* Atualizações: status principal acima da informação técnica. */
-.app-update-panel .app-update-summary strong{font-size:14px}
+.app-update-panel .app-update-summary strong{font-size:var(--fs-body-sm)}
 .app-update-panel .app-update-compact-meta{opacity:.72}
 .settings-backend-status{opacity:.76}
 
@@ -68,14 +68,14 @@
 .study-goal-human{
   display:block;
   margin-top:5px;
-  color:#ded4bf;
-  font-size:14px;
+  color:#ece6da;
+  font-size:var(--fs-body-sm);
   line-height:1;
 }
 .study-goal-human small{
   margin-left:4px;
-  color:#777e87;
-  font:650 7px var(--mono);
+  color:#857e72;
+  font:650 var(--fs-caption) var(--mono);
 }
 .study-goals-form>label>span:last-child{margin-top:7px}
 .study-goals-form>label:nth-child(-n+2)>span:last-child{
@@ -91,9 +91,9 @@
   min-width:42px;
   height:24px!important;
   padding:0!important;
-  border:1px solid rgba(255,255,255,.12)!important;
+  border:1px solid rgba(236,230,218,.12)!important;
   border-radius:999px!important;
-  background:#111112!important;
+  background:#111110!important;
   cursor:pointer;
   transition:.16s ease;
 }
@@ -105,25 +105,25 @@
   width:16px;
   height:16px;
   border-radius:50%;
-  background:#7d848d;
+  background:#857e72;
   box-shadow:0 2px 5px rgba(0,0,0,.35);
   transition:.16s ease;
 }
 .study-settings-toggle input[type="checkbox"]:checked{
-  border-color:rgba(79,147,143,.42)!important;
-  background:rgba(79,147,143,.18)!important;
+  border-color:rgba(140,154,108,.42)!important;
+  background:rgba(140,154,108,.18)!important;
 }
 .study-settings-toggle input[type="checkbox"]:checked::after{
   left:21px;
-  background:#73c2bc;
+  background:#8c9a6c;
 }
 
 /* Gerenciamento de tempo vira área secundária / destrutiva recolhível. */
 .study-time-manage{
   margin-top:14px!important;
-  border:1px solid rgba(255,255,255,.06)!important;
+  border:1px solid rgba(236,230,218,.06)!important;
   border-radius:10px;
-  background:rgba(255,255,255,.01);
+  background:rgba(236,230,218,.01);
 }
 .study-time-manage>summary{
   display:flex;
@@ -138,12 +138,12 @@
 .study-time-manage>summary::-webkit-details-marker{display:none}
 .study-time-manage>summary::after{
   content:"⌄";
-  color:#737a83;
-  font-size:13px;
+  color:#857e72;
+  font-size:var(--fs-body-sm);
 }
 .study-time-manage[open]>summary::after{content:"⌃"}
 .study-time-manage[open]>summary{
-  border-bottom:1px solid rgba(255,255,255,.055);
+  border-bottom:1px solid rgba(236,230,218,.055);
 }
 .study-time-manage .study-time-manage-head{
   flex:1;
@@ -155,7 +155,7 @@
 .study-time-manage-danger{
   margin-top:10px;
   padding-top:10px;
-  border-top:1px solid rgba(217,103,115,.12);
+  border-top:1px solid rgba(184,97,78,.12);
 }
 .study-time-manage-danger .danger{min-height:36px}
 .study-time-manage-note{display:block;margin-top:8px}
@@ -173,7 +173,7 @@
   }
   .planner-advanced-settings fieldset label span::after{
     content:attr(data-short);
-    font-size:8px;
+    font-size:var(--fs-caption);
   }
 }
 
@@ -193,12 +193,12 @@
   align-content:center;
 }
 .progress-metrics-strip .metric b{
-  font-size:19px!important;
+  font-size:var(--fs-h3)!important;
   line-height:1!important;
 }
 .progress-metrics-strip .metric span{
   margin-top:6px!important;
-  font-size:7px!important;
+  font-size:var(--fs-caption)!important;
 }
 
 /* Próximas ações: menos vazio, mais assinatura semântica. */
@@ -214,16 +214,16 @@
   min-height:112px!important;
   padding:12px!important;
 }
-.progress-insight-card>span{font-size:7px!important}
-.progress-insight-card>b{font-size:18px!important}
+.progress-insight-card>span{font-size:var(--fs-caption)!important}
+.progress-insight-card>b{font-size:var(--fs-h3)!important}
 .progress-insight-card p{
   min-height:28px!important;
   margin:3px 0 8px!important;
 }
-.progress-insight-resume{box-shadow:inset 2px 0 rgba(109,130,152,.42)}
-.progress-insight-start{box-shadow:inset 2px 0 rgba(216,184,88,.40)}
-.progress-insight-simulation{box-shadow:inset 2px 0 rgba(217,103,115,.32)}
-.progress-insight-focus,.progress-insight-review{box-shadow:inset 2px 0 rgba(98,169,120,.35)}
+.progress-insight-resume{box-shadow:inset 2px 0 rgba(133,126,114,.42)}
+.progress-insight-start{box-shadow:inset 2px 0 rgba(195,170,132,.40)}
+.progress-insight-simulation{box-shadow:inset 2px 0 rgba(184,97,78,.32)}
+.progress-insight-focus,.progress-insight-review{box-shadow:inset 2px 0 rgba(140,154,108,.35)}
 
 /* Quatro decisões viram indicadores compactos. */
 .study-intelligence-panel{margin-top:18px!important}
@@ -232,7 +232,7 @@
   min-height:118px!important;
   padding:11px 12px!important;
 }
-.intelligence-primary-actions>article>b{font-size:18px!important}
+.intelligence-primary-actions>article>b{font-size:var(--fs-h3)!important}
 .intelligence-primary-actions>article>p{
   min-height:22px!important;
   margin-bottom:6px!important;
@@ -289,9 +289,9 @@
   min-height:70px!important;
   padding:11px 14px 7px!important;
 }
-.progress-course.is-collapsed .progress-course-title h3{font-size:15px!important}
+.progress-course.is-collapsed .progress-course-title h3{font-size:var(--fs-body)!important}
 .progress-course.is-collapsed .progress-course-title p{margin-top:2px!important}
-.progress-course.is-collapsed .progress-course-score b{font-size:18px!important}
+.progress-course.is-collapsed .progress-course-score b{font-size:var(--fs-h3)!important}
 .progress-course.is-collapsed .progress-course-summary{
   padding:0 14px 10px!important;
 }
@@ -334,7 +334,7 @@
   }
   .simulation-card h3{
     margin-top:10px!important;
-    font-size:16.5px!important;
+    font-size:var(--fs-title)!important;
   }
   .simulation-subtitle{margin-top:4px!important}
   .simulation-meta{margin-top:10px!important}
@@ -355,8 +355,8 @@
 .simulation-code{
   max-width:190px;
   overflow:hidden;
-  color:#a8767b!important;
-  font-size:7.5px!important;
+  color:#b8614e!important;
+  font-size:var(--fs-caption)!important;
   letter-spacing:.055em!important;
   text-overflow:ellipsis;
   white-space:nowrap;
@@ -365,9 +365,9 @@
   margin:0!important;
   min-height:19px!important;
   padding:2px 6px!important;
-  font-size:7px!important;
+  font-size:var(--fs-caption)!important;
 }
-.simulation-board{font-size:8px!important}
+.simulation-board{font-size:var(--fs-caption)!important}
 .simulation-card-actions .primary{min-height:34px!important}
 
 /* Mobile mantém as alturas já validadas. */
@@ -390,7 +390,7 @@ html:not(.is-phone-layout) .side-bottom{
 html:not(.is-phone-layout) .cloud-card{
   padding:10px 4px 2px;
   border:0!important;
-  border-top:1px solid rgba(255,255,255,.052)!important;
+  border-top:1px solid rgba(236,230,218,.052)!important;
   border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
@@ -398,8 +398,8 @@ html:not(.is-phone-layout) .cloud-card{
 html:not(.is-phone-layout) .cloud-line{
   min-height:19px;
   gap:8px;
-  color:#aeb3bb;
-  font-size:9.2px;
+  color:#b9b2a5;
+  font-size:var(--fs-caption);
   font-weight:720;
   line-height:1.2;
 }
@@ -408,19 +408,19 @@ html:not(.is-phone-layout) .cloud-card .cloud-dot{
   width:14px;
   height:14px;
   border-radius:0;
-  background:#7e858e;
+  background:#857e72;
   box-shadow:none;
   -webkit-mask:var(--solid-cloud) center/contain no-repeat;
   mask:var(--solid-cloud) center/contain no-repeat;
 }
-html:not(.is-phone-layout) .cloud-card .cloud-dot.online{background:#72c995;box-shadow:none}
-html:not(.is-phone-layout) .cloud-card .cloud-dot.warn{background:#b99a63}
-html:not(.is-phone-layout) .cloud-card .cloud-dot.error{background:#cb7a83}
+html:not(.is-phone-layout) .cloud-card .cloud-dot.online{background:#8c9a6c;box-shadow:none}
+html:not(.is-phone-layout) .cloud-card .cloud-dot.warn{background:#c3aa84}
+html:not(.is-phone-layout) .cloud-card .cloud-dot.error{background:#b8614e}
 html:not(.is-phone-layout) .cloud-side-meta{
   margin-top:3px;
   padding-left:22px;
-  color:#5f6670;
-  font-size:7.4px;
+  color:#857e72;
+  font-size:var(--fs-caption);
   line-height:1.35;
   letter-spacing:.005em;
 }
@@ -432,43 +432,43 @@ html:not(.is-phone-layout) #syncTop{
   min-height:36px;
   padding:0 11px;
   gap:6px;
-  border-color:rgba(255,255,255,.068)!important;
+  border-color:rgba(236,230,218,.068)!important;
   border-radius:8px;
-  background:rgba(255,255,255,.014)!important;
-  color:#aeb4bc!important;
+  background:rgba(236,230,218,.014)!important;
+  color:#b9b2a5!important;
   box-shadow:none!important;
-  font-size:9.5px;
+  font-size:var(--fs-caption);
   font-weight:740;
 }
 html:not(.is-phone-layout) #syncTop>.ui-icon{
   --icon-size:14px;
-  color:#858c95!important;
+  color:#857e72!important;
 }
 html:not(.is-phone-layout) #syncTop[data-sync-state="synced"]:not(.sync-feedback)>.ui-icon{
-  color:#858c95!important;
+  color:#857e72!important;
 }
 html:not(.is-phone-layout) #syncTop.sync-feedback{
-  border-color:rgba(114,201,149,.14)!important;
-  background:rgba(114,201,149,.025)!important;
-  color:#a9cdb5!important;
+  border-color:rgba(140,154,108,.14)!important;
+  background:rgba(140,154,108,.025)!important;
+  color:#8c9a6c!important;
 }
-html:not(.is-phone-layout) #syncTop.sync-feedback>.ui-icon{color:#72c995!important}
+html:not(.is-phone-layout) #syncTop.sync-feedback>.ui-icon{color:#8c9a6c!important}
 html:not(.is-phone-layout) #syncTop[data-sync-state="syncing"]>.ui-icon{
-  color:#c4b48f!important;
+  color:#c3aa84!important;
   animation:cloudSyncStatusPulse 1.05s ease-in-out infinite!important;
 }
 html:not(.is-phone-layout) #syncTop[data-sync-state="offline"]{
-  border-color:rgba(185,154,99,.11)!important;
-  background:rgba(185,154,99,.018)!important;
-  color:#ac9975!important;
+  border-color:rgba(195,170,132,.11)!important;
+  background:rgba(195,170,132,.018)!important;
+  color:#c3aa84!important;
 }
-html:not(.is-phone-layout) #syncTop[data-sync-state="offline"]>.ui-icon{color:#b99a63!important}
+html:not(.is-phone-layout) #syncTop[data-sync-state="offline"]>.ui-icon{color:#c3aa84!important}
 html:not(.is-phone-layout) #syncTop[data-sync-state="error"]{
-  border-color:rgba(203,122,131,.13)!important;
-  background:rgba(203,122,131,.02)!important;
-  color:#bd8c92!important;
+  border-color:rgba(184,97,78,.13)!important;
+  background:rgba(184,97,78,.02)!important;
+  color:#b8614e!important;
 }
-html:not(.is-phone-layout) #syncTop[data-sync-state="error"]>.ui-icon{color:#cb7a83!important}
+html:not(.is-phone-layout) #syncTop[data-sync-state="error"]>.ui-icon{color:#b8614e!important}
 html:not(.is-phone-layout) #syncTop:disabled{opacity:.82!important}
 
 /* iPad/tablet: mesma linguagem, com alvo touch de 44 px. */
@@ -479,7 +479,7 @@ html.is-ipad:not(.is-phone-layout) #syncTop{
   min-height:44px;
   padding-inline:10px;
   border-radius:9px;
-  font-size:9.5px;
+  font-size:var(--fs-label);
 }
 html.is-ipad:not(.is-phone-layout) #syncTop>.ui-icon{--icon-size:15px}
 @media(prefers-reduced-motion:reduce){
@@ -513,13 +513,13 @@ html.is-ipad:not(.is-phone-layout) [data-view="simulations"]>.section-head{
 html.is-ipad:not(.is-phone-layout) [data-view="courses"]>.section-head h2,
 html.is-ipad:not(.is-phone-layout) [data-view="maps"]>.section-head h2,
 html.is-ipad:not(.is-phone-layout) [data-view="simulations"]>.section-head h2{
-  font-size:20px;
+  font-size:var(--fs-h2);
   line-height:1.08;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="courses"]>.section-head p,
 html.is-ipad:not(.is-phone-layout) [data-view="maps"]>.section-head p,
 html.is-ipad:not(.is-phone-layout) [data-view="simulations"]>.section-head p{
-  font-size:10.5px;
+  font-size:var(--fs-caption);
   line-height:1.45;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="courses"] button,
@@ -542,7 +542,7 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card
 }
 html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card h3{
   margin-top:9px!important;
-  font-size:17px!important;
+  font-size:var(--fs-h3)!important;
   line-height:1.15!important;
 }
 html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card-meta{
@@ -568,13 +568,13 @@ html.is-ipad:not(.is-phone-layout) [data-view="course"] .breadcrumb{
   margin-bottom:10px!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseTitle{
-  font-size:clamp(30px,4.1vw,42px)!important;
+  font-size:var(--fs-h1)!important;
   line-height:1!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] #courseDesc{
   max-width:720px;
   margin-top:6px!important;
-  font-size:11px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.45;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-progress-summary{
@@ -631,12 +631,12 @@ html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-vi
 }
 html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-card h3{
   margin-top:9px!important;
-  font-size:15px!important;
+  font-size:var(--fs-body)!important;
   line-height:1.18!important;
 }
 html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-card>p{
   margin-top:5px!important;
-  font-size:9.5px!important;
+  font-size:var(--fs-caption)!important;
   line-height:1.4;
 }
 html.is-ipad:not(.is-phone-layout) :is([data-view="course"] #courseMaps,[data-view="maps"] #allMaps) .map-card .foot{
@@ -663,7 +663,7 @@ html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card-bo
 }
 html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-card h3{
   margin-top:10px!important;
-  font-size:15px!important;
+  font-size:var(--fs-body)!important;
 }
 html.is-ipad:not(.is-phone-layout) [data-view="simulations"] .simulation-meta{
   margin-top:8px!important;
@@ -782,12 +782,12 @@ html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda
   margin-bottom:12px;
 }
 html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"])>.section-head h2{
-  font-size:20px;
+  font-size:var(--fs-h2);
   line-height:1.08;
 }
 html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"])>.section-head p{
   margin-top:3px;
-  font-size:10.5px;
+  font-size:var(--fs-caption);
   line-height:1.45;
 }
 html.is-ipad:not(.is-phone-layout) :is([data-view="progress"],[data-view="agenda"],[data-view="settings"]) button,
@@ -950,7 +950,7 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
     padding-top:14px!important;
     padding-left:0!important;
     border-left:0!important;
-    border-top:1px solid rgba(255,255,255,.07)!important;
+    border-top:1px solid rgba(236,230,218,.07)!important;
   }
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3{
     grid-template-columns:minmax(300px,.9fr) minmax(0,1.1fr)!important;
@@ -987,7 +987,7 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
     padding-top:0!important;
     padding-left:12px!important;
     border-top:0!important;
-    border-left:1px solid rgba(255,255,255,.07)!important;
+    border-left:1px solid rgba(236,230,218,.07)!important;
   }
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3{
     grid-template-columns:1fr!important;
@@ -1034,7 +1034,7 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
     padding-top:12px!important;
     padding-left:0!important;
     border-left:0!important;
-    border-top:1px solid rgba(255,255,255,.07)!important;
+    border-top:1px solid rgba(236,230,218,.07)!important;
   }
   html.is-ipad:not(.is-phone-layout) .settings-layout-v3{
     grid-template-columns:1fr!important;
@@ -1066,11 +1066,11 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
   min-width:0!important;
   height:35px!important;
   padding:0 9px!important;
-  border:1px solid rgba(255,255,255,.09)!important;
+  border:1px solid rgba(236,230,218,.09)!important;
   border-radius:7px!important;
-  background:#0e0e0f!important;
-  color:#e1e3e7!important;
-  font:750 10px var(--mono)!important;
+  background:#111110!important;
+  color:#ece6da!important;
+  font:750 var(--fs-input) var(--mono)!important;
   letter-spacing:.01em;
 }
 .study-duration-input:focus{
@@ -1080,8 +1080,8 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
 }
 .study-duration-field small,
 .planner-duration-field small{
-  color:#707780!important;
-  font:700 7px var(--mono)!important;
+  color:#857e72!important;
+  font:700 var(--fs-caption) var(--mono)!important;
   white-space:nowrap;
 }
 .study-goals-form>label:nth-child(-n+2)>span:last-child{opacity:1!important}
@@ -1125,15 +1125,15 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
 .priority-now-main h3{
   margin:0!important;
   overflow:hidden;
-  color:#e0e2e5;
-  font-size:11px!important;
+  color:#ece6da;
+  font-size:var(--fs-caption)!important;
   line-height:1.25;
   text-overflow:ellipsis;
   white-space:nowrap;
 }
 .priority-now-main small{
-  color:#777e86;
-  font-size:7.5px;
+  color:#857e72;
+  font-size:var(--fs-caption);
 }
 .priority-now-code{
   flex:0 0 auto;
@@ -1143,7 +1143,7 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
   border-radius:7px;
   background:color-mix(in srgb,var(--map-accent) 9%,transparent);
   color:var(--map-accent);
-  font:850 8px var(--mono);
+  font:850 var(--fs-caption) var(--mono);
   text-align:center;
 }
 .priority-reason-list{
@@ -1153,11 +1153,11 @@ html.is-ipad:not(.is-phone-layout) .modal-card .admin-actions button{
 }
 .priority-reason-chip{
   padding:3px 6px;
-  border:1px solid rgba(255,255,255,.065);
+  border:1px solid rgba(236,230,218,.065);
   border-radius:999px;
-  background:rgba(255,255,255,.018);
-  color:#858b93;
-  font-size:6.8px;
+  background:rgba(236,230,218,.018);
+  color:#857e72;
+  font-size:var(--fs-caption);
   line-height:1.2;
   white-space:nowrap;
 }

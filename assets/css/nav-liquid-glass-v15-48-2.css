@@ -4,18 +4,18 @@
 
 /* Intensidade topográfica consolidada em topographic-environment-v15-43.css. */
 
-/* 16 [G] Paleta exclusiva de navegação — NÃO altera acentos dos cursos/mapas. */
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#e6c790 }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="courses"] { --nav-accent:#ed9981 }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="maps"] { --nav-accent:#92cda9 }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"] { --nav-accent:#d994ac }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"] { --nav-accent:#b5a5e2 }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"] { --nav-accent:#8ec8ce }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"] { --nav-accent:#c9d47d }
-html.is-phone-layout .bottom-nav>.mobile-menu-trigger { --nav-accent:#c9d47d }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"] { --nav-accent:#8ec8ce }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"] { --nav-accent:#d994ac }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#c9d47d }
+/* 16 [G] Pigmentos do menu (conceito): uma cor por seção, só no item ativo; "Mais" do celular em pedra. */
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#c3aa84 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="courses"] { --nav-accent:#c08a6e }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="maps"] { --nav-accent:#a3ad8a }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"] { --nav-accent:#b98a8a }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"] { --nav-accent:#a294b4 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"] { --nav-accent:#8fa1b3 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"] { --nav-accent:#a8a29a }
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger { --nav-accent:#a8a29a }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"] { --nav-accent:#8fa1b3 }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"] { --nav-accent:#b98a8a }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#a8a29a }
 
 /* V15.48.3 [G] Cor EXCLUSIVA do item ativo. Inativos brancos,
    também em hover/focus: feedback neutro, sem mostrar outra cor. */
@@ -23,28 +23,28 @@ html .side .nav-btn[data-nav]:not(.active),
 html .bottom-nav>button[data-nav]:not(.active),
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"]),
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) {
-  color:#f4f4f4!important;
+  color:#ece6da!important;
 }
 html .side .nav-btn[data-nav]:not(.active)>.ui-icon,
 html .bottom-nav>button[data-nav]:not(.active)>.ui-icon,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"])>.ui-icon,
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) .ui-icon {
-  color:#f4f4f4!important;
+  color:#ece6da!important;
 }
 html .side .nav-btn[data-nav]:not(.active) .txt,
 html .bottom-nav>button[data-nav]:not(.active) .bottom-nav-label,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger:not(.active):not([aria-expanded="true"]) .bottom-nav-label,
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current) b {
-  color:#f4f4f4!important;
+  color:#ece6da!important;
 }
 /* O acento é exibido SOMENTE no item que representa a seção atual. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active {
   color:var(--nav-accent)!important;
   border:1px solid color-mix(in srgb,var(--nav-accent) 29%,transparent)!important;
   background:linear-gradient(90deg,
-    color-mix(in srgb,var(--nav-accent) 13%,rgba(255,255,255,.018)),
-    rgba(255,255,255,.015) 82%)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.065)!important;
+    color-mix(in srgb,var(--nav-accent) 13%,rgba(236,230,218,.018)),
+    rgba(236,230,218,.015) 82%)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.065)!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before {
   background:var(--nav-accent)!important;
@@ -58,14 +58,14 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current :is(.
 }
 /* Hover/foco em item NÃO ativo: apenas cinza translúcido, SEM acento. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav]:is(:hover,:focus-visible):not(.active) {
-  border-color:rgba(255,255,255,.13)!important;
-  background:rgba(255,255,255,.018)!important;
+  border-color:rgba(236,230,218,.13)!important;
+  background:rgba(236,230,218,.018)!important;
 }
 html .bottom-nav>button[data-nav]:is(:hover,:focus-visible):not(.active),
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(:hover,:focus-visible):not(.active):not([aria-expanded="true"]) {
-  color:#f4f4f4!important;
-  border:1px solid rgba(255,255,255,.10)!important;
-  background:rgba(255,255,255,.018)!important;
+  color:#ece6da!important;
+  border:1px solid rgba(236,230,218,.10)!important;
+  background:rgba(236,230,218,.018)!important;
   box-shadow:none!important;
 }
 /* Ativo: vidro neutro e cor única da seção, sem animação de lente. */
@@ -74,23 +74,23 @@ html.is-phone-layout .bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded=
   color:var(--nav-accent)!important;
   border:1px solid color-mix(in srgb,var(--nav-accent) 25%,transparent)!important;
   background:linear-gradient(180deg,
-    color-mix(in srgb,var(--nav-accent) 17%,rgba(255,255,255,.055)),
-    color-mix(in srgb,var(--nav-accent) 7%,rgba(10,10,10,.09)))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+    color-mix(in srgb,var(--nav-accent) 17%,rgba(236,230,218,.055)),
+    color-mix(in srgb,var(--nav-accent) 7%,rgba(10,10,9,.09)))!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.12)!important;
 }
 html .bottom-nav>button[data-nav].active::before,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before {
   background:var(--nav-accent)!important;
 }
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:is(:hover,:focus-visible):not(.is-current){
-  color:#f4f4f4!important;
-  border-color:rgba(255,255,255,.12)!important;
-  background:rgba(255,255,255,.045)!important;
+  color:#ece6da!important;
+  border-color:rgba(236,230,218,.12)!important;
+  background:rgba(236,230,218,.045)!important;
 }
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current {
   color:var(--nav-accent)!important;
   border-color:color-mix(in srgb,var(--nav-accent) 24%,transparent)!important;
-  background:color-mix(in srgb,var(--nav-accent) 8%,rgba(255,255,255,.016))!important;
+  background:color-mix(in srgb,var(--nav-accent) 8%,rgba(236,230,218,.016))!important;
 }
 
 /* 10/14 [T+M] Remove o gradiente retangular externo, culpado da "tarja".
@@ -105,13 +105,13 @@ html.is-phone-layout .bottom-nav {
   isolation:auto;
   overflow:visible!important;
   border-radius:18px!important;
-  border:1px solid rgba(255,255,255,.22)!important;
+  border:1px solid rgba(236,230,218,.22)!important;
   background:
-    linear-gradient(165deg,rgba(255,255,255,.105),rgba(255,255,255,.020) 42%,transparent 73%),
-    rgba(15,15,16,.16)!important;
+    linear-gradient(165deg,rgba(236,230,218,.105),rgba(236,230,218,.020) 42%,transparent 73%),
+    rgba(17,17,16,.16)!important;
   -webkit-backdrop-filter:blur(15px) saturate(118%) contrast(103%)!important;
   backdrop-filter:blur(15px) saturate(118%) contrast(103%)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 5px 17px rgba(0,0,0,.16)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.15),0 5px 17px rgba(0,0,0,.16)!important;
   transform:none;
   will-change:auto;
   touch-action:pan-y;
@@ -147,13 +147,13 @@ html:is(.is-ipad,.is-phone-layout) .topbar-wrap {
    isolada aninhada. Safari recompõe uma superfície durante o scroll. */
 html:is(.is-ipad,.is-phone-layout) .topbar {
   isolation:auto;
-  border:1px solid rgba(255,255,255,.21)!important;
+  border:1px solid rgba(236,230,218,.21)!important;
   background:
-    linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.019) 36%,transparent 75%),
-    rgba(20,20,21,.42)!important;
+    linear-gradient(150deg,rgba(236,230,218,.09),rgba(236,230,218,.019) 36%,transparent 75%),
+    rgba(17,17,16,.42)!important;
   -webkit-backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
   backdrop-filter:blur(14px) saturate(118%) contrast(103%)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 7px 20px rgba(0,0,0,.16)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.14),0 7px 20px rgba(0,0,0,.16)!important;
   will-change:auto;
 }
 html:is(.is-ipad,.is-phone-layout) .topbar::before,
@@ -163,29 +163,29 @@ html:is(.is-ipad,.is-phone-layout) .topbar>.mm-scroll-edge{
   pointer-events:none;
 }
 html.mobile-topbar-compact.is-phone-layout .topbar {
-  background:linear-gradient(150deg,rgba(255,255,255,.10),transparent 75%),rgba(19,19,20,.42)!important
+  background:linear-gradient(150deg,rgba(236,230,218,.10),transparent 75%),rgba(17,17,16,.42)!important
 }
 html:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#syncTop) {
-  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),rgba(14,14,15,.39)!important;
-  border-color:rgba(255,255,255,.15)!important;
+  background:linear-gradient(180deg,rgba(236,230,218,.055),rgba(236,230,218,.012)),rgba(17,17,16,.39)!important;
+  border-color:rgba(236,230,218,.15)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.045)!important
 }
 html:is(.is-ipad,.is-phone-layout) .topbar .search:focus-within {
-  border-color:rgba(255,255,255,.32)!important
+  border-color:rgba(236,230,218,.32)!important
 }
 /* Preserve a classe de acessibilidade implementada no runtime.
    Sem blur/transparência quando a preferência pede uma superfície sólida. */
 html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) :is(.topbar,.bottom-nav),
 html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#syncTop){
-  background:#101010!important;background-image:none!important;
+  background:#111110!important;background-image:none!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important
 }
 @media (prefers-reduced-transparency:reduce) {
   html:is(.is-ipad,.is-phone-layout) :is(.topbar,.bottom-nav),
   html:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#syncTop){
-    background:#101010!important;background-image:none!important;
+    background:#111110!important;background-image:none!important;
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important
   }
 }
@@ -204,18 +204,18 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
    isolation:auto;
    overflow:visible!important;
    border-radius:19px!important;
-   border:1px solid rgba(255,255,255,.24)!important;
+   border:1px solid rgba(236,230,218,.24)!important;
    background:
      linear-gradient(180deg,
-       rgba(255,255,255,.16) 0%,
-       rgba(255,255,255,.075) 18%,
-       rgba(255,255,255,.032) 58%,
-       rgba(255,255,255,.018) 100%),
-     rgba(35,35,37,var(--mm-dock-alpha,.10))!important;
+       rgba(236,230,218,.16) 0%,
+       rgba(236,230,218,.075) 18%,
+       rgba(236,230,218,.032) 58%,
+       rgba(236,230,218,.018) 100%),
+     rgba(36,35,32,var(--mm-dock-alpha,.10))!important;
    -webkit-backdrop-filter:blur(20px) saturate(124%) contrast(103%)!important;
    backdrop-filter:blur(20px) saturate(124%) contrast(103%)!important;
    box-shadow:
-     inset 0 1px 0 rgba(255,255,255,.21),
+     inset 0 1px 0 rgba(236,230,218,.21),
      0 5px 16px rgba(0,0,0,.16)!important;
    transform:none;
    filter:none;
@@ -227,11 +227,11 @@ html.mm-reduced-transparency:is(.is-ipad,.is-phone-layout) .topbar :is(.search,#
 
 /* Uma lente fumê na topbar desktop, sem aninhar backdrop nos controles. */
 html:not(.is-ipad):not(.is-phone-layout) .topbar{
-  background:linear-gradient(158deg,rgba(255,255,255,.085),rgba(255,255,255,.018) 42%,transparent 78%),rgba(17,17,18,.55)!important;
-  border-color:rgba(255,255,255,.19)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 10px 28px rgba(0,0,0,.24)!important;
+  background:linear-gradient(158deg,rgba(236,230,218,.085),rgba(236,230,218,.018) 42%,transparent 78%),rgba(17,17,16,.55)!important;
+  border-color:rgba(236,230,218,.19)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.12),0 10px 28px rgba(0,0,0,.24)!important;
 }
 html:not(.is-ipad):not(.is-phone-layout) .topbar :is(.search,#syncTop){
-  background:linear-gradient(180deg,rgba(255,255,255,.038),rgba(255,255,255,.012)),rgba(15,15,16,.54)!important;
-  border-color:rgba(255,255,255,.13)!important;
+  background:linear-gradient(180deg,rgba(236,230,218,.038),rgba(236,230,218,.012)),rgba(17,17,16,.54)!important;
+  border-color:rgba(236,230,218,.13)!important;
 }

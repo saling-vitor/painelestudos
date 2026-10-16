@@ -77,8 +77,8 @@
     border:0!important;
     border-radius:11px!important;
     background:transparent!important;
-    color:#8f949c!important;
-    font-size:9px!important;
+    color:#857e72!important;
+    font-size:var(--fs-caption)!important;
     font-weight:750!important;
   }
 
@@ -90,7 +90,7 @@
   html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-label{
     display:block!important;
     margin:0!important;
-    font-size:9px!important;
+    font-size:var(--fs-tabbar)!important;
     line-height:1.1!important;
     white-space:nowrap!important;
   }

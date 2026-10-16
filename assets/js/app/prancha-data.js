@@ -59,20 +59,12 @@
   P.util = { DAY, MESES, MESES_LONGOS, DSEM, DSEM_LONGO, esc, safeJson, startDay, addDays, dateKey, parseDate, daysBetween, clamp, fmtMin, fmtSec, fmtClock, fmtDay, fmtDayYear, fmtLong, fmtNum, plural, pct, norm, call };
 
   /* ---------- pigmentos (cor semântica de categoria) ---------- */
-  const PIGMENTS = { latao: '#c3aa84', terracota: '#c08a6e', salvia: '#a3ad8a', argila: '#b98a8a', ametista: '#a294b4', ardosia: '#8fa1b3', patina: '#8fafa6', ocre: '#cfa35e', pedra: '#a8a29a' };
-  const CATEGORY_PIGMENT = {
-    'Legislação e Administração': 'latao', 'Português': 'argila', 'Raciocínio Lógico e Matemática': 'ametista', 'Informática': 'patina',
-    'Conhecimentos Gerais e Atualidades': 'pedra', 'Arquitetura e Tecnologia': 'ardosia', 'Projeto, Representação e BIM': 'ardosia',
-    'Obras, Gestão e Orçamento': 'ocre', 'Instalações e Sistemas Prediais': 'patina', 'Estruturas e Materiais': 'pedra',
-    'Urbanismo e Habitação': 'salvia', 'Infraestrutura e Mobilidade Urbana': 'terracota', 'Meio Ambiente e Sustentabilidade': 'salvia',
-    'Acessibilidade e Segurança': 'terracota', 'Patrimônio e Restauro': 'ametista', 'Planejamento e Políticas Públicas': 'ocre',
-    'Outros Conhecimentos Específicos': 'pedra', 'Outros': 'pedra'
-  };
-  const PIG_ORDER = ['latao', 'salvia', 'ardosia', 'terracota', 'ametista', 'patina', 'ocre', 'argila', 'pedra'];
-  const hash = (s) => { let h = 0; for (const ch of String(s || '')) h = (h * 31 + ch.charCodeAt(0)) | 0; return Math.abs(h); };
-  function categoryPigment(cat) { const name = CATEGORY_PIGMENT[String(cat || '').trim()] || PIG_ORDER[hash(cat) % PIG_ORDER.length]; return PIGMENTS[name]; }
+  /* mesmo mapa de pigmentos das telas antigas (state.js) */
+  const PIG = typeof PIGMENTS !== 'undefined' ? PIGMENTS : {};
+  const PIG_ORDER = ['latao', 'terracota', 'salvia', 'argila', 'ametista', 'ardosia', 'patina', 'ocre', 'pedra'];
+  function categoryPigment(cat) { return typeof window.categoryPigment === 'function' ? window.categoryPigment(cat) : '#c3aa84'; }
   function mapColor(m) { return categoryPigment(m?.category || 'Outros'); }
-  P.pigments = PIGMENTS;
+  P.pigments = PIG;
   P.categoryPigment = categoryPigment;
   P.mapColor = mapColor;
 
@@ -147,7 +139,7 @@
   function courseColor(c) {
     const list = courses().slice().sort((a, b) => String(a.createdAt || a.created_at || a.id).localeCompare(String(b.createdAt || b.created_at || b.id)));
     const i = Math.max(0, list.findIndex((x) => String(x.id) === String(c?.id)));
-    return PIGMENTS[PIG_ORDER[i % PIG_ORDER.length]];
+    return PIG[PIG_ORDER[i % PIG_ORDER.length]];
   }
   function courseLabel(c) {
     if (!c) return '';

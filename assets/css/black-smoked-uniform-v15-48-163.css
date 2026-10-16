@@ -4,24 +4,24 @@
    A ordem de importacao deste arquivo deve ser a ULTIMA folha CSS. */
 :root{
   --mm-smoke-opacity:.84;
-  --mm-smoke-card-black:rgba(20,20,21,.94);
+  --mm-smoke-card-black:rgba(17,17,16,.94);
   --mm-smoke-tint:0%;
   --mm-smoke-ink:rgba(0,0,0,var(--mm-smoke-opacity));
-  --mm-smoke-neutral:rgba(17,17,18,.93);
-  --mm-smoke-inset:rgba(27,27,28,.96);
-  --mm-smoke-shell:rgba(18,18,19,.88);
-  --mm-smoke-edge:rgba(255,255,255,.13);
-  --mm-smoke-rim:inset 0 1px 0 rgba(255,255,255,.085);
+  --mm-smoke-neutral:rgba(17,17,16,.93);
+  --mm-smoke-inset:rgba(25,24,23,.96);
+  --mm-smoke-shell:rgba(17,17,16,.88);
+  --mm-smoke-edge:rgba(236,230,218,.13);
+  --mm-smoke-rim:inset 0 1px 0 rgba(236,230,218,.085);
   --mm-smoke-filter:blur(18px) saturate(112%) contrast(105%);
   --mm-smoke-card-filter:blur(12px) saturate(105%);
-  --mm-smoke-default:#A8A8A8;
-  --mm-ivory-strong:#EEE9E0;
-  --mm-ivory-body:#CFC8BC;
-  --mm-ivory-muted:#989187;
+  --mm-smoke-default:#b9b2a5;
+  --mm-ivory-strong:#ece6da;
+  --mm-ivory-body:#b9b2a5;
+  --mm-ivory-muted:#857e72;
   --text:var(--mm-ivory-strong);
   --text2:var(--mm-ivory-body);
   --muted:var(--mm-ivory-muted);
-  --muted2:#807A70;
+  --muted2:#857e72;
   --mm-text-strong:var(--mm-ivory-strong);
   --mm-text:var(--mm-ivory-body);
   --mm-text-secondary:var(--mm-ivory-muted);
@@ -29,7 +29,7 @@
 
 /* 01 · Cor contextual. A cascata acompanha automaticamente a cor da capa,
    mesmo quando a extracao assincrona do HEX atualiza as custom properties. */
-html .app .content .map-card{--mm-uniform-tone:var(--mm-smoke-default);--mm-action-tone:var(--map-accent,var(--cover-accent,#A8A8A8))}
+html .app .content .map-card{--mm-uniform-tone:var(--mm-smoke-default);--mm-action-tone:var(--map-accent,var(--cover-accent,#b9b2a5))}
 html .app .content :is(.progress-map-row,.progress-insight-card){
   --mm-uniform-tone:var(--map-accent,var(--cover-accent,var(--accent,var(--mm-smoke-default))));
 }
@@ -42,7 +42,7 @@ html .app .content :is(.course-card,.course-library-card,.simulation-card,.simul
   --mm-card-surface:var(--mm-smoke-card-black);
 }
 html .app .content :is(.simulation-card,.simulation-recent-item){
-  --mm-uniform-tone:var(--simulation-accent,var(--cover-accent,var(--course-accent,#A8686D)));
+  --mm-uniform-tone:var(--simulation-accent,var(--cover-accent,var(--course-accent,#b8614e)));
 }
 html .app .content :is(.continue-card,.home-continue-section .continue-card){
   --mm-uniform-tone:var(--continue-accent,var(--map-accent,var(--cover-accent,var(--mm-smoke-default))));
@@ -67,7 +67,7 @@ html .app .content :is(
 ):not(.mm-smoke-opt-out){
   background:var(--mm-smoke-card-black)!important;
   
-  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(255,255,255,.11))!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--mm-smoke-default)) 34%,rgba(236,230,218,.11))!important;
   box-shadow:var(--mm-smoke-rim),0 6px 18px rgba(0,0,0,.10);
   /* Camada unica de vidro fume por card, sem tingimento cromatico. */
   -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
@@ -77,12 +77,12 @@ html .app .content :is(
 html .app .content :is(.home-review-section,.study-intelligence-panel,.study-plan-footer,.study-command-metrics){
   background:var(--mm-smoke-neutral)!important;
   
-  border-color:rgba(255,255,255,.085)!important;
+  border-color:rgba(236,230,218,.085)!important;
   -webkit-backdrop-filter:var(--mm-smoke-card-filter)!important;
   backdrop-filter:var(--mm-smoke-card-filter)!important;
 }
 html .app .content #homeStudyDashboard .priority-now-card::before{
-  background:var(--mm-uniform-tone,var(--map-accent,#A8A8A8))!important;
+  background:var(--mm-uniform-tone,var(--map-accent,#b9b2a5))!important;
   
 }
 html .app .content :is(.study-plan-item,.continue-card,.simulation-recent-item,.course-card,.map-card):is(:hover,:active){
@@ -115,7 +115,7 @@ html :is(.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar)
 html .topbar :is(.search,#syncTop,#installBtn),
 html .global-search-shell .search{
   background:var(--mm-smoke-inset)!important;
-  border-color:rgba(255,255,255,.15)!important;
+  border-color:rgba(236,230,218,.15)!important;
 }
 /* Precedencia explicita sobre os seletores responsivos anteriores.
    Nenhuma camada acinzentada nem gradiente no shell principal. */
@@ -136,19 +136,19 @@ html #globalSearchPanel{
    vidro PRETO sobre fundo preto, mas opacidade abaixo de 50% no iPad
    e de 70% no iPhone para a topografia continuar visivel. */
 html.is-ipad:not(.is-phone-layout) :is(.topbar,.bottom-nav){
-  background:rgba(18,18,19,.42)!important;
+  background:rgba(17,17,16,.42)!important;
 }
 html.mobile-topbar-compact.is-phone-layout .topbar,
 html.is-phone-layout :is(.topbar,.bottom-nav){
-  background:rgba(18,18,19,.58)!important;
+  background:rgba(17,17,16,.58)!important;
 }
 /* Menu flutuante neutro; a cor da capa fica nas bordas e simbolos. */
 html :is(.map-card,.course-card,.course-library-card,.simulation-card)
   :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn){
-  --mm-uniform-tone:var(--map-accent,var(--course-accent,var(--simulation-accent,var(--cover-accent,#B0B0B0))));
+  --mm-uniform-tone:var(--map-accent,var(--course-accent,var(--simulation-accent,var(--cover-accent,#b9b2a5))));
   background:var(--mm-smoke-shell)!important;
-  border-color:color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(255,255,255,.25))!important;
-  box-shadow:inset 0 1px rgba(255,255,255,.20)!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(236,230,218,.25))!important;
+  box-shadow:inset 0 1px rgba(236,230,218,.20)!important;
 }
 /* 04 · Navegacao: a secao ativa recebe uma camada uniforme. */
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
@@ -156,31 +156,31 @@ html.is-ipad:not(.is-phone-layout) body>.bottom-nav>button[data-nav].active,
 html .bottom-nav>button[data-nav].active,
 html.is-phone-layout body>.bottom-nav>.mobile-menu-trigger:is(.active,[aria-expanded="true"]),
 html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
-  --mm-uniform-tone:var(--nav-accent,#C8AF86);
-  background:var(--mm-active-fill,color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(10,10,11,.78)))!important;
-  border-color:color-mix(in srgb,var(--mm-uniform-tone) 52%,rgba(255,255,255,.18))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.15)!important;
+  --mm-uniform-tone:var(--nav-accent,#c3aa84);
+  background:var(--mm-active-fill,color-mix(in srgb,var(--mm-uniform-tone) 34%,rgba(10,10,9,.78)))!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone) 52%,rgba(236,230,218,.18))!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.18),inset 0 -1px 0 rgba(0,0,0,.15)!important;
   -webkit-backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
   backdrop-filter:var(--mm-active-blur,blur(16px) saturate(118%))!important;
 }
 /* A sidebar visível em Desktop/iPad possui fill próprio e inequívoco.
    O valor não depende de --mm-active-fill herdado do dock no iPad. */
 html:not(.is-phone-layout) body .app .side .nav-btn[data-nav].active{
-  background:color-mix(in srgb,var(--nav-accent,#C3AA84) 36%,#141414)!important;
+  background:color-mix(in srgb,var(--nav-accent,#C3AA84) 36%,#111110)!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active::before,
 html .bottom-nav>button[data-nav].active::before,
 html.is-phone-layout .bottom-nav>.mobile-menu-trigger[aria-expanded="true"]::before{
-  background:var(--nav-accent,#C8AF86)!important;
+  background:var(--nav-accent,#c3aa84)!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav].active :is(.ui-icon,.txt),
 html .bottom-nav>button[data-nav].active :is(.ui-icon,.bottom-nav-label),
 html.is-phone-layout .mobile-menu-option.is-current :is(.ui-icon,b){
-  color:var(--nav-accent,#D1B58D)!important;
+  color:var(--nav-accent,#c3aa84)!important;
 }
 html:not(.is-phone-layout) .side .nav-btn[data-nav]:not(.active):is(:hover,:focus-visible),
 html .bottom-nav>button[data-nav]:not(.active):is(:hover,:focus-visible){
-  background:rgba(255,255,255,.028)!important;
+  background:rgba(236,230,218,.028)!important;
 }
 /* 05 · Filtros e selecoes: cores homogeneas, sem mudar no hover. */
 html :is(
@@ -190,10 +190,10 @@ html :is(
   .ui-select-option[aria-selected="true"],.mobile-menu-option.is-current,
   .maps-sort-option.active,.progress-sort-option.active
 ){
-  --mm-uniform-tone:var(--map-accent,var(--course-accent,var(--nav-accent,#C8AF86)));
+  --mm-uniform-tone:var(--map-accent,var(--course-accent,var(--nav-accent,#c3aa84)));
   background:var(--mm-smoke-card-black)!important;
-  border-color:color-mix(in srgb,var(--mm-uniform-tone) 47%,rgba(255,255,255,.12))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.11)!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone) 47%,rgba(236,230,218,.12))!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.11)!important;
 }
 html :is(.category-btn.active,.course-study-filter.active,.progress-filter.active,.agenda-day.selected):is(:hover,:active){
   background:var(--mm-smoke-card-black)!important;
@@ -203,8 +203,8 @@ html :is(.category-btn.active,.course-study-filter.active,.progress-filter.activ
 html .app .content :is(.study-plan-item,.continue-card,.priority-now-card)
   :is(.primary,.secondary,[data-study-plan-open]){
   background:rgba(0,0,0,.86)!important;
-  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,#A8A8A8)) 44%,rgba(255,255,255,.15))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important;
+  border-color:color-mix(in srgb,var(--mm-uniform-tone,var(--map-accent,#b9b2a5)) 44%,rgba(236,230,218,.15))!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.12)!important;
 }
 /* Acoes coloridas por HEX contextual, mantendo os cards pretos;
    botoes flutuantes ... e estrela continuam neutros. */
@@ -227,7 +227,7 @@ html .app .content .course-card .course-footer .enter{
     .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,
     .mobile-menu-sheet,.modal-card,.planner-modal-card,.study-doubt-card,.course-sticky-bar,
     .study-timer-idle-menu,.progress-sort-sheet){
-    background:#080808!important;
+    background:#0a0a09!important;
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   }
 }
@@ -235,7 +235,7 @@ html .app .content .course-card .course-footer .enter{
   html:not(.is-phone-layout) .side .nav-btn[data-nav].active,
   html .bottom-nav>button[data-nav].active,
   html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav].is-current{
-    --mm-active-fill:color-mix(in srgb,var(--nav-accent,#C3AA84) 36%,#131313);
+    --mm-active-fill:color-mix(in srgb,var(--nav-accent,#C3AA84) 36%,#111110);
     --mm-active-blur:none;
   }
   html .app .content .course-card .course-footer .enter{
@@ -247,7 +247,7 @@ html.mm-reduced-transparency{
   --mm-active-blur:none;
 }
 html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal-card,.planner-modal-card,.study-doubt-card){
-  background:#080808!important;
+  background:#0a0a09!important;
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
 }
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
@@ -255,7 +255,7 @@ html.mm-reduced-transparency :is(.topbar,.bottom-nav,.global-search-panel,.modal
     .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,
     .mobile-menu-sheet,.modal-card,.planner-modal-card,.study-doubt-card,.course-sticky-bar,
     .study-timer-idle-menu,.progress-sort-sheet){
-    background:#080808!important;
+    background:#0a0a09!important;
     -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
   }
 }
@@ -277,19 +277,19 @@ html:not(.mm-reduced-transparency) .app .main .topbar :is(.search,#syncTop,#inst
 html:not(.mm-reduced-transparency) .app .main .topbar :is(.search,#syncTop,#installBtn):focus-within,
 html:not(.mm-reduced-transparency) .app .main .global-search-shell .search{
   background:var(--mm-smoke-inset)!important;
-  border-color:rgba(255,255,255,.15)!important;
+  border-color:rgba(236,230,218,.15)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
 html:not(.mm-reduced-transparency).is-phone-layout .app .main .topbar,
 html:not(.mm-reduced-transparency).mobile-topbar-compact.is-phone-layout .app .main .topbar{
-  background:rgba(18,18,19,.58)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 7px 20px rgba(0,0,0,.16)!important;
+  background:rgba(17,17,16,.58)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.15),0 7px 20px rgba(0,0,0,.16)!important;
   -webkit-backdrop-filter:var(--mm-smoke-filter)!important;
   backdrop-filter:var(--mm-smoke-filter)!important;
 }
 html:not(.mm-reduced-transparency).is-ipad:not(.is-phone-layout) .app .main .topbar{
-  background:rgba(18,18,19,.42)!important;
+  background:rgba(17,17,16,.42)!important;
 }
 /* Na preferência do usuário, não reintroduzir blur por uma regra responsiva. */
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
@@ -299,7 +299,7 @@ html:not(.mm-reduced-transparency).is-ipad:not(.is-phone-layout) .app .main .top
   html .app .main .topbar .search,
   html .app .main .topbar #syncTop,
   html .app .main .topbar #installBtn{
-    background:#080808!important;
+    background:#0a0a09!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
@@ -313,7 +313,7 @@ html.mm-reduced-transparency .app .course-sticky-bar,
 html.mm-reduced-transparency .app .modal-card,
 html.mm-reduced-transparency .app .planner-modal-card,
 html.mm-reduced-transparency .app .study-doubt-card{
-  background:#080808!important;
+  background:#0a0a09!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
@@ -325,7 +325,7 @@ html.mm-reduced-transparency .app .study-doubt-card{
   html .app .modal-card,
   html .app .planner-modal-card,
   html .app .study-doubt-card{
-    background:#080808!important;
+    background:#0a0a09!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
@@ -374,7 +374,7 @@ html .app .content :is(#homeReviewSection,.home-review-section,
 #homeStudyDashboard .study-command-metrics,.study-intelligence-panel){
   background:var(--mm-smoke-neutral)!important;
   background-image:none!important;
-  border-color:rgba(255,255,255,.085)!important;
+  border-color:rgba(236,230,218,.085)!important;
 }
 html .app .content :is(.study-command-metrics>button,
 .study-rhythm-kpis>article,.study-rhythm-distribution>div,.study-rhythm-empty,
@@ -384,8 +384,8 @@ html .app .content :is(.study-command-metrics>button,
 .study-plan-footer,.study-doubt-inbox.is-empty){
   background:var(--mm-smoke-inset)!important;
   background-image:none!important;
-  border-color:rgba(255,255,255,.095)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
+  border-color:rgba(236,230,218,.095)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.045)!important;
 }
 /* Cards com capas e botões continuam sendo elementos independentes do vidro. */
 /* Todos os titulos estruturais adotam o marfim da identidade, sem retirar
@@ -432,29 +432,29 @@ html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav]:not(.is-current)
    Transparencia reduzida converte a origem dos tokens em superficie opaca.
    Isso evita uma nova disputa de especificidade nos componentes reais. */
 html.mm-reduced-transparency{
-  --mm-smoke-card-black:#080808;
-  --mm-smoke-neutral:#080808;
-  --mm-smoke-inset:#080808;
-  --mm-smoke-shell:#080808;
+  --mm-smoke-card-black:#0a0a09;
+  --mm-smoke-neutral:#0a0a09;
+  --mm-smoke-inset:#0a0a09;
+  --mm-smoke-shell:#0a0a09;
   --mm-smoke-card-filter:none;
   --mm-smoke-filter:none;
 }
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
   :root{
-    --mm-smoke-card-black:#080808;
-    --mm-smoke-neutral:#080808;
-    --mm-smoke-inset:#080808;
-    --mm-smoke-shell:#080808;
+    --mm-smoke-card-black:#0a0a09;
+    --mm-smoke-neutral:#0a0a09;
+    --mm-smoke-inset:#0a0a09;
+    --mm-smoke-shell:#0a0a09;
     --mm-smoke-card-filter:none;
     --mm-smoke-filter:none;
   }
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   :root{
-    --mm-smoke-card-black:#080808;
-    --mm-smoke-neutral:#080808;
-    --mm-smoke-inset:#080808;
-    --mm-smoke-shell:#080808;
+    --mm-smoke-card-black:#0a0a09;
+    --mm-smoke-neutral:#0a0a09;
+    --mm-smoke-inset:#0a0a09;
+    --mm-smoke-shell:#0a0a09;
     --mm-smoke-card-filter:none;
     --mm-smoke-filter:none;
   }
@@ -465,7 +465,7 @@ html.mm-reduced-transparency{
   html.is-phone-layout #homeStudyDashboard .study-command-card,
   html .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
   html:not(.is-phone-layout) .app .side{
-    background:#080808!important;
+    background:#0a0a09!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
@@ -473,7 +473,7 @@ html.mm-reduced-transparency{
 html.mm-reduced-transparency.is-phone-layout #homeStudyDashboard .study-command-card,
 html.mm-reduced-transparency .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
 html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
-  background:#080808!important;
+  background:#0a0a09!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
@@ -481,7 +481,7 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
   html.is-phone-layout #homeStudyDashboard .study-command-card,
   html .app .content :is(.study-plan-item,.study-command-card,.study-now-card,.priority-now-card,.forecast-home-card,.continue-card,.simulation-recent-item,.simulation-card,.course-card,.course-library-card,.map-card,.progress-insight-card,.progress-global-panel,.progress-course,.study-heatmap-card,.study-agenda-calendar,.study-agenda-side,.study-automation-panel,.settings-control-panel,.settings-panel,.home-review-section,.study-intelligence-panel),
   html:not(.is-phone-layout) .app .side{
-    background:#080808!important;
+    background:#0a0a09!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
   }
