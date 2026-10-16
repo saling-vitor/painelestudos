@@ -65,6 +65,66 @@ async function inspectInvalidCloudMapStorageId(key){
 }
 async function requestRepairInvalidCloudMapStorageId(key){
   const check=await inspectInvalidCloudMapStorageId(key);
+  if(check.repairHtml){
+    askConfirm('Criar HTML com identificador exclusivo para '+(check.code||'mapa')+'?',
+      'O HTML original declara um identificador inválido. Será arquivado e mantido sem alteração. '+
+      'Uma CÓPIA corrigida receberá o namespace '+check.namespace+
+      ' e substituirá apenas a referência deste mapa. Nenhum progresso ou nota será movido, mesclado ou excluído. '+
+      'Antes de abrir o arquivo em outros aparelhos, confira seus backups locais. Confirma?',
+      async()=>{
+        const owner=await StudyCloud.me();
+        if(!StudyCloud.session()||String(owner?.id)!==check.ownerId)
+          throw new Error('A conta conectada mudou. A correção foi cancelada.');
+        const filter='user_id=eq.'+encodeURIComponent(check.ownerId);
+        const rows=await StudyCloud.rows('maps',filter+'&id=eq.'+encodeURIComponent(check.mapId)+
+          '&select=id,storage_id,storage_path');
+        if(rows?.length!==1||String(rows[0].storage_id||'')!==check.previousId||
+          String(rows[0].storage_path||'')!==check.path)
+          throw new Error('O mapa foi alterado em outro aparelho. Nenhuma cópia foi criada.');
+        const all=await StudyCloud.rows('maps',filter+'&select=id,storage_id');
+        if(!Array.isArray(all)||all.length>=1000||
+          all.some(row=>String(row.id)!==String(check.mapId)&&slug(row.storage_id)===check.namespace))
+          throw new Error('O namespace foi ocupado ou a verificação do banco está incompleta.');
+        const keys=['mindmap_state::'+check.namespace,'mindmap_notes::'+check.namespace,
+          'mindmap_state::mapa-mental','mindmap_notes::mapa-mental'];
+        for(const storageKey of keys){
+          const existing=await StudyCloud.rows('study_snapshots',filter+
+            '&storage_key=eq.'+encodeURIComponent(storageKey)+'&select=storage_key');
+          if(!Array.isArray(existing)||existing.length||localStorage.getItem(storageKey)!==null)
+            throw new Error('Existem estados locais/remotos a reconciliar. Nenhuma alteração foi feita.');
+        }
+        // A revisão é otimista: nunca reparar um documento cuja versão cloud
+        // mudou entre a inspeção e a confirmação.
+        const original=await StudyCloud.download(check.path);
+        if(original!==check.html)throw new Error('O HTML foi atualizado em outro aparelho. Verifique novamente.');
+        const pattern=/<meta\b(?=[^>]*\bname\s*=\s*["']mindmap-storage-id["'])[^>]*>/i;
+        if(!pattern.test(original))throw new Error('A meta de progresso não existe no HTML. Operação cancelada.');
+        const corrected=original.replace(pattern,
+          '<meta name="mindmap-storage-id" content="'+check.namespace+'">');
+        const current=state.cloudMaps.find(row=>String(row.id)===String(check.mapId));
+        if(!current)throw new Error('O mapa não está mais disponível na lista atual.');
+        await archiveMapVersion(current,original,owner);
+        const base=check.path.replace(/\.html?$/i,'');
+        const newPath=base+'-namespace-'+check.namespace+'-'+Date.now()+'.html';
+        const file=new Blob([corrected],{type:'text/html'});
+        // Sem upsert: nunca sobrescrever o HTML original ou outro arquivo.
+        await StudyCloud.upload(newPath,file,'text/html',false);
+        const copied=await StudyCloud.download(newPath);
+        if(copied!==corrected)throw new Error('Não foi possível verificar a cópia corrigida. Cadastro preservado.');
+        const updated=await StudyCloud.patch('maps',filter+'&id=eq.'+encodeURIComponent(check.mapId)+
+          '&storage_id=eq.'+encodeURIComponent(check.previousId)+
+          '&storage_path=eq.'+encodeURIComponent(check.path),
+          {storage_id:check.namespace,storage_path:newPath});
+        if(!Array.isArray(updated)||updated.length!==1)
+          throw new Error('O cadastro não confirmou a troca. O arquivo original continua disponível.');
+        current.storageId=check.namespace;
+        current.storage_path=newPath;
+        await loadCloud();
+        toast('Cópia HTML com namespace independente vinculada. Original e snapshots preservados.');
+        window.MeusMapasPranchas?.refresh?.();
+      },'Criar cópia corrigida');
+    return check;
+  }
   const coverage=[check.hasState?'progresso registrado':'sem progresso encontrado',
     check.hasNotes?'notas registradas':'sem notas encontradas'].join(' · ');
   askConfirm('Corrigir identificador do mapa '+(check.code||''),
