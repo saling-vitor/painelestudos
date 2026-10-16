@@ -137,6 +137,27 @@ test('Leitor V211 [G] · mesmo HTML aceita namespaces isolados e rejeita mapa se
   await expect(page.locator('.loading-card')).toContainText('HTML do mapa não declara namespace de progresso');
 });
 
+test('Leitor real V134 [G][T+M] · CF88 empacotada mantém namespace, conteúdo e toolbar',async({page})=>{
+  test.setTimeout(90000);
+  const href='cursos/porto-alegre/mapas/CF88_Constituicao_Federal_Estudo_V02.html';
+  const url='/reader.html?mode=local&href='+encodeURIComponent(href)+
+    '&storage-id=study-cf88-fundatec-arquiteto-poa';
+  await page.goto(url,{waitUntil:'domcontentloaded'});
+  await expect(page.locator('body.mindmap-app')).toBeVisible({timeout:45000});
+  const info=await expect.poll(()=>page.evaluate(()=>({
+    key:window.MINDMAP_V134?.stateKey||'',
+    notes:window.MINDMAP_V134?.notesKey||'',
+    title:document.title||'',
+    hasToolbar:!!document.querySelector('.toolbar'),
+    hasDoc:!!document.querySelector('main')
+  })),{timeout:45000});
+  await info.toMatchObject({
+    key:'mindmap_state::study-cf88-fundatec-arquiteto-poa',
+    notes:'mindmap_notes::study-cf88-fundatec-arquiteto-poa',
+    hasToolbar:true,hasDoc:true
+  });
+});
+
 test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({page})=>{
   await enter(page,'home');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
