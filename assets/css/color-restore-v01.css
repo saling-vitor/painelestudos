@@ -2,12 +2,12 @@
    Recupera a identidade anterior sem alterar layout, responsividade ou dados. */
 
 .nav-btn[data-nav="home"],.bottom-nav button[data-nav="home"]{--nav-accent:#c3aa84}
-.nav-btn[data-nav="courses"],.bottom-nav button[data-nav="courses"]{--nav-accent:#c3aa84}
-.nav-btn[data-nav="maps"],.bottom-nav button[data-nav="maps"]{--nav-accent:#c3aa84}
-.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:var(--brand-coral,#b8614e)}
-.nav-btn[data-nav="progress"],.bottom-nav button[data-nav="progress"]{--nav-accent:#c3aa84}
-.nav-btn[data-nav="agenda"],.bottom-nav button[data-nav="agenda"],.bottom-nav .bottom-nav-agenda{--nav-accent:#c3aa84}
-.nav-btn[data-nav="settings"],.bottom-nav button[data-nav="settings"]{--nav-accent:#c3aa84}
+.nav-btn[data-nav="courses"],.bottom-nav button[data-nav="courses"]{--nav-accent:#c08a6e}
+.nav-btn[data-nav="maps"],.bottom-nav button[data-nav="maps"]{--nav-accent:#a3ad8a}
+.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:#b98a8a}
+.nav-btn[data-nav="progress"],.bottom-nav button[data-nav="progress"]{--nav-accent:#a294b4}
+.nav-btn[data-nav="agenda"],.bottom-nav button[data-nav="agenda"],.bottom-nav .bottom-nav-agenda{--nav-accent:#8fa1b3}
+.nav-btn[data-nav="settings"],.bottom-nav button[data-nav="settings"]{--nav-accent:#a8a29a}
 
 html:not(.is-phone-layout) .side{
   border-right-color:rgba(216,197,158,.095);

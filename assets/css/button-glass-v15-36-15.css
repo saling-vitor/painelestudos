@@ -37,19 +37,19 @@
 
 /* [G] Smoked Liquid Glass V2 · auditoria de contraste
    Aumento de opacidade preto→preto NÃO tornava o vidro visível em capa preta.
-   Placa grafite neutra 48/48/50 a 88%, reconhecível sobre fotografia P&B.
-   Controles são estáticos (sem estado visual de hover/press).
-   Smoked Liquid Glass de capa: fumê escuro e constante em todas as
-   plataformas. O material não pode se alterar no mouseover ou toque.
-   38 × 38 px, sem brilho branco opaco nem efeitos de movimento. */
+   Vidro Nanquim · Micro: preto 40% com blur 10 e saturação 160, borda papel 16%.
+   Hover/foco escurece para 58% com borda latão; posição e tamanho fixos (38 × 38 px).
+   Lista sem capa continua fosca; reduzir transparência/contraste vira preto opaco. */
 
 :root{
-  --cover-liquid-border:rgba(236,230,218,.52);
-  --cover-liquid-highlight:rgba(236,230,218,.32);
-  --cover-liquid-highlight-soft:rgba(236,230,218,.12);
-  --cover-liquid-shadow:rgba(0,0,0,.42);
+  /* Vidro Nanquim · material 4 · Micro: preto 40%, blur 10 e saturação 160; borda papel 16%, filete 22%. */
+  --cover-liquid-border:rgba(236,226,208,.16);
+  --cover-liquid-highlight:rgba(236,226,208,.22);
+  --cover-liquid-shadow:rgba(0,0,0,.35);
   --cover-liquid-icon:#ece6da;
-  --cover-liquid-plate:rgba(36,35,32,.88);
+  --cover-liquid-plate:rgba(0,0,0,.40);
+  --cover-liquid-plate-hover:rgba(0,0,0,.58);
+  --cover-liquid-border-hover:rgba(216,197,158,.42);
 }
 
 /* Geometria canônica dos controles sobre capas. */
@@ -98,31 +98,30 @@ html:not(.is-ipad):not(.is-phone-layout) .simulation-card.has-cover .simulation-
   isolation:isolate;
   overflow:hidden;
   border:1px solid var(--cover-liquid-border)!important;
-  background:
-    radial-gradient(120% 96% at 12% -18%,
-      rgba(236,230,218,.19) 0%,
-      rgba(236,230,218,.055) 28%,
-      transparent 68%),
-    linear-gradient(155deg,
-      rgba(236,230,218,.065) 0%,
-      rgba(236,230,218,.025) 45%,
-      rgba(0,0,0,.12) 100%),
-    var(--cover-liquid-plate)!important;
+  background:var(--cover-liquid-plate)!important;
   background-blend-mode:normal!important;
   background-clip:padding-box!important;
   color:var(--cover-liquid-icon)!important;
-  -webkit-backdrop-filter:blur(14px) saturate(118%) contrast(104%)!important;
-  backdrop-filter:blur(14px) saturate(118%) contrast(104%)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(160%)!important;
+  backdrop-filter:blur(10px) saturate(160%)!important;
   box-shadow:
-    0 6px 18px var(--cover-liquid-shadow),
-    0 1px 2px rgba(0,0,0,.24),
     inset 0 1px 0 var(--cover-liquid-highlight),
-    inset 1px 0 0 var(--cover-liquid-highlight-soft),
-    inset 0 -1px 0 rgba(0,0,0,.34)!important;
+    inset 0 -1px 0 rgba(0,0,0,.4),
+    0 4px 12px var(--cover-liquid-shadow)!important;
   text-shadow:0 1px 2px rgba(0,0,0,.56)!important;
   transform:none!important;
   filter:none!important;
-  transition:none!important;
+  transition:background-color 180ms cubic-bezier(.2,.8,.2,1),border-color 180ms cubic-bezier(.2,.8,.2,1)!important;
+}
+/* Hover/foco do conceito: o micro escurece e ganha borda latão; não muda tamanho nem posição. */
+:is(
+  :is(#coursesGrid,#homeCourses) .course-card.course-library-card>.course-cover-controls .course-card-edit,
+  .map-card.has-cover:not(.map-list .map-card) > .map-admin-btn,
+  .map-card.has-cover:not(.map-list .map-card) > .fav,
+  .simulation-card.has-cover .simulation-card-menu-btn
+):is(:hover,:focus-visible){
+  background:var(--cover-liquid-plate-hover)!important;
+  border-color:var(--cover-liquid-border-hover)!important;
 }
 
 /* Mantém os pictogramas visualmente acima do material sem alterar o posicionamento do botão. */
@@ -219,9 +218,7 @@ html .map-list .map-card.has-cover > .fav{
     .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:
-      linear-gradient(160deg,rgba(236,230,218,.085),transparent 58%),
-      rgba(36,35,32,.94)!important;
+    background:#000000!important;
   }
 }
 
@@ -233,11 +230,11 @@ html .map-list .map-card.has-cover > .fav{
     .map-card.has-cover:not(.map-list .map-card) > .fav,
     .simulation-card.has-cover .simulation-card-menu-btn
   ){
-    background:rgba(36,35,32,.92)!important;
+    background:#000000!important;
     background-blend-mode:normal!important;
     -webkit-backdrop-filter:none!important;
     backdrop-filter:none!important;
-    border-color:rgba(236,230,218,.38)!important;
+    border-color:rgba(236,226,208,.38)!important;
   }
 }
 
@@ -251,7 +248,9 @@ html .map-list .map-card.has-cover > .fav{
   ){
     color:#ece6da!important;
     border-color:rgba(236,230,218,.68)!important;
-    background-color:rgba(17,17,16,.54)!important;
+    background:#000000!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
   }
 }
 

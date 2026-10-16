@@ -1365,7 +1365,9 @@ test('V15.38.1 [D] refinamento de Progresso, Simulados e Configurações mantém
     expect(simData.coverWidth/simData.cover).toBeGreaterThanOrEqual(1.95);
     expect(simData.coverWidth/simData.cover).toBeLessThanOrEqual(2.05);
     expect(simData.height).toBeLessThan(500);
-    expect(simData.codeSize).toBeLessThanOrEqual(8);
+    // Escala V15.50: código em MAIÚSCULAS no piso do conceito (eyebrow/caption, 11–13px)
+    expect(simData.codeSize).toBeGreaterThanOrEqual(11);
+    expect(simData.codeSize).toBeLessThanOrEqual(13);
     expect(Math.abs(simData.statusTop-simData.codeTop)).toBeLessThan(10);
 
     await page.goto('/#settings');
@@ -1684,7 +1686,7 @@ test('ícones das capas usam preenchimento e contorno preto em camadas separadas
   }
 });
 
-test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
+test('favorito ativo destaca somente a estrela em latão',async({page})=>{
   await page.goto('/#maps');
   const fav=page.locator('.map-card.has-cover>.fav').first();
   await expect(fav).toBeVisible();
@@ -1706,18 +1708,15 @@ test('favorito ativo destaca somente a estrela em amarelo',async({page})=>{
     };
   });
   expect(active.iconColor).not.toBe(off);
-  expect(active.rgb[0]).toBeGreaterThan(220);
-  expect(active.rgb[1]).toBeGreaterThan(170);
-  expect(active.rgb[2]).toBeLessThan(120);
+  // estrela ativa em latão-claro #d8c59e (o amarelo saiu da paleta)
+  expect(active.rgb).toEqual([216,197,158]);
   expect(active.buttonBackdrop).not.toBe('none');
 
   const canHover=await page.evaluate(()=>matchMedia('(hover:hover) and (pointer:fine)').matches);
   if(canHover){
     await fav.hover();
     const hoverRgb=await fav.locator('.cover-icon-fill').evaluate(el=>(getComputedStyle(el).color.match(/[\d.]+/g)||[]).slice(0,3).map(Number));
-    expect(hoverRgb[0]).toBeGreaterThan(220);
-    expect(hoverRgb[1]).toBeGreaterThan(170);
-    expect(hoverRgb[2]).toBeLessThan(120);
+    expect(hoverRgb).toEqual([216,197,158]);
   }
 });
 
@@ -3030,7 +3029,7 @@ test('iPhone real usa glass leve sem blur pesado nos cards',async({page},testInf
   expect(style.shadow).not.toBe('none');
 });
 
-test('iPhone real mantém hierarquia tipográfica compacta',async({page},testInfo)=>{
+test('iPhone real mantém hierarquia tipográfica no piso do conceito',async({page},testInfo)=>{
   test.skip(testInfo.project.name==='ipad','Validação específica de smartphone.');
   await page.setViewportSize({width:390,height:844});
   await page.goto('/#progress');
@@ -3047,7 +3046,9 @@ test('iPhone real mantém hierarquia tipográfica compacta',async({page},testInf
   expect(type.page).toBeGreaterThanOrEqual(16);
   expect(type.page).toBeGreaterThan(type.sub);
   expect(type.metric).toBeGreaterThan(type.label);
-  expect(type.label).toBeLessThanOrEqual(9);
+  // Escala V15.50: rótulo da métrica no piso do conceito (11px em maiúsculas, 12–13px em minúsculas)
+  expect(type.label).toBeGreaterThanOrEqual(11);
+  expect(type.label).toBeLessThanOrEqual(13);
 });
 
 
@@ -4222,7 +4223,7 @@ test('[D] Retomar onde parei preenche capa sem faixa inferior e contém o conte�
 
 
 /* PASSO 2 · Black Editorial + Liquid Glass refinado */
-test('V15.48 [G] Black Editorial neutro aplica tokens e evita glass-on-glass',async({page},testInfo)=>{
+test('V15.50 [G] Nanquim aplica tokens quentes e evita glass-on-glass',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
   const data=await page.evaluate(()=>{
@@ -4247,12 +4248,13 @@ test('V15.48 [G] Black Editorial neutro aplica tokens e evita glass-on-glass',as
       dockActiveFilter:readFilter(activeDock)
     };
   });
-  expect(data.bg).toBe('#040404');
-  expect(data.bgDeep).toBe('#020202');
-  expect(data.surface1).toBe('#0B0B0B');
-  expect(data.regular).toBe('rgba(9,9,9,.60)');
-  expect(data.dense).toBe('rgba(8,8,8,.82)');
-  expect(data.clear).toBe('rgba(12,12,12,.24)');
+  // Paleta Nanquim e Latão (V15.50): pretos quentes do conceito no lugar dos neutros antigos
+  expect(data.bg).toBe('#050505');
+  expect(data.bgDeep).toBe('#000000');
+  expect(data.surface1).toBe('#0A0A09');
+  expect(data.regular).toBe('rgba(10,10,9,.60)');
+  expect(data.dense).toBe('rgba(10,10,9,.82)');
+  expect(data.clear).toBe('rgba(10,10,9,.24)');
   expect(data.searchFilter).toBe('none');
   expect(data.syncFilter).toBe('none');
   if(testInfo.project.name!=='iphone-webkit')expect(data.sideActiveFilter).toBe('none');
@@ -4323,7 +4325,7 @@ test('V15.48.169 [G] conteúdo em vidro fumê e fallbacks de acessibilidade exis
 
 
 /* PASSO 3 · Dynamic Liquid Glass V2 · Optical Interaction */
-test('V15.48.169 [G] PASSO 3 · runtime óptico, Inter e vidro fumê nos cards estão ativos',async({page},testInfo)=>{
+test('V15.48.169 [G] PASSO 3 · runtime óptico, Archivo e vidro fumê nos cards estão ativos',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>window.MMDynamicGlass&&typeof window.MMDynamicGlass.snapshot==='function');
   await expect(page.locator('link[href*="dynamic-liquid-glass-v2.css"]')).toHaveCount(1);
@@ -4345,7 +4347,7 @@ test('V15.48.169 [G] PASSO 3 · runtime óptico, Inter e vidro fumê nos cards e
     };
   });
 
-  expect(data.font).toContain('Inter');
+  expect(data.font).toContain('Archivo');
   expect(data.opticalSurfaces).toBeGreaterThan(0);
   expect(data.opticalSurfaces).toBeLessThan(120);
   expect(data.topbarFilter).not.toBe('none');
@@ -4688,9 +4690,9 @@ test('V15.48 mantém modais fora da shell em Black Editorial neutro',async({page
     return result;
   });
   expect(visual.modalInsideApp).toBe(false);
-  expect(visual.inputBackground).toBe('rgb(10, 10, 10)');
+  expect(visual.inputBackground).toBe('rgb(10, 10, 9)');
   expect(visual.inputBackgroundImage).toBe('none');
-  expect(visual.focusBackground).toBe('rgb(10, 10, 10)');
+  expect(visual.focusBackground).toBe('rgb(10, 10, 9)');
   const focusRgb=(visual.focusBorder.match(/\d+/g)||[]).slice(0,3).map(Number);
   expect(focusRgb.length).toBe(3);
   expect(focusRgb[2]).toBeLessThanOrEqual(Math.max(focusRgb[0],focusRgb[1])+4);
@@ -4700,7 +4702,7 @@ test('V15.48 mantém modais fora da shell em Black Editorial neutro',async({page
 
 
 /* LISTA MESTRA V2 — navegação por identidade e superfícies flutuantes. */
-test('V15.48.2 [G] sete seções possuem identidades cromáticas distintas',async({page},testInfo)=>{
+test('V15.50 [G] sete seções possuem pigmentos distintos (conceito)',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>!document.documentElement.classList.contains('app-booting'));
   const data=await page.evaluate(()=>{
@@ -5181,7 +5183,7 @@ test('Topografia [T+M] · intensidade responsiva e fundo sem artefatos WebKit',a
   }
 });
 
-test('[G] Smoked Liquid Glass das capas: teste DOM real em curso, mapa e favorito', async({page})=>{
+test('[G] Vidro Micro das capas: teste DOM real em curso, mapa e favorito', async({page})=>{
   // Caso de regressão pós-publicação: conferir botões REAIS renderizados por
   // mapCard/courseCard, não somente cartões de fixture isolada.
   const backdropSupported=await page.evaluate(()=>CSS.supports('backdrop-filter','blur(1px)')||CSS.supports('-webkit-backdrop-filter','blur(1px)'));
@@ -5201,18 +5203,19 @@ test('[G] Smoked Liquid Glass das capas: teste DOM real em curso, mapa e favorit
       };
     });
     const base=await read();
-    expect(base.rgb[0], 'Controle real deve ter cor grafite, não preta').toBeGreaterThanOrEqual(42);
-    expect(base.rgb[0], 'Material grafite não deve ficar cinza claro').toBeLessThanOrEqual(58);
-    expect(base.alpha,'Controle real deve ter fundo com corpo').toBeGreaterThanOrEqual(backdropSupported?0.85:0.92);
-    expect(base.image,'Material conserva reflexo em gradiente').toContain('radial-gradient');
+    // Vidro Nanquim · Micro: preto 40% com blur 10/saturação 160 e borda papel 16%.
+    expect(base.rgb,'Micro é preto puro translúcido').toEqual([0,0,0]);
+    expect(base.alpha,'Micro a 40% sobre a capa').toBeCloseTo(backdropSupported?0.40:1,2);
+    if(backdropSupported)expect(base.filter).toContain('blur(10px)');
+    expect(base.border).toMatch(/236,\s*226,\s*208,\s*0?\.16/);
     expect(base.width,'Área do controle não reduzida').toBeGreaterThanOrEqual(36);
     expect(base.height,'Área do controle não reduzida').toBeGreaterThanOrEqual(36);
     if(finePointer){
-      await control.hover();
+      // a sincronização pode redesenhar o card: repete o hover até ler o nó atual
+      await expect.poll(async()=>{await control.hover();await page.waitForTimeout(220);return (await read()).alpha},{timeout:8000}).toBeCloseTo(0.58,2);
       const hovering=await read();
-      for(const key of ['rgb','alpha','image','shadow','border','filter']){
-        expect(hovering[key], 'Nenhuma alteração visual de '+key+' no hover real').toEqual(base[key]);
-      }
+      expect(hovering.border,'Hover ganha borda latão').toMatch(/216,\s*197,\s*158/);
+      expect([hovering.width,hovering.height],'Hover não muda tamanho').toEqual([base.width,base.height]);
     }
   };
   const course=page.locator('#homeCourses .course-card-edit').first();
@@ -5482,7 +5485,7 @@ test('V15.48.173 [D] plano diário usa TAGs e bordas temáticas, sem gradiente n
   expect(results[0].after).not.toBe(results[1].after);
 });
 
-test('V15.48.173 [G] Home preserva a capa Hoje, cor real e TAG da prioridade',async({page})=>{
+test('V15.50 [G] Home preserva a capa Hoje, pigmento da categoria e TAG da prioridade',async({page})=>{
   await page.goto('/#home');
   const root=page.locator('#homeStudyDashboard'),main=root.locator('.study-command-card'),priority=root.locator('.priority-now-card');
   await expect(main).toBeVisible();
@@ -5490,9 +5493,12 @@ test('V15.48.173 [G] Home preserva a capa Hoje, cor real e TAG da prioridade',as
   // Extrator cromático assíncrono: aguardar as imagens reais do mapa.
   await expect.poll(()=>main.locator('.study-command-art img').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
   await expect(priority.locator('.priority-why-tile img')).toHaveCount(0);
-  const verify=await page.evaluate(()=>{
+  // a Home pode ser redesenhada pela sincronização: tenta de novo até os dois cards existirem
+  let verify=null;
+  for(let attempt=0;attempt<6&&!verify;attempt++){if(attempt)await page.waitForTimeout(400);verify=await page.evaluate(()=>{
     const main=document.querySelector('#homeStudyDashboard .study-command-card');
     const priority=document.querySelector('#homeStudyDashboard .priority-now-card');
+    if(!main||!priority)return null;
     const next=window.StudyCoach?.snapshot?.().items?.[0]||null,
       current=next?.kind==='map'&&next.key?mapById(next.key):null,
       priorityCode=priority.querySelector('.priority-now-code')?.textContent?.trim()||'';
@@ -5500,8 +5506,9 @@ test('V15.48.173 [G] Home preserva a capa Hoje, cor real e TAG da prioridade',as
     const mainCover=current?mapCover(current):'assets/brand/topographic-editorial-v1/covers/home-hero.png';
     const mainAccent=current?mapAccentValue(current):'';
     const priorityAccent=matched?mapAccentValue(matched):'';
-    const derivedMainAccent=current?cachedCoverAccent(mainCover):'';
-    const derivedPriorityAccent=matched?cachedCoverAccent(mapCover(matched)):'';
+    // Conceito Pigmentos: a cor do card vem da categoria do mapa, não da capa
+    const derivedMainAccent=current?categoryPigment(current.category):'';
+    const derivedPriorityAccent=matched?categoryPigment(matched.category):'';
     const image=main.querySelector('.study-command-art img');
     const priorityTag=priority.querySelector('.priority-why-tile .priority-why-code');
     const accent=(node)=>node.style.getPropertyValue('--map-accent').trim();
@@ -5522,7 +5529,8 @@ test('V15.48.173 [G] Home preserva a capa Hoje, cor real e TAG da prioridade',as
       mainProgressColor:getComputedStyle(main.querySelector('.study-command-progress>i')).backgroundColor,
       priorityProgressColor:getComputedStyle(priority.querySelector('.priority-progress-track>i')).backgroundColor
     };
-  });
+  })}
+  expect(verify,'cards da Home renderizados').not.toBeNull();
   expect(verify.renderedCover).toBe(verify.mainCover);
   if(verify.hasPlannedMap){
     expect(verify.renderedMainAccent).toBe(verify.mainAccent);

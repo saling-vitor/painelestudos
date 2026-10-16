@@ -23,9 +23,11 @@ async function verifyGraphite(page) {
   expect(result.metrics).toBe('none');
   expect(result.cta).toContain('gradient');
   expect(result.colors.length).toBeGreaterThanOrEqual(2);
+  // Paleta Nanquim e Latão: pretos e papéis quentes — nunca azulados, tom contido
   for(const [r,g,b] of result.colors){
-    expect(Math.abs(r-g)).toBeLessThanOrEqual(2);
-    expect(Math.abs(b-g)).toBeLessThanOrEqual(2);
+    expect(b,'sem azul').toBeLessThanOrEqual(g+1);
+    expect(g).toBeLessThanOrEqual(r+1);
+    expect(r-b,'tom quente contido').toBeLessThanOrEqual(20);
   }
   if(result.supportsGlass)expect(result.bottomBlur).toContain('blur(');
 }

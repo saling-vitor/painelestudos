@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// LG-01–LG-05: smoked glass imóvel no hover; sem conta ou dados persistidos.
+// Vidro Nanquim · Micro sobre capas (conceito V15.50); sem conta ou dados persistidos.
 // The fixture shares the same classes and ancestor selectors as production cards.
-test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito e lista', async ({ page }) => {
+test('[G] Vidro Micro das capas: material do conceito, hover, toque, favorito e lista', async ({ page }) => {
   // The real app may display the "what's new" modal over the fixture.
   // Mark the current test build as acknowledged before app boot: no forced clicks
   // and no permanent change to the production modal behavior.
@@ -72,28 +72,24 @@ test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito 
   for (const control of controls) {
     await expect(control).toBeVisible();
     const base = await style(control);
-    expect(base.alpha, 'Vidro fumê deve ter densidade suficiente').toBeGreaterThanOrEqual(backdropSupported ? 0.85 : 0.92);
-    expect(base.alpha, 'Vidro grafite mantém translucidez').toBeLessThanOrEqual(backdropSupported ? 0.91 : 0.99);
-    expect(base.rgb[0], 'Placa não pode continuar quase preta sobre capas pretas').toBeGreaterThanOrEqual(42);
-    expect(base.rgb[0], 'Placa não pode tornar-se leitosa').toBeLessThanOrEqual(58);
-    expect(Math.abs(base.rgb[0]-base.rgb[1]), 'Cor neutra sem tonalidade azul').toBeLessThanOrEqual(2);
-    expect(base.backgroundImage).toContain('radial-gradient');
+    // Vidro Nanquim · Micro (conceito): preto 40%, blur 10 e saturação 160, borda papel 16%, sem lente.
+    expect(base.rgb, 'Micro é preto translúcido').toEqual([0, 0, 0]);
+    expect(base.alpha, 'Micro a 40%').toBeCloseTo(backdropSupported ? 0.40 : 1, 2);
+    expect(base.border).toMatch(/236,\s*226,\s*208,\s*0?\.16/);
     expect(base.transform).toBe('none');
-    expect(base.transitionDuration.split(',').every(n => Number.parseFloat(n) === 0),
-      'Botão não deve animar material/posição').toBe(true);
-    if (backdropSupported) expect(base.backdrop).not.toBe('none');
+    if (backdropSupported) expect(base.backdrop).toContain('blur(10px)');
     if (pointerFine) {
       await control.hover();
+      await page.waitForTimeout(250);
       const hovered = await style(control);
-      for (const property of ['alpha','backgroundColor','backgroundImage','boxShadow','backdrop','border','color','transform']) {
-        expect(hovered[property], `O hover não pode mudar ${property}`).toBe(base[property]);
-      }
+      expect(hovered.alpha, 'Hover escurece o micro para 58%').toBeCloseTo(0.58, 2);
+      expect(hovered.border, 'Hover ganha borda latão').toMatch(/216,\s*197,\s*158/);
+      expect(hovered.transform, 'Hover não move o botão').toBe('none');
     } else {
       await control.tap();
       const touched = await style(control);
-      for (const property of ['alpha','backgroundColor','backgroundImage','boxShadow','backdrop','border','transform']) {
-        expect(touched[property], `O toque não pode mudar ${property}`).toBe(base[property]);
-      }
+      expect(touched.transform, 'O toque não move o botão').toBe('none');
+      expect(touched.rgb).toEqual([0, 0, 0]);
     }
     await control.focus();
     const keyboard = await control.evaluate(el => ({
@@ -107,7 +103,8 @@ test('[G] Smoked Liquid Glass das capas: repouso igual a hover, toque, favorito 
 
   const favorite = page.locator('#glassAuditFixture .map-card > .fav.on > .ui-icon');
   await expect(favorite).toBeAttached();
-  expect((await style(favorite)).color).toMatch(/242,\s*201,\s*76/);
+  // favorito ativo em latão-claro (o amarelo saiu da paleta)
+  expect((await style(favorite)).color).toMatch(/216,\s*197,\s*158/);
 
   const listMenu = page.locator('#glassAuditFixture .map-list .map-admin-btn');
   const listStyle = await style(listMenu);

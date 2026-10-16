@@ -677,11 +677,14 @@ html.is-ipad:not(.is-phone-layout) .progress-map-row{min-height:60px!important}
   html.is-phone-layout .progress-course-score b{font-size:var(--fs-h3)!important}
   html.is-phone-layout .progress-course-summary{padding:0 9px 7px!important}
   html.is-phone-layout .progress-map-list{padding:0 8px 4px!important}
+  /* Escala V15.50: o texto passou a 13px; a linha mantém a densidade pelo espaço, não pela fonte. */
   html.is-phone-layout .progress-map-row{
     grid-template-columns:minmax(0,1fr) auto!important;
     min-height:58px!important;
-    padding:7px 2px!important;
+    padding:4px 2px!important;
   }
+  html.is-phone-layout .progress-map-copy{row-gap:2px!important}
+  html.is-phone-layout .progress-map-copy>b{line-height:1.2!important}
   html.is-phone-layout .progress-map-main{grid-template-columns:48px minmax(0,1fr)!important;gap:7px!important}
   html.is-phone-layout .progress-map-main>.compact-code{
     width:48px!important;min-width:48px!important;max-width:48px!important;height:28px!important;

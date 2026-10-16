@@ -436,13 +436,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .nav-btn[data-nav="home"],
 .bottom-nav button[data-nav="home"]{--nav-accent:#c3aa84}
 .nav-btn[data-nav="courses"],
-.bottom-nav button[data-nav="courses"]{--nav-accent:#c3aa84}
+.bottom-nav button[data-nav="courses"]{--nav-accent:#c08a6e}
 .nav-btn[data-nav="maps"],
-.bottom-nav button[data-nav="maps"]{--nav-accent:#857e72}
+.bottom-nav button[data-nav="maps"]{--nav-accent:#a3ad8a}
 .nav-btn[data-nav="progress"],
-.bottom-nav button[data-nav="progress"]{--nav-accent:#8c9a6c}
+.bottom-nav button[data-nav="progress"]{--nav-accent:#a294b4}
 .nav-btn[data-nav="settings"],
-.bottom-nav button[data-nav="settings"]{--nav-accent:#8c9a6c}
+.bottom-nav button[data-nav="settings"]{--nav-accent:#a8a29a}
 
 .nav-btn,
 .bottom-nav button{position:relative}
@@ -520,9 +520,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* ========================================
    V13.0 · SIMULATIONS
    ======================================== */
-:root{--brand-coral:#b8614e}
+:root{--brand-coral:#b98a8a}
 .icon-simulations{--ui-icon:var(--solid-simulations)}
-.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:var(--brand-coral)}
+.nav-btn[data-nav="simulations"],.bottom-nav button[data-nav="simulations"]{--nav-accent:#b98a8a}
 .simulations-head{align-items:center}
 .simulations-head .primary{border-color:color-mix(in srgb,var(--brand-coral) 34%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--brand-coral) 16%,transparent),color-mix(in srgb,var(--brand-coral) 6%,transparent));color:color-mix(in srgb,var(--brand-coral) 78%,white)}
 .simulation-toolbar{display:grid;grid-template-columns:minmax(240px,1fr) minmax(180px,.42fr) minmax(160px,.34fr);gap:10px;margin:0 0 14px}

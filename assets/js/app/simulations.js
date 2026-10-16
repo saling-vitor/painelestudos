@@ -68,13 +68,13 @@ function simulationCourseAccentInfo(s){
  const explicit=String(course?.accent||'').trim().toLowerCase();
  const courseImage=course&&typeof courseCover==='function'?courseCover(course):'';
  const simulationImage=simulationCover(s);
- const courseTone=courseImage?cachedCoverAccent(courseImage):'';
- const ownTone=simulationImage?cachedCoverAccent(simulationImage):'';
- const fallback=courseTone||(explicit&&explicit!=='gold'&&explicit!=='auto'&&accent[explicit]?accent[explicit]:CONTENT_NEUTRAL_ACCENT);
- return{value:ownTone||fallback,cover:courseImage};
+ // Pigmentos: simulados usam a cor da seção (argila), não a cor tirada da capa
+ return{value:PIGMENTS.argila,cover:courseImage};
 }
 function applySimulationCourseAccent(card){
  if(!card)return;
+ card.style.setProperty('--simulation-accent',PIGMENTS.argila);card.style.setProperty('--accent',PIGMENTS.argila);
+ card.dataset.simulationCourseAccentSrc=card.querySelector('.simulation-cover img,.simulation-recent-cover img')?.getAttribute('src')||card.dataset.simulationCourseCover||'pigmento';return;
  const ownImage=card.querySelector('.simulation-cover img,.simulation-recent-cover img');
  const courseSrc=card.dataset.simulationCourseCover||'';
  const ownSrc=ownImage?.getAttribute('src')||'';

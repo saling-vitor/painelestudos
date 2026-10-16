@@ -181,6 +181,11 @@ html :is(.course-primary-actions button,.bottom-nav>button,.side .nav-btn,.pr-ac
  html [data-mm-open]{animation:none}
  html :is(.course-primary-actions button,.bottom-nav>button,.side .nav-btn,.pr-acts button,.pr-bar .pr-tab):active{transform:none}
 }
+/* Micro (conceito): ao passar o mouse ou focar, escurece para 58% e ganha borda latão. Lista sem capa segue fosca. */
+html .app :is(.map-card:not(.map-list .map-card),.course-card,.course-library-card,.simulation-card)
+ :is(.map-admin-btn,.fav,.course-card-edit,.simulation-card-menu-btn):is(:hover,:focus-visible){
+ background:rgba(0,0,0,.58)!important;border-color:rgba(216,197,158,.42)!important;
+}
 /* Buttons: brass actions, matte inside glass; covers and artwork untouched. */
 html .app .content :is(.study-plan-item,.continue-card,.priority-now-card,.study-command-card,.course-card,.course-library-card,.simulation-card,.map-card,.simulation-recent-item)
  :is(.primary,.secondary,.course-footer .enter,[data-study-plan-open],button[data-open-simulation]):not(.course-card-edit):not(.simulation-card-menu-btn):not(.map-admin-btn):not(.fav){

@@ -4,18 +4,18 @@
 
 /* Intensidade topográfica consolidada em topographic-environment-v15-43.css. */
 
-/* 16 [G] Paleta exclusiva de navegação — NÃO altera acentos dos cursos/mapas. */
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#d8c59e }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="courses"] { --nav-accent:#b8614e }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="maps"] { --nav-accent:#8c9a6c }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"] { --nav-accent:#b8614e }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"] { --nav-accent:#8fa1b3 }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"] { --nav-accent:#8c9a6c }
-:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"] { --nav-accent:#8c9a6c }
-html.is-phone-layout .bottom-nav>.mobile-menu-trigger { --nav-accent:#8c9a6c }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"] { --nav-accent:#8c9a6c }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"] { --nav-accent:#b8614e }
-html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#8c9a6c }
+/* 16 [G] Pigmentos do menu (conceito): uma cor por seção, só no item ativo; "Mais" do celular em pedra. */
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="home"] { --nav-accent:#c3aa84 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="courses"] { --nav-accent:#c08a6e }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="maps"] { --nav-accent:#a3ad8a }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="simulations"] { --nav-accent:#b98a8a }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="progress"] { --nav-accent:#a294b4 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="agenda"] { --nav-accent:#8fa1b3 }
+:is(.side .nav-btn,.bottom-nav>button)[data-nav="settings"] { --nav-accent:#a8a29a }
+html.is-phone-layout .bottom-nav>.mobile-menu-trigger { --nav-accent:#a8a29a }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="agenda"] { --nav-accent:#8fa1b3 }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="simulations"] { --nav-accent:#b98a8a }
+html.is-phone-layout .mobile-menu-option[data-mobile-sheet-nav="settings"] { --nav-accent:#a8a29a }
 
 /* V15.48.3 [G] Cor EXCLUSIVA do item ativo. Inativos brancos,
    também em hover/focus: feedback neutro, sem mostrar outra cor. */
