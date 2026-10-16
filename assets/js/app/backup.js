@@ -4,10 +4,39 @@ function buildStudyBackup(){const mapStates={},mapNotes={},modified={};for(let i
 function downloadStudyBackup(){const backup=buildStudyBackup(),blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a'),d=new Date(),date=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');a.href=url;a.download='meus-mapas-backup-'+date+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);try{localStorage.setItem('studyapp.lastBackupRequestedAt',backup.createdAt)}catch{}window.SettingsControlCenter?.render?.();toast('Download do backup solicitado. Confirme o arquivo salvo na pasta Downloads.')}
 function validateStudyBackup(backup){return!!(backup&&backup.type==='meus-mapas-backup'&&Number(backup.schemaVersion)===1&&backup.data&&typeof backup.data==='object')}
 function mergeTimestampObject(current={},incoming={},timestampField=''){const out={...current};for(const[k,v]of Object.entries(incoming||{})){if(!timestampField){const incomingTs=activityTimestamp(v),currentTs=activityTimestamp(out[k]);if(incomingTs>currentTs)out[k]=v;continue}const incomingTs=activityTimestamp(v?.[timestampField]),currentTs=activityTimestamp(out[k]?.[timestampField]);if(incomingTs>currentTs)out[k]=v}return out}
-function applyBackupStorageGroup(group={},modified={}){for(const[key,value]of Object.entries(group||{})){if(typeof value!=='string')continue;const current=localStorage.getItem(key),currentTs=activityTimestamp(localStorage.getItem('studyapp.modified::'+key)),incomingTs=activityTimestamp(modified?.[key]);if(current===null||incomingTs>=currentTs){localStorage.setItem(key,value);if(incomingTs)localStorage.setItem('studyapp.modified::'+key,modified[key])}}}
-function replaceBackupStorageGroups(data){const remove=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i)||'';if(/^mindmap_(state|notes)::/.test(key)||/^studyapp\.modified::mindmap_(state|notes)::/.test(key))remove.push(key)}remove.forEach(key=>localStorage.removeItem(key));for(const[key,value]of Object.entries(data.mapStates||{}))if(typeof value==='string')localStorage.setItem(key,value);for(const[key,value]of Object.entries(data.mapNotes||{}))if(typeof value==='string')localStorage.setItem(key,value);for(const[key,value]of Object.entries(data.modified||{}))if(value)localStorage.setItem('studyapp.modified::'+key,value)}
+// Backups são arquivos externos: só podem escrever estados/notas dos mapas.
+// Impedir que uma chave arbitrária dentro do JSON sobrescreva configurações,
+// autenticação, cache ou qualquer namespace diferente de mindmap_*.
+function backupMapEntries(group,prefix){
+  if(!group||typeof group!=='object'||Array.isArray(group))return[];
+  return Object.entries(group).filter(([key,value])=>key.startsWith(prefix)&&key.length>prefix.length&&typeof value==='string');
+}
+function applyBackupStorageGroup(group={},modified={},prefix='mindmap_state::'){
+  for(const[key,value]of backupMapEntries(group,prefix)){
+    const current=localStorage.getItem(key),currentTs=activityTimestamp(localStorage.getItem('studyapp.modified::'+key)),
+      incomingTs=activityTimestamp(modified?.[key]);
+    if(current===null||incomingTs>=currentTs){
+      localStorage.setItem(key,value);
+      if(incomingTs)localStorage.setItem('studyapp.modified::'+key,modified[key]);
+    }
+  }
+}
+function replaceBackupStorageGroups(data){
+  const remove=[];
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i)||'';
+    if(/^mindmap_(state|notes)::/.test(key)||/^studyapp\.modified::mindmap_(state|notes)::/.test(key))remove.push(key);
+  }
+  remove.forEach(key=>localStorage.removeItem(key));
+  const entries=[...backupMapEntries(data.mapStates,'mindmap_state::'),...backupMapEntries(data.mapNotes,'mindmap_notes::')];
+  for(const[key,value]of entries){
+    localStorage.setItem(key,value);
+    const stamp=data.modified?.[key];
+    if(typeof stamp==='string'&&activityTimestamp(stamp))localStorage.setItem('studyapp.modified::'+key,stamp);
+  }
+}
 function rebuildSimulationResults(){state.simResults={};for(const[key,list]of Object.entries(state.simAttempts||{}))if(Array.isArray(list)&&list[0])state.simResults[key]={...list[0]};localStorage.setItem('studyapp.simResults',JSON.stringify(state.simResults))}
-async function restoreStudyBackup(backup,options={}){if(!validateStudyBackup(backup))throw new Error('Arquivo de backup inválido.');const data=backup.data||{},replace=options.replace===true;if(replace)replaceBackupStorageGroups(data);else{applyBackupStorageGroup(data.mapStates,data.modified);applyBackupStorageGroup(data.mapNotes,data.modified)}if(replace)favs.clear();for(const id of data.favorites||[])favs.add(id);localStorage.setItem('studyapp.favs',JSON.stringify([...favs]));state.mapActivity=replace?safeBackupJson(data.mapActivity,{}):mergeTimestampObject(state.mapActivity,data.mapActivity);localStorage.setItem('studyapp.mapActivity',JSON.stringify(state.mapActivity));state.simActivity=replace?safeBackupJson(data.simulationActivity,{}):mergeTimestampObject(state.simActivity,data.simulationActivity,'lastOpenedAt');localStorage.setItem('studyapp.simActivity',JSON.stringify(state.simActivity));state.simAttempts=replace?safeBackupJson(data.simulationAttempts,{}):mergeSimulationAttempts(state.simAttempts,data.simulationAttempts);localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));rebuildSimulationResults();
+async function restoreStudyBackup(backup,options={}){if(!validateStudyBackup(backup))throw new Error('Arquivo de backup inválido.');const data=backup.data||{},replace=options.replace===true;if(replace)replaceBackupStorageGroups(data);else{applyBackupStorageGroup(data.mapStates,data.modified,'mindmap_state::');applyBackupStorageGroup(data.mapNotes,data.modified,'mindmap_notes::')}if(replace)favs.clear();for(const id of data.favorites||[])favs.add(id);localStorage.setItem('studyapp.favs',JSON.stringify([...favs]));state.mapActivity=replace?safeBackupJson(data.mapActivity,{}):mergeTimestampObject(state.mapActivity,data.mapActivity);localStorage.setItem('studyapp.mapActivity',JSON.stringify(state.mapActivity));state.simActivity=replace?safeBackupJson(data.simulationActivity,{}):mergeTimestampObject(state.simActivity,data.simulationActivity,'lastOpenedAt');localStorage.setItem('studyapp.simActivity',JSON.stringify(state.simActivity));state.simAttempts=replace?safeBackupJson(data.simulationAttempts,{}):mergeSimulationAttempts(state.simAttempts,data.simulationAttempts);localStorage.setItem('studyapp.simAttempts',JSON.stringify(state.simAttempts));rebuildSimulationResults();
 if(data.simulationOverrides&&typeof data.simulationOverrides==='object'&&!Array.isArray(data.simulationOverrides)){
   state.simulationOverrides=replace?safeBackupJson(data.simulationOverrides,{}):
     mergePreferenceRecordMap(state.simulationOverrides||{},data.simulationOverrides);
