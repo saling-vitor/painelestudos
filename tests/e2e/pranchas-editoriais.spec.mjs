@@ -780,7 +780,43 @@ test('Configurações [G] · reparo de namespace exige HTML real e confirmação
     storage:state.cloudMaps[0].storageId,
     downloaded:window.__repairCalls.download,
     patches:window.__repairCalls.patch
-  }))).toEqual({storage:'sin-sintaxe-e2e',downloaded:1,patches:1});
+  }))).toEqual({storage:'sin-sintaxe-e2e',downloaded:2,patches:1});
+});
+
+test('Configurações [G] · reparo aborta quando HTML muda entre inspeção e confirmação',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    const owner='stale-html-owner-e2e',path=owner+'/curso/SIN.html';
+    const first='<meta name="mindmap-storage-id" content="sin-v01-e2e">'+
+      '<meta name="study-short-code" content="SIN"><main>Versão inicial</main>';
+    state.cloudCourses=[{id:'curso-e2e',title:'Curso E2E',status:'active'}];
+    state.cloudMaps=[{id:'map-stale-e2e',courseId:'curso-e2e',code:'SIN',
+      title:'Sintaxe',storageId:'—',storage_path:path}];
+    window.__staleHtmlRepair={downloads:0,patches:0};
+    StudyCloud.configured=()=>true;
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.me=async()=>({id:owner});
+    StudyCloud.download=async requested=>{
+      if(requested!==path)throw Error('Caminho diferente');
+      window.__staleHtmlRepair.downloads++;
+      return first+(window.__staleHtmlRepair.downloads>1?' revisado':'');
+    };
+    StudyCloud.rows=async(table,query)=>{
+      if(table==='study_snapshots')return [];
+      if(table==='maps'&&query.includes('select=storage_id,storage_path'))
+        return[{storage_id:'—',storage_path:path}];
+      if(table==='maps'&&query.includes('select=id,storage_id'))
+        return[{id:'map-stale-e2e',storage_id:'—'}];
+      throw Error('Consulta inesperada');
+    };
+    StudyCloud.patch=async()=>{window.__staleHtmlRepair.patches++;throw Error('Proibido');};
+    loadCloud=async()=>{};
+  });
+  await page.evaluate(()=>requestRepairInvalidCloudMapStorageId(mapKey(state.cloudMaps[0])));
+  await expect(page.locator('#confirmModal')).toHaveClass(/open/);
+  await page.locator('#confirmAccept').click();
+  await expect.poll(()=>page.evaluate(()=>window.__staleHtmlRepair.downloads)).toBe(2);
+  expect(await page.evaluate(()=>window.__staleHtmlRepair.patches)).toBe(0);
 });
 
 test('Configurações [G] · falha de leitura da nuvem nunca autoriza reparo do identificador',async({page})=>{
