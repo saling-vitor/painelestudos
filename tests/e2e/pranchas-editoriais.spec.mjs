@@ -905,6 +905,34 @@ test('Backup [G] · novos estados entram na exportação sem quebrar formato ant
   expect(report).toEqual({valid:true,schema:1,exam:true,goal:true,review:true,dashboard:true,courseLayout:true,sort:true});
 });
 
+test('Backup [G] · mesclar arquivo sem timestamp nunca sobrescreve progresso local',async({page})=>{
+  await enter(page,'settings');
+  const actual=await page.evaluate(async()=>{
+    const key='mindmap_state::e2e-backup-no-stamp',newKey='mindmap_notes::e2e-backup-new',
+      oldStamp=new Date(Date.now()-3*86400000).toISOString(),
+      recentStamp=new Date(Date.now()-86400000).toISOString();
+    localStorage.setItem(key,'{"done":99}');
+    localStorage.removeItem('studyapp.modified::'+key);
+    const base={type:'meus-mapas-backup',schemaVersion:1,data:{
+      mapStates:{[key]:'{"done":1}'},mapNotes:{[newKey]:'{"note":"backup"}'}
+    }};
+    await restoreStudyBackup(base,{silent:true});
+    const ambiguous={kept:localStorage.getItem(key)==='{"done":99}',
+      newNotes:localStorage.getItem(newKey)==='{"note":"backup"}'};
+    localStorage.setItem(key,'{"done":42}');
+    localStorage.setItem('studyapp.modified::'+key,recentStamp);
+    await restoreStudyBackup({...base,data:{...base.data,modified:{[key]:oldStamp}}},{silent:true});
+    const olderKept=localStorage.getItem(key)==='{"done":42}';
+    // Com carimbo comprovadamente mais novo, a mesclagem pode aplicar o backup.
+    const newest=new Date().toISOString();
+    await restoreStudyBackup({...base,data:{...base.data,modified:{[key]:newest}}},{silent:true});
+    const newerApplied=localStorage.getItem(key)==='{"done":1}'&&
+      localStorage.getItem('studyapp.modified::'+key)===newest;
+    return{...ambiguous,olderKept,newerApplied};
+  });
+  expect(actual).toEqual({kept:true,newNotes:true,olderKept:true,newerApplied:true});
+});
+
 test('Backup [G] · arquivo malformado é rejeitado antes de apagar progresso existente',async({page})=>{
   await enter(page,'settings');
   const report=await page.evaluate(async()=>{
