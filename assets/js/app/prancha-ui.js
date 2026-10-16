@@ -102,7 +102,7 @@
     if (root.contains(document.activeElement) && document.activeElement.matches('input,select,textarea') && !page.renderWhileTyping) return;
     const scrollY = window.scrollY;
     P.__frame = {};
-    try { page.render(root); root.dataset.rendered = String(Date.now()); }
+    try { page.render(root); reapplyArmed(root); root.dataset.rendered = String(Date.now()); }
     catch (e) { console.error('[Prancha] falha ao desenhar ' + view, e); root.innerHTML = '<div class="pr-empty"><b>Não foi possível desenhar esta prancha.</b><p>O conteúdo original continua disponível abaixo.</p></div>'; root.closest('.view')?.classList.remove('pr-on'); }
     finally { P.__frame = null; }
     if (Math.abs(window.scrollY - scrollY) > 2) window.scrollTo(0, scrollY);
@@ -150,10 +150,26 @@
   document.addEventListener('click', (e) => { if (!e.target.closest('.pr-menu')) closeMenus(); });
 
   /* confirmação na própria página: primeiro toque arma, segundo executa */
+  /* confirmação em dois toques; o estado sobrevive a um redesenho da prancha durante a janela de 5 s */
+  let armedState = null;
+  const armedId = (el) => (el.dataset.prAct || '') + '|' + (el.dataset.arg || '');
+  function disarm(el) { if (!el) return; delete el.dataset.armed; el.classList.remove('armed'); if (el.dataset.label) el.textContent = el.dataset.label; }
   function armed(el, run, label = 'Toque de novo para confirmar') {
-    if (el.dataset.armed === '1') { delete el.dataset.armed; el.classList.remove('armed'); el.textContent = el.dataset.label || el.textContent; run(); return; }
+    const id = armedId(el), live = armedState && armedState.id === id && armedState.until > Date.now();
+    if (el.dataset.armed === '1' || live) { armedState = null; disarm(el); run(); return; }
     el.dataset.label = el.textContent; el.dataset.armed = '1'; el.classList.add('armed'); el.textContent = label;
-    setTimeout(() => { if (el.dataset.armed === '1') { delete el.dataset.armed; el.classList.remove('armed'); el.textContent = el.dataset.label; } }, 5000);
+    armedState = { id, label, original: el.dataset.label, until: Date.now() + 5000 };
+    setTimeout(() => {
+      if (armedState && armedState.id === id && armedState.until <= Date.now() + 50) armedState = null;
+      document.querySelectorAll('.pr [data-armed="1"]').forEach((b) => { if (armedId(b) === id) disarm(b); });
+    }, 5000);
+  }
+  function reapplyArmed(root) {
+    if (!armedState || armedState.until <= Date.now()) { armedState = null; return; }
+    root.querySelectorAll('[data-pr-act]').forEach((b) => {
+      if (armedId(b) !== armedState.id) return;
+      b.dataset.label = armedState.original; b.dataset.armed = '1'; b.classList.add('armed'); b.textContent = armedState.label;
+    });
   }
   function confirmAction(title, message, run, label = 'Confirmar') {
     if (typeof askConfirm === 'function') return askConfirm(title, message, run, label);
