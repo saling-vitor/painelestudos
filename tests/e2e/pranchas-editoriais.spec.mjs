@@ -532,6 +532,23 @@ test('Configurações [G] · versão da nuvem segue versão global, sem V12.1 le
   expect(report.stored).toBe(report.expected);
 });
 
+test('Configurações [G] · alerta sobre storage_id cloud inválido sem inventar progresso',async({page})=>{
+  await enter(page,'settings');
+  await page.evaluate(()=>{
+    // Fixture de catálogo em memória, sem login ou escrita na nuvem real.
+    state.cloudCourses=[{id:'curso-invalid-id-e2e',title:'Curso de diagnóstico',status:'active'}];
+    state.cloudMaps=[{id:'map-invalid-id-e2e',courseId:'curso-invalid-id-e2e',
+      code:'SIN',title:'Sintaxe e pontuação',storageId:'—',storage_path:'fixture/e2e.html'}];
+    StudyCloud.session=()=>({user:{id:'diagnostic-e2e'}});
+    MeusMapasPranchas.refresh();
+  });
+  const warning=page.locator('#editorialSettings p.pr-note[role="status"]');
+  await expect(warning).toBeVisible();
+  await expect(warning).toContainText('SIN');
+  await expect(warning).toContainText('nenhuma migração é automática');
+  expect(await page.evaluate(()=>mapStorageNs(state.cloudMaps[0]))).toBe('');
+});
+
 test('Backup [G] · novos estados entram na exportação sem quebrar formato anterior',async({page})=>{
   await enter(page,'settings');
   const report=await page.evaluate(()=>{
