@@ -30,6 +30,14 @@ test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({
     await expect(page.locator('[data-view="'+view+'"]')).toHaveClass(/active/);
     await expect(page.locator('#'+id+' .pr-stamp')).toHaveCount(1);
     await expect(page.locator('#'+id+' .pr-stamp')).toBeVisible();
+    if(view==='home'){
+      const geometry=await page.locator('#editorialHome').evaluate(el=>({
+        width:el.getBoundingClientRect().width,
+        parent:el.parentElement.getBoundingClientRect().width
+      }));
+      expect(geometry.width,'A prancha do Início deve ocupar as duas colunas do grid antigo').toBeGreaterThan(geometry.parent*.82);
+      await expect(page.locator('#homeStudyDashboard .study-command-art img')).toHaveAttribute('loading','eager');
+    }
     mkdirSync('visual-audit',{recursive:true});
     await page.screenshot({path:'visual-audit/prancha-'+test.info().project.name+'-'+view+'.png',animations:'disabled'});
   }
