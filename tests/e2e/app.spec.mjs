@@ -3941,7 +3941,9 @@ test('[M] smartphone Mapas usa busca superior e mantém controles acessíveis',a
   expect(await page.locator('#allMapsSearch').isDisabled()).toBe(true);
   await expect(page.locator('.maps-library-view .maps-toolbar')).toBeHidden();
 
-  const title=await page.locator('#allMaps .map-card h3').first().innerText();
+  // textContent: innerText volta vazio enquanto o card (content-visibility:auto) ainda não foi desenhado
+  const title=(await page.locator('#allMaps .map-card h3').first().textContent()).trim();
+  expect(title).not.toBe('');
   await globalSearch.fill(title);
   await expect(page.locator('#allMaps .map-card')).toHaveCount(1);
   await globalSearch.fill('');
