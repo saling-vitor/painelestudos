@@ -34,6 +34,23 @@ test('Novidades [G] · exibe uma vez e respeita confirmação real do usuário',
   await expect(modal).not.toHaveClass(/open/);
 });
 
+test('Novidades [G][T+M] · consulta independente do registro do Service Worker',async({page})=>{
+  const response=await page.request.get('/version.json');
+  expect(response.ok()).toBeTruthy();
+  const release=await response.json();
+  test.skip(!release.showWhatsNew,'Versão sem janela de novidades');
+  // Interrompe deliberadamente o registro do SW: informações desta versão
+  // ainda precisam ser consultadas e apresentadas ao usuário.
+  await page.route('**/sw.js*',route=>route.abort());
+  await page.goto('/#home');
+  await expect(page.locator('html')).toHaveClass(/app-ready/);
+  await expect(page.locator('#whatsNewModal')).toHaveClass(/open/,{timeout:15000});
+  await expect(page.locator('#whatsNewVersion')).toContainText(release.label);
+  await page.locator('#whatsNewAccept').click();
+  await expect(page.locator('#whatsNewModal')).not.toHaveClass(/open/);
+  expect(await page.evaluate(()=>localStorage.getItem('studyapp.lastSeenVersion'))).toBe(release.version);
+});
+
 /* Contrato E2E das sete pranchas, executável sem dados de demonstração. */
 test('Simulados [G] · mensagens exigem iframe esperado e origem do portal',async({page})=>{
   await enter(page,'simulations');
