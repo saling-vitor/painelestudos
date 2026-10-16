@@ -606,6 +606,55 @@ test('Importador [G] · mapas do mesmo lote recebem namespaces únicos',async({p
   expect(report.metas).toEqual(report.ids);
 });
 
+test('Importação [G] · catálogo desatualizado não reutiliza namespace de outro aparelho',async({page})=>{
+  await enter(page,'courses');
+  const report=await page.evaluate(async()=>{
+    const owner='remote-namespace-owner-e2e',course='remote-namespace-course-e2e',
+      id='shared-remote-e2e',uploads=[],saved=[];
+    const original={
+      maps:state.cloudMaps,courses:state.cloudCourses,
+      session:StudyCloud.session,rows:StudyCloud.rows,upload:StudyCloud.upload,
+      upsert:StudyCloud.upsert,forget:StudyCloud.forgetCached,
+      cache:StudyCloud.cachePrivateBlob
+    };
+    state.cloudCourses=[{id:course,title:'Curso de vínculo E2E',status:'active'}];
+    state.cloudMaps=[];
+    StudyCloud.session=()=>({user:{id:owner}});
+    StudyCloud.rows=async(table,filter)=>{
+      if(table!=='maps'||!filter.includes('user_id=eq.'+owner))
+        throw Error('Consulta inesperada');
+      return[{storage_id:id}];
+    };
+    StudyCloud.upload=async(path,blob)=>{uploads.push({path,html:await blob.text()});return true};
+    StudyCloud.upsert=async(table,row)=>{saved.push({table,...row});return[{id:'created-remote-namespace-e2e'}]};
+    StudyCloud.forgetCached=async()=>{};
+    StudyCloud.cachePrivateBlob=async()=>{};
+    const candidate={code:'E2ER',declaredCode:'E2ER',title:'Mapa isolado',
+      shortTitle:'Mapa isolado',version:'V01',board:'Banca',contest:'Concurso',
+      topics:1,branches:1,category:'Outros',filename:'remote-namespace-e2e.html',
+      storageId:id,html:'<!doctype html><head><meta name="mindmap-storage-id" content="'+id+'">'+
+        '<meta name="study-short-code" content="E2ER"></head><body class="mindmap-app"></body></html>'};
+    try{
+      const reserved=await reserveCloudMapNamespaces({id:owner},new Set());
+      await importOneMap(candidate,course,{id:owner},reserved);
+      const declared=new DOMParser().parseFromString(uploads[0].html,'text/html')
+        .querySelector('meta[name="mindmap-storage-id"]')?.content;
+      return{remoteReserved:reserved.has(id),oldIdUsed:saved[0].storage_id===id,
+        newId:saved[0].storage_id,declared,uploads:uploads.length};
+    }finally{
+      state.cloudMaps=original.maps;state.cloudCourses=original.courses;
+      StudyCloud.session=original.session;StudyCloud.rows=original.rows;
+      StudyCloud.upload=original.upload;StudyCloud.upsert=original.upsert;
+      StudyCloud.forgetCached=original.forget;StudyCloud.cachePrivateBlob=original.cache;
+    }
+  });
+  expect(report.remoteReserved).toBe(true);
+  expect(report.oldIdUsed).toBe(false);
+  expect(report.newId).toMatch(/^study-e2er-remote-namespace-course-e2e/);
+  expect(report.declared).toBe(report.newId);
+  expect(report.uploads).toBe(1);
+});
+
 test('Configurações [G] · reparo de namespace exige HTML real e confirmação sem migrar progresso',async({page})=>{
   await enter(page,'settings');
   await page.evaluate(()=>{
