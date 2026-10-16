@@ -194,6 +194,18 @@ test('Sete pranchas [G][T+M] · navegação e carimbos usam estado real',async({
     await page.screenshot({path:'visual-audit/prancha-'+test.info().project.name+'-'+view+'.png',animations:'disabled'});
   }
 });
+test('Home [G][T+M] · Todos automático substitui banner e cursos legados',async({page})=>{
+  await enter(page,'home');
+  const auto=await page.locator('#editorialHome [data-pr-home="todos"]').getAttribute('aria-pressed');
+  // Sem prova cadastrada, "Todos" é a vista automática, sem seleção manual.
+  if(auto==='true'){
+    await expect(page.locator('[data-view="home"]')).toHaveAttribute('data-pr-manual-home','false');
+    await expect(page.locator('[data-view="home"] > .hero')).toBeHidden();
+    await expect(page.locator('[data-view="home"] > .home-courses-section')).toBeHidden();
+    await expect(page.locator('#editorialHome .pr-stamp')).toBeVisible();
+  }
+});
+
 test('Cinco telas da Home [G][T+M] · seleção não cria sessão paralela',async({page})=>{
   await enter(page,'home');
   await expect(page.locator('html')).toHaveClass(/app-ready/);
