@@ -363,11 +363,18 @@
   function exportAgendaIcs(){
     const dashboard=agendaData(),manual=(dashboard.agenda||[]).filter(item=>!item.deleted),topics=dueTopicRows().slice(0,100).map(row=>({id:'topic-'+row.id,date:dateKey(row.dueAt),title:'Revisão · '+(row.map.code||'MAP')+' · '+row.title,kind:'review'})),exams=combinedCourses().map(course=>{const d=parseDate(course.examDate);return d?{id:'exam-'+course.id,date:dateKey(d),title:'Prova · '+course.title,kind:'exam'}:null}).filter(Boolean);
     const events=[...manual,...topics,...exams],stamp=nowIso().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
-    const clean=value=>String(value||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+    const clean=value=>String(value||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');
+    /* V15.52 · F4: linhas dobradas em 75 octetos (RFC 5545), horário quando o bloco tem início e fim pela duração. */
+    const enc=new TextEncoder(),fold=line=>{const out=[];let cur='',size=0;for(const ch of line){const n=enc.encode(ch).length;if(size+n>(out.length?74:75)){out.push(cur);cur='';size=0}cur+=ch;size+=n}out.push(cur);return out.join('\r\n ')};
+    const two=n=>String(n).padStart(2,'0'),local=dt=>dt.getFullYear()+two(dt.getMonth()+1)+two(dt.getDate())+'T'+two(dt.getHours())+two(dt.getMinutes())+'00';
     const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Meus Mapas//Agenda de Estudos//PT-BR','CALSCALE:GREGORIAN'];
     for(const item of events){
       const d=String(item.date||'').replace(/-/g,'');if(!/^\d{8}$/.test(d))continue;
-      lines.push('BEGIN:VEVENT','UID:'+clean(item.id||uid('study'))+'@meus-mapas','DTSTAMP:'+stamp,'DTSTART;VALUE=DATE:'+d,'SUMMARY:'+clean(item.title||'Estudo'),'END:VEVENT');
+      const timed=/^\d{2}:\d{2}$/.test(String(item.start||''))&&Number(item.minutes)>0;
+      let when;
+      if(timed){const[h,m]=item.start.split(':').map(Number),a=new Date(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8),h,m),b=new Date(a.getTime()+Number(item.minutes)*60000);when=['DTSTART:'+local(a),'DTEND:'+local(b)]}
+      else{const a=new Date(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)+1);when=['DTSTART;VALUE=DATE:'+d,'DTEND;VALUE=DATE:'+a.getFullYear()+two(a.getMonth()+1)+two(a.getDate())]}
+      lines.push('BEGIN:VEVENT','UID:'+clean(item.id||uid('study'))+'@meus-mapas','DTSTAMP:'+stamp,...when,fold('SUMMARY:'+clean(item.title||'Estudo')),...(item.kind==='review'?['CATEGORIES:Revisão']:[]),'END:VEVENT');
     }
     lines.push('END:VCALENDAR');
     const blob=new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='meus-mapas-agenda.ics';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);

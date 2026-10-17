@@ -33,7 +33,7 @@
     if (ex?.date && ex.date >= start && ex.date <= end) g += '<line x1="' + x(ex.date) + '" x2="' + x(ex.date) + '" y1="' + T + '" y2="' + y(0) + '" stroke="var(--pr-oxido)" stroke-width="1.5"/><text x="' + (x(ex.date) - 5) + '" y="' + y(total * 0.1) + '" text-anchor="end" style="fill:var(--pr-oxido)">prova ' + fmtDay(ex.date) + '</text>';
     g += '<circle cx="' + x(today) + '" cy="' + y(p.marked) + '" r="4.5" fill="var(--pr-latao)" stroke="#000" stroke-width="2"/><text x="' + (x(today) - 8) + '" y="' + (y(p.marked) - 10) + '" text-anchor="end" style="fill:var(--pr-papel)">' + p.marked + '</text>';
     const note = keys.length < 2 ? '<p class="pr-mono">A curva começou a ser registrada em ' + esc(fmtDay(pts[0].d)) + '. Cada dia em que o app abre grava um ponto; dias anteriores não são reconstruídos.</p>' : '';
-    return '<div class="pr-chart"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Tópicos marcados ao longo do tempo">' + g + '</svg></div>' + note;
+    return '<div class="pr-chart" tabindex="0" role="region" aria-label="Curva de avanço (role para os lados)"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Tópicos marcados ao longo do tempo">' + g + '</svg></div>' + note;
   }
   function heat() {
     const days = P.time.days(), keys = Object.keys(days).filter((k) => days[k] > 0).sort(), first = keys[0] ? U.parseDate(keys[0]) : null;

@@ -47,7 +47,7 @@
     return '<div class="pr-mini" role="img" aria-label="Planta: ' + list.length + ' mapas">' + list.map((m) => { const p = P.data.prog(m); return '<i style="--w:' + Math.max(4, p.total || 4) + ';--p:' + U.pct(p.marked, p.total) + '%;--c:' + (color || P.mapColor(m)) + '" title="' + esc((m.code || '') + ' · ' + U.pct(p.marked, p.total) + '%') + '"></i>'; }).join('') + '</div>';
   }
   function top({ eyebrow = '', title = '', desc = '', tabs = null, active = '', label = '', tabAct = 'tab', right = '' } = {}) {
-    const tabHtml = tabs ? '<div class="pr-tabs" role="tablist" aria-label="' + esc(label || title) + '">' + tabs.map((t) => '<button type="button" class="pr-tab" role="tab" data-pr-act="' + tabAct + '" data-arg="' + esc(t.id) + '" aria-selected="' + (t.id === active) + '" aria-pressed="' + (t.id === active) + '"' + (t.disabled ? ' disabled' : '') + '>' + esc(t.label) + (t.badge !== undefined && t.badge !== '' ? '<small>' + esc(t.badge) + '</small>' : '') + '</button>').join('') + '</div>' : '';
+    const tabHtml = tabs ? '<div class="pr-tabs" role="tablist" aria-label="' + esc(label || title) + '">' + tabs.map((t) => '<button type="button" class="pr-tab" role="tab" data-pr-act="' + tabAct + '" data-arg="' + esc(t.id) + '" aria-selected="' + (t.id === active) + '"' + (t.disabled ? ' disabled' : '') + '>' + esc(t.label) + (t.badge !== undefined && t.badge !== '' ? '<small>' + esc(t.badge) + '</small>' : '') + '</button>').join('') + '</div>' : '';
     return '<header class="pr-top"><div class="pr-head"><div>' + (eyebrow ? '<div class="pr-eyebrow">' + esc(eyebrow) + '</div>' : '') + (title ? '<h1>' + esc(title) + '</h1>' : '') + (desc ? '<p>' + desc + '</p>' : '') + '</div>' + right + '</div>' + (tabHtml || label ? '<div class="pr-bar">' + (label ? '<span class="pr-lbl">' + esc(label) + '</span>' : '') + tabHtml + '</div>' : '') + '</header>';
   }
   const card = (inner, cls = '', a = {}) => '<section class="pr-card ' + cls + '"' + attrs(a) + '>' + inner + '</section>';
@@ -85,6 +85,88 @@
     host.classList.add('pr-on');
     return root;
   }
+  /* P1-9 · índice de seções no celular: atalhos para os blocos da prancha (Início e Progresso). */
+  const SECNAV_VIEWS = new Set(['home', 'progress']);
+  function secLabel(card, view) {
+    if (view === 'progress' && card.classList.contains('pr-carimbo')) return 'Resumo';
+    const k = card.querySelector('.pr-head .pr-k, .pr-k');
+    const h = card.querySelector('h3, h2');
+    let t = ((k && k.textContent) || (h && h.textContent) || '').trim();
+    t = t.split(' · ')[0].trim();
+    return t.length > 28 ? t.slice(0, 26) + '…' : t;
+  }
+  function buildSecNav(view, root) {
+    if (!SECNAV_VIEWS.has(view)) return;
+    const cards = [...root.querySelectorAll(':scope > .pr-card, :scope > .pr-two > .pr-card, :scope > .pr-three > .pr-card, :scope > div > .pr-card')]
+      .filter((c, i, a) => a.indexOf(c) === i && !c.closest('.pr-top'));
+    const seen = new Set();
+    const items = [];
+    cards.forEach((c, i) => {
+      const label = secLabel(c, view);
+      if (!label || seen.has(label)) return;
+      seen.add(label);
+      if (!c.id) c.id = 'pr-s-' + view + '-' + i;
+      items.push('<a href="#' + c.id + '" data-pr-act="secnav" data-arg="' + c.id + '">' + esc(label) + '</a>');
+    });
+    if (items.length < 3) return;
+    const nav = document.createElement('nav');
+    nav.className = 'pr-toc pr-secnav';
+    nav.setAttribute('aria-label', 'Seções desta prancha');
+    nav.innerHTML = items.join('');
+    const top = root.querySelector(':scope > .pr-top');
+    if (top) top.after(nav); else root.prepend(nav);
+  }
+  /* No celular e no iPad a barra do app não fica fixa e o position:sticky das pranchas não tem efeito (o <body> vira contêiner de rolagem).
+     Em vez de mexer nesse comportamento global, o índice é fixado por JS quando passa do topo, com um espaço reservado. */
+  function unstick(nav) { nav.classList.remove('is-stuck'); nav.style.left = ''; nav.style.width = ''; nav.__ph?.remove(); nav.__ph = null; }
+  let stickyTopFor = '';
+  function syncStickyTop() {
+    const key = innerWidth + 'x' + innerHeight;
+    if (stickyTopFor === key) return;
+    stickyTopFor = key;
+    const tb = document.querySelector('.topbar-wrap');
+    const pinned = tb && getComputedStyle(tb).position === 'sticky' && tb.offsetHeight > 0;
+    document.documentElement.style.setProperty('--pr-sticky-top', (pinned ? tb.offsetHeight + 1 : 8) + 'px');
+  }
+  function stickNav() {
+    syncStickyTop();
+    const nav = document.querySelector('.view.active .pr .pr-toc');
+    document.querySelectorAll('.pr-toc.is-stuck').forEach((n) => { if (n !== nav) unstick(n); });
+    if (!nav) return;
+    const html = document.documentElement;
+    const tb = document.querySelector('.topbar-wrap');
+    const stickyBroken = !tb || tb.getBoundingClientRect().bottom <= 0;
+    const needsPin = nav.offsetHeight > 0 && stickyBroken;
+    if (!needsPin || html.classList.contains('mobile-menu-open')) { unstick(nav); return; }
+    const ref = (nav.__ph || nav).getBoundingClientRect().top;
+    if (ref < 6 && !nav.__ph) {
+      const ph = document.createElement('div');
+      ph.className = 'pr-toc-ph'; ph.style.height = nav.offsetHeight + 'px'; ph.setAttribute('aria-hidden', 'true');
+      nav.before(ph); nav.__ph = ph; nav.classList.add('is-stuck');
+    }
+    if (nav.__ph) { const r = nav.__ph.getBoundingClientRect(); nav.style.left = Math.max(8, r.left - 6) + 'px'; nav.style.width = (r.width + 12) + 'px'; } else if (ref >= 6 && nav.__ph) unstick(nav);
+    if (!nav.classList.contains('pr-secnav')) return;
+    let cur = null;
+    nav.querySelectorAll('a[data-arg]').forEach((a) => { const t = document.getElementById(a.dataset.arg); if (t && t.getBoundingClientRect().top < 150) cur = a; });
+    nav.querySelectorAll('a[aria-current]').forEach((a) => { if (a !== cur) a.removeAttribute('aria-current'); });
+    if (cur && !cur.hasAttribute('aria-current')) {
+      cur.setAttribute('aria-current', 'location');
+      const l = cur.offsetLeft - 12; if (l < nav.scrollLeft || cur.offsetLeft + cur.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = Math.max(0, l);
+    }
+  }
+  let stickRaf = 0;
+  const onStickScroll = () => { if (!stickRaf) stickRaf = requestAnimationFrame(() => { stickRaf = 0; stickNav(); }); };
+  window.addEventListener('scroll', onStickScroll, { passive: true });
+  window.addEventListener('resize', onStickScroll, { passive: true });
+  P.stickNav = stickNav;
+  actions.secnav = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
+  };
+
   const queue = new Set();
   let raf = 0;
   function schedule(view) {
@@ -102,10 +184,11 @@
     if (root.contains(document.activeElement) && document.activeElement.matches('input,select,textarea') && !page.renderWhileTyping) return;
     const scrollY = window.scrollY;
     P.__frame = {};
-    try { page.render(root); reapplyArmed(root); root.dataset.rendered = String(Date.now()); }
+    try { page.render(root); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
     catch (e) { console.error('[Prancha] falha ao desenhar ' + view, e); root.innerHTML = '<div class="pr-empty"><b>Não foi possível desenhar esta prancha.</b><p>O conteúdo original continua disponível abaixo.</p></div>'; root.closest('.view')?.classList.remove('pr-on'); }
     finally { P.__frame = null; }
     if (Math.abs(window.scrollY - scrollY) > 2) window.scrollTo(0, scrollY);
+    stickNav();
     document.body.classList.toggle('pr-session-home', view === 'home' && root.dataset.screen === 'sessao');
   }
   P.schedule = schedule;

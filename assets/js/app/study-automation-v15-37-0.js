@@ -592,7 +592,10 @@
     wrapImportInference();
   }
 
+  let waitingIndex=false,waitForce=false;
   function scheduleMaintenance(force=false){
+    /* V15.52: com o índice de busca ainda chegando, a manutenção espera por ele (títulos e tópicos completos) */
+    if(state?.searchIndexPending&&window.studySearchIndexReady){waitForce=waitForce||force;if(!waitingIndex){waitingIndex=true;window.studySearchIndexReady.finally(()=>{const f=waitForce;waitingIndex=false;waitForce=false;scheduleMaintenance(f)})}return}
     clearTimeout(maintenanceTimer);
     maintenanceTimer=setTimeout(()=>{try{syncAutoAgenda({force});renderAllAutomation()}catch(error){console.warn('Automação de estudos não pôde ser atualizada.',error)}},force?20:180);
   }
@@ -617,7 +620,8 @@
     const wrapped=function(payload={}){
       const key=state?.simulationReaderKey||'';
       const result=base.apply(this,arguments);
-      try{scheduleSimulationRecovery(key,payload)}catch(error){console.warn('Recuperação pós-simulado não pôde ser criada.',error)}
+      const recover=()=>{try{scheduleSimulationRecovery(key,payload)}catch(error){console.warn('Recuperação pós-simulado não pôde ser criada.',error)}};
+      if(state?.searchIndexPending&&window.studySearchIndexReady)window.studySearchIndexReady.finally(recover);else recover();
       return result;
     };
     wrapped.__automationWrapped=true;window.recordSimulationResult=wrapped;

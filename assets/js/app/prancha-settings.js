@@ -34,18 +34,22 @@
     const upd = typeof appUpdateState !== 'undefined' && appUpdateState.updateAvailable;
     const syncErr = typeof state !== 'undefined' && state.cloudSyncError;
     const issues = [];
+    /* V15.52 · P1-11: sondagem só de leitura do projeto Supabase (sem token; a cada 10 min no máximo) */
+    const cloud = window.StudyFlow?.cloudStatus?.() || { state: 'unknown' };
+    if (cloud.state === 'paused' || cloud.state === 'unreachable') issues.push(['conta', 'o', cloud.state === 'paused' ? 'O projeto da nuvem (Supabase) está pausado ou fora do ar.' : 'A nuvem (Supabase) não respondeu.', 'Projetos gratuitos pausam após dias sem uso; reative no painel do Supabase. O progresso continua salvo neste aparelho e sobe quando a nuvem voltar.']);
     if (!session) issues.push(['conta', 'o', 'A conta não está conectada.', 'Entre para sincronizar progresso e biblioteca.']);
     else if (syncErr) issues.push(['conta', 'o', 'A última sincronização falhou.', 'Toque em Sincronizar agora; nada local é perdido.']);
     if (backupAge === null || backupAge > 14) issues.push(['dados', 'o', backupAge === null ? 'Nenhum backup baixado neste aparelho.' : 'O último backup tem ' + backupAge + ' dias.', 'Vale ter uma cópia do progresso e da agenda fora da nuvem.']);
     if (upd) issues.push(['app', 'l', 'Há uma atualização do aplicativo pronta.', 'Atualize na folha 06.']);
     if (session && pending && !syncErr) issues.push(['conta', 'l', pending + ' ' + U.plural(pending, 'alteração aguardando', 'alterações aguardando') + ' envio.', 'A sincronização envia assim que houver conexão.']);
-    return { session, pending, lastBackup, backupAge, autos, cfg, upd, issues, syncErr };
+    return { session, pending, lastBackup, backupAge, autos, cfg, upd, issues, syncErr, cloud };
   }
   function folhaState(id, st) { const i = st.issues.filter((x) => x[0] === id); return i.some((x) => x[1] === 'o') ? 'o' : i.length ? 'l' : ''; }
 
   function render(root) {
     if (offlineInfo === null || restoreCount === null) probe();
     const st = status(), goals = P.time.goals();
+    const F = window.StudyFlow || { fmtBytes: (n) => String(n) }, usage = F.storageUsage?.() || null;
     const label = typeof APP_VERSION_LABEL !== 'undefined' ? APP_VERSION_LABEL : '';
     const m = /^(V[\d.]+)(-.+)?$/.exec(label) || [label, label, ''];
     const okN = FOLHAS.filter(([, id]) => !folhaState(id, st)).length;
@@ -60,10 +64,14 @@
       ui.cell('Automação', st.autos + ' ' + U.plural(st.autos, 'ativa'), '', 'modo ' + esc({ light: 'leve', balanced: 'equilibrado', intense: 'intenso' }[mode] || mode)) +
       ui.cell('Metas', fmtMin(goals.daily) + ' · ' + fmtMin(goals.weekly), '', 'por dia · por semana') +
       ui.cell('Backup', st.lastBackup ? (st.backupAge === 0 ? 'hoje' : 'há ' + st.backupAge + ' d') : 'nunca', st.backupAge === null || st.backupAge > 14 ? 'ox' : 'ok', (restoreCount ?? '…') + ' ' + U.plural(restoreCount || 0, 'ponto', 'pontos') + ' de restauração') +
-      ui.cell('Ícone', esc(document.getElementById('appIconCurrent')?.textContent || 'Automático'), '', 'tema escuro nanquim') + '</div></section>';
+      ui.cell('Ícone', esc(document.getElementById('appIconCurrent')?.textContent || 'Automático'), '', 'tema escuro nanquim') +
+      ui.cell('Supabase', { ok: 'no ar', paused: 'pausado', unreachable: 'sem resposta', error: 'com erro', offline: 'sem conexão', unconfigured: 'não configurado' }[st.cloud.state] || 'verificando', st.cloud.state === 'ok' ? 'ok' : ['paused', 'unreachable', 'error'].includes(st.cloud.state) ? 'ox' : '', st.cloud.at ? 'verificado às ' + new Date(st.cloud.at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'serviço de login e dados') +
+      ui.cell('Neste aparelho', usage ? F.fmtBytes(usage.used ?? usage.local) : '…', usage && usage.quota && usage.used / usage.quota > .8 ? 'ox' : '', usage ? 'dados locais ' + F.fmtBytes(usage.local) + (usage.quota ? ' · cota ' + F.fmtBytes(usage.quota) : '') + (usage.persisted ? ' · protegido' : '') : 'medindo o armazenamento') + '</div></section>';
     const toc = '<nav class="pr-toc" aria-label="Folhas">' + FOLHAS.map(([n, id, t]) => '<a href="#" data-pr-act="goto" data-arg="' + id + '"><i class="' + folhaState(id, st) + '"></i>' + n + ' ' + esc(t) + '</a>').join('') + '<a href="#" data-pr-act="goto" data-arg="risco"><i class="o"></i>Zona de risco</a></nav>';
     const folhas = FOLHAS.map(([n, id, t]) => { const s = folhaState(id, st); return '<section class="pr-folha" id="pr-f-' + id + '"><span class="n">' + n + '</span><div class="bd"><h4>' + esc(t) + '<span class="pr-chip ' + (s === 'o' ? 'ox' : s === 'l' ? 'l' : 'ok') + '">' + (s === 'o' ? 'pede atenção' : s === 'l' ? 'aviso' : 'ok') + '</span></h4><div class="pr-host" data-pr-host="' + id + '"></div></div></section>'; }).join('');
-    const zr = '<section class="pr-zr" id="pr-f-risco"><span class="pr-k o">Zona de risco</span><p style="font-size:var(--fs-body-sm)">Apaga registros de tempo ou recarrega o aplicativo. O progresso dos mapas, a agenda, as anotações e os simulados não são afetados. Cada ação pede um segundo toque e, para o tempo, uma confirmação.</p><div class="pr-row">' + ui.btn('Zerar hoje', ui.act('reset-time', 'today'), 'd') + ui.btn('Zerar semana', ui.act('reset-time', 'week'), 'd') + ui.btn('Zerar todo o histórico de tempo', ui.act('reset-time', 'all'), 'd') + ui.btn('Forçar atualização do aplicativo', ui.act('force-update'), 'd') + ui.btn('Usar a interface clássica', ui.act('classic'), 'g') + '</div></section>';
+    const zr = '<section class="pr-zr" id="pr-f-risco"><span class="pr-k o">Zona de risco</span><p style="font-size:var(--fs-body-sm)">Apaga registros de tempo ou recarrega o aplicativo. O progresso dos mapas, a agenda, as anotações e os simulados não são afetados. Cada ação pede um segundo toque e, para o tempo, uma confirmação.</p><div class="pr-row">' + ui.btn('Zerar hoje', ui.act('reset-time', 'today'), 'd') + ui.btn('Zerar semana', ui.act('reset-time', 'week'), 'd') + ui.btn('Zerar todo o histórico de tempo', ui.act('reset-time', 'all'), 'd') + ui.btn('Forçar atualização do aplicativo', ui.act('force-update'), 'd') + '</div></section>';
+    /* V15.52 · P2-2: a opção "Usar a interface clássica" saiu da tela (pouco usada). A ação "classic" e o caminho de volta
+       continuam no código por duas semanas; a remoção definitiva fica para uma versão seguinte. */
     /* tira os painéis das folhas antes de reescrever, para não destruí-los */
     const parking = document.createDocumentFragment();
     root.querySelectorAll('[data-pr-host] > *').forEach((n) => parking.appendChild(n));

@@ -323,13 +323,12 @@ test('Fluxo [G] · Todos os Mapas e Início abrem o Reader; busca global continu
   }
 });
 
-test('Configurações [G] · interface clássica fica acessível e há caminho de volta', async ({ page }) => {
+test('Configurações [G] · opção da interface clássica oculta, com caminho de volta preservado', async ({ page }) => {
   await setupPrancha(page);
   await go(page, 'settings');
-  const b = page.locator('.pr[data-prancha="settings"] .pr-zr').getByRole('button', { name: 'Usar a interface clássica' });
-  await b.click();
-  await expect(page.locator('.pr-zr .pr-btn.armed')).toHaveCount(1);
-  await Promise.all([page.waitForEvent('load'), page.locator('.pr-zr .pr-btn.armed').click()]);
+  /* V15.52: o botão saiu da Zona de risco; quem já usa a clássica continua com o caminho de volta. */
+  await expect(page.locator('.pr[data-prancha="settings"] .pr-zr').getByRole('button', { name: 'Usar a interface clássica' })).toHaveCount(0);
+  await Promise.all([page.waitForEvent('load'), page.evaluate(() => Prancha.setClassic(true))]);
   await page.waitForFunction(() => typeof Prancha !== 'undefined');
   expect(await page.evaluate(() => Prancha.enabled())).toBe(false);
   await page.evaluate(() => nav('settings'));

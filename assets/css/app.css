@@ -284,7 +284,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .map-admin-btn .ui-icon,.fav .ui-icon{pointer-events:none}
 .map-origin,.map-open-label{gap:5px}.map-open-label{color:#d8c59e;font-weight:800}
 .continue-icon .ui-icon{--icon-size:22px}
-.icon-credit{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);color:#857e72;font-size:var(--fs-caption);text-align:right}.icon-credit a{color:#857e72;text-decoration:none}.icon-credit a:hover{color:#d8c59e}
+.icon-credit{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);color:#857e72;font-size:var(--fs-caption);text-align:right}.icon-credit a{color:#857e72;text-decoration:underline;text-underline-offset:2px}.icon-credit a:hover{color:#d8c59e}
 .bottom-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.bottom-nav button>.ui-icon{--icon-size:20px;margin:0}.bottom-nav button .bottom-nav-label{display:block;font-size:var(--fs-tabbar);line-height:1.1;margin:0}
 .document-upload-head b.icon-label{display:inline-flex;align-items:center;gap:7px}
 @media(max-width:1180px){.nav-btn>.ui-icon{--icon-size:18px}}

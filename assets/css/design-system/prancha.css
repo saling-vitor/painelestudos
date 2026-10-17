@@ -43,7 +43,7 @@
 .pr-num{font-variant-numeric:tabular-nums}
 .pr-mono{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-3);letter-spacing:.01em}
 .pr-k{font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);letter-spacing:.12em;text-transform:uppercase;color:var(--pr-papel-3);font-weight:500}
-.pr-k.l{color:var(--pr-latao)}.pr-k.o{color:var(--pr-oxido)}
+.pr-k.l{color:var(--pr-latao)}.pr-k.o{color:color-mix(in srgb,var(--pr-oxido) 90%,var(--pr-papel))}
 .pr-sig{font-family:var(--pr-f-capa);font-weight:400;line-height:1;color:var(--c,var(--pr-latao));letter-spacing:.01em}
 .pr-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .pr-row.sp{justify-content:space-between}
@@ -70,8 +70,8 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-tabs::-webkit-scrollbar{display:none}
 .pr-tab{min-height:var(--pr-touch);font-size:var(--fs-label);font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid transparent;background:transparent;color:var(--pr-papel-2);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
 .pr-tab small{font-family:var(--pr-f-mono);font-weight:500;font-size:var(--fs-caption);color:var(--pr-papel-3)}
-.pr-tab[aria-pressed="true"],.pr-tab[aria-selected="true"]{background:var(--pr-g2);border-color:color-mix(in srgb,var(--pr-latao) 45%,transparent);color:var(--pr-latao-c)}
-.pr-tab[aria-pressed="true"] small{color:var(--pr-latao)}
+.pr-tab[aria-selected="true"]{background:var(--pr-g2);border-color:color-mix(in srgb,var(--pr-latao) 45%,transparent);color:var(--pr-latao-c)}
+.pr-tab[aria-selected="true"] small{color:var(--pr-latao)}
 .pr-tab:disabled{opacity:.4;cursor:not-allowed}
 
 /* foco visível */
@@ -84,13 +84,14 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 
 /* ---------- carimbo ---------- */
 .pr-carimbo{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);padding:0;overflow:hidden;gap:0}
-@media (max-width:820px){.pr-carimbo{grid-template-columns:1fr}}
+/* V15.52: tablet em retrato (até 900 px: iPad mini, Air e Pro 11") empilha o carimbo; antes 834 px ficava espremido */
+@media (max-width:900px){.pr-carimbo{grid-template-columns:1fr}}
 .pr-c-a{padding:20px;display:grid;gap:10px;align-content:start;border-right:1px solid var(--pr-linha);min-width:0}
-@media (max-width:820px){.pr-c-a{border-right:0;border-bottom:1px solid var(--pr-linha);padding:16px}}
+@media (max-width:900px){.pr-c-a{border-right:0;border-bottom:1px solid var(--pr-linha);padding:16px}}
 .pr-big{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .pr-pct{font-family:var(--pr-f-capa);font-size:var(--pr-fs-big);line-height:.9;color:var(--pr-latao);letter-spacing:.005em}
 .pr-pct small{font-size:.42em;color:var(--pr-latao-e)}
-.pr-pct.ox{color:var(--pr-oxido)}.pr-pct.ox small{color:color-mix(in srgb,var(--pr-oxido) 60%,var(--pr-g3))}
+.pr-pct.ox{color:var(--pr-oxido)}.pr-pct.ox small{color:color-mix(in srgb,var(--pr-oxido) 80%,var(--pr-g3))}
 .pr-pct.pa{color:var(--pr-papel)}.pr-pct.pa small{color:var(--pr-papel-3)}
 .pr-pct.ok{color:var(--pr-musgo)}
 .pr-sub{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-2)}
@@ -178,7 +179,7 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-tile .in{position:relative;padding:9px 10px 9px 12px;display:grid;gap:2px;height:100%;align-content:space-between}
 .pr-tile .sig{font-family:var(--pr-f-capa);font-size:var(--pr-fs-sig);line-height:1;color:var(--c);overflow-wrap:anywhere}
 .pr-tile .pc{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel)}
-.pr-tile .tp{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-3)}
+.pr-tile .tp{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-2)}
 .pr-tile .flags{position:absolute;right:7px;bottom:8px;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:70%}
 .pr-tile .flags span{font-family:var(--pr-f-mono);font-size:var(--fs-caption);padding:1px 5px;border-radius:4px;background:rgba(0,0,0,.6)}
 .pr-tile .flags .d{color:var(--pr-oxido);border:1px solid color-mix(in srgb,var(--pr-oxido) 50%,transparent)}
@@ -465,7 +466,8 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-wd.today{border-color:var(--pr-latao-e)}.pr-wd.today .dn b{color:var(--pr-latao)}
 .pr-wd.on{border-color:var(--pr-latao-c)}
 .pr-wd.prova{border-color:var(--pr-oxido);background:color-mix(in srgb,var(--pr-oxido) 7%,var(--pr-g0))}.pr-wd.prova .dn b{color:var(--pr-oxido)}
-.pr-wd.past{opacity:.62}
+/* V15.52: o dia passado esmaece a barra e o número, não os rótulos pequenos (contraste ≥ 4,5:1) */
+.pr-wd.past .dn b,.pr-wd.past .stk{opacity:.62}
 .pr-mg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
 .pr-mg .dw{font-family:var(--pr-f-mono);font-size:var(--fs-caption);letter-spacing:.1em;color:var(--pr-papel-3);text-align:center}
 .pr-mc{text-align:left;cursor:pointer;min-width:0;min-height:84px;border-radius:9px;border:1px solid var(--pr-linha-s);background:var(--pr-g0);padding:6px;display:grid;grid-template-rows:auto 1fr auto;gap:3px;color:inherit}
@@ -528,3 +530,22 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-gm .pr-fav[aria-pressed="true"]{color:var(--pr-latao)}
 .pr-gm .pr-fav .ui-icon,.pr .pr-ib .ui-icon,.pr .pr-menu>button .ui-icon{background-color:currentColor}
 .pr-crumb button{display:inline-flex;align-items:center;gap:4px}
+/* V15.52 · P1-9 — índice de seções. Celular: barra de atalhos fixa sob a barra do app (Início, Progresso, Configurações).
+   Tablet/desktop: só as Configurações mantêm o índice, também fixo, para não perder as folhas ao rolar. */
+.pr-secnav{display:none}
+.pr .pr-card[id^="pr-s-"],.pr [id^="pr-f-"]{scroll-margin-top:calc(var(--pr-sticky-top,72px) + 56px)}
+.pr-toc{position:sticky;top:var(--pr-sticky-top,72px);z-index:5;padding:6px 0;background:linear-gradient(var(--pr-g0) 78%,transparent)}
+@media (max-width:700px){
+  .pr-secnav{display:flex;margin:0 0 4px}
+  .pr-toc a{padding:9px 11px;min-height:40px;display:inline-flex;align-items:center}
+}
+.pr-toc.is-stuck{position:fixed;top:calc(env(safe-area-inset-top,0px) + 6px);left:12px;right:auto;max-width:calc(100vw - 16px);z-index:60;padding:6px;border:1px solid var(--pr-linha);border-radius:12px;background:var(--nq-glass-bar-scrolled,var(--pr-g1));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+/* A animação de entrada termina em transform:none; manter o preenchimento "both" deixava um transform residual que
+   transformava a prancha em referência para position:fixed. "backwards" dá o mesmo resultado visual sem esse efeito. */
+.view.active.pr-on{animation-fill-mode:backwards}
+.pr-toc a[aria-current]{border-color:var(--pr-latao-e);color:var(--pr-latao-c)}
+/* V15.52 · P1-10 + F1 — coluna do "Agora" com o "Retomar" logo abaixo; simulado e dúvida em dupla */
+.pr-stack{display:grid;gap:var(--pr-gap);align-content:start;min-width:0}
+.pr-three.pr-pair{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:700px){.pr-three.pr-pair{grid-template-columns:1fr}}
+.pr-ret-topic{display:grid;gap:2px;font-size:var(--fs-body-sm);color:var(--pr-papel-2);min-width:0;overflow-wrap:anywhere}

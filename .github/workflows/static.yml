@@ -1,4 +1,7 @@
 # GitHub Pages — validação, QA por navegador e deploy
+# V15.52: concorrência por branch (um PR não cancela mais o deploy da main), permissões mínimas por job,
+# npm ci com lockfile e cache, iPad em 2 partes, auditoria D/T/M + acessibilidade bloqueando o deploy,
+# artefatos só em falha e resumo dos testes no painel da execução.
 name: Deploy static content to Pages
 
 on:
@@ -10,14 +13,11 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-  actions: write
 
-# Mantém apenas a execução mais recente para evitar filas e deploys obsoletos.
+# Testes: um push novo no MESMO PR cancela a execução anterior desse PR. Pushes na main nunca são cancelados.
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   validate:
@@ -32,23 +32,19 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
 
       - name: Prepare automatic release version
         run: node scripts/prepare-release.mjs
 
       - name: Install test dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Validate JavaScript
         run: |
           node --check assets/js/app.js
-          for file in assets/js/app/*.js; do node --check "$file"; done
-          node --check tests/e2e/app.spec.mjs
-          node --check tests/e2e/prancha.spec.mjs
-          node --check tests/e2e/nanquim-conceitos.spec.mjs
-          node --check tests/e2e/helpers/prancha-mock.mjs
-          node --check tests/e2e/auditoria-plataformas.spec.mjs
-          node --check scripts/validate-release.mjs
+          for file in assets/js/*.js assets/js/app/*.js; do node --check "$file"; done
+          for file in tests/e2e/*.mjs tests/e2e/helpers/*.mjs scripts/*.mjs; do node --check "$file"; done
           node --check sw.js
 
       - name: Build search index
@@ -63,63 +59,33 @@ jobs:
       - name: Smoke test routes
         run: node scripts/smoke-static.mjs
 
-  e2e-desktop:
-    name: E2E Desktop
-    needs: validate
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
-      options: --user 1001
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - name: Simulado → map topic matching (informative)
+        run: |
+          { echo "### Correspondência de tópicos (simulado → mapa)"; echo '```'; node scripts/measure-topic-matching.mjs; echo '```'; } >> "$GITHUB_STEP_SUMMARY" || true
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
+      - name: Dead CSS stays at zero
+        run: |
+          node scripts/css-dead-code.mjs > css-dead.json
+          node -e "const r=require('./css-dead.json');if(r.mortas>0){console.error('Declarações CSS mortas: '+r.mortas);process.exit(1)}console.log('✓ Nenhuma declaração CSS sobrescrita sem efeito')"
 
-      - name: Prepare automatic release version
-        run: node scripts/prepare-release.mjs
-
-      - name: Install test dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Build search index
-        run: node scripts/build-search-index.mjs
-
-      - name: Browser E2E — Desktop Chromium
-        run: npx playwright test --project=desktop-chromium
-
-      - name: Upload visual audit screenshots — Desktop
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: black-smoked-visual-desktop-${{ github.run_id }}
-          path: visual-audit/*.png
-          if-no-files-found: error
-          retention-days: 10
-
-      - name: Upload Playwright failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-desktop-${{ github.run_id }}
-          path: |
-            test-results/
-            playwright-report/
-          if-no-files-found: ignore
-          retention-days: 10
-
-  e2e-ipad:
-    name: E2E iPad
+  e2e:
+    name: E2E ${{ matrix.label }}
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 25
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
       options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { label: "Desktop", project: "desktop-chromium", shard: "1/1" }
+          - { label: "iPad 1/2", project: "ipad", shard: "1/2" }
+          - { label: "iPad 2/2", project: "ipad", shard: "2/2" }
+          - { label: "iPad WebKit", project: "ipad-webkit", shard: "1/1" }
+          - { label: "iPhone", project: "iphone-webkit", shard: "1/1" }
+          - { label: "Auditoria D/T/M e acessibilidade", project: "auditoria-plataformas", shard: "1/1" }
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -128,174 +94,102 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
 
       - name: Prepare automatic release version
         run: node scripts/prepare-release.mjs
 
       - name: Install test dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Build search index
         run: node scripts/build-search-index.mjs
 
-      - name: Browser E2E — iPad
-        run: npx playwright test --project=ipad
+      - name: Browser E2E — ${{ matrix.label }}
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: playwright-results.json
+        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shard }} --reporter=list,json
 
-      - name: Upload visual audit screenshots — iPad
+      - name: Test summary
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: black-smoked-visual-ipad-${{ github.run_id }}
-          path: visual-audit/*.png
-          if-no-files-found: error
-          retention-days: 10
+        run: node scripts/ci-summary.mjs playwright-results.json "${{ matrix.label }}" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload Playwright failure artifacts
+      - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-ipad-${{ github.run_id }}
+          name: playwright-${{ matrix.project }}-${{ strategy.job-index }}-${{ github.run_id }}
           path: |
             test-results/
             playwright-report/
+            visual-audit/*.png
           if-no-files-found: ignore
-          retention-days: 10
+          retention-days: 5
 
-  e2e-ipad-webkit:
-    name: E2E iPad WebKit
+  visual-compare:
+    name: Comparação visual com a main (informativa)
+    if: ${{ github.event_name == 'pull_request' }}
     needs: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 30
+    continue-on-error: true
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
       options: --user 1001
     steps:
-      - name: Checkout
+      - name: Checkout PR
         uses: actions/checkout@v6
+        with:
+          path: pr
+
+      - name: Checkout main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          path: base
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
 
-      - name: Prepare automatic release version
-        run: node scripts/prepare-release.mjs
+      - name: Snapshot main and PR
+        env:
+          AUDIT_SNAP: D-1440x900,T-820x1180,M-390x844
+        run: |
+          for side in base pr; do
+            (cd "$side" && node scripts/prepare-release.mjs && (npm ci --no-audit --no-fund || npm install --no-audit --no-fund) && node scripts/build-search-index.mjs \
+              && cp ../pr/tests/e2e/auditoria-plataformas.spec.mjs tests/e2e/auditoria-plataformas.spec.mjs \
+              && AUDIT_OUT="$GITHUB_WORKSPACE/snap-$side" npx playwright test --project=auditoria-plataformas -g "D-1440x900 · prancha|T-820x1180 · prancha|M-390x844 · prancha" --reporter=line) || true
+          done
 
-      - name: Install test dependencies
-        run: npm install --no-audit --no-fund
+      - name: Compare computed styles
+        run: node pr/scripts/compare-style-snapshots.mjs snap-base snap-pr >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Build search index
-        run: node scripts/build-search-index.mjs
-
-      - name: Browser E2E — iPad WebKit
-        run: npx playwright test --project=ipad-webkit
-
-      - name: Upload visual audit screenshots — iPad WebKit
-        if: always()
+      - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: black-smoked-visual-ipad-webkit-${{ github.run_id }}
-          path: visual-audit/*.png
-          if-no-files-found: error
-          retention-days: 10
-
-      - name: Upload Playwright failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-ipad-webkit-${{ github.run_id }}
+          name: comparacao-visual-${{ github.run_id }}
           path: |
-            test-results/
-            playwright-report/
+            snap-base/shots/
+            snap-pr/shots/
           if-no-files-found: ignore
-          retention-days: 10
-
-  e2e-iphone:
-    name: E2E iPhone
-    needs: validate
-    runs-on: ubuntu-latest
-    timeout-minutes: 22
-    container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
-      options: --user 1001
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-
-      - name: Prepare automatic release version
-        run: node scripts/prepare-release.mjs
-
-      - name: Install test dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Build search index
-        run: node scripts/build-search-index.mjs
-
-      - name: Browser E2E — iPhone WebKit
-        run: npx playwright test --project=iphone-webkit
-
-      - name: Upload visual audit screenshots — iPhone
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: black-smoked-visual-iphone-${{ github.run_id }}
-          path: visual-audit/*.png
-          if-no-files-found: error
-          retention-days: 10
-
-      - name: Upload Playwright failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-iphone-${{ github.run_id }}
-          path: |
-            test-results/
-            playwright-report/
-          if-no-files-found: ignore
-          retention-days: 10
-
-  e2e-auditoria:
-    name: E2E Auditoria D/T/M (pranchas + clássica)
-    needs: validate
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
-      options: --user 1001
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-
-      - name: Prepare automatic release version
-        run: node scripts/prepare-release.mjs
-
-      - name: Install test dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Build search index
-        run: node scripts/build-search-index.mjs
-
-      # Interface atual (pranchas) em 16 viewports Desktop/iPad/celular, clássica em 5, estados vazios,
-      # XSS e PWA offline. Informativo: não bloqueia o deploy (as quatro suítes acima continuam sendo o portão).
-      - name: Browser E2E — auditoria multiplataforma
-        run: npx playwright test --project=auditoria-plataformas
+          retention-days: 5
 
   deploy:
     name: Deploy Pages
-    needs: [validate, e2e-desktop, e2e-ipad, e2e-ipad-webkit, e2e-iphone]
+    needs: [validate, e2e]
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Publicação: nunca cancelada; pushes seguidos publicam em ordem.
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -347,34 +241,30 @@ jobs:
       - name: Prepare automatic release version
         run: node scripts/prepare-release.mjs
 
-      - name: Confirm public site serves this release
+      - name: Confirm public site serves this release, byte by byte
         shell: bash
         run: |
           expected="$(node -p "require('./version.json').version")"
           base="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          # Arquivos conferidos por SHA-256 contra o build desta execução (mesmo prepare-release).
+          files="index.html sw.js reader.html offline.html version.json assets/css/design-system/prancha.css assets/css/camada-5-acabamento-final.css assets/js/app/prancha-ui.js assets/js/app/state.js assets/js/app/updates.js data/catalog.json"
           for attempt in {1..18}; do
-            stamp="$(date +%s%N)"
-            version_body="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/version.json?t=$stamp" || true)"
-            actual="$(printf '%s' "$version_body" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(JSON.parse(s).version||'')}catch{}})")"
-            index_body="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/?t=$stamp" || true)"
-            # Confere o CSS efetivamente servido, não apenas o número da versão.
-            glass_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/camada-2-responsivo-dispositivos.css?v=$expected&t=$stamp" || true)"
-            smoked_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/camada-5-acabamento-final.css?v=$expected&t=$stamp" || true)"
-            prancha_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/design-system/prancha.css?v=$expected&t=$stamp" || true)"
-            prancha_js="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/js/app/prancha-ui.js?v=$expected&t=$stamp" || true)"
-            type_css="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/assets/css/design-system/nanquim-typography.css?v=$expected&t=$stamp" || true)"
+            stamp="$(date +%s%N)"; ok=1; report=""
+            for f in $files; do
+              want="$(sha256sum "$f" | cut -d' ' -f1)"
+              got="$(curl -fsSL -H 'Cache-Control: no-cache' "$base/$f?t=$stamp" | sha256sum | cut -d' ' -f1 || true)"
+              if [ "$want" = "$got" ]; then report="$report ok:$f"; else ok=0; report="$report pendente:$f"; fi
+            done
             font_status="$(curl -s -o /dev/null -w '%{http_code}' "$base/assets/fonts/archivo-latin-wght-normal.woff2?t=$stamp" || true)"
-            if [ "$actual" = "$expected" ] && [[ "$index_body" == *"app.js?v=$expected"* ]] && [[ "$index_body" == *"camada-5-acabamento-final.css?v=$expected"* ]] && [[ "$glass_css" == *"--cover-liquid-plate:rgba(0,0,0,.40)"* ]] && [[ "$smoked_css" == *"--mm-smoke-opacity:.84"* ]] && [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && [[ "$smoked_css" == *"@origem assets/css/black-smoked-uniform-v15-48-163.css"* ]] && [[ "$index_body" == *"prancha.css?v=$expected"* ]] && [[ "$index_body" == *"prancha-boot.js?v=$expected"* ]] && [[ "$prancha_css" == *"--pr-oxido:#b8614e"* ]] && [[ "$prancha_js" == *"studyapp.prancha.off"* ]] && [[ "$type_css" == *"archivo-latin-wght-normal.woff2"* ]] && [ "$font_status" = "200" ]; then
-              echo "✓ GitHub Pages público está em $actual"
-              echo "✓ Nanquim: camadas CSS consolidadas, tingimento zero e Grafite fumê publicados"
-              echo "✓ Pranchas: CSS, módulos e interface clássica publicados"
-              echo "✓ Conceitos: fontes locais Archivo/Plex/Anton e escala tipográfica publicadas"
+            if [ "$ok" = "1" ] && [ "$font_status" = "200" ]; then
+              echo "✓ GitHub Pages público está em $expected, com os arquivos idênticos ao build"
+              { echo "### Site publicado"; echo "Versão $expected · arquivos conferidos por SHA-256:"; for f in $files; do echo "- \`$f\`"; done; } >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
-            echo "Tentativa $attempt/18: esperado=$expected publicado=${actual:-indisponível} | html=$( [[ "$index_body" == *"app.js?v=$expected"* ]] && echo ok || echo pendente ) | css=$( [[ "$smoked_css" == *"--mm-smoke-tint:0%"* ]] && echo ok || echo pendente ) | pranchas=$( [[ "$prancha_css" == *"--pr-oxido:#b8614e"* ]] && echo ok || echo pendente )"
+            echo "Tentativa $attempt/18 ($expected):$report fonte=$font_status"
             sleep 10
           done
-          echo "::error::O GitHub Pages não serviu a versão $expected dentro do prazo."
+          echo "::error::O GitHub Pages não serviu a versão $expected idêntica ao build dentro do prazo."
           exit 1
 
   cleanup-actions:
@@ -383,6 +273,8 @@ jobs:
     if: ${{ always() && needs.verify-live.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      actions: write
     steps:
       - name: Remove failed and cancelled runs older than 10 days
         env:
