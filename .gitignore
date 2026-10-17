@@ -1,0 +1,7 @@
+# V15.51 · artefatos locais de teste e build (o CI gera data/search-index.json em toda publicação)
+node_modules/
+package-lock.json
+test-results/
+playwright-report/
+visual-audit/
+data/search-index.json

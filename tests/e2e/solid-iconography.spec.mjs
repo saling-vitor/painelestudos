@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 test('[G] Interface Lucide — somente PNG transparente, geometria e cores CSS',async({page,request})=>{
   await page.goto('/');
-  await expect(page.locator('link[href*="lucide-png-v15-48-172.css"]')).toHaveCount(1);
+  await expect(page.locator('link[href*="camada-5-acabamento-final.css"]')).toHaveCount(1);
   for(const name of ['home','courses','maps','simulations','progress','calendar','settings']){
     const icon=page.locator('.ui-icon.icon-'+name).first();
     await expect(icon).toHaveCount(1);
@@ -18,13 +18,13 @@ test('[G] Interface Lucide — somente PNG transparente, geometria e cores CSS',
     expect(response.ok()).toBeTruthy();
     expect(response.headers()['content-type']).toContain('image/png');
   }
-  const css=await request.get('/assets/css/lucide-png-v15-48-172.css');
+  const css=await request.get('/assets/css/camada-5-acabamento-final.css');
   expect(css.ok()).toBeTruthy();
   const cssText=await css.text();
   expect(cssText).toContain('--solid-cloud-check');
   expect(cssText).not.toContain('data:image/svg+xml');
   const sw=await request.get('/sw.js');
-  expect((await sw.text())).toContain('lucide-png-v15-48-172.css');
+  expect((await sw.text())).toContain('camada-5-acabamento-final.css');
 });
 test('[G] Capas padrão — imagens originais, sem substituir opções personalizadas',async({page,request})=>{
   await page.goto('/');

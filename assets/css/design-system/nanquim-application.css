@@ -102,11 +102,6 @@ html .app .course-sticky-bar{
  -webkit-backdrop-filter:var(--nq-glass-bar-filter)!important;
  backdrop-filter:var(--nq-glass-bar-filter)!important;
 }
-html:not(.is-phone-layout) .app .side{
- background:var(--nq-glass-lens),var(--nq-glass-panel)!important;
- -webkit-backdrop-filter:var(--nq-glass-panel-filter)!important;
- backdrop-filter:var(--nq-glass-panel-filter)!important;
-}
 html.mm-scrolled .app .main .topbar,html.mm-scrolled .bottom-nav,html.mm-scrolled .app .course-sticky-bar{
  background:var(--nq-glass-lens),var(--nq-glass-bar-scrolled)!important;
 }

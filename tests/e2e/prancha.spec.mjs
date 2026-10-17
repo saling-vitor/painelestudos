@@ -109,7 +109,7 @@ test('Revisões [G] · adiar as do dia da prova move sem excluir', async ({ page
   expect(result.moved).toBeGreaterThanOrEqual(3);
   /* nenhuma revisão existente desaparece (o app pode agendar outras em paralelo) */
   expect(result.lost).toEqual([]);
-  const tomorrow = await page.evaluate(() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); });
+  const tomorrow = await page.evaluate(() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(12, 0, 0, 0); return d.toISOString().slice(0, 10); }); /* meio-dia local: mesma data em UTC a qualquer hora */
   for (const d of result.due) expect(d >= tomorrow.slice(0, 10) || d === tomorrow).toBeTruthy();
 });
 

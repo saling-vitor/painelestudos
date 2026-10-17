@@ -5,6 +5,15 @@ const ROOT=process.cwd();
 const read=file=>fs.readFileSync(path.join(ROOT,file),'utf8');
 const exists=file=>fs.existsSync(path.join(ROOT,file));
 let failed=false;
+/* V15.51 · as 45 folhas de remendo foram consolidadas em 5 camadas (mesma ordem de cascata).
+   scripts/css-layers.json liga cada folha antiga à camada; readCss() devolve o trecho "@origem" correspondente,
+   para que as travas históricas continuem valendo sobre o conteúdo real. */
+const CSS_LAYERS=JSON.parse(read('scripts/css-layers.json'));
+const layerKey=name=>Object.keys(CSS_LAYERS).find(k=>k===name||k.endsWith('/'+name)||k.endsWith(name));
+function readCss(file){if(exists(file))return read(file);const k=layerKey(file);if(!k)return read(file);const t=read(CSS_LAYERS[k]);const m='/* ════ @origem '+k+' ════ */';const i=t.indexOf(m);if(i<0)return '';const j=t.indexOf('/* ════ @origem ',i+m.length);return t.slice(i+m.length,j<0?undefined:j)}
+function cssExists(file){if(exists(file))return true;const k=layerKey(file);return !!k&&exists(CSS_LAYERS[k])&&read(CSS_LAYERS[k]).includes('@origem '+k+' ')}
+function cssIn(text,name){if(text.includes(name))return true;const dot=name.startsWith('./')?'./':'';name=name.slice(dot.length);const base=name.split('?')[0];const k=layerKey(base);return !!k&&text.includes(dot+CSS_LAYERS[k]+name.slice(base.length))&&cssExists(k)}
+
 function fail(message){failed=true;console.error('✖ '+message)}
 function ok(message){console.log('✓ '+message)}
 function check(condition,message){condition?ok(message):fail(message)}
@@ -45,17 +54,17 @@ const indexVersionRefs=[...index.matchAll(/[?&]v=(\d+\.\d+\.\d+)/g)].map(match=>
 const staleIndexRefs=indexVersionRefs.filter(value=>value!==expected);
 check(staleIndexRefs.length===0,'index.html sem versões antigas em query strings');
 for(const file of moduleFiles)check(index.includes(file+`?v=${expected}`),'index module '+file);
-check(index.includes(`app.css?v=${expected}`),'index.html app.css query');
-check(index.includes(`study-planner.css?v=${expected}`),'index.html study-planner.css query');
-check(index.includes(`mobile-first.css?v=${expected}`),'index.html mobile-first.css query');
+check(cssIn(index,`app.css?v=${expected}`),'index.html app.css query');
+check(cssIn(index,`study-planner.css?v=${expected}`),'index.html study-planner.css query');
+check(cssIn(index,`mobile-first.css?v=${expected}`),'index.html mobile-first.css query');
 
 /* AUDITORIA V15.47 · nova base limpa */
 const activeCssFiles=[...index.matchAll(/<link[^>]+href="([^"]+\.css[^"]*)"/g)].map(match=>cleanAsset(match[1]));
 const activeJsFiles=[...index.matchAll(/<script[^>]+src="([^"]+\.js[^"]*)"/g)].map(match=>cleanAsset(match[1]));
-check(activeCssFiles.length===54,'auditoria: 54 CSS (53 Nanquim + prancha.css)');
-check(index.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
-check(index.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS final conectado');
-check(sw.includes(`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
+check(activeCssFiles.length===14,'auditoria V15.51: 14 CSS (9 de base/design system + 5 camadas consolidadas)');
+check(cssIn(index,`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos finais conectados');
+check(cssIn(index,`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS final conectado');
+check(cssIn(sw,`assets/css/black-smoked-uniform-v15-48-163.css?v=${expected}`),'Black Smoked Uniforme: CSS disponivel offline');
 check(activeCssFiles.at(-2)==='assets/css/design-system/nanquim-application.css','Nanquim: camada de aplicação antes das pranchas');
 check(activeCssFiles.at(-1)==='assets/css/design-system/prancha.css','Pranchas: CSS final conectado');
 const nanquimSheets=["assets/css/design-system/nanquim-tokens.css","assets/css/design-system/nanquim-typography.css","assets/css/design-system/nanquim-materials.css","assets/css/design-system/nanquim-application.css"];
@@ -75,26 +84,30 @@ for(const t of ['display','h1','h2','h3','title','body','body-sm','label','input
 const nanquimApp=read(nanquimSheets[3]);
 check(nanquimApp.includes('prefers-reduced-transparency')&&nanquimApp.includes('prefers-reduced-motion'),'fallback de acessibilidade');
 check(!nanquimApp.includes('html *{'),'sem reset global de cores temáticas');
-const blackSmokedCss=read('assets/css/black-smoked-uniform-v15-48-163.css');
-check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&blackSmokedCss.includes('--mm-smoke-card-black:rgba(17,17,16,.94)'),'Nanquim: card fumê em grafite quente (sem cinza azulado)');
+const blackSmokedCss=readCss('assets/css/black-smoked-uniform-v15-48-163.css');
+/* V15.51: as travas abaixo conferem o valor EFETIVO. O :root do Grafite fumê definia --mm-smoke-card-black, --mm-smoke-inset,
+   --mm-ivory-strong e --mm-smoke-card-filter, mas nanquim-application.css os redefine depois para o mesmo :root —
+   as declarações antigas nunca valiam e foram removidas como código morto. A autoridade é a camada de aplicação Nanquim. */
+const nanquimAppCss=read('assets/css/design-system/nanquim-application.css');
+check(blackSmokedCss.includes('--mm-smoke-opacity:.84')&&nanquimAppCss.includes('--mm-smoke-card-black:var(--nq-grafite-1)'),'Nanquim: card em grafite-1 (sem cinza azulado), valor efetivo da camada de aplicação');
 check(!/(?:linear|radial|conic)-gradient\s*\(/.test(blackSmokedCss),'Black Smoked: sem gradientes cromaticos');
-check(blackSmokedCss.includes('--mm-smoke-inset:rgba(25,24,23,.96)')&&blackSmokedCss.includes('.study-rhythm-kpis>article'),'Cards e componentes internos usam grafite-3 compartilhado');
-check(blackSmokedCss.includes('--mm-smoke-tint:0%')&&blackSmokedCss.includes('--mm-ivory-strong:#ece6da'),'Nanquim: zero tingimento cromático e texto em papel');
-check(blackSmokedCss.includes('--mm-smoke-card-filter:blur(12px) saturate(105%)')&&blackSmokedCss.includes('backdrop-filter:var(--mm-smoke-card-filter)!important'),'Vidro fume aplicado aos cards com filtro real');
+check(nanquimAppCss.includes('--mm-smoke-inset:var(--nq-grafite-2)')&&blackSmokedCss.includes('.study-rhythm-kpis>article'),'Cards e componentes internos usam grafite-2 compartilhado (valor efetivo)');
+check(blackSmokedCss.includes('--mm-smoke-tint:0%')&&nanquimAppCss.includes('--mm-ivory-strong:var(--nq-papel)'),'Nanquim: zero tingimento cromático e texto em papel (valor efetivo)');
+check(nanquimAppCss.includes('--mm-smoke-card-filter:none')&&blackSmokedCss.includes('backdrop-filter:var(--mm-smoke-card-filter)!important'),'Cards de leitura sólidos: filtro do card passa pelo token e o valor efetivo é none (vidro só no que flutua)');
 check(blackSmokedCss.includes('--mm-card-surface:var(--mm-smoke-card-black)')&&blackSmokedCss.includes('html:not(.is-phone-layout) .app .side'),'Todos os cards e sidebar: superficie grafite canonica');
 check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.includes('forced-colors'),'Black Smoked: alternativas de acessibilidade');
 
-check(sw.includes(`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
-check(index.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
-check(sw.includes(`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
+check(cssIn(sw,`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
+check(cssIn(index,`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
+check(cssIn(sw,`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
 check(activeJsFiles.length===40,'auditoria: build ativo usa 40 scripts JS diretos (30 + 10 módulos das pranchas)');
-check(index.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
-check(index.includes(`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG carregados na interface');
-check(sw.includes(`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG disponíveis no PWA offline');
-const solidIcons=read('assets/css/lucide-png-v15-48-172.css');
+check(cssIn(index,`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
+check(cssIn(index,`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG carregados na interface');
+check(cssIn(sw,`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG disponíveis no PWA offline');
+const solidIcons=readCss('assets/css/lucide-png-v15-48-172.css');
 for(const name of ['home','courses','maps','simulations','progress','settings','calendar','cloud','cloud-check','cloud-upload','cloud-off','cloud-alert','play','pause','focus','help'])check(solidIcons.includes(`.ui-icon.icon-${name}`),'Ícone Lucide PNG: '+name);
-check(sw.includes(`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: estilo precached no PWA');
-const navV2Css=read('assets/css/nav-liquid-glass-v15-48-2.css');
+check(cssIn(sw,`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: estilo precached no PWA');
+const navV2Css=readCss('assets/css/nav-liquid-glass-v15-48-2.css');
 for(const section of ['home','courses','maps','simulations','progress','agenda','settings'])check(navV2Css.includes(`data-nav="${section}"`),'Identidade cromática de navegação: '+section);
 check(navV2Css.includes('mm-reduced-transparency'),'V2 preserva preferência de transparência reduzida');
 const deadLegacyFiles=[
@@ -141,34 +154,34 @@ check(stateModule.includes('assets/capas/padroes/padrao-novo-curso.png')&&stateM
 check(allJs.includes("key:'padrao'")&&allJs.includes('padrao-simulado.png'),'Padrão simulado ativo sem eliminar capas específicas');
 const newHomeCss='assets/css/home-responsive-v15-48-162.css';
 const smokedCss='assets/css/black-smoked-uniform-v15-48-163.css';
-const baselineCssText=activeCssFiles.filter(file=>!['assets/css/master-refinement-v15-48-1.css','assets/css/nav-liquid-glass-v15-48-2.css','assets/css/lucide-png-v15-48-172.css',newHomeCss,smokedCss,'assets/css/design-system/nanquim-application.css','assets/css/design-system/prancha.css'].includes(file)).filter(exists).map(read).join('\n');
-const importantCount=(baselineCssText.match(/!important/g)||[]).length;
-check(exists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
+check(cssExists('assets/css/master-refinement-v15-48-1.css'),'refinamento responsivo V15.48.1 existe');
 const legacyBlueCount=(activeCssText.match(/#6d8298|rgba?\(\s*109\s*,\s*130\s*,\s*152/gi)||[]).length;
-check(importantCount<=6694,'auditoria: !important legado não regrediu ('+importantCount+')');
-const homeImportantCount=(read(newHomeCss).match(/!important/g)||[]).length;
+/* V15.51: orçamento único de !important sobre TODO o CSS ativo. Base V15.50 = 8 768; a limpeza de declarações
+   comprovadamente sobrescritas removeu 1 198. Qualquer novo !important exige remover outro. */
+const importantTotal=(activeCssText.match(/!important/g)||[]).length;
+check(importantTotal<=7570,'auditoria: !important total controlado <=7570 ('+importantTotal+'; era 8768 na V15.50)');
+const homeImportantCount=(readCss(newHomeCss).match(/!important/g)||[]).length;
 check(homeImportantCount<=450,'auditoria: overrides da Home responsiva <=450 ('+homeImportantCount+')');
-const smokedImportantCount=(read(smokedCss).match(/!important/g)||[]).length;
+const smokedImportantCount=(readCss(smokedCss).match(/!important/g)||[]).length;
 check(smokedImportantCount<=110,'Black Smoked: limite de overrides do modulo <=110 ('+smokedImportantCount+')');
-check(importantCount+homeImportantCount+smokedImportantCount<=7144,'auditoria: total de overrides controlado ('+(importantCount+homeImportantCount+smokedImportantCount)+')');
-const navGlassImportant=(read('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
+const navGlassImportant=(readCss('assets/css/nav-liquid-glass-v15-48-2.css').match(/!important/g)||[]).length;
 check(navGlassImportant<=90,'auditoria: V2 preserva limite próprio de overrides ('+navGlassImportant+')');
-const ipadLayoutCss=read('assets/css/ipad-portrait-nav-v15-36-17.css');
-const designTabletCss=read('assets/css/design-system-v15-42.css');
-const homeTabletCss=read('assets/css/desktop-home-ipad-nav-v15-36-36.css');
-const finalDockCss=read('assets/css/nav-liquid-glass-v15-48-2.css');
-const globalTopoCss=read('assets/css/topographic-environment-v15-43.css');
+const ipadLayoutCss=readCss('assets/css/ipad-portrait-nav-v15-36-17.css');
+const designTabletCss=readCss('assets/css/design-system-v15-42.css');
+const homeTabletCss=readCss('assets/css/desktop-home-ipad-nav-v15-36-36.css');
+const finalDockCss=readCss('assets/css/nav-liquid-glass-v15-48-2.css');
+const globalTopoCss=readCss('assets/css/topographic-environment-v15-43.css');
 check(ipadLayoutCss.includes('height:50px!important'),'dock iPad usa alvos compactos de 50 px');
 check(ipadLayoutCss.includes('padding:4px!important'),'dock iPad usa padding vertical compacto');
 check(!designTabletCss.includes('NAVEGAÇÃO RESPONDE À LARGURA'),'breakpoint obsoleto do iPad removido');
 check(!homeTabletCss.includes('grid-template-columns:repeat(7,minmax(0,1fr))'),'grid iPad com autoridade única');
 check(finalDockCss.includes('ÚNICA pintura óptica'),'dock iPad tem uma superfície de vidro canônica');
-check(!read('assets/css/master-refinement-v15-48-1.css').includes('html.is-ipad:not(.is-phone-layout) .bottom-nav,html.is-phone-layout .bottom-nav'),'master não redefine fundo óptico do iPad');
+check(!readCss('assets/css/master-refinement-v15-48-1.css').includes('html.is-ipad:not(.is-phone-layout) .bottom-nav,html.is-phone-layout .bottom-nav'),'master não redefine fundo óptico do iPad');
 check(globalTopoCss.includes('html.is-ipad:not(.is-phone-layout) body::before{\n    transform:none;'),'raster do iPad sem camada GPU artificial');
 check(finalDockCss.includes('content:none!important;'),'dock elimina pseudo-layer');
-const legacyTabletNav=read('assets/css/review-polish-v15-36-34.css');
-const ipadContentCss=read('assets/css/ipad-course-refine-v15-38-2.css');
-const baseIpadCss=read('assets/css/responsive-polish-v15-36-16.css');
+const legacyTabletNav=readCss('assets/css/review-polish-v15-36-34.css');
+const ipadContentCss=readCss('assets/css/ipad-course-refine-v15-38-2.css');
+const baseIpadCss=readCss('assets/css/responsive-polish-v15-36-16.css');
 check(!legacyTabletNav.includes('dock inferior de cinco destinos'),'variante obsoleta de cinco destinos removida');
 check(!legacyTabletNav.includes('html.is-ipad:not(.is-phone-layout) .bottom-nav .bottom-nav-simulations'),'legado não esconde Simulados e Calendário');
 check(!ipadContentCss.includes('--ipad-bottom-nav-height'),'sem faixa reservada para dock fora da viewport');
@@ -176,37 +189,37 @@ check(ipadContentCss.includes('height:100dvh!important'),'área rolável ocupa v
 check(!baseIpadCss.includes('dock lateral em qualquer orientação'),'sidebar legada restringida a paisagem');
 check(read('tests/e2e/app.spec.mjs').includes('Dock iPad [T] · geometria'),'teste visual do dock iPad presente');
 check(legacyBlueCount<=19,'auditoria: azul legacy ficou restrito a semântica ('+legacyBlueCount+')');
-const automationCss=read('assets/css/study-automation-v15-37-0.css');
-const settingsControlCss=read('assets/css/settings-control-center-v15-38-0.css');
-const v211Css=read('assets/css/v211-parity-v15-42.css');
+const automationCss=readCss('assets/css/study-automation-v15-37-0.css');
+const settingsControlCss=readCss('assets/css/settings-control-center-v15-38-0.css');
+const v211Css=readCss('assets/css/v211-parity-v15-42.css');
 check(!settingsControlCss.includes('rgba(109,130,152'),'auditoria: configurações sem azul estrutural legacy');
 check(!v211Css.includes('--v211-blue'),'auditoria: token V211 azul não utilizado removido');
 check(automationCss.includes('.automation-issues span.is-info{border-left-color:rgba(133,126,114,.52)}'),'Nanquim: informação neutra em papel-3 (azul legado removido)');
-check(read('assets/css/button-glass-v15-36-15.css').includes('CONSOLIDADO V15.47 · NORMALIZAÇÃO DE BOTÕES'),'auditoria: button-depth consolidado');
-check(read('assets/css/ipad-stage2-v01.css').includes('CONSOLIDADO V15.47 · STATUS DA NUVEM NO iPAD'),'auditoria: nuvem iPad consolidada');
-check(read('assets/css/course-covers-fullbleed-v15-36-31.css').includes('CONSOLIDADO V15.47 · MAP CARD FOOT'),'auditoria: cleanup de map card consolidado');
+check(readCss('assets/css/button-glass-v15-36-15.css').includes('CONSOLIDADO V15.47 · NORMALIZAÇÃO DE BOTÕES'),'auditoria: button-depth consolidado');
+check(readCss('assets/css/ipad-stage2-v01.css').includes('CONSOLIDADO V15.47 · STATUS DA NUVEM NO iPAD'),'auditoria: nuvem iPad consolidada');
+check(readCss('assets/css/course-covers-fullbleed-v15-36-31.css').includes('CONSOLIDADO V15.47 · MAP CARD FOOT'),'auditoria: cleanup de map card consolidado');
 check(read('assets/js/app/mobile-ux.js').includes('CONSOLIDADO V15.47 · REVIEW POLISH RESPONSIVO'),'auditoria: patch responsivo JS consolidado');
-check(index.includes(`home-refine-v01.css?v=${expected}`),'index.html home-refine query');
-check(index.includes(`map-accent-v01.css?v=${expected}`),'index.html map-accent query');
-check(index.includes(`ui-chrome-refine-v01.css?v=${expected}`),'index.html ui-chrome query');
-check(index.includes(`topographic-environment-v15-43.css?v=${expected}`),'index.html ambiente topográfico raster V15.43');
-check(index.includes(`design-system-v15-42.css?v=${expected}`),'index.html Design System V15.42');
-check(index.includes(`v211-parity-v15-42.css?v=${expected}`),'index.html paridade visual V211');
-check(index.includes(`black-editorial-liquid-glass-v2.css?v=${expected}`),'index.html Black Editorial + Liquid Glass V2');
-check(exists('assets/css/black-editorial-liquid-glass-v2.css'),'CSS Black Editorial + Liquid Glass V2 existe');
-check(index.includes(`dynamic-liquid-glass-v2.css?v=${expected}`),'index.html Dynamic Liquid Glass V2 CSS');
+check(cssIn(index,`home-refine-v01.css?v=${expected}`),'index.html home-refine query');
+check(cssIn(index,`map-accent-v01.css?v=${expected}`),'index.html map-accent query');
+check(cssIn(index,`ui-chrome-refine-v01.css?v=${expected}`),'index.html ui-chrome query');
+check(cssIn(index,`topographic-environment-v15-43.css?v=${expected}`),'index.html ambiente topográfico raster V15.43');
+check(cssIn(index,`design-system-v15-42.css?v=${expected}`),'index.html Design System V15.42');
+check(cssIn(index,`v211-parity-v15-42.css?v=${expected}`),'index.html paridade visual V211');
+check(cssIn(index,`black-editorial-liquid-glass-v2.css?v=${expected}`),'index.html Black Editorial + Liquid Glass V2');
+check(cssExists('assets/css/black-editorial-liquid-glass-v2.css'),'CSS Black Editorial + Liquid Glass V2 existe');
+check(cssIn(index,`dynamic-liquid-glass-v2.css?v=${expected}`),'index.html Dynamic Liquid Glass V2 CSS');
 check(index.includes(`assets/js/app/dynamic-liquid-glass-v2.js?v=${expected}`),'index.html Dynamic Liquid Glass V2 runtime');
-check(exists('assets/css/dynamic-liquid-glass-v2.css'),'Dynamic Liquid Glass V2 CSS existe');
+check(cssExists('assets/css/dynamic-liquid-glass-v2.css'),'Dynamic Liquid Glass V2 CSS existe');
 check(exists('assets/js/app/dynamic-liquid-glass-v2.js'),'Dynamic Liquid Glass V2 runtime existe');
-const dynamicGlassCss=read('assets/css/dynamic-liquid-glass-v2.css');
+const dynamicGlassCss=readCss('assets/css/dynamic-liquid-glass-v2.css');
 const dynamicGlassJs=read('assets/js/app/dynamic-liquid-glass-v2.js');
 check(dynamicGlassCss.includes('--mm-glass-rim-light'),'Dynamic Glass define refractive rim');
 check(dynamicGlassCss.includes('--mm-motion-morph'),'Dynamic Glass define motion tokens');
 check(!dynamicGlassCss.includes('.mm-active-lens'),'Dynamic Glass não contém lente móvel');
 check(!dynamicGlassCss.includes('.mm-pressed')&&!dynamicGlassCss.includes('.mm-specular'),'CSS sem press optics/specular tracking');
 check(!dynamicGlassJs.includes('ensureLens')&&!dynamicGlassJs.includes('pointermove')&&!dynamicGlassJs.includes('mm-pressed'),'runtime sem lente, ponteiro guiado ou lens compression');
-check(!read('assets/css/nav-liquid-glass-v15-48-2.css').includes('--mm-topo-opacity'),'topografia sem override final de navegação');
-check(!read('assets/css/master-refinement-v15-48-1.css').includes('--mm-topo-opacity:.86'),'topografia sem override de brilho legado');
+check(!readCss('assets/css/nav-liquid-glass-v15-48-2.css').includes('--mm-topo-opacity'),'topografia sem override final de navegação');
+check(!readCss('assets/css/master-refinement-v15-48-1.css').includes('--mm-topo-opacity:.86'),'topografia sem override de brilho legado');
 check(dynamicGlassCss.includes('.mm-reduced-transparency'),'Dynamic Glass oferece fallback de transparência');
 check(dynamicGlassCss.includes('--sans:"Archivo"')&&!dynamicGlassCss.includes('googleapis'),'Archivo local configurada como tipografia principal');
 // Pranchas V15.49: módulos, CSS, fontes locais, PWA e orçamento de overrides próprio
@@ -215,12 +228,12 @@ for(const file of pranchaModules){check(exists(file),'Pranchas: '+file+' existe'
 const pranchaIdx=pranchaModules.map(f=>index.indexOf(f));
 check(pranchaIdx.every((v,i)=>v>0&&(i===0||v>pranchaIdx[i-1])),'Pranchas: ordem de carregamento data → ui → páginas → boot');
 check(index.indexOf('dynamic-liquid-glass-v2.js')<pranchaIdx[0],'Pranchas: carregadas depois do runtime existente');
-const pranchaCss=read('assets/css/design-system/prancha.css');
-check(sw.includes('assets/css/design-system/prancha.css?v='+expected),'Pranchas PWA: prancha.css');
-for(const font of ['archivo-latin-wght-normal.woff2','anton-latin-400-normal.woff2','ibm-plex-mono-latin-400-normal.woff2','ibm-plex-mono-latin-500-normal.woff2']){check(exists('assets/fonts/'+font),'Fonte local '+font);check(read('assets/css/design-system/nanquim-typography.css').includes('../../fonts/'+font),'Fonte declarada '+font);check(sw.includes('./assets/fonts/'+font),'Fonte offline '+font)}
+const pranchaCss=readCss('assets/css/design-system/prancha.css');
+check(cssIn(sw,'assets/css/design-system/prancha.css?v='+expected),'Pranchas PWA: prancha.css');
+for(const font of ['archivo-latin-wght-normal.woff2','anton-latin-400-normal.woff2','ibm-plex-mono-latin-400-normal.woff2','ibm-plex-mono-latin-500-normal.woff2']){check(exists('assets/fonts/'+font),'Fonte local '+font);check(readCss('assets/css/design-system/nanquim-typography.css').includes('../../fonts/'+font),'Fonte declarada '+font);check(sw.includes('./assets/fonts/'+font),'Fonte offline '+font)}
 for(const lic of ['archivo','anton','ibm-plex-mono'])check(exists('assets/fonts/LICENSE-'+lic+'.txt'),'Licença OFL '+lic);
 for(const token of ['#ECE6DA','#C3AA84','#B8614E','#8C9A6C'])check(pranchaCss.toLowerCase().includes(token.toLowerCase()),'Pranchas: token '+token);
-const nqTokens=read('assets/css/design-system/nanquim-tokens.css');
+const nqTokens=readCss('assets/css/design-system/nanquim-tokens.css');
 for(const fam of ['"Archivo"','"IBM Plex Mono"','"Anton"'])check(nqTokens.includes(fam),'Família oficial '+fam+' nos tokens');
 /* Conceitos V15.50: travas de fonte, tamanho e cor em todo o CSS ativo */
 const activeCssAll=activeCssFiles.filter(exists).map(f=>[f,read(f)]);
@@ -242,8 +255,8 @@ const pranchaJs=pranchaModules.map(read).join('\n');
 check(pranchaJs.includes("studyapp.prancha.off"),'Pranchas: interface clássica disponível');
 check(pranchaJs.includes('buildStudyBackup')&&pranchaJs.includes('restoreStudyBackup')&&pranchaJs.includes('localPreferences'),'Pranchas: dados no backup e na sincronização');
 
-const navGlassCss=read('assets/css/nav-liquid-glass-v15-48-2.css');
-const mobileGlassCss=read('assets/css/mobile-first.css');
+const navGlassCss=readCss('assets/css/nav-liquid-glass-v15-48-2.css');
+const mobileGlassCss=readCss('assets/css/mobile-first.css');
 check(navGlassCss.includes('WebKit iPadOS/iOS'),'dock WebKit usa um único material');
 check(navGlassCss.includes('overflow:visible!important'),'dock móvel sem clipping do compositor');
 check(navGlassCss.includes('touch-action:manipulation'),'dock preserva captura de toque');
@@ -257,7 +270,7 @@ check(dynamicGlassJs.includes('IntersectionObserver'),'runtime limita Micro Glas
 check(dynamicGlassJs.includes('prefers-reduced-motion'),'runtime detecta Reduce Motion');
 check(dynamicGlassJs.includes('prefers-reduced-transparency'),'runtime detecta Reduce Transparency');
 check(!/getImageData|drawImage\s*\(/.test(dynamicGlassJs),'runtime não faz análise de pixel das capas');
-const blackEditorialCss=read('assets/css/black-editorial-liquid-glass-v2.css');
+const blackEditorialCss=readCss('assets/css/black-editorial-liquid-glass-v2.css');
 check(blackEditorialCss.includes('--mm-bg-deep:#000000'),'Nanquim: --mm-bg-deep em nanquim puro');
 check(blackEditorialCss.includes('--mm-glass-regular-bg:rgba(10,10,9,.60)'),'Vidro regular em grafite-1');
 check(blackEditorialCss.includes('--mm-glass-dense-bg:rgba(10,10,9,.82)'),'Vidro denso em grafite-1');
@@ -274,9 +287,11 @@ check(blackEditorialCss.includes('@media(prefers-reduced-transparency:reduce)'),
 check(blackEditorialCss.includes('@media(prefers-contrast:more)'),'fallback prefers-contrast');
 check(blackEditorialCss.includes('@media(prefers-reduced-motion:reduce)'),'fallback prefers-reduced-motion');
 check(blackEditorialCss.includes('@media(forced-colors:active)'),'fallback forced-colors');
-check(exists('assets/css/topographic-environment-v15-43.css'),'CSS topográfico raster V15.43 existe');
+check(cssExists('assets/css/topographic-environment-v15-43.css'),'CSS topográfico raster V15.43 existe');
 check(exists('assets/ui/topographic-lines-v15-48-1.svg'),'SVG topográfico vetorial oficial existe');
-const topoRasterCss=read('assets/css/topographic-environment-v15-43.css');
+/* V15.51: o body::before da topografia é pintado em definitivo pelo refino mestre V15.48.1 (as regras equivalentes
+   da folha V15.43 eram sobrescritas e foram removidas). As travas leem as duas origens juntas. */
+const topoRasterCss=readCss('assets/css/topographic-environment-v15-43.css')+'\n'+readCss('assets/css/master-refinement-v15-48-1.css');
 const topoRasterStat=fs.statSync(path.join(ROOT,'assets/ui/topographic-lines-v15-48-1.svg'));
 check(topoRasterStat.size>100000,'SVG topográfico original preserva a geometria vetorial em alta qualidade');
 check(topoRasterCss.includes('topographic-lines-v15-48-1.svg'),'CSS topográfico referencia o SVG oficial V15.48.1');
@@ -288,14 +303,14 @@ check(/html\.is-ipad:not\(\.is-phone-layout\)\s*\{\s*--mm-topo-opacity:\.32\s*;/
 check(/html\.is-phone-layout\s*\{\s*--mm-topo-opacity:\.28\s*;/.test(topoRasterCss),'topografia smartphone usa .28');
 check(/@media\(max-width:1180px\)\s*\{\s*:root\s*\{\s*--mm-topo-opacity:\.21\s*;/.test(topoRasterCss),'fallback histórico por largura preservado');
 check(topoRasterCss.includes('transform:none;'),'transform de proteção do dock do iPad preservado');
-check(!read('assets/css/nav-liquid-glass-v15-48-2.css').includes('--mm-topo-opacity'),'dock não sobrepõe topografia');
+check(!readCss('assets/css/nav-liquid-glass-v15-48-2.css').includes('--mm-topo-opacity'),'dock não sobrepõe topografia');
 check(read('tests/e2e/app.spec.mjs').includes('Topografia [T+M] · intensidade'),'teste de visibilidade WebKit presente');
 check(topoRasterCss.includes('opacity:.025!important'),'topografia reduz ruído em transparência/contraste');
 check(topoRasterCss.includes('body:has(#reader.open)::before'),'leitor oculta o ambiente topográfico global');
 check(!blackEditorialCss.includes('topographic-map-v15-42.svg'),'Black Editorial não reativa o SVG topográfico legado');
 check(!blackEditorialCss.includes('--mm-topo-size'),'Black Editorial não redefine escala topográfica legada');
 check(sw.includes('./assets/ui/topographic-lines-v15-48-1.svg'),'service worker pré-cacheia SVG topográfico oficial');
-check(sw.includes(`./assets/css/topographic-environment-v15-43.css?v=${expected}`),'service worker pré-cacheia CSS topográfico raster');
+check(cssIn(sw,`./assets/css/topographic-environment-v15-43.css?v=${expected}`),'service worker pré-cacheia CSS topográfico raster');
 check(!sw.includes('./assets/ui/topographic-map-v15-42.svg'),'service worker não pré-cacheia SVG topográfico legado');
 check(!sw.includes('topographic-environment-v15-42.css'),'service worker não pré-cacheia CSS topográfico legado');
 check(index.includes('id="forceAppRefreshBtn"'),'index botão atualização forçada');
@@ -319,7 +334,7 @@ if(!coreMatch){fail('CORE não encontrado em sw.js')}else{
  for(const ref of refs){if(ref==='./'){ok('CORE ./');continue}const file=cleanAsset(ref);check(exists(file),'CORE '+file)}
 }
 // V211: preserve the authored inline standard and provide an offline-only reader fallback for imported maps.
-const v211ThemeSource=read('assets/css/design-system/nanquim-study-v211.css').trim();
+const v211ThemeSource=readCss('assets/css/design-system/nanquim-study-v211.css').trim();
 check(readerEntry.includes('mmNanquimReaderStyle')&&readerEntry.includes('mm-nanquim-(?:v211-standard|map-theme|reader-theme)')&&readerEntry.includes('mindmap-app'),'V211: reader offline skips duplicate inline theme');
 const bundledV211Maps=(catalog.maps||[]).filter(map=>String(map.href||'').startsWith('cursos/porto-alegre/mapas/')&&/\.html$/i.test(map.href));
 check(bundledV211Maps.length>=14,'V211: 14 estudos integrados disponíveis');

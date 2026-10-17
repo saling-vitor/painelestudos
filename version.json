@@ -1,19 +1,19 @@
 {
-  "version": "15.50.0",
-  "label": "V15.50.0-G",
-  "notes": "Conceitos Nanquim e Latão aplicados ao app inteiro: fontes Archivo, IBM Plex Mono e Anton locais; escala de 14 tokens nas três telas; paleta única nas 54 folhas; pigmentos por categoria e por seção; Vidro Nanquim no que flutua.",
+  "version": "15.51.0",
+  "label": "V15.51.0-G",
+  "notes": "Auditoria e limpeza estrutural: CSS de 54 para 14 folhas com 2.588 declarações mortas removidas sem mudar o visual, legados de marca e manifestos históricos retirados, cartões de mapa sem corte no celular e iPad, PWA e leitor com versões coerentes.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Archivo, IBM Plex Mono e Anton em todo o app, sem fonte da rede",
-    "[G] Escala tipográfica de 14 tokens: nada abaixo de 11px e campos com 16px no toque",
-    "[G] Paleta Nanquim e Latão em todas as superfícies, sem cinzas azulados",
-    "[G] Pigmento por categoria nas capas e por seção no menu ativo; Vidro Nanquim no leitor"
+    "[G] CSS consolidado: 54 folhas viraram 14, sem mudar o que aparece na tela",
+    "[G] 2.588 regras sobrescritas e 1.198 !important mortos removidos com prova de paridade",
+    "[M] [T] Cartões de Todos os Mapas sem texto cortado no celular e no iPad",
+    "[G] Leitor offline e PWA com versões de cache coerentes; legados de marca removidos"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.50",
+    "series": "15.51",
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-16T12:16:59-03:00"
+  "releasedAt": "2026-10-16T23:59:00-03:00"
 }

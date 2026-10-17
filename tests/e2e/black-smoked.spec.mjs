@@ -27,7 +27,7 @@ test('Nanquim Editorial [G] · fundo preto e contorno neutro dos mapas',async({p
       .find(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
     const nav=active?getComputedStyle(active):null;
     const source=[...document.styleSheets].some(sheet=>{
-      try{return !!sheet.href&&sheet.href.includes('black-smoked-uniform-v15-48-163.css')}catch{return false}
+      try{return !!sheet.href&&sheet.href.includes('camada-5-acabamento-final.css')}catch{return false}
     });
     const dock=document.querySelector('.bottom-nav');
     const dockFill=dock?getComputedStyle(dock).backgroundColor:null;
