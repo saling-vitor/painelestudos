@@ -54,10 +54,9 @@ test('Índice de seções [M] · aparece no celular e leva até a seção', asyn
   const nav = page.locator('[data-prancha="progress"] .pr-secnav');
   await expect(nav).toBeVisible();
   expect(await nav.locator('a').count()).toBeGreaterThanOrEqual(4);
+  await page.waitForFunction(() => state.searchIndexPending === false);
   await nav.locator('a').nth(3).click();
-  await page.waitForTimeout(700);
-  const top = await page.evaluate(() => { const a = document.querySelectorAll('[data-prancha="progress"] .pr-secnav a')[3]; return document.getElementById(a.dataset.arg).getBoundingClientRect().top; });
-  expect(top).toBeLessThan(260);
+  await expect.poll(() => page.evaluate(() => { const a = document.querySelectorAll('[data-prancha="progress"] .pr-secnav a')[3]; return document.getElementById(a.dataset.arg).getBoundingClientRect().top; })).toBeLessThan(260);
   await expect(page.locator('[data-prancha="progress"] .pr-secnav')).toHaveClass(/is-stuck/);
 });
 
