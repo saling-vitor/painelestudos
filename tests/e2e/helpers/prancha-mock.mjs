@@ -5,7 +5,9 @@ import { expect } from '@playwright/test';
 
 const CATALOG = JSON.parse(fs.readFileSync(new URL('../../../data/catalog.json', import.meta.url), 'utf8'));
 const RELEASE = JSON.parse(fs.readFileSync(new URL('../../../version.json', import.meta.url), 'utf8'));
-const dayIso = (offset) => { const d = new Date(); d.setDate(d.getDate() + offset); return d.toISOString().slice(0, 10); };
+// V15.51: data LOCAL (como o app calcula). toISOString() usava UTC e, depois das 21h em Brasília, a prova
+// "daqui a 3 dias" virava 4 — falha de horário que nada tinha a ver com o aplicativo.
+const dayIso = (offset) => { const d = new Date(); d.setDate(d.getDate() + offset); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 
 export function mapRows(courseId = 'porto-alegre') {
   return (CATALOG.maps || []).map((m, i) => ({

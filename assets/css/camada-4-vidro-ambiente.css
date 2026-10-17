@@ -1,0 +1,2389 @@
+/* MEUS MAPAS · Camada 4 · vidro (shell e superfícies), ambiente topográfico, design system V15.42, paridade V211 e vidro dinâmico.
+   Gerado na auditoria V15.51.0-G pela consolidação, NA MESMA ORDEM DE CASCATA, de 7 folhas antes carregadas separadamente.
+   Cada trecho começa com "@origem <arquivo>" para rastreabilidade. Editar aqui; não recriar as folhas antigas. */
+
+/* ════ @origem assets/css/liquid-glass-shell-v15-40.css ════ */
+/* V15.40.0-G · Liquid Glass shell V4 + true layered icon outline
+   - topbar [D+T] recebe o mesmo material óptico dos controles sobre capas;
+   - smartphone mantém a topbar compacta existente;
+   - ••• e estrela usam duas camadas reais: preenchimento + base preta contornada;
+   - sem alterar dimensões, posição ou hit-area dos controles. */
+
+:root{
+  --lg-shell-border:rgba(236,230,218,.34);
+  --lg-shell-border-strong:rgba(236,230,218,.52);
+  --lg-shell-highlight:rgba(236,230,218,.38);
+  --lg-shell-shadow:rgba(0,0,0,.30);
+  --lg-shell-icon-stroke:#050505;
+}
+
+/* ---------- Ícones das capas: contorno real em camada separada ---------- */
+.cover-icon-stack{
+  position:relative;
+  display:inline-block;
+  width:16px;
+  height:16px;
+  min-width:16px;
+  min-height:16px;
+  overflow:visible;
+  flex:0 0 16px;
+  color:inherit;
+  line-height:0;
+  pointer-events:none;
+}
+
+.cover-icon-stack>.ui-icon{
+  position:absolute!important;
+  inset:0!important;
+  width:16px!important;
+  height:16px!important;
+  min-width:16px!important;
+  min-height:16px!important;
+  --icon-size:16px!important;
+  margin:0!important;
+  transform:none!important;
+}
+
+.cover-icon-stack>.cover-icon-stroke{
+  z-index:1;
+  color:var(--lg-shell-icon-stroke)!important;
+  background-color:var(--lg-shell-icon-stroke)!important;
+  -webkit-filter:
+    drop-shadow(.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 .9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 -.9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(.6px .6px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.6px -.6px 0 var(--lg-shell-icon-stroke))!important;
+  filter:
+    drop-shadow(.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.9px 0 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 .9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(0 -.9px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(.6px .6px 0 var(--lg-shell-icon-stroke))
+    drop-shadow(-.6px -.6px 0 var(--lg-shell-icon-stroke))!important;
+}
+
+.cover-icon-stack>.cover-icon-fill{
+  z-index:2;
+  color:inherit!important;
+  background-color:currentColor!important;
+  -webkit-filter:none!important;
+  filter:none!important;
+}
+
+/* Favorito ativo: frente dourada, contorno continua preto. */
+.map-card>.fav.on .cover-icon-fill.icon-star{
+  color:#d8c59e!important;
+  background-color:#d8c59e!important;
+}
+.map-card>.fav.on .cover-icon-stroke.icon-star{
+  color:var(--lg-shell-icon-stroke)!important;
+  background-color:var(--lg-shell-icon-stroke)!important;
+}
+
+/* ---------- Topbar Liquid Glass fumê [D+T] ---------- */
+html:not(.is-phone-layout) .topbar{
+  background-blend-mode:screen,screen,normal,normal!important;
+}
+
+html:not(.is-phone-layout) .topbar::before{
+  inset:0!important;
+  border-radius:inherit!important;
+  background:
+    linear-gradient(112deg,
+      rgba(236,230,218,.085) 0%,
+      rgba(236,230,218,.024) 17%,
+      transparent 34%,
+      transparent 100%)!important;
+  opacity:.82!important;
+  filter:none!important;
+}
+
+html:not(.is-phone-layout) .topbar::after{
+  inset:1px!important;
+  width:auto!important;
+  height:auto!important;
+  left:1px!important;
+  top:1px!important;
+  border-radius:inherit!important;
+  background:
+    radial-gradient(70% 180% at 16% 0%,
+      rgba(236,230,218,.050) 0%,
+      transparent 46%),
+    radial-gradient(60% 160% at 88% 100%,
+      rgba(236,230,218,.032) 0%,
+      transparent 54%)!important;
+  filter:none!important;
+  opacity:.92!important;
+}
+
+/* Campo da busca: Liquid Glass fumê.
+   Menos branco leitoso, mais grafite translúcido e highlight apenas nas bordas. */
+html:not(.is-phone-layout) .topbar .search{
+  background-blend-mode:screen,screen,normal,normal!important;
+}
+
+html:not(.is-phone-layout) .topbar .search::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+  background:
+    linear-gradient(112deg,
+      rgba(236,230,218,.105) 0%,
+      rgba(236,230,218,.030) 17%,
+      transparent 34%,
+      transparent 100%),
+    radial-gradient(72% 145% at 90% 110%,
+      rgba(236,230,218,.028) 0%,
+      transparent 56%);
+  opacity:.85;
+}
+
+html:not(.is-phone-layout) .topbar .search input{
+  position:relative;
+  z-index:1;
+  background:transparent!important;
+  -webkit-box-shadow:none!important;
+  box-shadow:none!important;
+}
+
+html:not(.is-phone-layout) .topbar .search .search-icon{
+  z-index:2;
+  color:rgba(236,230,218,.62)!important;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.32));
+}
+
+html:not(.is-phone-layout) .topbar .search input::placeholder{
+  color:rgba(236,230,218,.60)!important;
+}
+
+html:not(.is-phone-layout) .topbar .search input:-webkit-autofill,
+html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:hover,
+html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:focus,
+html:not(.is-phone-layout) .topbar .search input:-webkit-autofill:active{
+  -webkit-text-fill-color:#ece6da!important;
+  caret-color:#ece6da!important;
+  -webkit-box-shadow:0 0 0 1000px rgba(10,10,9,.34) inset!important;
+  box-shadow:0 0 0 1000px rgba(10,10,9,.34) inset!important;
+}
+
+/* Sincronizar integra-se à mesma família do vidro das capas. */
+html:not(.is-phone-layout) .topbar #syncTop{
+  border-color:rgba(236,230,218,.30)!important;
+  color:#ece6da!important;
+  box-shadow:
+    0 5px 14px rgba(0,0,0,.18),
+    inset 0 1px 1px rgba(236,230,218,.32),
+    inset 0 -1px 1px rgba(0,0,0,.16)!important;
+}
+
+@media(hover:hover) and (pointer:fine){
+  html:not(.is-phone-layout) .topbar #syncTop:hover{
+    border-color:var(--lg-shell-border-strong)!important;
+    color:#ece6da!important;
+    box-shadow:
+      0 7px 18px rgba(0,0,0,.21),
+      inset 0 1px 1px rgba(236,230,218,.42),
+      inset 0 -1px 1px rgba(0,0,0,.14)!important;
+  }
+}
+
+/* iPad preserva dimensões/touch targets; muda apenas o material. */
+html.is-ipad:not(.is-phone-layout) .topbar #syncTop{
+  border-color:rgba(236,230,218,.28)!important;
+}
+
+/* Acessibilidade: densidade maior quando transparência é reduzida. */
+
+@media(forced-colors:active){
+  .cover-icon-stack>.cover-icon-stroke{display:none!important}
+  html:not(.is-phone-layout) .topbar,
+  html:not(.is-phone-layout) .topbar .search,
+  html:not(.is-phone-layout) .topbar #syncTop{
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+  }
+}
+
+
+/* V15.41.x-G · Apple HIG revalidation: one optical layer per topbar group */
+/* A topbar é o container Liquid Glass. Busca e Sincronizar continuam com aparência
+   de lente, mas deixam de aplicar um segundo backdrop-filter sobre o vidro pai. */
+html:not(.is-phone-layout) .topbar .search{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html:not(.is-phone-layout) .topbar .search:focus-within{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html:not(.is-phone-layout) .topbar #syncTop{
+  background:
+    radial-gradient(140% 160% at 8% -70%,
+      rgba(236,230,218,.20) 0%,
+      rgba(236,230,218,.055) 39%,
+      transparent 63%),
+    linear-gradient(145deg,
+      rgba(236,230,218,.055) 0%,
+      rgba(236,230,218,.016) 55%,
+      rgba(236,230,218,.026) 100%),
+    rgba(10,10,9,.12)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+@media(hover:hover) and (pointer:fine){
+  html:not(.is-phone-layout) .topbar #syncTop:hover{
+    background:
+      radial-gradient(145% 165% at 8% -70%,
+        rgba(236,230,218,.26) 0%,
+        rgba(236,230,218,.075) 39%,
+        transparent 64%),
+      linear-gradient(145deg,
+        rgba(236,230,218,.068) 0%,
+        rgba(236,230,218,.020) 55%,
+        rgba(236,230,218,.032) 100%),
+      rgba(10,10,9,.11)!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+@media(prefers-contrast:more){
+  html:not(.is-phone-layout) .topbar{
+    background-color:rgba(5,5,5,.90)!important;
+  }
+  html:not(.is-phone-layout) .topbar :is(.search,#syncTop){
+    border-color:rgba(236,230,218,.40)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html:not(.is-phone-layout) .topbar,
+  html:not(.is-phone-layout) .topbar :is(.search,#syncTop){
+    transition:none!important;
+  }
+}
+
+/* ════ @origem assets/css/liquid-glass-surfaces-v15-40.css ════ */
+/* V15.41.x-G · Liquid Glass surfaces V2 · Apple HIG audit
+   Escopo: camada funcional acima do conteúdo — navegação, busca, menus,
+   popovers, modais, grupos de ações e filtros selecionados.
+   Princípios aplicados:
+   - vidro Regular nas superfícies funcionais e overlays;
+   - uma única camada de blur por grupo (evita glass-on-glass);
+   - cor apenas como indicação de seleção/estado, nunca como massa de fundo;
+   - conteúdo permanente continua sendo conteúdo, não Liquid Glass;
+   - fallbacks para transparência, contraste, movimento e forced colors. */
+
+:root{
+  --lg-regular-bg-dense:var(--mm-glass-dense-bg,rgba(10,10,9,.78));
+  --lg-regular-border-strong:rgba(236,230,218,.30);
+  --lg-regular-highlight:rgba(236,230,218,.16);
+  --lg-regular-shadow:0 22px 58px rgba(0,0,0,.48);
+  --lg-regular-filter:blur(20px) saturate(148%) contrast(106%) brightness(101%);
+  --lg-inner-fill:rgba(236,230,218,.036);
+}
+
+/* ---------------------------------------------------------
+   1 · RESULTADOS DA BUSCA
+   Popover Regular ligado visualmente à busca, sem virar card.
+   --------------------------------------------------------- */
+.global-search-panel{
+  isolation:isolate;
+  border-color:var(--lg-regular-border-strong)!important;
+  background:
+    radial-gradient(125% 90% at 8% -24%,
+      rgba(236,230,218,.135) 0%,
+      rgba(236,230,218,.035) 30%,
+      transparent 58%),
+    linear-gradient(145deg,
+      rgba(236,230,218,.034) 0%,
+      rgba(236,230,218,.008) 48%,
+      rgba(5,5,5,.11) 100%),
+    var(--lg-regular-bg-dense)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
+  backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(236,230,218,.18),
+    inset 0 -1px 0 rgba(0,0,0,.24)!important;
+}
+.global-search-option:hover,
+.global-search-option[aria-selected="true"]{
+  border-color:rgba(236,230,218,.13)!important;
+  background:linear-gradient(135deg,rgba(236,230,218,.060),rgba(236,230,218,.016))!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.045)!important;
+}
+
+/* ---------------------------------------------------------
+   2 · SIDEBAR
+   A lateral permanece sólida; somente o item ativo vira lâmina.
+   A cor do destino fica no símbolo/marcador, não na placa.
+   --------------------------------------------------------- */
+html:not(.is-phone-layout) .nav-btn.active{
+  border-color:rgba(236,230,218,.15)!important;
+  background:
+    radial-gradient(115% 140% at 6% -42%,
+      rgba(236,230,218,.105) 0%,
+      rgba(236,230,218,.025) 38%,
+      transparent 58%),
+    linear-gradient(92deg,
+      rgba(236,230,218,.040) 0%,
+      rgba(236,230,218,.016) 55%,
+      rgba(5,5,5,.12) 100%),
+    rgba(10,10,9,.40)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(142%) contrast(104%)!important;
+  backdrop-filter:blur(12px) saturate(142%) contrast(104%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(236,230,218,.085),
+    inset 0 -1px 0 rgba(0,0,0,.18),
+    0 7px 20px rgba(0,0,0,.16)!important;
+}
+html:not(.is-phone-layout) .nav-btn.active::before{
+  width:2px!important;
+  opacity:.82!important;
+  box-shadow:none!important;
+}
+
+/* ---------------------------------------------------------
+   3 · BOTTOM NAV iPHONE / iPAD
+   O dock é a única superfície de vidro. O item ativo é uma lente
+   interna feita com fill/vibrancy, sem um segundo backdrop-filter.
+   --------------------------------------------------------- */
+@media(max-width:820px){
+  .bottom-nav{
+    isolation:isolate;
+  }
+  .bottom-nav button.active{
+    border-color:rgba(236,230,218,.13)!important;
+    background:
+      radial-gradient(125% 145% at 15% -38%,
+        rgba(236,230,218,.10) 0%,
+        transparent 55%),
+      linear-gradient(180deg,rgba(236,230,218,.052),rgba(236,230,218,.020))!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    box-shadow:
+      inset 0 1px 0 rgba(236,230,218,.11),
+      0 6px 16px rgba(0,0,0,.10)!important;
+  }
+}
+
+/* Dock de iPad: geometria em ipad-portrait-nav;
+   material e estado cromático exclusivamente em nav-liquid-glass.
+   Removida a autoridade legada que mantinha isolation:isolate
+   com especificidade maior que o acabamento final. */
+
+/* mobile-first desliga blur tarde na cascata; esta folha é carregada por último. */
+@media(max-width:480px){
+  html.is-phone-layout .bottom-nav button.active{
+    border-color:rgba(236,230,218,.12)!important;
+    background:
+      radial-gradient(120% 130% at 15% -30%,rgba(236,230,218,.085),transparent 55%),
+      linear-gradient(180deg,rgba(236,230,218,.046),rgba(236,230,218,.018))!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    box-shadow:inset 0 1px 0 rgba(236,230,218,.095),0 5px 14px rgba(0,0,0,.10)!important;
+  }
+}
+
+/* ---------------------------------------------------------
+   4 · MENUS, POPOVERS E SHEETS
+   Regular é a variante padrão para texto e comandos.
+   Inclui os menus de mapas e o select customizado do desktop.
+   --------------------------------------------------------- */
+:is(
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet
+){
+  isolation:isolate;
+  border-color:var(--lg-regular-border-strong)!important;
+  background:
+    radial-gradient(125% 112% at 8% -27%,
+      rgba(236,230,218,.12) 0%,
+      rgba(236,230,218,.026) 37%,
+      transparent 60%),
+    linear-gradient(145deg,
+      rgba(236,230,218,.028) 0%,
+      rgba(236,230,218,.006) 48%,
+      rgba(5,5,5,.095) 100%),
+    var(--lg-regular-bg-dense)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
+  backdrop-filter:blur(22px) saturate(150%) contrast(107%)!important;
+  box-shadow:
+    0 24px 64px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(236,230,218,.16),
+    inset 0 -1px 0 rgba(0,0,0,.22)!important;
+}
+:is(
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu
+) button:hover,
+:is(
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu
+) button:focus-visible{
+  background:var(--lg-inner-fill-hover)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.035)!important;
+}
+.ui-select-popover .ui-select-option:hover,
+.ui-select-popover .ui-select-option:focus-visible,
+.ui-select-popover .ui-select-option[aria-selected="true"]{
+  background:linear-gradient(180deg,rgba(236,230,218,.060),rgba(236,230,218,.025))!important;
+}
+@media(max-width:480px){
+  html.is-phone-layout .mobile-menu-sheet{
+    border-color:rgba(236,230,218,.18)!important;
+    background:
+      radial-gradient(120% 100% at 12% -20%,rgba(236,230,218,.09),transparent 52%),
+      linear-gradient(155deg,rgba(236,230,218,.020),rgba(5,5,5,.10)),
+      rgba(10,10,9,.86)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(145%) contrast(105%)!important;
+    backdrop-filter:blur(18px) saturate(145%) contrast(105%)!important;
+  }
+}
+
+/* ---------------------------------------------------------
+   5 · GRUPO DE AÇÕES DO CURSO
+   Edital | Simulados | ••• = UMA superfície de vidro.
+   Os três controles internos são fills transparentes, evitando glass-on-glass.
+   --------------------------------------------------------- */
+.course-primary-actions{
+  isolation:isolate;
+}
+/* Neutraliza gaps legados de maior especificidade: o grupo precisa ser uma peça contínua. */
+html:not(.is-ipad):not(.is-phone-layout) [data-view="course"] .course-primary-actions,
+html.is-ipad:not(.is-phone-layout) [data-view="course"] .course-primary-actions{
+  gap:0!important;
+}
+
+.course-primary-actions>#openEdital,
+.course-primary-actions>#courseSimulationsBtn,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn{
+  border:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+.course-primary-actions>#courseSimulationsBtn{
+  border-left:1px solid var(--lg-separator)!important;
+  border-radius:0!important;
+}
+.course-primary-actions>.course-more-wrap{
+  align-self:stretch;
+  display:flex;
+  border-left:1px solid var(--lg-separator)!important;
+}
+.course-primary-actions>.course-more-wrap>#courseMoreBtn{
+  height:100%!important;
+  min-height:41px;
+}
+.course-primary-actions>#openEdital:hover,
+.course-primary-actions>#courseSimulationsBtn:hover,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn:hover,
+.course-primary-actions>#openEdital:focus-visible,
+.course-primary-actions>#courseSimulationsBtn:focus-visible,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn:focus-visible{
+  background:var(--lg-inner-fill-hover)!important;
+}
+.course-primary-actions>#openEdital:active,
+.course-primary-actions>#courseSimulationsBtn:active,
+.course-primary-actions>.course-more-wrap>#courseMoreBtn:active{
+  background:rgba(236,230,218,.075)!important;
+}
+
+/* ---------------------------------------------------------
+   6 · MODAIS / TOASTS
+   Regular mais denso para legibilidade de texto e tarefas focadas.
+   --------------------------------------------------------- */
+.modal-card{
+  isolation:isolate;
+}
+@media(max-width:480px){
+  html.is-phone-layout :is(.modal-card,.planner-modal-card,.study-doubt-card){
+    border-color:rgba(236,230,218,.18)!important;
+    background:
+      radial-gradient(115% 80% at 8% -15%,rgba(236,230,218,.085),transparent 50%),
+      linear-gradient(155deg,rgba(236,230,218,.022),rgba(5,5,5,.105) 72%),
+      rgba(10,10,9,.88)!important;
+    -webkit-backdrop-filter:blur(17px) saturate(142%) contrast(104%)!important;
+    backdrop-filter:blur(17px) saturate(142%) contrast(104%)!important;
+    box-shadow:0 28px 82px rgba(0,0,0,.68),inset 0 1px 0 rgba(236,230,218,.12)!important;
+  }
+}
+
+/* ---------------------------------------------------------
+   7 · BARRAS FLUTUANTES E FILTROS
+   Glass apenas no estado ativo. Selects principais recebem vidro leve.
+   --------------------------------------------------------- */
+.course-sticky-bar{
+  isolation:isolate;
+  border-color:rgba(236,230,218,.17)!important;
+}
+
+.course-study-filter.active,
+.category-btn.active{
+  border-color:rgba(236,230,218,.17)!important;
+  background:
+    radial-gradient(130% 135% at 12% -38%,rgba(236,230,218,.105),transparent 53%),
+    linear-gradient(145deg,rgba(236,230,218,.047),rgba(236,230,218,.018)),
+    rgba(10,10,9,.42)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(140%)!important;
+  backdrop-filter:blur(10px) saturate(140%)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.09),0 5px 14px rgba(0,0,0,.14)!important;
+}
+
+/* O select nativo continua funcional em touch; no desktop o JS mostra .ui-select-trigger. */
+.simulation-toolbar select,
+.simulation-toolbar .ui-select-trigger{
+  border-color:rgba(236,230,218,.16)!important;
+  background:
+    radial-gradient(135% 145% at 10% -50%,rgba(236,230,218,.085),transparent 56%),
+    linear-gradient(145deg,rgba(236,230,218,.030),rgba(5,5,5,.075)),
+    rgba(10,10,9,.58)!important;
+  -webkit-backdrop-filter:blur(11px) saturate(142%)!important;
+  backdrop-filter:blur(11px) saturate(142%)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.065)!important;
+}
+.simulation-toolbar .ui-select-trigger:hover,
+.simulation-toolbar .ui-select-trigger[aria-expanded="true"]{
+  border-color:rgba(236,230,218,.24)!important;
+  background:
+    radial-gradient(135% 145% at 10% -50%,rgba(236,230,218,.11),transparent 56%),
+    linear-gradient(145deg,rgba(236,230,218,.045),rgba(5,5,5,.070)),
+    rgba(10,10,9,.55)!important;
+}
+
+/* ---------------------------------------------------------
+   ACESSIBILIDADE E FALLBACKS
+   --------------------------------------------------------- */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :is(
+    .global-search-panel,
+    .bottom-nav,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .toast,
+    .course-sticky-bar,
+    .course-primary-actions,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
+    background:rgba(25,24,23,.94)!important;
+  }
+}
+
+@media(prefers-reduced-transparency:reduce){
+  :is(
+    .global-search-panel,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .toast,
+    .course-sticky-bar,
+    .bottom-nav,
+    .course-primary-actions,
+    .course-study-filter.active,
+    .category-btn.active,
+    .simulation-toolbar select,
+    .simulation-toolbar .ui-select-trigger,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
+    background:#0a0a09!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+
+@media(prefers-contrast:more){
+  :is(
+    .global-search-panel,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .course-sticky-bar,
+    .bottom-nav,
+    .course-primary-actions,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
+    border-color:rgba(236,230,218,.48)!important;
+    background-color:rgba(5,5,5,.90)!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  :is(
+    .nav-btn,
+    .bottom-nav button,
+    .course-primary-actions button,
+    .course-more-menu button,
+    .reader-more-menu button,
+    .simulation-card-action-menu button,
+    .map-actions-menu button,
+    .ui-select-trigger,
+    .ui-select-option
+  ){
+    transition:none!important;
+  }
+}
+
+@media(forced-colors:active){
+  :is(
+    .global-search-panel,
+    .course-more-menu,
+    .reader-more-menu,
+    .simulation-card-action-menu,
+    .map-actions-menu,
+    .maps-filter-panel,
+    .ui-select-popover,
+    .mobile-menu-sheet,
+    .modal-card,
+    .toast,
+    .course-sticky-bar,
+    .bottom-nav,
+    .course-primary-actions,
+    .course-study-filter.active,
+    .category-btn.active,
+    .simulation-toolbar select,
+    .simulation-toolbar .ui-select-trigger,
+    html:not(.is-phone-layout) .nav-btn.active
+  ){
+    background:Canvas!important;
+    background-image:none!important;
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .course-primary-actions>.course-more-wrap,
+  .course-primary-actions>#courseSimulationsBtn{
+    border-color:CanvasText!important;
+  }
+}
+
+/* ════ @origem assets/css/topographic-environment-v15-43.css ════ */
+/* V15.45 · TOPOGRAPHIC RASTER ENVIRONMENT · MEUS MAPAS
+   PASSO 4 · composição raster orgânica, contínua e não repetitiva.
+   O ambiente pertence ao fundo global; conteúdo, leitores e superfícies matte permanecem limpos. */
+
+:root{
+  --mm-topo-opacity:.20;
+
+  --mm-topo-image:url("../ui/topographic-lines-v15-48-1.svg");
+}
+
+body{
+
+  background:
+    radial-gradient(
+      1200px 820px at 4% -8%,
+      rgba(36,35,32,.13),
+      transparent 66%
+    ),
+    radial-gradient(
+      980px 700px at 98% 14%,
+      rgba(216,197,158,.022),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      var(--mm-bg-1),
+      var(--mm-bg-0) 48%,
+      #000000
+    )!important;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+
+  transform:translateZ(0);
+}
+
+/* O raster nunca entra nos leitores/iframes. Ao abrir um leitor, o ambiente global
+   é ocultado atrás da superfície de leitura e restaurado ao fechar. */
+:is(
+  #reader,
+  #simulationReader,
+  .simulation-reader,
+  .reader-frame-shell,
+  .simulation-frame-shell
+){
+  --mm-topo-opacity:0;
+}
+
+/* Intensidade responsiva: as classes reais prevalecem sobre os
+   fallbacks por largura. iPad + iPhone: reforço visual; desktop intacto.
+   Não alterar os fundos do dock, a pintura global ou o modo de leitura. */
+html.is-ipad:not(.is-phone-layout){
+  --mm-topo-opacity:.32;
+}
+html.is-phone-layout{
+  --mm-topo-opacity:.28;
+}
+html.is-ipad:not(.is-phone-layout) body::before,
+html.is-phone-layout body::before{
+  display:block;
+  visibility:visible;
+}
+/* WebKit/iPadOS: o raster global permanece contínuo, sem layer
+   artificial por translateZ(0) atrás de elementos fixed/backdrop. */
+@media(orientation:portrait){
+  html.is-ipad:not(.is-phone-layout) body::before{
+    transform:none;
+  }
+}
+
+/* Fallback histórico por largura (sem alterar a aparência de desktop estreito).
+   Em tablets reais, a classe is-ipad acima prevalece por especificidade. */
+@media(max-width:1180px){
+  :root{
+    --mm-topo-opacity:.21;
+  }
+}
+
+/* Fallback histórico para telas estreitas; o iPhone usa o token .28
+   definido por is-phone-layout, mesmo quando a viewport muda. */
+@media(max-width:600px){
+  :root{
+    --mm-topo-opacity:.20;
+  }
+
+  body{
+    background:
+      radial-gradient(
+        720px 520px at 8% -8%,
+        rgba(36,35,32,.10),
+        transparent 68%
+      ),
+      linear-gradient(
+        180deg,
+        #050505,
+        #050505 52%,
+        #000000
+      )!important;
+  }
+}
+
+/* Acessibilidade: textura praticamente some quando transparência/contraste pedem menos ruído. */
+
+/* ════ @origem assets/css/design-system-v15-42.css ════ */
+/* V15.42 · MEUS MAPAS Design System V2
+   Apple-inspired functional layer + identidade cartográfica própria.
+   Princípio: conteúdo sólido; navegação/controles/overlays formam a camada Liquid Glass. */
+:root{
+  --mm-accent:#d8c59e;
+
+  --mm-radius-control:9px;
+  --mm-radius-inner:10px;
+  --mm-radius-surface:13px;
+  --mm-radius-shell:18px;
+  --mm-radius-overlay:16px;
+  --mm-motion:190ms;
+}
+
+/* =========================================================
+   1 · CONTEÚDO: MENOS CAIXAS, MAIS HIERARQUIA
+   ========================================================= */
+:is(
+  .study-command-card,
+  .study-intelligence-row>article,
+  .home-review-section,
+  .continue-card,
+  .simulation-recent-item,
+  .course-card,
+  .map-card,
+  .progress-insights,
+  .progress-insight-card,
+  .progress-attention,
+  .panel
+){
+  border-color:var(--mm-surface-border)!important;
+  box-shadow:none!important;
+}
+:is(
+  .study-command-card,
+  .home-review-section,
+  .continue-card,
+  .simulation-recent-item,
+  .progress-insights,
+  .panel
+){
+  background:linear-gradient(180deg,rgba(10,10,9,.88),rgba(5,5,5,.86))!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.section-head{position:relative}
+
+/* KPIs do hero funcionam como uma faixa única, não como mini-cards soltos. */
+.hero-stats{
+  gap:0!important;
+  overflow:hidden;
+  border:1px solid var(--mm-surface-border)!important;
+  border-radius:var(--mm-radius-inner)!important;
+  background:rgba(5,5,5,.64)!important;
+}
+.hero-stats .stat{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.hero-stats .stat+.stat{border-left:1px solid rgba(236,230,218,.065)!important}
+
+/* Métricas internas seguem a mesma lógica de agrupamento discreto. */
+.study-command-metrics{
+  gap:1px!important;
+  overflow:hidden;
+  border:1px solid var(--mm-surface-border-soft);
+  border-radius:var(--mm-radius-inner);
+  background:rgba(236,230,218,.045);
+}
+.study-command-metrics>button{
+  border:0!important;
+  border-radius:0!important;
+  background:rgba(5,5,5,.88)!important;
+  box-shadow:none!important;
+}
+
+/* Configurações: painéis continuam semânticos, porém mais planos. */
+.settings-layout-v3 .panel{
+  border-color:rgba(236,230,218,.065)!important;
+  background:rgba(10,10,9,.82)!important;
+  box-shadow:none!important;
+}
+.settings-layout-v3 .panel-kicker{letter-spacing:.12em}
+
+/* =========================================================
+   2 · SIDEBAR / RAIL · UMA SUPERFÍCIE FUNCIONAL
+   ========================================================= */
+html:not(.is-phone-layout) .side{
+  top:10px!important;
+  bottom:10px!important;
+  left:10px!important;
+  width:calc(var(--nav) - 20px)!important;
+  height:auto!important;
+  overflow:hidden;
+  border-radius:var(--mm-radius-shell)!important;
+}
+html:not(.is-phone-layout) .side .brand{padding-inline:10px}
+html:not(.is-phone-layout) .side .nav-btn{
+  border-radius:var(--mm-radius-control)!important;
+  transition:background var(--mm-motion-fast) ease,border-color var(--mm-motion-fast) ease,color var(--mm-motion-fast) ease,transform var(--mm-motion-fast) ease;
+}
+html:not(.is-phone-layout) .side .nav-btn.active{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html:not(.is-phone-layout) .side .nav-btn.active::before{
+  width:2px!important;
+  opacity:.88!important;
+}
+
+/* =========================================================
+   3 · TOPBAR · UMA CAMADA ÓPTICA
+   ========================================================= */
+html:not(.is-phone-layout) .topbar{
+  border-color:var(--mm-glass-border)!important;
+  border-radius:var(--mm-radius-shell)!important;
+}
+html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn){
+  border-radius:var(--mm-radius-control)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* =========================================================
+   4 · LIQUID GLASS REGULAR / DENSE
+   ========================================================= */
+:is(
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet
+){
+  border:1px solid rgba(236,230,218,.22)!important;
+  border-radius:var(--mm-radius-overlay)!important;
+  background:
+    radial-gradient(120% 95% at 8% -24%,rgba(236,230,218,.115),transparent 56%),
+    linear-gradient(155deg,rgba(236,230,218,.025),rgba(5,5,5,.11)),
+    var(--mm-glass-dense)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
+  backdrop-filter:blur(22px) saturate(148%) contrast(106%)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.68),
+    var(--mm-shadow-float),
+    inset 0 1px 0 rgba(236,230,218,.15)!important;
+}
+.modal-card{
+  border:1px solid rgba(236,230,218,.19)!important;
+  border-radius:var(--mm-radius-overlay)!important;
+  background:
+    radial-gradient(110% 74% at 7% -10%,rgba(236,230,218,.09),transparent 54%),
+    linear-gradient(155deg,rgba(236,230,218,.022),rgba(5,5,5,.105)),
+    rgba(10,10,9,.84)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
+  backdrop-filter:blur(24px) saturate(142%) contrast(106%)!important;
+  box-shadow:0 0 0 1px rgba(0,0,0,.72),0 34px 96px rgba(0,0,0,.68),inset 0 1px 0 rgba(236,230,218,.14)!important;
+}
+
+/* =========================================================
+   5 · CONTROLES SOBRE CAPAS
+   Material centralizado no CSS de botões (Smoked Glass estático).
+   Este módulo define apenas tokens compartilhados e outros componentes.
+   ========================================================= */
+
+/* =========================================================
+   6 · GRUPO DO CURSO · UMA SUPERFÍCIE, TRÊS CONTROLES
+   ========================================================= */
+.course-primary-actions{
+  gap:0!important;
+  overflow:visible;
+  border-radius:var(--mm-radius-inner)!important;
+}
+.course-primary-actions>#openEdital{border-radius:8px 0 0 8px!important}
+.course-primary-actions>.course-more-wrap>#courseMoreBtn{border-radius:0 8px 8px 0!important}
+
+/* =========================================================
+   7 · FILTROS / SELECTS · VIDRO SOMENTE ONDE FAZ SENTIDO
+   ========================================================= */
+:is(.course-study-filter.active,.category-btn.active){
+  border-color:rgba(236,230,218,.15)!important;
+  border-radius:var(--mm-radius-control)!important;
+  background:linear-gradient(180deg,rgba(236,230,218,.052),rgba(236,230,218,.018)),rgba(10,10,9,.40)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(138%)!important;
+  backdrop-filter:blur(9px) saturate(138%)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.09)!important;
+}
+.simulation-toolbar :is(select,.ui-select-trigger){
+  border-radius:var(--mm-radius-control)!important;
+  border-color:rgba(236,230,218,.15)!important;
+  background:linear-gradient(180deg,rgba(236,230,218,.040),rgba(236,230,218,.012)),rgba(10,10,9,.55)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(138%)!important;
+  backdrop-filter:blur(10px) saturate(138%)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.07)!important;
+}
+
+/* =========================================================
+   8 · BOTTOM NAV · DOCK ÚNICO + LENTE INTERNA
+   ========================================================= */
+.bottom-nav{
+  border-color:var(--mm-glass-border)!important;
+}
+.bottom-nav>button.active{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* =========================================================
+   9 · IPAD · CONTRATO ÚNICO POR ORIENTAÇÃO
+   A geometria do dock em retrato pertence exclusivamente a
+   ipad-portrait-nav-v15-36-17.css. Esta folha conserva apenas
+   a densidade adicional da barra lateral em paisagem.
+   ========================================================= */
+@media(orientation:landscape){
+  html.is-ipad:not(.is-phone-layout) .side{
+    width:72px!important;
+    left:8px!important;
+    top:8px!important;
+    bottom:8px!important;
+  }
+  html.is-ipad:not(.is-phone-layout) .content{
+    width:min(1180px,100%)!important;
+    padding-left:18px!important;
+    padding-right:18px!important;
+    padding-bottom:52px!important;
+  }
+}
+
+/* =========================================================
+   10 · SMARTPHONE · COMPACTO, SEM AUMENTAR CARDS
+   ========================================================= */
+@media(max-width:480px){
+  html.is-phone-layout .content{padding-inline:12px!important}
+  html.is-phone-layout .bottom-nav{
+    left:7px!important;
+    right:7px!important;
+    bottom:calc(6px + var(--safe-bottom))!important;
+  }
+  html.is-phone-layout :is(.course-toolbar,.maps-toolbar,.simulation-toolbar){
+    gap:6px!important;
+  }
+}
+
+/* =========================================================
+   11 · CONTEÚDO PERMANENTE NUNCA VIRA GLASS
+   ========================================================= */
+:is(.course-card,.map-card,.simulation-card,.progress-insight-card,.study-plan-item,.agenda-day){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* =========================================================
+   12 · ACESSIBILIDADE / FALLBACKS
+   ========================================================= */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    background:#0a0a09!important;
+  }
+}
+@media(prefers-reduced-transparency:reduce){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    background:#0a0a09!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+@media(prefers-contrast:more){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    border-color:rgba(236,230,218,.48)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  :is(.nav-btn,.bottom-nav button,.course-primary-actions button,.ui-select-trigger,.course-study-filter,.category-btn){
+    transition:none!important;
+  }
+}
+@media(forced-colors:active){
+  :is(.side,.topbar,.bottom-nav,.global-search-panel,.course-more-menu,.reader-more-menu,.simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,.ui-select-popover,.modal-card,.course-primary-actions){
+    background:Canvas!important;
+    background-image:none!important;
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+
+/* ════ @origem assets/css/v211-parity-v15-42.css ════ */
+/* ==========================================================================
+   MEUS MAPAS · V211 PARITY LAYER · V15.42
+   Complementa Design System V2 + ambiente topografico com a linguagem
+   editorial da TemplateEstudos_GitHubPages_V211: hierarquia, hero, cards,
+   paineis, formularios e chrome do leitor. Nao duplica o Liquid Glass.
+   ========================================================================== */
+
+:root{
+  --v211-bg:#050505;
+  --v211-surface:#0a0a09;
+  --v211-surface-2:#0a0a09;
+  --v211-surface-3:#111110;
+  --v211-text:#ece6da;
+  --v211-text-2:#ece6da;
+  --v211-muted:#857e72;
+  --v211-muted-2:#857e72;
+  --v211-champagne:#d8c59e;
+  --v211-champagne-2:#c3aa84;
+  --v211-coral:#b8614e;
+  --v211-green:#8c9a6c;
+  --v211-plum:#857e72;
+  --v211-line:rgba(236,230,218,.095);
+  --v211-line-2:rgba(236,230,218,.055);
+  --v211-card-radius:11px;
+  --v211-panel-radius:13px;
+  --v211-control-radius:8px;
+}
+
+.content{
+  width:min(1360px,100%)!important;
+  padding-top:28px!important;
+}
+.section-head h2,
+.study-agenda-head h2,
+.planner-page-head h2,
+.settings-control-center .section-head h2{
+  color:#ece6da!important;
+  letter-spacing:-.018em!important;
+}
+.kicker,
+.panel-kicker,
+.section-kicker,
+.simulation-manage-section-head>div>span{
+  color:#c3aa84!important;
+  font-family:var(--mono)!important;
+  font-weight:800!important;
+  letter-spacing:.15em!important;
+  text-transform:uppercase!important;
+}
+.section-head p,
+.modal-description{color:#857e72!important}
+
+.hero{
+  min-height:330px!important;
+  border:1px solid rgba(216,197,158,.16)!important;
+  border-radius:26px!important;
+  background-color:#050505!important;
+  box-shadow:0 34px 110px rgba(0,0,0,.66),inset 0 1px rgba(236,230,218,.04)!important;
+}
+.hero::before{
+  background:
+    linear-gradient(90deg,
+      rgba(5,5,5,.90) 0%,
+      rgba(5,5,5,.72) 34%,
+      rgba(5,5,5,.35) 58%,
+      rgba(5,5,5,.10) 78%,
+      rgba(5,5,5,.24) 100%)!important;
+}
+.hero::after{
+  content:"MEUS MAPAS · ESTUDO INTELIGENTE / V211";
+  position:absolute;
+  right:25px;
+  bottom:16px;
+  z-index:2;
+  color:rgba(216,197,158,.24);
+  font:700 var(--fs-eyebrow) var(--mono);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  pointer-events:none;
+}
+.hero-copy{padding:44px 44px 40px}
+.eyebrow{
+  border:1px solid rgba(216,197,158,.22)!important;
+  border-radius:9px!important;
+  background:rgba(216,197,158,.04)!important;
+  color:#c3aa84!important;
+}
+.hero h1{
+  font-family:var(--condensed)!important;
+  font-weight:800!important;
+  letter-spacing:-.015em!important;
+}
+.hero p{color:#b9b2a5!important;line-height:1.75!important}
+
+.map-card{
+  border:1px solid var(--v211-line)!important;
+  border-radius:var(--v211-card-radius)!important;
+  background:linear-gradient(180deg,#0a0a09,#0a0a09)!important;
+  box-shadow:0 12px 27px rgba(0,0,0,.34)!important;
+}
+.map-card::before{
+  width:2px!important;
+  background:var(--accent,var(--v211-champagne-2))!important;
+  opacity:.86!important;
+}
+.map-card:hover{
+  border-color:color-mix(in srgb,var(--accent,var(--v211-champagne-2)) 43%,rgba(236,230,218,.10))!important;
+}
+.map-code{
+  border-radius:var(--v211-control-radius)!important;
+  background:color-mix(in srgb,var(--accent,var(--v211-champagne-2)) 9%,#0a0a09)!important;
+  color:color-mix(in srgb,var(--accent,var(--v211-champagne-2)) 72%,#ece6da)!important;
+}
+.map-card h3{color:#ece6da!important}
+.map-card p{color:#857e72!important}
+
+:is(
+  .study-command-card,
+  .study-intelligence-row>article,
+  .study-intelligence-panel,
+  .priority-now-card,
+  .forecast-home-card,
+  .study-agenda-calendar,
+  .study-agenda-side,
+  .study-analytics-grid>.panel,
+  .study-heatmap-card,
+  .progress-insight-card,
+  .progress-global-panel,
+  .progress-course,
+  .settings-control-panel,
+  .settings-control-summary,
+  .study-time-manage,
+  .study-automation-panel,
+  .account-connected-card,
+  .app-update-compact,
+  .diagnostic-row,
+  .restore-point-item,
+  .simulation-card,
+  .simulation-manage-section,
+  .map-file-panel,
+  .cover-editor,
+  .version-panel
+){
+  border-color:var(--v211-line)!important;
+  border-radius:var(--v211-card-radius)!important;
+  background:linear-gradient(180deg,#0a0a09,#0a0a09)!important;
+  box-shadow:0 12px 27px rgba(0,0,0,.24),inset 0 1px rgba(236,230,218,.020)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+.study-command-card,
+.priority-now-card,
+.progress-insight-focus,
+.settings-area-study,
+.settings-area-automation,
+.simulation-card{
+  position:relative;
+  overflow:hidden;
+}
+.study-command-card::before,
+.priority-now-card::before,
+.progress-insight-focus::before,
+.settings-area-study::before,
+.settings-area-automation::before,
+.simulation-card::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:2px;
+  opacity:.78;
+  background:var(--v211-champagne-2);
+}
+.simulation-card::before{background:var(--v211-coral);opacity:.62}
+
+.course-card,
+.course-library-card{
+  border-color:rgba(216,197,158,.14)!important;
+  border-radius:16px!important;
+  box-shadow:0 15px 34px rgba(0,0,0,.32)!important;
+}
+.course-card:hover,
+.course-library-card:hover{border-color:rgba(216,197,158,.30)!important}
+
+.continue-card{
+  border-radius:var(--v211-panel-radius)!important;
+  border-color:color-mix(in srgb,var(--continue-accent,#b9b2a5) 26%,rgba(236,230,218,.07))!important;
+  background:
+    linear-gradient(105deg,
+      color-mix(in srgb,var(--continue-accent,#b9b2a5) 6%,#111110),
+      #0a0a09 58%)!important;
+  box-shadow:0 12px 27px rgba(0,0,0,.28)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+.course-hero{
+  border-color:rgba(216,197,158,.14)!important;
+  border-radius:20px!important;
+  background:
+    radial-gradient(520px 260px at 0% 0%,rgba(216,197,158,.040),transparent 68%),
+    linear-gradient(110deg,rgba(17,17,16,.96),rgba(10,10,9,.985))!important;
+  box-shadow:0 20px 48px rgba(0,0,0,.32)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.course-hero h1{
+  font-family:var(--condensed)!important;
+  text-transform:uppercase!important;
+}
+
+.course-study-filter,
+.category-btn,
+.maps-filter-chip,
+.progress-filter{
+  /* Mantém a linguagem retangular aprovada do sistema; V211 entra na hierarquia,
+     não transforma filtros em pills. */
+  border-radius:var(--v211-control-radius)!important;
+  border-color:var(--v211-line)!important;
+  color:#857e72!important;
+}
+.course-study-filter:not(.active),
+.category-btn:not(.active),
+.progress-filter:not(.active){
+  background:#0a0a09!important;
+}
+
+.progress-metrics-strip .metric,
+.agenda-day,
+.agenda-week-card,
+.agenda-today-card,
+.agenda-entry{
+  border-color:var(--v211-line)!important;
+  border-radius:var(--v211-card-radius)!important;
+  background:linear-gradient(180deg,rgba(236,230,218,.022),rgba(236,230,218,.008))!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.agenda-day.today{
+  border-color:rgba(216,197,158,.28)!important;
+  box-shadow:inset 0 0 0 1px rgba(216,197,158,.04)!important;
+}
+.agenda-day.selected{
+  border-color:rgba(184,97,78,.34)!important;
+  background:linear-gradient(180deg,rgba(184,97,78,.055),rgba(236,230,218,.008))!important;
+}
+
+.field input,
+.field select,
+.field textarea,
+.course-toolbar input,
+.course-toolbar select,
+.maps-select-control select,
+.maps-filter-field select,
+.maps-search-control input,
+.study-agenda-form input,
+.study-agenda-form select,
+.study-agenda-form textarea,
+.study-goals-form input,
+.study-goals-form select{
+  border-color:var(--v211-line)!important;
+  border-radius:var(--v211-control-radius)!important;
+  background:#0a0a09!important;
+  color:#ece6da!important;
+  box-shadow:inset 0 1px rgba(236,230,218,.018)!important;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.course-toolbar input:focus,
+.maps-search-control input:focus{
+  border-color:rgba(216,197,158,.32)!important;
+  outline:none!important;
+  box-shadow:0 0 0 2px rgba(216,197,158,.055),inset 0 1px rgba(236,230,218,.020)!important;
+}
+
+.readerbar,
+.simulation-readerbar{
+  border-color:rgba(236,230,218,.12)!important;
+  background:
+    radial-gradient(650px 180px at 12% -35%,rgba(236,230,218,.06),transparent 64%),
+    rgba(10,10,9,.88)!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.68),inset 0 1px rgba(236,230,218,.045)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(130%)!important;
+  backdrop-filter:blur(22px) saturate(130%)!important;
+}
+.readerbar .title b,
+.simulation-readerbar .title b{color:#ece6da!important}
+.readerbar .title small,
+.simulation-readerbar .title small{color:#857e72!important}
+
+.empty,
+.empty-state--compact{
+  border-color:rgba(236,230,218,.11)!important;
+  border-radius:var(--v211-panel-radius)!important;
+  background:rgba(10,10,9,.50)!important;
+  color:#857e72!important;
+}
+.toast{
+  border-radius:var(--v211-control-radius)!important;
+  color:#ece6da!important;
+}
+
+@media(max-width:1180px){
+  .content{width:100%!important}
+}
+@media(max-width:820px){
+  .hero{
+    border-radius:18px!important;
+    box-shadow:0 24px 70px rgba(0,0,0,.58),inset 0 1px rgba(236,230,218,.035)!important;
+  }
+  .hero::after{display:none}
+}
+@media(max-width:480px){
+  .hero{border-radius:15px!important}
+  .hero-copy{padding:24px 18px 22px!important}
+  .map-card{border-radius:10px!important}
+}
+
+@media(prefers-reduced-transparency:reduce){
+  .readerbar,
+  .simulation-readerbar{
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background:#0a0a09!important;
+  }
+}
+@media(forced-colors:active){
+  .hero::after{display:none!important}
+  .map-card,
+  .course-card,
+  .course-library-card,
+  .settings-control-panel{
+    border-color:CanvasText!important;
+    background:Canvas!important;
+    color:CanvasText!important;
+    box-shadow:none!important;
+  }
+}
+
+/* Desktop: preserva a densidade aprovada da Home enquanto mantém a linguagem V211. */
+@media(min-width:900px){
+  .hero{min-height:315px!important}
+  .hero-copy{padding:32px 42px 28px}
+}
+
+/* iPad estreito/Split View: mantém o hero dentro da densidade aprovada. */
+@media(min-width:481px) and (max-width:899px){
+  html.is-ipad:not(.is-phone-layout) .hero{min-height:285px!important}
+  /* Espaçamento óptico reduzido para acomodar legendas legíveis (>=11px) sem aumentar o hero retrato. */
+  html.is-ipad:not(.is-phone-layout) .hero-copy{padding:14px 28px!important}
+}
+
+/* ════ @origem assets/css/black-editorial-liquid-glass-v2.css ════ */
+/* ==========================================================================
+   MEUS MAPAS · BLACK EDITORIAL + LIQUID GLASS REFINADO · PASSO 2
+   Camada final de tema. Carregada por último para neutralizar o chrome cromático
+   legado sem apagar cores semânticas de cursos, tags, mapas e estados.
+   Regra: conteúdo permanente = matte; camada funcional = Liquid Glass.
+   ========================================================================== */
+
+:root{
+  color-scheme:dark;
+
+  /* Ambiente */
+  --mm-bg-deep:#000000;
+  --mm-bg:#050505;
+  --mm-bg-raised:#050505;
+  --mm-bg-soft:#0a0a09;
+
+  /* Superfícies permanentes */
+  --mm-surface-0:#0a0a09;
+  --mm-surface-1:#0a0a09;
+  --mm-surface-2:#111110;
+  --mm-surface-3:#111110;
+
+  /* Texto */
+  --mm-text-muted:#857e72;
+
+  /* Marca */
+  --mm-cream:#d8c59e;
+  --mm-coral:#b8614e;
+
+  /* Linhas e sombras neutras */
+  --mm-line:rgba(236,230,218,.090);
+  --mm-line-soft:rgba(236,230,218,.055);
+  --mm-line-strong:rgba(236,230,218,.16);
+  --mm-shadow-surface:0 14px 34px rgba(0,0,0,.34);
+  --mm-shadow-float:0 28px 78px rgba(0,0,0,.62);
+
+  /* Liquid Glass — uma superfície funcional = um backdrop-filter */
+  --mm-glass-regular-bg:rgba(10,10,9,.60);
+  --mm-glass-regular-filter:blur(20px) saturate(128%) contrast(104%);
+  --mm-glass-dense-bg:rgba(10,10,9,.82);
+  --mm-glass-dense-filter:blur(24px) saturate(122%) contrast(105%);
+  --mm-glass-clear-bg:rgba(10,10,9,.24);
+  --mm-glass-clear-filter:blur(11px) saturate(135%);
+  --mm-glass-border:rgba(236,230,218,.16);
+  --mm-glass-border-strong:rgba(236,230,218,.22);
+  --mm-glass-highlight:rgba(236,230,218,.14);
+  --mm-glass-outer:rgba(0,0,0,.82);
+
+  /* Compatibilidade com tokens legados */
+  --mm-bg-0:var(--mm-bg-deep);
+  --mm-bg-1:var(--mm-bg);
+  --mm-bg-2:var(--mm-bg-raised);
+  --mm-surface-border:var(--mm-line);
+  --mm-surface-border-soft:var(--mm-line-soft);
+  --mm-glass-bg:var(--mm-glass-regular-bg);
+  --mm-glass-dense:var(--mm-glass-dense-bg);
+  --mm-glass-filter:var(--mm-glass-regular-filter);
+  --lg-regular-bg:var(--mm-glass-regular-bg);
+  --lg-dense-bg:var(--mm-glass-dense-bg);
+  --lg-regular-border:var(--mm-glass-border);
+  --lg-separator:rgba(236,230,218,.075);
+  --lg-inner-fill-hover:rgba(236,230,218,.045);
+
+}
+
+/* ==========================================================================
+   1 · AMBIENTE BLACK EDITORIAL
+   ========================================================================== */
+html{
+  background:var(--mm-bg-deep)!important;
+  color:var(--mm-text)!important;
+}
+body{
+  position:relative;
+  isolation:isolate;
+  color:var(--mm-text)!important;
+}
+/* O ambiente topográfico global é responsabilidade exclusiva
+   de topographic-environment-v15-43.css. */
+body>.app{position:relative;z-index:1}
+
+.content,
+.main,
+.view{background:transparent!important}
+
+/* Leitores e superfícies densas nunca recebem a topografia internamente. */
+:is(#reader,.simulation-reader,.reader-frame-shell,.simulation-frame-shell,.reader-shell,.map-reader){
+  background-color:var(--mm-bg)!important;
+  background-image:none!important;
+}
+
+/* ==========================================================================
+   2 · TIPOGRAFIA / CROMA ESTRUTURAL NEUTRO
+   ========================================================================== */
+:is(.section-head h2,.study-agenda-head h2,.planner-page-head h2,.settings-control-center .section-head h2){
+  color:var(--mm-text-strong)!important;
+}
+:is(.section-head p,.modal-description,.map-card p,.course-card p,.simulation-card p){
+  color:var(--mm-text-secondary)!important;
+}
+:is(.kicker,.panel-kicker,.section-kicker,.simulation-manage-section-head>div>span){
+  color:var(--mm-cream)!important;
+}
+.hero h1,.course-hero h1{color:var(--mm-cream)!important}
+.hero h1 span{color:var(--mm-cream)!important}
+
+/* ==========================================================================
+   3 · REGULAR GLASS — SHELL FUNCIONAL
+   ========================================================================== */
+html:not(.is-phone-layout) .topbar,
+html:not(.is-phone-layout) .side,
+.bottom-nav,
+.course-primary-actions,
+.course-sticky-bar{
+  border:1px solid var(--mm-glass-border)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.032),rgba(236,230,218,.008) 34%,transparent 58%),
+    var(--mm-glass-regular-bg)!important;
+  -webkit-backdrop-filter:var(--mm-glass-regular-filter)!important;
+  backdrop-filter:var(--mm-glass-regular-filter)!important;
+  box-shadow:
+    0 0 0 1px var(--mm-glass-outer),
+    0 18px 48px rgba(0,0,0,.42),
+    inset 0 1px 0 var(--mm-glass-highlight),
+    inset 0 -1px 0 rgba(0,0,0,.32)!important;
+}
+
+/* Topbar: preto translúcido, sem leitura cromática fria. */
+html:not(.is-phone-layout) .topbar{
+  background:
+    radial-gradient(115% 150% at 9% -72%,rgba(236,230,218,.10),transparent 58%),
+    linear-gradient(180deg,rgba(236,230,218,.025),rgba(236,230,218,.006) 40%,transparent 66%),
+    var(--mm-glass-regular-bg)!important;
+}
+
+/* Sidebar: fumê quase preto; a topografia é percebida apenas através do vidro. */
+html:not(.is-phone-layout) .side{
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.022),transparent 38%),
+    rgba(10,10,9,.70)!important;
+}
+
+/* ==========================================================================
+   4 · PROIBIDO GLASS-ON-GLASS
+   Controles internos usam fill/tint/border; nenhum novo blur.
+   ========================================================================== */
+html:not(.is-phone-layout) .topbar :is(.search,#syncTop,#installBtn,.icon-btn,button,input),
+html:not(.is-phone-layout) .side .nav-btn,
+.bottom-nav>button,
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn),
+.course-sticky-bar :is(button,label,select,input),
+.course-sticky-bar label :is(select,input){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Busca e Sincronizar = lentes internas, não superfícies de vidro independentes. */
+html:not(.is-phone-layout) .topbar .search{
+  border:1px solid rgba(236,230,218,.10)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.032),rgba(236,230,218,.012)),
+    rgba(236,230,218,.020)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.055),inset 0 -1px 0 rgba(0,0,0,.18)!important;
+}
+html:not(.is-phone-layout) .topbar .search:focus-within{
+  border-color:rgba(236,230,218,.22)!important;
+  background:rgba(236,230,218,.036)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(236,230,218,.075),
+    0 0 0 2px rgba(216,197,158,.10)!important;
+}
+html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn){
+  border-color:rgba(236,230,218,.10)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.040),rgba(236,230,218,.014)),
+    rgba(236,230,218,.020)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.05)!important;
+}
+html:not(.is-phone-layout) .topbar :is(#syncTop,#installBtn):is(:hover,:focus-visible){
+  border-color:rgba(236,230,218,.18)!important;
+  background:rgba(236,230,218,.023)!important;
+}
+
+/* Sidebar: itens transparentes, hover discreto, ativo = lente interna. */
+html:not(.is-phone-layout) .side .nav-btn{
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) .side .nav-btn:hover{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html:not(.is-phone-layout) .side .nav-btn.active{
+  border-color:rgba(236,230,218,.090)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.050),rgba(236,230,218,.016)),
+    rgba(236,230,218,.012)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.075)!important;
+}
+
+/* Bottom dock: uma superfície; item ativo = lente sem blur. */
+.bottom-nav>button{
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.bottom-nav>button:is(:hover,:focus-visible){background:rgba(236,230,218,.030)!important}
+.bottom-nav>button.active{
+  border-color:rgba(236,230,218,.095)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.050),rgba(236,230,218,.016)),
+    rgba(236,230,218,.012)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.075)!important;
+}
+
+/* Grupo de ações do curso: vidro apenas no invólucro. */
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn){
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn):is(:hover,:focus-visible){
+  background:rgba(236,230,218,.018)!important;
+}
+
+/* Filtros e selects dentro de barras funcionais: fill, nunca glass aninhado. */
+:is(.course-study-filter.active,.category-btn.active,.simulation-toolbar select,.simulation-toolbar .ui-select-trigger){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border-color:rgba(236,230,218,.11)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.035),rgba(236,230,218,.012)),
+    var(--mm-surface-1)!important;
+  box-shadow:inset 0 1px 0 rgba(236,230,218,.055)!important;
+}
+
+/* V15.48.171-G · Removido legado MATTE BLACK: gradientes e fills de cards
+   foram consolidados na camada final black-smoked-uniform. */
+
+/* Curso/hero: editorial sólido; sem glow azul. */
+.app .content .course-hero{
+  border-color:rgba(236,230,218,.085)!important;
+  background:
+    radial-gradient(580px 290px at 0% 0%,rgba(216,197,158,.045),transparent 70%),
+    linear-gradient(110deg,#111110,#0a0a09 62%,#050505)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:0 22px 54px rgba(0,0,0,.38)!important;
+}
+.app .content .hero{
+  background-color:#050505!important;
+  box-shadow:0 34px 110px rgba(0,0,0,.66),inset 0 1px rgba(236,230,218,.04)!important;
+}
+
+/* KPIs internos e pequenos agrupamentos permanecem sólidos. */
+.app .content :is(.hero-stats,.study-command-metrics){
+  border-color:var(--mm-line)!important;
+  background:var(--mm-surface-0)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+.app .content .study-command-metrics>button{
+  background:var(--mm-surface-1)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* ==========================================================================
+   6 · CONTROLES SOBRE CAPAS
+   Estilos duplicados de Clear Glass retirados desta camada editorial.
+   Fonte única: button-glass-v15-36-15.css, carregada anteriormente.
+   ========================================================================= */
+
+/* ==========================================================================
+   7 · DENSE GLASS — MENUS / POPOVERS / SEARCH RESULTS
+   ========================================================================== */
+:is(
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet,
+  .popover,
+  .context-menu
+){
+  border:1px solid var(--mm-glass-border-strong)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.036),rgba(236,230,218,.006) 42%,transparent 68%),
+    var(--mm-glass-dense-bg)!important;
+  -webkit-backdrop-filter:var(--mm-glass-dense-filter)!important;
+  backdrop-filter:var(--mm-glass-dense-filter)!important;
+  box-shadow:
+    0 0 0 1px var(--mm-glass-outer),
+    var(--mm-shadow-float),
+    inset 0 1px 0 var(--mm-glass-highlight)!important;
+}
+
+/* Itens internos de popover não empilham blur. */
+:is(
+  .global-search-panel,
+  .course-more-menu,
+  .reader-more-menu,
+  .simulation-card-action-menu,
+  .map-actions-menu,
+  .maps-filter-panel,
+  .ui-select-popover,
+  .mobile-menu-sheet,
+  .popover,
+  .context-menu
+) :is(button,a,input,select,.ui-select-option,[role="option"],[role="menuitem"]){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* ==========================================================================
+   8 · MODAIS
+   ========================================================================== */
+:is(.modal,.modal-backdrop,.dialog-backdrop,.maps-filter-backdrop){
+  background-color:rgba(0,0,0,.58)!important;
+}
+:is(.modal-card,.planner-modal-card,.study-doubt-card,[role="dialog"].modal-card){
+  border:1px solid rgba(236,230,218,.18)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.030),rgba(236,230,218,.005) 45%,transparent 70%),
+    rgba(10,10,9,.88)!important;
+  -webkit-backdrop-filter:var(--mm-glass-dense-filter)!important;
+  backdrop-filter:var(--mm-glass-dense-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.86),
+    0 36px 100px rgba(0,0,0,.72),
+    inset 0 1px 0 rgba(236,230,218,.13)!important;
+}
+:is(.modal-card,.planner-modal-card,.study-doubt-card) :is(button,input,select,textarea){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Toasts usam Dense Glass porque são overlays transitórios. */
+.toast{
+  border-color:rgba(236,230,218,.16)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.030),transparent 64%),
+    rgba(10,10,9,.82)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
+  backdrop-filter:blur(20px) saturate(122%) contrast(104%)!important;
+  box-shadow:0 22px 58px rgba(0,0,0,.62),inset 0 1px 0 rgba(236,230,218,.11)!important;
+}
+
+/* ==========================================================================
+   9 · FORMULÁRIOS / CONTROLES GERAIS — SEM TINT ESTRUTURAL FRIA
+   ========================================================================== */
+body :is(input,select,textarea,.ui-select-trigger){
+  color:var(--mm-text)!important;
+}
+body :is(input,select,textarea):not([type="checkbox"]):not([type="radio"]){
+  border-color:rgba(236,230,218,.10)!important;
+  background:#0a0a09!important;
+  box-shadow:none!important;
+}
+body :is(input,select,textarea):focus,
+body :is(input,select,textarea):focus-visible{
+  border-color:rgba(216,197,158,.38)!important;
+  outline:1px solid rgba(216,197,158,.42)!important;
+  outline-offset:2px!important;
+}
+
+/* Focus keyboard visível também em botões e links. */
+body :is(button,a,[role="button"],[tabindex]):focus-visible{
+  outline:2px solid rgba(216,197,158,.62)!important;
+  outline-offset:2px!important;
+}
+
+/* Rótulos auxiliares de 7.5–8px: contraste AA sobre surface-1. */
+.app .content .study-command-metrics small{
+  color:#857e72!important;
+}
+
+/* ==========================================================================
+   10 · IPAD / BREAKPOINTS POR LARGURA
+   ========================================================================== */
+@media(min-width:900px){
+  html.is-ipad:not(.is-phone-layout) .side{
+    background:
+      linear-gradient(180deg,rgba(236,230,218,.020),transparent 40%),
+      rgba(10,10,9,.73)!important;
+  }
+}
+
+/* ==========================================================================
+   11 · SMARTPHONE
+   ========================================================================== */
+@media(max-width:480px){
+  html.is-phone-layout .topbar :is(.search,#syncTop,#installBtn,.icon-btn,button,input){
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+
+  /* Mantém cinco destinos e as safe areas definidas pelas folhas responsivas. */
+  html.is-phone-layout .bottom-nav{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+  html.is-phone-layout .bottom-nav :is(.bottom-nav-simulations,.bottom-nav-agenda){
+    display:none!important;
+  }
+
+  /* Sheets/popovers móveis usam Dense Glass, sem azul. */
+  html.is-phone-layout :is(.mobile-menu-sheet,.maps-filter-panel,.ui-select-popover,.course-more-menu){
+    background:
+      linear-gradient(180deg,rgba(236,230,218,.030),transparent 60%),
+      rgba(10,10,9,.88)!important;
+    -webkit-backdrop-filter:blur(21px) saturate(122%) contrast(104%)!important;
+    backdrop-filter:blur(21px) saturate(122%) contrast(104%)!important;
+  }
+}
+
+/* ==========================================================================
+   12 · ACESSIBILIDADE / FALLBACKS
+   ========================================================================== */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast
+  ){
+    background:#0a0a09!important;
+    background-image:none!important;
+  }
+}
+
+@media(prefers-reduced-transparency:reduce){
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast,
+    .map-card.has-cover>.fav,.map-card.has-cover>.map-admin-btn,
+    .course-card-edit,.simulation-card.has-cover .simulation-card-menu-btn
+  ){
+    background:#0a0a09!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+
+@media(prefers-contrast:more){
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card
+  ){
+    border-color:rgba(236,230,218,.48)!important;
+    background-color:#0a0a09!important;
+  }
+  body :is(input,select,textarea,button,a,[role="button"]):focus-visible{
+    outline-color:#ece6da!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    scroll-behavior:auto!important;
+  }
+  :is(
+    .nav-btn,.bottom-nav button,.course-primary-actions button,
+    .ui-select-trigger,.ui-select-option,.course-study-filter,.category-btn,
+    .map-card,.course-card,.simulation-card
+  ){
+    transition:none!important;
+    animation:none!important;
+  }
+}
+
+@media(forced-colors:active){
+  :is(
+    .side,.topbar,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast
+  ){
+    background:Canvas!important;
+    background-image:none!important;
+    color:CanvasText!important;
+    border-color:CanvasText!important;
+    box-shadow:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  body :is(button,a,input,select,textarea,[role="button"]):focus-visible{
+    outline:2px solid Highlight!important;
+  }
+}
+
+/* V15.48.170-G: as superfícies principais são geridas exclusivamente
+   por black-smoked-uniform; não desativar aqui o filtro óptico dos cards. */
+
+/* ════ @origem assets/css/dynamic-liquid-glass-v2.css ════ */
+
+/* ==========================================================================
+   MEUS MAPAS · STATIC LIQUID GLASS · REFLEXOS FIXOS
+   Passo 3 · progressive enhancement sobre Black Editorial (Passo 2)
+   Conteúdo permanente permanece matte. Glass continua restrito à camada funcional.
+   ========================================================================== */
+
+:root{
+  /* Tipografia oficial: Archivo local (assets/fonts); sistema apenas fallback. */
+  --sans:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  /* Escala óptica */
+  --mm-micro-bg:rgba(10,10,9,.25);
+  --mm-micro-filter:blur(11px) saturate(134%) contrast(104%);
+  --mm-controls-bg:rgba(10,10,9,.56);
+  --mm-controls-filter:blur(15px) saturate(128%) contrast(104%);
+  --mm-bar-bg:rgba(10,10,9,.60);
+  --mm-bar-filter:blur(20px) saturate(126%) contrast(104%);
+  --mm-large-bg:rgba(10,10,9,.76);
+  --mm-large-filter:blur(22px) saturate(122%) contrast(105%);
+
+  /* Refractive rim */
+  --mm-glass-rim-light:rgba(236,230,218,.18);
+  --mm-glass-rim-soft:rgba(236,230,218,.07);
+  --mm-glass-rim-shadow:rgba(0,0,0,.48);
+  --mm-glass-rim-width:1px;
+
+  /* Context tint: neutro por padrão; JS só injeta em contexto local. */
+  --mm-context-tint:transparent;
+  --mm-context-tint-strength:0;
+
+  /* Motion */
+  --mm-motion-instant:80ms;
+  --mm-motion-fast:140ms;
+  --mm-motion-medium:200ms;
+  --mm-motion-morph:240ms;
+
+}
+
+/* Archivo governa UI e controles. Condensed/mono seguem reservadas aos papéis editoriais. */
+body,
+button,
+input,
+select,
+textarea{
+  font-family:var(--sans)!important;
+}
+
+/* ==========================================================================
+   1 · BASE / FEATURE FLAGS
+   ========================================================================== */
+.mm-optical-surface{isolation:isolate}
+.mm-optical-surface::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+  padding:var(--mm-glass-rim-width);
+  background:
+    radial-gradient(88% 118% at 50% 0%,
+      rgba(236,230,218,.045) 0%,
+      rgba(236,230,218,.020) 36%,
+      transparent 68%),
+    linear-gradient(180deg,var(--mm-glass-rim-light),var(--mm-glass-rim-soft) 24%,transparent 55%,var(--mm-glass-rim-shadow));
+  opacity:.58;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+}
+.mm-optical-surface>:not(.side-bottom){
+  position:relative;
+  z-index:1;
+}
+.side.mm-optical-surface>.side-bottom{
+  z-index:1;
+}
+
+/* ==========================================================================
+   2 · ESCALA DE MATERIAIS
+   ========================================================================== */
+/* BAR GLASS: topbar, dock, sticky toolbars. */
+.mm-optics-supported :is(.topbar,.bottom-nav,.course-sticky-bar).mm-glass-bar{
+  border-color:rgba(236,230,218,.16)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.034),rgba(236,230,218,.008) 38%,transparent 66%),
+    rgba(5,5,5,var(--mm-bar-alpha,.60))!important;
+  -webkit-backdrop-filter:var(--mm-bar-filter)!important;
+  backdrop-filter:var(--mm-bar-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.84),
+    0 18px 52px rgba(0,0,0,.46),
+    inset 0 1px 0 rgba(236,230,218,.09)!important;
+  transition:
+    background-color var(--mm-motion-medium) ease,
+    border-color var(--mm-motion-medium) ease,
+    box-shadow var(--mm-motion-medium) ease;
+}
+
+/* LARGE GLASS: sidebar ampla / modal grande. */
+.mm-optics-supported .side.mm-glass-large{
+  border-color:rgba(236,230,218,.145)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.024),transparent 42%),
+    var(--mm-large-bg)!important;
+  -webkit-backdrop-filter:var(--mm-large-filter)!important;
+  backdrop-filter:var(--mm-large-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.86),
+    16px 20px 60px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(236,230,218,.085)!important;
+}
+
+/* CONTROLS GLASS: um invólucro, controles internos sem blur. */
+.mm-optics-supported :is(.course-primary-actions,.mm-controls-glass).mm-glass-controls{
+  border-color:rgba(236,230,218,.15)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.036),rgba(236,230,218,.010) 44%,transparent 72%),
+    var(--mm-controls-bg)!important;
+  -webkit-backdrop-filter:var(--mm-controls-filter)!important;
+  backdrop-filter:var(--mm-controls-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.70),
+    0 12px 30px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(236,230,218,.095)!important;
+}
+.mm-optics-supported :is(.course-primary-actions,.mm-controls-glass) :is(button,input,select,.ui-select-trigger){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* MICRO GLASS genérico: NÃO estilizar os botões das capas.
+   O acabamento desses controles pertence exclusivamente a button-glass.
+   Evita a sobrescrita tardia e a mudança de material durante mouseover. */
+.mm-optics-supported .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)){
+  border-color:rgba(236,230,218,.23)!important;
+  background:
+    linear-gradient(180deg,rgba(236,230,218,.105),rgba(236,230,218,.022) 56%,transparent 78%),
+    linear-gradient(var(--mm-context-tint),var(--mm-context-tint)),
+    var(--mm-micro-bg)!important;
+  -webkit-backdrop-filter:var(--mm-micro-filter)!important;
+  backdrop-filter:var(--mm-micro-filter)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.62),
+    0 6px 17px rgba(0,0,0,.31),
+    inset 0 1px 0 rgba(236,230,218,.17)!important;
+  /* Static optical finish: no press/hover movement or lens compression. */
+  transition:
+    border-color var(--mm-motion-fast) ease,
+    box-shadow var(--mm-motion-fast) ease,
+    background-color var(--mm-motion-fast) ease;
+}
+.mm-pointer-fine .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)):hover{
+  border-color:rgba(236,230,218,.29)!important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.58),
+    0 9px 21px rgba(0,0,0,.36),
+    inset 0 1px 0 rgba(236,230,218,.20)!important;
+}
+
+/* Local dimming: somente sob o micro controle, nunca na capa inteira. */
+.mm-optics-supported .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)) .ui-icon::after{
+  content:"";
+  position:absolute;
+  inset:-7px;
+  z-index:-1;
+  border-radius:10px;
+  background:radial-gradient(circle,rgba(0,0,0,.30),rgba(0,0,0,.08) 54%,transparent 76%);
+  pointer-events:none;
+}
+
+.mm-optics-supported .mm-glass-micro:not(:is(.course-card-edit,.map-admin-btn,.fav,.simulation-card-menu-btn)):not(.mm-visible-glass){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  background:rgba(10,10,9,.42)!important;
+  box-shadow:0 0 0 1px rgba(0,0,0,.58),inset 0 1px 0 rgba(236,230,218,.10)!important;
+}
+
+/* V15.48.170-G: os cards da biblioteca e da Home obedecem ao
+   material fumê canônico, sem veto global ao backdrop-filter. */
+/* ==========================================================================
+   4 · CONTROLES: SEM VIDRO ANINHADO
+   ========================================================================== */
+:is(.topbar .search,.topbar #syncTop,.topbar #installBtn,
+  .side .nav-btn,.bottom-nav>button,
+  .course-primary-actions #openEdital,
+  .course-primary-actions #courseSimulationsBtn,
+  .course-primary-actions #courseMoreBtn,
+  .course-sticky-bar button,.course-sticky-bar input,.course-sticky-bar select){
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+/* Âncora de posicionamento das superfícies estáticas. */
+.mm-position-anchor{position:relative!important}
+/* ==========================================================================
+   6 · SEARCH MORPH
+   ========================================================================== */
+.global-search-shell{
+  position:relative;
+}
+.global-search-shell .search{
+  transition:
+    border-color var(--mm-motion-medium) ease,
+    background-color var(--mm-motion-medium) ease,
+    border-radius var(--mm-motion-morph) cubic-bezier(.2,.75,.2,1),
+    box-shadow var(--mm-motion-medium) ease,
+    transform var(--mm-motion-fast) ease;
+}
+.global-search-shell.mm-search-open .search{
+  border-color:rgba(236,230,218,.20)!important;
+  border-radius:11px 11px 8px 8px!important;
+  background:rgba(236,230,218,.043)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(236,230,218,.075),
+    0 0 0 1px rgba(0,0,0,.28)!important;
+}
+.global-search-shell .global-search-panel{
+  transform-origin:50% 0%;
+}
+.global-search-shell.mm-search-open .global-search-panel:not([hidden]){
+  margin-top:4px!important;
+  border-top-left-radius:10px!important;
+  border-top-right-radius:10px!important;
+  animation:mm-search-panel-in var(--mm-motion-morph) cubic-bezier(.2,.75,.2,1) both;
+}
+@keyframes mm-search-panel-in{
+  from{opacity:0;transform:translate3d(0,-4px,0) scale(.992)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+
+/* ==========================================================================
+   7 · POPOVER SOURCE MORPH / SHARED GEOMETRY
+   ========================================================================== */
+:is(
+  .global-search-panel,.course-more-menu,.reader-more-menu,
+  .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+  .ui-select-popover,.mobile-menu-sheet,.popover,.context-menu
+)[data-mm-open="true"]{
+  transform-origin:var(--mm-source-x,50%) var(--mm-source-y,0%);
+  animation:mm-popover-source-in var(--mm-motion-morph) cubic-bezier(.2,.78,.22,1) both;
+}
+@keyframes mm-popover-source-in{
+  from{opacity:.18;transform:translate3d(0,-3px,0) scale(.975)}
+  62%{opacity:1}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+/* Popover pequeno mais responsivo; modal grande permanece estável. */
+:is(.course-more-menu,.map-actions-menu,.simulation-card-action-menu,.ui-select-popover).mm-optical-surface{
+  --mm-large-bg:rgba(10,10,9,.82)
+}
+
+/* ==========================================================================
+   8 · SCROLL EDGE + TOPBAR DENSITY
+   ========================================================================== */
+.mm-scroll-edge{
+  position:absolute!important;
+  left:2px;
+  right:2px;
+  z-index:0!important;
+  height:18px;
+  pointer-events:none;
+  opacity:var(--mm-edge-opacity,.50);
+  transition:opacity var(--mm-motion-medium) ease;
+}
+.topbar>.mm-scroll-edge,
+.course-sticky-bar>.mm-scroll-edge{
+  bottom:-16px;
+  background:linear-gradient(180deg,rgba(5,5,5,.28),rgba(5,5,5,.10) 48%,transparent);
+  -webkit-mask-image:linear-gradient(#000,transparent);
+  mask-image:linear-gradient(#000,transparent);
+}
+.bottom-nav>.mm-scroll-edge{
+  top:-16px;
+  background:linear-gradient(0deg,rgba(5,5,5,.34),rgba(5,5,5,.11) 48%,transparent);
+  -webkit-mask-image:linear-gradient(0deg,#000,transparent);
+  mask-image:linear-gradient(0deg,#000,transparent);
+}
+:is(.topbar,.bottom-nav,.course-sticky-bar)>.mm-scroll-edge~*{
+  position:relative;
+  z-index:1;
+}
+
+/* Topbar é levemente mais clara no topo e densifica até ~48px de scroll. */
+.topbar.mm-scroll-density{
+  --mm-bar-alpha:.54;
+  --mm-edge-opacity:.30;
+}
+html.mm-scrolled .topbar.mm-scroll-density{
+  --mm-edge-opacity:.58;
+}
+
+/* ==========================================================================
+   9 · GEOMETRIA CONCÊNTRICA
+   ========================================================================== */
+.topbar.mm-glass-bar{border-radius:18px!important}
+.topbar .search{border-radius:10px!important}
+.bottom-nav.mm-glass-bar{border-radius:18px!important}
+.bottom-nav>button{border-radius:11px!important}
+.course-primary-actions.mm-glass-controls{border-radius:11px!important}
+.course-primary-actions :is(#openEdital,#courseSimulationsBtn,#courseMoreBtn){border-radius:9px!important}
+:is(.course-more-menu,.map-actions-menu,.simulation-card-action-menu,.ui-select-popover){
+  border-radius:15px!important;
+}
+
+/* ==========================================================================
+   10 · TOUCH / POINTER
+   ========================================================================== */
+.mm-touch .mm-glass-micro:hover{
+  transform:none;
+}
+/* Smartphone: menos blur/shadow/compositing; sem lógica desktop-only. */
+@media(max-width:480px){
+  :root{
+    --mm-bar-filter:blur(17px) saturate(122%) contrast(103%);
+    --mm-controls-filter:blur(13px) saturate(124%) contrast(103%);
+    --mm-micro-filter:blur(9px) saturate(128%) contrast(103%);
+  }
+  .mm-optics-supported :is(.topbar,.bottom-nav).mm-glass-bar{
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.80),
+      0 14px 38px rgba(0,0,0,.42),
+      inset 0 1px 0 rgba(236,230,218,.075)!important;
+  }
+}
+
+/* ==========================================================================
+   11 · REDUCE MOTION
+   ========================================================================== */
+.mm-reduced-motion *,
+.mm-reduced-motion *::before,
+.mm-reduced-motion *::after{scroll-behavior:auto!important}
+.mm-reduced-motion .global-search-shell .search,
+.mm-reduced-motion [data-mm-open="true"]{
+  animation:none!important;transition:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .global-search-shell .search,[data-mm-open="true"]{
+    animation:none!important;transition:none!important;
+  }
+}
+/* ==========================================================================
+   12 · REDUCE TRANSPARENCY
+   ========================================================================== */
+.mm-reduced-transparency :is(
+  .topbar,.side,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+  .global-search-panel,.course-more-menu,.reader-more-menu,
+  .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+  .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+  .study-doubt-card,.toast,.mm-glass-micro
+){
+  background:#0a0a09!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  --mm-context-tint:transparent!important;
+}
+.mm-reduced-transparency .mm-optical-surface::before{
+  display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+  :is(
+    .topbar,.side,.bottom-nav,.course-primary-actions,.course-sticky-bar,
+    .global-search-panel,.course-more-menu,.reader-more-menu,
+    .simulation-card-action-menu,.map-actions-menu,.maps-filter-panel,
+    .ui-select-popover,.mobile-menu-sheet,.modal-card,.planner-modal-card,
+    .study-doubt-card,.toast,.mm-glass-micro
+  ){
+    background:#0a0a09!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .mm-optical-surface::before{display:none!important}
+}
+
+/* ==========================================================================
+   13 · CONTRAST / FORCED COLORS
+   ========================================================================== */
+@media(prefers-contrast:more){
+  .mm-optical-surface{border-color:rgba(236,230,218,.46)!important}
+}
+@media(forced-colors:active){
+  .mm-optical-surface::before,
+  .mm-scroll-edge{display:none!important}
+}
+
+/* Progressive enhancement: se backdrop não existe, nível 1 continua sólido. */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :is(.mm-glass-micro,.mm-glass-controls,.mm-glass-bar,.mm-glass-large){
+    background:#0a0a09!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+  .mm-optical-surface::before{display:none!important}
+}
+
+
+/* ==========================================================================
+   FINAL ACCESSIBILITY OVERRIDE
+   Deve vencer inclusive as regras mm-optics-supported de maior especificidade.
+   ========================================================================== */
+html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface,
+html.mm-optics-supported.mm-reduced-transparency .toast{
+  background:#0a0a09!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  --mm-context-tint:transparent!important;
+}
+html.mm-optics-supported.mm-reduced-transparency .mm-optical-surface::before{
+  display:none!important;
+}
+@media(prefers-reduced-transparency:reduce){
+  html.mm-optics-supported .mm-optical-surface,
+  html.mm-optics-supported .toast{
+    background:#0a0a09!important;
+    background-image:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    --mm-context-tint:transparent!important;
+  }
+  html.mm-optics-supported .mm-optical-surface::before{
+    display:none!important;
+  }
+}

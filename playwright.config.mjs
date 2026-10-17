@@ -12,15 +12,20 @@ export default defineConfig({
     trace:'retain-on-failure',screenshot:'only-on-failure',video:'retain-on-failure'},
   webServer:{command:'python3 -m http.server 4173 --bind 127.0.0.1',port:4173,reuseExistingServer:false},
   projects:[
-    {name:'desktop-chromium',grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
-    {name:'ipad',grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
+    // V15.51: auditoria multiplataforma da interface ATUAL (pranchas) e da clássica — 16 viewports D/T/M,
+    // estados vazios, XSS e PWA offline. Roda só neste projeto (as demais suítes a ignoram).
+    {name:'auditoria-plataformas',testMatch:/auditoria-plataformas\.spec\.mjs/,timeout:240000,use:{...devices['Desktop Chrome']}},
+    {name:'desktop-chromium',testIgnore:/auditoria-plataformas/,grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
+    {name:'ipad',testIgnore:/auditoria-plataformas/,grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
     {
       name:'ipad-webkit',
+      testIgnore:/auditoria-plataformas/,
       grep:/\[T\+M\]|Dock iPad \[T\]|Smoked Liquid Glass das capas/i,
       use:{...devices['iPad Pro 11'],browserName:'webkit',serviceWorkers:'block'}
     },
     {
       name:'iphone-webkit',
+      testIgnore:/auditoria-plataformas/,
       grep:/(?:\[G\]|\[M\]|\[T\+M\]|smartphone|iPhone real|agenda de revisão)/i,
       retries:1,
       use:{

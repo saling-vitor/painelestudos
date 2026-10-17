@@ -95,8 +95,8 @@ test('simulados renderizam',async({page})=>{await page.goto('/#simulations');awa
 
 test('busca global mostra resultados instantâneos sem navegar',async({page})=>{const input=page.locator('#globalSearch'),panel=page.locator('#globalSearchPanel');await input.fill('demhab');await expect(panel).toBeVisible();await expect(page.locator('[data-view="home"]')).toHaveClass(/active/);await expect(panel.locator('[role="option"]').first()).toBeVisible();await input.press('ArrowDown');await expect(panel.locator('[role="option"]').first()).toHaveAttribute('aria-selected','true');await input.press('Escape');await expect(panel).toBeHidden()});
 test('[G] Black Smoked mantém topografia contínua sob cards translúcidos',async({page})=>{
-  await expect(page.locator('link[href*="topographic-environment-v15-43.css"]')).toHaveCount(1);
-  await expect(page.locator('link[href*="design-system-v15-42.css"]')).toHaveCount(1);
+  await expect(page.locator('link[href*="camada-4-vidro-ambiente.css"]')).toHaveCount(1);
+  await expect(page.locator('link[href*="camada-4-vidro-ambiente.css"]')).toHaveCount(1);
   const visual=await page.evaluate(()=>{
     const bodyBefore=getComputedStyle(document.body,'::before');
     const map=document.querySelector('.map-card');
@@ -122,7 +122,7 @@ test('[G] Black Smoked mantém topografia contínua sob cards translúcidos',asy
 });
 
 test('[G] Liquid Glass segue camada funcional e evita glass-on-glass',async({page},testInfo)=>{
-  await expect(page.locator('link[href*="liquid-glass-surfaces-v15-40.css"]')).toHaveCount(1);
+  await expect(page.locator('link[href*="camada-4-vidro-ambiente.css"]')).toHaveCount(1);
 
   const glass=async locator=>locator.evaluate(el=>{
     const s=getComputedStyle(el);
@@ -3824,7 +3824,7 @@ test('V15.32 [G] accent respeita prioridade mapa categoria curso e neutro',async
 
 
 test('[G] refinamento visual mantém foco discreto, menus harmonizados e modal rolável',async({page},testInfo)=>{
-  await expect(page.locator('link[href*="ui-chrome-refine-v01.css"]')).toHaveCount(1);
+  await expect(page.locator('link[href*="camada-1-refinos-telas.css"]')).toHaveCount(1);
   const search=page.locator('#globalSearch');
   await expect(search).toBeVisible();
   await search.focus();
@@ -4310,7 +4310,7 @@ test('V15.48.169 [G] conteúdo em vidro fumê e fallbacks de acessibilidade exis
   const data=await page.evaluate(()=>{
     const card=document.querySelector('.map-card');
     const cardStyle=card?getComputedStyle(card):null;
-    const sheet=[...document.styleSheets].find(s=>String(s.href||'').includes('black-editorial-liquid-glass-v2.css'));
+    const sheet=[...document.styleSheets].find(s=>String(s.href||'').includes('camada-4-vidro-ambiente.css'));
     let css='';
     try{css=[...(sheet?.cssRules||[])].map(rule=>rule.cssText).join('\n')}catch{}
     const filter=cardStyle?(cardStyle.backdropFilter||cardStyle.webkitBackdropFilter||'none'):'missing';
@@ -4336,7 +4336,7 @@ test('V15.48.169 [G] conteúdo em vidro fumê e fallbacks de acessibilidade exis
 test('V15.48.169 [G] PASSO 3 · runtime óptico, Archivo e vidro fumê nos cards estão ativos',async({page},testInfo)=>{
   await page.goto('/#home');
   await page.waitForFunction(()=>window.MMDynamicGlass&&typeof window.MMDynamicGlass.snapshot==='function');
-  await expect(page.locator('link[href*="dynamic-liquid-glass-v2.css"]')).toHaveCount(1);
+  await expect(page.locator('link[href*="camada-4-vidro-ambiente.css"]')).toHaveCount(1);
   await expect(page.locator('script[src*="dynamic-liquid-glass-v2.js"]')).toHaveCount(1);
 
   const data=await page.evaluate(()=>{
@@ -5360,7 +5360,7 @@ test('V15.48.150 [G] Ícones PNG e elementos editoriais carregam sem placeholder
   await expect(root.locator('.forecast-home-actions .ui-icon')).toHaveCount(reviewAvailable?2:1);
   await expect(page.locator('#homeReviewSection .home-review-icon .icon-book-open')).toHaveCount(1);
   const imgs=['bolt','target','chart-bars','clock','book-open','play','help'];
-  const solid=await page.request.get('/assets/css/lucide-png-v15-48-172.css');
+  const solid=await page.request.get('/assets/css/camada-5-acabamento-final.css');
   expect(solid.ok()).toBe(true);
   const css=await solid.text();
   for(const name of imgs)expect(css).toContain('--solid-'+name+':url("../ui-icons/lucide/'+name+'.png")');

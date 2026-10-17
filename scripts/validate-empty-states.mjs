@@ -3,7 +3,8 @@ const names=["01_empty-retomar.png","02_empty-mapas.png","03_empty-cursos.png","
 for(const name of names){const file='assets/empty-states/'+name;assert(fs.existsSync(file),'Ausente '+file);const b=fs.readFileSync(file);assert(b.subarray(0,8).equals(Buffer.from('89504e470d0a1a0a','hex')),'PNG inválido: '+file);assert.equal(b.readUInt32BE(16),1254,'Largura inesperada');assert.equal(b.readUInt32BE(20),1254,'Altura inesperada');assert.equal(b.readUInt8(25),6,'Imagem não RGBA')}
 const state=fs.readFileSync('assets/js/app/state.js','utf8'),sw=fs.readFileSync('sw.js','utf8'),site=fs.readFileSync('index.html','utf8');
 for(let i=0;i<keys.length;i++){assert(state.includes('"'+keys[i]+'":"assets/empty-states/'+names[i]+'"'),keys[i]);assert(sw.includes('assets/empty-states/'+names[i]),'PWA '+names[i])}
-assert(site.includes('empty-illustrations-v15-48-160.css'));
+// V15.51: a folha dos estados vazios foi consolidada na camada 5 (trecho @origem preservado).
+assert(site.includes('camada-5-acabamento-final.css')&&fs.readFileSync('assets/css/camada-5-acabamento-final.css','utf8').includes('@origem assets/css/empty-illustrations-v15-48-160.css'),'CSS dos estados vazios');
 const d=fs.readFileSync('assets/js/app/study-dashboard.js','utf8');
 for(const key of ['data-doubt-toggle','toggleDoubtResolved','EMPTY_STATE_ART.doubts'])assert(d.includes(key),'Dúvidas '+key);
 for(const file of ['assets/js/app/state.js','assets/js/app/maps.js','assets/js/app/courses.js','assets/js/app/simulations.js'])assert(!fs.readFileSync(file,'utf8').includes('EMPTY_STATE_MASCOTS'),'Mascote '+file);

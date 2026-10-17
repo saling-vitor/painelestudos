@@ -89,6 +89,9 @@ sw=sw.replace(/const V='study-pwa-v[^']+';/,"const V='"+swCache+"';");
 if(!sw.includes(swCache))throw new Error('Falha ao sincronizar cache do service worker');
 write(swFile,sw);
 
+// V15.51: leitor e página offline também carregam CSS/JS/manifesto com ?v=; sincronizados aqui para não ficarem para trás.
+for(const entry of ['reader.html','offline.html']){write(entry,replaceThreePartQuery(read(entry)))}
+
 // Mantém ícones Claro/Escuro/Automático e manifests no mesmo cache-bust da release.
 let iconSettings=replaceThreePartQuery(read(iconSettingsFile));
 write(iconSettingsFile,iconSettings);

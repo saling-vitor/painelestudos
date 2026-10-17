@@ -42,6 +42,8 @@ O armazenamento entra em `localPreferences` (sincronização), em `mergePreferen
 
 ## Auditoria de CSS
 
+> **Atualização V15.51.0-G:** as 53 folhas anteriores foram consolidadas em 13 (5 camadas + base + design system) e 2 588 declarações sobrescritas foram removidas com prova de paridade. Ver `docs/arquitetura-css.md` e `docs/auditoria-v15-51/`. O texto abaixo descreve o estado da V15.49.
+
 Medido no build V15.49.0: 54 folhas ativas, ~1,15 MB, 8 731 `!important`. As pranchas acrescentam uma única folha (46 KB) com 21 `!important`, todos na camada de integração (ocultar a marcação antiga da view e hospedar os painéis reais de Configurações). O validador passa a limitar esse número.
 
 A consolidação das 53 folhas anteriores **não** foi feita nesta versão: elas ainda desenham o que é compartilhado (barra lateral, dock, busca, Reader, modais, painéis movidos para Configurações) e toda a interface clássica. Maiores acumuladores: `master-refinement-v15-48-1.css` (1 325), `mobile-first.css` (1 314), `content-refine-v15-25.css` (464), `home-responsive-v15-48-162.css` (437), `progress-hierarchy-v15-36-33.css` (423). Com as pranchas como padrão, as regras de Início/Cursos/Mapas/Simulados/Progresso/Agenda dessas folhas passam a valer só no modo clássico, o que permite removê-las por tela numa versão seguinte.
