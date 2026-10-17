@@ -162,7 +162,8 @@
   actions.secnav = (id) => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    /* salto direto: a rolagem suave podia ser interrompida por um redesenho da prancha (ex.: índice de busca chegando) */
+    el.scrollIntoView({ behavior: 'auto', block: 'start' });
     el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });
   };
