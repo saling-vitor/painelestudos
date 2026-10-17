@@ -3895,3 +3895,17 @@ html.is-ipad:not(.is-phone-layout) #reader .reader-more-wrap>#readerMoreBtn{
   }
 }
 
+
+/* V15.53 · categoria por mapa na prévia de importação e pigmento no editor do mapa */
+.category-pigment-dot{display:inline-block;flex:none;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:baseline}
+.batch-category{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0}
+.batch-category>.category-pigment-dot{margin-right:0}
+.batch-category>b{color:#ece6da;font-size:var(--fs-caption)}
+.batch-category select{min-width:0;max-width:100%;flex:0 1 auto;padding:5px 28px 5px 9px;font-size:var(--fs-caption);border-radius:8px}
+.batch-category-note{flex:1 1 220px;min-width:0;color:#857e72;font-size:var(--fs-caption);line-height:1.4}
+.batch-category.needs-review select{border-color:rgba(207,163,94,.55)}
+.batch-category.needs-review .batch-category-note>b{color:#cfa35e}
+.batch-category-alt{all:unset;cursor:pointer;color:#d8c59e;text-decoration:underline;text-decoration-color:rgba(216,197,158,.35);text-underline-offset:2px}
+.batch-category-alt:hover{text-decoration-color:currentColor}
+.batch-category-alt:focus-visible{outline:2px solid #d8c59e;outline-offset:2px;border-radius:2px}
+#manageMapCategoryHint{display:flex;align-items:center}

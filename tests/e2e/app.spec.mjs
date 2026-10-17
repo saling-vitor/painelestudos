@@ -59,9 +59,59 @@ test('etapa 0 [G] curso não herda mapas empacotados quando a nuvem não possui 
 test('importação detecta categoria individual pelo HTML',async({page})=>{
   const categories=await page.evaluate(()=>{
     const make=(code,title,body)=>parseMap('<!doctype html><html><head><meta name="study-short-code" content="'+code+'"><meta name="study-display-title" content="'+title+'"></head><body><main><section class="ramo"><h2 class="ramo-title">'+body+'</h2><article class="topic-card"></article></section></main></body></html>',new File(['x'],code+'.html',{type:'text/html'})).category;
-    return{port:make('PORT','Língua Portuguesa','Sintaxe, crase e concordância'),uti:make('UTI','Urbanismo, Topografia e Infraestrutura','Mobilidade urbana e drenagem')};
+    return{port:make('NOVOA','Língua Portuguesa','Sintaxe, crase e concordância'),uti:make('NOVOB','Urbanismo, Topografia e Infraestrutura','Mobilidade urbana e drenagem')};
   });
   expect(categories).toEqual({port:'Português',uti:'Infraestrutura e Mobilidade Urbana'});
+  /* Mesma sigla já usada na biblioteca: a categoria escolhida pelo usuário prevalece sobre a leitura do conteúdo. */
+  const own=await page.evaluate(()=>{const m=combinedMaps().find(x=>x.code==='UTI');if(!m)return null;const r=parseMap('<!doctype html><html><head><meta name="study-short-code" content="UTI"><meta name="study-display-title" content="'+m.title+'"></head><body><main><section class="ramo"><h2 class="ramo-title">Mobilidade urbana</h2><article class="topic-card"></article></section></main></body></html>',new File(['x'],'UTI_V09.html',{type:'text/html'}));return{expected:m.category,category:r.category,source:r.categorySource}});
+  if(own){expect(own.category).toBe(own.expected);expect(own.source).toBe('mesma sigla na sua biblioteca')}
+});
+test('[G] classificador de categoria acerta os mapas reais só pelo conteúdo',async({page})=>{
+  const result=await page.evaluate(async()=>{
+    const expected={CF88:['Legislação e Administração'],DCAS:['Acessibilidade e Segurança','Conforto Ambiental e Desempenho'],DEMHAB:['Legislação e Administração','Urbanismo e Habitação'],EFPA:['Legislação e Administração'],EPF:['Projeto, Representação e BIM','Exercício Profissional, Perícia e Avaliação'],GCO:['Obras, Gestão e Orçamento'],HPS:['Urbanismo e Habitação'],IERA:['Legislação e Administração'],LIU:['Urbanismo e Habitação'],LOPA:['Legislação e Administração'],LP:['Português'],PDGV:['Legislação e Administração'],TEP:['Instalações e Sistemas Prediais','Arquitetura e Tecnologia','Estruturas e Materiais'],UTI:['Infraestrutura e Mobilidade Urbana','Urbanismo e Habitação']};
+    const out=[];
+    for(const m of state.catalog.maps||[]){
+      const path='cursos/'+m.courseId+'/mapas/'+m.filename;
+      const html=await (await fetch(path)).text();
+      /* Sem sigla e com nome de arquivo neutro: força a leitura do conteúdo. */
+      const stripped=html.replace(/<meta name="study-short-code"[^>]*>/,'');
+      const info=parseMap(stripped,new File(['x'],'MAPA_V01.html',{type:'text/html'}));
+      const allowed=expected[m.code]||[];
+      out.push({code:m.code,category:info.category,confidence:info.categoryConfidence,ok:allowed.includes(info.category)});
+    }
+    return out;
+  });
+  expect(result.length).toBeGreaterThan(10);
+  expect(result.filter(r=>!r.ok)).toEqual([]);
+});
+test('[G] categoria por norma citada e meta study-category',async({page})=>{
+  const r=await page.evaluate(()=>{
+    const make=(title,ramos,extra='')=>parseMap('<!doctype html><html><head><meta name="study-display-title" content="'+title+'">'+extra+'</head><body><main>'+ramos.map(t=>'<section class="ramo"><h2 class="ramo-title">'+t+'</h2><details class="topic-card"><summary><span class="topic-name">'+t+'</span></summary></details></section>').join('')+'</main></body></html>',new File(['x'],'X_V01.html',{type:'text/html'}));
+    return{
+      organica:make('Lei Orgânica do Município de Canguçu',['Organização do Município','Poder Legislativo']).category,
+      licit:make('Lei 14.133/2021',['Modalidades','Contratos administrativos']).category,
+      nbr9050:make('NBR 9050',['Rotas acessíveis','Sanitários']).category,
+      conforto:make('Conforto Ambiental',['Carta solar','Iluminação natural','NBR 15220']).category,
+      pericia:make('Avaliação de Imóveis',['NBR 14653','Método comparativo']).category,
+      meta:make('Qualquer título',['Ramo'],'<meta name="study-category" content="patrimonio">'),
+      vazio:make('Receitas',['Massas'])
+    };
+  });
+  expect(r.organica).toBe('Legislação e Administração');
+  expect(r.licit).toBe('Obras, Gestão e Orçamento');
+  expect(r.nbr9050).toBe('Acessibilidade e Segurança');
+  expect(r.conforto).toBe('Conforto Ambiental e Desempenho');
+  expect(r.pericia).toBe('Exercício Profissional, Perícia e Avaliação');
+  expect(r.meta.category).toBe('Patrimônio e Restauro');
+  expect(r.meta.categorySource).toBe('metadado do HTML');
+  expect(r.vazio.category).toBe('Outros');
+  expect(r.vazio.categoryConfidence).toBe('baixa');
+});
+test('[G] cor do card vem só da categoria',async({page})=>{
+  const r=await page.evaluate(()=>({field:!!document.querySelector('#manageMapAccent'),explicit:mapAccentValue({category:'Português',accent:'blue'}),pigment:categoryPigment('Português'),novas:['Conforto Ambiental e Desempenho','Exercício Profissional, Perícia e Avaliação'].every(c=>MAP_CATEGORY_CATALOG.includes(c))}));
+  expect(r.field).toBe(false);
+  expect(r.explicit).toBe(r.pigment);
+  expect(r.novas).toBe(true);
 });
 test('navegação principal funciona',async({page},testInfo)=>{
   for(const view of ['courses','maps','simulations','progress','settings','home']){
@@ -3807,18 +3857,15 @@ test('V15.32 [D] biblioteca do curso mantém composição compacta e três colun
   expect(data.scrollWidth).toBeLessThanOrEqual(data.viewportWidth+2);
 });
 
-test('V15.32 [G] accent respeita prioridade mapa categoria curso e neutro',async({page})=>{
-  const result=await page.evaluate(()=>{
-    const course=state.cloudCourses.find(item=>item.id==='porto-alegre'),before=course?.accent;
-    if(course)course.accent='teal';
-    const explicit=mapAccentKey({courseId:'porto-alegre',category:'Acessibilidade e Segurança',accent:'red'});
-    const category=mapAccentKey({courseId:'porto-alegre',category:'Acessibilidade e Segurança',accent:''});
-    const courseFallback=mapAccentKey({courseId:'porto-alegre',category:'',accent:''});
-    const neutral=mapAccentKey({courseId:'__sem_curso__',category:'',accent:''});
-    if(course){if(before===undefined)delete course.accent;else course.accent=before}
-    return{explicit,category,courseFallback,neutral};
-  });
-  expect(result).toEqual({explicit:'red',category:'blue',courseFallback:'teal',neutral:''});
+test('V15.53 [G] accent do mapa é o pigmento da categoria, sem cor manual',async({page})=>{
+  const result=await page.evaluate(()=>({
+    explicit:mapAccentValue({courseId:'porto-alegre',category:'Acessibilidade e Segurança',accent:'red'}),
+    category:mapAccentValue({courseId:'porto-alegre',category:'Acessibilidade e Segurança',accent:''}),
+    neutral:mapAccentValue({courseId:'__sem_curso__',category:'',accent:''}),
+    ametista:PIGMENTS.ametista,pedra:PIGMENTS.pedra}));
+  expect(result.explicit).toBe(result.ametista);
+  expect(result.category).toBe(result.ametista);
+  expect(result.neutral).toBe(result.pedra);
 });
 
 
