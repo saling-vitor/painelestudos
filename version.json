@@ -1,20 +1,20 @@
 {
-  "version": "15.52.0",
-  "label": "V15.52.0-G",
-  "notes": "Estudo mais contínuo e app mais leve: o leitor lembra o último tópico e a Home abre direto nele; revisão guiada tópico a tópico dentro do leitor; atualizações deixam de baixar de novo os mapas (de ~89 MB para ~2,5 MB); índice de seções no celular; estado da nuvem e do armazenamento nas Configurações; acessibilidade WCAG AA nas pranchas.",
+  "version": "15.53.0",
+  "label": "V15.53.0-G",
+  "notes": "Categorias com cor própria e classificação automática mais precisa: 20 categorias para concurso de arquiteto (novas: Conforto Ambiental e Desempenho; Exercício Profissional, Perícia e Avaliação), cada uma com seu pigmento; o campo Cor do card saiu, porque a cor agora vem da categoria; a importação lê título, ramos e normas citadas para escolher a categoria, mostra a confiança e deixa trocar mapa a mapa antes de importar.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Retomar no tópico exato: a Home mostra onde você parou e abre o mapa nesse ponto",
-    "[G] Revisão guiada no leitor: Errei, Difícil, Ok ou Fácil e segue para o próximo tópico vencido",
-    "[G] Atualizações sem baixar todos os mapas de novo; mapas, capas e fontes ficam guardados entre versões",
-    "[M] Índice de seções fixo no topo de Início, Progresso e Configurações",
-    "[G] Configurações mostram se a nuvem está no ar ou pausada e quanto o app ocupa no aparelho"
+    "[G] 20 categorias, cada uma com seu pigmento; duas novas: Conforto Ambiental e Desempenho e Exercício Profissional, Perícia e Avaliação",
+    "[G] Cor do card sai das configurações do mapa: a cor vem da categoria",
+    "[G] Importação reconhece a categoria pelo título, pelos ramos e pelas normas citadas (NBR, leis)",
+    "[G] Prévia da importação mostra a confiança e permite trocar a categoria de cada mapa",
+    "[G] Meta study-category no HTML define a categoria com certeza"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.52",
+    "series": "15.53",
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-17T00:19:37-03:00"
+  "releasedAt": "2026-10-17T03:36:27-03:00"
 }
