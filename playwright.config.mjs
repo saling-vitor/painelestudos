@@ -14,18 +14,18 @@ export default defineConfig({
   projects:[
     // V15.51: auditoria multiplataforma da interface ATUAL (pranchas) e da clássica — 16 viewports D/T/M,
     // estados vazios, XSS e PWA offline. Roda só neste projeto (as demais suítes a ignoram).
-    {name:'auditoria-plataformas',testMatch:/auditoria-plataformas\.spec\.mjs/,timeout:240000,use:{...devices['Desktop Chrome']}},
-    {name:'desktop-chromium',testIgnore:/auditoria-plataformas/,grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
-    {name:'ipad',testIgnore:/auditoria-plataformas/,grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
+    {name:'auditoria-plataformas',testMatch:/(auditoria-plataformas|acessibilidade-pranchas)\.spec\.mjs/,timeout:240000,use:{...devices['Desktop Chrome']}},
+    {name:'desktop-chromium',testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
+    {name:'ipad',testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
     {
       name:'ipad-webkit',
-      testIgnore:/auditoria-plataformas/,
+      testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,
       grep:/\[T\+M\]|Dock iPad \[T\]|Smoked Liquid Glass das capas/i,
       use:{...devices['iPad Pro 11'],browserName:'webkit',serviceWorkers:'block'}
     },
     {
       name:'iphone-webkit',
-      testIgnore:/auditoria-plataformas/,
+      testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,
       grep:/(?:\[G\]|\[M\]|\[T\+M\]|smartphone|iPhone real|agenda de revisão)/i,
       retries:1,
       use:{

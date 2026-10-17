@@ -218,7 +218,7 @@ test('Auditoria [G] · PWA offline real: instala, desliga a rede, recarrega, nav
   await page.waitForFunction(() => !!navigator.serviceWorker?.controller, null, { timeout: 60000 });
   await page.evaluate(() => navigator.serviceWorker.controller.postMessage({ type: 'WARM_CACHE' }));
   // aguarda o aquecimento: página offline, leitor e primeiro mapa empacotado no cache
-  await page.waitForFunction(async () => { const keys = await caches.keys(); if (!keys.length) return false; const c = await caches.open(keys.find((k) => k.startsWith('study-pwa-'))); const all = (await c.keys()).map((r) => r.url); return all.some((u) => u.includes('reader.html')) && all.some((u) => /cursos\/.*\/mapas\/.*\.html/.test(u)) && all.some((u) => u.includes('prancha.css')); }, null, { timeout: 120000, polling: 1000 });
+  await page.waitForFunction(async () => { const keys = await caches.keys(); if (!keys.length) return false; const all = []; for (const k of keys) all.push(...(await (await caches.open(k)).keys()).map((r) => r.url)); return all.some((u) => u.includes('reader.html')) && all.some((u) => /cursos\/.*\/mapas\/.*\.html/.test(u)) && all.some((u) => u.includes('prancha.css')); }, null, { timeout: 120000, polling: 1000 });
   const failures = [];
   ctx.on('response', (r) => { if (r.status() >= 400 && r.url().startsWith(BASE)) failures.push(r.status() + ' ' + r.url().replace(BASE, '')); });
   await ctx.setOffline(true);

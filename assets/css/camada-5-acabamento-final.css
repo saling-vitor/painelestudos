@@ -2811,3 +2811,23 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
   }
 }
 
+
+/* V15.52 · F2 — faixa da revisão guiada dentro do leitor (Nanquim/Latão) */
+.guided-review-bar{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:246;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;width:min(760px,calc(100vw - 24px));padding:12px 14px;border:1px solid rgba(216,197,158,.24);border-radius:14px;background:rgba(10,10,9,.97);box-shadow:0 18px 48px rgba(0,0,0,.55);color:#ece6da}
+.guided-review-bar[hidden]{display:none}
+.guided-review-bar .gr-copy{display:grid;gap:2px;min-width:0;flex:1 1 220px}
+.guided-review-bar .gr-copy b{font-size:var(--fs-caption);letter-spacing:.06em;text-transform:uppercase;color:#d8c59e}
+.guided-review-bar .gr-copy span{font-size:var(--fs-body-sm);color:#b9b2a5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.guided-review-bar .gr-rate,.guided-review-bar .gr-nav{display:flex;gap:6px}
+.guided-review-bar button{min-height:40px;padding:0 12px;border:1px solid #242320;border-radius:9px;background:#111110;color:#ece6da;font:600 var(--fs-label)/1 inherit;cursor:pointer}
+.guided-review-bar button:hover{border-color:rgba(216,197,158,.45)}
+.guided-review-bar button:focus-visible{outline:2px solid #d8c59e;outline-offset:2px}
+.guided-review-bar .gr-wrong{color:color-mix(in srgb,#b8614e 82%,#ece6da);border-color:rgba(184,97,78,.45)}
+.guided-review-bar .gr-easy{color:#8c9a6c;border-color:rgba(140,154,108,.45)}
+.guided-review-bar .gr-nav button{color:#b9b2a5}
+@media (max-width:700px){
+  .guided-review-bar{bottom:calc(12px + env(safe-area-inset-bottom,0px));gap:8px}
+  .guided-review-bar .gr-rate{flex:1 1 100%}
+  .guided-review-bar .gr-rate button{flex:1}
+  .guided-review-bar .gr-nav{flex:1 1 100%;justify-content:flex-end}
+}

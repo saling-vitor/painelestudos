@@ -125,7 +125,7 @@
     if (cut) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(cut.value) + '" y2="' + y(cut.value) + '" stroke="var(--pr-oxido)" stroke-dasharray="4 4"/><text x="' + (W - R) + '" y="' + (y(cut.value) - 5) + '" text-anchor="end" style="fill:var(--pr-oxido)">corte ' + cut.value + '%</text>';
     g += '<path d="' + list.map((a, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(Number(a.score) || 0).toFixed(1)).join(' ') + '" fill="none" stroke="var(--pr-latao)" stroke-width="2"/>';
     g += list.map((a, i) => '<circle cx="' + x(i) + '" cy="' + y(Number(a.score) || 0) + '" r="4" fill="var(--pr-latao)"/><text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + new Date(a.finishedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + '</text>').join('');
-    return '<div class="pr-chart"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Notas das tentativas">' + g + '</svg></div>';
+    return '<div class="pr-chart" tabindex="0" role="region" aria-label="Notas das tentativas (role para os lados)"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Notas das tentativas">' + g + '</svg></div>';
   }
 
   function render(root) {

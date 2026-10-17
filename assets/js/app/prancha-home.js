@@ -55,7 +55,10 @@
     const lm = typeof lastMap === 'function' ? lastMap() : null;
     if (!lm) return ui.card('<span class="pr-k">Retomar onde parei</span>' + ui.empty('Nenhum mapa aberto ainda', 'O último mapa estudado aparece aqui.'));
     const p = P.data.prog(lm), k = P.data.keyOf(lm);
-    return ui.card('<span class="pr-k">Retomar onde parei</span><div class="pr-ret">' + ui.mapCov(lm) + '<div style="display:grid;gap:6px;min-width:0"><b>' + esc(lm.title) + '</b>' + ui.stbar(p) + '<span class="pr-mono">' + p.marked + '/' + p.total + ' · ' + pct(p.marked, p.total) + '% · ' + esc(typeof mapActivityText === 'function' ? mapActivityText(p) : '') + '</span>' + ui.btn('Continuar', ui.act('open-map', k), 'sm') + '</div></div>');
+    /* V15.52 · F1: o leitor registra o último tópico visível; "Continuar" abre direto nele */
+    const r = window.StudyFlow?.resume?.get(k);
+    const topic = r ? '<span class="pr-ret-topic"><span class="pr-k">Tópico</span>' + esc(r.title || 'último tópico lido') + '</span>' : '';
+    return ui.card('<span class="pr-k">Retomar onde parei</span><div class="pr-ret">' + ui.mapCov(lm) + '<div style="display:grid;gap:6px;min-width:0"><b>' + esc((lm.code ? lm.code + ' · ' : '') + lm.title) + '</b>' + topic + ui.stbar(p) + '<span class="pr-mono">' + p.marked + '/' + p.total + ' · ' + pct(p.marked, p.total) + '% · ' + esc(typeof mapActivityText === 'function' ? mapActivityText(p) : '') + '</span>' + ui.btn(r ? 'Continuar no tópico' : 'Continuar', ui.act('open-map', k, r ? { 'data-topic': r.topicId } : {}), 'sm') + '</div></div>', 'pr-retomar');
   }
   function nextSimCard(course) {
     const s = P.sims.summary(course?.id || '');
@@ -142,7 +145,8 @@
       const list = P.data.mapsForCourse(pc.id);
       planta = ui.card(ui.head('Planta do edital · ' + pc.sigla, pc.mapsDone + ' ' + plural(pc.mapsDone, 'mapa fechado', 'mapas fechados') + ', ' + pc.mapsNever + ' ainda ' + plural(pc.mapsNever, 'vazio'), ui.btn('Abrir curso', ui.act('open-course', pc.id), 'g sm')) + ui.tiles(list, { sel: selTile, cls: 'sm' }) + '<div class="pr-detail" data-pr-detail aria-live="polite">' + tileDetail(selTile) + '</div>');
     }
-    return carimbo + '<div class="pr-two">' + agora + plano + '</div>' + planta + '<div class="pr-three">' + retomar() + nextSimCard(pc?.course) + doubtCard() + '</div>';
+    /* P1-10: "Retomar" ocupa o vão sob o "Agora" (a coluna do plano é mais alta); simulado e dúvida seguem em dupla */
+    return carimbo + '<div class="pr-two"><div class="pr-stack">' + agora + retomar() + '</div>' + plano + '</div>' + planta + '<div class="pr-three pr-pair">' + nextSimCard(pc?.course) + doubtCard() + '</div>';
   }
   function tileDetail(key) {
     const m = key && typeof mapById === 'function' ? mapById(key) : null;
@@ -204,9 +208,10 @@
     if (!total) v = ui.verdict('m', 'Nenhuma revisão vencida.', cal[1]?.count ? 'Amanhã vencem ' + cal[1].count + '.' : 'A fila está zerada.');
     else v = ui.verdict('l', 'A fila toda leva cerca de ' + fmtMin(minutes) + '.', (first && firstEx && firstEx.days !== null && firstEx.days >= 0 && groups.length > 1 ? 'Com a prova de ' + esc(P.courses.sigla(first.course)) + ' em ' + firstEx.days + ' ' + plural(firstEx.days, 'dia') + ', os ' + first.count + ' itens dele vêm primeiro (' + fmtMin(first.minutes) + ').' : '') + ' Estimativa: tempo médio por tópico registrado em cada mapa; sem histórico, 50 s por tópico.');
     const firstMap = q[0];
+    const guidedN = window.StudyFlow?.guided?.count?.() || 0;
     const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">Revisões de hoje · revisão por tópico e por mapa</span><div class="pr-big"><span class="pr-pct pr-num' + (total ? '' : ' ok') + '">' + fmtNum(total) + '</span><span class="pr-sub">' + plural(total, 'revisão vencida', 'revisões vencidas') + ' · em ' + q.length + ' ' + plural(q.length, 'mapa') + '</span></div>' +
       ui.states(groups.map((g) => [P.courses.sigla(g.course), g.count, g.course ? P.courses.color(g.course) : 'var(--pr-latao)']), 'Revisões vencidas por concurso') + ui.legend(groups.map((g) => [P.courses.sigla(g.course), g.count, g.course ? P.courses.color(g.course) : 'var(--pr-latao)'])) + v +
-      '<div class="pr-row">' + (total ? ui.btn('Revisar ' + esc(firstMap.map.code || '') + ' · ' + fmtMin(firstMap.minutes), ui.act('open-map', firstMap.key), 'p') + ui.btn('Fila inteira', ui.act('review-queue'), 'g') + (window.StudyPlanner?.showTopicReview ? ui.btn('Revisão por tópico', ui.act('topic-review'), 'g') : '') : '') + (examToday ? ui.btn('Adiar revisões do dia da prova', ui.act('postpone-exam'), 'g') : '') + '</div></div><div class="pr-c-b">' +
+      '<div class="pr-row">' + (total ? ui.btn('Revisar ' + esc(firstMap.map.code || '') + ' · ' + fmtMin(firstMap.minutes), ui.act('open-map', firstMap.key), 'p') + ui.btn('Fila inteira', ui.act('review-queue'), 'g') + (window.StudyPlanner?.showTopicReview ? ui.btn('Revisão por tópico', ui.act('topic-review'), 'g') : '') : '') + (guidedN ? ui.btn('Revisão guiada no leitor · ' + guidedN, ui.act('guided-review'), total ? 'g' : 'p') : '') + (examToday ? ui.btn('Adiar revisões do dia da prova', ui.act('postpone-exam'), 'g') : '') + '</div></div><div class="pr-c-b">' +
       ui.cell('Vencidas', fmtNum(total), total ? 'l' : 'ok', 'hoje, ' + fmtDay(new Date())) + ui.cell('Feitas hoje', doneToday, doneToday ? 'ok' : '', 'tópicos e mapas avaliados') +
       ui.cell('Tempo', total ? '~' + fmtMin(minutes) : '—', '', 'estimativa pela fila') + ui.cell('Mapas', q.length, '', groups.length > 1 ? groups.map((g) => g.count + ' ' + esc(P.courses.sigla(g.course))).join(' · ') : '') +
       ui.cell('Atrasadas', overdue, overdue ? 'ox' : 'ok', overdue ? 'mapas com revisão de dias anteriores' : 'nada de dias anteriores') + ui.cell('Amanhã', cal[1]?.count ?? 0, '', 'já agendadas') + '</div></section>';

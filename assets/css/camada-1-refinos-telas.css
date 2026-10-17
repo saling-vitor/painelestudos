@@ -1038,8 +1038,8 @@ html.is-phone-layout .continue-map-category{
 
 /* Atualizações: status principal acima da informação técnica. */
 .app-update-panel .app-update-summary strong{font-size:var(--fs-body-sm)}
-.app-update-panel .app-update-compact-meta{opacity:.72}
-.settings-backend-status{opacity:.76}
+.app-update-panel .app-update-compact-meta{opacity:1}
+.settings-backend-status{opacity:1}
 
 /* Metas: leitura humana em horas, minutos permanecem editáveis. */
 .study-goals-form>label{position:relative}
