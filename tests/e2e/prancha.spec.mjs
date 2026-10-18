@@ -145,7 +145,7 @@ test('Todos os Mapas [G] · filtros com contagem, ordenação, três leituras e 
   await lib.locator('.pr-chipf[data-arg="nao"]').click();
   await expect(lib.locator('.pr-gm')).toHaveCount(9);
   await lib.locator('.pr-chipf[data-arg="todos"]').first().click();
-  await lib.locator('.pr-seg button[data-arg="tam"]').click();
+  await lib.locator('select[data-pr-input="sort"]').selectOption('tam');
   await expect(lib.locator('.pr-gm').first()).toContainText(/Constituição/);
   await lib.locator('.pr-tab[data-arg="lista"]').click();
   await expect(lib.locator('.pr-tbl tbody tr')).toHaveCount(14);
