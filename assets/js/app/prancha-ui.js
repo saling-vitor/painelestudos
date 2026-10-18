@@ -168,6 +168,48 @@
     el.focus({ preventScroll: true });
   };
 
+  /* V15.53.3 · capas sem piscar. Cada redesenho troca o innerHTML e recriava as <img>; a nova imagem
+     precisava decodificar de novo e, nesse intervalo, a capa aparecia vazia (só o fundo e o disco).
+     Antes de redesenhar, guardamos as imagens já carregadas; depois, a nova marcação recebe o mesmo nó
+     (mesmo endereço) e, se o endereço mudou, a imagem antiga fica visível até a nova terminar de carregar. */
+  function collectImgs(root) {
+    const bySrc = new Map(), bySlot = new Map();
+    root.querySelectorAll('img').forEach((img) => {
+      if (!img.complete || !img.naturalWidth) return;
+      const src = img.getAttribute('src') || '';
+      if (src && !bySrc.has(src)) bySrc.set(src, []);
+      if (src) bySrc.get(src).push(img);
+      const slot = img.parentElement?.getAttribute('aria-label');
+      if (slot && !bySlot.has(slot)) bySlot.set(slot, img);
+    });
+    return { bySrc, bySlot };
+  }
+  function reuseImgs(root, keep) {
+    if (!keep.bySrc.size) return;
+    root.querySelectorAll('img').forEach((img) => {
+      const src = img.getAttribute('src') || '';
+      const same = keep.bySrc.get(src);
+      if (same && same.length) {
+        const old = same.shift();
+        for (const attr of ['class', 'alt', 'style']) { if (img.hasAttribute(attr)) old.setAttribute(attr, img.getAttribute(attr)); else old.removeAttribute(attr); }
+        img.replaceWith(old);
+        return;
+      }
+      if (img.complete && img.naturalWidth) return;
+      const slot = img.parentElement?.getAttribute('aria-label');
+      const prev = slot && keep.bySlot.get(slot);
+      if (!prev || prev.isConnected) return;
+      /* endereço novo para a mesma capa: mostra a antiga por cima até a nova carregar */
+      const ghost = prev;
+      ghost.classList.add('pr-img-ghost');
+      img.insertAdjacentElement('afterend', ghost);
+      const done = () => ghost.remove();
+      img.addEventListener('load', done, { once: true });
+      img.addEventListener('error', done, { once: true });
+      img.loading = 'eager';
+    });
+  }
+
   const queue = new Set();
   let raf = 0;
   function schedule(view) {
@@ -185,7 +227,8 @@
     if (root.contains(document.activeElement) && document.activeElement.matches('input,select,textarea') && !page.renderWhileTyping) return;
     const scrollY = window.scrollY;
     P.__frame = {};
-    try { page.render(root); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
+    const keepImgs = collectImgs(root);
+    try { page.render(root); reuseImgs(root, keepImgs); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
     catch (e) { console.error('[Prancha] falha ao desenhar ' + view, e); root.innerHTML = '<div class="pr-empty"><b>Não foi possível desenhar esta prancha.</b><p>O conteúdo original continua disponível abaixo.</p></div>'; root.closest('.view')?.classList.remove('pr-on'); }
     finally { P.__frame = null; }
     if (Math.abs(window.scrollY - scrollY) > 2) window.scrollTo(0, scrollY);
@@ -193,6 +236,8 @@
     document.body.classList.toggle('pr-session-home', view === 'home' && root.dataset.screen === 'sessao');
   }
   P.schedule = schedule;
+  P.collectImgs = collectImgs;
+  P.reuseImgs = reuseImgs;
   P.renderNow = renderNow;
   P.rootFor = rootFor;
 

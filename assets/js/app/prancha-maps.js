@@ -100,7 +100,7 @@
     if (!el) return;
     st.q = el.value;
     clearTimeout(qTimer);
-    qTimer = setTimeout(() => { const pos = el.selectionStart; P.pages.maps.render(P.rootFor('maps')); const n = P.rootFor('maps').querySelector('[data-pr-input="q"]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch {} } }, 180);
+    qTimer = setTimeout(() => { const pos = el.selectionStart, mroot = P.rootFor('maps'), keep = P.collectImgs?.(mroot); P.pages.maps.render(mroot); if (keep) P.reuseImgs(mroot, keep); const n = P.rootFor('maps').querySelector('[data-pr-input="q"]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch {} } }, 180);
   });
   document.addEventListener('change', (e) => {
     const sel = e.target.closest?.('[data-prancha="maps"] select[data-pr-input="sort"]');
