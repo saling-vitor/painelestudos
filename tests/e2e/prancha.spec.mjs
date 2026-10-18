@@ -338,3 +338,19 @@ test('Configurações [G] · opção da interface clássica oculta, com caminho 
   await page.waitForFunction(() => typeof Prancha !== 'undefined');
   expect(await page.evaluate(() => Prancha.enabled())).toBe(true);
 });
+
+test('Capas [G] · redesenhar a prancha reaproveita as imagens já carregadas (sem piscar)', async ({ page }) => {
+  await setupPrancha(page);
+  await go(page, 'maps');
+  const lib = page.locator('.pr[data-prancha="maps"]');
+  await expect(lib.locator('.pr-cov img').first()).toBeVisible();
+  await page.waitForFunction(() => [...document.querySelectorAll('.pr[data-prancha="maps"] .pr-cov img')].slice(0, 3).every((i) => i.complete && i.naturalWidth > 0));
+  const same = await page.evaluate(() => {
+    const before = [...document.querySelectorAll('.pr[data-prancha="maps"] .pr-cov img')].slice(0, 3);
+    before.forEach((img, i) => { img.dataset.tag = 'antes-' + i; });
+    window.Prancha.renderNow('maps');
+    const after = [...document.querySelectorAll('.pr[data-prancha="maps"] .pr-cov img')].slice(0, 3);
+    return after.map((img) => img.dataset.tag || '');
+  });
+  expect(same).toEqual(['antes-0', 'antes-1', 'antes-2']);
+});
