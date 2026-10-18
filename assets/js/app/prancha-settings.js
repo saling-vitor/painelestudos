@@ -8,13 +8,14 @@
   let offlineInfo = null, restoreCount = null, probing = false;
 
   const FOLHAS = [
-    ['01', 'conta', 'Conta e nuvem', ['.sync-panel']],
-    ['02', 'rotina', 'Rotina de estudo', ['#studySettingsPanel']],
-    ['03', 'plan', 'Planejamento adaptativo', ['#plannerAdvancedSettings']],
-    ['04', 'auto', 'Automação', ['#studyAutomationPanel']],
-    ['05', 'dados', 'Backup e restauração', ['.backup-panel']],
-    ['06', 'app', 'Aparelho e aplicativo', ['#appUpdatePanel', '#appAppearancePanel', '#appDiagnosticPanel']],
-    ['07', 'adm', 'Administração', ['.admin-panel']]
+    /* [número, id, título da folha, painéis, rótulo curto do índice] — V15.53.1: índice com rótulo curto para caber inteiro */
+    ['01', 'conta', 'Conta e nuvem', ['.sync-panel'], 'Conta'],
+    ['02', 'rotina', 'Rotina de estudo', ['#studySettingsPanel'], 'Rotina'],
+    ['03', 'plan', 'Planejamento adaptativo', ['#plannerAdvancedSettings'], 'Planejamento'],
+    ['04', 'auto', 'Automação', ['#studyAutomationPanel'], 'Automação'],
+    ['05', 'dados', 'Backup e restauração', ['.backup-panel'], 'Backup'],
+    ['06', 'app', 'Aparelho e aplicativo', ['#appUpdatePanel', '#appAppearancePanel', '#appDiagnosticPanel'], 'Aparelho'],
+    ['07', 'adm', 'Administração', ['.admin-panel'], 'Admin']
   ];
   function probe() {
     if (probing) return;
@@ -67,7 +68,7 @@
       ui.cell('Ícone', esc(document.getElementById('appIconCurrent')?.textContent || 'Automático'), '', 'tema escuro nanquim') +
       ui.cell('Supabase', { ok: 'no ar', paused: 'pausado', unreachable: 'sem resposta', error: 'com erro', offline: 'sem conexão', unconfigured: 'não configurado' }[st.cloud.state] || 'verificando', st.cloud.state === 'ok' ? 'ok' : ['paused', 'unreachable', 'error'].includes(st.cloud.state) ? 'ox' : '', st.cloud.at ? 'verificado às ' + new Date(st.cloud.at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'serviço de login e dados') +
       ui.cell('Neste aparelho', usage ? F.fmtBytes(usage.used ?? usage.local) : '…', usage && usage.quota && usage.used / usage.quota > .8 ? 'ox' : '', usage ? 'dados locais ' + F.fmtBytes(usage.local) + (usage.quota ? ' · cota ' + F.fmtBytes(usage.quota) : '') + (usage.persisted ? ' · protegido' : '') : 'medindo o armazenamento') + '</div></section>';
-    const toc = '<nav class="pr-toc" aria-label="Folhas">' + FOLHAS.map(([n, id, t]) => '<a href="#" data-pr-act="goto" data-arg="' + id + '"><i class="' + folhaState(id, st) + '"></i>' + n + ' ' + esc(t) + '</a>').join('') + '<a href="#" data-pr-act="goto" data-arg="risco"><i class="o"></i>Zona de risco</a></nav>';
+    const toc = '<nav class="pr-toc" aria-label="Folhas">' + FOLHAS.map(([n, id, t, , curto]) => '<a href="#" data-pr-act="goto" data-arg="' + id + '" title="' + esc(n + ' · ' + t) + '" aria-label="' + esc(n + ' ' + t) + '"><i class="' + folhaState(id, st) + '"></i><b>' + n + '</b>' + esc(curto || t) + '</a>').join('') + '<a href="#" data-pr-act="goto" data-arg="risco" title="Zona de risco" aria-label="Zona de risco"><i class="o"></i>Risco</a></nav>';
     const folhas = FOLHAS.map(([n, id, t]) => { const s = folhaState(id, st); return '<section class="pr-folha" id="pr-f-' + id + '"><span class="n">' + n + '</span><div class="bd"><h4>' + esc(t) + '<span class="pr-chip ' + (s === 'o' ? 'ox' : s === 'l' ? 'l' : 'ok') + '">' + (s === 'o' ? 'pede atenção' : s === 'l' ? 'aviso' : 'ok') + '</span></h4><div class="pr-host" data-pr-host="' + id + '"></div></div></section>'; }).join('');
     const zr = '<section class="pr-zr" id="pr-f-risco"><span class="pr-k o">Zona de risco</span><p style="font-size:var(--fs-body-sm)">Apaga registros de tempo ou recarrega o aplicativo. O progresso dos mapas, a agenda, as anotações e os simulados não são afetados. Cada ação pede um segundo toque e, para o tempo, uma confirmação.</p><div class="pr-row">' + ui.btn('Zerar hoje', ui.act('reset-time', 'today'), 'd') + ui.btn('Zerar semana', ui.act('reset-time', 'week'), 'd') + ui.btn('Zerar todo o histórico de tempo', ui.act('reset-time', 'all'), 'd') + ui.btn('Forçar atualização do aplicativo', ui.act('force-update'), 'd') + '</div></section>';
     /* V15.52 · P2-2: a opção "Usar a interface clássica" saiu da tela (pouco usada). A ação "classic" e o caminho de volta

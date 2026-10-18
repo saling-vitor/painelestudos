@@ -1,14 +1,12 @@
 {
-  "version": "15.53.0",
-  "label": "V15.53.0-G",
-  "notes": "Categorias com cor própria e classificação automática mais precisa: 20 categorias para concurso de arquiteto (novas: Conforto Ambiental e Desempenho; Exercício Profissional, Perícia e Avaliação), cada uma com seu pigmento; o campo Cor do card saiu, porque a cor agora vem da categoria; a importação lê título, ramos e normas citadas para escolher a categoria, mostra a confiança e deixa trocar mapa a mapa antes de importar.",
+  "version": "15.53.1",
+  "label": "V15.53.1-G",
+  "notes": "Telas mais enxutas: o índice das Configurações usa rótulos curtos e cabe inteiro; os filtros de categoria em Todos os Mapas e na página do curso usam nomes curtos e ocupam metade do espaço.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] 20 categorias, cada uma com seu pigmento; duas novas: Conforto Ambiental e Desempenho e Exercício Profissional, Perícia e Avaliação",
-    "[G] Cor do card sai das configurações do mapa: a cor vem da categoria",
-    "[G] Importação reconhece a categoria pelo título, pelos ramos e pelas normas citadas (NBR, leis)",
-    "[G] Prévia da importação mostra a confiança e permite trocar a categoria de cada mapa",
-    "[G] Meta study-category no HTML define a categoria com certeza"
+    "[G] Índice das Configurações compacto: todos os atalhos visíveis, inclusive Zona de risco",
+    "[G] Filtros de categoria com nomes curtos em Todos os Mapas e na página do curso (nome completo ao passar o mouse)",
+    "[T] No iPad o índice das Configurações cabe em uma linha, com alvos de toque mantidos"
   ],
   "automation": {
     "enabled": true,
@@ -16,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-17T03:36:27-03:00"
+  "releasedAt": "2026-10-17T20:19:21-03:00"
 }

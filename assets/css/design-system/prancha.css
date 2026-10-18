@@ -549,3 +549,13 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-three.pr-pair{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media (max-width:700px){.pr-three.pr-pair{grid-template-columns:1fr}}
 .pr-ret-topic{display:grid;gap:2px;font-size:var(--fs-body-sm);color:var(--pr-papel-2);min-width:0;overflow-wrap:anywhere}
+/* V15.53.1 · índice das Configurações compacto: rótulos curtos, número discreto e quebra de linha no tablet/desktop
+   para nunca esconder o último atalho. No celular continua uma faixa rolável. */
+.pr-toc a b{font-weight:500;color:var(--pr-papel-3);margin-right:5px}
+.pr-toc a[aria-current] b,.pr-toc a:hover b{color:inherit}
+@media (min-width:701px){.pr-toc{flex-wrap:wrap;gap:4px}}
+@media (min-width:701px) and (hover:hover) and (pointer:fine){
+  .pr-toc a{padding:5px 10px;min-height:32px}
+  .pr-toc a i{width:6px;height:6px;margin-right:6px}
+}
+@media (max-width:1100px){.pr-toc a b{display:none}}
