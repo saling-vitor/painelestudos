@@ -559,3 +559,12 @@ body.pr-session-home #studyTimerFloat{display:none!important}
   .pr-toc a i{width:6px;height:6px;margin-right:6px}
 }
 @media (max-width:1100px){.pr-toc a b{display:none}}
+/* V15.53.2 · filtros e ordenação compactos no computador (mouse): mesma leitura, metade da altura.
+   Toque (celular/iPad) mantém o alvo de --pr-touch. Vale para Todos os Mapas, página do curso e demais pranchas. */
+@media (hover:hover) and (pointer:fine){
+  .pr-chips{gap:4px}
+  .pr-chipf{min-height:30px;padding:3px 9px;gap:6px}
+  .pr-chipf i{width:7px;height:7px}
+  .pr-seg{padding:2px}
+  .pr-seg button{min-height:28px;padding:3px 10px}
+}

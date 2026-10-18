@@ -1,12 +1,12 @@
 {
-  "version": "15.53.1",
-  "label": "V15.53.1-G",
-  "notes": "Telas mais enxutas: o índice das Configurações usa rótulos curtos e cabe inteiro; os filtros de categoria em Todos os Mapas e na página do curso usam nomes curtos e ocupam metade do espaço.",
+  "version": "15.53.2",
+  "label": "V15.53.2-G",
+  "notes": "Filtros e ordenação mais compactos no computador: os botões de Todos os Mapas, da página do curso e das demais pranchas ocupam menos altura; no toque continuam com alvo grande.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Índice das Configurações compacto: todos os atalhos visíveis, inclusive Zona de risco",
-    "[G] Filtros de categoria com nomes curtos em Todos os Mapas e na página do curso (nome completo ao passar o mouse)",
-    "[T] No iPad o índice das Configurações cabe em uma linha, com alvos de toque mantidos"
+    "[D] Filtros, categorias e ordenação com botões mais baixos no computador",
+    "[G] No celular e no iPad os botões mantêm o alvo de toque",
+    "[G] Mantém o índice das Configurações e os nomes curtos das categorias da V15.53.1"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-17T20:19:21-03:00"
+  "releasedAt": "2026-10-17T21:12:12-03:00"
 }
