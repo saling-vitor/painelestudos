@@ -559,3 +559,13 @@ body.pr-session-home #studyTimerFloat{display:none!important}
   .pr-toc a i{width:6px;height:6px;margin-right:6px}
 }
 @media (max-width:1100px){.pr-toc a b{display:none}}
+/* V15.53.2 · barra de Todos os Mapas no formato da página do curso: busca e ordenação compactas à esquerda, estados à direita */
+.pr-tool-maps .grp:first-child{flex:0 1 auto}
+.pr-tool-maps .grp:last-child{justify-content:flex-end;flex:1 1 auto}
+.pr-qbox,.pr-sortsel select{min-height:var(--pr-touch);font:inherit;font-size:var(--fs-label);color:var(--pr-papel);background:var(--pr-g0);border:1px solid var(--pr-linha);border-radius:8px;padding:6px 10px}
+.pr-qbox{width:190px;max-width:100%}
+.pr-qbox::placeholder{color:var(--pr-papel-3)}
+.pr-qbox:focus-visible,.pr-sortsel select:focus-visible{outline:2px solid var(--pr-latao-c);outline-offset:1px}
+.pr-sortsel{display:inline-flex}
+.pr-sortsel select{cursor:pointer;font-weight:600;color:var(--pr-papel-2)}
+@media (max-width:700px){.pr-tool-maps .grp:first-child{width:100%}.pr-qbox{flex:1 1 auto;width:auto}}

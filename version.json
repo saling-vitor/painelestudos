@@ -1,12 +1,12 @@
 {
-  "version": "15.53.1",
-  "label": "V15.53.1-G",
-  "notes": "Telas mais enxutas: o índice das Configurações usa rótulos curtos e cabe inteiro; os filtros de categoria em Todos os Mapas e na página do curso usam nomes curtos e ocupam metade do espaço.",
+  "version": "15.53.2",
+  "label": "V15.53.2-G",
+  "notes": "Todos os Mapas com a mesma barra de dentro do curso: busca e ordenação compactas à esquerda e os filtros de estado à direita, numa linha só.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Índice das Configurações compacto: todos os atalhos visíveis, inclusive Zona de risco",
-    "[G] Filtros de categoria com nomes curtos em Todos os Mapas e na página do curso (nome completo ao passar o mouse)",
-    "[T] No iPad o índice das Configurações cabe em uma linha, com alvos de toque mantidos"
+    "[G] Todos os Mapas: busca, ordenação e filtros de estado numa linha, como dentro do curso",
+    "[G] Ordenação vira um seletor compacto (Ordenar: A–Z, Progresso, Tamanho…)",
+    "[G] Filtro Disponível offline passa a se chamar Offline"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-17T20:19:21-03:00"
+  "releasedAt": "2026-10-17T21:12:12-03:00"
 }

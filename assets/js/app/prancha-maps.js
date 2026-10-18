@@ -14,7 +14,7 @@
   const FE = [
     ['todos', 'Todos', () => true], ['feito', 'Concluídos', (m, p) => p.total > 0 && p.marked >= p.total], ['and', 'Em andamento', (m, p) => p.marked > 0 && p.marked < p.total],
     ['nao', 'Nunca abertos', (m, p) => !p.marked && !p.lastActivity], ['rev', 'Com revisão', (m, p) => p.review > 0], ['dif', 'Difíceis', (m, p) => p.difficult > 0],
-    ['fav', 'Favoritos', (m) => isFav(P.data.keyOf(m))], ['off', 'Disponível offline', (m) => !!offline?.has(P.data.keyOf(m))]
+    ['fav', 'Favoritos', (m) => isFav(P.data.keyOf(m))], ['off', 'Offline', (m) => !!offline?.has(P.data.keyOf(m))]
   ];
   const SORTS = [['az', 'A–Z'], ['prog', 'Progresso'], ['tam', 'Tamanho'], ['par', 'Parado'], ['rec', 'Recentes']];
   function refreshOffline() {
@@ -77,7 +77,9 @@
     const feChips = '<div class="pr-chips" role="group" aria-label="Estado">' + FE.filter((x) => x[0] !== 'off' || offline).map(([id, label, fn]) => ui.chipf(id, label, base.filter((m) => okCat(m) && fn(m, progs.get(P.data.keyOf(m)))).length, st.fe === id, 'fe')).join('') + '</div>';
     const catChips = '<div class="pr-chips" role="group" aria-label="Categoria">' + ui.chipf('todos', 'Todas', undefined, st.fc === 'todos', 'fc', undefined, 'Todas as categorias') + cats.map((x) => ui.chipf(x, (typeof categoryShortName === 'function' ? categoryShortName(x) : x), base.filter((m) => m.category === x && fe[2](m, progs.get(P.data.keyOf(m)))).length, st.fc === x, 'fc', P.categoryPigment(x), x)).join('') + '</div>';
     const courseChips = courses.length > 1 ? '<div class="pr-chips" role="group" aria-label="Concurso">' + ui.chipf('todos', 'Todos os concursos', undefined, st.fco === 'todos', 'fco') + courses.map((c) => ui.chipf(String(c.id), P.courses.sigla(c), all.filter((m) => String(m.courseId) === String(c.id)).length, st.fco === String(c.id), 'fco', P.courses.color(c))).join('') + '</div>' : '';
-    const tool = '<div class="pr-tool"><div class="grp">' + feChips + '</div><div class="grp"><label class="pr-field" style="min-width:200px"><span class="pr-k">Buscar</span><input type="search" value="' + esc(st.q) + '" placeholder="Código, título ou tema" data-pr-input="q" aria-label="Buscar mapas"></label><div style="display:grid;gap:4px"><span class="pr-k">Ordenar</span>' + ui.seg(SORTS, st.sort, 'sort', 'Ordenar') + '</div></div></div>';
+    /* V15.53.2 · mesma barra de dentro do curso: busca e ordenação à esquerda, estados à direita, numa linha só. */
+    const sortSel = '<span class="pr-sortsel"><select data-pr-input="sort" aria-label="Ordenar mapas">' + SORTS.map(([id, label]) => '<option value="' + id + '"' + (st.sort === id ? ' selected' : '') + '>Ordenar: ' + esc(label) + '</option>').join('') + '</select></span>';
+    const tool = '<div class="pr-tool pr-tool-maps"><div class="grp"><input class="pr-qbox" type="search" value="' + esc(st.q) + '" placeholder="Buscar mapa…" data-pr-input="q" aria-label="Buscar mapas por código, título ou tema">' + sortSel + '</div><div class="grp">' + feChips + '</div></div>';
     let body;
     if (!list.length) body = ui.card(ui.empty('Nenhum mapa neste filtro', 'Limpe os filtros para ver todo o acervo.', ui.btn('Limpar filtros', ui.act('clear'), 'g sm')));
     else if (st.view === 'lista') body = table(list, fol);
@@ -99,6 +101,10 @@
     st.q = el.value;
     clearTimeout(qTimer);
     qTimer = setTimeout(() => { const pos = el.selectionStart; P.pages.maps.render(P.rootFor('maps')); const n = P.rootFor('maps').querySelector('[data-pr-input="q"]'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch {} } }, 180);
+  });
+  document.addEventListener('change', (e) => {
+    const sel = e.target.closest?.('[data-prancha="maps"] select[data-pr-input="sort"]');
+    if (sel) P.pages.maps.actions.sort(sel.value);
   });
   P.pages.maps = {
     render,
