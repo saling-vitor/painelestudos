@@ -1,4 +1,5 @@
 # GitHub Pages — validação, QA por navegador e deploy
+# V15.54.1: deploy publica só os arquivos do site (_site) e pula pushes só de documentação.
 # V15.52: concorrência por branch (um PR não cancela mais o deploy da main), permissões mínimas por job,
 # npm ci com lockfile e cache, iPad em 2 partes, auditoria D/T/M + acessibilidade bloqueando o deploy,
 # artefatos só em falha e resumo dos testes no painel da execução.
@@ -7,6 +8,10 @@ name: Deploy static content to Pages
 on:
   push:
     branches: ["main"]
+    # Mudanças só de documentação não publicam o site (docs/ não é servido pelo Pages).
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
   pull_request:
     branches: ["main"]
   workflow_dispatch:
@@ -211,11 +216,23 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      # Publica só o que o site usa: fora ficam docs, testes, scripts e arquivos de desenvolvimento.
+      - name: Stage public files
+        run: |
+          rsync -a --delete \
+            --exclude='.git/' --exclude='.github/' --exclude='node_modules/' \
+            --exclude='docs/' --exclude='tests/' --exclude='scripts/' \
+            --exclude='test-results/' --exclude='playwright-report/' --exclude='visual-audit/' \
+            --exclude='package.json' --exclude='package-lock.json' --exclude='playwright.config.mjs' \
+            --exclude='css-dead.json' --exclude='_site/' \
+            ./ _site/
+          echo "Artefato do Pages: $(du -sh _site | cut -f1) (repositório: $(du -sh --exclude=.git . | cut -f1))" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages-${{ github.run_attempt }}
-          path: '.'
+          path: '_site'
           retention-days: 1
 
       - name: Deploy to GitHub Pages
