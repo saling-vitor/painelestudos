@@ -449,7 +449,7 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-blk b{font-family:var(--pr-f-capa);font-weight:400;font-size:var(--fs-body);color:var(--c)}
 .pr-blk.done{opacity:.55}
 .pr-blk.cf{border-color:var(--pr-oxido);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pr-oxido) 50%,transparent)}
-.pr-blk.sug{background:transparent;border-style:dashed;border-color:var(--pr-latao-e);color:var(--pr-papel-3)}
+.pr-blk.sug{background:transparent;border-style:dashed;border-color:var(--pr-latao-e);color:var(--pr-papel-2)}
 .pr-blk.sug::before{display:none}
 .pr-nowline{position:absolute;left:0;right:0;border-top:2px solid var(--pr-latao);z-index:2;pointer-events:none}
 .pr-nowline em{position:absolute;right:6px;top:-17px;font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-latao);font-style:normal}
