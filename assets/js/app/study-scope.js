@@ -50,14 +50,13 @@
   function maps(list) {
     const src = Array.isArray(list) ? list : all('combinedMaps');
     if (!enabled()) return src.slice();
-    const now = new Date(), cache = new Map();
+    /* uma passada pelos cursos por chamada (barato mesmo com centenas de mapas) */
+    const now = new Date(), state = new Map();
+    for (const c of all('combinedCourses')) if (c) state.set(String(c.id), courseRetired(c, now));
     return src.filter((m) => {
       if (!m) return false;
       const id = String(m.courseId || '');
-      if (id && cache.has(id)) return !cache.get(id);
-      const r = mapRetired(m, now);
-      if (id && courseOf(m)) cache.set(id, r);
-      return !r;
+      return !(state.has(id) ? state.get(id) : examPassed(m.examDate, now));
     });
   }
   function retiredMaps(list) {
