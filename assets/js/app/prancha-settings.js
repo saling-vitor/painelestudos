@@ -19,6 +19,18 @@
   ];
   /* V15.55 · painéis técnicos que entram recolhidos na folha */
   const COLLAPSED = { '#appDiagnosticPanel': ['Diagnóstico técnico', 'Versão, nuvem, offline e ambiente desta instalação'] };
+  /* Reutiliza o details existente para preservar o estado aberto durante redesenhos. */
+  function mountPanel(host, sel, panel) {
+    if (!COLLAPSED[sel]) { host.appendChild(panel); return; }
+    let wrapper = panel.closest('details.pr-disc') || host.querySelector(':scope > details.pr-disc');
+    if (!wrapper) {
+      wrapper = document.createElement('details');
+      wrapper.className = 'pr-disc';
+      wrapper.innerHTML = '<summary><b>' + COLLAPSED[sel][0] + '</b><span>' + COLLAPSED[sel][1] + '</span></summary>';
+    }
+    if (panel.parentElement !== wrapper) wrapper.appendChild(panel);
+    host.appendChild(wrapper);
+  }
   function probe() {
     if (probing) return;
     probing = true;
@@ -86,13 +98,7 @@
       for (const sel of sels) {
         const panel = parking.querySelector?.(sel) || document.querySelector(sel);
         if (!panel) continue;
-        if (COLLAPSED[sel]) {
-          const d = document.createElement('details');
-          d.className = 'pr-disc';
-          d.innerHTML = '<summary><b>' + COLLAPSED[sel][0] + '</b><span>' + COLLAPSED[sel][1] + '</span></summary>';
-          d.appendChild(panel);
-          host.appendChild(d);
-        } else host.appendChild(panel);
+        mountPanel(host, sel, panel);
       }
       if (!host.children.length) host.innerHTML = '<div class="pr-mono" data-pr-wait>' + ui.skeleton(2) + '</div>';
     }
@@ -105,7 +111,13 @@
     for (const [, id, , sels] of FOLHAS) {
       const host = root.querySelector('[data-pr-host="' + id + '"]');
       if (!host) continue;
-      for (const sel of sels) { const panel = document.querySelector(sel); if (panel && panel.closest('[data-pr-host]') !== host && !panel.contains(host)) { host.querySelector(':scope>.pr-mono')?.remove(); host.appendChild(panel); } }
+      for (const sel of sels) {
+        const panel = document.querySelector(sel);
+        if (panel && panel.closest('[data-pr-host]') !== host && !panel.contains(host)) {
+          host.querySelector(':scope>.pr-mono')?.remove();
+          mountPanel(host, sel, panel);
+        }
+      }
     }
   }
   window.addEventListener('studyapp:navigation', (e) => { if (e.detail?.view === 'settings') { clearInterval(watch); let n = 0; watch = setInterval(() => { rehome(); if (++n > 12) clearInterval(watch); }, 250); } });

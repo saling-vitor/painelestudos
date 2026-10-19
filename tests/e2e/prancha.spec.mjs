@@ -386,6 +386,10 @@ test('Configurações [G] · diagnóstico técnico recolhido na folha 06, sem ca
   await disc.locator('summary').click();
   await expect(disc.locator('#appDiagnosticPanel')).toBeVisible();
   expect(await disc.locator('#appDiagnosticPanel').evaluate((e) => getComputedStyle(e).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
+  /* redraw por sincronização não deve fechar o diagnóstico já aberto */
+  await page.evaluate(() => Prancha.pages.settings.render(document.querySelector('.pr[data-prancha="settings"]')));
+  await expect(disc).toHaveAttribute('open', '');
+  await expect(disc.locator('#appDiagnosticPanel')).toBeVisible();
   /* sair e voltar mantém o painel dentro do bloco (rehome não o tira de lá) */
   await go(page, 'home');
   await go(page, 'settings');
