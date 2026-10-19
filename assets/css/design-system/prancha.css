@@ -584,5 +584,5 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-disc>summary{display:flex;flex-direction:column;gap:2px;margin:0 -14px;padding:12px 14px;cursor:pointer;list-style:none}
 .pr-disc>summary::-webkit-details-marker{display:none}
 .pr-disc>summary b{font-weight:500;color:var(--pr-papel)}
-.pr-disc>summary span{font-family:var(--pr-f-mono);font-size:var(--pr-fs-xs);color:var(--pr-papel-3)}
+.pr-disc>summary span{font-family:var(--pr-f-mono);font-size:max(12px,var(--pr-fs-xs));color:var(--pr-papel-3)}
 .pr-disc[open]>summary{border-bottom:1px solid var(--pr-linha);margin-bottom:12px}
