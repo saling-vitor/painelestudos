@@ -52,7 +52,12 @@
     return '<div class="pr-list">' + items.map((x, i) => '<div class="pr-pi' + (x.done ? ' done' : '') + (curKey && x.key === curKey ? ' cur' : '') + '" style="--c:' + x.color + '"><span class="n">' + (x.done ? '✓' : i + 1) + '</span><span><b>' + esc(x.title) + '</b><small>' + esc([x.code, x.startLabel, x.reason].filter(Boolean).join(' · ')) + '</small></span><span class="pr-mono">' + fmtMin(x.minutes) + '</span>' + (x.done ? '<span class="pr-chip ok">feito</span>' : ui.btn('Iniciar', ui.act(x.kind === 'agenda' ? 'start-agenda' : 'start-plan', x.kind === 'agenda' ? x.id : x.key, { 'data-min': x.minutes }), 'sm')) + '</div>').join('') + '</div>';
   }
   function retomar() {
-    const lm = typeof lastMap === 'function' ? lastMap() : null;
+    /* V15.54: mapa de concurso encerrado não volta para "Retomar"; usa o último mapa em estudo */
+    let lm = typeof lastMap === 'function' ? lastMap() : null;
+    if (lm && window.StudyScope?.mapRetired?.(lm)) {
+      const ts = (m) => { const p = P.data.prog(m); return typeof activityTimestamp === 'function' ? activityTimestamp(p.lastActivity) : Date.parse(p.lastActivity || 0) || 0; };
+      lm = P.data.maps().filter((m) => ts(m) > 0).sort((a, b) => ts(b) - ts(a))[0] || null;
+    }
     if (!lm) return ui.card('<span class="pr-k">Retomar onde parei</span>' + ui.empty('Nenhum mapa aberto ainda', 'O último mapa estudado aparece aqui.'));
     const p = P.data.prog(lm), k = P.data.keyOf(lm);
     /* V15.52 · F1: o leitor registra o último tópico visível; "Continuar" abre direto nele */
@@ -358,7 +363,7 @@
         P.schedule('home');
       },
       'close-doubts': (id) => { P.store.patch('closures', id, { ...P.courses.closure(id), doubtsAt: new Date().toISOString() }); P.schedule('home'); },
-      'dismiss-post': (id) => P.confirm('Manter o curso ativo?', 'A tela Pós-prova deixa de aparecer para este curso. Ele continua ativo; você pode arquivá-lo depois em Cursos.', () => { P.store.patch('closures', id, { ...P.courses.closure(id), dismissedAt: new Date().toISOString() }); manual.set(''); P.schedule('home'); }, 'Manter ativo'),
+      'dismiss-post': (id) => P.confirm('Manter o curso ativo?', 'A tela Pós-prova deixa de aparecer para este curso. Como a prova já passou, os mapas dele continuam fora do plano e das revisões; para voltar a estudá-lo, informe uma nova data de prova (ex.: próxima fase) em Cursos.', () => { P.store.patch('closures', id, { ...P.courses.closure(id), dismissedAt: new Date().toISOString() }); manual.set(''); P.schedule('home'); }, 'Manter ativo'),
       'archive-course': (id) => archiveCourse(id),
       'plan-next': (id) => { try { window.StudyAutomation?.syncAgenda?.({ force: true }); } catch {} if (typeof toast === 'function') toast('Plano recalculado com o próximo concurso.'); if (typeof nav === 'function') nav('agenda'); }
     }

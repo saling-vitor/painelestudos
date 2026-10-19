@@ -1,18 +1,18 @@
 {
-  "version": "15.53.3",
-  "label": "V15.53.3-G",
-  "notes": "Capas sem piscar: ao atualizar a tela (sincronização, cronômetro, busca), as capas já carregadas são reaproveitadas em vez de recarregadas.",
+  "version": "15.54.0",
+  "label": "V15.54.0-G",
+  "notes": "Concursos encerrados fora das telas: mapas de cursos arquivados ou com a prova já realizada saem do Início, do plano do dia, das revisões, das prioridades e da agenda. Nada é apagado.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Capas dos mapas e cursos param de piscar quando a tela se atualiza",
-    "[G] Se a capa mudar, a anterior fica visível até a nova terminar de carregar",
-    "[G] Vale para Início, Cursos, Todos os Mapas e demais pranchas, em todas as plataformas"
+    "[G] Cursos arquivados ou com prova já realizada saem do Início, do \"Agora\", do plano do dia e da fila de revisões",
+    "[G] Todos os Mapas mostra só o que está em estudo; o botão \"Mostrar encerrados\" traz o acervo antigo",
+    "[G] Em Cursos, os concursos encerrados ficam juntos numa seção própria — progresso e histórico continuam guardados"
   ],
   "automation": {
     "enabled": true,
-    "series": "15.53",
+    "series": "15.54",
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-17T21:58:45-03:00"
+  "releasedAt": "2026-10-18T01:03:30-03:00"
 }

@@ -116,7 +116,11 @@
 
   /* ---------- cursos e mapas ---------- */
   const courses = () => memo('courses', () => (call('combinedCourses') || []).filter(Boolean));
-  const maps = () => memo('maps', () => (call('combinedMaps') || []).filter(Boolean));
+  /* allMaps: acervo completo (biblioteca, cursos, histórico). maps: só o que está em estudo —
+     mapas de concursos encerrados (arquivados ou com prova já realizada) ficam de fora (V15.54). */
+  const allMaps = () => memo('allMaps', () => (call('combinedMaps') || []).filter(Boolean));
+  const maps = () => memo('maps', () => (window.StudyScope ? window.StudyScope.maps(allMaps()) : allMaps()));
+  const isRetired = (c) => (window.StudyScope ? window.StudyScope.courseRetired(c) : c?.status === 'archived');
   const keyOf = (m) => (m ? String(m._key || call('mapKey', m) || '') : '');
   const prog = (m) => memo('p:' + keyOf(m), () => call('mapProgress', m)) || { done: 0, review: 0, difficult: 0, marked: 0, pending: 0, total: Number(m?.topics) || 0, pct: 0, pctRaw: 0, lastActivity: '' };
   const agg = (list) => call('aggregateProgress', list) || { done: 0, review: 0, difficult: 0, marked: 0, pending: 0, total: 0, pct: 0, pctRaw: 0, lastActivity: '' };
@@ -182,7 +186,7 @@
     return out;
   }
   function mapsForCourse(courseId, { includeLinked = true } = {}) {
-    const all = maps();
+    const all = allMaps();
     const own = all.filter((m) => String(m.courseId) === String(courseId));
     if (!includeLinked) return own;
     const keys = new Set(own.map(keyOf));
@@ -202,7 +206,7 @@
   /* conteúdo em comum detectado (mesmo storageId ou mesmo código+título em cursos diferentes) */
   function commonContent() {
     const groups = new Map();
-    for (const m of maps()) {
+    for (const m of allMaps()) {
       const sig = m.storageId ? 'sid:' + m.storageId : 'ct:' + norm(m.code) + '|' + norm(m.title);
       if (!groups.has(sig)) groups.set(sig, []);
       groups.get(sig).push(m);
@@ -237,23 +241,33 @@
     const never = list.filter((m) => !prog(m).marked && !prog(m).lastActivity).length;
     return { course: c, id: c.id, sigla: courseSigla(c), color: courseColor(c), maps: list, progress: p, exam: ex, health: h, forecast: forecast(c.id), mapsDone: done, mapsNever: never };
   }
+  const byExam = (a, b) => {
+    const da = a.exam.days, db = b.exam.days;
+    const ka = da === null ? 1e6 : da < 0 ? 1e5 - da : da, kb = db === null ? 1e6 : db < 0 ? 1e5 - db : db;
+    return ka - kb || String(a.course.title).localeCompare(String(b.course.title), 'pt-BR');
+  };
+  /* concursos em estudo: nem arquivados nem com prova já realizada */
   function activeSummaries(today = new Date()) {
-    return memo('as', () => courses().filter((c) => !isArchived(c)).map((c) => courseSummary(c, today)).sort((a, b) => {
-      const da = a.exam.days, db = b.exam.days;
-      const ka = da === null ? 1e6 : da < 0 ? 1e5 - da : da, kb = db === null ? 1e6 : db < 0 ? 1e5 - db : db;
-      return ka - kb || String(a.course.title).localeCompare(String(b.course.title), 'pt-BR');
-    }));
+    return memo('as', () => courses().filter((c) => !isRetired(c)).map((c) => courseSummary(c, today)).sort(byExam));
+  }
+  /* encerrados: arquivados ou com prova realizada (Cursos → Encerrados) */
+  function retiredSummaries(today = new Date()) {
+    return memo('rs', () => courses().filter((c) => isRetired(c)).map((c) => courseSummary(c, today)).sort(byExam));
+  }
+  function unarchivedSummaries(today = new Date()) {
+    return memo('us', () => courses().filter((c) => !isArchived(c)).map((c) => courseSummary(c, today)).sort(byExam));
   }
   /* curso prioritário: o de prova futura mais próxima (inclui hoje) */
   function priorityCourse(today = new Date()) {
     const s = activeSummaries(today);
     return s.find((x) => x.exam.phase === 'before' || x.exam.phase === 'today') || null;
   }
-  /* curso em pós-prova: prova passou, curso não arquivado e fechamento não concluído */
+  /* curso em pós-prova: prova passou há até 30 dias, curso não arquivado e fechamento não concluído.
+     (Ele já está fora do estudo; esta tela só serve para registrar gabarito e arquivar.) */
   function postExamCourse(today = new Date()) {
-    return activeSummaries(today).filter((x) => x.exam.phase === 'after' && !x.exam.closure.dismissedAt).sort((a, b) => b.exam.days - a.exam.days)[0] || null;
+    return unarchivedSummaries(today).filter((x) => x.exam.phase === 'after' && x.exam.days >= -30 && !x.exam.closure.dismissedAt).sort((a, b) => b.exam.days - a.exam.days)[0] || null;
   }
-  P.courses = { list: courses, byId: courseById, sigla: courseSigla, color: courseColor, label: courseLabel, examDate, examState: courseExamState, summary: courseSummary, active: activeSummaries, priority: priorityCourse, postExam: postExamCourse, isArchived, closure, health };
+  P.courses = { list: courses, byId: courseById, sigla: courseSigla, color: courseColor, label: courseLabel, examDate, examState: courseExamState, summary: courseSummary, active: activeSummaries, retired: retiredSummaries, priority: priorityCourse, postExam: postExamCourse, isArchived, isRetired, closure, health };
 
   /* ---------- metas e tempo ---------- */
   function goals() { const g = window.StudyDashboard?.goals?.() || {}; return { daily: Number(g.dailyMinutes) || 120, weekly: Number(g.weeklyMinutes) || 600, pomodoroWork: Number(g.pomodoroWork) || 25, pomodoroBreak: Number(g.pomodoroBreak) || 5 }; }
@@ -290,7 +304,7 @@
     clearTimeout(historyTimer);
     historyTimer = setTimeout(() => {
       try {
-        const all = maps();
+        const all = allMaps();
         if (!all.length) return;
         const p = agg(all), byCourse = {};
         for (const c of courses()) { const q = agg(all.filter((m) => String(m.courseId) === String(c.id))); byCourse[c.id] = [q.marked, q.total]; }
@@ -311,8 +325,9 @@
   function reviewsRaw(today = new Date()) {
     const all = maps();
     const sum = call('reviewScheduleSummary', all, today) || { due: [], upcoming: [], overdue: [], today: [], dueCount: 0, schedule: {} };
-    const topics = (window.StudyPlanner?.dueTopics?.('', today) || []).filter(Boolean);
-    const allTopics = (window.StudyPlanner?.topicReviews?.('') || []).filter(Boolean);
+    const live = new Set(all.map(keyOf));
+    const topics = (window.StudyPlanner?.dueTopics?.('', today) || []).filter((t) => t && live.has(String(t.mapKey || keyOf(t.map))));
+    const allTopics = (window.StudyPlanner?.topicReviews?.('') || []).filter((t) => t && live.has(String(t.mapKey || keyOf(t.map))));
     return { summary: sum, topics, allTopics };
   }
   /* fila de revisão por mapa: une revisões de mapa vencidas e tópicos vencidos */
@@ -416,7 +431,9 @@
   function setAgendaStart(id, start) { if (!/^\d{2}:\d{2}$/.test(String(start || ''))) return null; return patchStore('agendaStarts', id, { start }); }
   function agendaForDate(d) {
     const k = dateKey(d), data = agendaData();
-    return (data.agenda || []).filter((x) => !x.deleted && x.date === k).map((x) => ({ ...x, kind: x.kind || 'study', startResolved: agendaStart(x), startDefault: !agendaStart(x) }));
+    /* V15.54: blocos de estudo ligados a mapas de concursos encerrados não entram no dia */
+    const retired = (x) => { if (!x.mapKey || !window.StudyScope || typeof mapById !== 'function') return false; const m = mapById(x.mapKey); return !!m && window.StudyScope.mapRetired(m); };
+    return (data.agenda || []).filter((x) => !x.deleted && x.date === k && !retired(x)).map((x) => ({ ...x, kind: x.kind || 'study', startResolved: agendaStart(x), startDefault: !agendaStart(x) }));
   }
   function sessionsForDate(d) {
     const k = dateKey(d);
@@ -529,15 +546,16 @@
   function priorityAll(courseId) { return memo('pr:' + courseId, () => { try { return window.StudyPlanner?.priorityRows?.(courseId ? mapsForCourse(courseId, { includeLinked: false }) : maps()) || []; } catch { return []; } }); }
   function priorities(n = 3, courseId = '') {
     try {
+      const live = new Set(maps().map(keyOf));
       const rows = priorityAll(courseId) || window.StudyPlanner?.priorityRows?.(courseId ? mapsForCourse(courseId, { includeLinked: false }) : maps()) || [];
-      return rows.filter((r) => r.progress.pending > 0 || r.progress.difficult > 0 || r.progress.review > 0 || r.dueTopics > 0).slice(0, n);
+      return rows.filter((r) => (courseId || live.has(r.key || keyOf(r.map)))).filter((r) => r.progress.pending > 0 || r.progress.difficult > 0 || r.progress.review > 0 || r.dueTopics > 0).slice(0, n);
     } catch { return []; }
   }
   function dailyPlan() { return memo('dp', () => dailyPlanRaw()); }
   function dailyPlanRaw() { try { return window.StudyCoach?.snapshot?.() || { items: [], summary: {} }; } catch { return { items: [], summary: {} }; } }
   P.plan = { priorities, daily: dailyPlan };
 
-  P.data = { keyOf, prog, agg, maps, folhas, mapsForCourse };
+  P.data = { keyOf, prog, agg, maps, allMaps, folhas, mapsForCourse };
 
   /* ---------- integração com sincronização e backup ---------- */
   function installSync() {
