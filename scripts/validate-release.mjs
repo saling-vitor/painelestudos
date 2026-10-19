@@ -30,7 +30,7 @@ if(!version||!catalog||!simulations||!searchIndex)process.exit(1);
 const expected=String(version.version||'');
 const expectedLabel=String(version.label||'');
 const automation=version.automation||{};
-const moduleFiles=["assets/js/app/state.js","assets/js/app/core.js","assets/js/app/study-time.js","assets/js/app/router.js","assets/js/app/maps.js","assets/js/app/map-category.js","assets/js/app/review-schedule.js","assets/js/app/courses.js","assets/js/app/search.js","assets/js/app/map-library.js","assets/js/app/progress.js","assets/js/app/reader.js","assets/js/app/sync.js","assets/js/app/diagnostics.js","assets/js/app/backup.js","assets/js/app/restore-points.js","assets/js/app/ui.js","assets/js/app/simulations.js","assets/js/app/study-coach.js","assets/js/app/study-dashboard.js","assets/js/app/study-planner.js","assets/js/app/mobile-ux.js","assets/js/app/updates.js","assets/js/app/dynamic-liquid-glass-v2.js"];
+const moduleFiles=["assets/js/app/state.js","assets/js/app/core.js","assets/js/app/study-time.js","assets/js/app/router.js","assets/js/app/maps.js","assets/js/app/map-category.js","assets/js/app/review-schedule.js","assets/js/app/courses.js","assets/js/app/study-scope.js","assets/js/app/search.js","assets/js/app/map-library.js","assets/js/app/progress.js","assets/js/app/reader.js","assets/js/app/sync.js","assets/js/app/diagnostics.js","assets/js/app/backup.js","assets/js/app/restore-points.js","assets/js/app/ui.js","assets/js/app/simulations.js","assets/js/app/study-coach.js","assets/js/app/study-dashboard.js","assets/js/app/study-planner.js","assets/js/app/mobile-ux.js","assets/js/app/updates.js","assets/js/app/dynamic-liquid-glass-v2.js"];
 for(const file of moduleFiles)check(exists(file),file+' existe');
 const stateModule=read('assets/js/app/state.js');
 const allJs=[...moduleFiles.map(read),read('assets/js/app.js')].join('\n');
@@ -100,7 +100,7 @@ check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.in
 check(cssIn(sw,`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
 check(cssIn(index,`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
 check(cssIn(sw,`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
-check(activeJsFiles.length===42,'auditoria: build ativo usa 42 scripts JS diretos (30 + 10 módulos das pranchas + fluxo de estudo V15.52 + categorias V15.53)');
+check(activeJsFiles.length===43,'auditoria: build ativo usa 43 scripts JS diretos (30 + 10 módulos das pranchas + fluxo de estudo V15.52 + categorias V15.53 + escopo de estudo V15.54)');
 check(cssIn(index,`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
 check(cssIn(index,`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG carregados na interface');
 check(cssIn(sw,`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG disponíveis no PWA offline');

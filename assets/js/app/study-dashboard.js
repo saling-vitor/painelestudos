@@ -136,14 +136,14 @@
   }
   function nearestExam(){
     const today=startOfDay(new Date()).getTime();
-    const exams=combinedCourses().map(course=>({course,date:parseDate(course.examDate||course.exam_date)})).filter(row=>row.date&&row.date.getTime()>=today).sort((a,b)=>a.date-b.date);
+    const exams=(typeof studyScopeCourses==='function'?studyScopeCourses():combinedCourses()).map(course=>({course,date:parseDate(course.examDate||course.exam_date)})).filter(row=>row.date&&row.date.getTime()>=today).sort((a,b)=>a.date-b.date);
     if(!exams.length)return null;
     const first=exams[0],days=Math.max(0,Math.ceil((startOfDay(first.date)-startOfDay(new Date()))/86400000));
     return{...first,days};
   }
   function reviewEntries(){
     if(typeof syncReviewSchedules!=='function')return[];
-    const maps=combinedMaps(),schedule=syncReviewSchedules(maps);
+    const maps=(typeof studyScopeMaps==='function'?studyScopeMaps():combinedMaps()),schedule=syncReviewSchedules(maps);
     return maps.map(map=>{
       const key=map._key||mapKey(map),entry=schedule[key];
       if(!entry?.dueAt)return null;
@@ -257,7 +257,7 @@
       const hero=home.querySelector('.hero');
       if(hero)hero.insertAdjacentElement('afterend',root);else home.prepend(root);
     }
-    const snap=goalSnapshot(),exam=nearestExam(),planned=todayPlanned(),review=typeof reviewScheduleSummary==='function'?reviewScheduleSummary(combinedMaps()):{dueCount:0},active=readActive();
+    const snap=goalSnapshot(),exam=nearestExam(),planned=todayPlanned(),review=typeof reviewScheduleSummary==='function'?reviewScheduleSummary((typeof studyScopeMaps==='function'?studyScopeMaps():combinedMaps())):{dueCount:0},active=readActive();
     const returning=!!(active||window.StudyTime?.week?.()||localStorage.getItem('studyapp.lastMap'));
     home.classList.toggle('study-dashboard-returning',returning);
     const nextPlan=window.StudyCoach?.snapshot?.().items?.[0]||null;

@@ -110,6 +110,7 @@
   }
 
   function activeCourses(){
+    if(typeof studyScopeCourses==='function')return studyScopeCourses();
     return typeof combinedCourses==='function'?combinedCourses().filter(course=>course?.status!=='archived'):[];
   }
   function mapsForCourse(courseId){

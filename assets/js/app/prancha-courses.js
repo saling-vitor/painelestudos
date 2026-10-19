@@ -32,7 +32,7 @@
   }
 
   function renderList(root) {
-    const all = P.courses.list(), S = all.map((c) => P.courses.summary(c)), active = S.filter((s) => !P.courses.isArchived(s.course)), archived = S.filter((s) => P.courses.isArchived(s.course));
+    const all = P.courses.list(), S = all.map((c) => P.courses.summary(c)), active = S.filter((s) => !P.courses.isRetired(s.course)), archived = S.filter((s) => P.courses.isRetired(s.course));
     active.sort((a, b) => { const k = (x) => (x.exam.days === null ? 1e6 : x.exam.days < 0 ? 1e5 - x.exam.days : x.exam.days); return k(a) - k(b); });
     const top = ui.top({ eyebrow: 'Cursos', title: 'Meus Cursos', desc: 'Concursos pela data da prova, cada um com a planta do seu edital.', right: ui.btn('+ Novo concurso', ui.act('new-course'), 'p') });
     if (!all.length) { root.innerHTML = top + ui.card(ui.empty(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Nenhum concurso ainda' : 'Sua biblioteca está desconectada', typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Crie um concurso e importe os mapas do edital.' : 'Entre na sua conta em Configurações para carregar seus concursos.', ui.btn(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Novo concurso' : 'Abrir Configurações', ui.act(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'new-course' : 'nav', 'settings'), 'p'))); return; }
@@ -49,8 +49,8 @@
       ui.cell('Em dia', ok.length, ok.length ? 'ok' : 'mu', ok.length ? esc(ok.map((s) => s.sigla).join(', ')) : '—') +
       ui.cell('Mapas', maps.length, '', active.reduce((n, s) => n + s.mapsDone, 0) + ' concluídos') +
       ui.cell('Hoje', fmtSec(P.time.today()), '', 'meta ' + fmtMin(goals.daily)) + '</div></section>';
-    const list = active.map((s, i) => crRow(s, i === 0)).join('') || ui.empty('Nenhum concurso ativo', 'Os concursos arquivados estão abaixo.');
-    const arch = archived.length ? ui.card(ui.head('Arquivados', archived.length + ' ' + plural(archived.length, 'concurso'), ui.btn(showArchived ? 'Ocultar' : 'Mostrar', ui.act('toggle-archived'), 'g sm')) + (showArchived ? '<div style="display:grid;gap:10px">' + archived.map((s) => crRow(s, false)).join('') + '</div>' : '<p style="font-size:var(--fs-body-sm)">Mapas, progresso e histórico continuam guardados. Reative pelo menu ⋯ do curso.</p>')) : '';
+    const list = active.map((s, i) => crRow(s, i === 0)).join('') || ui.empty('Nenhum concurso em estudo', 'Os concursos encerrados (arquivados ou com prova realizada) estão abaixo.');
+    const arch = archived.length ? ui.card(ui.head('Encerrados', archived.length + ' ' + plural(archived.length, 'concurso'), ui.btn(showArchived ? 'Ocultar' : 'Mostrar', ui.act('toggle-archived'), 'g sm')) + (showArchived ? '<div style="display:grid;gap:10px">' + archived.map((s) => crRow(s, false)).join('') + '</div>' : '<p style="font-size:var(--fs-body-sm)">Arquivados ou com a prova já realizada: ficam fora do Início, do plano e das revisões. Mapas, progresso e histórico continuam guardados — reative pelo menu ⋯ ou informe uma nova data de prova em Gerenciar curso.</p>')) : '';
     root.innerHTML = top + carimbo + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + arch;
   }
 
@@ -102,7 +102,7 @@
     const rest = Math.max(0, p.total - p.marked);
     let v;
     if (ex.phase === 'archived') v = ui.verdict('n', 'Curso arquivado.', 'Ele está fora das prioridades automáticas. Reative pelo menu ⋯.');
-    else if (ex.phase === 'after') v = ui.verdict('l', 'A prova já passou.', 'O fechamento do curso fica na tela Pós-prova do Início.');
+    else if (ex.phase === 'after') v = ui.verdict('l', 'A prova já passou.', 'Os mapas deste curso saíram do Início, do plano e das revisões (nada foi apagado). O fechamento fica na tela Pós-prova; para estudar uma próxima fase, informe a nova data em Gerenciar curso.');
     else if (ex.phase === 'nodate') v = ui.verdict('n', 'Sem data de prova.', 'Defina a data em Gerenciar curso para calcular o ritmo.');
     else v = ui.verdict(h?.status === 'risk' ? '' : h?.status === 'healthy' ? 'm' : 'l', (ex.days === 0 ? 'Prova hoje' : 'Prova em ' + ex.days + ' ' + plural(ex.days, 'dia')) + ', ' + fmtNum(rest) + ' ' + plural(rest, 'tópico aberto', 'tópicos abertos') + '.', (f?.remainingSeconds ? 'O plano estima ' + fmtSec(f.remainingSeconds) + ' de leitura para o restante. ' : '') + (top1 ? 'Próximo agora: ' + esc(top1.map.code || top1.map.title) + ', ' + fmtMin(top1.minutes) + '.' : ''));
     const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">' + esc(s.sigla + ' · ' + P.courses.label(c)) + '</span><div class="pr-big"><span class="pr-pct pr-num">' + pct(p.marked, p.total) + '<small>%</small></span><span class="pr-sub">' + fmtNum(p.marked) + ' de ' + fmtNum(p.total) + ' tópicos · ' + own.length + ' mapas' + (linkedN ? ' · +' + linkedN + ' ' + plural(linkedN, 'vinculado') : '') + '</span></div>' + ui.stateBar(p) + ui.stateLegend(p) + v +

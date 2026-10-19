@@ -6,7 +6,7 @@
   const U = P.util, ui = P.ui, { esc, fmtNum, plural, pct } = U;
   const KEY = 'studyapp.prancha.mapsView';
   const st = (() => { try { return { view: 'grade', sort: 'az', group: 'cat', ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch { return { view: 'grade', sort: 'az', group: 'cat' }; } })();
-  st.fe = 'todos'; st.fc = 'todos'; st.fco = 'todos'; st.q = '';
+  st.fe = 'todos'; st.fc = 'todos'; st.fco = 'todos'; st.q = ''; st.closed = false;
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ view: st.view, sort: st.sort, group: st.group })); } catch {} };
   let offline = null, offlineBusy = false;
 
@@ -20,7 +20,7 @@
   function refreshOffline() {
     if (offlineBusy || typeof mapAvailableOffline !== 'function') return;
     offlineBusy = true;
-    const all = P.data.maps();
+    const all = P.data.allMaps();
     Promise.all(all.map((m) => Promise.resolve(mapAvailableOffline(m)).then((ok) => (ok ? P.data.keyOf(m) : null)).catch(() => null))).then((keys) => { offline = new Set(keys.filter(Boolean)); offlineBusy = false; if (state.view === 'maps') P.schedule('maps'); });
   }
   function sorted(list) {
@@ -51,16 +51,21 @@
     }).join('') + '</tbody></table></div>';
   }
   function render(root) {
-    const all = P.data.maps();
+    /* V15.54: concursos encerrados (arquivados ou com prova realizada) ficam ocultos; "Mostrar encerrados" traz o acervo deles */
+    const live = P.data.maps(), every = P.data.allMaps(), hidden = every.length - live.length;
+    if (!hidden) st.closed = false;
+    const all = st.closed ? every.filter((m) => !live.includes(m)) : live;
     if (offline === null) refreshOffline();
     const top = ui.top({ eyebrow: 'Biblioteca global', title: 'Todos os Mapas', tabs: [{ id: 'grade', label: 'Grade' }, { id: 'lista', label: 'Lista' }, { id: 'grupo', label: 'Agrupado' }], active: st.view, label: 'Todos os Mapas', tabAct: 'view' });
+    const closedBar = hidden ? '<div class="pr-row sp" style="margin:4px 0 2px"><span class="pr-mono">' + (st.closed ? 'Mostrando ' + hidden + ' ' + plural(hidden, 'mapa') + ' de concursos encerrados · progresso e histórico guardados' : hidden + ' ' + plural(hidden, 'mapa') + ' de concursos encerrados ' + plural(hidden, 'oculto', 'ocultos')) + '</span>' + ui.btn(st.closed ? 'Voltar aos mapas em estudo' : 'Mostrar encerrados', ui.act('closed'), 'g sm') + '</div>' : '';
+    if (!all.length && hidden && !st.closed) { root.innerHTML = top + closedBar + ui.card(ui.empty('Nenhum mapa em estudo', 'Todos os concursos estão encerrados. Crie um novo concurso ou reative um em Cursos.', ui.btn('Ver cursos', ui.act('nav', 'courses'), 'g sm'))); return; }
     if (!all.length) { root.innerHTML = top + ui.card(ui.empty(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Nenhum mapa na biblioteca' : 'Biblioteca desconectada', typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Importe os mapas HTML de um concurso.' : 'Entre na sua conta para carregar os mapas.', ui.btn(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Importar mapas' : 'Abrir Configurações', ui.act(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'import-maps' : 'nav', 'settings'), 'p'))); return; }
     const fol = P.data.folhas(all), gp = P.data.agg(all);
     const progs = new Map(all.map((m) => [P.data.keyOf(m), P.data.prog(m)]));
     const done = all.filter((m) => { const p = progs.get(P.data.keyOf(m)); return p.total > 0 && p.marked >= p.total; }).length;
     const never = all.filter((m) => { const p = progs.get(P.data.keyOf(m)); return !p.marked && !p.lastActivity; });
     const andN = all.length - done - never.length;
-    const courses = P.courses.list(), cats = typeof mapCategoriesFor === 'function' ? mapCategoriesFor(all) : [...new Set(all.map((m) => m.category))];
+    const inList = new Set(all.map((m) => String(m.courseId))), courses = P.courses.list().filter((c) => inList.has(String(c.id))), cats = typeof mapCategoriesFor === 'function' ? mapCategoriesFor(all) : [...new Set(all.map((m) => m.category))];
     const biggest = never.slice().sort((a, b) => progs.get(P.data.keyOf(b)).total - progs.get(P.data.keyOf(a)).total).slice(0, 3);
     const v = never.length ? ui.verdict('l', never.length + ' ' + plural(never.length, 'mapa nunca foi aberto', 'mapas nunca foram abertos') + '.', biggest.length ? 'Os maiores são ' + biggest.map((m) => esc(m.code || m.title) + ' (' + progs.get(P.data.keyOf(m)).total + ')').join(', ') + '. Ordene por "Tamanho" para ver o que pesa mais.' : '') : ui.verdict('m', 'Todos os mapas já foram abertos.', done === all.length ? 'O acervo está concluído.' : 'Ordene por "Parado" para ver os que estão há mais tempo sem estudo.');
     const catCells = cats.map((cname) => { const ms = all.filter((m) => m.category === cname); const t = ms.reduce((n, m) => n + progs.get(P.data.keyOf(m)).total, 0), mk = ms.reduce((n, m) => n + progs.get(P.data.keyOf(m)).marked, 0); return { cname, ms, t, mk }; }).sort((a, b) => b.t - a.t);
@@ -92,7 +97,7 @@
         return '<section class="pr-grpc"><div class="pr-grph" style="--c:' + g.color + '"><b>' + esc(g.name) + '</b>' + ui.mini(g.all, g.color) + '<span class="pr-mono">' + g.all.length + ' mapas · ' + ag.marked + '/' + ag.total + ' · ' + pct(ag.marked, ag.total) + '%</span></div><div class="pr-gridm">' + ms.map((m) => card(m, fol)).join('') + '</div></section>';
       }).join('');
     } else body = '<div class="pr-gridm">' + list.map((m) => card(m, fol)).join('') + '</div>';
-    root.innerHTML = top + carimbo + tool + catChips + courseChips + '<p class="pr-mono" aria-live="polite">' + list.length + ' de ' + all.length + ' mapas</p>' + body;
+    root.innerHTML = top + closedBar + carimbo + tool + catChips + courseChips + '<p class="pr-mono" aria-live="polite">' + list.length + ' de ' + all.length + ' mapas</p>' + body;
   }
   let qTimer = 0;
   document.addEventListener('input', (e) => {
@@ -115,6 +120,7 @@
       fco: (id) => { st.fco = id; P.schedule('maps'); },
       sort: (id) => { st.sort = id; save(); P.schedule('maps'); },
       group: (id) => { st.group = id; save(); P.schedule('maps'); },
+      closed: () => { st.closed = !st.closed; st.fco = 'todos'; P.schedule('maps'); },
       clear: () => { st.fe = 'todos'; st.fc = 'todos'; st.fco = 'todos'; st.q = ''; P.schedule('maps'); },
       'fav-menu': (key) => { P.actions.fav(key); P.schedule('maps'); },
       fav: (key, el, root, e) => { e?.stopPropagation(); P.actions.fav(key, el); }

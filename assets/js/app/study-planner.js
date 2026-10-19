@@ -94,7 +94,8 @@
   }
   function topicReviewRows(courseId=''){
     const data=read(),rows=[];
-    for(const map of combinedMaps()){
+    /* V15.54: sem curso definido, só mapas de concursos em estudo (encerrados ficam guardados, fora da fila) */
+    for(const map of (courseId?combinedMaps():(typeof studyScopeMaps==='function'?studyScopeMaps():combinedMaps()))){
       if(courseId&&map.courseId!==courseId)continue;
       const key=mapKeyOf(map),stateData=readMapState(map),topicStates=stateData.topicStates||{},indexed=searchTopicsForMap(map),indexedIds=new Set(indexed.map(item=>String(item.topicId)));
       const ids=new Set([...Object.keys(topicStates),...indexedIds]);
@@ -218,7 +219,7 @@
     const course=courseById(map?.courseId),d=parseDate(course?.examDate||map?.examDate);if(!d)return null;
     return Math.ceil((startDay(d)-startDay(new Date()))/86400000);
   }
-  function priorityRows(maps=combinedMaps()){
+  function priorityRows(maps=(typeof studyScopeMaps==='function'?studyScopeMaps():combinedMaps())){
     const dueTopics=dueTopicRows(),topicCounts={};
     dueTopics.forEach(row=>topicCounts[row.mapKey]=(topicCounts[row.mapKey]||0)+1);
     const reviewSummary=typeof reviewScheduleSummary==='function'?reviewScheduleSummary(maps):{schedule:{}};
@@ -548,7 +549,7 @@
     const root=document.getElementById('homeStudyDashboard');if(!root)return;
     let panel=root.querySelector('.study-intelligence-row');
     if(!panel){panel=document.createElement('div');panel.className='study-intelligence-row';root.appendChild(panel)}
-    const top=priorityRows()[0],courseId=top?.map?.courseId||combinedCourses()[0]?.id||'',fc=forecast(courseId),due=dueTopicRows().length;
+    const top=priorityRows()[0],courseId=top?.map?.courseId||(typeof studyScopeCourses==='function'?studyScopeCourses():combinedCourses())[0]?.id||'',fc=forecast(courseId),due=dueTopicRows().length;
     const priorityTitle=top?.map?.shortTitle||top?.map?.title||'Seu próximo estudo';
     const priorityReasons=top?.reasons?.slice(0,2)||['Conteúdo pendente'],priorityCode=top?.map?.code||'',priorityMinutes=top?.minutes||20;
     const priorityAccent=top?.map&&typeof mapAccentValue==='function'?mapAccentValue(top.map):'';
@@ -592,7 +593,7 @@
   function renderProgressIntelligence(){
     const view=document.querySelector('[data-view="progress"]');if(!view)return;
     let root=document.getElementById('studyIntelligencePanel');if(!root){root=document.createElement('section');root.id='studyIntelligencePanel';root.className='section study-intelligence-panel';const analytics=document.getElementById('studyAnalyticsPanel');if(analytics)analytics.insertAdjacentElement('beforebegin',root);else view.appendChild(root)}
-    const top=priorityRows().slice(0,3),due=dueTopicRows(),groups=errorGroups().slice(0,4),week=weeklySnapshot(),courseId=top[0]?.map?.courseId||combinedCourses()[0]?.id||'',fc=forecast(courseId),errorCount=groups.reduce((sum,g)=>sum+g.count,0),actions=[];
+    const top=priorityRows().slice(0,3),due=dueTopicRows(),groups=errorGroups().slice(0,4),week=weeklySnapshot(),courseId=top[0]?.map?.courseId||(typeof studyScopeCourses==='function'?studyScopeCourses():combinedCourses())[0]?.id||'',fc=forecast(courseId),errorCount=groups.reduce((sum,g)=>sum+g.count,0),actions=[];
     if(due.length)actions.push('<article class="intelligence-action intelligence-action-review"><span>Revisar agora</span><b>'+due.length+'</b><p>'+due.length+' tópico'+(due.length===1?' vencido':'s vencidos')+' para revisão espaçada</p><button type="button" class="secondary" data-topic-reviews>Revisar tópicos</button></article>');
     if(errorCount)actions.push('<article class="intelligence-action intelligence-action-errors"><span>Caderno de erros</span><b>'+errorCount+'</b><p>'+esc(groups[0]?'Mais recorrente: '+groups[0].label:'Erros aguardando revisão')+'</p><button type="button" class="secondary" data-error-notebook>Ver erros</button></article>');
     actions.push('<article class="intelligence-action intelligence-action-forecast"><span>Previsão de conclusão</span><b>'+esc(fc.finishDate.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}))+'</b><p>'+esc(fmtSeconds(fc.remainingSeconds))+' de carga estimada</p><button type="button" class="secondary" data-forecast-matrix>Ver previsão</button></article>');
@@ -621,7 +622,7 @@
     const view=document.querySelector('[data-view="agenda"]');if(!view)return;
     const head=view.querySelector('.study-agenda-head');if(head&&!head.querySelector('.agenda-v2-actions')){const actions=document.createElement('div');actions.className='agenda-v2-actions';actions.innerHTML='<details class="agenda-more"><summary aria-label="Mais opções da agenda" title="Mais opções"><span class="ui-icon icon-more ui-icon-sm" aria-hidden="true"></span></summary><div class="agenda-more-menu"><button type="button" data-agenda-replan><span class="ui-icon icon-repeat ui-icon-sm" aria-hidden="true"></span><div><b>Replanejar semana</b><small>Redistribuir sessões atrasadas</small></div></button><button type="button" data-agenda-export><span class="ui-icon icon-file-down ui-icon-sm" aria-hidden="true"></span><div><b>Exportar calendário</b><small>Arquivo .ics para iPhone/iPad</small></div></button></div></details>';head.appendChild(actions);actions.querySelector('[data-agenda-replan]').onclick=()=>{actions.querySelector('details').removeAttribute('open');showReplanModal()};actions.querySelector('[data-agenda-export]').onclick=()=>{actions.querySelector('details').removeAttribute('open');exportAgendaIcs()}}
     const form=view.querySelector('#agendaQuickForm');if(form&&!form.querySelector('[name="recurrence"]')){
-      const mapLabel=document.createElement('label');mapLabel.innerHTML='Mapa (opcional)<select name="mapKey"><option value="">Sessão geral</option>'+combinedMaps().map(map=>'<option value="'+esc(mapKeyOf(map))+'">'+esc((map.code||'MAP')+' · '+(map.shortTitle||map.title||''))+'</option>').join('')+'</select>';
+      const mapLabel=document.createElement('label');mapLabel.innerHTML='Mapa (opcional)<select name="mapKey"><option value="">Sessão geral</option>'+(typeof studyScopeMaps==='function'?studyScopeMaps():combinedMaps()).map(map=>'<option value="'+esc(mapKeyOf(map))+'">'+esc((map.code||'MAP')+' · '+(map.shortTitle||map.title||''))+'</option>').join('')+'</select>';
       const row=document.createElement('label');row.innerHTML='Repetição<select name="recurrence"><option value="none">Não repetir</option><option value="weekly">Semanal · 8 semanas</option><option value="weekdays">Dias úteis · 20 sessões</option><option value="daily">Diária · 14 dias</option></select>';
       form.querySelector('.row')?.insertAdjacentElement('afterend',mapLabel);mapLabel.insertAdjacentElement('afterend',row);
       form.onsubmit=e=>{e.preventDefault();const fd=new FormData(form),payload={date:fd.get('date'),title:fd.get('title'),kind:fd.get('kind'),minutes:fd.get('minutes'),mapKey:fd.get('mapKey')||''},rule=fd.get('recurrence');if(rule&&rule!=='none')addRecurringAgenda(payload,rule);else window.StudyDashboard?.addAgenda?.(payload);form.elements.title.value='';form.elements.minutes.value='30'};
@@ -843,7 +844,7 @@
       for(const row of dueTopicRows().filter(row=>norm(row.title+' '+row.map.code).includes(q)).slice(0,5))out.push({title:row.title,meta:'Revisar · '+(row.map.code||'MAP'),action:'open-topic:'+row.mapKey+'|'+row.topicId});
       for(const sim of (typeof combinedSimulations==='function'?combinedSimulations():[]).filter(sim=>norm(sim.title+' '+sim.code+' '+sim.board).includes(q)).slice(0,3))out.push({title:sim.title||sim.code,meta:'Simulado · '+(sim.board||''),action:'open-sim:'+(sim._key||simulationKey(sim))});
       if(q.startsWith('dif ')){
-        const term=q.slice(4);for(const map of combinedMaps())for(const[id,stateValue]of Object.entries(readMapState(map).topicStates||{}))if(stateValue==='difficult'&&norm(topicTitle(map,id)).includes(term))out.push({title:topicTitle(map,id),meta:'DIF · '+(map.code||'MAP'),action:'open-topic:'+mapKeyOf(map)+'|'+id});
+        const term=q.slice(4);for(const map of (typeof studyScopeMaps==='function'?studyScopeMaps():combinedMaps()))for(const[id,stateValue]of Object.entries(readMapState(map).topicStates||{}))if(stateValue==='difficult'&&norm(topicTitle(map,id)).includes(term))out.push({title:topicTitle(map,id),meta:'DIF · '+(map.code||'MAP'),action:'open-topic:'+mapKeyOf(map)+'|'+id});
       }
     }
     return out.slice(0,12);
