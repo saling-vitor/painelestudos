@@ -569,3 +569,12 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-sortsel{display:inline-flex}
 .pr-sortsel select{cursor:pointer;font-weight:600;color:var(--pr-papel-2)}
 @media (max-width:700px){.pr-tool-maps .grp:first-child{width:100%}.pr-qbox{flex:1 1 auto;width:auto}}
+/* V15.55 · esqueleto de carregamento: blocos grafite, sem brilho, respeita movimento reduzido */
+.pr-skel{display:grid;gap:10px;padding:16px;border:1px dashed var(--pr-linha);border-radius:var(--pr-r-s)}
+.pr-skel i{display:block;height:12px;border-radius:4px;background:var(--pr-g3);width:88%}
+.pr-skel i.t{height:14px;width:42%;background:var(--pr-g3)}
+.pr-skel i:last-child:not(.t){width:64%}
+@media (prefers-reduced-motion:no-preference){
+  .pr-skel i{animation:pr-skel-pulse 1.6s ease-in-out infinite}
+  @keyframes pr-skel-pulse{50%{opacity:.45}}
+}
