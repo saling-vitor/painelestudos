@@ -836,7 +836,7 @@ test('cards da biblioteca de cursos usam nova hierarquia',async({page},testInfo)
   await expect(card.locator('.progress-state.pending')).toHaveCount(0);
   await expect(card.locator('.course-progress-empty')).toContainText('Ainda sem progresso registrado.');
   await expect(card.locator('.course-exam-info')).toContainText('Prova');
-  await expect(card.locator('.course-exam-info small')).toContainText('out');
+  await expect(card.locator('.course-exam-info small')).toContainText(/\d{2} (jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez) \d{4}/); /* V15.54: data relativa (prova sempre 30 dias à frente) */
   await expect(card.locator('.course-edital-btn')).toContainText('Ver edital');
   const styles=await page.locator('#coursesGrid').evaluate(el=>({columns:getComputedStyle(el).gridTemplateColumns,gap:getComputedStyle(el).gap}));
   expect(styles.columns).not.toBe('none');
