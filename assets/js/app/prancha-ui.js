@@ -27,7 +27,19 @@
     const t = Math.max(1, p.total || 0), ok = Math.max(0, (p.marked || 0) - (p.review || 0) - (p.difficult || 0));
     return '<span class="pr-stbar" style="height:' + h + 'px" aria-hidden="true"><i style="width:' + (ok / t) * 100 + '%;background:var(--pr-musgo)"></i><i style="width:' + ((p.review || 0) / t) * 100 + '%;background:var(--pr-latao)"></i><i style="width:' + ((p.difficult || 0) / t) * 100 + '%;background:var(--pr-oxido)"></i></span>';
   };
-  const empty = (title, text = '', actionHtml = '') => '<div class="pr-empty"><b>' + esc(title) + '</b>' + (text ? '<p>' + text + '</p>' : '') + actionHtml + '</div>';
+  /* V15.55 · enquanto a primeira carga da nuvem não chega, o vazio vira esqueleto (não é vazio, está chegando) */
+  const cloudPending = () => {
+    try {
+      return !!(typeof state !== 'undefined' && state.cloudLoading && typeof StudyCloud !== 'undefined' && StudyCloud.session()
+        && !(state.cloudCourses?.length || state.cloudMaps?.length || state.cloudSimulations?.length));
+    } catch { return false; }
+  };
+  const skeleton = (lines = 2) => '<div class="pr-skel" aria-busy="true" aria-label="Carregando da nuvem"><i class="t"></i>'
+    + Array.from({ length: lines }, () => '<i></i>').join('') + '</div>';
+  const empty = (title, text = '', actionHtml = '') => {
+    if (cloudPending()) { P.skeletonShown = true; return skeleton(text ? 2 : 1); }
+    return '<div class="pr-empty"><b>' + esc(title) + '</b>' + (text ? '<p>' + text + '</p>' : '') + actionHtml + '</div>';
+  };
   function cov({ img = '', sig = '', color = 'var(--pr-latao)', cls = '', label = '' } = {}) {
     return '<div class="pr-cov' + (img ? ' has-img' : '') + (cls ? ' ' + cls : '') + '" style="--c:' + esc(color) + '" role="img" aria-label="' + esc(label || 'Capa ' + sig) + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.remove(\'has-img\');this.remove()">' : '') + '<span class="r"></span><span class="s">' + esc(sig) + '</span></div>';
   }
@@ -60,7 +72,7 @@
   const lastLabel = (iso) => { const ms = typeof activityTimestamp === 'function' ? activityTimestamp(iso) : Date.parse(iso || 0) || 0; if (!ms) return 'nunca'; const d = U.daysBetween(new Date(ms), new Date()); return d <= 0 ? 'hoje' : d === 1 ? 'ontem' : 'há ' + d + ' d'; };
   const mapState = (p) => (p.total > 0 && p.marked >= p.total ? 'concluído' : p.marked ? 'em andamento' : p.lastActivity ? 'aberto' : 'não iniciado');
 
-  P.ui = { attrs, btn, act, cell, verdict, states, legend, stateSegs, stateBar, stateLegend, stbar, empty, cov, mapCov, courseCov, tiles, mini, top, card, head, chipf, seg, menu, lastLabel, mapState, STATE_COLORS };
+  P.ui = { attrs, btn, act, cell, verdict, states, legend, stateSegs, stateBar, stateLegend, stbar, empty, skeleton, cov, mapCov, courseCov, tiles, mini, top, card, head, chipf, seg, menu, lastLabel, mapState, STATE_COLORS };
 
   /* ---------- controlador ---------- */
   const pages = (P.pages = P.pages || {});

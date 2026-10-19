@@ -354,3 +354,62 @@ test('Capas [G] · redesenhar a prancha reaproveita as imagens já carregadas (s
   });
   expect(same).toEqual(['antes-0', 'antes-1', 'antes-2']);
 });
+
+test('Carregamento [G] · sem dados da nuvem e com carga em curso, o vazio vira esqueleto (V15.55)', async ({ page }) => {
+  await setupPrancha(page);
+  const [loading, done] = await page.evaluate(() => {
+    const keep = [state.cloudCourses, state.cloudMaps, state.cloudSimulations, state.cloudLoading];
+    state.cloudCourses = []; state.cloudMaps = []; state.cloudSimulations = []; state.cloudLoading = true;
+    const a = Prancha.ui.empty('Nenhum concurso ainda', 'Crie um concurso.');
+    state.cloudLoading = false;
+    const b = Prancha.ui.empty('Nenhum concurso ainda', 'Crie um concurso.');
+    [state.cloudCourses, state.cloudMaps, state.cloudSimulations, state.cloudLoading] = keep;
+    delete Prancha.skeletonShown;
+    return [a, b];
+  });
+  expect(loading).toContain('pr-skel');
+  expect(loading).not.toContain('Nenhum concurso');
+  expect(done).toContain('pr-empty');
+  /* com dados já na memória, uma sincronização em segundo plano não esconde nada */
+  const withData = await page.evaluate(() => { state.cloudLoading = true; const h = Prancha.ui.empty('Nada', ''); state.cloudLoading = false; return h; });
+  expect(withData).toContain('pr-empty');
+});
+
+test('Configurações [G] · diagnóstico técnico recolhido na folha 06, sem caixa dupla (V15.55)', async ({ page }) => {
+  await setupPrancha(page);
+  await go(page, 'settings');
+  const st = page.locator('.pr[data-prancha="settings"]');
+  const disc = st.locator('[data-pr-host="app"] > details.pr-disc');
+  await expect(disc).toHaveCount(1);
+  await expect(disc).not.toHaveAttribute('open', '');
+  await expect(disc.locator('#appDiagnosticPanel')).toBeAttached();
+  await disc.locator('summary').click();
+  await expect(disc.locator('#appDiagnosticPanel')).toBeVisible();
+  expect(await disc.locator('#appDiagnosticPanel').evaluate((e) => getComputedStyle(e).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
+  /* redraw por sincronização não deve fechar o diagnóstico já aberto */
+  await page.evaluate(() => Prancha.pages.settings.render(document.querySelector('.pr[data-prancha="settings"]')));
+  await expect(disc).toHaveAttribute('open', '');
+  await expect(disc.locator('#appDiagnosticPanel')).toBeVisible();
+  /* sair e voltar mantém o painel dentro do bloco (rehome não o tira de lá) */
+  await go(page, 'home');
+  await go(page, 'settings');
+  await page.waitForTimeout(3500);
+  await expect(st.locator('[data-pr-host="app"] > details.pr-disc #appDiagnosticPanel')).toHaveCount(1);
+  await expect(st.locator('[data-pr-host="app"] > #appDiagnosticPanel')).toHaveCount(0);
+});
+
+test('Tipografia [G] · Anton nas siglas; dias do calendário em mono; categoria em Archivo (V15.55)', async ({ page }) => {
+  await setupPrancha(page);
+  await seedProgress(page);
+  /* consulta de novo a cada tentativa: o redesenho da prancha troca os nós */
+  const ff = (sel) => page.evaluate((s) => { const e = document.querySelector(s); return e && e.isConnected ? getComputedStyle(e).fontFamily : ''; }, sel);
+  await go(page, 'home');
+  await expect.poll(() => ff('.pr[data-prancha="home"] .pr-tile .sig')).toContain('Anton');
+  await go(page, 'agenda');
+  const ag = page.locator('.pr[data-prancha="agenda"]');
+  await ag.locator('.pr-tab[data-arg="mes"]').click();
+  await expect.poll(() => ff('.pr[data-prancha="agenda"] .pr-mc b')).toContain('IBM Plex Mono');
+  await ag.locator('.pr-tab[data-arg="semana"]').click();
+  await expect.poll(() => ff('.pr[data-prancha="agenda"] .pr-wd .dn b')).toContain('IBM Plex Mono');
+  await expect.poll(() => ff('.pr[data-prancha="agenda"] .pr-calh b')).toContain('Archivo');
+});

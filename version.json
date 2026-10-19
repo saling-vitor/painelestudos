@@ -1,12 +1,12 @@
 {
-  "version": "15.54.0",
-  "label": "V15.54.0-G",
-  "notes": "Concursos encerrados fora das telas: mapas de cursos arquivados ou com a prova já realizada saem do Início, do plano do dia, das revisões, das prioridades e da agenda. Nada é apagado.",
+  "version": "15.55.0",
+  "label": "V15.55.0-G",
+  "notes": "Refinos de design: tipografia em três papéis, esqueleto enquanto a nuvem carrega e diagnóstico técnico recolhido nas Configurações.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cursos arquivados ou com prova já realizada saem do Início, do \"Agora\", do plano do dia e da fila de revisões",
-    "[G] Todos os Mapas mostra só o que está em estudo; o botão \"Mostrar encerrados\" traz o acervo antigo",
-    "[G] Em Cursos, os concursos encerrados ficam juntos numa seção própria — progresso e histórico continuam guardados"
+    "[G] Datas, dias do calendário e horários em fonte mono; o Anton fica para siglas, títulos e o número principal de cada tela",
+    "[G] Sem cache no aparelho, as telas mostram um esqueleto enquanto a biblioteca chega, em vez de \"Nenhum concurso ainda\"",
+    "[G] Configurações: o Diagnóstico técnico da folha 06 fica recolhido"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-18T01:03:30-03:00"
+  "releasedAt": "2026-10-19T19:07:35-03:00"
 }
