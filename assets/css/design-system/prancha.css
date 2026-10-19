@@ -509,8 +509,8 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-chart svg{max-width:820px}
 
 /* ---------- Configurações: painéis reais dentro das folhas ---------- */
-.pr-host:not(#pr-a) > .panel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;grid-column:auto!important;min-height:0!important;width:auto!important;max-width:none!important}
-.pr-host:not(#pr-a) > .panel > .panel-kicker,.pr-host:not(#pr-a) > .panel > h2.icon-heading,.pr-host:not(#pr-a) > .panel > .settings-panel-title-row > h2{display:none!important}
+.pr-host:not(#pr-a) > .panel,.pr-host:not(#pr-a) > .pr-disc > .panel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;grid-column:auto!important;min-height:0!important;width:auto!important;max-width:none!important}
+.pr-host:not(#pr-a) > .panel > .panel-kicker,.pr-host:not(#pr-a) > .panel > h2.icon-heading,.pr-host:not(#pr-a) > .pr-disc > .panel > .panel-kicker,.pr-host:not(#pr-a) > .pr-disc > .panel > h2.icon-heading,.pr-host:not(#pr-a) > .panel > .settings-panel-title-row > h2{display:none!important}
 .pr-host:not(#pr-a) > .panel + .panel{border-top:1px dashed var(--pr-linha-s)!important;padding-top:14px!important}
 .pr-host:not(#pr-a) :is(.study-time-manage-actions,.study-time-manage-danger),.pr-host:not(#pr-a) #forceAppRefreshBtn{display:none!important}
 .pr-host:not(#pr-a) #plannerAdvancedSettings{margin:0;padding:0;border:0}
@@ -578,3 +578,11 @@ body.pr-session-home #studyTimerFloat{display:none!important}
   .pr-skel i{animation:pr-skel-pulse 1.6s ease-in-out infinite}
   @keyframes pr-skel-pulse{50%{opacity:.45}}
 }
+/* V15.55 · Configurações: diagnóstico técnico recolhido na folha 06 */
+.pr-disc{border:1px solid var(--pr-linha);border-radius:var(--pr-r-s);padding:0 14px}
+.pr-disc[open]{padding-bottom:14px}
+.pr-disc>summary{display:flex;flex-direction:column;gap:2px;margin:0 -14px;padding:12px 14px;cursor:pointer;list-style:none}
+.pr-disc>summary::-webkit-details-marker{display:none}
+.pr-disc>summary b{font-weight:500;color:var(--pr-papel)}
+.pr-disc>summary span{font-family:var(--pr-f-mono);font-size:var(--pr-fs-xs);color:var(--pr-papel-3)}
+.pr-disc[open]>summary{border-bottom:1px solid var(--pr-linha);margin-bottom:12px}

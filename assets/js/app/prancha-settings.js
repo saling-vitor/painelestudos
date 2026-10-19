@@ -17,6 +17,8 @@
     ['06', 'app', 'Aparelho e aplicativo', ['#appUpdatePanel', '#appAppearancePanel', '#appDiagnosticPanel'], 'Aparelho'],
     ['07', 'adm', 'Administração', ['.admin-panel'], 'Admin']
   ];
+  /* V15.55 · painéis técnicos que entram recolhidos na folha */
+  const COLLAPSED = { '#appDiagnosticPanel': ['Diagnóstico técnico', 'Versão, nuvem, offline e ambiente desta instalação'] };
   function probe() {
     if (probing) return;
     probing = true;
@@ -83,9 +85,16 @@
       const host = root.querySelector('[data-pr-host="' + id + '"]');
       for (const sel of sels) {
         const panel = parking.querySelector?.(sel) || document.querySelector(sel);
-        if (panel) host.appendChild(panel);
+        if (!panel) continue;
+        if (COLLAPSED[sel]) {
+          const d = document.createElement('details');
+          d.className = 'pr-disc';
+          d.innerHTML = '<summary><b>' + COLLAPSED[sel][0] + '</b><span>' + COLLAPSED[sel][1] + '</span></summary>';
+          d.appendChild(panel);
+          host.appendChild(d);
+        } else host.appendChild(panel);
       }
-      if (!host.children.length) host.innerHTML = '<p class="pr-mono">Carregando os controles desta folha…</p>';
+      if (!host.children.length) host.innerHTML = '<div class="pr-mono" data-pr-wait>' + ui.skeleton(2) + '</div>';
     }
   }
   /* os painéis de rotina, planejamento e automação são criados depois; reorganiza quando aparecerem */
@@ -96,7 +105,7 @@
     for (const [, id, , sels] of FOLHAS) {
       const host = root.querySelector('[data-pr-host="' + id + '"]');
       if (!host) continue;
-      for (const sel of sels) { const panel = document.querySelector(sel); if (panel && panel.parentElement !== host && !panel.contains(host)) { host.querySelector(':scope>.pr-mono')?.remove(); host.appendChild(panel); } }
+      for (const sel of sels) { const panel = document.querySelector(sel); if (panel && panel.closest('[data-pr-host]') !== host && !panel.contains(host)) { host.querySelector(':scope>.pr-mono')?.remove(); host.appendChild(panel); } }
     }
   }
   window.addEventListener('studyapp:navigation', (e) => { if (e.detail?.view === 'settings') { clearInterval(watch); let n = 0; watch = setInterval(() => { rehome(); if (++n > 12) clearInterval(watch); }, 250); } });
