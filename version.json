@@ -1,12 +1,11 @@
 {
-  "version": "15.55.0",
-  "label": "V15.55.0-G",
-  "notes": "Refinos de design: tipografia em três papéis, esqueleto enquanto a nuvem carrega e diagnóstico técnico recolhido nas Configurações.",
+  "version": "15.55.1",
+  "label": "V15.55.1-G",
+  "notes": "Correção do piscar contínuo da tela: o efeito de vidro entrava em loop e era reaplicado a cada frame.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Datas, dias do calendário e horários em fonte mono; o Anton fica para siglas, títulos e o número principal de cada tela",
-    "[G] Sem cache no aparelho, as telas mostram um esqueleto enquanto a biblioteca chega, em vez de \"Nenhum concurso ainda\"",
-    "[G] Configurações: o Diagnóstico técnico da folha 06 fica recolhido"
+    "[G] Corrigido o piscar contínuo da tela (biblioteca, cursos e demais telas) em todas as plataformas",
+    "[G] Menos uso de processador e bateria com o app parado"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +13,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-19T19:07:35-03:00"
+  "releasedAt": "2026-10-19T20:31:16-03:00"
 }
