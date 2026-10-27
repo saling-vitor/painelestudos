@@ -50,15 +50,24 @@
     else el.classList.add('mm-visible-glass');
   }
 
+  // classList.add() reescreve o atributo "class" mesmo quando a classe já
+  // existe, e isso gera um registro no MutationObserver abaixo (que observa
+  // "class"). Sem esta checagem, cada passada agendava a seguinte: um loop
+  // a cada frame que fazia a tela piscar. Só escrever o que estiver faltando.
   function addClasses(el,...classes){
     if(!el)return;
-    for(const cls of classes)if(cls)el.classList.add(cls);
+    const missing=classes.filter(cls=>cls&&!el.classList.contains(cls));
+    if(missing.length)el.classList.add(...missing);
   }
 
   function markSurface(el,scale){
     if(!el)return;
+    const fresh=!el.classList.contains('mm-optical-surface');
     addClasses(el,'mm-optical-surface','mm-glass-'+scale);
-    if(getComputedStyle(el).position==='static')el.classList.add('mm-position-anchor');
+    // getComputedStyle força recálculo de estilo: medir só na primeira marcação.
+    if(fresh&&!el.classList.contains('mm-position-anchor')&&getComputedStyle(el).position==='static'){
+      el.classList.add('mm-position-anchor');
+    }
   }
 
   function accentFrom(el){
