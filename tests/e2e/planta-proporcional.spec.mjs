@@ -10,6 +10,7 @@ test.afterEach(async ({ page }, info) => {
 });
 
 test('Planta [G] · lotes proporcionais com siglas e indicadores visiveis', async ({ page }) => {
+  test.setTimeout(120000); // 4 larguras × 2 medidas: no iPhone WebKit do CI passa de 30 s
   const base = mapRows('porto-alegre')[0];
   const extraMaps = [
     ['CARMONT', 6], ['ARQPROJ', 9], ['INTPUBL', 16], ['CONSFED', 40]

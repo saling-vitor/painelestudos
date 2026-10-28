@@ -25,6 +25,9 @@ export default defineConfig({
     },
     {
       name:'iphone-webkit',
+      // WebKit com tela 3x é o projeto mais lento no runner do GitHub: mais folga evita falso vermelho por tempo
+      timeout:60000,
+      expect:{timeout:12000},
       testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,
       grep:/(?:\[G\]|\[M\]|\[T\+M\]|smartphone|iPhone real|agenda de revisão)/i,
       retries:1,
