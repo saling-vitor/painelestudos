@@ -240,7 +240,7 @@
       if(mode==='reviews')score+=(p.review||0)*6+(p.difficult||0)*7+(topicCounts[key]||0)*8;
       if(mode==='specific'&&map.category==='Arquitetura e Tecnologia')score+=14;
       const reasons=[];
-      if(topicCounts[key])reasons.push(topicCounts[key]+' revisão'+(topicCounts[key]===1?'':'ões')+' por tópico');
+      if(topicCounts[key])reasons.push(topicCounts[key]+(topicCounts[key]===1?' revisão':' revisões')+' por tópico');
       if(p.difficult)reasons.push(p.difficult+' DIF');
       if(p.review)reasons.push(p.review+' REV');
       if(overdueDays)reasons.push('revisão atrasada '+overdueDays+'d');
