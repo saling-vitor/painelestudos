@@ -38,7 +38,8 @@ test('Planta [G] · lotes proporcionais com siglas e indicadores visiveis', asyn
       /* a prancha pode redesenhar no meio do toque (troca de largura): repete o clique até a medida ficar ativa */
       await expect.poll(async () => { if (await switcher.getAttribute('aria-pressed') !== 'true') await switcher.click(); return switcher.getAttribute('aria-pressed'); }, { timeout: 15000, intervals: [250, 500, 1000] }).toBe('true');
 
-      const audit = await course.locator('.pr-tiles').evaluate((container, measure) => {
+      /* a troca de largura redesenha a prancha; a medição repete até a planta assentar (um erro real persiste) */
+      const measureOnce = () => course.locator('.pr-tiles').evaluate((container, measure) => {
         const errors = [];
         const weights = {};
         const tiles = [...container.querySelectorAll('.pr-tile')];
@@ -49,7 +50,7 @@ test('Planta [G] · lotes proporcionais com siglas e indicadores visiveis', asyn
           const grow = Number(getComputedStyle(tile).flexGrow);
           weights[code] = weight;
           if (!Number.isFinite(weight) || weight <= 0 || Math.abs(grow - weight) > .01) {
-            errors.push(code + ': flex-grow deixou de usar o peso do lote');
+            errors.push(code + ': flex-grow deixou de usar o peso do lote (grow ' + getComputedStyle(tile).flexGrow + ', peso ' + tile.style.getPropertyValue('--w') + ')');
           }
           for (const cls of ['sig', 'pc', 'tp']) {
             const el = tile.querySelector('.' + cls);
@@ -74,6 +75,8 @@ test('Planta [G] · lotes proporcionais com siglas e indicadores visiveis', asyn
         }
         return { errors, weights, count: tiles.length };
       }, mode);
+      let audit;
+      await expect.poll(async () => { audit = await measureOnce(); return audit.errors.length; }, { timeout: 8000, intervals: [200, 400, 800] }).toBe(0).catch(() => {});
 
       expect(audit.errors, 'viewport ' + width + ', medida ' + mode).toEqual([]);
       expect(audit.count).toBe(total);

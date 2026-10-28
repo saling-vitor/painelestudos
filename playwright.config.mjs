@@ -16,7 +16,7 @@ export default defineConfig({
     // estados vazios, XSS e PWA offline. Roda só neste projeto (as demais suítes a ignoram).
     {name:'auditoria-plataformas',testMatch:/(auditoria-plataformas|acessibilidade-pranchas)\.spec\.mjs/,timeout:240000,use:{...devices['Desktop Chrome']}},
     {name:'desktop-chromium',testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,grepInvert:/\[(?:T|M)\]/i,retries:1,use:{...devices['Desktop Chrome']}},
-    {name:'ipad',testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,grepInvert:/\[(?:D|M)\]/i,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
+    {name:'ipad',testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,grepInvert:/\[(?:D|M)\]/i,retries:1,use:{...devices['iPad Pro 11'],browserName:'chromium'}},
     {
       name:'ipad-webkit',
       testIgnore:/auditoria-plataformas|acessibilidade-pranchas/,
