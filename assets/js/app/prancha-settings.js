@@ -124,7 +124,7 @@
     const mode = (st.cfg.mode || 'balanced');
     const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">Meus Mapas · ficha técnica · ' + esc(U.fmtDayYear(new Date())) + '</span><div class="pr-big"><span class="pr-pct pr-num" style="font-size:clamp(40px,6.5vw,72px)">' + esc(m[1]) + '</span><span class="pr-sub">' + esc((m[2] || '').replace(/^-/, '') + ' · ' + (st.upd ? 'atualização disponível' : 'versão instalada') + ' · ' + (matchMedia('(display-mode: standalone)').matches ? 'app instalado' : 'navegador')) + '</span></div>' +
       ui.states([['ok', okN, 'var(--pr-musgo)'], ['at', FOLHAS.length - okN, 'var(--pr-oxido)']], FOLHAS.length + ' folhas: ' + okN + ' ok') + ui.legend([['Folhas ok', okN, 'var(--pr-musgo)'], ['Pedem atenção', FOLHAS.length - okN, 'var(--pr-oxido)']]) + v +
-      '<div class="pr-row">' + (first?.[0] === 'dados' || !st.lastBackup ? ui.btn('Baixar backup', ui.act('backup'), 'p') : '') + (st.session ? ui.btn('Sincronizar agora', ui.act('sync-now'), first?.[0] === 'dados' || !st.lastBackup ? 'g' : 'p') : ui.btn('Entrar na conta', ui.act('goto', 'conta'), 'p')) + '</div></div><div class="pr-c-b">' +
+      '<div class="pr-row">' + (first?.[0] === 'dados' || !st.lastBackup ? ui.btn('Baixar backup', ui.act('backup'), 'p') : '') + (st.session ? ui.btn('Sincronizar agora', ui.act('sync-now'), first?.[0] === 'dados' || !st.lastBackup ? 'g' : 'p') : ui.btn('Entrar na conta', ui.act('goto', 'conta'), 'p')) + ui.btn(st.upd ? 'Atualizar para ' + esc(String(appUpdateState.latest?.label || 'nova versão').replace(/-[A-Z+]+$/, '')) : 'Atualizar app', ui.act('app-update'), st.upd ? 'p' : 'g') + '</div></div><div class="pr-c-b">' +
       ui.cell('Nuvem', st.session ? (st.syncErr ? 'com erro' : 'conectada') : 'desconectada', st.session && !st.syncErr ? 'ok' : 'ox', st.session ? (st.pending ? st.pending + ' ' + U.plural(st.pending, 'alteração pendente', 'alterações pendentes') : 'nada pendente') : 'entre na conta') +
       ui.cell('Offline', offlineInfo ? offlineInfo.cached + '/' + offlineInfo.total : '…', offlineInfo && offlineInfo.total && offlineInfo.cached >= offlineInfo.total ? 'ok' : '', offlineInfo ? (offlineInfo.total ? 'arquivos neste aparelho' : 'nada a baixar') : 'verificando') +
       ui.cell('Automação', st.autos + ' ' + U.plural(st.autos, 'ativa'), '', 'modo ' + esc({ light: 'leve', balanced: 'equilibrado', intense: 'intenso' }[mode] || mode)) +
@@ -200,6 +200,7 @@
         if (typeof toast === 'function') toast('Padrão ' + banca + ' salvo.');
         P.renderNow('settings');
       },
+      'app-update': () => window.MeusMapasUpdate?.run?.(),
       'force-update': (a, el) => P.armed(el, () => document.getElementById('forceAppRefreshBtn')?.click(), 'Toque de novo para recarregar')
     }
   };

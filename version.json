@@ -1,11 +1,11 @@
 {
-  "version": "15.60.5",
-  "label": "V15.60.5-G",
-  "notes": "Menu ⋯ abre de primeira e o aviso do .zip cabe na barra lateral.",
+  "version": "15.60.6",
+  "label": "V15.60.6-G",
+  "notes": "Atalho de atualização na barra lateral e nas Configurações.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Menu ⋯: não pisca mais ao abrir — continua aberto mesmo quando a página se atualiza sozinha",
-    "[G] Aviso do .zip: o texto não sai mais do quadro; o nome do curso aparece inteiro"
+    "[G] Barra lateral: botão \"Atualizar app\" acima de \"Nuvem conectada\" — um toque procura a versão nova e já instala; fica em latão quando há atualização",
+    "[G] Configurações: botão \"Atualizar app\" na ficha técnica, ao lado de Sincronizar agora"
   ],
   "automation": {
     "enabled": true,
@@ -13,5 +13,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T18:45:13-03:00"
+  "releasedAt": "2026-10-28T19:01:40-03:00"
 }
