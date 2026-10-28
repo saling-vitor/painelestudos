@@ -296,7 +296,7 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-dayline span{min-width:74px;flex-basis:0;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:4px 8px;border-radius:6px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);box-shadow:inset 3px 0 0 var(--c);overflow:hidden;font-family:var(--pr-f-mono)}
 .pr-dayline span b,.pr-dayline span i{display:block;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .pr-dayline span b{font-size:var(--fs-caption);font-weight:600;letter-spacing:.03em;line-height:1.15}
-.pr-dayline span i{font-style:normal;font-size:var(--fs-caption);color:var(--pr-papel-3);line-height:1.15}
+.pr-dayline span i{font-style:normal;font-size:var(--fs-caption);color:var(--pr-papel);line-height:1.15}
 .pr-dayline span.free{align-items:center;color:var(--pr-papel-3);font-size:var(--fs-caption);background:transparent;box-shadow:none;min-width:0;white-space:nowrap}
 .pr-dayline span.done{opacity:.5}
 .pr-dayline span.cur{box-shadow:inset 3px 0 0 var(--c),inset 0 -3px 0 var(--pr-latao)}
