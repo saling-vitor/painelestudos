@@ -489,10 +489,10 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-it b{font-size:var(--fs-body-sm);display:block}
 .pr-it.done{opacity:.6}
 .pr-it.cf{border-color:color-mix(in srgb,var(--pr-oxido) 55%,var(--pr-linha))}
-details.pr-add{border:1px dashed var(--pr-linha);border-radius:10px}
-details.pr-add summary{cursor:pointer;padding:12px;font-weight:700;font-size:var(--fs-body-sm);color:var(--pr-latao-c);list-style:none;min-height:var(--pr-touch)}
-details.pr-add summary::-webkit-details-marker{display:none}
-details.pr-add form{padding:0 12px 12px;display:grid;gap:8px}
+details:is(.pr-add,.pr-rot){border:1px dashed var(--pr-linha);border-radius:10px}
+details:is(.pr-add,.pr-rot) summary{cursor:pointer;padding:12px;font-weight:700;font-size:var(--fs-body-sm);color:var(--pr-latao-c);list-style:none;min-height:var(--pr-touch)}
+details:is(.pr-add,.pr-rot) summary::-webkit-details-marker{display:none}
+details:is(.pr-add,.pr-rot) form{padding:0 12px 12px;display:grid;gap:8px}
 .pr-fi{display:grid;gap:3px}.pr-fi>span{font-size:var(--fs-caption);color:var(--pr-papel-3)}
 
 /* ---------- material e movimento ---------- */
@@ -526,7 +526,7 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-bar{flex-wrap:nowrap}
 .pr-bar .pr-tabs{flex:1 1 auto;justify-content:flex-end}
 @media (max-width:700px){.pr-bar .pr-tabs{justify-content:flex-start}}
-.pr-field{min-width:0}.pr-field :is(input,select){min-width:0;max-width:100%}details.pr-add form>.pr-field :is(input,select),details.pr-add form .pr-row .pr-field :is(input,select){width:100%}
+.pr-field{min-width:0}.pr-field :is(input,select){min-width:0;max-width:100%}details:is(.pr-add,.pr-rot) form>.pr-field :is(input,select),details:is(.pr-add,.pr-rot) form .pr-row .pr-field :is(input,select){width:100%}
 @media (max-width:700px){.pr-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.pr-chips::-webkit-scrollbar{display:none}.pr-chipf{flex:none}}
 .pr-gm .pr-fav{color:var(--pr-papel-2)}
 .pr-gm .pr-fav[aria-pressed="true"]{color:var(--pr-latao)}

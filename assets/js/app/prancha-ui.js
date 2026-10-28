@@ -194,7 +194,18 @@
     el.scrollIntoView({ behavior: 'auto', block: 'start' });
     el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });
+    /* V15.58 · se um redesenho ou o fim do layout (WebKit) deslocar a seção logo depois do salto, reposiciona */
+    secTarget = { id, until: Date.now() + 1500 };
+    [120, 400, 900].forEach((ms) => setTimeout(realignSec, ms));
   };
+  function realignSec() {
+    if (!secTarget || Date.now() > secTarget.until) { secTarget = null; return; }
+    const el = document.getElementById(secTarget.id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top, want = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    if (Math.abs(top - want) > 24) el.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }
+  P.realignSec = realignSec;
 
   /* V15.53.3 · capas sem piscar. Cada redesenho troca o innerHTML e recriava as <img>; a nova imagem
      precisava decodificar de novo e, nesse intervalo, a capa aparecia vazia (só o fundo e o disco).
@@ -239,6 +250,7 @@
   }
 
   const queue = new Set();
+  let secTarget = null;
   let raf = 0;
   function schedule(view) {
     if (!P.enabled()) return;
@@ -262,6 +274,7 @@
     catch (e) { console.error('[Prancha] falha ao desenhar ' + view, e); root.innerHTML = '<div class="pr-empty"><b>Não foi possível desenhar esta prancha.</b><p>O conteúdo original continua disponível abaixo.</p></div>'; root.closest('.view')?.classList.remove('pr-on'); }
     finally { P.__frame = null; }
     if (Math.abs(window.scrollY - scrollY) > 2) window.scrollTo(0, scrollY);
+    if (secTarget) realignSec();
     stickNav();
     document.body.classList.toggle('pr-session-home', view === 'home' && root.dataset.screen === 'sessao');
   }
