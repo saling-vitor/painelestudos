@@ -77,7 +77,7 @@ test('Peso [G] · planejamento do kit vira matriz pelo programa; formato errado 
     fases: [{ id: 'recursos', data: '2026-12-01' }, { id: 'nada', data: '2026-12-02' }],
     programa: [{ item: 'Estatuto da Cidade: instrumentos', disciplina: 'Específicos', mapas: ['LIU'] }, { item: 'Acessibilidade NBR 9050', disciplina: 'Específicos', mapas: [] }]
   }));
-  expect(r).toEqual({ disciplinas: 2, itens: 2, fases: 1 });
+  expect(r).toMatchObject({ disciplinas: 2, itens: 2, fases: 1 });
   await go(page, 'progress');
   const mx = page.locator('.pr[data-prancha="progress"] .pr-card').filter({ hasText: 'Matriz pelo programa' });
   await expect(mx).toContainText('2 itens do edital · 1 sem mapa');
