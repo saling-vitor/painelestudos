@@ -19,7 +19,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-demhab-fundatec-arquiteto-poa",
-      "cover": "assets/capas/demhab.webp"
+      "cover": "assets/capas/demhab.webp",
+      "alcance": "local"
     },
     {
       "id": "pdgv",
@@ -39,7 +40,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-pdgv-fundatec-arquiteto-poa",
-      "cover": "assets/capas/pdgv.webp"
+      "cover": "assets/capas/pdgv.webp",
+      "alcance": "portatil"
     },
     {
       "id": "cf88",
@@ -59,7 +61,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-cf88-fundatec-arquiteto-poa",
-      "cover": "assets/capas/cf88.webp"
+      "cover": "assets/capas/cf88.webp",
+      "alcance": "portatil"
     },
     {
       "id": "efpa",
@@ -79,7 +82,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-efpa-fundatec-arquiteto-poa",
-      "cover": "assets/capas/efpa.webp"
+      "cover": "assets/capas/efpa.webp",
+      "alcance": "local"
     },
     {
       "id": "iera",
@@ -99,7 +103,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-iera-fundatec-arquiteto-poa",
-      "cover": "assets/capas/iera.webp"
+      "cover": "assets/capas/iera.webp",
+      "alcance": "misto"
     },
     {
       "id": "lp",
@@ -119,7 +124,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-lp-fundatec-arquiteto-poa",
-      "cover": "assets/capas/lp.webp"
+      "cover": "assets/capas/lp.webp",
+      "alcance": "portatil"
     },
     {
       "id": "lopa",
@@ -139,7 +145,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-lopa-fundatec-arquiteto-poa",
-      "cover": "assets/capas/lopa.webp"
+      "cover": "assets/capas/lopa.webp",
+      "alcance": "local"
     },
     {
       "id": "epf",
@@ -159,7 +166,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-epf-fundatec-arquiteto-poa",
-      "cover": "assets/capas/epf.webp"
+      "cover": "assets/capas/epf.webp",
+      "alcance": "portatil"
     },
     {
       "id": "dcas",
@@ -179,7 +187,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-dcas-fundatec-arquiteto-poa",
-      "cover": "assets/capas/dcas.webp"
+      "cover": "assets/capas/dcas.webp",
+      "alcance": "portatil"
     },
     {
       "id": "uti",
@@ -199,7 +208,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-uti-fundatec-arquiteto-poa",
-      "cover": "assets/capas/uti.webp"
+      "cover": "assets/capas/uti.webp",
+      "alcance": "portatil"
     },
     {
       "id": "tep",
@@ -219,7 +229,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-tep-fundatec-arquiteto-poa",
-      "cover": "assets/capas/tep.webp"
+      "cover": "assets/capas/tep.webp",
+      "alcance": "portatil"
     },
     {
       "id": "hps",
@@ -239,7 +250,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-hps-fundatec-arquiteto-poa",
-      "cover": "assets/capas/hps.webp"
+      "cover": "assets/capas/hps.webp",
+      "alcance": "portatil"
     },
     {
       "id": "liu",
@@ -259,7 +271,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-liu-fundatec-arquiteto-poa",
-      "cover": "assets/capas/liu.webp"
+      "cover": "assets/capas/liu.webp",
+      "alcance": "portatil"
     },
     {
       "id": "gco",
@@ -279,7 +292,8 @@
       "source": "bundled",
       "courseId": "porto-alegre",
       "storageId": "study-gco-fundatec-arquiteto-poa",
-      "cover": "assets/capas/gco.webp"
+      "cover": "assets/capas/gco.webp",
+      "alcance": "portatil"
     }
   ],
   "generated": "2026-09-28",

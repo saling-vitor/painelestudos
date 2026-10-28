@@ -240,7 +240,9 @@
     const scrollY = window.scrollY;
     P.__frame = {};
     const keepImgs = collectImgs(root);
-    try { page.render(root); reuseImgs(root, keepImgs); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
+    /* V15.56 · seções <details> abertas continuam abertas depois do redesenho (sincronização, índice de busca) */
+    const openKeys = new Set([...root.querySelectorAll('details[open]>summary')].map((x) => x.textContent.trim()).filter(Boolean));
+    try { page.render(root); reuseImgs(root, keepImgs); if (openKeys.size) root.querySelectorAll('details:not([open])>summary').forEach((x) => { if (openKeys.has(x.textContent.trim())) x.parentElement.open = true; }); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
     catch (e) { console.error('[Prancha] falha ao desenhar ' + view, e); root.innerHTML = '<div class="pr-empty"><b>Não foi possível desenhar esta prancha.</b><p>O conteúdo original continua disponível abaixo.</p></div>'; root.closest('.view')?.classList.remove('pr-on'); }
     finally { P.__frame = null; }
     if (Math.abs(window.scrollY - scrollY) > 2) window.scrollTo(0, scrollY);

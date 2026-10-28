@@ -37,8 +37,12 @@ test('Encerrados [G] · prova realizada some do Início, das revisões e da bibl
 
   await go(page, 'maps');
   const maps = page.locator('.pr[data-prancha="maps"]');
-  await expect(maps).toContainText('3 de 3 mapas');
-  await expect(maps).toContainText('de concursos encerrados ocultos');
+  /* V15.56: só os 3 mapas LOCAIS do concurso encerrado saem da biblioteca (LOPA, EFPA, DEMHAB);
+     os portáteis e o misto continuam, porque servem no próximo edital */
+  await expect(maps).toContainText('14 de 14 mapas');
+  await expect(maps).toContainText('3 mapas locais de concursos encerrados ocultos');
+  await expect(maps).toContainText('Constituição Federal');
+  await expect(maps).not.toContainText('Política Habitacional');
   await maps.getByRole('button', { name: 'Mostrar encerrados' }).click();
   await expect(maps).toContainText('Política Habitacional');
 

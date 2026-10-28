@@ -15,7 +15,9 @@
     ['04', 'auto', 'Automação', ['#studyAutomationPanel'], 'Automação'],
     ['05', 'dados', 'Backup e restauração', ['.backup-panel'], 'Backup'],
     ['06', 'app', 'Aparelho e aplicativo', ['#appUpdatePanel', '#appAppearancePanel', '#appDiagnosticPanel'], 'Aparelho'],
-    ['07', 'adm', 'Administração', ['.admin-panel'], 'Admin']
+    ['07', 'adm', 'Administração', ['.admin-panel'], 'Admin'],
+    /* V15.56 · padrões de edital por banca; painel próprio das pranchas (sem painel legado) */
+    ['08', 'editais', 'Concursos e editais', [], 'Editais']
   ];
   /* V15.55 · painéis técnicos que entram recolhidos na folha */
   const COLLAPSED = { '#appDiagnosticPanel': ['Diagnóstico técnico', 'Versão, nuvem, offline e ambiente desta instalação'] };
@@ -59,6 +61,25 @@
     if (session && pending && !syncErr) issues.push(['conta', 'l', pending + ' ' + U.plural(pending, 'alteração aguardando', 'alterações aguardando') + ' envio.', 'A sincronização envia assim que houver conexão.']);
     return { session, pending, lastBackup, backupAge, autos, cfg, upd, issues, syncErr, cloud };
   }
+  /* V15.56 · folha 08: estrutura típica de prova por banca, ponto de partida ao criar um curso */
+  let editBanca = '';
+  function padraoForm(banca, p) {
+    const rows = (p?.prova?.length ? p.prova : []).concat([{ nome: '', questoes: '', peso: 1, minimo: '', nova: true }]);
+    return '<form data-pr-submit="save-padrao" data-n="' + rows.length + '" data-orig="' + esc(banca || '') + '" class="pr-padrao-form"><label class="pr-field"><span>Banca</span><input name="banca" required maxlength="30" value="' + esc(banca || '') + '" placeholder="Ex.: AOCP"></label>' +
+      rows.map((d, i) => '<div class="pr-fgrid d"><label class="pr-field"><span>Disciplina' + (d.nova ? ' (nova)' : '') + '</span><input name="nome' + i + '" maxlength="60" value="' + esc(d.nome || '') + '"></label><label class="pr-field"><span>Questões</span><input name="questoes' + i + '" type="number" min="0" inputmode="numeric" value="' + esc(d.questoes ?? '') + '"></label><label class="pr-field"><span>Peso</span><input name="peso' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.peso ?? 1) + '"></label><label class="pr-field"><span>Mínimo</span><input name="minimo' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.minimo ?? '') + '"></label><input type="hidden" name="cats' + i + '" value="' + esc(JSON.stringify(d.categorias || [])) + '"><input type="hidden" name="id' + i + '" value="' + esc(d.id || '') + '"></div>').join('') +
+      '<div class="pr-fgrid"><label class="pr-field"><span>Mínimo geral (pontos)</span><input name="minimoGeral" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(p?.minimoGeral ?? '') + '"></label><label class="pr-field"><span>Fonte</span><input name="fonte" maxlength="120" value="' + esc(p?.fonte || '') + '"></label></div><div class="pr-row"><button type="submit" class="pr-btn sm">Salvar padrão</button>' + ui.btn('Cancelar', ui.act('edit-padrao', ''), 'g sm') + '</div></form>';
+  }
+  function editaisPanel() {
+    const all = P.editais.padroes(), keys = Object.keys(all).sort();
+    const list = keys.map((k) => {
+      const p = all[k], max = P.editais.pontosMax(p.prova), used = P.courses.list().filter((c) => U.norm(c.board).includes(U.norm(k))).length;
+      return '<div class="pr-li"><span class="pr-sig">' + esc(k) + '</span><span><b>' + p.prova.map((d) => esc(d.nome) + ' ' + d.questoes + (d.peso !== 1 ? ' (peso ' + String(d.peso).replace('.', ',') + ')' : '')).join(' · ') + '</b><br><span class="t">' + String(max).replace('.', ',') + ' pontos' + (p.minimoGeral != null ? ' · mínimo geral ' + String(p.minimoGeral).replace('.', ',') : '') + ' · mínimos ' + p.prova.map((d) => String(d.minimo).replace('.', ',')).join(' · ') + (used ? ' · ' + used + ' ' + U.plural(used, 'curso') + ' desta banca' : '') + (p.fonte ? ' · ' + esc(p.fonte) : '') + '</span></span><span class="pr-row" style="flex-wrap:nowrap">' + ui.btn('Editar', ui.act('edit-padrao', k), 'g sm') + (p.base ? '' : ui.btn('Remover', ui.act('remove-padrao', k), 'g sm')) + '</span></div>';
+    }).join('');
+    const editing = editBanca && all[editBanca];
+    return '<p class="pr-detail">A estrutura de prova de cada banca é o ponto de partida ao criar um curso: no curso, “Usar estrutura” copia pesos e mínimos, que podem ser ajustados ao edital.</p><div class="pr-list">' + list + '</div>' +
+      /* formulário aberto por estado (não por <details>): sobrevive aos redesenhos da prancha durante a sincronização */
+      (editing ? '<span class="pr-k l">Editando ' + esc(editBanca) + '</span>' + padraoForm(editBanca, all[editBanca]) : editBanca === '__nova__' ? '<span class="pr-k l">Nova banca</span>' + padraoForm('', null) : ui.btn('+ Nova banca', ui.act('edit-padrao', '__nova__'), 'g sm'));
+  }
   function folhaState(id, st) { const i = st.issues.filter((x) => x[0] === id); return i.some((x) => x[1] === 'o') ? 'o' : i.length ? 'l' : ''; }
 
   function render(root) {
@@ -100,6 +121,7 @@
         if (!panel) continue;
         mountPanel(host, sel, panel);
       }
+      if (id === 'editais') { host.innerHTML = editaisPanel(); continue; }
       if (!host.children.length) host.innerHTML = '<div class="pr-mono" data-pr-wait>' + ui.skeleton(2) + '</div>';
     }
   }
@@ -110,7 +132,7 @@
     if (!root || state.view !== 'settings') return;
     for (const [, id, , sels] of FOLHAS) {
       const host = root.querySelector('[data-pr-host="' + id + '"]');
-      if (!host) continue;
+      if (!host || !sels.length) continue;
       for (const sel of sels) {
         const panel = document.querySelector(sel);
         if (panel && panel.closest('[data-pr-host]') !== host && !panel.contains(host)) {
@@ -130,6 +152,20 @@
       backup: () => { if (typeof downloadStudyBackup === 'function') downloadStudyBackup(); setTimeout(() => P.schedule('settings'), 300); },
       'reset-time': (scope, el) => P.armed(el, () => { const b = document.querySelector('[data-study-time-reset="' + scope + '"]'); if (b) b.click(); else if (typeof toast === 'function') toast('Abra a folha 02 e tente de novo.'); }, 'Toque de novo'),
       classic: (a, el) => P.armed(el, () => P.setClassic(true), 'Toque de novo para trocar'),
+      'edit-padrao': (k) => { editBanca = k || ''; P.renderNow('settings'); document.getElementById('pr-f-editais')?.scrollIntoView({ block: 'start' }); },
+      'remove-padrao': (k, el) => P.armed(el, () => { P.store.patch('padroes', k, null); editBanca = ''; P.renderNow('settings'); }, 'Toque de novo para remover'),
+      'save-padrao': (fd, form) => {
+        const banca = String(fd.get('banca') || '').trim().toUpperCase(), n = Number(form.dataset.n) || 0, prova = [];
+        for (let i = 0; i < n; i++) { const nome = String(fd.get('nome' + i) || '').trim(); if (!nome) continue; prova.push({ id: String(fd.get('id' + i) || ''), nome, questoes: fd.get('questoes' + i), peso: fd.get('peso' + i), minimo: fd.get('minimo' + i), categorias: U.safeJson(String(fd.get('cats' + i) || '[]'), []) }); }
+        const list = P.editais.normProva(prova);
+        if (!banca || !list.length) { if (typeof toast === 'function') toast('Informe a banca e ao menos uma disciplina com questões.'); return; }
+        const mg = String(fd.get('minimoGeral') || '').trim();
+        if (form.dataset.orig && form.dataset.orig !== banca) P.store.patch('padroes', form.dataset.orig, null);
+        P.editais.setPadrao(banca, { prova: list, minimoGeral: mg === '' ? null : Number(mg.replace(',', '.')), fonte: String(fd.get('fonte') || '').trim() });
+        editBanca = '';
+        if (typeof toast === 'function') toast('Padrão ' + banca + ' salvo.');
+        P.renderNow('settings');
+      },
       'force-update': (a, el) => P.armed(el, () => document.getElementById('forceAppRefreshBtn')?.click(), 'Toque de novo para recarregar')
     }
   };
