@@ -223,7 +223,7 @@
     if (typeof CompressionStream !== 'function') return null;
     try { return new Uint8Array(await new Response(new Blob([b]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()); } catch { return null; }
   }
-  async function buildZip(files) {
+  async function buildZip(files, onStep) {
     const enc = new TextEncoder(), parts = [], central = [], d = new Date();
     const dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dosDate = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
     let offset = 0;
@@ -240,23 +240,54 @@
       ch.setUint32(16, crc, true); ch.setUint32(20, packed.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
       central.push(ch.buffer, name);
       offset += 30 + name.length + packed.length;
+      onStep?.(central.length / 2);
     }
     const cSize = central.reduce((n, x) => n + x.byteLength, 0), end = new DataView(new ArrayBuffer(22));
     end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cSize, true); end.setUint32(16, offset, true);
     return new Blob([...parts, ...central, end.buffer], { type: 'application/zip' });
   }
+
+  /* V15.61 · aviso de progresso do .zip na barra lateral (acima de "Nuvem conectada"); sem barra lateral visível, flutua no canto */
+  function zipProgress(sigla) {
+    if (!document.getElementById('prZipCss')) {
+      const st = document.createElement('style'); st.id = 'prZipCss';
+      st.textContent = '.pr-zip{padding:12px;margin-bottom:10px;border:1px solid var(--pr-latao,#c9a46b);border-radius:12px;background:#0a0a09;color:var(--pr-papel,#ece4d4);display:grid;gap:7px;font-size:13px;line-height:1.3}' +
+        '.pr-zip.float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9999;width:min(280px,calc(100vw - 32px));margin:0;box-shadow:0 10px 30px rgba(0,0,0,.55)}' +
+        '.pr-zip-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.pr-zip-h b{font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pr-zip-h span{font-family:var(--mono,ui-monospace,monospace);font-weight:700;color:var(--pr-latao,#c9a46b);font-variant-numeric:tabular-nums}' +
+        '.pr-zip-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.pr-zip-bar i{display:block;height:100%;width:0;background:var(--pr-latao,#c9a46b);border-radius:inherit;transition:width .25s ease}' +
+        '.pr-zip-s{font-size:11.5px;opacity:.7;font-family:var(--mono,ui-monospace,monospace);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pr-zip.ok{border-color:var(--pr-musgo,#8fa86b)}.pr-zip.ok .pr-zip-bar i{background:var(--pr-musgo,#8fa86b)}.pr-zip.err{border-color:var(--pr-oxido,#c0634a)}' +
+        '@media (prefers-reduced-motion:reduce){.pr-zip-bar i{transition:none}}';
+      document.head.appendChild(st);
+    }
+    document.getElementById('prZip')?.remove();
+    const el = document.createElement('div');
+    el.id = 'prZip'; el.className = 'pr-zip'; el.setAttribute('role', 'status'); el.setAttribute('aria-live', 'polite');
+    el.innerHTML = '<div class="pr-zip-h"><b>Gerando .zip · ' + esc(sigla) + '</b><span>0%</span></div><div class="pr-zip-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div><div class="pr-zip-s">Preparando…</div>';
+    const side = document.querySelector('.side'), bottom = side?.querySelector('.side-bottom');
+    const sideOn = bottom && side.getClientRects().length && getComputedStyle(side).display !== 'none' && getComputedStyle(side).visibility !== 'hidden';
+    if (sideOn) bottom.prepend(el); else { el.classList.add('float'); document.body.appendChild(el); }
+    const pctEl = el.querySelector('.pr-zip-h span'), bar = el.querySelector('.pr-zip-bar'), fill = bar.firstChild, sub = el.querySelector('.pr-zip-s');
+    return {
+      set(v, text) { const n = Math.max(0, Math.min(100, Math.round(v))); pctEl.textContent = n + '%'; fill.style.width = n + '%'; bar.setAttribute('aria-valuenow', n); if (text) sub.textContent = text; },
+      done(text, kind) { el.classList.add(kind || 'ok'); if (kind !== 'err') this.set(100); sub.textContent = text; setTimeout(() => el.remove(), kind === 'err' ? 8000 : 5000); }
+    };
+  }
   const safeName = (v) => String(v || '').normalize('NFC').replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90);
   let zipBusy = false;
   async function downloadCourseZip(id) {
     const say = (t) => { if (typeof toast === 'function') toast(t); };
-    if (zipBusy) return say('O .zip deste curso ainda está sendo montado.');
+    if (zipBusy) { document.getElementById('prZip')?.animate?.([{ transform: 'scale(1)' }, { transform: 'scale(1.04)' }, { transform: 'scale(1)' }], 300); return say('O .zip ainda está sendo montado — acompanhe na barra lateral.'); }
     const c = typeof courseById === 'function' ? courseById(id) : null, all = c ? P.data.mapsForCourse(c.id) : [];
     if (!all.length || typeof mapHtml !== 'function') return say('Nenhum mapa para baixar neste curso.');
     zipBusy = true;
     const fol = P.data.folhas(all), used = new Set(), files = [], falhas = [];
+    let bar = null;
     try {
-      say('Juntando ' + all.length + ' ' + plural(all.length, 'mapa') + ' do ' + P.courses.sigla(c) + '…');
+      bar = zipProgress(P.courses.sigla(c) || c.title || 'curso');
+      let i = 0;
       for (const m of all) {
+        bar.set((i / all.length) * 80, 'Lendo ' + (i + 1) + ' de ' + all.length + ' · ' + (m.code || m.title || 'mapa'));
+        i++;
         let html = '';
         try { html = await mapHtml(m); } catch (e) { console.warn('zip', m?.code, e); }
         if (!html) { falhas.push(m.code || m.title || '?'); continue; }
@@ -265,14 +296,16 @@
         used.add(name.toLowerCase());
         files.push({ name, text: html });
       }
-      if (!files.length) return say('Não consegui ler nenhum mapa agora. Confira a conexão e tente de novo.');
-      const blob = await buildZip(files), d = new Date(), stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      if (!files.length) { bar.done('Nenhum mapa pôde ser lido. Confira a conexão.', 'err'); return say('Não consegui ler nenhum mapa agora. Confira a conexão e tente de novo.'); }
+      bar.set(80, 'Compactando ' + files.length + ' ' + plural(files.length, 'arquivo') + '…');
+      const blob = await buildZip(files, (j) => bar.set(80 + (j / files.length) * 18, 'Compactando ' + j + ' de ' + files.length + '…')), d = new Date(), stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
       const url = URL.createObjectURL(blob), a = document.createElement('a');
       a.href = url; a.download = safeName('Meus Mapas - ' + (P.courses.sigla(c) || c.title) + ' - ' + stamp) + '.zip';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
+      bar.done('Download iniciado · ' + files.length + ' ' + plural(files.length, 'mapa') + ' · ' + (blob.size / 1048576).toFixed(1).replace('.', ',') + ' MB' + (falhas.length ? ' · ' + falhas.length + ' fora' : ''));
       say(files.length + ' ' + plural(files.length, 'mapa baixado', 'mapas baixados') + ' no .zip' + (falhas.length ? '; ' + falhas.length + ' não ' + plural(falhas.length, 'abriu', 'abriram') + ' (' + falhas.slice(0, 4).join(', ') + (falhas.length > 4 ? '…' : '') + ').' : '.'));
-    } catch (e) { console.warn(e); say('Não foi possível montar o .zip.'); }
+    } catch (e) { console.warn(e); bar?.done('Não foi possível montar o .zip.', 'err'); say('Não foi possível montar o .zip.'); }
     finally { zipBusy = false; }
   }
   function renderCourse(root) {

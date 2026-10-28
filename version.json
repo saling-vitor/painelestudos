@@ -1,10 +1,10 @@
 {
-  "version": "15.60.3",
-  "label": "V15.60.3-G",
-  "notes": "Baixe todos os mapas HTML de um curso de uma vez, num arquivo .zip.",
+  "version": "15.60.4",
+  "label": "V15.60.4-G",
+  "notes": "O download dos mapas em .zip agora mostra o progresso na barra lateral.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Curso: novo item \"Baixar mapas (.zip)\" no menu ⋯ junta todos os HTML do curso num único arquivo, nomeados pela folha da planta (A-01, A-02…)"
+    "[G] Baixar mapas (.zip): aviso na barra lateral, acima de \"Nuvem conectada\", com a porcentagem, o mapa que está sendo lido e o tamanho final do arquivo; no celular o aviso flutua no canto da tela"
   ],
   "automation": {
     "enabled": true,
@@ -12,5 +12,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T18:09:20-03:00"
+  "releasedAt": "2026-10-28T18:24:41-03:00"
 }
