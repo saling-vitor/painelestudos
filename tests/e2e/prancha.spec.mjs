@@ -245,11 +245,11 @@ test('Agenda [G] · Dia, Semana e Mês; sessão com horário sem duplicar', asyn
   await expect(ag.locator('.pr-blk').filter({ hasText: '07:30' })).toBeVisible();
 });
 
-test('Configurações [G] · oito folhas com os painéis reais e zona de risco com confirmação', async ({ page }) => {
+test('Configurações [G] · nove folhas com os painéis reais e zona de risco com confirmação', async ({ page }) => {
   await setupPrancha(page);
   await go(page, 'settings');
   const st = page.locator('.pr[data-prancha="settings"]');
-  await expect(st.locator('.pr-folha')).toHaveCount(8);
+  await expect(st.locator('.pr-folha')).toHaveCount(9);
   await expect(st.locator('[data-pr-host="editais"]')).toContainText('FUNDATEC');
   await expect(st.locator('[data-pr-host="conta"] .sync-panel')).toBeAttached();
   await expect(st.locator('[data-pr-host="dados"] #downloadBackupBtn')).toBeAttached();
@@ -257,7 +257,7 @@ test('Configurações [G] · oito folhas com os painéis reais e zona de risco c
   await expect(st.locator('[data-pr-host="adm"] .admin-panel')).toBeAttached();
   await expect.poll(() => st.locator('[data-pr-host="rotina"] #studyGoalsForm').count()).toBe(1);
   await expect.poll(() => st.locator('[data-pr-host="auto"] #studyAutomationPanel').count()).toBe(1);
-  await expect(st.locator('.pr-toc a')).toHaveCount(9);
+  await expect(st.locator('.pr-toc a')).toHaveCount(10);
   const zr = st.locator('.pr-zr').getByRole('button', { name: 'Zerar hoje' });
   await zr.click();
   await expect(st.locator('.pr-zr .pr-btn.armed')).toHaveCount(1);

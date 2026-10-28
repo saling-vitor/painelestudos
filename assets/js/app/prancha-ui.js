@@ -72,7 +72,22 @@
   const lastLabel = (iso) => { const ms = typeof activityTimestamp === 'function' ? activityTimestamp(iso) : Date.parse(iso || 0) || 0; if (!ms) return 'nunca'; const d = U.daysBetween(new Date(ms), new Date()); return d <= 0 ? 'hoje' : d === 1 ? 'ontem' : 'há ' + d + ' d'; };
   const mapState = (p) => (p.total > 0 && p.marked >= p.total ? 'concluído' : p.marked ? 'em andamento' : p.lastActivity ? 'aberto' : 'não iniciado');
 
-  P.ui = { attrs, btn, act, cell, verdict, states, legend, stateSegs, stateBar, stateLegend, stbar, empty, skeleton, cov, mapCov, courseCov, tiles, mini, top, card, head, chipf, seg, menu, lastLabel, mapState, STATE_COLORS };
+  /* V15.56/57 · gabarito no formato da banca (Pós-prova do Início e fechamento no curso) */
+  const fmtPts = (n) => String(Math.round(Number(n || 0) * 100) / 100).replace('.', ',');
+  const elimText = (gp) => gp.falhas.length ? 'eliminado em ' + gp.falhas.map((x) => x.nome + ' (faltou ' + fmtPts(x.falta) + ')').join(' e ') : 'abaixo do mínimo geral de ' + fmtPts(gp.minimoGeral);
+  function gabForm(c, prova) {
+    return '<form data-pr-submit="save-gab-pond" data-course="' + esc(c.id) + '" data-ponderado="1" class="pr-gabf">' + prova.map((d) => '<label class="pr-field"><span>' + esc(({ lp: 'Português', leg: 'Legislação', esp: 'Específicos' })[d.id] || d.nome) + ' · de ' + d.questoes + '</span><input name="d_' + esc(d.id) + '" type="number" min="0" max="' + d.questoes + '" inputmode="numeric" required></label>').join('') + '<button type="submit" class="pr-btn sm">Registrar</button></form>';
+  }
+  function gabRows(gp) {
+    const rows = gp.por.map((d) => '<div class="ln"><span><b>' + esc(d.nome) + '</b><br><span class="pr-mono">' + d.acertos + ' de ' + d.questoes + ' · peso ' + fmtPts(d.peso) + '</span></span><span class="tr" role="img" aria-label="' + esc(d.nome + ': ' + fmtPts(d.pontos) + ' de ' + fmtPts(d.max) + ', mínimo ' + fmtPts(d.minimo)) + '"><i style="width:' + (d.max ? (d.pontos / d.max) * 100 : 0) + '%"></i><em style="left:' + (d.max ? (d.minimo / d.max) * 100 : 0) + '%"></em></span><span class="v' + (d.ok ? '' : ' ox') + '">' + fmtPts(d.pontos) + ' / ' + fmtPts(d.max) + ' · mín. ' + fmtPts(d.minimo) + '</span></div>').join('');
+    const geral = gp.minimoGeral !== null ? '<div class="ln"><span><b>Total</b><br><span class="pr-mono">' + gp.corretas + ' de ' + gp.questoes + ' acertos</span></span><span class="tr"><i style="width:' + (gp.pontos / Math.max(1, gp.max)) * 100 + '%"></i><em style="left:' + (gp.minimoGeral / Math.max(1, gp.max)) * 100 + '%"></em></span><span class="v' + (gp.geralOk ? '' : ' ox') + '">' + fmtPts(gp.pontos) + ' / ' + fmtPts(gp.max) + ' · mín. ' + fmtPts(gp.minimoGeral) + '</span></div>' : '';
+    return '<div class="pr-gab">' + rows + geral + '</div>';
+  }
+  function gabCard(gp, sigla) {
+    const v = gp.aprovado ? verdict('m', 'Aprovado no total e em todas as disciplinas.', gp.minimoGeral !== null ? fmtPts(gp.pontos - gp.minimoGeral) + ' pontos acima do mínimo geral.' : '') : verdict('', 'Pelo seu gabarito, ' + esc(elimText(gp)) + '.', 'Confira no gabarito definitivo; recursos deferidos podem mudar a nota.');
+    return card(head('Gabarito no formato da banca · ' + sigla, fmtPts(gp.pontos) + ' de ' + fmtPts(gp.max) + ' pontos', '', 'l') + gabRows(gp) + v);
+  }
+  P.ui = { attrs, btn, act, cell, verdict, states, legend, stateSegs, stateBar, stateLegend, stbar, empty, skeleton, cov, mapCov, courseCov, tiles, mini, top, card, head, chipf, seg, menu, lastLabel, mapState, STATE_COLORS, fmtPts, elimText, gabForm, gabRows, gabCard };
 
   /* ---------- controlador ---------- */
   const pages = (P.pages = P.pages || {});
@@ -354,6 +369,14 @@
     'timer-finish': (arg, el) => armed(el, () => { window.StudyDashboard?.finish?.(); schedule(state.view); }, 'Toque de novo para finalizar'),
     'timer-focus': () => { if (state?.readerMapKey && typeof toggleReaderFocus === 'function') toggleReaderFocus(); else { const a = window.StudyDashboard?.active?.(); if (a?.mapKey && typeof openMap === 'function') openMap(a.mapKey).then?.(() => typeof setReaderFocus === 'function' && setReaderFocus(true)); else if (typeof toast === 'function') toast('Abra um mapa para usar o modo foco.'); } },
     'review-queue': () => { if (typeof startReviewQueue === 'function') startReviewQueue(); },
+    'save-gab-pond': (fd, form) => {
+      const id = form.dataset.course, prova = P.editais.prova(id), acertos = {};
+      for (const d of prova) { const v = Math.round(Number(fd.get('d_' + d.id))); if (!(v >= 0) || v > d.questoes) { if (typeof toast === 'function') toast('Confira ' + d.nome + ': acertos entre 0 e ' + d.questoes + '.'); return; } acertos[d.id] = v; }
+      const r = P.editais.pontuar(id, acertos), cl = P.courses.closure(id);
+      P.store.patch('closures', id, { ...cl, gabarito: { correct: r.corretas, total: r.questoes, pontos: r.pontos, max: r.max, aprovado: r.aprovado, porDisciplina: Object.fromEntries(r.por.map((x) => [x.id, { acertos: x.acertos, pontos: x.pontos, minimo: x.minimo, ok: x.ok }])), at: new Date().toISOString() } });
+      if (typeof toast === 'function') toast('Gabarito registrado: ' + fmtPts(r.pontos) + ' pontos' + (r.aprovado ? '.' : ' · ' + elimText(r) + '.'));
+      schedule(state.view);
+    },
     'sync-now': () => { if (typeof syncNow === 'function') syncNow(); else document.getElementById('syncTop')?.click(); }
   });
 

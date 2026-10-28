@@ -72,7 +72,7 @@
   const STORE_KEY = 'studyapp.prancha.v1';
   /* V15.56: editais (estrutura da prova e cronograma por curso), padroes (estrutura típica por banca)
      e mapMeta (alcance de cada mapa) entram no mesmo armazenamento, sincronizado e no backup. */
-  const SECTIONS = ['closures', 'cutoffs', 'links', 'history', 'agendaStarts', 'editais', 'padroes', 'mapMeta'];
+  const SECTIONS = ['closures', 'cutoffs', 'links', 'history', 'agendaStarts', 'editais', 'padroes', 'mapMeta', 'prefs'];
   const emptyStore = () => ({ version: 1, updatedAt: '', ...Object.fromEntries(SECTIONS.map((k) => [k, {}])) });
   function normalizeStore(v) {
     const s = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
@@ -496,10 +496,12 @@
   function cutoffFor(scopeId) { const r = readStore().cutoffs[scopeId]; return r && !r.removed && Number.isFinite(Number(r.value)) ? r : null; }
   /* corte do curso (oficial > meta > estimativa) */
   function courseCutoff(courseId) { return cutoffFor('course:' + courseId); }
-  function setCourseCutoff(courseId, value, kind) {
-    const v = Number(String(value).replace(',', '.'));
-    if (!Number.isFinite(v) || v <= 0 || v > 100) return null;
-    return patchStore('cutoffs', 'course:' + courseId, { value: Math.round(v * 10) / 10, kind: ['oficial', 'meta', 'estimativa'].includes(kind) ? kind : 'meta' });
+  /* V15.57 · unidade do corte: '%' (padrão, como antes) ou 'pts' (pontos da banca, quando há estrutura da prova) */
+  function setCourseCutoff(courseId, value, kind, unit = '%') {
+    const v = Number(String(value).replace(',', '.')), u = unit === 'pts' ? 'pts' : '%';
+    const max = u === 'pts' ? Math.max(1, pontosMax(provaOf(courseId))) : 100;
+    if (!Number.isFinite(v) || v <= 0 || v > max) return null;
+    return patchStore('cutoffs', 'course:' + courseId, { value: Math.round(v * 10) / 10, kind: ['oficial', 'meta', 'estimativa'].includes(kind) ? kind : 'meta', unit: u });
   }
   function clearCourseCutoff(courseId) { return patchStore('cutoffs', 'course:' + courseId, null); }
   /* gabarito por questão: só quando os erros registrados batem com erradas+branco */
@@ -613,6 +615,21 @@
     const mg = minimoGeral(courseId), falhas = por.filter((x) => !x.ok);
     return { pontos, max: pontosMax(prova), corretas, questoes, por, minimoGeral: mg, geralOk: mg === null || pontos >= mg, aprovado: !falhas.length && (mg === null || pontos >= mg), falhas };
   }
+  /* V15.57 · tentativa de simulado em pontos da banca: cada seção ({nome:{correct,total}}) vai para a
+     disciplina de nome equivalente (sem acento/caixa). Só pontua se todas as disciplinas forem encontradas. */
+  function secaoDisciplina(nome, prova) {
+    const n = norm(nome);
+    if (!n) return null;
+    return prova.find((d) => norm(d.nome) === n || norm(d.id) === n) || prova.find((d) => n.includes(norm(d.nome)) || norm(d.nome).includes(n)) || prova.find((d) => norm(d.nome).split(' ')[0] === n.split(' ')[0] && n.split(' ')[0].length > 4) || null;
+  }
+  function pontuarTentativa(courseId, attempt) {
+    const prova = provaOf(courseId), sec = attempt?.sections;
+    if (!prova.length || !sec || typeof sec !== 'object') return null;
+    const ac = {}, seen = new Set();
+    for (const [nome, v] of Object.entries(sec)) { const d = secaoDisciplina(nome, prova); if (!d) continue; seen.add(d.id); ac[d.id] = (ac[d.id] || 0) + (Number(v?.correct) || 0); }
+    if (seen.size !== prova.length) return null;
+    return pontuar(courseId, ac);
+  }
   /* cronograma: a data da prova vem do curso (Gerenciar curso); as demais fases, do edital */
   function fasesOf(course, today = new Date()) {
     if (!course) return [];
@@ -651,7 +668,49 @@
     return /legisla|administra/.test(norm(map.category)) ? 'local' : 'portatil';
   }
   function setAlcance(key, value) { if (!ALCANCES.some(([id]) => id === value)) return null; return patchStore('mapMeta', key, { alcance: value }); }
-  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva };
+  /* preferências das pranchas (V15.57): prefs[chave] = { value, updatedAt } */
+  const PREF_DEFAULTS = { metaEntre: 40 };
+  function pref(k) { const r = readStore().prefs[k]; return r && !r.removed && r.value !== undefined ? r.value : PREF_DEFAULTS[k]; }
+  function setPref(k, value) { return patchStore('prefs', k, { value }); }
+  P.prefs = { get: pref, set: setPref, DEFAULTS: PREF_DEFAULTS };
+  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva };
+
+  /* ---------- auditoria do acervo (V15.57) ----------
+     Só leitura. Usa o índice de busca (gerado no build a partir dos HTML incluídos: marcadores, questões,
+     template e fonte legal declarada), os cursos e as tentativas de simulado. Mapas que existem só na
+     nuvem não estão no índice e aparecem como "não verificados". */
+  function auditAcervo(today = new Date()) {
+    return memo('audit', () => {
+      const idx = (typeof state !== 'undefined' && state.searchIndex) || {}, sums = Array.isArray(idx.maps) ? idx.maps : [];
+      const byKey = new Map(sums.map((m) => [m.mapKey, m])), all = allMaps(), out = [];
+      const known = all.filter((m) => byKey.has(keyOf(m))), unknown = all.filter((m) => !byKey.has(keyOf(m)));
+      const sumOf = (m) => byKey.get(keyOf(m));
+      const semMk = known.filter((m) => { const x = sumOf(m); return x.topics && !x.topicsWithMarkers; });
+      const parcial = known.filter((m) => { const x = sumOf(m); return x.topicsWithMarkers && x.topicsWithMarkers < x.topics; });
+      if (semMk.length) out.push({ sev: 'aviso', tipo: 'marcadores', titulo: semMk.map((m) => m.code).join(', ') + ' sem nenhum data-markers', detalhe: 'Os filtros ⭐ ⚠️ 💎 🔢 do leitor ficam vazios nesses mapas. Vale regerar no template atual, sem mudar o conteúdo.', keys: semMk.map(keyOf) });
+      if (parcial.length) out.push({ sev: 'aviso', tipo: 'marcadores', titulo: parcial.length + ' ' + plural(parcial.length, 'mapa com tópicos', 'mapas com tópicos') + ' sem marcador', detalhe: parcial.map((m) => m.code + ' (' + (sumOf(m).topics - sumOf(m).topicsWithMarkers) + ')').join(', '), keys: parcial.map(keyOf) });
+      const semFonte = known.filter((m) => !sumOf(m).fonte), comFonte = known.filter((m) => sumOf(m).fonte);
+      if (semFonte.length) out.push({ sev: 'info', tipo: 'fonte legal', titulo: semFonte.length + ' de ' + known.length + ' mapas não declaram a data da fonte', detalhe: (comFonte.length ? comFonte.map((m) => m.code).join(', ') + ' declaram. ' : '') + 'Sem a data, não há como saber se a lei estudada é a vigente.', keys: semFonte.map(keyOf) });
+      const antigos = known.filter((m) => sumOf(m).template !== 'V211');
+      if (antigos.length) out.push({ sev: 'aviso', tipo: 'template', titulo: antigos.map((m) => m.code).join(', ') + ' fora do Template V211', detalhe: 'Regerar mantém o progresso quando os identificadores dos tópicos são os mesmos.', keys: antigos.map(keyOf) });
+      if (unknown.length) out.push({ sev: 'info', tipo: 'nuvem', titulo: unknown.length + ' ' + plural(unknown.length, 'mapa só na nuvem', 'mapas só na nuvem') + ', não verificados', detalhe: unknown.slice(0, 8).map((m) => m.code || m.title).join(', ') + (unknown.length > 8 ? '…' : '') + '. A auditoria lê os HTML incluídos no aplicativo.', keys: unknown.map(keyOf) });
+      for (const c of courses()) {
+        if (isArchived(c)) continue;
+        const ex = courseExamState(c, today), sg = courseSigla(c), cl = closure(c.id);
+        if (ex.phase === 'nodate') out.push({ sev: 'aviso', tipo: 'curso', titulo: sg + ' sem data de prova', detalhe: 'Sem a data, o plano não calcula o ritmo nem a régua mostra a fase.', course: c.id });
+        if (!provaOf(c.id).length) out.push({ sev: 'aviso', tipo: 'curso', titulo: sg + ' sem estrutura da prova', detalhe: 'Pesos e mínimos alimentam o gabarito em pontos e o valor de cada mapa' + (padraoDaBanca(c.board) ? '; há um padrão ' + padraoDaBanca(c.board).banca + ' pronto para usar.' : '.'), course: c.id });
+        if (ex.phase === 'after' && ex.days >= -30 && !cl.gabarito) out.push({ sev: 'aviso', tipo: 'curso', titulo: sg + ': prova feita, gabarito não registrado', detalhe: 'Registre os acertos para ter a nota estimada e acompanhar os recursos.', course: c.id });
+        if ((ex.phase === 'before' || ex.phase === 'after') && !fasesOf(c, today).some((f) => f.date && f.id !== 'prova')) out.push({ sev: 'info', tipo: 'curso', titulo: sg + ': cronograma vazio', detalhe: 'Informe gabarito, recursos e resultado na Régua do edital, ou importe o .ics na Agenda.', course: c.id });
+      }
+      const semSec = sims().filter((sm) => attempts(sm).some((a) => !a.sections || !Object.keys(a.sections).length));
+      if (semSec.length) out.push({ sev: 'info', tipo: 'simulados', titulo: semSec.length + ' ' + plural(semSec.length, 'simulado com tentativa', 'simulados com tentativas') + ' sem acerto por disciplina', detalhe: 'Essas tentativas não viram pontos da banca.' });
+      const q = sums.reduce((n, m) => n + (Number(m.questions) || 0), 0);
+      if (known.length) out.push({ sev: 'ok', tipo: 'questões', titulo: fmtNum(q) + ' variantes de questão em ' + known.length + ' mapas', detalhe: 'Banco embutido nos tópicos (níveis N1 a N3).' });
+      if (known.length && !antigos.length) out.push({ sev: 'ok', tipo: 'template', titulo: 'Template V211 em todos os ' + known.length + ' mapas verificados', detalhe: sums.every((m) => m.g26) ? 'Mesma base G26.' : '' });
+      return { items: out, avisos: out.filter((x) => x.sev === 'aviso').length, verificados: known.length, total: all.length, bytes: sums.reduce((n, m) => n + (Number(m.bytes) || 0), 0) };
+    });
+  }
+  P.audit = { run: auditAcervo };
 
   /* biblioteca (V15.56): o que está em estudo + mapas portáteis/mistos de concursos encerrados.
      Só os mapas locais de concursos encerrados ficam ocultos. */

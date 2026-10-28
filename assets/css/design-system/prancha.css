@@ -343,6 +343,8 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-chk>div{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--pr-linha);border-radius:10px;background:var(--pr-g0);font-size:var(--fs-body-sm)}
 .pr-chk .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--pr-linha);display:grid;place-items:center;font-family:var(--pr-f-mono);font-size:var(--fs-caption)}
 .pr-chk>div.ok .n{background:var(--pr-musgo);border-color:var(--pr-musgo);color:var(--pr-nanquim)}
+.pr-chk>div[data-pr-gabarito]{grid-template-columns:24px minmax(0,1fr)}
+.pr-chk>div[data-pr-gabarito]>:last-child{grid-column:2}
 .pr-chk small{display:block;font-size:var(--fs-caption);color:var(--pr-papel-3)}
 @media (max-width:520px){.pr-chk>div{grid-template-columns:24px minmax(0,1fr)}.pr-chk>div>:last-child{grid-column:2;justify-self:start}}
 .pr-pace{display:grid;grid-template-columns:repeat(var(--n,12),minmax(0,1fr));gap:3px}
@@ -613,3 +615,12 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-gab .v{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-2);white-space:nowrap}
 .pr-gab .v.ox{color:var(--pr-oxido)}
 @media (max-width:700px){.pr-fgrid.d{grid-template-columns:repeat(3,minmax(0,1fr))}.pr-fgrid.d>.pr-field:first-child{grid-column:1/-1}.pr-gab .ln{grid-template-columns:minmax(0,1fr) auto}.pr-gab .ln .tr{grid-column:1/-1;grid-row:2}}
+/* V15.57 · marcos do cronograma na agenda e situação dos recursos */
+.pr-wd .mks{display:grid;gap:3px;justify-items:start}
+.pr-marco{font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);letter-spacing:.04em;line-height:1.25;padding:2px 6px;border-radius:5px;border:1px solid color-mix(in srgb,var(--pr-latao) 45%,transparent);color:var(--pr-latao-c);max-width:100%;overflow-wrap:anywhere;text-align:left}
+.pr-marco.ox{border-color:color-mix(in srgb,var(--pr-oxido) 50%,transparent);color:var(--pr-oxido)}
+.pr-sel{min-height:var(--pr-touch);max-width:150px}
+.pr-gabf{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:end}
+.pr-gabf .pr-field input{width:100%}
+.pr-li.rec{grid-template-columns:auto minmax(0,1fr)}
+.pr-li.rec>.pr-row{grid-column:1/-1;justify-content:flex-end}

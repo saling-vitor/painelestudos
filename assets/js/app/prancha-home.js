@@ -5,7 +5,7 @@
   if (!P || P.pages.home) return;
   const U = P.util, ui = P.ui, { esc, fmtMin, fmtSec, fmtDay, fmtLong, fmtNum, plural, pct } = U;
 
-  const SCREENS = [['hoje', 'Hoje'], ['todos', 'Todos'], ['rev', 'Revisões'], ['sessao', 'Em sessão'], ['pos', 'Pós-prova']];
+  const SCREENS = [['hoje', 'Hoje'], ['todos', 'Todos'], ['rev', 'Revisões'], ['sessao', 'Em sessão'], ['pos', 'Pós-prova'], ['entre', 'Entre concursos']];
   const SKEY = 'studyapp.prancha.homeScreen';
   let lastAuto = '', tick = 0, quick = 0, selTile = '';
   const manual = { get: () => { try { return sessionStorage.getItem(SKEY) || ''; } catch { return ''; } }, set: (v) => { try { v ? sessionStorage.setItem(SKEY, v) : sessionStorage.removeItem(SKEY); } catch {} } };
@@ -14,6 +14,7 @@
     if (P.session.read()) return 'sessao';
     if (P.courses.postExam()) return 'pos';
     if (P.courses.priority()) return 'hoje';
+    if (!P.courses.active().length && entreMaps().length) return 'entre';
     return P.courses.active().length ? 'todos' : 'hoje';
   }
   function currentScreen() {
@@ -21,8 +22,12 @@
     if (auto !== lastAuto) { lastAuto = auto; manual.set(''); }
     const m = manual.get();
     if (m === 'pos' && !P.courses.postExam()) return auto;
+    if (m === 'entre' && !entreMaps().length) return auto;
     return m || auto;
   }
+
+  /* V15.57 · entressafra: mapas portáteis/mistos de concursos encerrados (os locais ficam guardados) */
+  const entreMaps = () => P.memo('entre', () => { const live = new Set(P.data.maps().map(P.data.keyOf)); return P.data.libraryMaps().filter((m) => !live.has(P.data.keyOf(m))); });
 
   /* ---------- peças compartilhadas ---------- */
   function planItems(course) {
@@ -116,7 +121,7 @@
       else {
         const need = ex.days > 0 ? Math.ceil(rest / ex.days) : rest;
         const fcTxt = f && f.remainingSeconds ? ' O plano do app estima ' + fmtSec(f.remainingSeconds) + ' de leitura para o restante: ' + fmtSec(f.remainingSeconds / Math.max(1, ex.days)) + ' por dia.' : '';
-        v = ui.verdict(h?.status === 'risk' ? '' : h?.status === 'healthy' ? 'm' : 'l', 'Faltam ' + ex.days + ' ' + plural(ex.days, 'dia') + ' e ' + fmtNum(rest) + ' ' + plural(rest, 'tópico') + '.', esc(h?.message || '') + (rest ? ' São ' + need + ' ' + plural(need, 'tópico') + ' por dia.' : '') + fcTxt + ' Hoje: ' + fmtSec(today) + '.');
+        v = ui.verdict(h?.status === 'risk' ? '' : h?.status === 'healthy' ? 'm' : 'l', 'Faltam ' + ex.days + ' ' + plural(ex.days, 'dia') + ' e ' + fmtNum(rest) + ' ' + plural(rest, 'tópico') + '.', esc(h?.message || '') + (rest ? ' São ' + need + ' ' + plural(need, 'tópico') + ' por dia.' : '') + fcTxt + ' Hoje: ' + fmtSec(today) + '.' + esc(marcoAviso()));
       }
       carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">' + esc('Hoje · ' + pc.sigla + ' · ' + P.courses.label(c)) + '</span><div class="pr-big">' + big + '</div>' +
         ui.states([['feito', doneMin, 'var(--pr-latao)'], ['planejado', Math.max(0, planned - doneMin), 'var(--pr-g3)']], 'Plano de hoje: ' + fmtMin(doneMin) + ' de ' + fmtMin(planned) + ' feitos') +
@@ -273,16 +278,20 @@
   }
 
   /* ---------- 5 · PÓS-PROVA ---------- */
-  const fmtPts = (n) => String(Math.round(Number(n || 0) * 100) / 100).replace('.', ',');
-  const elimText = (gp) => gp.falhas.length ? 'eliminado em ' + gp.falhas.map((x) => x.nome + ' (faltou ' + fmtPts(x.falta) + ')').join(' e ') : 'abaixo do mínimo geral de ' + fmtPts(gp.minimoGeral);
-  function gabFormProva(c, prova) {
-    return '<form data-pr-submit="save-gabarito" data-course="' + esc(c.id) + '" data-ponderado="1" class="pr-row" style="gap:6px;align-items:flex-end">' + prova.map((d) => '<label class="pr-field"><span>' + esc(d.nome) + ' · de ' + d.questoes + '</span><input name="d_' + esc(d.id) + '" type="number" min="0" max="' + d.questoes + '" inputmode="numeric" required style="width:96px"></label>').join('') + '<button type="submit" class="pr-btn sm">Registrar</button></form>';
+  const { fmtPts, elimText, gabForm: gabFormProva, gabCard } = ui;
+  /* V15.57 · próximo marco do cronograma (gabarito, recursos, resultado, convocação) */
+  function marcoCard(c) {
+    const fases = P.editais.fases(c), next = P.editais.proximoMarco(c);
+    if (!fases.some((f) => f.date && f.id !== 'prova')) return ui.card(ui.head('Próximo marco', 'Cronograma não informado') + '<p class="pr-detail">Informe as datas de gabarito, recursos e resultado na Régua do edital do curso para acompanhar os prazos depois da prova.</p>' + ui.btn('Abrir curso', ui.act('open-course', c.id), 'g sm'));
+    const prazo = next && /recursos|convocacao/.test(next.id);
+    const lst = '<div class="pr-list">' + fases.filter((f) => f.date || f.status !== 'futura').map((f) => '<div class="pr-li"><span class="pr-chip ' + (f.status === 'futura' ? '' : 'ok') + '">' + (f.status === 'futura' ? (f.days === 0 ? 'hoje' : f.days + ' d') : 'feito') + '</span><span><b>' + esc(f.label) + '</b><br><span class="t">' + (f.date ? esc(fmtLong(f.date)) : 'sem data') + '</span></span><span></span></div>').join('') + '</div>';
+    const big = next ? '<div class="pr-big"><span class="pr-pct pr-num' + (prazo && next.days <= 3 ? ' ox' : '') + '">' + next.days + '<small> ' + plural(next.days, 'dia') + '</small></span><span class="pr-sub">' + esc(next.label.toLowerCase()) + ' · ' + esc(fmtDay(next.date)) + '</span></div>' : '<p class="pr-detail">Todas as fases com data já passaram.</p>';
+    return ui.card(ui.head('Próximo marco · ' + P.courses.sigla(c), next ? esc(next.label) : 'Cronograma concluído', ui.btn('Cronograma', ui.act('open-course', c.id), 'g sm'), 'l') + big + (prazo ? ui.verdict('', esc(next.label) + ' é um prazo.', 'Depois da data não há como recorrer ou entregar documentos.') : '') + lst);
   }
-  function gabCard(gp, sigla) {
-    const rows = gp.por.map((d) => '<div class="ln"><span><b>' + esc(d.nome) + '</b><br><span class="pr-mono">' + d.acertos + ' de ' + d.questoes + ' · peso ' + fmtPts(d.peso) + '</span></span><span class="tr" role="img" aria-label="' + esc(d.nome + ': ' + fmtPts(d.pontos) + ' de ' + fmtPts(d.max) + ', mínimo ' + fmtPts(d.minimo)) + '"><i style="width:' + (d.max ? (d.pontos / d.max) * 100 : 0) + '%"></i><em style="left:' + (d.max ? (d.minimo / d.max) * 100 : 0) + '%"></em></span><span class="v' + (d.ok ? '' : ' ox') + '">' + fmtPts(d.pontos) + ' / ' + fmtPts(d.max) + ' · mín. ' + fmtPts(d.minimo) + '</span></div>').join('');
-    const geral = gp.minimoGeral !== null ? '<div class="ln"><span><b>Total</b><br><span class="pr-mono">' + gp.corretas + ' de ' + gp.questoes + ' acertos</span></span><span class="tr"><i style="width:' + (gp.pontos / Math.max(1, gp.max)) * 100 + '%"></i><em style="left:' + (gp.minimoGeral / Math.max(1, gp.max)) * 100 + '%"></em></span><span class="v' + (gp.geralOk ? '' : ' ox') + '">' + fmtPts(gp.pontos) + ' / ' + fmtPts(gp.max) + ' · mín. ' + fmtPts(gp.minimoGeral) + '</span></div>' : '';
-    const v = gp.aprovado ? ui.verdict('m', 'Aprovado no total e em todas as disciplinas.', gp.minimoGeral !== null ? fmtPts(gp.pontos - gp.minimoGeral) + ' pontos acima do mínimo geral.' : '') : ui.verdict('', 'Pelo seu gabarito, ' + esc(elimText(gp)) + '.', 'Confira no gabarito definitivo; recursos deferidos podem mudar a nota.');
-    return ui.card(ui.head('Gabarito no formato da banca · ' + sigla, fmtPts(gp.pontos) + ' de ' + fmtPts(gp.max) + ' pontos', '', 'l') + '<div class="pr-gab">' + rows + geral + '</div>' + v);
+  function marcoAviso() {
+    const out = [];
+    for (const c of P.courses.list()) { if (P.courses.isArchived(c)) continue; const m = P.editais.proximoMarco(c); if (m && m.days <= 7) out.push(P.courses.sigla(c) + ': ' + m.label.toLowerCase() + (m.days === 0 ? ' hoje' : ' em ' + m.days + ' ' + plural(m.days, 'dia'))); }
+    return out.length ? ' Marcos próximos: ' + out.join(' · ') + '.' : '';
   }
   function screenPos() {
     const s = P.courses.postExam();
@@ -325,7 +334,30 @@
         '<div class="pr-pace" style="--n:' + weeks + ';--c:' + next.color + '" role="img" aria-label="' + weeks + ' semanas até a prova">' + Array.from({ length: weeks }, (_, i) => '<i class="' + (i < studied ? 'f' : i === studied ? 'h' : '') + '"></i>').join('') + '</div>' +
         ui.legend([['proporção já estudada', '', 'color-mix(in srgb,' + next.color + ' 60%,transparent)'], ['esta semana', '', 'var(--pr-latao)'], ['semanas à frente', '', 'var(--pr-g3)', true]]) + '<p style="font-size:var(--fs-body-sm)">Cada célula é uma semana até ' + esc(U.fmtDayYear(next.exam.date)) + '.</p>' + ui.btn('Trazer ' + esc(next.sigla) + ' para o plano', ui.act('plan-next', next.id), ''));
     } else nextCard = ui.card(ui.head('Próximo concurso', 'Nenhum com prova marcada') + '<p>Defina a data da prova de outro concurso para o plano recomeçar.</p>' + ui.btn('Ver cursos', ui.act('nav', 'courses'), 'g sm'));
-    return carimbo + (gp ? gabCard(gp, s.sigla) : '') + '<div class="pr-two">' + ui.card(ui.head('Fechar o ' + s.sigla, 'Quatro passos, nesta ordem') + chk) + nextCard + '</div>' + ui.card(ui.head('Planta final · ' + s.sigla, 'Como o edital ficou no dia da prova', '<span class="pr-mono">fica guardada no curso</span>') + ui.tiles(s.maps, { cls: 'sm' }));
+    return carimbo + (gp ? gabCard(gp, s.sigla) : '') + marcoCard(c) + '<div class="pr-two">' + ui.card(ui.head('Fechar o ' + s.sigla, 'Quatro passos, nesta ordem') + chk) + nextCard + '</div>' + ui.card(ui.head('Planta final · ' + s.sigla, 'Como o edital ficou no dia da prova', '<span class="pr-mono">fica guardada no curso</span>') + ui.tiles(s.maps, { cls: 'sm' }));
+  }
+
+  /* ---------- 6 · ENTRE CONCURSOS (V15.57) ---------- */
+  function screenEntre() {
+    const list = entreMaps();
+    if (!list.length) return ui.card(ui.empty('Nada guardado para manutenção', 'Os mapas portáteis de concursos encerrados aparecem aqui.'));
+    const all = P.data.allMaps(), locals = all.filter((m) => P.editais.alcance(m) === 'local' && window.StudyScope?.mapRetired?.(m));
+    const rows = list.map((m) => ({ m, p: P.data.prog(m), k: P.data.keyOf(m) }));
+    const keys = new Set(rows.map((r) => r.k));
+    let due = 0; try { due = (window.StudyPlanner?.dueTopics?.('', new Date()) || []).filter((t) => keys.has(String(t.mapKey || P.data.keyOf(t.map)))).length; } catch {}
+    const ag = P.data.agg(list), fix = ag.review + ag.difficult, meta = Number(P.prefs.get('metaEntre')) || 40;
+    const retired = P.courses.retired(), last = retired.map((x) => x.exam.date).filter(Boolean).sort((a, b) => b - a)[0];
+    rows.sort((a, b) => (b.p.review + b.p.difficult) - (a.p.review + a.p.difficult) || U.pct(a.p.marked, a.p.total) - U.pct(b.p.marked, b.p.total));
+    const first = rows[0];
+    const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">' + esc('Entre concursos' + (last ? ' · desde ' + fmtDay(U.addDays(last, 1)) : '')) + '</span><div class="pr-big"><span class="pr-pct pr-num">' + fmtNum(ag.total) + '</span><span class="pr-sub">tópicos portáteis guardados em ' + list.length + ' ' + plural(list.length, 'mapa') + '</span></div>' + ui.stateBar(ag, 'Mapas portáteis por estado') + ui.stateLegend(ag) +
+      ui.verdict('l', 'Ritmo de manutenção: ' + fmtMin(meta) + ' por dia.', 'Revise os mapas que servem em qualquer edital; os ' + locals.length + ' ' + plural(locals.length, 'mapa local', 'mapas locais') + ' ficam guardados até outro concurso do mesmo órgão.') +
+      '<div class="pr-row">' + ui.btn('Revisar ' + esc(first.m.code || '') + ' · ' + fmtMin(Math.min(meta, 40)), ui.act('start-plan', first.k, { 'data-min': Math.min(meta, 40) }), 'p') + ui.btn('+ Novo concurso', ui.act('new-course'), 'g') + '</div></div><div class="pr-c-b">' +
+      ui.cell('Mapas portáteis', list.length, '', fmtNum(ag.marked) + ' de ' + fmtNum(ag.total) + ' tópicos marcados') + ui.cell('Para firmar', fmtNum(fix), fix ? 'l' : 'ok', ag.review + ' REV · ' + ag.difficult + ' DIF') +
+      ui.cell('Revisões vencidas', fmtNum(due), due ? 'l' : 'ok', 'nos mapas portáteis') + ui.cell('Meta de manutenção', fmtMin(meta), '', 'ajuste em Configurações · folha 08') +
+      ui.cell('Hoje', fmtSec(P.time.today()), '', 'estudados') + ui.cell('Encerrados', retired.length, '', plural(retired.length, 'concurso', 'concursos') + ' com mapas guardados') + '</div></section>';
+    const lst = '<div class="pr-list">' + rows.map((r) => '<div class="pr-li" style="--c:' + P.mapColor(r.m) + '"><span class="pr-sig">' + esc(r.m.code || '') + '</span><span><b>' + esc(r.m.shortTitle || r.m.title) + '</b><br><span class="t">' + esc([r.m.category, U.pct(r.p.marked, r.p.total) + '%', r.p.review ? r.p.review + ' REV' : '', r.p.difficult ? r.p.difficult + ' DIF' : '', P.editais.alcance(r.m) === 'misto' ? 'misto' : ''].filter(Boolean).join(' · ')) + '</span></span>' + ui.btn(r.p.review + r.p.difficult ? 'Revisar' : 'Abrir', ui.act('open-map', r.k), 'sm') + '</div>').join('') + '</div>';
+    const guard = locals.length ? ui.card(ui.head('Guardados', locals.length + ' ' + plural(locals.length, 'mapa local', 'mapas locais')) + '<p class="pr-detail">' + esc(locals.map((m) => m.code).join(' · ')) + '. Voltam se houver outro concurso do mesmo órgão; o progresso continua salvo. Para mudar, altere o alcance no painel do mapa, dentro do curso.</p>') : '';
+    return carimbo + '<div class="pr-two">' + ui.card(ui.head('O que entra na manutenção', 'Primeiro o que tem REV e DIF') + lst) + guard + '</div>';
   }
 
   /* ---------- render ---------- */
@@ -333,8 +365,9 @@
     const screen = currentScreen();
     root.dataset.screen = screen;
     const q = P.reviews.queue(), qCount = q.reduce((s, x) => s + x.count, 0), sess = P.session.read(), post = P.courses.postExam();
-    const tabs = SCREENS.map(([id, label]) => ({ id, label, badge: id === 'rev' && qCount ? qCount : id === 'sessao' && sess ? '●' : '', disabled: id === 'pos' && !post }));
-    const body = screen === 'todos' ? screenTodos() : screen === 'rev' ? screenRev() : screen === 'sessao' ? screenSessao() : screen === 'pos' ? screenPos() : screenHoje();
+    const entreOn = !!entreMaps().length;
+    const tabs = SCREENS.filter(([id]) => id !== 'entre' || entreOn).map(([id, label]) => ({ id, label, badge: id === 'rev' && qCount ? qCount : id === 'sessao' && sess ? '●' : '', disabled: id === 'pos' && !post }));
+    const body = screen === 'entre' ? screenEntre() : screen === 'todos' ? screenTodos() : screen === 'rev' ? screenRev() : screen === 'sessao' ? screenSessao() : screen === 'pos' ? screenPos() : screenHoje();
     root.innerHTML = ui.top({ eyebrow: 'Início · ' + U.fmtLong(new Date()), tabs, active: screen, label: 'Início', tabAct: 'screen' }) + body;
     clearInterval(tick);
     if (screen === 'sessao' && sess) tick = setInterval(() => updateClock(root), 1000);
@@ -370,15 +403,7 @@
       'postpone-exam': () => P.confirm('Adiar revisões do dia da prova?', 'As revisões que caem no dia de uma prova passam para o dia seguinte. Nenhuma revisão é excluída.', () => { const r = P.reviews.postponeExamDay(); if (typeof toast === 'function') toast(r.moved ? r.moved + ' ' + plural(r.moved, 'revisão adiada', 'revisões adiadas') + ' para o dia seguinte.' : 'Nenhuma revisão cai no dia de uma prova.'); P.schedule('home'); }, 'Adiar'),
       'focus-gabarito': (a, el, root) => { const f = root.querySelector('[data-pr-gabarito] input'); f?.scrollIntoView({ block: 'center', behavior: 'smooth' }); f?.focus(); },
       'save-gabarito': (fd, form) => {
-        if (form.dataset.ponderado) {
-          const id = form.dataset.course, prova = P.editais.prova(id), acertos = {};
-          for (const d of prova) { const v = Math.round(Number(fd.get('d_' + d.id))); if (!(v >= 0) || v > d.questoes) { if (typeof toast === 'function') toast('Confira ' + d.nome + ': acertos entre 0 e ' + d.questoes + '.'); return; } acertos[d.id] = v; }
-          const r = P.editais.pontuar(id, acertos), cl = P.courses.closure(id);
-          P.store.patch('closures', id, { ...cl, gabarito: { correct: r.corretas, total: r.questoes, pontos: r.pontos, max: r.max, aprovado: r.aprovado, porDisciplina: Object.fromEntries(r.por.map((x) => [x.id, { acertos: x.acertos, pontos: x.pontos, minimo: x.minimo, ok: x.ok }])), at: new Date().toISOString() } });
-          if (typeof toast === 'function') toast('Gabarito registrado: ' + fmtPts(r.pontos) + ' pontos' + (r.aprovado ? '.' : ' · ' + elimText(r) + '.'));
-          P.schedule('home');
-          return;
-        }
+        if (form.dataset.ponderado) { P.actions['save-gab-pond'](fd, form); return; }
         const correct = Math.round(Number(fd.get('correct'))), total = Math.round(Number(fd.get('total')));
         if (!(total > 0) || !(correct >= 0) || correct > total) { if (typeof toast === 'function') toast('Confira os números: acertos entre 0 e o total de questões.'); return; }
         const id = form.dataset.course, cl = P.courses.closure(id);
