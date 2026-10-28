@@ -69,7 +69,49 @@
     const linked = P.links.courses(k), others = P.courses.list().filter((c) => String(c.id) !== String(m.courseId) && !P.courses.isArchived(c));
     const origin = m._linkedFrom ? P.courses.byId(m._linkedFrom) : null;
     const share = others.length ? '<details class="pr-add"><summary>Compartilhar com outro concurso</summary><form data-pr-submit="link" data-key="' + esc(k) + '"><p style="font-size:var(--fs-caption)">O mapa aparece no outro concurso sem duplicar o HTML; o progresso continua um só, identificado pelo curso de origem.</p><label class="pr-field"><span>Concurso</span><select name="course">' + others.map((c) => '<option value="' + esc(c.id) + '"' + (linked.includes(String(c.id)) ? ' disabled' : '') + '>' + esc(P.courses.sigla(c) + ' · ' + c.title) + (linked.includes(String(c.id)) ? ' (já vinculado)' : '') + '</option>').join('') + '</select></label><button type="submit" class="pr-btn sm">Vincular</button>' + (linked.length ? '<div class="pr-list">' + linked.map((id) => { const c = P.courses.byId(id); return c ? '<div class="pr-li"><span class="pr-sig" style="--c:' + P.courses.color(c) + '">' + esc(P.courses.sigla(c)) + '</span><span>' + esc(c.title) + '</span>' + ui.btn('Desvincular', ui.act('unlink', k + '|' + id), 'g sm') + '</div>' : ''; }).join('') + '</div>' : '') + '</form></details>' : '';
-    return ui.card('<span class="pr-k">' + esc((folha || '') + ' · ' + (m.category || '')) + '</span>' + ui.mapCov(m) + '<h3>' + esc(m.title) + '</h3>' + ui.stbar(p, 6) + '<span class="pr-mono">' + p.marked + '/' + p.total + ' tópicos · ' + ui.mapState(p) + ' · ' + (sec ? fmtSec(sec) + ' de estudo' : 'ainda não estudado') + '</span>' + (origin ? '<span class="pr-chip l">compartilhado de ' + esc(P.courses.sigla(origin)) + '</span>' : '') + topicsOf(m) + '<div class="pr-row">' + ui.btn(actionLabel(p), ui.act('open-map', k), 'p') + (m._linkedFrom ? '' : ui.btn('Gerenciar', ui.act('manage-map', k), 'g sm')) + '</div>' + share, 'pr-pick');
+    return ui.card('<span class="pr-k">' + esc((folha || '') + ' · ' + (m.category || '')) + '</span>' + ui.mapCov(m) + '<h3>' + esc(m.title) + '</h3>' + ui.stbar(p, 6) + '<span class="pr-mono">' + p.marked + '/' + p.total + ' tópicos · ' + ui.mapState(p) + ' · ' + (sec ? fmtSec(sec) + ' de estudo' : 'ainda não estudado') + '</span>' + (origin ? '<span class="pr-chip l">compartilhado de ' + esc(P.courses.sigla(origin)) + '</span>' : '') + topicsOf(m) + '<div class="pr-row">' + ui.btn(actionLabel(p), ui.act('open-map', k), 'p') + (m._linkedFrom ? '' : ui.btn('Gerenciar', ui.act('manage-map', k), 'g sm')) + '</div>' + alcanceSeg(m) + share, 'pr-pick');
+  }
+  /* ---------- V15.56 · régua do edital e raio-x da prova ---------- */
+  const E = P.editais;
+  function regua(c) {
+    const fases = E.fases(c), atual = fases.find((f) => f.status === 'atual');
+    const cells = fases.map((f) => '<li class="' + f.status + '"><span class="t">' + esc(f.label) + '</span><span class="d">' + (f.date ? esc(U.fmtDayYear(f.date)) : 'sem data') + '</span>' + (f.status === 'atual' ? '<span class="pr-chip l">agora</span>' : '') + '</li>').join('');
+    const next = E.proximoMarco(c);
+    const note = next ? 'Próximo marco: <b>' + esc(next.label) + '</b> ' + (next.days === 0 ? 'hoje' : 'em ' + next.days + ' ' + plural(next.days, 'dia')) + ' (' + esc(fmtDay(next.date)) + ').' : atual ? 'Fase atual: ' + esc(atual.label.toLowerCase()) + '.' : 'Informe as datas do cronograma para acompanhar o concurso até a convocação.';
+    const e = E.get(c.id) || {};
+    const form = '<details class="pr-add"><summary>Editar cronograma</summary><form data-pr-submit="save-fases" data-course="' + esc(c.id) + '"><p class="pr-mono">A data da prova vem de Gerenciar curso. As demais saem do cronograma do edital; deixe em branco o que ainda não foi divulgado.</p><div class="pr-fgrid">' +
+      E.FASES.filter(([id]) => id !== 'prova').map(([id, label]) => '<label class="pr-field"><span>' + esc(label) + '</span><input type="date" name="' + id + '" value="' + esc(e.fases?.[id]?.date || '') + '"></label>').join('') + '</div><button type="submit" class="pr-btn sm">Salvar cronograma</button></form></details>';
+    return ui.card(ui.head('Régua do edital', 'Fases do concurso', '', 'l') + '<ol class="pr-regua" aria-label="Fases do concurso">' + cells + '</ol><p class="pr-detail">' + note + '</p>' + form, 'pr-regua-card');
+  }
+  function provaForm(c, prova, e, cats) {
+    const rows = (prova.length ? prova : [{ id: '', nome: '', questoes: '', peso: 1, minimo: '' }]).concat([{ id: '', nome: '', questoes: '', peso: 1, minimo: '', nova: true }]);
+    const disc = rows.map((d, i) => '<div class="pr-fgrid d" data-row="' + i + '"><label class="pr-field"><span>Disciplina' + (d.nova ? ' (nova)' : '') + '</span><input name="nome' + i + '" value="' + esc(d.nome || '') + '" maxlength="60"' + (d.nova ? ' placeholder="Opcional"' : '') + '></label><label class="pr-field"><span>Questões</span><input name="questoes' + i + '" type="number" min="0" inputmode="numeric" value="' + esc(d.questoes ?? '') + '"></label><label class="pr-field"><span>Peso</span><input name="peso' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.peso ?? 1) + '"></label><label class="pr-field"><span>Mínimo</span><input name="minimo' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.minimo ?? '') + '"></label><input type="hidden" name="id' + i + '" value="' + esc(d.id || '') + '"></div>').join('');
+    const link = prova.length && cats.length ? '<span class="pr-k">Categoria dos mapas → disciplina</span><div class="pr-fgrid">' + cats.map((cat, j) => { const cur = E.disciplinaDoMapa({ category: cat }, c.id); return '<label class="pr-field"><span>' + esc(cat) + '</span><select name="cat' + j + '" data-cat="' + esc(cat) + '">' + prova.map((d) => '<option value="' + esc(d.id) + '"' + (cur?.id === d.id ? ' selected' : '') + '>' + esc(d.nome) + '</option>').join('') + '</select></label>'; }).join('') + '</div>' : '';
+    const cargo = e.cargo || {};
+    const ficha = '<span class="pr-k">Ficha do cargo (opcional)</span><div class="pr-fgrid">' + [['vagas', 'Vagas'], ['carga', 'Carga horária'], ['vencimento', 'Vencimento'], ['validade', 'Validade do concurso'], ['desempate', 'Desempate']].map(([k, l]) => '<label class="pr-field"><span>' + l + '</span><input name="cargo_' + k + '" value="' + esc(cargo[k] || '') + '" maxlength="80"></label>').join('') + '</div>';
+    return '<form data-pr-submit="save-prova" data-course="' + esc(c.id) + '" data-n="' + rows.length + '" data-cats="' + esc(JSON.stringify(cats)) + '">' + disc + '<div class="pr-fgrid"><label class="pr-field"><span>Mínimo geral (pontos)</span><input name="minimoGeral" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(e.minimoGeral ?? '') + '"></label><label class="pr-field"><span>Fonte</span><input name="fonte" value="' + esc(e.fonte || '') + '" maxlength="120" placeholder="Ex.: edital, item 13.1.2"></label></div>' + link + ficha + '<div class="pr-row"><button type="submit" class="pr-btn sm">Salvar estrutura</button>' + (prova.length ? ui.btn('Remover estrutura', ui.act('clear-prova', c.id), 'g sm') : '') + '</div></form>';
+  }
+  function raioX(c, all) {
+    const prova = E.prova(c.id), e = E.get(c.id) || {}, cats = [...new Set(all.map((m) => m.category).filter(Boolean))];
+    if (!prova.length) {
+      const pad = E.padraoDaBanca(c.board), list = Object.keys(E.padroes());
+      const use = pad ? ui.btn('Usar estrutura ' + esc(pad.banca), ui.act('apply-padrao', c.id + '|' + pad.banca), 'p sm') : list.length ? '<span class="pr-row">' + list.map((b) => ui.btn('Usar ' + esc(b), ui.act('apply-padrao', c.id + '|' + b), 'g sm')).join('') + '</span>' : '';
+      return ui.card(ui.head('Raio-X da prova', 'Estrutura ainda não informada', '', 'l') + '<p class="pr-detail">Com questões, pesos e mínimos de cada disciplina, o curso passa a mostrar quanto cada mapa vale na prova e a nota no formato da banca.' + (pad ? ' A banca deste curso tem um padrão salvo em Configurações.' : '') + '</p>' + use + '<details class="pr-add"><summary>Informar manualmente</summary>' + provaForm(c, [], e, cats) + '</details>', 'pr-raiox-card');
+    }
+    const max = E.pontosMax(prova), mg = E.minimoGeral(c.id);
+    const disc = prova.map((d) => {
+      const ms = all.filter((m) => E.disciplinaDoMapa(m, c.id)?.id === d.id), color = ms[0] ? P.mapColor(ms[0]) : 'var(--pr-latao)';
+      return '<div class="pr-dsc" style="--c:' + color + '"><span class="pr-k">' + esc(d.nome) + (d.padrao ? ' · demais conteúdos' : '') + '</span><b class="pr-sig">' + d.questoes + ' q</b><div class="pr-dcells"><span><i>Peso</i>' + String(d.peso).replace('.', ',') + '</span><span><i>Pontos</i>' + String(d.questoes * d.peso).replace('.', ',') + '</span><span><i>Mínimo</i>' + String(d.minimo).replace('.', ',') + '</span></div><div class="pr-row">' + (ms.length ? ms.map((m) => '<span class="pr-chip c" style="--c:' + P.mapColor(m) + '">' + esc(m.code || m.title) + '</span>').join('') : '<span class="pr-mono">nenhum mapa ligado</span>') + '</div></div>';
+    }).join('');
+    const cargo = e.cargo || {}, fichaCells = [['Vagas', cargo.vagas], ['Carga horária', cargo.carga], ['Vencimento', cargo.vencimento], ['Validade', cargo.validade], ['Desempate', cargo.desempate]].filter(([, v]) => v);
+    const ficha = fichaCells.length ? '<div class="pr-ficha">' + fichaCells.map(([l, v]) => '<span><i>' + l + '</i>' + esc(v) + '</span>').join('') + '</div>' : '';
+    const sub = prova.reduce((n, d) => n + d.questoes, 0) + ' questões · ' + String(max).replace('.', ',') + ' pontos' + (mg !== null ? ' · mínimo geral ' + String(mg).replace('.', ',') : '');
+    return ui.card(ui.head('Raio-X da prova', sub, e.fonte ? '<span class="pr-mono">' + esc(e.fonte) + '</span>' : '', 'l') + '<div class="pr-dscs">' + disc + '</div>' + ficha + '<details class="pr-add"><summary>Editar estrutura da prova</summary>' + provaForm(c, prova, e, cats) + '</details>', 'pr-raiox-card');
+  }
+  function alcanceSeg(m) {
+    if (m._linkedFrom) return '';
+    const k = P.data.keyOf(m), cur = E.alcance(m);
+    return '<label class="pr-field"><span>Alcance do mapa</span><select data-pr-change="set-alcance" data-key="' + esc(k) + '">' + E.ALCANCES.map(([id, l]) => '<option value="' + id + '"' + (id === cur ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label><p class="pr-mono">' + (cur === 'local' ? 'Local: sai da biblioteca quando este concurso encerrar.' : cur === 'misto' ? 'Misto: parte vale em outros editais; continua na biblioteca.' : 'Continua na biblioteca depois que este concurso encerrar.') + '</p>';
   }
   function mapRowMenu(m) {
     const k = P.data.keyOf(m), fav = typeof favs !== 'undefined' && favs.has(k);
@@ -123,7 +165,7 @@
       listing = shown.length && typeof mapCard === 'function' ? '<div class="map-grid pr-legacy-grid" data-pr-legacy>' + shown.filter((m) => !m._linkedFrom).map(mapCard).join('') + '</div>' + (shown.some((m) => m._linkedFrom) ? '<p class="pr-mono">' + shown.filter((m) => m._linkedFrom).length + ' mapa(s) vinculado(s) aparecem na lista.</p>' : '') : ui.empty('Nada neste filtro', 'Troque o filtro de situação ou de conteúdo.');
     } else listing = listTable(shown, fol, c);
     const mapsCard = ui.card('<div class="pr-vw"><div><span class="pr-k">Mapas do curso</span><h3>' + shown.length + ' de ' + all.length + ' mapas · ' + shown.reduce((n, m) => n + P.data.prog(m).marked, 0) + '/' + shown.reduce((n, m) => n + P.data.prog(m).total, 0) + ' tópicos</h3></div>' + ui.seg([['lista', 'Lista'], ['capas', 'Capas']], mode, 'view-mode', 'Visualização') + '</div>' + listing);
-    root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' + (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') + ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' + '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' + esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') + '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + carimbo + '<div class="pr-vw">' + '<div class="pr-row">' + acts + '</div>' + chips + '</div>' + catChips + '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>' + mapsCard;
+    root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' + (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') + ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' + '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' + esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') + '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + regua(c) + carimbo + raioX(c, all) + '<div class="pr-vw">' + '<div class="pr-row">' + acts + '</div>' + chips + '</div>' + catChips + '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>' + mapsCard;
     const legacy = root.querySelector('[data-pr-legacy]');
     if (legacy && typeof bindMapCards === 'function') bindMapCards(legacy);
   }
@@ -141,6 +183,33 @@
     'study-now': async (key, el) => { const map = typeof mapById === 'function' ? mapById(key) : null; if (!window.StudyDashboard?.active?.()) window.StudyDashboard?.start?.({ map, mode: 'planned', minutes: Number(el?.dataset.min) || 20, label: map?.code || 'Sessão' }); if (map && typeof openMap === 'function') await openMap(key); },
     replan: () => { try { window.StudyAutomation?.run?.(); if (typeof toast === 'function') toast('Plano atualizado.'); } catch (e) { console.warn(e); } P.schedule(state.view); },
     link: (fd, form) => { const id = fd.get('course'); if (!id) return; P.links.link(form.dataset.key, id, true); if (typeof toast === 'function') toast('Mapa vinculado ao ' + P.courses.sigla(P.courses.byId(id)) + '.'); P.schedule(state.view); },
+    /* V15.56 · editais */
+    'save-fases': (fd, form) => {
+      const id = form.dataset.course, cur = E.get(id) || {}, fases = { ...(cur.fases || {}) };
+      for (const [f] of E.FASES) { if (f === 'prova') continue; const v = String(fd.get(f) || ''); if (/^\d{4}-\d{2}-\d{2}$/.test(v)) fases[f] = { date: v }; else delete fases[f]; }
+      E.set(id, { fases });
+      if (typeof toast === 'function') toast('Cronograma salvo.');
+      P.schedule('course');
+    },
+    'save-prova': (fd, form) => {
+      const id = form.dataset.course, n = Number(form.dataset.n) || 0, cats = U.safeJson(form.dataset.cats || '[]', []);
+      const prova = [];
+      for (let i = 0; i < n; i++) { const nome = String(fd.get('nome' + i) || '').trim(); if (!nome) continue; prova.push({ id: String(fd.get('id' + i) || ''), nome, questoes: fd.get('questoes' + i), peso: fd.get('peso' + i), minimo: fd.get('minimo' + i), categorias: [] }); }
+      let list = E.normProva(prova);
+      if (!list.length) { if (typeof toast === 'function') toast('Informe ao menos uma disciplina com número de questões.'); return; }
+      const prev = E.prova(id);
+      list = list.map((d) => ({ ...d, categorias: prev.find((x) => x.id === d.id)?.categorias || (d.nome === 'Língua Portuguesa' ? ['Português'] : /legisla/i.test(d.nome) ? ['Legislação e Administração'] : []), padrao: prev.find((x) => x.id === d.id)?.padrao ?? d.padrao }));
+      cats.forEach((cat, j) => { const dest = String(fd.get('cat' + j) || ''); if (!dest) return; list.forEach((d) => { d.categorias = d.categorias.filter((x) => x !== cat); if (d.id === dest && !d.padrao) d.categorias.push(cat); }); });
+      if (!list.some((d) => d.padrao)) list[list.length - 1].padrao = true;
+      const cargo = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) { const v = String(fd.get('cargo_' + k) || '').trim(); if (v) cargo[k] = v; }
+      const mg = String(fd.get('minimoGeral') || '').trim();
+      E.set(id, { prova: list, minimoGeral: mg === '' ? null : Number(mg.replace(',', '.')), fonte: String(fd.get('fonte') || '').trim(), cargo });
+      if (typeof toast === 'function') toast('Estrutura da prova salva.');
+      P.schedule('course');
+    },
+    'clear-prova': (id, el) => P.armed(el, () => { E.set(id, { prova: [], minimoGeral: null }); P.schedule('course'); }, 'Toque de novo para remover'),
+    'apply-padrao': (arg) => { const [id, banca] = String(arg).split('|'); if (E.aplicarPadrao(id, banca) && typeof toast === 'function') toast('Estrutura ' + banca + ' aplicada. Confira e ajuste se o edital for diferente.'); P.schedule('course'); },
+    'set-alcance': (value, el) => { E.setAlcance(el.dataset.key, value); P.schedule(state.view); },
     unlink: (arg) => { const [key, id] = String(arg).split('|'); P.confirm('Desvincular mapa?', 'O mapa deixa de aparecer neste concurso. O HTML, o progresso e o curso de origem não mudam.', () => { P.links.link(key, id, false); P.schedule(state.view); }, 'Desvincular'); }
   };
   P.pages.courses = { render: renderList, actions: shared };

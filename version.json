@@ -1,12 +1,14 @@
 {
-  "version": "15.55.2",
-  "label": "V15.55.2-G",
-  "notes": "Correção do piscar ao sincronizar: os cards não refazem mais a animação de entrada a cada envio para a nuvem, e as capas já carregadas são mantidas no redesenho.",
+  "version": "15.56.0",
+  "label": "V15.56.0-G",
+  "notes": "Fundação do edital: cada curso guarda a estrutura da prova e o cronograma, o gabarito sai em pontos da banca e os mapas que servem em outros editais continuam na biblioteca.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] A grade de mapas não pisca mais quando uma alteração é sincronizada com a nuvem",
-    "[G] Capas já carregadas continuam no lugar quando a tela é redesenhada",
-    "[G] Textos corrigidos: \"alterações\", \"atualizações\", \"sessões\" e \"revisões\" no plural"
+    "[G] Curso: Raio-X da prova com questões, peso e mínimo de cada disciplina, e os mapas ligados a cada uma",
+    "[G] Curso: Régua do edital com as fases do concurso e o próximo marco",
+    "[G] Pós-prova: gabarito por disciplina, em pontos, com os mínimos eliminatórios",
+    "[G] Todos os Mapas: mapas portáteis de concursos encerrados continuam visíveis; filtro por alcance",
+    "[G] Configurações: nova folha 08 com a estrutura de prova por banca (FUNDATEC já incluída)"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +16,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-27T20:43:59-03:00"
+  "releasedAt": "2026-10-27T22:55:13-03:00"
 }

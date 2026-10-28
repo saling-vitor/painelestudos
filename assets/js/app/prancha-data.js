@@ -70,11 +70,14 @@
 
   /* ---------- store Prancha (sincronizado com as preferências da conta) ---------- */
   const STORE_KEY = 'studyapp.prancha.v1';
-  const emptyStore = () => ({ version: 1, updatedAt: '', closures: {}, cutoffs: {}, links: {}, history: {}, agendaStarts: {} });
+  /* V15.56: editais (estrutura da prova e cronograma por curso), padroes (estrutura típica por banca)
+     e mapMeta (alcance de cada mapa) entram no mesmo armazenamento, sincronizado e no backup. */
+  const SECTIONS = ['closures', 'cutoffs', 'links', 'history', 'agendaStarts', 'editais', 'padroes', 'mapMeta'];
+  const emptyStore = () => ({ version: 1, updatedAt: '', ...Object.fromEntries(SECTIONS.map((k) => [k, {}])) });
   function normalizeStore(v) {
     const s = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
     const obj = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? { ...x } : {});
-    return { version: 1, updatedAt: String(s.updatedAt || ''), closures: obj(s.closures), cutoffs: obj(s.cutoffs), links: obj(s.links), history: obj(s.history), agendaStarts: obj(s.agendaStarts) };
+    return { version: 1, updatedAt: String(s.updatedAt || ''), ...Object.fromEntries(SECTIONS.map((k) => [k, obj(s[k])])) };
   }
   function readStore() { return normalizeStore(safeJson(localStorage.getItem(STORE_KEY) || '{}', {})); }
   function writeStore(value, { touch = true } = {}) {
@@ -94,11 +97,7 @@
     const a = normalizeStore(local), b = normalizeStore(incoming);
     return normalizeStore({
       updatedAt: new Date(Math.max(Date.parse(a.updatedAt || 0) || 0, Date.parse(b.updatedAt || 0) || 0) || Date.now()).toISOString(),
-      closures: mergeRecordMap(a.closures, b.closures),
-      cutoffs: mergeRecordMap(a.cutoffs, b.cutoffs),
-      links: mergeRecordMap(a.links, b.links),
-      history: mergeRecordMap(a.history, b.history),
-      agendaStarts: mergeRecordMap(a.agendaStarts, b.agendaStarts)
+      ...Object.fromEntries(SECTIONS.map((k) => [k, mergeRecordMap(a[k], b[k])]))
     });
   }
   function importStore(value, { merge = true } = {}) {
@@ -555,7 +554,110 @@
   function dailyPlanRaw() { try { return window.StudyCoach?.snapshot?.() || { items: [], summary: {} }; } catch { return { items: [], summary: {} }; } }
   P.plan = { priorities, daily: dailyPlan };
 
-  P.data = { keyOf, prog, agg, maps, allMaps, folhas, mapsForCourse };
+  /* ---------- editais (V15.56) ----------
+     editais[courseId] = { banca, prova:[{id,nome,questoes,peso,minimo,categorias[],padrao}], minimoGeral, fonte,
+                           fases:{<fase>:{date}}, cargo:{vagas,carga,vencimento,validade,desempate}, updatedAt }
+     padroes[BANCA]    = { prova, minimoGeral, fonte, updatedAt }  (ponto de partida ao criar um curso)
+     mapMeta[mapKey]   = { alcance, updatedAt }                       (local · estadual · portátil · misto)
+     Sem estrutura da prova, nada muda: as funções devolvem [] ou null e as telas seguem como antes. */
+  const FASES = [['inscricoes', 'Inscrições'], ['homologacao', 'Homologação'], ['prova', 'Prova'], ['gabarito', 'Gabarito preliminar'], ['recursos', 'Recursos'], ['resultado', 'Resultado final'], ['convocacao', 'Convocação']];
+  const PADROES_BASE = {
+    FUNDATEC: {
+      prova: [
+        { id: 'lp', nome: 'Língua Portuguesa', questoes: 10, peso: 1, minimo: 4, categorias: ['Português'] },
+        { id: 'leg', nome: 'Legislação', questoes: 10, peso: 1, minimo: 4, categorias: ['Legislação e Administração'] },
+        { id: 'esp', nome: 'Conhecimentos Específicos', questoes: 40, peso: 2, minimo: 40, categorias: [], padrao: true }
+      ],
+      minimoGeral: 50,
+      fonte: 'Edital DEMHAB 001/2026, item 13.1.2 (60 questões, nível superior)'
+    }
+  };
+  const ALCANCES = [['local', 'Local'], ['estadual', 'Estadual'], ['portatil', 'Portátil'], ['misto', 'Misto']];
+  const num = (v, d = 0) => { const n = Number(String(v ?? '').replace(',', '.')); return Number.isFinite(n) ? n : d; };
+  function normDisc(d, i) {
+    if (!d || typeof d !== 'object') return null;
+    const nome = String(d.nome || '').trim();
+    if (!nome) return null;
+    const id = String(d.id || norm(nome).replace(/\s+/g, '-') || 'd' + i).slice(0, 40);
+    return { id, nome, questoes: Math.max(0, Math.round(num(d.questoes))), peso: Math.max(0, num(d.peso, 1)), minimo: Math.max(0, num(d.minimo)), categorias: Array.isArray(d.categorias) ? d.categorias.map(String) : [], padrao: !!d.padrao };
+  }
+  function normProva(list) {
+    const out = (Array.isArray(list) ? list : []).map(normDisc).filter((d) => d && d.questoes > 0);
+    if (out.length && !out.some((d) => d.padrao)) out[out.length - 1].padrao = true;
+    return out;
+  }
+  function editalOf(courseId) { const r = readStore().editais[courseId]; return r && !r.removed ? r : null; }
+  function provaOf(courseId) { return memo('ep:' + courseId, () => normProva(editalOf(courseId)?.prova)); }
+  function setEdital(courseId, patch) { return patchStore('editais', courseId, patch); }
+  const pontosMax = (prova) => prova.reduce((s, d) => s + d.questoes * d.peso, 0);
+  function minimoGeral(courseId) { const v = num(editalOf(courseId)?.minimoGeral, NaN); return Number.isFinite(v) ? v : null; }
+  /* disciplina da prova a que o mapa pertence: pela categoria; o que não casa vai para a disciplina padrão */
+  function disciplinaDoMapa(map, courseId = map?.courseId) {
+    const prova = provaOf(courseId);
+    if (!prova.length || !map) return null;
+    const cat = String(map.category || '');
+    return prova.find((d) => d.categorias.includes(cat)) || prova.find((d) => d.padrao) || null;
+  }
+  /* nota no formato da banca: acertos × peso, mínimo por disciplina e mínimo geral */
+  function pontuar(courseId, acertos = {}) {
+    const prova = provaOf(courseId);
+    if (!prova.length) return null;
+    let pontos = 0, corretas = 0, questoes = 0;
+    const por = prova.map((d) => {
+      const a = Math.max(0, Math.min(d.questoes, Math.round(num(acertos[d.id]))));
+      const pts = Math.round(a * d.peso * 100) / 100;
+      pontos += pts; corretas += a; questoes += d.questoes;
+      return { id: d.id, nome: d.nome, acertos: a, questoes: d.questoes, peso: d.peso, pontos: pts, max: d.questoes * d.peso, minimo: d.minimo, ok: pts >= d.minimo, falta: Math.max(0, Math.round((d.minimo - pts) * 100) / 100) };
+    });
+    pontos = Math.round(pontos * 100) / 100;
+    const mg = minimoGeral(courseId), falhas = por.filter((x) => !x.ok);
+    return { pontos, max: pontosMax(prova), corretas, questoes, por, minimoGeral: mg, geralOk: mg === null || pontos >= mg, aprovado: !falhas.length && (mg === null || pontos >= mg), falhas };
+  }
+  /* cronograma: a data da prova vem do curso (Gerenciar curso); as demais fases, do edital */
+  function fasesOf(course, today = new Date()) {
+    if (!course) return [];
+    const e = editalOf(course.id) || {}, t0 = startDay(today);
+    const list = FASES.map(([id, label]) => ({ id, label, date: id === 'prova' ? (examDate(course) || parseDate(e.fases?.prova?.date)) : parseDate(e.fases?.[id]?.date) }));
+    let atual = -1;
+    list.forEach((f, i) => { if (f.date && f.date <= t0) atual = i; });
+    return list.map((f, i) => ({ ...f, status: i === atual ? 'atual' : f.date && f.date < t0 ? 'passada' : i < atual ? 'passada' : 'futura', days: f.date ? daysBetween(t0, f.date) : null }));
+  }
+  function proximoMarco(course, today = new Date()) { return fasesOf(course, today).find((f) => f.date && f.days >= 0 && f.id !== 'prova') || null; }
+  function padroes() {
+    const out = {};
+    for (const [k, v] of Object.entries(PADROES_BASE)) out[k] = { ...v, prova: normProva(v.prova), base: true };
+    for (const [k, v] of Object.entries(readStore().padroes)) { if (!v || v.removed) continue; const prova = normProva(v.prova); if (prova.length) out[k] = { ...v, prova, base: !!PADROES_BASE[k] }; }
+    return out;
+  }
+  function padraoDaBanca(board) {
+    const b = norm(board);
+    if (!b) return null;
+    const all = padroes();
+    const k = Object.keys(all).find((x) => b.includes(norm(x)));
+    return k ? { banca: k, ...all[k] } : null;
+  }
+  function setPadrao(banca, value) { const k = String(banca || '').trim().toUpperCase().slice(0, 30); if (!k) return null; return patchStore('padroes', k, value); }
+  function aplicarPadrao(courseId, banca) {
+    const p = padroes()[String(banca || '').toUpperCase()];
+    if (!p) return null;
+    return setEdital(courseId, { banca: String(banca).toUpperCase(), prova: p.prova, minimoGeral: p.minimoGeral ?? null, fonte: p.fonte || '' });
+  }
+  /* alcance do mapa: escolha do usuário > catálogo > categoria (Legislação tende a ser local) */
+  function alcance(map) {
+    if (!map) return 'portatil';
+    const meta = readStore().mapMeta[keyOf(map)];
+    if (meta && !meta.removed && ALCANCES.some(([id]) => id === meta.alcance)) return meta.alcance;
+    if (ALCANCES.some(([id]) => id === map.alcance)) return map.alcance;
+    return /legisla|administra/.test(norm(map.category)) ? 'local' : 'portatil';
+  }
+  function setAlcance(key, value) { if (!ALCANCES.some(([id]) => id === value)) return null; return patchStore('mapMeta', key, { alcance: value }); }
+  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva };
+
+  /* biblioteca (V15.56): o que está em estudo + mapas portáteis/mistos de concursos encerrados.
+     Só os mapas locais de concursos encerrados ficam ocultos. */
+  const libraryMaps = () => memo('lib', () => { const live = new Set(maps().map(keyOf)); return allMaps().filter((m) => live.has(keyOf(m)) || alcance(m) !== 'local'); });
+
+  P.data = { keyOf, prog, agg, maps, allMaps, libraryMaps, folhas, mapsForCourse };
 
   /* ---------- integração com sincronização e backup ---------- */
   function installSync() {

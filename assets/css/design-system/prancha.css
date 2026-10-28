@@ -586,3 +586,30 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-disc>summary b{font-weight:500;color:var(--pr-papel)}
 .pr-disc>summary span{font-family:var(--pr-f-mono);font-size:max(12px,var(--pr-fs-xs));color:var(--pr-papel-3)}
 .pr-disc[open]>summary{border-bottom:1px solid var(--pr-linha);margin-bottom:12px}
+/* V15.56 · Fundação do edital: régua de fases, raio-x da prova, formulários em grade e gabarito por disciplina */
+.pr-regua{list-style:none;margin:4px 0 0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(96px,1fr));overflow-x:auto;scrollbar-width:thin}
+.pr-regua li{display:grid;gap:4px;align-content:start;padding:10px 8px 0 0;border-top:3px solid var(--pr-linha);min-width:0}
+.pr-regua li .t{font-size:var(--fs-body-sm);font-weight:700;color:var(--pr-papel-2)}
+.pr-regua li .d{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-3)}
+.pr-regua li.passada{border-top-color:var(--pr-latao-e)}
+.pr-regua li.passada .t{color:var(--pr-papel-3)}
+.pr-regua li.atual{border-top-color:var(--pr-latao)}
+.pr-regua li.atual .t{color:var(--pr-latao-c)}
+.pr-regua li .pr-chip{justify-self:start}
+.pr-fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.pr-fgrid.d{grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));align-items:end}
+.pr-dscs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.pr-dsc{display:grid;gap:8px;align-content:start;padding:12px 14px;border:1px solid var(--pr-linha);border-top:3px solid var(--c);border-radius:10px;background:var(--pr-g0);min-width:0}
+.pr-dsc>.pr-sig{font-size:var(--fs-h1);color:var(--c)}
+.pr-dcells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pr-dcells span,.pr-ficha span{display:grid;gap:2px;padding:7px 8px;border-radius:8px;background:var(--pr-g2);font-weight:700;font-size:var(--fs-body-sm);min-width:0;overflow-wrap:anywhere}
+.pr-dcells i,.pr-ficha i{font-style:normal;font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);letter-spacing:.08em;text-transform:uppercase;color:var(--pr-papel-3);font-weight:500}
+.pr-ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.pr-gab{display:grid;gap:10px}
+.pr-gab .ln{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) auto;gap:12px;align-items:center;font-size:var(--fs-body-sm)}
+.pr-gab .tr{position:relative;height:12px;border-radius:6px;background:var(--pr-g3)}
+.pr-gab .tr>i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--c,var(--pr-latao))}
+.pr-gab .tr>em{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--pr-oxido)}
+.pr-gab .v{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-2);white-space:nowrap}
+.pr-gab .v.ox{color:var(--pr-oxido)}
+@media (max-width:700px){.pr-fgrid.d{grid-template-columns:repeat(3,minmax(0,1fr))}.pr-fgrid.d>.pr-field:first-child{grid-column:1/-1}.pr-gab .ln{grid-template-columns:minmax(0,1fr) auto}.pr-gab .ln .tr{grid-column:1/-1;grid-row:2}}

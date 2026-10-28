@@ -6,7 +6,7 @@
   const U = P.util, ui = P.ui, { esc, fmtNum, plural, pct } = U;
   const KEY = 'studyapp.prancha.mapsView';
   const st = (() => { try { return { view: 'grade', sort: 'az', group: 'cat', ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch { return { view: 'grade', sort: 'az', group: 'cat' }; } })();
-  st.fe = 'todos'; st.fc = 'todos'; st.fco = 'todos'; st.q = ''; st.closed = false;
+  st.fe = 'todos'; st.fc = 'todos'; st.fco = 'todos'; st.fa = 'todos'; st.q = ''; st.closed = false;
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ view: st.view, sort: st.sort, group: st.group })); } catch {} };
   let offline = null, offlineBusy = false;
 
@@ -38,8 +38,11 @@
     return '<div class="pr-gm" style="--c:' + P.mapColor(m) + '" data-pr-act="open-map" data-arg="' + esc(k) + '" role="link" tabindex="0" aria-label="' + esc('Abrir ' + (m.code || '') + ' · ' + m.title) + '">' + ui.mapCov(m) +
       '<button type="button" class="pr-fav" data-pr-act="fav" data-arg="' + esc(k) + '" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos') + '">' + (typeof uiIcon === 'function' ? uiIcon('star', 'ui-icon-sm') : '★') + '</button>' +
       '<div class="stamp"><div><span>Folha</span><b>' + esc(fol.get(k) || '—') + '</b></div><div><span>Tópicos</span><b>' + p.marked + '/' + p.total + '</b></div><div><span>Feito</span><b>' + pct(p.marked, p.total) + '%</b></div></div>' +
-      '<div class="ti"><b>' + esc(m.title) + '</b>' + ui.stbar(p) + '<div class="pr-row sp"><span class="pr-mono">' + esc(ui.mapState(p) + ' · ' + ui.lastLabel(p.lastActivity) + (c ? ' · ' + P.courses.sigla(c) : '')) + '</span>' + rowMenu(m) + '</div></div></div>';
+      '<div class="ti"><b>' + esc(m.title) + '</b>' + ui.stbar(p) + '<div class="pr-row sp"><span class="pr-mono">' + esc(ui.mapState(p) + ' · ' + ui.lastLabel(p.lastActivity) + (c ? ' · ' + P.courses.sigla(c) : '')) + '</span>' + alcChip(m) + rowMenu(m) + '</div></div></div>';
   }
+  /* V15.56 · alcance: portátil (serve em qualquer edital), misto, estadual ou local */
+  const ALC_LABEL = Object.fromEntries(P.editais.ALCANCES);
+  function alcChip(m) { const a = P.editais.alcance(m); return a === 'local' ? '' : '<span class="pr-chip ' + (a === 'portatil' ? 'ok' : 'l') + '">' + esc(ALC_LABEL[a].toLowerCase()) + '</span>'; }
   function rowMenu(m) {
     const k = P.data.keyOf(m);
     return ui.menu('am-' + k, [['Abrir', ui.act('open-map', k)], [isFav(k) ? 'Remover dos favoritos' : 'Adicionar aos favoritos', ui.act('fav-menu', k)], typeof mapCanUpdateHtml === 'function' && mapCanUpdateHtml(m) ? ['Atualizar HTML', ui.act('update-map', k)] : null, ['Gerenciar mapa', ui.act('manage-map', k)], ['Abrir o curso', ui.act('open-course', m.courseId)]]);
@@ -51,13 +54,14 @@
     }).join('') + '</tbody></table></div>';
   }
   function render(root) {
-    /* V15.54: concursos encerrados (arquivados ou com prova realizada) ficam ocultos; "Mostrar encerrados" traz o acervo deles */
-    const live = P.data.maps(), every = P.data.allMaps(), hidden = every.length - live.length;
+    /* V15.54: concursos encerrados (arquivados ou com prova realizada) ficam ocultos; "Mostrar encerrados" traz o acervo deles.
+       V15.56: só os mapas LOCAIS desses concursos saem da vista; portáteis e mistos continuam (servem no próximo edital). */
+    const live = P.data.libraryMaps(), every = P.data.allMaps(), hidden = every.length - live.length;
     if (!hidden) st.closed = false;
     const all = st.closed ? every.filter((m) => !live.includes(m)) : live;
     if (offline === null) refreshOffline();
     const top = ui.top({ eyebrow: 'Biblioteca global', title: 'Todos os Mapas', tabs: [{ id: 'grade', label: 'Grade' }, { id: 'lista', label: 'Lista' }, { id: 'grupo', label: 'Agrupado' }], active: st.view, label: 'Todos os Mapas', tabAct: 'view' });
-    const closedBar = hidden ? '<div class="pr-row sp" style="margin:4px 0 2px"><span class="pr-mono">' + (st.closed ? 'Mostrando ' + hidden + ' ' + plural(hidden, 'mapa') + ' de concursos encerrados · progresso e histórico guardados' : hidden + ' ' + plural(hidden, 'mapa') + ' de concursos encerrados ' + plural(hidden, 'oculto', 'ocultos')) + '</span>' + ui.btn(st.closed ? 'Voltar aos mapas em estudo' : 'Mostrar encerrados', ui.act('closed'), 'g sm') + '</div>' : '';
+    const closedBar = hidden ? '<div class="pr-row sp" style="margin:4px 0 2px"><span class="pr-mono">' + (st.closed ? 'Mostrando ' + hidden + ' ' + plural(hidden, 'mapa local', 'mapas locais') + ' de concursos encerrados · progresso e histórico guardados' : hidden + ' ' + plural(hidden, 'mapa local', 'mapas locais') + ' de concursos encerrados ' + plural(hidden, 'oculto', 'ocultos') + ' · os portáteis continuam aqui') + '</span>' + ui.btn(st.closed ? 'Voltar aos mapas em estudo' : 'Mostrar encerrados', ui.act('closed'), 'g sm') + '</div>' : '';
     if (!all.length && hidden && !st.closed) { root.innerHTML = top + closedBar + ui.card(ui.empty('Nenhum mapa em estudo', 'Todos os concursos estão encerrados. Crie um novo concurso ou reative um em Cursos.', ui.btn('Ver cursos', ui.act('nav', 'courses'), 'g sm'))); return; }
     if (!all.length) { root.innerHTML = top + ui.card(ui.empty(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Nenhum mapa na biblioteca' : 'Biblioteca desconectada', typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Importe os mapas HTML de um concurso.' : 'Entre na sua conta para carregar os mapas.', ui.btn(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'Importar mapas' : 'Abrir Configurações', ui.act(typeof StudyCloud !== 'undefined' && StudyCloud.session() ? 'import-maps' : 'nav', 'settings'), 'p'))); return; }
     const fol = P.data.folhas(all), gp = P.data.agg(all);
@@ -77,10 +81,12 @@
     const q = U.norm(st.q);
     const fe = FE.find((x) => x[0] === st.fe) || FE[0];
     const base = all.filter((m) => (!q || U.norm([m.title, m.shortTitle, m.code, m.category, m.board, m.contest].join(' ')).includes(q)) && (st.fco === 'todos' || String(m.courseId) === st.fco));
-    const okCat = (m) => st.fc === 'todos' || m.category === st.fc;
+    const okCat = (m) => (st.fc === 'todos' || m.category === st.fc) && (st.fa === 'todos' || P.editais.alcance(m) === st.fa);
     const list = sorted(base.filter((m) => fe[2](m, progs.get(P.data.keyOf(m))) && okCat(m)));
     const feChips = '<div class="pr-chips" role="group" aria-label="Estado">' + FE.filter((x) => x[0] !== 'off' || offline).map(([id, label, fn]) => ui.chipf(id, label, base.filter((m) => okCat(m) && fn(m, progs.get(P.data.keyOf(m)))).length, st.fe === id, 'fe')).join('') + '</div>';
     const catChips = '<div class="pr-chips" role="group" aria-label="Categoria">' + ui.chipf('todos', 'Todas', undefined, st.fc === 'todos', 'fc', undefined, 'Todas as categorias') + cats.map((x) => ui.chipf(x, (typeof categoryShortName === 'function' ? categoryShortName(x) : x), base.filter((m) => m.category === x && fe[2](m, progs.get(P.data.keyOf(m)))).length, st.fc === x, 'fc', P.categoryPigment(x), x)).join('') + '</div>';
+    const alcN = (id) => base.filter((m) => (st.fc === 'todos' || m.category === st.fc) && fe[2](m, progs.get(P.data.keyOf(m))) && P.editais.alcance(m) === id).length;
+    const alcChips = '<div class="pr-chips" role="group" aria-label="Alcance">' + ui.chipf('todos', 'Todo alcance', undefined, st.fa === 'todos', 'fa') + P.editais.ALCANCES.map(([id, l]) => { const n = alcN(id); return n || st.fa === id ? ui.chipf(id, l, n, st.fa === id, 'fa') : ''; }).join('') + '</div>';
     const courseChips = courses.length > 1 ? '<div class="pr-chips" role="group" aria-label="Concurso">' + ui.chipf('todos', 'Todos os concursos', undefined, st.fco === 'todos', 'fco') + courses.map((c) => ui.chipf(String(c.id), P.courses.sigla(c), all.filter((m) => String(m.courseId) === String(c.id)).length, st.fco === String(c.id), 'fco', P.courses.color(c))).join('') + '</div>' : '';
     /* V15.53.2 · mesma barra de dentro do curso: busca e ordenação à esquerda, estados à direita, numa linha só. */
     const sortSel = '<span class="pr-sortsel"><select data-pr-input="sort" aria-label="Ordenar mapas">' + SORTS.map(([id, label]) => '<option value="' + id + '"' + (st.sort === id ? ' selected' : '') + '>Ordenar: ' + esc(label) + '</option>').join('') + '</select></span>';
@@ -97,7 +103,7 @@
         return '<section class="pr-grpc"><div class="pr-grph" style="--c:' + g.color + '"><b>' + esc(g.name) + '</b>' + ui.mini(g.all, g.color) + '<span class="pr-mono">' + g.all.length + ' mapas · ' + ag.marked + '/' + ag.total + ' · ' + pct(ag.marked, ag.total) + '%</span></div><div class="pr-gridm">' + ms.map((m) => card(m, fol)).join('') + '</div></section>';
       }).join('');
     } else body = '<div class="pr-gridm">' + list.map((m) => card(m, fol)).join('') + '</div>';
-    root.innerHTML = top + closedBar + carimbo + tool + catChips + courseChips + '<p class="pr-mono" aria-live="polite">' + list.length + ' de ' + all.length + ' mapas</p>' + body;
+    root.innerHTML = top + closedBar + carimbo + tool + catChips + alcChips + courseChips + '<p class="pr-mono" aria-live="polite">' + list.length + ' de ' + all.length + ' mapas</p>' + body;
   }
   let qTimer = 0;
   document.addEventListener('input', (e) => {
@@ -118,10 +124,11 @@
       fe: (id) => { st.fe = id; P.schedule('maps'); },
       fc: (id) => { st.fc = id; P.schedule('maps'); },
       fco: (id) => { st.fco = id; P.schedule('maps'); },
+      fa: (id) => { st.fa = id; P.schedule('maps'); },
       sort: (id) => { st.sort = id; save(); P.schedule('maps'); },
       group: (id) => { st.group = id; save(); P.schedule('maps'); },
       closed: () => { st.closed = !st.closed; st.fco = 'todos'; P.schedule('maps'); },
-      clear: () => { st.fe = 'todos'; st.fc = 'todos'; st.fco = 'todos'; st.q = ''; P.schedule('maps'); },
+      clear: () => { st.fe = 'todos'; st.fc = 'todos'; st.fco = 'todos'; st.fa = 'todos'; st.q = ''; P.schedule('maps'); },
       'fav-menu': (key) => { P.actions.fav(key); P.schedule('maps'); },
       fav: (key, el, root, e) => { e?.stopPropagation(); P.actions.fav(key, el); }
     }
