@@ -173,10 +173,10 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 
 /* ---------- planta do edital ---------- */
 .pr-tiles{display:flex;flex-wrap:wrap;gap:6px}
-.pr-tile{position:relative;flex-grow:var(--w);flex-basis:calc(var(--w)*4px);min-width:96px;height:112px;border-radius:8px;overflow:hidden;border:1px solid var(--pr-linha);background:var(--pr-g0);cursor:pointer;text-align:left;padding:0;color:inherit}
+.pr-tile{position:relative;display:flex;flex-direction:column;flex-grow:var(--w);flex-basis:calc(var(--w)*4px);min-width:96px;min-height:112px;height:auto;border-radius:8px;overflow:hidden;border:1px solid var(--pr-linha);background:var(--pr-g0);cursor:pointer;text-align:left;padding:0;color:inherit}
 .pr-tile .fill{position:absolute;left:0;right:0;bottom:0;height:var(--p);background:color-mix(in srgb,var(--c) 22%,transparent);border-top:1px solid color-mix(in srgb,var(--c) 60%,transparent)}
 .pr-tile .stripe{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
-.pr-tile .in{position:relative;padding:9px 10px 9px 12px;display:grid;gap:2px;height:100%;align-content:space-between}
+.pr-tile .in{position:relative;flex:1 0 auto;min-width:0;width:100%;padding:9px 10px 9px 12px;display:flex;flex-direction:column;justify-content:space-between;gap:8px}
 .pr-tile .sig{font-family:var(--pr-f-capa);font-size:var(--pr-fs-sig);line-height:1;color:var(--c);overflow-wrap:anywhere}
 .pr-tile .pc{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel)}
 .pr-tile .tp{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-2)}
@@ -187,8 +187,8 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-tile .flags .s{color:var(--pr-papel-2);border:1px solid var(--pr-linha)}
 .pr-tile:hover,.pr-tile.on{border-color:color-mix(in srgb,var(--c) 70%,transparent)}
 .pr-tile.dim{opacity:.28}
-.pr-tiles.sm .pr-tile{height:92px}
-@media (max-width:600px){.pr-tile{height:96px;min-width:30%;flex-basis:30%}.pr-tile .sig{font-size:var(--fs-h2)}}
+.pr-tiles.sm .pr-tile{min-height:92px}
+@media (max-width:600px){.pr-tile{min-height:96px;min-width:30%;flex-basis:30%}.pr-tile .sig{font-size:var(--fs-h2)}}
 .pr-mini{display:flex;gap:3px;height:40px;min-width:0}
 .pr-mini i{flex-grow:var(--w);flex-basis:0;min-width:6px;border-radius:3px;background:var(--pr-g3);position:relative;overflow:hidden;border-top:2px solid var(--c)}
 .pr-mini i::after{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--p);background:color-mix(in srgb,var(--c) 55%,transparent)}
