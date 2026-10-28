@@ -1,12 +1,12 @@
 {
-  "version": "15.60.0",
-  "label": "V15.60.0-G",
-  "notes": "Ajustes finos: nome completo do concurso, linha do tempo alinhada, cartões alinhados, menu ⋯ por cima de tudo e siglas dos lotes inteiras.",
+  "version": "15.60.1",
+  "label": "V15.60.1-G",
+  "notes": "Categorias por extenso nos cartões, régua do Plano do dia com respiro e capas maiores em Meus Cursos.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Concursos aparecem pelo nome completo (MONTE → MONTENEGRO) e a linha do tempo separa provas próximas com as bolinhas sobre a linha",
-    "[G] Menu ⋯ dos mapas abre por cima de tudo; cartões com nome longo ficam alinhados",
-    "[G] Planta do edital: a sigla do lote não quebra e os tópicos ficam sempre visíveis"
+    "[G] Cartões de mapa: a categoria aparece inteira na própria linha, sem corte",
+    "[G] Plano do dia: cada bloco mostra a sigla e os minutos sem encavalar",
+    "[G] Meus Cursos: capas dos concursos maiores e mais visíveis"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T11:22:31-03:00"
+  "releasedAt": "2026-10-28T13:12:50-03:00"
 }

@@ -50,7 +50,7 @@
     const total = items.reduce((s, x) => s + x.minutes, 0);
     if (!items.length) return '<div class="pr-dayline" role="img" aria-label="Régua do dia vazia"><span class="free" style="flex:1">nada planejado</span></div>';
     const goal = P.time.goals().daily, free = Math.max(0, goal - total);
-    return '<div class="pr-dayline" role="img" aria-label="Régua do dia: ' + fmtMin(total) + ' planejados">' + items.map((x) => '<span class="' + (x.done ? 'done' : '') + (curKey && x.key === curKey ? ' cur' : '') + '" style="flex:' + x.minutes + ';--c:' + x.color + '" title="' + esc(x.code + ' · ' + fmtMin(x.minutes)) + '">' + esc(x.code) + '</span>').join('') + (free > 0 ? '<span class="free" style="flex:' + Math.min(free, total * 2 || free) + '">' + fmtMin(free) + ' livres</span>' : '') + '</div>';
+    return '<div class="pr-dayline" role="img" aria-label="Régua do dia: ' + fmtMin(total) + ' planejados">' + items.map((x) => '<span class="' + (x.done ? 'done' : '') + (curKey && x.key === curKey ? ' cur' : '') + '" style="flex:' + x.minutes + ';--c:' + x.color + '" title="' + esc(x.code + ' · ' + fmtMin(x.minutes)) + '"><b>' + esc(x.code) + '</b><i>' + fmtMin(x.minutes) + '</i></span>').join('') + (free > 0 ? '<span class="free" style="flex:' + Math.min(free, total || free) + '">' + fmtMin(free) + ' livres</span>' : '') + '</div>';
   }
   function planList(items, curKey = '') {
     if (!items.length) return ui.empty('Nenhum bloco para hoje', 'Planeje na Agenda ou use "Tenho só" para montar um bloco agora.', ui.btn('Abrir a Agenda', ui.act('nav', 'agenda'), 'g sm'));
