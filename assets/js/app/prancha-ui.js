@@ -269,11 +269,15 @@
     P.__frame = {};
     const keepImgs = collectImgs(root);
     /* V15.56 · seções <details> abertas continuam abertas depois do redesenho (sincronização, índice de busca) */
+    /* V15.60.5 · o menu ⋯ aberto sobrevive ao redesenho (antes ele piscava: o redesenho o destruía) */
+    const openMenu = root.querySelector('[data-pr-menu-panel]:not([hidden])')?.dataset.prMenuPanel || '';
+    if (openMenu) menuGuard = Date.now() + 400;
     const openKeys = new Set([...root.querySelectorAll('details[open]>summary')].map((x) => x.textContent.trim()).filter(Boolean));
     try { page.render(root); reuseImgs(root, keepImgs); if (openKeys.size) root.querySelectorAll('details:not([open])>summary').forEach((x) => { if (openKeys.has(x.textContent.trim())) x.parentElement.open = true; }); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
     catch (e) { console.error('[Prancha] falha ao desenhar ' + view, e); root.innerHTML = '<div class="pr-empty"><b>Não foi possível desenhar esta prancha.</b><p>O conteúdo original continua disponível abaixo.</p></div>'; root.closest('.view')?.classList.remove('pr-on'); }
     finally { P.__frame = null; }
     if (Math.abs(window.scrollY - scrollY) > 2) window.scrollTo(0, scrollY);
+    if (openMenu) { const pn = [...root.querySelectorAll('[data-pr-menu-panel]')].find((x) => x.dataset.prMenuPanel === openMenu), mb = pn?.parentElement?.querySelector('[data-pr-menu]'); if (pn && mb) { pn.hidden = false; placePanel(pn, mb); mb.setAttribute('aria-expanded', 'true'); } }
     if (secTarget) realignSec();
     stickNav();
     document.body.classList.toggle('pr-session-home', view === 'home' && root.dataset.screen === 'sessao');
@@ -287,6 +291,7 @@
   /* delegação de eventos */
   /* V15.60 · o menu "⋯" abre na camada superior (Popover API), por cima de tudo: o cartão que o contém
      corta o que transborda (overflow:hidden) e o menu aparecia espremido dentro dele. */
+  let menuGuard = 0, menuScrollY = 0;
   const canPop = typeof HTMLElement !== 'undefined' && typeof HTMLElement.prototype.showPopover === 'function';
   function hidePanel(p) { p.hidden = true; if (canPop && p.matches?.(':popover-open')) { try { p.hidePopover(); } catch {} } p.style.removeProperty('top'); p.style.removeProperty('left'); }
   function placePanel(panel, btn) {
@@ -300,7 +305,7 @@
   function closeMenus(except) { document.querySelectorAll('.pr [data-pr-menu-panel]').forEach((p) => { if (p !== except && (!p.hidden || p.style.top)) { hidePanel(p); p.parentElement?.querySelector('[data-pr-menu]')?.setAttribute('aria-expanded', 'false'); } }); }
   function onClick(e) {
     const mbtn = e.target.closest('[data-pr-menu]');
-    if (mbtn) { e.stopPropagation(); const panel = mbtn.parentElement.querySelector('[data-pr-menu-panel]'); const open = panel.hidden; closeMenus(panel); if (open) { panel.hidden = false; placePanel(panel, mbtn); } else hidePanel(panel); mbtn.setAttribute('aria-expanded', String(open)); if (open) panel.querySelector('button')?.focus({ preventScroll: true }); return; }
+    if (mbtn) { e.stopPropagation(); const panel = mbtn.parentElement.querySelector('[data-pr-menu-panel]'); const open = panel.hidden; closeMenus(panel); if (open) { panel.hidden = false; menuScrollY = window.scrollY; menuGuard = Date.now() + 400; placePanel(panel, mbtn); } else hidePanel(panel); mbtn.setAttribute('aria-expanded', String(open)); if (open) panel.querySelector('button')?.focus({ preventScroll: true }); return; }
     const el = e.target.closest('[data-pr-act]');
     if (!el || el.disabled) return;
     const root = e.currentTarget, view = root.dataset.prancha, name = el.dataset.prAct;
@@ -333,7 +338,7 @@
   }
   document.addEventListener('click', (e) => { if (!e.target.closest('.pr-menu')) closeMenus(); });
   /* o menu flutuante não acompanha a rolagem: rolar ou redimensionar fecha */
-  const closeOnMove = (e) => { if (e?.target?.closest?.('[data-pr-menu-panel]')) return; if (document.querySelector('.pr [data-pr-menu-panel]:not([hidden])')) closeMenus(); };
+  const closeOnMove = (e) => { if (e?.target?.closest?.('[data-pr-menu-panel]')) return; if (Date.now() < menuGuard) return; if (e?.type === 'scroll' && (e.target === document || e.target === document.documentElement || e.target === document.body) && Math.abs(window.scrollY - menuScrollY) < 24) return; if (document.querySelector('.pr [data-pr-menu-panel]:not([hidden])')) closeMenus(); };
   window.addEventListener('scroll', closeOnMove, { capture: true, passive: true });
   window.addEventListener('resize', closeOnMove, { passive: true });
 

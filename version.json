@@ -1,10 +1,11 @@
 {
-  "version": "15.60.4",
-  "label": "V15.60.4-G",
-  "notes": "O download dos mapas em .zip agora mostra o progresso na barra lateral.",
+  "version": "15.60.5",
+  "label": "V15.60.5-G",
+  "notes": "Menu ⋯ abre de primeira e o aviso do .zip cabe na barra lateral.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Baixar mapas (.zip): aviso na barra lateral, acima de \"Nuvem conectada\", com a porcentagem, o mapa que está sendo lido e o tamanho final do arquivo; no celular o aviso flutua no canto da tela"
+    "[G] Menu ⋯: não pisca mais ao abrir — continua aberto mesmo quando a página se atualiza sozinha",
+    "[G] Aviso do .zip: o texto não sai mais do quadro; o nome do curso aparece inteiro"
   ],
   "automation": {
     "enabled": true,
@@ -12,5 +13,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T18:24:41-03:00"
+  "releasedAt": "2026-10-28T18:45:13-03:00"
 }
