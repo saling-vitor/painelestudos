@@ -103,7 +103,7 @@ test('Edital [G] · Configurações: folha 08 com padrões por banca', async ({ 
   const host = page.locator('.pr[data-prancha="settings"] [data-pr-host="editais"]');
   await expect(host).toContainText('FUNDATEC');
   await expect(host).toContainText('100 pontos · mínimo geral 50');
-  await host.locator('summary').filter({ hasText: 'Nova banca' }).click();
+  await host.getByRole('button', { name: '+ Nova banca' }).click();
   await host.locator('input[name="banca"]').fill('aocp');
   await host.locator('input[name="nome0"]').fill('Conhecimentos Básicos');
   await host.locator('input[name="questoes0"]').fill('30');

@@ -67,7 +67,7 @@
     const rows = (p?.prova?.length ? p.prova : []).concat([{ nome: '', questoes: '', peso: 1, minimo: '', nova: true }]);
     return '<form data-pr-submit="save-padrao" data-n="' + rows.length + '" data-orig="' + esc(banca || '') + '" class="pr-padrao-form"><label class="pr-field"><span>Banca</span><input name="banca" required maxlength="30" value="' + esc(banca || '') + '" placeholder="Ex.: AOCP"></label>' +
       rows.map((d, i) => '<div class="pr-fgrid d"><label class="pr-field"><span>Disciplina' + (d.nova ? ' (nova)' : '') + '</span><input name="nome' + i + '" maxlength="60" value="' + esc(d.nome || '') + '"></label><label class="pr-field"><span>Questões</span><input name="questoes' + i + '" type="number" min="0" inputmode="numeric" value="' + esc(d.questoes ?? '') + '"></label><label class="pr-field"><span>Peso</span><input name="peso' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.peso ?? 1) + '"></label><label class="pr-field"><span>Mínimo</span><input name="minimo' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.minimo ?? '') + '"></label><input type="hidden" name="cats' + i + '" value="' + esc(JSON.stringify(d.categorias || [])) + '"><input type="hidden" name="id' + i + '" value="' + esc(d.id || '') + '"></div>').join('') +
-      '<div class="pr-fgrid"><label class="pr-field"><span>Mínimo geral (pontos)</span><input name="minimoGeral" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(p?.minimoGeral ?? '') + '"></label><label class="pr-field"><span>Fonte</span><input name="fonte" maxlength="120" value="' + esc(p?.fonte || '') + '"></label></div><div class="pr-row"><button type="submit" class="pr-btn sm">Salvar padrão</button>' + (banca ? ui.btn('Cancelar', ui.act('edit-padrao', ''), 'g sm') : '') + '</div></form>';
+      '<div class="pr-fgrid"><label class="pr-field"><span>Mínimo geral (pontos)</span><input name="minimoGeral" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(p?.minimoGeral ?? '') + '"></label><label class="pr-field"><span>Fonte</span><input name="fonte" maxlength="120" value="' + esc(p?.fonte || '') + '"></label></div><div class="pr-row"><button type="submit" class="pr-btn sm">Salvar padrão</button>' + ui.btn('Cancelar', ui.act('edit-padrao', ''), 'g sm') + '</div></form>';
   }
   function editaisPanel() {
     const all = P.editais.padroes(), keys = Object.keys(all).sort();
@@ -77,7 +77,8 @@
     }).join('');
     const editing = editBanca && all[editBanca];
     return '<p class="pr-detail">A estrutura de prova de cada banca é o ponto de partida ao criar um curso: no curso, “Usar estrutura” copia pesos e mínimos, que podem ser ajustados ao edital.</p><div class="pr-list">' + list + '</div>' +
-      (editing ? '<span class="pr-k l">Editando ' + esc(editBanca) + '</span>' + padraoForm(editBanca, all[editBanca]) : '<details class="pr-add"><summary>+ Nova banca</summary>' + padraoForm('', null) + '</details>');
+      /* formulário aberto por estado (não por <details>): sobrevive aos redesenhos da prancha durante a sincronização */
+      (editing ? '<span class="pr-k l">Editando ' + esc(editBanca) + '</span>' + padraoForm(editBanca, all[editBanca]) : editBanca === '__nova__' ? '<span class="pr-k l">Nova banca</span>' + padraoForm('', null) : ui.btn('+ Nova banca', ui.act('edit-padrao', '__nova__'), 'g sm'));
   }
   function folhaState(id, st) { const i = st.issues.filter((x) => x[0] === id); return i.some((x) => x[1] === 'o') ? 'o' : i.length ? 'l' : ''; }
 
