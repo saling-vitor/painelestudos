@@ -619,6 +619,9 @@
   function disciplinaDoMapa(map, courseId = map?.courseId) {
     const prova = provaOf(courseId);
     if (!prova.length || !map) return null;
+    /* V15.59 · o planejamento do kit diz a disciplina de cada mapa pela sigla; vale antes da categoria */
+    const md = editalOf(courseId)?.mapaDisciplina, viaKit = md && map.code ? md[String(map.code).toUpperCase()] : null;
+    if (viaKit) { const d = prova.find((x) => x.id === viaKit); if (d) return d; }
     const cat = String(map.category || '');
     return prova.find((d) => d.categorias.includes(cat)) || prova.find((d) => d.padrao) || null;
   }
@@ -834,8 +837,12 @@
         const ms = Number(rm[id]?.mastery);
         if (at > 0) { soma += Number.isFinite(ms) ? ms : at ? ((Number(q.correct) || 0) / at) * 100 : 0; n++; }
       }
-      const traps = {};
-      for (const [k, v] of Object.entries(ep)) { const id = P.armadilhas.id(k); if (id) traps[id] = (traps[id] || 0) + (Number(v) || 0); }
+      const traps = {}, sum = mapSummary(map);
+      if (sum) {
+        /* G27: o resumo do mapa já soma Raio-X por tópico e as alternativas erradas do Teste-se, na taxonomia única */
+        for (const t of Object.values(sum.topics)) for (const [k, v] of Object.entries(t.traps || {})) traps[k] = (traps[k] || 0) + (Number(v) || 0);
+        for (const e of sum.rxErrors || []) if (e.trap) traps[e.trap] = (traps[e.trap] || 0) + 1;
+      } else for (const [k, v] of Object.entries(ep)) { const id = P.armadilhas.id(k); if (id) traps[id] = (traps[id] || 0) + (Number(v) || 0); }
       const p = prog(map);
       return { dominio: n ? Math.round(soma / n) : null, topicosRespondidos: n, respondidas, acertos, chutes, traps, cobertura: p.total ? Math.round((p.marked / p.total) * 100) : 0 };
     });
@@ -911,10 +918,75 @@
     const patch = { programa, fases, fonte: String(j.fonte || 'Kit Meus Mapas').slice(0, 200), importadoEm: new Date().toISOString() };
     if (prova.length) { patch.prova = prova; patch.minimoGeral = j.minimoGeral ?? prev.minimoGeral ?? null; }
     if (j.banca) patch.banca = String(j.banca).toUpperCase().slice(0, 40);
+    /* mapas da série: disciplina principal e alcance por sigla (gerar_edital_app.py do kit REV07) */
+    const ms = (Array.isArray(j.mapas) ? j.mapas : []).slice(0, 200), dids = new Set((prova.length ? prova : normProva(editalOf(courseId)?.prova)).map((d) => d.id));
+    const md = {};
+    let alc = 0;
+    for (const m of ms) {
+      const sig = String(m?.sigla || '').toUpperCase().slice(0, 40), d0 = (Array.isArray(m?.disciplinas) ? m.disciplinas : []).map(String).find((x) => dids.has(x));
+      if (sig && d0) md[sig] = d0;
+      const map = sig ? mapsForCourse(courseId, { includeLinked: false }).find((x) => String(x.code || '').toUpperCase() === sig) : null;
+      if (map && ALCANCES.some(([a]) => a === m.alcance) && setAlcance(keyOf(map), m.alcance)) alc++;
+    }
+    if (Object.keys(md).length) patch.mapaDisciplina = md;
     setEdital(courseId, patch);
-    return { disciplinas: prova.length, itens: programa.length, fases: nf };
+    return { disciplinas: prova.length, itens: programa.length, fases: nf, mapas: Object.keys(md).length, alcances: alc };
   }
   P.editais.importKit = importKit;
+
+  /* ---------- V15.59 · ponte com a Template V211 G27 (mesma origem, só o mapa aberto no leitor) ----------
+     Mapa → app: MEUS_MAPAS_MAP_HELLO e MEUS_MAPAS_MAP_SUMMARY (meus-mapas/map-summary/v1). O resumo fica neste aparelho,
+     como o estado do mapa, em studyapp.mapSummary::<mapKey>; nunca traz anotações, enunciados nem alternativas.
+     App → mapa: MEUS_MAPAS_CONTEXT (meus-mapas/context/v1) com curso, disciplina, peso, pontos por tópico, alcance e motivos do plano. */
+  const SUM_KEY = (k) => 'studyapp.mapSummary::' + k;
+  function mapSummary(map) {
+    const k = keyOf(map);
+    if (!k) return null;
+    return memo('sum:' + k, () => { try { const v = JSON.parse(localStorage.getItem(SUM_KEY(k)) || 'null'); return v && v.schema === 'meus-mapas/map-summary/v1' && v.topics && typeof v.topics === 'object' ? v : null; } catch { return null; } });
+  }
+  function readerMap(win) {
+    const frame = document.getElementById('readerFrame');
+    if (!frame || win !== frame.contentWindow) return null;
+    const key = typeof state !== 'undefined' ? state.readerMapKey : '';
+    return key && typeof mapById === 'function' ? mapById(key) : null;
+  }
+  function contextFor(map) {
+    const c = courseById(map.courseId), d = disciplinaDoMapa(map), ex = c ? courseExamState(c) : null;
+    let motivos = [];
+    try { const row = (window.StudyPlanner?.priorityRows?.(mapsForCourse(map.courseId, { includeLinked: false })) || []).find((r) => r.key === keyOf(map)); motivos = (row?.reasons || []).filter((x) => /peso|mínimo|pt|domínio|prova/.test(x)).slice(0, 3); } catch {}
+    const ppt = pptDoMapa(map);
+    return {
+      curso: c ? { sigla: courseSigla(c), banca: String(c.board || '').slice(0, 40), cargo: String(c.subtitle || '').replace(/^[^·]*·\s*/, '').slice(0, 60), provaISO: ex?.date ? dateKey(ex.date) : '', fase: ex?.phase || '' } : {},
+      disciplina: d ? { nome: d.nome, peso: d.peso, minimo: d.minimo, pontosPorTopico: ppt ? Math.round(ppt * 100) / 100 : null } : null,
+      alcance: alcance(map),
+      motivosPlano: motivos
+    };
+  }
+  function slimSummary(d) {
+    const topics = {};
+    for (const [id, t] of Object.entries(d.topics || {}).slice(0, 600)) {
+      if (!t || typeof t !== 'object') continue;
+      const traps = {};
+      for (const [k, n] of Object.entries(t.traps || {})) { const tid = P.armadilhas.id(k); if (tid && Number(n) > 0) traps[tid] = (traps[tid] || 0) + Math.min(999, Number(n)); }
+      topics[String(id).slice(0, 120)] = { state: String(t.state || '').slice(0, 12), mastery: Number.isFinite(Number(t.mastery)) && t.mastery !== null ? Math.max(0, Math.min(100, Math.round(Number(t.mastery)))) : null, answered: Number(t.answered) || 0, correct: Number(t.correct) || 0, guesses: Number(t.guesses) || 0, traps, markers: Array.isArray(t.markers) ? t.markers.map(String).slice(0, 6) : [] };
+    }
+    const rx = (Array.isArray(d.rxErrors) ? d.rxErrors : []).slice(-60).map((e) => ({ topicId: String(e?.topicId || '').slice(0, 120), trap: P.armadilhas.id(e?.trap) || 'outra', when: e?.when || null }));
+    const id0 = d.identity || {};
+    return { schema: 'meus-mapas/map-summary/v1', templateRelease: String(d.templateRelease || '').slice(0, 30), storageId: String(d.storageId || '').slice(0, 120), identity: { code: String(id0.code || '').slice(0, 20), cutoff: /^\d{4}-\d{2}-\d{2}$/.test(String(id0.cutoff || '')) ? id0.cutoff : '', scope: String(id0.scope || '').slice(0, 12), editalItems: Array.isArray(id0.editalItems) ? id0.editalItems.map(String).slice(0, 80) : [] }, topics, rxErrors: rx, vespera: d.vespera && typeof d.vespera === 'object' ? { items: Number(d.vespera.items) || 0, seen: Number(d.vespera.seen) || 0, minutes: Number(d.vespera.minutes) || 0 } : null, receivedAt: new Date().toISOString() };
+  }
+  window.addEventListener('message', (e) => {
+    if (e.origin !== location.origin) return;
+    const d = e.data;
+    if (!d || (d.type !== 'MEUS_MAPAS_MAP_HELLO' && d.type !== 'MEUS_MAPAS_MAP_SUMMARY') || d.schema !== 'meus-mapas/map-summary/v1') return;
+    const map = readerMap(e.source);
+    if (!map) return;
+    if (d.type === 'MEUS_MAPAS_MAP_HELLO') {
+      try { e.source.postMessage({ type: 'MEUS_MAPAS_CONTEXT', schema: 'meus-mapas/context/v1', storageId: String(d.storageId || ''), ...contextFor(map) }, location.origin); } catch {}
+      return;
+    }
+    try { localStorage.setItem(SUM_KEY(keyOf(map)), JSON.stringify(slimSummary(d))); } catch {}
+  });
+  P.bridge = { summary: mapSummary, context: contextFor, slim: slimSummary };
   /* ---------- auditoria do acervo (V15.57) ----------
      Só leitura. Usa o índice de busca (gerado no build a partir dos HTML incluídos: marcadores, questões,
      template e fonte legal declarada), os cursos e as tentativas de simulado. Mapas que existem só na

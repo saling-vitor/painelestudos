@@ -1,15 +1,12 @@
 {
-  "version": "15.58.0",
-  "label": "V15.58.0-G",
-  "notes": "Peso do edital no plano e ponte com o Template: prioridades pelos pontos da prova, revisão relâmpago, treino dirigido, nota projetada, domínio das questões dos mapas e planejamento do kit.",
+  "version": "15.59.0",
+  "label": "V15.59.0-G",
+  "notes": "Ponte com a Template V211 G27: o mapa recebe o contexto do curso e devolve o resumo do estudo; o planejamento do kit REV07 define disciplina e alcance de cada mapa.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Curso: Peso × Esforço (pontos por tópico de cada disciplina), placar de simulados, revisão relâmpago e linha do tempo dos concursos",
-    "[G] Plano: prioridades e revisão ordenadas pelos pontos da prova e pelo risco de mínimo; desliga em Configurações",
-    "[G] Início e Agenda: bloco montado pelo tempo disponível, revisão com horário fixo e semana-modelo",
-    "[G] Simulados: ritmo por questão, acerto por dificuldade e treino dirigido com as variantes dos mapas",
-    "[G] Progresso: nota projetada, cobertura × domínio, matriz pelo programa e erros por armadilha",
-    "[G] Mapas: ordenar por pontos, ficha técnica do mapa e diferenças ao atualizar o HTML; planejamento do kit e CSV para o Notion"
+    "[G] Leitor: mapas da Template G27 mostram banca, cargo, data da prova, disciplina, peso e pontos por tópico do curso",
+    "[G] Progresso: erros por armadilha incluem o Raio-X e as alternativas erradas do Teste-se, enviados pelo próprio mapa",
+    "[G] Configurações: o planejamento do kit REV07 define a disciplina e o alcance de cada mapa pela sigla"
   ],
   "automation": {
     "enabled": true,
@@ -17,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T01:30:05-03:00"
+  "releasedAt": "2026-10-28T02:20:48-03:00"
 }
