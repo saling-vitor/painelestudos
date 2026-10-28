@@ -1,12 +1,12 @@
 {
-  "version": "15.59.0",
-  "label": "V15.59.0-G",
-  "notes": "Ponte com a Template V211 G27: o mapa recebe o contexto do curso e devolve o resumo do estudo; o planejamento do kit REV07 define disciplina e alcance de cada mapa.",
+  "version": "15.60.0",
+  "label": "V15.60.0-G",
+  "notes": "Ajustes finos: nome completo do concurso, linha do tempo alinhada, cartões alinhados, menu ⋯ por cima de tudo e siglas dos lotes inteiras.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Leitor: mapas da Template G27 mostram banca, cargo, data da prova, disciplina, peso e pontos por tópico do curso",
-    "[G] Progresso: erros por armadilha incluem o Raio-X e as alternativas erradas do Teste-se, enviados pelo próprio mapa",
-    "[G] Configurações: o planejamento do kit REV07 define a disciplina e o alcance de cada mapa pela sigla"
+    "[G] Concursos aparecem pelo nome completo (MONTE → MONTENEGRO) e a linha do tempo separa provas próximas com as bolinhas sobre a linha",
+    "[G] Menu ⋯ dos mapas abre por cima de tudo; cartões com nome longo ficam alinhados",
+    "[G] Planta do edital: a sigla do lote não quebra e os tópicos ficam sempre visíveis"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T02:20:48-03:00"
+  "releasedAt": "2026-10-28T11:22:31-03:00"
 }
