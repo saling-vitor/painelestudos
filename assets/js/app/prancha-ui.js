@@ -52,7 +52,7 @@
     if (!list.length) return empty('Nenhum mapa neste curso', 'Importe os mapas HTML do edital para desenhar a planta.');
     return '<div class="pr-tiles ' + cls + '">' + list.map((m) => {
       const p = P.data.prog(m), k = P.data.keyOf(m), wv = weight ? Number(weight(m)) : NaN, w = Number.isFinite(wv) ? Math.max(2, Math.round(wv * 10) / 10) : Math.max(6, p.total || Number(m.topics) || 6), pc = U.pct(p.marked, p.total);
-      return '<button type="button" class="pr-tile' + (k === sel ? ' on' : '') + '" data-pr-act="' + pick + '" data-arg="' + esc(k) + '" style="--w:' + w + ';--c:' + P.mapColor(m) + ';--p:' + pc + '%" aria-label="' + esc((m.code || '') + ': ' + pc + '% de ' + p.total + ' tópicos') + '"><span class="fill"></span><span class="stripe"></span><span class="flags">' + (p.difficult ? '<span class="d">DIF ' + p.difficult + '</span>' : '') + (p.review ? '<span class="r">REV ' + p.review + '</span>' : '') + (m._linkedFrom ? '<span class="s">vinc.</span>' : '') + '</span><span class="in"><span class="sig">' + esc(m.code || 'MAPA') + '</span><span><span class="pc">' + pc + '%</span><br><span class="tp">' + (note ? esc(note(m)) : p.marked + '/' + p.total) + '</span></span></span></button>';
+      return '<button type="button" class="pr-tile' + (k === sel ? ' on' : '') + '" data-pr-act="' + pick + '" data-arg="' + esc(k) + '" style="--w:' + w + ';--c:' + P.mapColor(m) + ';--p:' + pc + '%;--n:' + Math.max(4, String(m.code || 'MAPA').length) + '" aria-label="' + esc((m.code || '') + ': ' + pc + '% de ' + p.total + ' tópicos') + '"><span class="fill"></span><span class="stripe"></span><span class="flags">' + (p.difficult ? '<span class="d">DIF ' + p.difficult + '</span>' : '') + (p.review ? '<span class="r">REV ' + p.review + '</span>' : '') + (m._linkedFrom ? '<span class="s">vinc.</span>' : '') + '</span><span class="in"><span class="sig">' + esc(m.code || 'MAPA') + '</span><span><span class="pc">' + pc + '%</span><br><span class="tp">' + (note ? esc(note(m)) : p.marked + '/' + p.total) + '</span></span></span></button>';
     }).join('') + '</div>';
   }
   function mini(list, color) {
@@ -68,7 +68,7 @@
   const chipf = (id, label, count, pressed, act, color, title) => '<button type="button" class="pr-chipf" data-pr-act="' + act + '" data-arg="' + esc(id) + '" aria-pressed="' + !!pressed + '"' + (title && title !== label ? ' title="' + esc(title) + '"' : '') + (color ? ' style="--c:' + color + '"' : '') + '>' + (color ? '<i></i>' : '') + esc(label) + (count !== undefined ? ' <span class="pr-mono">' + count + '</span>' : '') + '</button>';
   const seg = (items, active, act, label = '') => '<div class="pr-seg" role="group" aria-label="' + esc(label) + '">' + items.map(([id, l]) => '<button type="button" data-pr-act="' + act + '" data-arg="' + esc(id) + '" aria-pressed="' + (id === active) + '">' + esc(l) + '</button>').join('') + '</div>';
   function menu(id, items) {
-    return '<div class="pr-menu">' + btn((typeof uiIcon === 'function' ? uiIcon('more', 'ui-icon-sm') : '⋯'), { 'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-label': 'Mais ações', 'data-pr-menu': id }, 'g sm') + '<div role="menu" data-pr-menu-panel="' + esc(id) + '" hidden>' + items.filter(Boolean).map(([label, a, cls]) => '<button type="button" role="menuitem" class="' + (cls || '') + '"' + attrs(a) + '>' + esc(label) + '</button>').join('') + '</div></div>';
+    return '<div class="pr-menu">' + btn((typeof uiIcon === 'function' ? uiIcon('more', 'ui-icon-sm') : '⋯'), { 'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-label': 'Mais ações', 'data-pr-menu': id }, 'g sm') + '<div role="menu" data-pr-menu-panel="' + esc(id) + '" popover="manual" hidden>' + items.filter(Boolean).map(([label, a, cls]) => '<button type="button" role="menuitem" class="' + (cls || '') + '"' + attrs(a) + '>' + esc(label) + '</button>').join('') + '</div></div>';
   }
   const lastLabel = (iso) => { const ms = typeof activityTimestamp === 'function' ? activityTimestamp(iso) : Date.parse(iso || 0) || 0; if (!ms) return 'nunca'; const d = U.daysBetween(new Date(ms), new Date()); return d <= 0 ? 'hoje' : d === 1 ? 'ontem' : 'há ' + d + ' d'; };
   const mapState = (p) => (p.total > 0 && p.marked >= p.total ? 'concluído' : p.marked ? 'em andamento' : p.lastActivity ? 'aberto' : 'não iniciado');
@@ -285,10 +285,22 @@
   P.rootFor = rootFor;
 
   /* delegação de eventos */
-  function closeMenus(except) { document.querySelectorAll('.pr [data-pr-menu-panel]').forEach((p) => { if (p !== except) { p.hidden = true; p.parentElement?.querySelector('[data-pr-menu]')?.setAttribute('aria-expanded', 'false'); } }); }
+  /* V15.60 · o menu "⋯" abre na camada superior (Popover API), por cima de tudo: o cartão que o contém
+     corta o que transborda (overflow:hidden) e o menu aparecia espremido dentro dele. */
+  const canPop = typeof HTMLElement !== 'undefined' && typeof HTMLElement.prototype.showPopover === 'function';
+  function hidePanel(p) { p.hidden = true; if (canPop && p.matches?.(':popover-open')) { try { p.hidePopover(); } catch {} } p.style.removeProperty('top'); p.style.removeProperty('left'); }
+  function placePanel(panel, btn) {
+    if (!canPop || !panel.hasAttribute('popover')) return;
+    try { if (!panel.matches(':popover-open')) panel.showPopover(); } catch { return; }
+    const r = btn.getBoundingClientRect(), pw = panel.offsetWidth, ph = panel.offsetHeight, vw = document.documentElement.clientWidth, vh = window.innerHeight, gap = 4, pad = 8;
+    let left = Math.min(Math.max(pad, r.right - pw), vw - pw - pad), top = r.bottom + gap;
+    if (top + ph > vh - pad && r.top - gap - ph >= pad) top = r.top - gap - ph;
+    panel.style.left = Math.round(left) + 'px'; panel.style.top = Math.round(Math.max(pad, top)) + 'px';
+  }
+  function closeMenus(except) { document.querySelectorAll('.pr [data-pr-menu-panel]').forEach((p) => { if (p !== except && (!p.hidden || p.style.top)) { hidePanel(p); p.parentElement?.querySelector('[data-pr-menu]')?.setAttribute('aria-expanded', 'false'); } }); }
   function onClick(e) {
     const mbtn = e.target.closest('[data-pr-menu]');
-    if (mbtn) { e.stopPropagation(); const panel = mbtn.parentElement.querySelector('[data-pr-menu-panel]'); const open = panel.hidden; closeMenus(panel); panel.hidden = !open; mbtn.setAttribute('aria-expanded', String(open)); if (open) panel.querySelector('button')?.focus(); return; }
+    if (mbtn) { e.stopPropagation(); const panel = mbtn.parentElement.querySelector('[data-pr-menu-panel]'); const open = panel.hidden; closeMenus(panel); if (open) { panel.hidden = false; placePanel(panel, mbtn); } else hidePanel(panel); mbtn.setAttribute('aria-expanded', String(open)); if (open) panel.querySelector('button')?.focus({ preventScroll: true }); return; }
     const el = e.target.closest('[data-pr-act]');
     if (!el || el.disabled) return;
     const root = e.currentTarget, view = root.dataset.prancha, name = el.dataset.prAct;
@@ -320,6 +332,10 @@
     }
   }
   document.addEventListener('click', (e) => { if (!e.target.closest('.pr-menu')) closeMenus(); });
+  /* o menu flutuante não acompanha a rolagem: rolar ou redimensionar fecha */
+  const closeOnMove = (e) => { if (e?.target?.closest?.('[data-pr-menu-panel]')) return; if (document.querySelector('.pr [data-pr-menu-panel]:not([hidden])')) closeMenus(); };
+  window.addEventListener('scroll', closeOnMove, { capture: true, passive: true });
+  window.addEventListener('resize', closeOnMove, { passive: true });
 
   /* confirmação na própria página: primeiro toque arma, segundo executa */
   /* confirmação em dois toques; o estado sobrevive a um redesenho da prancha durante a janela de 5 s */

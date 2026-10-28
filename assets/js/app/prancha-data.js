@@ -127,7 +127,23 @@
   const examDate = (c) => parseDate(c?.examDate || c?.exam_date);
   const isArchived = (c) => c?.status === 'archived';
 
+  /* V15.60 · nome de exibição completo: a sigla curta que é só o começo do nome da cidade ou do órgão
+     (MONTE → MONTENEGRO, IJUI → IJUÍ) aparece por extenso; siglas de órgão (CASAN, DMHAB) ficam como estão. */
   function courseSigla(c) {
+    const code = courseCode(c);
+    if (!c || code === 'CURSO') return code;
+    const fold = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const k = fold(code);
+    if (!k) return code;
+    const inst = String(c.institution || '').replace(/^.*?\b(?:Prefeitura(?: Municipal)?|Munic[ií]pio|C[aâ]mara(?: Municipal)?)\s+de\s+/i, '');
+    const cands = [String(c.city || '').split(/[\/,–-]/)[0], inst.split(/[\/,–-]/)[0]].concat(String(c.title || '').split(/\s+/)).map((x) => String(x || '').trim()).filter(Boolean);
+    for (const name of cands) {
+      const f = fold(name);
+      if (f.length <= 18 && f.length >= k.length && f.startsWith(k)) return name.toUpperCase();
+    }
+    return code;
+  }
+  function courseCode(c) {
     if (!c) return 'CURSO';
     const explicit = String(c.code || c.acronym || '').trim();
     if (explicit && explicit.length <= 10) return explicit.toUpperCase();
@@ -266,7 +282,7 @@
   function postExamCourse(today = new Date()) {
     return unarchivedSummaries(today).filter((x) => x.exam.phase === 'after' && x.exam.days >= -30 && !x.exam.closure.dismissedAt).sort((a, b) => b.exam.days - a.exam.days)[0] || null;
   }
-  P.courses = { list: courses, byId: courseById, sigla: courseSigla, color: courseColor, label: courseLabel, examDate, examState: courseExamState, summary: courseSummary, active: activeSummaries, retired: retiredSummaries, priority: priorityCourse, postExam: postExamCourse, isArchived, isRetired, closure, health };
+  P.courses = { list: courses, byId: courseById, sigla: courseSigla, code: courseCode, color: courseColor, label: courseLabel, examDate, examState: courseExamState, summary: courseSummary, active: activeSummaries, retired: retiredSummaries, priority: priorityCourse, postExam: postExamCourse, isArchived, isRetired, closure, health };
 
   /* ---------- metas e tempo ---------- */
   function goals() { const g = window.StudyDashboard?.goals?.() || {}; return { daily: Number(g.dailyMinutes) || 120, weekly: Number(g.weeklyMinutes) || 600, pomodoroWork: Number(g.pomodoroWork) || 25, pomodoroBreak: Number(g.pomodoroBreak) || 5 }; }
@@ -956,7 +972,7 @@
     try { const row = (window.StudyPlanner?.priorityRows?.(mapsForCourse(map.courseId, { includeLinked: false })) || []).find((r) => r.key === keyOf(map)); motivos = (row?.reasons || []).filter((x) => /peso|mínimo|pt|domínio|prova/.test(x)).slice(0, 3); } catch {}
     const ppt = pptDoMapa(map);
     return {
-      curso: c ? { sigla: courseSigla(c), banca: String(c.board || '').slice(0, 40), cargo: String(c.subtitle || '').replace(/^[^·]*·\s*/, '').slice(0, 60), provaISO: ex?.date ? dateKey(ex.date) : '', fase: ex?.phase || '' } : {},
+      curso: c ? { sigla: courseCode(c), banca: String(c.board || '').slice(0, 40), cargo: String(c.subtitle || '').replace(/^[^·]*·\s*/, '').slice(0, 60), provaISO: ex?.date ? dateKey(ex.date) : '', fase: ex?.phase || '' } : {},
       disciplina: d ? { nome: d.nome, peso: d.peso, minimo: d.minimo, pontosPorTopico: ppt ? Math.round(ppt * 100) / 100 : null } : null,
       alcance: alcance(map),
       motivosPlano: motivos
