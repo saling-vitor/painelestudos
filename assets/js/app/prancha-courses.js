@@ -24,12 +24,19 @@
       [archived ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), archived ? '' : 'd']
     ]);
   }
+  /* V15.60 · planta da linha do curso: lotes com a sigla legível, em várias fileiras, na altura da capa */
+  function crPlanta(s) {
+    const list = s.maps;
+    if (!list.length) return '<div class="pr-crp vazio"><span class="pr-k">Planta do edital</span><p>Nenhum mapa importado ainda</p></div>';
+    const done = list.filter((m) => { const p = P.data.prog(m); return p.total > 0 && p.marked >= p.total; }).length;
+    return '<div class="pr-crp"><span class="pr-k">Planta do edital · ' + list.length + ' ' + plural(list.length, 'mapa') + ' · ' + done + ' ' + plural(done, 'fechado') + '</span><div class="pr-crp-t" role="img" aria-label="' + esc('Planta: ' + list.length + ' mapas, ' + done + ' fechados') + '">' + list.map((m) => { const p = P.data.prog(m), pc = U.pct(p.marked, p.total); return '<i style="--w:' + Math.max(4, p.total || 4) + ';--p:' + pc + '%;--c:' + P.mapColor(m) + '" title="' + esc((m.code || '') + ' · ' + (m.shortTitle || m.title || '') + ' · ' + pc + '%') + '"><b>' + esc(m.code || '') + '</b></i>'; }).join('') + '</div></div>';
+  }
   function crRow(s, primary) {
     const c = s.course, p = s.progress, ex = s.exam;
     return '<div class="pr-cr' + (P.courses.isArchived(c) ? ' archived' : '') + '" style="--c:' + s.color + '">' + ui.courseCov(c) +
       '<div style="display:grid;gap:6px;min-width:0"><div class="pr-row">' + statusChip(s) + '</div><h3>' + esc(c.title) + '</h3><span class="pr-mono">' + esc(P.courses.label(c) || c.city || '') + '</span>' +
       '<div class="pr-cells"><div><span>Prova</span><b class="' + (ex.days !== null && ex.days >= 0 && ex.days < 15 ? 'ox' : '') + '">' + esc(ex.date ? U.fmtDayYear(ex.date) : 'sem data') + '</b></div><div><span>Progresso</span><b>' + pct(p.marked, p.total) + '%</b></div><div><span>Tópicos</span><b>' + fmtNum(p.marked) + '/' + fmtNum(p.total) + '</b></div><div><span>Mapas</span><b>' + s.maps.length + '</b></div></div></div>' +
-      ui.mini(s.maps) + '<div class="pr-row">' + ui.btn('Entrar', ui.act('open-course', c.id), primary ? 'p' : 'g') + courseMenu(c) + '</div></div>';
+      crPlanta(s) + '<div class="pr-row">' + ui.btn('Entrar', ui.act('open-course', c.id), primary ? 'p' : 'g') + courseMenu(c) + '</div></div>';
   }
 
   /* V15.58 · linha do tempo: fases de cada concurso não arquivado numa faixa de 4 meses */

@@ -119,7 +119,7 @@ test('Cursos [G] · quadro por data da prova e curso com planta como menu, lista
   await go(page, 'courses');
   const list = page.locator('.pr[data-prancha="courses"]');
   await expect(list.locator('.pr-cr')).toHaveCount(1);
-  await expect(list.locator('.pr-cr .pr-mini i')).toHaveCount(14);
+  await expect(list.locator('.pr-cr .pr-crp-t i')).toHaveCount(14);
   await list.locator('.pr-cr').getByRole('button', { name: 'Entrar' }).click();
   const course = page.locator('.pr[data-prancha="course"]');
   await expect(course).toBeVisible();

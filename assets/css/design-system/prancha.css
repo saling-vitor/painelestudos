@@ -363,10 +363,16 @@ html.mm-scrolled .pr-bar{background:var(--nq-glass-lens),var(--nq-glass-bar-scro
 .pr-pace i.h{background:var(--pr-latao)}
 
 /* ---------- Cursos ---------- */
-.pr-cr{display:grid;grid-template-columns:clamp(200px,22vw,300px) minmax(0,1fr) minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px;border:1px solid var(--pr-linha);border-radius:12px;background:var(--pr-g1)}
+.pr-cr{display:grid;grid-template-columns:clamp(200px,20vw,280px) minmax(0,.9fr) minmax(0,1.4fr) auto;gap:16px;align-items:center;padding:14px;border:1px solid var(--pr-linha);border-radius:12px;background:var(--pr-g1)}
 .pr-cr.archived{opacity:.72}
-@media (max-width:980px){.pr-cr{grid-template-columns:200px minmax(0,1fr)}.pr-cr .pr-mini,.pr-cr>.pr-row{grid-column:1/-1}}
+@media (max-width:980px){.pr-cr{grid-template-columns:200px minmax(0,1fr)}.pr-cr .pr-mini,.pr-cr .pr-crp,.pr-cr>.pr-row{grid-column:1/-1}}
 .pr-cr .pr-cov .s{font-size:var(--fs-h1)}
+.pr-crp{display:grid;gap:8px;min-width:0;align-self:center}
+.pr-crp-t{display:flex;flex-wrap:wrap;gap:4px}
+.pr-crp-t i{flex-grow:var(--w);flex-basis:calc(var(--w) * 3px);min-width:78px;height:32px;display:flex;align-items:center;padding:0 8px;border-radius:5px;background:var(--pr-g2);border:1px solid var(--pr-linha);border-left:3px solid var(--c);position:relative;overflow:hidden;font-style:normal;box-sizing:border-box}
+.pr-crp-t i::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:var(--p);background:var(--c)}
+.pr-crp-t b{position:relative;font-family:var(--pr-f-mono);font-size:var(--fs-caption);font-weight:600;letter-spacing:.02em;color:var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.pr-crp.vazio p{margin:0;padding:12px 14px;border:1px dashed var(--pr-linha);border-radius:8px;color:var(--pr-papel-2);font-size:var(--fs-label)}
 @media (max-width:560px){.pr-cr{grid-template-columns:1fr}.pr-cr>.pr-cov{max-width:420px}}
 .pr-cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--pr-linha);border-radius:9px;overflow:hidden}
 .pr-cells div{padding:7px 9px;border-right:1px solid var(--pr-linha);display:grid;min-width:0}

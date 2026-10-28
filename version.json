@@ -1,12 +1,12 @@
 {
-  "version": "15.60.1",
-  "label": "V15.60.1-G",
-  "notes": "Categorias por extenso nos cartões, régua do Plano do dia com respiro e capas maiores em Meus Cursos.",
+  "version": "15.60.2",
+  "label": "V15.60.2-G",
+  "notes": "Cartões de mapa mais limpos (versão ao lado da sigla, categoria inteira) e planta legível em Meus Cursos.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Cartões de mapa: a categoria aparece inteira na própria linha, sem corte",
-    "[G] Plano do dia: cada bloco mostra a sigla e os minutos sem encavalar",
-    "[G] Meus Cursos: capas dos concursos maiores e mais visíveis"
+    "[G] Cartões de mapa: a versão fica ao lado da sigla e sai o \"tópicos\" repetido; a categoria aparece inteira",
+    "[G] Meus Cursos: a planta de cada concurso mostra as siglas dos mapas em blocos maiores, alinhados à capa",
+    "[G] Concurso sem mapas mostra o aviso no lugar da planta vazia"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T13:12:50-03:00"
+  "releasedAt": "2026-10-28T14:26:29-03:00"
 }
