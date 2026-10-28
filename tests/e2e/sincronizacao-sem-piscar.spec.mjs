@@ -20,6 +20,7 @@ test('Sincronização [G] · cards animam só ao abrir a tela; sincronizar não 
   await expect(page.locator('.view.is-entering')).toHaveCount(0, { timeout: 6000 });
   await page.waitForFunction(() => state.cloudLoading === false);
   await takeAnimations(page);
+  await expect.poll(() => page.evaluate(() => [...document.querySelectorAll('.view.active img')].filter((i) => i.complete && i.naturalWidth).length), { timeout: 15000 }).toBeGreaterThan(0);
   // marca só as capas já carregadas e confere que esses mesmos nós continuam na tela
   const marked = await page.evaluate(() => { const imgs = [...document.querySelectorAll('.view.active img')].filter((i) => i.complete && i.naturalWidth); imgs.forEach((i) => { i.__keep = true; }); return imgs.length; });
   expect(marked).toBeGreaterThan(0);
@@ -44,5 +45,6 @@ test('Sincronização [G] · contador de alterações usa plural correto', async
     return out.join('\n');
   });
   expect(texts).not.toMatch(/alteraçãoões|alteraçãoes/);
-  expect(texts).toMatch(/3 alterações/);
+  // o app soma 1 se as preferências também estiverem pendentes: confere a forma do plural, não o número
+  expect(texts).toMatch(/\b(?:[2-9]|\d{2,}) alterações aguardando/);
 });
