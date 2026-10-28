@@ -16,7 +16,12 @@
     ['nao', 'Nunca abertos', (m, p) => !p.marked && !p.lastActivity], ['rev', 'Com revisão', (m, p) => p.review > 0], ['dif', 'Difíceis', (m, p) => p.difficult > 0],
     ['fav', 'Favoritos', (m) => isFav(P.data.keyOf(m))], ['off', 'Offline', (m) => !!offline?.has(P.data.keyOf(m))]
   ];
-  const SORTS = [['az', 'A–Z'], ['prog', 'Progresso'], ['tam', 'Tamanho'], ['par', 'Parado'], ['rec', 'Recentes']];
+  const SORTS = [['az', 'A–Z'], ['prog', 'Progresso'], ['tam', 'Tamanho'], ['par', 'Parado'], ['rec', 'Recentes'], ['valor', 'Valor na prova'], ['rende', 'Rende agora']];
+  /* V15.58 · valor do mapa na prova (pontos da disciplina × fatia de tópicos) e o que ainda rende (× parte não marcada) */
+  const valorOf = (m) => { const v = P.editais.pontosDoMapa(m); return v === null || v === undefined ? -1 : v; };
+  const rendeOf = (m, p) => { const v = valorOf(m); return v < 0 ? -1 : Math.round(v * (1 - (p.total ? p.marked / p.total : 0)) * 10) / 10; };
+  const ptsSort = () => st.sort === 'valor' || st.sort === 'rende';
+  const ptsOf = (m, p) => { const v = st.sort === 'rende' ? rendeOf(m, p) : valorOf(m); return v < 0 ? '—' : P.editais.fmtPt(v); };
   function refreshOffline() {
     if (offlineBusy || typeof mapAvailableOffline !== 'function') return;
     offlineBusy = true;
@@ -31,13 +36,15 @@
     if (st.sort === 'tam') a.sort((x, y) => y.p.total - x.p.total);
     if (st.sort === 'par') a.sort((x, y) => (ts(x.p) || 0) - (ts(y.p) || 0));
     if (st.sort === 'rec') a.sort((x, y) => ts(y.p) - ts(x.p));
+    if (st.sort === 'valor') a.sort((x, y) => valorOf(y.m) - valorOf(x.m));
+    if (st.sort === 'rende') a.sort((x, y) => rendeOf(y.m, y.p) - rendeOf(x.m, x.p));
     return a.map((x) => x.m);
   }
   function card(m, fol) {
     const p = P.data.prog(m), k = P.data.keyOf(m), c = P.courses.byId(m.courseId), fav = isFav(k);
     return '<div class="pr-gm" style="--c:' + P.mapColor(m) + '" data-pr-act="open-map" data-arg="' + esc(k) + '" role="link" tabindex="0" aria-label="' + esc('Abrir ' + (m.code || '') + ' · ' + m.title) + '">' + ui.mapCov(m) +
       '<button type="button" class="pr-fav" data-pr-act="fav" data-arg="' + esc(k) + '" aria-pressed="' + fav + '" aria-label="' + (fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos') + '">' + (typeof uiIcon === 'function' ? uiIcon('star', 'ui-icon-sm') : '★') + '</button>' +
-      '<div class="stamp"><div><span>Folha</span><b>' + esc(fol.get(k) || '—') + '</b></div><div><span>Tópicos</span><b>' + p.marked + '/' + p.total + '</b></div><div><span>Feito</span><b>' + pct(p.marked, p.total) + '%</b></div></div>' +
+      '<div class="stamp"><div><span>Folha</span><b>' + esc(fol.get(k) || '—') + '</b></div><div><span>Tópicos</span><b>' + p.marked + '/' + p.total + '</b></div>' + (ptsSort() ? '<div><span>Pts</span><b>' + ptsOf(m, p) + '</b></div>' : '<div><span>Feito</span><b>' + pct(p.marked, p.total) + '%</b></div>') + '</div>' +
       '<div class="ti"><b>' + esc(m.title) + '</b>' + ui.stbar(p) + '<div class="pr-row sp"><span class="pr-mono">' + esc(ui.mapState(p) + ' · ' + ui.lastLabel(p.lastActivity) + (c ? ' · ' + P.courses.sigla(c) : '')) + '</span>' + alcChip(m) + rowMenu(m) + '</div></div></div>';
   }
   /* V15.56 · alcance: portátil (serve em qualquer edital), misto, estadual ou local */
@@ -45,14 +52,59 @@
   function alcChip(m) { const a = P.editais.alcance(m); return a === 'local' ? '' : '<span class="pr-chip ' + (a === 'portatil' ? 'ok' : 'l') + '">' + esc(ALC_LABEL[a].toLowerCase()) + '</span>'; }
   function rowMenu(m) {
     const k = P.data.keyOf(m);
-    return ui.menu('am-' + k, [['Abrir', ui.act('open-map', k)], [isFav(k) ? 'Remover dos favoritos' : 'Adicionar aos favoritos', ui.act('fav-menu', k)], typeof mapCanUpdateHtml === 'function' && mapCanUpdateHtml(m) ? ['Atualizar HTML', ui.act('update-map', k)] : null, ['Gerenciar mapa', ui.act('manage-map', k)], ['Abrir o curso', ui.act('open-course', m.courseId)]]);
+    return ui.menu('am-' + k, [['Abrir', ui.act('open-map', k)], [isFav(k) ? 'Remover dos favoritos' : 'Adicionar aos favoritos', ui.act('fav-menu', k)], typeof mapCanUpdateHtml === 'function' && mapCanUpdateHtml(m) ? ['Atualizar HTML', ui.act('update-map', k)] : null, ['Ficha técnica', ui.act('ficha', k)], ['Gerenciar mapa', ui.act('manage-map', k)], ['Abrir o curso', ui.act('open-course', m.courseId)]]);
   }
   function table(list, fol) {
-    return '<div class="pr-tbl"><table><thead><tr><th>Folha</th><th>Mapa</th><th class="hide-m"></th><th class="hide-m">Categoria</th><th class="hide-m">Concurso</th><th>Tópicos</th><th>Estado</th><th class="hide-m">Última</th><th></th></tr></thead><tbody>' + list.map((m) => {
+    return '<div class="pr-tbl"><table><thead><tr><th>Folha</th><th>Mapa</th><th class="hide-m"></th><th class="hide-m">Categoria</th><th class="hide-m">Concurso</th><th>Tópicos</th>' + (ptsSort() ? '<th class="hide-m">Pts</th>' : '') + '<th>Estado</th><th class="hide-m">Última</th><th></th></tr></thead><tbody>' + list.map((m) => {
       const p = P.data.prog(m), k = P.data.keyOf(m), c = P.courses.byId(m.courseId);
-      return '<tr style="--c:' + P.mapColor(m) + '" data-pr-act="open-map" data-arg="' + esc(k) + '"><td class="fn">' + esc(fol.get(k) || '') + '</td><td><span class="pr-sig">' + esc(m.code || '') + '</span></td><td class="hide-m"><b>' + esc(m.title) + '</b></td><td class="hide-m"><span class="pr-chip c">' + esc(m.category || 'Outros') + '</span></td><td class="pr-mono hide-m">' + esc(c ? P.courses.sigla(c) : '') + '</td><td class="pr-num">' + p.marked + '/' + p.total + '</td><td style="min-width:110px">' + ui.stbar(p) + '<span class="pr-mono">' + ui.mapState(p) + '</span></td><td class="pr-mono hide-m">' + ui.lastLabel(p.lastActivity) + '</td><td><span class="pr-row" style="flex-wrap:nowrap">' + ui.btn('Abrir', ui.act('open-map', k), p.total > 0 && p.marked >= p.total ? 'g sm' : 'sm') + rowMenu(m) + '</span></td></tr>';
+      return '<tr style="--c:' + P.mapColor(m) + '" data-pr-act="open-map" data-arg="' + esc(k) + '"><td class="fn">' + esc(fol.get(k) || '') + '</td><td><span class="pr-sig">' + esc(m.code || '') + '</span></td><td class="hide-m"><b>' + esc(m.title) + '</b></td><td class="hide-m"><span class="pr-chip c">' + esc(m.category || 'Outros') + '</span></td><td class="pr-mono hide-m">' + esc(c ? P.courses.sigla(c) : '') + '</td><td class="pr-num">' + p.marked + '/' + p.total + '</td>' + (ptsSort() ? '<td class="pr-num hide-m">' + ptsOf(m, p) + '</td>' : '') + '<td style="min-width:110px">' + ui.stbar(p) + '<span class="pr-mono">' + ui.mapState(p) + '</span></td><td class="pr-mono hide-m">' + ui.lastLabel(p.lastActivity) + '</td><td><span class="pr-row" style="flex-wrap:nowrap">' + ui.btn('Abrir', ui.act('open-map', k), p.total > 0 && p.marked >= p.total ? 'g sm' : 'sm') + rowMenu(m) + '</span></td></tr>';
     }).join('') + '</tbody></table></div>';
   }
+  /* ---------- V15.58 · ficha técnica do mapa (lida do próprio HTML, sob demanda) ----------
+     template, versão, estrutura, marcadores por tipo, questões embutidas e procedência declarada
+     (metas study-normative-cutoff, study-normative-sources, study-map-scope e study-edital-items do Template G27;
+     sem elas, a frase "compilado até…" do texto). */
+  const FICHA = new Map();
+  let fichaKey = '', fichaBusy = '';
+  const MK = [['star', '⭐ Cai muito'], ['warn', '⚠️ Pegadinha'], ['decore', '💎 Decore'], ['imp', '🔷 Importante'], ['num', '🔢 Número-chave'], ['arch', '📐 Arquiteto'], ['target', '🎯 Como cai'], ['update', '🟡 Atualização']];
+  function fichaFromHtml(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html'), meta = (n) => doc.querySelector('meta[name="' + n + '"]')?.content?.trim() || '';
+    const topics = [...doc.querySelectorAll('.topic-card[data-topic-id]')], mk = {};
+    let semMarc = 0;
+    topics.forEach((t) => { const l = String(t.getAttribute('data-markers') || '').split(/[\s,]+/).filter(Boolean); if (!l.length) semMarc++; l.forEach((x) => { mk[x] = (mk[x] || 0) + 1; }); });
+    const text = doc.body?.textContent || '';
+    const fonteTxt = (text.match(/[^.{}"<>\n]{0,40}\bcompilad[oa]\b[^.{}"<>\n]{0,80}/gi) || []).filter((t) => /\d{4}/.test(t)).sort((a, b) => b.length - a.length)[0] || '';
+    const ok = (v) => (/\[\[/.test(v) ? '' : v);
+    return { bytes: new Blob([html]).size, release: ok(meta('study-template-release')), g26: /G26/.test(html), v211: /v211-standard/.test(html), versao: ok(meta('study-file-version')), ramos: doc.querySelectorAll('main > .ramo').length, topicos: topics.length, semMarcadores: semMarc, marcadores: mk, questoes: (html.match(/"difficulty"\s*:\s*"N\d"/g) || []).length, corte: ok(meta('study-normative-cutoff')), fontes: ok(meta('study-normative-sources')) || fonteTxt.trim(), alcance: ok(meta('study-map-scope')), itens: ok(meta('study-edital-items')).split(/\s+/).filter(Boolean) };
+  }
+  function loadFicha(m) {
+    const k = P.data.keyOf(m);
+    if (FICHA.has(k)) return Promise.resolve(FICHA.get(k));
+    if (typeof mapHtml !== 'function') return Promise.resolve(null);
+    return mapHtml(m).then((h) => { const f = h ? fichaFromHtml(h) : { erro: 'vazio' }; FICHA.set(k, f);
+      /* alcance declarado pelo HTML vale enquanto você não escolher outro */
+      if (f.alcance && P.editais.ALCANCES.some(([id]) => id === f.alcance) && !P.store.read().mapMeta?.[k]) P.editais.setAlcance(k, f.alcance);
+      return f; }).catch(() => { const f = { erro: 'leitura' }; FICHA.set(k, f); return f; });
+  }
+  P.fichaMapa = { get: (k) => FICHA.get(k) || null, load: loadFicha, parse: fichaFromHtml };
+  function fichaCard() {
+    if (!fichaKey) return '';
+    const m = typeof mapById === 'function' ? mapById(fichaKey) : null;
+    if (!m) { fichaKey = ''; return ''; }
+    const f = FICHA.get(fichaKey), close = ui.btn('Fechar', ui.act('ficha', ''), 'g sm');
+    if (!f) { if (fichaBusy !== fichaKey) { fichaBusy = fichaKey; loadFicha(m).then(() => { fichaBusy = ''; P.schedule('maps'); }); } return ui.card(ui.head('Ficha técnica · ' + esc(m.code || ''), 'Lendo o HTML do mapa…', close, 'l') + ui.skeleton(2)); }
+    if (f.erro) return ui.card(ui.head('Ficha técnica · ' + esc(m.code || ''), 'Não foi possível ler o HTML', close, 'l') + '<p class="pr-detail">O arquivo do mapa não está disponível agora (sem conexão ou fora do cache offline).</p>');
+    const mx = Math.max(1, ...Object.values(f.marcadores)), pts = P.editais.pontosDoMapa(m);
+    const bars = Object.keys(f.marcadores).length ? '<div class="pr-cats">' + MK.map(([id, l]) => '<div class="pr-cat" style="--c:' + P.mapColor(m) + '"><span class="nm"><span>' + esc(l) + '</span></span><span class="bar"><i style="width:' + ((f.marcadores[id] || 0) / mx) * 100 + '%"></i></span><span class="v">' + (f.marcadores[id] || 0) + '</span></div>').join('') + '</div>' : ui.verdict('', 'Nenhum tópico tem marcadores (data-markers).', 'Os filtros ⭐ ⚠️ 💎 🔢 do mapa e a revisão relâmpago ficam vazios; vale regerar o mapa no template atual.');
+    const alerts = [f.semMarcadores && f.semMarcadores < f.topicos ? f.semMarcadores + ' ' + plural(f.semMarcadores, 'tópico sem marcador', 'tópicos sem marcador') : '', !f.corte && !f.fontes ? 'o HTML não declara a data da fonte legal' : ''].filter(Boolean);
+    const fonte = f.corte ? 'Corte normativo em ' + esc(U.fmtDayYear(f.corte)) + (f.fontes ? ' · ' + esc(f.fontes) : '') : f.fontes ? '“' + esc(f.fontes.slice(0, 160)) + '”' : 'O HTML não declara a data da fonte legal.';
+    return ui.card(ui.head('Ficha técnica · ' + esc(m.code || ''), esc(m.title), close, 'l') + '<div class="pr-pe-cells">' +
+      ui.cell('Versão', esc(f.versao || m.version || '—'), '', esc((f.v211 ? 'template V211' : 'template não identificado') + (f.g26 ? ' · G26' : '') + (f.release ? ' · ' + f.release : ''))) +
+      ui.cell('Estrutura', f.topicos, '', 'tópicos em ' + f.ramos + ' ' + plural(f.ramos, 'ramo')) + ui.cell('Questões', U.fmtNum(f.questoes), f.questoes ? '' : 'mu', 'variantes N1–N3 embutidas') +
+      ui.cell('Arquivo', (f.bytes / 1048576).toFixed(1).replace('.', ','), '', 'MB') + ui.cell('Na prova', pts === null ? '—' : E58fmt(pts), '', pts === null ? 'curso sem estrutura da prova' : 'pontos que o mapa cobre') + '</div>' +
+      '<div class="pr-two"><div><span class="pr-k">Marcadores nos tópicos</span>' + bars + '</div><div><span class="pr-k">Procedência</span><p class="pr-detail">' + fonte + '</p>' + (f.itens.length ? '<p class="pr-mono">Itens do edital: ' + esc(f.itens.join(' · ')) + '</p>' : '') + '<div class="pr-row">' + alcChip(m) + '<span class="pr-chip c">' + esc(m.category || 'Outros') + '</span></div>' + (alerts.length ? ui.verdict('l', 'Conferir:', esc(alerts.join('; ')) + '.') : '') + '</div></div>');
+  }
+  const E58fmt = (n) => P.editais.fmtPt(n);
   function render(root) {
     /* V15.54: concursos encerrados (arquivados ou com prova realizada) ficam ocultos; "Mostrar encerrados" traz o acervo deles.
        V15.56: só os mapas LOCAIS desses concursos saem da vista; portáteis e mistos continuam (servem no próximo edital). */
@@ -103,8 +155,42 @@
         return '<section class="pr-grpc"><div class="pr-grph" style="--c:' + g.color + '"><b>' + esc(g.name) + '</b>' + ui.mini(g.all, g.color) + '<span class="pr-mono">' + g.all.length + ' mapas · ' + ag.marked + '/' + ag.total + ' · ' + pct(ag.marked, ag.total) + '%</span></div><div class="pr-gridm">' + ms.map((m) => card(m, fol)).join('') + '</div></section>';
       }).join('');
     } else body = '<div class="pr-gridm">' + list.map((m) => card(m, fol)).join('') + '</div>';
-    root.innerHTML = top + closedBar + carimbo + tool + catChips + alcChips + courseChips + '<p class="pr-mono" aria-live="polite">' + list.length + ' de ' + all.length + ' mapas</p>' + body;
+    root.innerHTML = top + closedBar + carimbo + fichaCard() + tool + catChips + alcChips + courseChips + (ptsSort() && !all.some((m) => valorOf(m) >= 0) ? '<p class="pr-mono">Nenhum curso destes mapas tem a estrutura da prova; informe-a no Raio-X do curso para ordenar por pontos.</p>' : '') + '<p class="pr-mono" aria-live="polite">' + list.length + ' de ' + all.length + ' mapas</p>' + body;
   }
+  /* V15.58 · Atualizar HTML com prévia: antes de confirmar, compara os tópicos das duas versões
+     (mantidos, novos, removidos, renomeados) e quanto do progresso marcado é preservado. */
+  (function installUpdateDiff() {
+    const base = window.renderMapUpdatePreview;
+    if (typeof base !== 'function' || base.__diff) return;
+    const topicsOf = (html) => { const doc = new DOMParser().parseFromString(html || '', 'text/html'); return [...doc.querySelectorAll('.topic-card[data-topic-id]')].map((t) => ({ id: t.getAttribute('data-topic-id'), title: (t.querySelector('.topic-name')?.textContent || '').replace(/\s+/g, ' ').trim() })); };
+    let seq = 0;
+    const li = (tag, t, note) => '<li><b>' + tag + '</b> ' + esc(t.title || t.id) + (note ? ' <small>' + esc(note) + '</small>' : '') + '</li>';
+    const wrapped = function () {
+      const r = base.apply(this, arguments);
+      try {
+        const box = document.getElementById('mapUpdatePreview'), m = typeof currentMapUpdateTarget === 'function' ? currentMapUpdateTarget() : null, c = typeof mapUpdate !== 'undefined' ? mapUpdate.candidate : null;
+        if (!box || !m || !c?.html || typeof mapHtml !== 'function') return r;
+        const my = ++seq;
+        box.insertAdjacentHTML('beforeend', '<div class="map-update-diff" data-update-diff><p class="map-update-empty">Comparando os tópicos das duas versões…</p></div>');
+        Promise.resolve(mapHtml(m)).then((cur) => {
+          const host = box.querySelector('[data-update-diff]');
+          if (my !== seq || !host) return;
+          const a = topicsOf(cur), b = topicsOf(c.html), ia = new Map(a.map((t) => [t.id, t])), ib = new Map(b.map((t) => [t.id, t]));
+          if (!a.length) { host.innerHTML = '<p class="map-update-empty">Não foi possível ler os tópicos da versão atual para comparar.</p>'; return; }
+          const mant = b.filter((t) => ia.has(t.id)), novos = b.filter((t) => !ia.has(t.id)), rem = a.filter((t) => !ib.has(t.id)), ren = mant.filter((t) => ia.get(t.id).title && t.title && ia.get(t.id).title !== t.title);
+          const stt = (typeof readMapState === 'function' ? readMapState(m).topicStates : null) || {};
+          const marc = a.filter((t) => stt[t.id]).length, kept = mant.filter((t) => stt[t.id]).length;
+          const lab = { done: 'OK', review: 'REV', difficult: 'DIF' };
+          host.innerHTML = '<div class="map-update-checks"><span>' + mant.length + ' mantidos</span><span>' + novos.length + ' novos</span><span>' + rem.length + ' removidos</span>' + (ren.length ? '<span>' + ren.length + ' renomeados</span>' : '') + '</div>' +
+            '<p class="map-update-empty">' + (marc ? 'Seu progresso fica em ' + kept + ' de ' + marc + ' tópicos marcados.' + (marc > kept ? ' O estado dos removidos continua guardado, mas eles saem da fila.' : '') : 'Nenhum tópico marcado neste mapa ainda.') + '</p>' +
+            (novos.length || rem.length || ren.length ? '<ul class="map-update-diff-list">' + novos.slice(0, 12).map((t) => li('novo', t)).join('') + ren.slice(0, 12).map((t) => li('renomeado', t, 'antes: ' + ia.get(t.id).title)).join('') + rem.slice(0, 12).map((t) => li('removido', t, lab[stt[t.id]] || '')).join('') + '</ul>' : '<p class="map-update-empty">Os mesmos tópicos nas duas versões.</p>');
+        }).catch(() => { const host = box.querySelector('[data-update-diff]'); if (host && my === seq) host.innerHTML = '<p class="map-update-empty">Não foi possível ler a versão atual para comparar.</p>'; });
+      } catch (e) { console.warn('[Prancha] prévia da atualização', e); }
+      return r;
+    };
+    wrapped.__diff = true;
+    window.renderMapUpdatePreview = wrapped;
+  })();
   let qTimer = 0;
   document.addEventListener('input', (e) => {
     const el = e.target.closest('[data-prancha="maps"] [data-pr-input="q"]');
@@ -120,6 +206,7 @@
   P.pages.maps = {
     render,
     actions: {
+      ficha: (key) => { fichaKey = fichaKey === key ? '' : String(key || ''); P.schedule('maps'); if (fichaKey) window.scrollTo({ top: 0 }); },
       view: (id) => { st.view = id; save(); P.schedule('maps'); },
       fe: (id) => { st.fe = id; P.schedule('maps'); },
       fc: (id) => { st.fc = id; P.schedule('maps'); },

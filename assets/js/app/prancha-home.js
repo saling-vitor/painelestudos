@@ -36,7 +36,7 @@
     if (agenda.length) {
       return agenda.map((b) => {
         const it = b.item, map = it.mapKey && typeof mapById === 'function' ? mapById(it.mapKey) : null;
-        return { id: it.id, kind: 'agenda', map, key: it.mapKey || '', code: map?.code || (it.kind === 'simulation' ? 'SIM' : 'LIVRE'), title: map ? (map.shortTitle || map.title) : String(it.title || 'Sessão').replace(/^Iniciar\s*·\s*/i, ''), minutes: b.minutes, startLabel: P.agenda.fromMin(b.start) + (b.explicit ? '' : ' (sem horário)'), done: !!it.completedAt, color: map ? P.mapColor(map) : 'var(--pr-pg-argila)' };
+        return { id: it.id, kind: it.kind === 'review' ? 'review' : 'agenda', map, key: it.mapKey || '', code: map?.code || (it.kind === 'simulation' ? 'SIM' : it.kind === 'review' ? 'REV' : 'LIVRE'), title: map ? (map.shortTitle || map.title) : String(it.title || 'Sessão').replace(/^Iniciar\s*·\s*/i, ''), minutes: b.minutes, startLabel: P.agenda.fromMin(b.start) + (b.explicit ? '' : ' (sem horário)'), done: !!it.completedAt, color: map ? P.mapColor(map) : it.kind === 'review' ? 'var(--pr-latao)' : 'var(--pr-pg-argila)' };
       });
     }
     const snap = P.plan.daily();
@@ -54,7 +54,7 @@
   }
   function planList(items, curKey = '') {
     if (!items.length) return ui.empty('Nenhum bloco para hoje', 'Planeje na Agenda ou use "Tenho só" para montar um bloco agora.', ui.btn('Abrir a Agenda', ui.act('nav', 'agenda'), 'g sm'));
-    return '<div class="pr-list">' + items.map((x, i) => '<div class="pr-pi' + (x.done ? ' done' : '') + (curKey && x.key === curKey ? ' cur' : '') + '" style="--c:' + x.color + '"><span class="n">' + (x.done ? '✓' : i + 1) + '</span><span><b>' + esc(x.title) + '</b><small>' + esc([x.code, x.startLabel, x.reason].filter(Boolean).join(' · ')) + '</small></span><span class="pr-mono">' + fmtMin(x.minutes) + '</span>' + (x.done ? '<span class="pr-chip ok">feito</span>' : ui.btn('Iniciar', ui.act(x.kind === 'agenda' ? 'start-agenda' : 'start-plan', x.kind === 'agenda' ? x.id : x.key, { 'data-min': x.minutes }), 'sm')) + '</div>').join('') + '</div>';
+    return '<div class="pr-list">' + items.map((x, i) => '<div class="pr-pi' + (x.done ? ' done' : '') + (curKey && x.key === curKey ? ' cur' : '') + '" style="--c:' + x.color + '"><span class="n">' + (x.done ? '✓' : i + 1) + '</span><span><b>' + esc(x.title) + '</b><small>' + esc([x.code, x.startLabel, x.reason].filter(Boolean).join(' · ')) + '</small></span><span class="pr-mono">' + fmtMin(x.minutes) + '</span>' + (x.done ? '<span class="pr-chip ok">feito</span>' : ui.btn('Iniciar', x.kind === 'review' ? ui.act('review-queue') : ui.act(x.kind === 'agenda' ? 'start-agenda' : 'start-plan', x.kind === 'agenda' ? x.id : x.key, { 'data-min': x.minutes }), 'sm')) + '</div>').join('') + '</div>';
   }
   function retomar() {
     /* V15.54: mapa de concurso encerrado não volta para "Retomar"; usa o último mapa em estudo */
@@ -103,6 +103,20 @@
     return ui.card('<span class="pr-k">Dúvida aberta</span><b style="font-size:var(--fs-body-sm)">' + esc((map?.code ? map.code + ' · ' : '') + d.text) + '</b><span class="pr-mono">' + esc(ui.lastLabel(d.createdAt)) + ' · ' + list.length + ' ' + plural(list.length, 'aberta') + '</span>' + ui.btn('Ver dúvidas', ui.act('nav', 'progress'), 'g sm'));
   }
 
+  /* V15.58 · "Tenho só": o bloco que cabe no tempo escolhido, montado pela ordem do plano (peso da prova incluído) */
+  function bloco(minutes) {
+    const rows = P.plan.priorities(8), out = [];
+    let used = 0;
+    for (const r of rows) { const mins = Math.max(5, Number(r.minutes) || 15); if (used + mins > minutes) continue; out.push({ r, mins }); used += mins; if (used >= minutes) break; }
+    if (!out.length && rows[0]) out.push({ r: rows[0], mins: minutes });
+    return { items: out, used: out.reduce((n, x) => n + x.mins, 0) };
+  }
+  function blocoHtml(minutes) {
+    if (!minutes) return '';
+    const b = bloco(minutes);
+    if (!b.items.length) return '';
+    return '<div class="pr-bloco"><span class="pr-k">Bloco de ' + fmtMin(minutes) + ' · ' + fmtMin(b.used) + ' montados</span><div class="pr-list">' + b.items.map((x, i) => '<div class="pr-pi" style="--c:' + P.mapColor(x.r.map) + '"><span class="n">' + (i + 1) + '</span><span><b>' + esc(x.r.map.shortTitle || x.r.map.title) + '</b><small>' + esc([x.r.map.code, ...(x.r.reasons || []).slice(0, 2)].filter(Boolean).join(' · ')) + '</small></span><span class="pr-mono">' + fmtMin(x.mins) + '</span><span></span></div>').join('') + '</div><div class="pr-row">' + ui.btn('Começar bloco · ' + fmtMin(b.used), ui.act('start-bloco', String(minutes)), 'p sm') + (window.StudyPlanner?.showTimePlan ? ui.btn('Ajustar no planejador', ui.act('time-plan', String(minutes)), 'g sm') : '') + '</div></div>';
+  }
   /* ---------- 1 · HOJE ---------- */
   function screenHoje() {
     const pc = P.courses.priority();
@@ -146,7 +160,7 @@
     if (top) {
       const m = top.map, p = top.progress;
       const quickBtns = [15, 30, 60, 90].map((n) => '<button type="button" data-pr-act="quick" data-arg="' + n + '" aria-pressed="' + (quick === n) + '">' + fmtMin(n) + '</button>').join('');
-      agora = ui.card(ui.head('Agora', esc(m.title), ui.btn('Começar · ' + fmtMin(top.minutes), ui.act('start-plan', top.key, { 'data-min': top.minutes }), 'p'), 'l') + '<div class="pr-now">' + ui.mapCov(m) + '<div style="display:grid;gap:10px;min-width:0"><div class="pr-why">' + top.reasons.slice(0, 4).map((r) => '<span class="' + (/prova|atras/.test(r) ? 'o' : /DIF|REV|revis/.test(r) ? 'l' : '') + '">' + esc(r) + '</span>').join('') + '</div><p style="font-size:var(--fs-body-sm)">' + esc((m.code || '') + ' · ' + p.marked + '/' + p.total + ' tópicos · ' + ui.mapState(p)) + '</p><div><span class="pr-k">Tenho só</span><div class="pr-qk" role="group" aria-label="Tempo disponível" style="margin-top:6px">' + quickBtns + '</div></div></div></div>');
+      agora = ui.card(ui.head('Agora', esc(m.title), ui.btn('Começar · ' + fmtMin(top.minutes), ui.act('start-plan', top.key, { 'data-min': top.minutes }), 'p'), 'l') + '<div class="pr-now">' + ui.mapCov(m) + '<div style="display:grid;gap:10px;min-width:0"><div class="pr-why">' + top.reasons.slice(0, 4).map((r) => '<span class="' + (/prova|atras|mínimo/.test(r) ? 'o' : /DIF|REV|revis|pt por tópico/.test(r) ? 'l' : '') + '">' + esc(r) + '</span>').join('') + '</div><p style="font-size:var(--fs-body-sm)">' + esc((m.code || '') + ' · ' + p.marked + '/' + p.total + ' tópicos · ' + ui.mapState(p)) + '</p><div><span class="pr-k">Tenho só</span><div class="pr-qk" role="group" aria-label="Tempo disponível" style="margin-top:6px">' + quickBtns + '</div></div></div></div>' + blocoHtml(quick));
     } else agora = ui.card(ui.head('Agora', 'Nada pendente agora') + ui.empty('Todos os mapas estão em dia', 'Importe novos mapas ou revise os concluídos.'));
     const done = items.filter((x) => x.done).length;
     const plano = ui.card(ui.head('Plano do dia', fmtMin(planned) + ' · ' + items.length + ' ' + plural(items.length, 'bloco') + ' · ' + done + ' ' + plural(done, 'feito'), ui.btn('Agenda', ui.act('nav', 'agenda'), 'g sm')) + dayline(items) + planList(items));
@@ -204,7 +218,7 @@
 
   /* ---------- 3 · REVISÕES ---------- */
   function screenRev() {
-    const q = P.reviews.queue(), total = q.reduce((s, x) => s + x.count, 0), minutes = q.reduce((s, x) => s + x.minutes, 0);
+    const q = P.reviews.queue(), total = q.reduce((s, x) => s + x.count, 0), minutes = q.reduce((s, x) => s + x.minutes, 0), pontos = Math.round(q.reduce((s, x) => s + (x.pontos || 0), 0) * 10) / 10;
     const cal = P.reviews.calendar(7), byCourse = new Map();
     q.forEach((r) => { const id = String(r.map.courseId); const row = byCourse.get(id) || { course: r.course, count: 0, minutes: 0 }; row.count += r.count; row.minutes += r.minutes; byCourse.set(id, row); });
     const groups = [...byCourse.values()];
@@ -219,13 +233,13 @@
     else v = ui.verdict('l', 'A fila toda leva cerca de ' + fmtMin(minutes) + '.', (first && firstEx && firstEx.days !== null && firstEx.days >= 0 && groups.length > 1 ? 'Com a prova de ' + esc(P.courses.sigla(first.course)) + ' em ' + firstEx.days + ' ' + plural(firstEx.days, 'dia') + ', os ' + first.count + ' itens dele vêm primeiro (' + fmtMin(first.minutes) + ').' : '') + ' Estimativa: tempo médio por tópico registrado em cada mapa; sem histórico, 50 s por tópico.');
     const firstMap = q[0];
     const guidedN = window.StudyFlow?.guided?.count?.() || 0;
-    const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">Revisões de hoje · revisão por tópico e por mapa</span><div class="pr-big"><span class="pr-pct pr-num' + (total ? '' : ' ok') + '">' + fmtNum(total) + '</span><span class="pr-sub">' + plural(total, 'revisão vencida', 'revisões vencidas') + ' · em ' + q.length + ' ' + plural(q.length, 'mapa') + '</span></div>' +
+    const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">Revisões de hoje · revisão por tópico e por mapa</span>' + (pontos > 0 ? '<div class="pr-big"><span class="pr-pct pr-num">≈ ' + P.editais.fmtPt(pontos) + '</span><span class="pr-sub">pontos de prova em ' + fmtNum(total) + ' ' + plural(total, 'revisão vencida', 'revisões vencidas') + ' · ' + q.length + ' ' + plural(q.length, 'mapa') + '</span></div>' : '<div class="pr-big"><span class="pr-pct pr-num' + (total ? '' : ' ok') + '">' + fmtNum(total) + '</span><span class="pr-sub">' + plural(total, 'revisão vencida', 'revisões vencidas') + ' · em ' + q.length + ' ' + plural(q.length, 'mapa') + '</span></div>') +
       ui.states(groups.map((g) => [P.courses.sigla(g.course), g.count, g.course ? P.courses.color(g.course) : 'var(--pr-latao)']), 'Revisões vencidas por concurso') + ui.legend(groups.map((g) => [P.courses.sigla(g.course), g.count, g.course ? P.courses.color(g.course) : 'var(--pr-latao)'])) + v +
       '<div class="pr-row">' + (total ? ui.btn('Revisar ' + esc(firstMap.map.code || '') + ' · ' + fmtMin(firstMap.minutes), ui.act('open-map', firstMap.key), 'p') + ui.btn('Fila inteira', ui.act('review-queue'), 'g') + (window.StudyPlanner?.showTopicReview ? ui.btn('Revisão por tópico', ui.act('topic-review'), 'g') : '') : '') + (guidedN ? ui.btn('Revisão guiada no leitor · ' + guidedN, ui.act('guided-review'), total ? 'g' : 'p') : '') + (examToday ? ui.btn('Adiar revisões do dia da prova', ui.act('postpone-exam'), 'g') : '') + '</div></div><div class="pr-c-b">' +
       ui.cell('Vencidas', fmtNum(total), total ? 'l' : 'ok', 'hoje, ' + fmtDay(new Date())) + ui.cell('Feitas hoje', doneToday, doneToday ? 'ok' : '', 'tópicos e mapas avaliados') +
       ui.cell('Tempo', total ? '~' + fmtMin(minutes) : '—', '', 'estimativa pela fila') + ui.cell('Mapas', q.length, '', groups.length > 1 ? groups.map((g) => g.count + ' ' + esc(P.courses.sigla(g.course))).join(' · ') : '') +
       ui.cell('Atrasadas', overdue, overdue ? 'ox' : 'ok', overdue ? 'mapas com revisão de dias anteriores' : 'nada de dias anteriores') + ui.cell('Amanhã', cal[1]?.count ?? 0, '', 'já agendadas') + '</div></section>';
-    const fila = q.length ? '<div class="pr-list">' + q.map((r, i) => '<div class="pr-pi" style="--c:' + P.mapColor(r.map) + '"><span class="n">' + (i + 1) + '</span><span><b>' + esc((r.map.code ? r.map.code + ' · ' : '') + r.map.title) + '</b><small>' + esc([r.topics ? r.topics + ' ' + plural(r.topics, 'tópico') : '', r.mapDue ? 'revisão do mapa' : '', r.overdueDays ? 'atrasada ' + r.overdueDays + ' d' : '', r.examDays !== null && r.examDays >= 0 ? 'prova em ' + r.examDays + ' d' : ''].filter(Boolean).join(' · ')) + '</small></span><span class="pr-mono" title="' + esc('base: ' + r.estimatedBasis) + '">~' + fmtMin(r.minutes) + '</span>' + ui.btn('Revisar', ui.act('open-map', r.key), 'sm') + '</div>').join('') + '</div>' : ui.empty('Fila vazia', 'Quando um mapa ou tópico vencer, ele entra aqui na ordem: prova mais perto primeiro, depois o mapa com mais itens.');
+    const fila = q.length ? '<div class="pr-list">' + q.map((r, i) => '<div class="pr-pi" style="--c:' + P.mapColor(r.map) + '"><span class="n">' + (i + 1) + '</span><span><b>' + esc((r.map.code ? r.map.code + ' · ' : '') + r.map.title) + '</b><small>' + esc([r.topics ? r.topics + ' ' + plural(r.topics, 'tópico') : '', r.mapDue ? 'revisão do mapa' : '', r.overdueDays ? 'atrasada ' + r.overdueDays + ' d' : '', r.examDays !== null && r.examDays >= 0 ? 'prova em ' + r.examDays + ' d' : '', r.ppt ? P.editais.fmtPt(r.ppt) + ' pt cada' : ''].filter(Boolean).join(' · ')) + '</small></span><span class="pr-mono" title="' + esc('base: ' + r.estimatedBasis) + '">~' + fmtMin(r.minutes) + (r.pontos ? ' · ' + P.editais.fmtPt(r.pontos) + ' pt' : '') + '</span>' + ui.btn('Revisar', ui.act('open-map', r.key), 'sm') + '</div>').join('') + '</div>' : ui.empty('Fila vazia', 'Quando um mapa ou tópico vencer, ele entra aqui na ordem: prova mais perto primeiro, depois o mapa com mais itens.');
     const maxN = Math.max(1, ...cal.map((d) => d.count));
     const rcal = '<div class="pr-rcal" role="img" aria-label="Revisões nos próximos 7 dias">' + cal.map((d, i) => '<div><b class="pr-num">' + d.count + '</b><span class="b' + (i === 0 ? ' today' : '') + (d.exam ? ' pv' : '') + '" style="height:' + Math.max(d.exam ? 12 : 2, (d.count / maxN) * 110) + 'px"></span><span>' + (i === 0 ? 'hoje' : U.DSEM[d.date.getDay()].toLowerCase()) + '<br>' + d.date.getDate() + (d.exam ? '<br>prova' : '') + '</span></div>').join('') + '</div>';
     const examIn = cal.find((d) => d.exam);
@@ -250,7 +264,7 @@
     const s = P.session.read(), goals = P.time.goals();
     if (!s) {
       const items = planItems(), first = items.find((x) => !x.done);
-      return '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">Em sessão · nenhuma sessão ativa</span><div class="pr-big"><span class="pr-tmr paused pr-num">00:00</span></div>' + ui.verdict('n', 'O cronômetro está parado.', 'Ao iniciar uma sessão, o tempo é registrado no mapa e na meta do dia; a Home passa a mostrar esta tela.') + '<div class="pr-ctl">' + (first ? ui.btn('Começar o 1º bloco · ' + esc(first.code), ui.act(first.kind === 'agenda' ? 'start-agenda' : 'start-plan', first.kind === 'agenda' ? first.id : first.key, { 'data-min': first.minutes }), 'p') : '') + ui.btn('Sessão livre', ui.act('start-free'), first ? 'g' : 'p') + ui.btn('Pomodoro · ' + fmtMin(goals.pomodoroWork), ui.act('start-pomodoro'), 'g') + '</div></div><div class="pr-c-b">' + ui.cell('Meta de hoje', fmtSec(P.time.today()) + ' / ' + fmtMin(goals.daily), '', '') + ui.cell('Semana', fmtSec(P.time.week()) + ' / ' + fmtMin(goals.weekly), '', '') + '</div></section>';
+      return '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">Em sessão · nenhuma sessão ativa</span><div class="pr-big"><span class="pr-tmr paused pr-num">00:00</span></div>' + ui.verdict('n', 'O cronômetro está parado.', 'Ao iniciar uma sessão, o tempo é registrado no mapa e na meta do dia; a Home passa a mostrar esta tela.') + '<div class="pr-ctl">' + (first ? ui.btn('Começar o 1º bloco · ' + esc(first.code), (first.kind === 'review' ? ui.act('review-queue') : ui.act(first.kind === 'agenda' ? 'start-agenda' : 'start-plan', first.kind === 'agenda' ? first.id : first.key, { 'data-min': first.minutes })), 'p') : '') + ui.btn('Sessão livre', ui.act('start-free'), first ? 'g' : 'p') + ui.btn('Pomodoro · ' + fmtMin(goals.pomodoroWork), ui.act('start-pomodoro'), 'g') + '</div></div><div class="pr-c-b">' + ui.cell('Meta de hoje', fmtSec(P.time.today()) + ' / ' + fmtMin(goals.daily), '', '') + ui.cell('Semana', fmtSec(P.time.week()) + ' / ' + fmtMin(goals.weekly), '', '') + '</div></section>';
     }
     const a = s.active, map = s.map, p = s.progress, sp = s.startProgress;
     const target = s.target, elapsed = s.elapsed;
@@ -386,7 +400,18 @@
     render,
     actions: {
       screen: (id) => { manual.set(id === autoScreen() ? '' : id); P.schedule('home'); window.scrollTo({ top: 0 }); },
-      quick: (n) => { quick = Number(n); if (window.StudyPlanner?.showTimePlan) window.StudyPlanner.showTimePlan(quick, { focusOnStart: false }); P.schedule('home'); },
+      quick: (n) => { quick = quick === Number(n) ? 0 : Number(n); P.schedule('home'); },
+      'time-plan': (n) => window.StudyPlanner?.showTimePlan?.(Number(n) || 30, { focusOnStart: false }),
+      'start-bloco': async (n) => {
+        const b = bloco(Number(n) || 30), first = b.items[0];
+        if (!first) return;
+        try { sessionStorage.setItem('studyapp.prancha.blocoFila', JSON.stringify(b.items.map((x) => ({ key: x.r.key, minutes: x.mins })))); } catch {}
+        if (window.StudyDashboard?.active?.()) { manual.set('sessao'); P.schedule('home'); return; }
+        window.StudyDashboard?.start?.({ map: first.r.map, mode: 'planned', minutes: b.used, label: 'Bloco · ' + (first.r.map.code || '') });
+        quick = 0; manual.set('');
+        if (typeof openMap === 'function') await openMap(first.r.key);
+        P.schedule('home');
+      },
       'pick-map': (key, el, root) => { selTile = key; root.querySelectorAll('.pr-tile').forEach((t) => t.classList.toggle('on', t.dataset.arg === key)); const d = root.querySelector('[data-pr-detail]'); if (d) d.innerHTML = tileDetail(key); },
       'start-plan': async (key, el) => {
         const map = typeof mapById === 'function' ? mapById(key) : null;
