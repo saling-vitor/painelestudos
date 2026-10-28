@@ -65,8 +65,15 @@ export async function seedProgress(page, plan = { DEMHAB: [27, 1, 0], PDGV: [33,
 }
 
 export async function go(page, view) {
-  await page.evaluate((v) => nav(v), view);
-  await expect(page.locator('.view[data-view="' + view + '"].pr-on > .pr[data-prancha="' + view + '"]')).toBeVisible();
+  /* fechar o leitor devolve o histórico de forma assíncrona: no WebKit lento do CI o popstate chega
+     depois do nav() e leva de volta à tela anterior. Repete o nav() até a prancha pedida ficar na tela. */
+  const target = page.locator('.view[data-view="' + view + '"].pr-on > .pr[data-prancha="' + view + '"]');
+  await expect.poll(async () => {
+    if (await target.isVisible()) return true;
+    await page.evaluate((v) => nav(v), view);
+    return target.isVisible();
+  }, { timeout: 15000, intervals: [300, 600, 1000] }).toBe(true);
+  await expect(target).toBeVisible();
 }
 export async function screen(page, id) {
   await page.locator('[data-prancha="home"] .pr-tab[data-arg="' + id + '"]').click();

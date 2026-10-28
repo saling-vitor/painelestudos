@@ -35,8 +35,8 @@ test('Planta [G] · lotes proporcionais com siglas e indicadores visiveis', asyn
     await page.setViewportSize({ width, height: 900 });
     for (const mode of ['t', 'p']) {
       const switcher = course.locator('.pr-seg[aria-label="Medida da planta"] button[data-arg="' + mode + '"]');
-      await switcher.click();
-      await expect(switcher).toHaveAttribute('aria-pressed', 'true');
+      /* a prancha pode redesenhar no meio do toque (troca de largura): repete o clique até a medida ficar ativa */
+      await expect.poll(async () => { if (await switcher.getAttribute('aria-pressed') !== 'true') await switcher.click(); return switcher.getAttribute('aria-pressed'); }, { timeout: 15000, intervals: [250, 500, 1000] }).toBe('true');
 
       const audit = await course.locator('.pr-tiles').evaluate((container, measure) => {
         const errors = [];

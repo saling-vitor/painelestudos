@@ -14,7 +14,8 @@ test('Ponte [G] · leitor responde ao mapa G27 com o contexto do curso e guarda 
   await seedProgress(page, { LIU: [10, 0, 0] });
   const key = await page.evaluate(() => combinedMaps().find((m) => m.code === 'LIU')._key);
   await page.evaluate((k) => openMap(k), key);
-  await page.waitForFunction(() => document.getElementById('readerFrame')?.contentDocument?.readyState === 'complete');
+  /* espera o HTML do mapa de fato (não o about:blank inicial): no WebKit lento o quadro ainda era trocado depois */
+  await page.waitForFunction(() => { const d = document.getElementById('readerFrame')?.contentDocument; return d?.readyState === 'complete' && d.location.href !== 'about:blank' && !!d.body?.children.length; });
   const f = await (await page.$('#readerFrame')).contentFrame();
   const ctx = await f.evaluate(() => new Promise((res) => {
     addEventListener('message', (e) => { if (e.data?.type === 'MEUS_MAPAS_CONTEXT') res(e.data); });

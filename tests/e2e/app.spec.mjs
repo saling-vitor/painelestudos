@@ -524,7 +524,7 @@ test('V15.37.0 [G] automação aparece em Cursos, curso e Configurações',async
 
 test('V15.37.0 [G] importador consegue inferir curso e diagnóstico detecta inconsistências sem quebrar',async({page})=>{
   await page.goto('/#home');
-  await page.waitForFunction(()=>window.StudyAutomation);
+  await page.waitForFunction(()=>window.StudyAutomation&&typeof combinedMaps==='function'&&combinedMaps().length>0&&combinedCourses().length>0);
   const result=await page.evaluate(()=>{
     const course=combinedCourses().find(c=>c.status!=='archived')||combinedCourses()[0];
     const map=combinedMaps().find(m=>m.courseId===course.id)||combinedMaps()[0];
@@ -1238,7 +1238,9 @@ test('[G] Retomar replica a identidade cromática do mapa em todas as telas',asy
   await expect(card.locator('.continue-map-code')).toHaveText(selected.code);
   await expect(card.locator('.continue-map-category')).toHaveText(selected.category);
   await expect(card.locator('.continue-thumb img')).toBeVisible();
-  const visual=await card.evaluate(el=>{
+  /* a Home pode redesenhar o cartão (sincronização) entre a espera e a leitura: um elemento solto devolve
+     estilo vazio, então a leitura se repete até pegar o cartão já estável */
+  const readVisual=el=>{
     const mapAccent=getComputedStyle(el).getPropertyValue('--map-accent').trim();
     const probe=document.createElement('span');
     probe.style.color=mapAccent;probe.style.position='fixed';probe.style.left='-9999px';document.body.append(probe);
@@ -1260,7 +1262,9 @@ test('[G] Retomar replica a identidade cromática do mapa em todas as telas',asy
       viewportWidth:innerWidth,
       scrollWidth:document.documentElement.scrollWidth
     };
-  });
+  };
+  let visual;
+  await expect.poll(async()=>{visual=await card.evaluate(readVisual).catch(()=>null);return !!visual&&visual.codeColor!==''&&visual.codeColor===visual.accentColor;},{timeout:10000}).toBe(true);
   expect(visual.codeColor).toBe(visual.accentColor);
   expect(visual.categoryColor).toBe(visual.accentColor);
   expect(visual.progressColor).toBe(visual.accentColor);
