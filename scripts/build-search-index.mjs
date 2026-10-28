@@ -33,9 +33,11 @@ function topicItems(map){
    if(!name)continue;
    const title=decode(name[1]);
    if(!title)continue;
-   const bodyStart=summaryEnd+'</summary>'.length,bodyEnd=matchingDetailsEnd(html,bodyStart),content=decode(cleanTopicBody(html.slice(bodyStart,bodyEnd))).slice(0,2200),signals=topicSignals(content),snippet=content.slice(0,300);
+   const bodyStart=summaryEnd+'</summary>'.length,bodyEnd=matchingDetailsEnd(html,bodyStart),rawBody=html.slice(bodyStart,bodyEnd),content=decode(cleanTopicBody(rawBody)).slice(0,2200),signals=topicSignals(content),snippet=content.slice(0,300);
+   /* V15.57 · marcadores do tópico (data-markers) e variantes de questão embutidas (v134-question-data) */
+   const markers=String((attrs.match(/\bdata-markers=["']([^"']*)["']/i)||[])[1]||'').split(/[\s,]+/).filter(Boolean),questions=(rawBody.match(/"difficulty"\s*:\s*"N\d"/g)||[]).length;
    const mapKey=String(map.courseId||'')+'::'+String(map.code||map.id||'').toLowerCase();
-   items.push({type:'topic',courseId:map.courseId||'',mapCode:map.code||'',mapKey,topicId,title,snippet,signals,content,keywords:decode([map.code,map.title,map.shortTitle,map.category,map.board,map.contest,title,...signals].filter(Boolean).join(' '))});
+   items.push({type:'topic',courseId:map.courseId||'',mapCode:map.code||'',mapKey,topicId,title,snippet,signals,markers,questions,content,keywords:decode([map.code,map.title,map.shortTitle,map.category,map.board,map.contest,title,...signals].filter(Boolean).join(' '))});
  }
  if(Number(map.topics||0)&&items.length!==Number(map.topics))throw new Error(map.code+': catálogo informa '+map.topics+' tópicos, extraídos '+items.length);
  return items;
@@ -43,6 +45,14 @@ function topicItems(map){
 
 const bundled=(catalog.maps||[]).filter(map=>map.source==='bundled'&&map.href);
 const items=bundled.flatMap(topicItems);
-const output={version:1,generatedAt:new Date().toISOString(),items};
+/* V15.57 · ficha por mapa para a Auditoria do acervo: template, fonte legal declarada, questões e marcadores */
+function mapSummary(map){
+ const html=read(map.href),text=decode(cleanTopicBody(html)),mapKey=String(map.courseId||'')+'::'+String(map.code||map.id||'').toLowerCase();
+ const own=items.filter(it=>it.mapKey===mapKey);
+ const fontes=[...text.matchAll(/[^.{}"<>]{0,40}\bcompilad[oa]\b[^.{}"<>]{0,80}/gi)].map(m=>m[0].trim()).filter(t=>/\d{4}/.test(t));
+ return {mapKey,code:map.code||'',bytes:Buffer.byteLength(html),template:/v211-standard/.test(html)?'V211':'',g26:/G26/.test(html),fonte:fontes.sort((a,b)=>b.length-a.length)[0]||'',topics:own.length,topicsWithMarkers:own.filter(it=>it.markers.length).length,questions:own.reduce((n,it)=>n+it.questions,0)};
+}
+const maps=bundled.map(mapSummary);
+const output={version:1,generatedAt:new Date().toISOString(),items,maps};
 fs.writeFileSync(path.join(ROOT,'data/search-index.json'),JSON.stringify(output,null,2)+'\n');
 console.log('✓ Índice de busca: '+items.length+' tópicos em '+bundled.length+' mapas bundled.');

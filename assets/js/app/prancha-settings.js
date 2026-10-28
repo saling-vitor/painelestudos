@@ -17,7 +17,9 @@
     ['06', 'app', 'Aparelho e aplicativo', ['#appUpdatePanel', '#appAppearancePanel', '#appDiagnosticPanel'], 'Aparelho'],
     ['07', 'adm', 'Administração', ['.admin-panel'], 'Admin'],
     /* V15.56 · padrões de edital por banca; painel próprio das pranchas (sem painel legado) */
-    ['08', 'editais', 'Concursos e editais', [], 'Editais']
+    ['08', 'editais', 'Concursos e editais', [], 'Editais'],
+    /* V15.57 · auditoria do acervo (só leitura) */
+    ['09', 'acervo', 'Auditoria do acervo', [], 'Acervo']
   ];
   /* V15.55 · painéis técnicos que entram recolhidos na folha */
   const COLLAPSED = { '#appDiagnosticPanel': ['Diagnóstico técnico', 'Versão, nuvem, offline e ambiente desta instalação'] };
@@ -78,9 +80,18 @@
     const editing = editBanca && all[editBanca];
     return '<p class="pr-detail">A estrutura de prova de cada banca é o ponto de partida ao criar um curso: no curso, “Usar estrutura” copia pesos e mínimos, que podem ser ajustados ao edital.</p><div class="pr-list">' + list + '</div>' +
       /* formulário aberto por estado (não por <details>): sobrevive aos redesenhos da prancha durante a sincronização */
-      (editing ? '<span class="pr-k l">Editando ' + esc(editBanca) + '</span>' + padraoForm(editBanca, all[editBanca]) : editBanca === '__nova__' ? '<span class="pr-k l">Nova banca</span>' + padraoForm('', null) : ui.btn('+ Nova banca', ui.act('edit-padrao', '__nova__'), 'g sm'));
+      (editing ? '<span class="pr-k l">Editando ' + esc(editBanca) + '</span>' + padraoForm(editBanca, all[editBanca]) : editBanca === '__nova__' ? '<span class="pr-k l">Nova banca</span>' + padraoForm('', null) : ui.btn('+ Nova banca', ui.act('edit-padrao', '__nova__'), 'g sm')) +
+      '<form data-pr-submit="save-meta-entre" class="pr-row" style="align-items:flex-end"><label class="pr-field"><span>Meta diária entre concursos (min)</span><input name="meta" type="number" min="5" max="480" step="5" inputmode="numeric" value="' + esc(P.prefs.get('metaEntre')) + '" style="width:120px"></label><button type="submit" class="pr-btn sm">Salvar</button><span class="pr-mono">Usada no Início quando nenhum concurso tem prova marcada.</span></form>';
   }
-  function folhaState(id, st) { const i = st.issues.filter((x) => x[0] === id); return i.some((x) => x[1] === 'o') ? 'o' : i.length ? 'l' : ''; }
+  function acervoPanel() {
+    const r = P.audit.run(), F = window.StudyFlow || {};
+    const head = '<p class="pr-detail">' + r.verificados + ' de ' + r.total + ' mapas verificados' + (r.bytes && F.fmtBytes ? ' · ' + F.fmtBytes(r.bytes) + ' de HTML' : '') + '. A verificação só lê; nada é alterado.</p>';
+    if (!r.items.length) return head + ui.empty('Nada a verificar ainda', 'Os mapas e cursos aparecem aqui depois da primeira sincronização.');
+    const order = { aviso: 0, info: 1, ok: 2 };
+    return head + '<div class="pr-list">' + r.items.slice().sort((a, b) => order[a.sev] - order[b.sev]).map((x) => '<div class="pr-li"><span class="pr-chip ' + (x.sev === 'aviso' ? 'ox' : x.sev === 'ok' ? 'ok' : 'l') + '">' + esc(x.tipo) + '</span><span><b>' + esc(x.titulo) + '</b><br><span class="t">' + esc(x.detalhe || '') + '</span></span>' + (x.course ? ui.btn('Abrir curso', ui.act('open-course', x.course), 'g sm') : x.keys?.length ? ui.btn('Ver mapas', ui.act('nav', 'maps'), 'g sm') : '<span></span>') + '</div>').join('') + '</div>';
+  }
+  function folhaState(id, st) {
+    if (id === 'acervo') return P.audit.run().avisos ? 'l' : ''; const i = st.issues.filter((x) => x[0] === id); return i.some((x) => x[1] === 'o') ? 'o' : i.length ? 'l' : ''; }
 
   function render(root) {
     if (offlineInfo === null || restoreCount === null) probe();
@@ -122,6 +133,7 @@
         mountPanel(host, sel, panel);
       }
       if (id === 'editais') { host.innerHTML = editaisPanel(); continue; }
+      if (id === 'acervo') { host.innerHTML = acervoPanel(); continue; }
       if (!host.children.length) host.innerHTML = '<div class="pr-mono" data-pr-wait>' + ui.skeleton(2) + '</div>';
     }
   }
@@ -152,6 +164,7 @@
       backup: () => { if (typeof downloadStudyBackup === 'function') downloadStudyBackup(); setTimeout(() => P.schedule('settings'), 300); },
       'reset-time': (scope, el) => P.armed(el, () => { const b = document.querySelector('[data-study-time-reset="' + scope + '"]'); if (b) b.click(); else if (typeof toast === 'function') toast('Abra a folha 02 e tente de novo.'); }, 'Toque de novo'),
       classic: (a, el) => P.armed(el, () => P.setClassic(true), 'Toque de novo para trocar'),
+      'save-meta-entre': (fd) => { const v = Math.round(Number(fd.get('meta'))); if (!(v >= 5 && v <= 480)) { if (typeof toast === 'function') toast('Informe entre 5 e 480 minutos.'); return; } P.prefs.set('metaEntre', v); if (typeof toast === 'function') toast('Meta entre concursos: ' + v + ' min por dia.'); P.renderNow('settings'); },
       'edit-padrao': (k) => { editBanca = k || ''; P.renderNow('settings'); document.getElementById('pr-f-editais')?.scrollIntoView({ block: 'start' }); },
       'remove-padrao': (k, el) => P.armed(el, () => { P.store.patch('padroes', k, null); editBanca = ''; P.renderNow('settings'); }, 'Toque de novo para remover'),
       'save-padrao': (fd, form) => {

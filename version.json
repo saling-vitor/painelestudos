@@ -1,14 +1,15 @@
 {
-  "version": "15.56.0",
-  "label": "V15.56.0-G",
-  "notes": "Fundação do edital: cada curso guarda a estrutura da prova e o cronograma, o gabarito sai em pontos da banca e os mapas que servem em outros editais continuam na biblioteca.",
+  "version": "15.57.0",
+  "label": "V15.57.0-G",
+  "notes": "Fase pós-prova: fechamento dentro do curso, próximo marco, Início entre concursos, simulado em pontos da banca, marcos e .ics na Agenda e auditoria do acervo.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Curso: Raio-X da prova com questões, peso e mínimo de cada disciplina, e os mapas ligados a cada uma",
-    "[G] Curso: Régua do edital com as fases do concurso e o próximo marco",
-    "[G] Pós-prova: gabarito por disciplina, em pontos, com os mínimos eliminatórios",
-    "[G] Todos os Mapas: mapas portáteis de concursos encerrados continuam visíveis; filtro por alcance",
-    "[G] Configurações: nova folha 08 com a estrutura de prova por banca (FUNDATEC já incluída)"
+    "[G] Curso: depois da prova, gabarito em pontos, recursos ligados ao mapa da fundamentação e \"aguardando convocação\"",
+    "[G] Início: próximo marco do cronograma, com aviso de prazo de recurso",
+    "[G] Início: tela \"Entre concursos\" para manter os mapas portáteis quando nenhuma prova está marcada",
+    "[G] Simulados: resultado em pontos da banca, com mínimo eliminatório por disciplina e corte em pontos",
+    "[G] Agenda: marcos do cronograma nas visões e importação de .ics (Google Agenda)",
+    "[G] Configurações: folha 09 \"Auditoria do acervo\" (mapas sem marcadores, fonte legal, cursos incompletos)"
   ],
   "automation": {
     "enabled": true,
@@ -16,5 +17,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-27T22:55:13-03:00"
+  "releasedAt": "2026-10-27T23:51:52-03:00"
 }
