@@ -47,11 +47,12 @@
   const courseCov = (c, cls = '') => { let img = ''; try { img = typeof courseCover === 'function' ? courseCover(c) || '' : ''; } catch {} return cov({ img, sig: P.courses.sigla(c), color: P.courses.color(c), cls, label: 'Capa ' + (c?.title || '') }); };
 
   /* planta do edital: cada mapa é um lote do tamanho dos seus tópicos */
-  function tiles(list, { sel = '', cls = '', pick = 'pick-map' } = {}) {
+  /* V15.58 · weight(m) troca a medida do lote (ex.: pontos na prova); note(m) substitui a linha de tópicos */
+  function tiles(list, { sel = '', cls = '', pick = 'pick-map', weight = null, note = null } = {}) {
     if (!list.length) return empty('Nenhum mapa neste curso', 'Importe os mapas HTML do edital para desenhar a planta.');
     return '<div class="pr-tiles ' + cls + '">' + list.map((m) => {
-      const p = P.data.prog(m), k = P.data.keyOf(m), w = Math.max(6, p.total || Number(m.topics) || 6), pc = U.pct(p.marked, p.total);
-      return '<button type="button" class="pr-tile' + (k === sel ? ' on' : '') + '" data-pr-act="' + pick + '" data-arg="' + esc(k) + '" style="--w:' + w + ';--c:' + P.mapColor(m) + ';--p:' + pc + '%" aria-label="' + esc((m.code || '') + ': ' + pc + '% de ' + p.total + ' tópicos') + '"><span class="fill"></span><span class="stripe"></span><span class="flags">' + (p.difficult ? '<span class="d">DIF ' + p.difficult + '</span>' : '') + (p.review ? '<span class="r">REV ' + p.review + '</span>' : '') + (m._linkedFrom ? '<span class="s">vinc.</span>' : '') + '</span><span class="in"><span class="sig">' + esc(m.code || 'MAPA') + '</span><span><span class="pc">' + pc + '%</span><br><span class="tp">' + p.marked + '/' + p.total + '</span></span></span></button>';
+      const p = P.data.prog(m), k = P.data.keyOf(m), wv = weight ? Number(weight(m)) : NaN, w = Number.isFinite(wv) ? Math.max(2, Math.round(wv * 10) / 10) : Math.max(6, p.total || Number(m.topics) || 6), pc = U.pct(p.marked, p.total);
+      return '<button type="button" class="pr-tile' + (k === sel ? ' on' : '') + '" data-pr-act="' + pick + '" data-arg="' + esc(k) + '" style="--w:' + w + ';--c:' + P.mapColor(m) + ';--p:' + pc + '%" aria-label="' + esc((m.code || '') + ': ' + pc + '% de ' + p.total + ' tópicos') + '"><span class="fill"></span><span class="stripe"></span><span class="flags">' + (p.difficult ? '<span class="d">DIF ' + p.difficult + '</span>' : '') + (p.review ? '<span class="r">REV ' + p.review + '</span>' : '') + (m._linkedFrom ? '<span class="s">vinc.</span>' : '') + '</span><span class="in"><span class="sig">' + esc(m.code || 'MAPA') + '</span><span><span class="pc">' + pc + '%</span><br><span class="tp">' + (note ? esc(note(m)) : p.marked + '/' + p.total) + '</span></span></span></button>';
     }).join('') + '</div>';
   }
   function mini(list, color) {
@@ -350,6 +351,21 @@
     'new-course': () => { const b = document.getElementById('newCourseBtn2') || document.getElementById('newCourseBtn'); b?.click(); },
     'import-maps': () => { const b = document.getElementById('importBtn2') || document.getElementById('importBtn'); b?.click(); },
     'import-sim': () => document.getElementById('importSimulationBtn')?.click(),
+    'import-kit': (courseId) => {
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json';
+      inp.onchange = async () => {
+        const f = inp.files?.[0]; if (!f) return;
+        const say = (m) => (typeof toast === 'function' ? toast(m) : null);
+        try {
+          if (f.size > 2e6) throw new Error('Arquivo grande demais para um planejamento (máx. 2 MB).');
+          const r = P.editais.importKit(courseId, await f.text());
+          say('Planejamento importado: ' + r.disciplinas + ' disciplinas · ' + r.itens + ' itens do programa · ' + r.fases + ' fases.');
+          if (typeof touchPreferences === 'function') touchPreferences();
+          P.schedule?.();
+        } catch (e) { say(String(e?.message || e)); }
+      };
+      inp.click();
+    },
     'fav': (key, el) => {
       if (typeof favs === 'undefined') return;
       if (favs.has(key)) favs.delete(key); else favs.add(key);

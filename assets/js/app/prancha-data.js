@@ -72,7 +72,7 @@
   const STORE_KEY = 'studyapp.prancha.v1';
   /* V15.56: editais (estrutura da prova e cronograma por curso), padroes (estrutura típica por banca)
      e mapMeta (alcance de cada mapa) entram no mesmo armazenamento, sincronizado e no backup. */
-  const SECTIONS = ['closures', 'cutoffs', 'links', 'history', 'agendaStarts', 'editais', 'padroes', 'mapMeta', 'prefs'];
+  const SECTIONS = ['closures', 'cutoffs', 'links', 'history', 'agendaStarts', 'editais', 'padroes', 'mapMeta', 'prefs', 'treinos', 'modelo'];
   const emptyStore = () => ({ version: 1, updatedAt: '', ...Object.fromEntries(SECTIONS.map((k) => [k, {}])) });
   function normalizeStore(v) {
     const s = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
@@ -306,7 +306,7 @@
         const all = allMaps();
         if (!all.length) return;
         const p = agg(all), byCourse = {};
-        for (const c of courses()) { const q = agg(all.filter((m) => String(m.courseId) === String(c.id))); byCourse[c.id] = [q.marked, q.total]; }
+        for (const c of courses()) { const q = agg(all.filter((m) => String(m.courseId) === String(c.id))); let np = null; try { np = notaProjetada(c.id); } catch {} byCourse[c.id] = np ? [q.marked, q.total, np.pontos] : [q.marked, q.total]; }
         const key = dateKey(), data = readStore(), cur = data.history[key];
         const same = cur && cur.marked === p.marked && cur.total === p.total && JSON.stringify(cur.byCourse || {}) === JSON.stringify(byCourse);
         if (same) return;
@@ -358,11 +358,15 @@
       row.minutes = Math.max(5, Math.round((count * perTopic) / 60));
       const ex = row.course ? courseExamState(row.course, today) : { phase: 'none' };
       row.examDays = ex.days;
+      /* V15.58 · pontos da prova que dependem desta revisão: pontos por tópico da disciplina × itens */
+      const ppt = pptDoMapa(row.map);
+      row.ppt = ppt || 0;
+      row.pontos = ppt ? Math.round(ppt * count * 100) / 100 : 0;
       return row;
     });
     list.sort((a, b) => {
       const ea = a.examDays === null || a.examDays < 0 ? 1e6 : a.examDays, eb = b.examDays === null || b.examDays < 0 ? 1e6 : b.examDays;
-      return ea - eb || b.overdueDays - a.overdueDays || b.count - a.count;
+      return ea - eb || b.pontos - a.pontos || b.overdueDays - a.overdueDays || b.count - a.count;
     });
     return list;
   }
@@ -443,8 +447,26 @@
   /* blocos do dia com horário resolvido; itens antigos sem hora entram às 19:00 (só exibição) e
      ficam em sequência para não sobrepor. Conflitos reais (horários definidos sobrepostos) são marcados. */
   function dayBlocks(d) { return memo('db:' + dateKey(d), () => dayBlocksRaw(d)); }
+  /* V15.58 · revisões com horário: um bloco do dia (não gravado na agenda) no horário escolhido em Agenda,
+     com a duração estimada pela fila; não existe no dia de prova nem quando nada vence. */
+  function reviewBlock(d) {
+    const cfg = pref('revHorario') || {};
+    if (!cfg.on || !/^\d{2}:\d{2}$/.test(String(cfg.start || ''))) return null;
+    const day = parseDate(d) || new Date(), t0 = startDay();
+    if (day < t0 || !(cfg.days || [1, 2, 3, 4, 5, 6]).includes(day.getDay())) return null;
+    if (courses().some((c) => !isArchived(c) && examDate(c) && dateKey(examDate(c)) === dateKey(day))) return null;
+    const off = daysBetween(t0, day);
+    if (off > 30) return null;
+    let count = 0, minutes = 0;
+    if (off === 0) { const q = reviewQueue(); count = q.reduce((n, x) => n + x.count, 0); minutes = q.reduce((n, x) => n + x.minutes, 0); }
+    else { const cal = reviewCalendar(off + 1)[off]; count = cal ? cal.count : 0; minutes = Math.round((count * 50) / 60); }
+    if (!count) return null;
+    const max = Math.max(10, Number(cfg.max) || 40);
+    return { id: 'rev-' + dateKey(day), kind: 'review', title: 'Revisões do dia', date: dateKey(day), minutes: Math.max(10, Math.min(max, minutes)), count, virtual: true, startResolved: cfg.start, startDefault: false };
+  }
   function dayBlocksRaw(d) {
-    const items = agendaForDate(d).sort((a, b) => (toMin(a.startResolved) ?? 1e4) - (toMin(b.startResolved) ?? 1e4));
+    const rv = reviewBlock(d);
+    const items = agendaForDate(d).concat(rv ? [rv] : []).sort((a, b) => (toMin(a.startResolved) ?? 1e4) - (toMin(b.startResolved) ?? 1e4));
     let cursor = toMin(DEFAULT_START);
     const out = [];
     for (const it of items) {
@@ -482,7 +504,7 @@
     }
     return out;
   }
-  P.agenda = { data: agendaData, start: agendaStart, setStart: setAgendaStart, forDate: agendaForDate, sessionsForDate, blocks: dayBlocks, free: freeSlots, toMin, fromMin, DEFAULT_START };
+  P.agenda = { reviewBlock, data: agendaData, start: agendaStart, setStart: setAgendaStart, forDate: agendaForDate, sessionsForDate, blocks: dayBlocks, free: freeSlots, toMin, fromMin, DEFAULT_START };
 
   /* ---------- simulados ---------- */
   function sims() { return (call('combinedSimulations') || []).filter((s) => s && s.status !== 'deleted' && s.status !== 'archived'); }
@@ -669,12 +691,230 @@
   }
   function setAlcance(key, value) { if (!ALCANCES.some(([id]) => id === value)) return null; return patchStore('mapMeta', key, { alcance: value }); }
   /* preferências das pranchas (V15.57): prefs[chave] = { value, updatedAt } */
-  const PREF_DEFAULTS = { metaEntre: 40 };
+  const PREF_DEFAULTS = { metaEntre: 40, planoPeso: true, revHorario: { on: false, start: '18:00', max: 40, days: [1, 2, 3, 4, 5, 6] } };
   function pref(k) { const r = readStore().prefs[k]; return r && !r.removed && r.value !== undefined ? r.value : PREF_DEFAULTS[k]; }
   function setPref(k, value) { return patchStore('prefs', k, { value }); }
   P.prefs = { get: pref, set: setPref, DEFAULTS: PREF_DEFAULTS };
-  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva };
+  /* ---------- peso do edital (V15.58) ----------
+     Pontos por tópico de cada disciplina = pontos da disciplina ÷ tópicos dos mapas do curso ligados a ela.
+     Pontos do mapa = pontos da disciplina × tópicos do mapa ÷ tópicos da disciplina. Sem estrutura: null. */
+  function pesoEsforco(courseId) {
+    return memo('pe:' + courseId, () => {
+      const prova = provaOf(courseId);
+      if (!prova.length) return null;
+      const own = mapsForCourse(courseId, { includeLinked: false });
+      const rows = prova.map((d) => ({ disc: d, id: d.id, nome: d.nome, pontos: d.questoes * d.peso, topicos: 0, marcados: 0, mapas: [] }));
+      const byId = new Map(rows.map((r) => [r.id, r]));
+      for (const m of own) {
+        const d = disciplinaDoMapa(m, courseId), r = d && byId.get(d.id);
+        if (!r) continue;
+        const p = prog(m), t = Math.max(0, p.total || Number(m.topics) || 0);
+        r.topicos += t; r.marcados += p.marked || 0; r.mapas.push(m);
+      }
+      const totT = rows.reduce((s, r) => s + r.topicos, 0), totP = rows.reduce((s, r) => s + r.pontos, 0);
+      rows.forEach((r) => {
+        r.ppt = r.topicos ? r.pontos / r.topicos : 0;
+        r.fatiaTopicos = totT ? r.topicos / totT : 0;
+        r.fatiaPontos = totP ? r.pontos / totP : 0;
+        r.cobertura = r.topicos ? r.marcados / r.topicos : 0;
+        r.cor = r.mapas[0] ? mapColor(r.mapas[0]) : 'var(--pr-latao)';
+      });
+      const comPeso = rows.filter((r) => r.ppt > 0);
+      const maxR = comPeso.slice().sort((a, b) => b.ppt - a.ppt)[0] || null, minR = comPeso.slice().sort((a, b) => a.ppt - b.ppt)[0] || null;
+      return { rows, totTopicos: totT, totPontos: totP, max: maxR, min: minR, razao: maxR && minR && minR.ppt > 0 ? maxR.ppt / minR.ppt : null };
+    });
+  }
+  function pontosDoMapa(map, courseId = map?.courseId) {
+    const pe = pesoEsforco(courseId), d = disciplinaDoMapa(map, courseId);
+    if (!pe || !d) return null;
+    const r = pe.rows.find((x) => x.id === d.id);
+    if (!r || !r.topicos) return null;
+    const t = Math.max(0, prog(map).total || Number(map.topics) || 0);
+    return Math.round(r.pontos * (t / r.topicos) * 10) / 10;
+  }
+  function pptDoMapa(map, courseId = map?.courseId) {
+    const pe = pesoEsforco(courseId), d = disciplinaDoMapa(map, courseId);
+    if (!pe || !d) return null;
+    return pe.rows.find((x) => x.id === d.id)?.ppt ?? null;
+  }
+  /* disciplinas abaixo do mínimo na tentativa mais recente de simulado do curso */
+  function riscoMinimo(courseId) {
+    return memo('rm:' + courseId, () => {
+      const list = sims().filter((s) => String(s.courseId) === String(courseId));
+      let last = null;
+      for (const s of list) for (const a of attempts(s)) { const t = Date.parse(a.finishedAt || 0) || 0; if (!last || t > last.t) last = { a, t }; }
+      const r = last ? pontuarTentativa(courseId, last.a) : null;
+      return r ? r.falhas.map((f) => f.id) : [];
+    });
+  }
+  const fmtPt = (n) => (Math.round(Number(n || 0) * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt };
 
+
+  /* ---------- V15.58 · taxonomia única de armadilhas (conceito 04 do Template de estudos) ----------
+     As 8 categorias do Raio-X dos erros são o vocabulário oficial; os rótulos livres das questões dos mapas
+     (trapType) e do Raio-X são convertidos na leitura, sem regerar nenhum mapa. */
+  const TRAPS = [['excecao-ou-inversao', 'Exceção ou inversão', 'Montar o par regra × exceção e reler o enunciado procurando o “salvo”, “exceto”, “somente”.'], ['prazo-ou-numero', 'Prazo ou número', 'Repetição espaçada dos números-chave (🔢) do mapa, em voz alta.'], ['competencia-ou-sujeito', 'Competência ou sujeito', 'Tabela “quem faz o quê” do tema, com o órgão ou agente de cada ato.'], ['troca-de-conceitos', 'Troca de conceitos', 'Quadro de contraste (card FIXE) para cada par confundido.'], ['literalidade', 'Literalidade', 'Ler o artigo na letra da lei e marcar as palavras que a banca troca.'], ['interpretacao-do-comando', 'Interpretação do comando', 'Sublinhar o comando (CORRETA/INCORRETA, EXCETO) antes de ler as alternativas.'], ['calculo-ou-aplicacao', 'Cálculo ou aplicação', 'Refazer o exercício do zero e conferir a fórmula no ENTENDA.'], ['outra', 'Outra', 'Rever o tópico inteiro no mapa e anotar a dúvida.']];
+  const TRAP_EQ = { 'troca': 'troca-de-conceitos', 'troca de conceito': 'troca-de-conceitos', 'troca de conceitos': 'troca-de-conceitos', 'distincao fina': 'troca-de-conceitos', 'inversao': 'excecao-ou-inversao', 'generalizacao': 'excecao-ou-inversao', 'generalizacao indevida': 'excecao-ou-inversao', 'excecao': 'excecao-ou-inversao', 'excecao ou inversao': 'excecao-ou-inversao', 'regra numero': 'prazo-ou-numero', 'prazo ou numero': 'prazo-ou-numero', 'prazo': 'prazo-ou-numero', 'numero': 'prazo-ou-numero', 'regra': 'literalidade', 'memoria': 'literalidade', 'literalidade': 'literalidade', 'aplicacao': 'calculo-ou-aplicacao', 'calculo': 'calculo-ou-aplicacao', 'calculo ou aplicacao': 'calculo-ou-aplicacao', 'competencia ou sujeito': 'competencia-ou-sujeito', 'competencia': 'competencia-ou-sujeito', 'sujeito': 'competencia-ou-sujeito', 'interpretacao do comando': 'interpretacao-do-comando', 'interpretacao': 'interpretacao-do-comando', 'outra': 'outra' };
+  function trapId(label) {
+    const n = norm(label);
+    if (!n || n === 'nenhum' || n === 'conceito central' || n === 'ainda nao identificada') return null;
+    if (TRAPS.some(([id]) => id === String(label))) return String(label);
+    return TRAP_EQ[n] || 'outra';
+  }
+  P.armadilhas = { LIST: TRAPS, id: trapId, label: (id) => (TRAPS.find((t) => t[0] === id) || TRAPS[7])[1], antidoto: (id) => (TRAPS.find((t) => t[0] === id) || TRAPS[7])[2], EQ: TRAP_EQ };
+
+  /* ---------- V15.58 · treinos dirigidos (Simulados) ----------
+     treinos[id] = { at, simKey, courseId, total, acertos, itens:[{origem, mapKey, topicId, titulo, trap, ok}] } */
+  function treinos() { return Object.entries(readStore().treinos).filter(([, v]) => v && !v.removed).map(([id, v]) => ({ id, ...v })).sort((a, b) => (Date.parse(b.at || 0) || 0) - (Date.parse(a.at || 0) || 0)); }
+  function saveTreino(row) {
+    const id = 'tr-' + Date.now().toString(36);
+    patchStore('treinos', id, { ...row, at: new Date().toISOString(), itens: (row.itens || []).slice(0, 60) });
+    const data = readStore(), keys = Object.keys(data.treinos).sort((a, b) => (Date.parse(data.treinos[a]?.at || 0) || 0) - (Date.parse(data.treinos[b]?.at || 0) || 0));
+    if (keys.length > 40) { keys.slice(0, keys.length - 40).forEach((k) => delete data.treinos[k]); writeStore(data); }
+    return id;
+  }
+  P.treinos = { list: treinos, save: saveTreino };
+
+  /* ---------- V15.58 · questões lidas dos HTML (mapas V211 e simulados V08), sob demanda e em cache ---------- */
+  const QCACHE = new Map();
+  function questoesDoMapa(map) {
+    const k = keyOf(map);
+    if (QCACHE.has('m:' + k)) return QCACHE.get('m:' + k);
+    const pr = Promise.resolve(typeof mapHtml === 'function' ? mapHtml(map) : '').then((html) => {
+      const doc = new DOMParser().parseFromString(html || '', 'text/html'), out = [];
+      doc.querySelectorAll('.topic-card[data-topic-id]').forEach((t) => {
+        const titulo = (t.querySelector('.topic-name')?.textContent || '').replace(/\s+/g, ' ').trim();
+        t.querySelectorAll('script.v134-question-data').forEach((sc) => {
+          const d = safeJson(sc.textContent || '', null);
+          const vs = (d?.variants || []).filter((v) => v && v.prompt && Array.isArray(v.options) && v.options.length >= 2 && v.correct && !/\[\[/.test(v.prompt));
+          if (vs.length) out.push({ topicId: t.getAttribute('data-topic-id'), titulo, bank: d.bank || '', variants: vs });
+        });
+      });
+      return out;
+    }).catch(() => []);
+    QCACHE.set('m:' + k, pr);
+    return pr;
+  }
+  function questoesDoSimulado(sim) {
+    const k = simKey(sim);
+    if (QCACHE.has('s:' + k)) return QCACHE.get('s:' + k);
+    const pr = Promise.resolve(typeof simulationSourceHtml === 'function' ? simulationSourceHtml(sim) : '').then((html) => {
+      const at = String(html || '').search(/EXAM_DATA\s*=\s*\{/);
+      if (at < 0) return new Map();
+      let i = html.indexOf('{', at), depth = 0, str = false, q = '', end = -1;
+      for (let j = i; j < html.length; j++) {
+        const ch = html[j];
+        if (str) { if (ch === '\\') { j++; continue; } if (ch === q) str = false; continue; }
+        if (ch === '"' || ch === "'") { str = true; q = ch; continue; }
+        if (ch === '{') depth++;
+        else if (ch === '}') { depth--; if (!depth) { end = j; break; } }
+      }
+      const data = end > 0 ? safeJson(html.slice(i, end + 1), null) : null, out = new Map();
+      (data?.sections || []).forEach((sec) => (sec.questions || []).forEach((qq) => out.set(Number(qq.number), { ...qq, section: sec.title || '' })));
+      return out;
+    }).catch(() => new Map());
+    QCACHE.set('s:' + k, pr);
+    return pr;
+  }
+  P.questoes = { mapa: questoesDoMapa, simulado: questoesDoSimulado };
+
+  /* ---------- V15.58 · o que o mapa registra (ponte mapa → app, lida direto do estado do Reader) ----------
+     O Template V211 grava em mindmap_state::<storage-id> (mesma origem do app): reviewMeta[topic].mastery,
+     quizMeta[topic] {attempts, correct, wrong, guessed} e v135.errorPatterns {trapType: n}. Só leitura. */
+  function masteryOf(map) {
+    return memo('ms:' + keyOf(map), () => {
+      const st = (typeof readMapState === 'function' ? readMapState(map) : null) || {};
+      const rm = st.reviewMeta || {}, qm = st.quizMeta || {}, ep = st.v135?.errorPatterns || {};
+      let respondidas = 0, acertos = 0, chutes = 0, soma = 0, n = 0;
+      for (const [id, q] of Object.entries(qm)) {
+        if (!q || typeof q !== 'object') continue;
+        const at = Number(q.attempts) || 0;
+        respondidas += at; acertos += Number(q.correct) || 0; chutes += Number(q.guessed) || 0;
+        const ms = Number(rm[id]?.mastery);
+        if (at > 0) { soma += Number.isFinite(ms) ? ms : at ? ((Number(q.correct) || 0) / at) * 100 : 0; n++; }
+      }
+      const traps = {};
+      for (const [k, v] of Object.entries(ep)) { const id = P.armadilhas.id(k); if (id) traps[id] = (traps[id] || 0) + (Number(v) || 0); }
+      const p = prog(map);
+      return { dominio: n ? Math.round(soma / n) : null, topicosRespondidos: n, respondidas, acertos, chutes, traps, cobertura: p.total ? Math.round((p.marked / p.total) * 100) : 0 };
+    });
+  }
+  P.mastery = { of: masteryOf };
+  /* nota projetada por disciplina: domínio médio (ponderado por tópicos) × pontos; sem respostas, cobertura × 0,7 */
+  function notaProjetada(courseId) {
+    return memo('np:' + courseId, () => {
+      const pe = pesoEsforco(courseId);
+      if (!pe) return null;
+      let total = 0, estimativa = false;
+      const por = pe.rows.map((r) => {
+        let peso = 0, acc = 0, est = false;
+        for (const m of r.mapas) { const t = Math.max(1, prog(m).total || Number(m.topics) || 1), ms = masteryOf(m); let d = ms.dominio; if (d === null) { d = ms.cobertura * 0.7; est = true; } acc += d * t; peso += t; }
+        const dom = peso ? acc / peso / 100 : 0, pts = Math.round(r.pontos * dom * 10) / 10;
+        if (est) estimativa = true;
+        total += pts;
+        return { id: r.id, nome: r.nome, pontos: pts, max: r.pontos, minimo: r.disc.minimo, dominio: Math.round(dom * 100), estimativa: est, cor: r.cor, ok: pts >= r.disc.minimo };
+      });
+      const mg = minimoGeral(courseId);
+      return { por, pontos: Math.round(total * 10) / 10, max: pe.totPontos, minimoGeral: mg, estimativa, aprovado: por.every((x) => x.ok) && (mg === null || total >= mg) };
+    });
+  }
+  P.editais.notaProjetada = notaProjetada;
+
+  /* caderno por armadilha: mapa (v135.errorPatterns) + treinos do app + erros de simulado (styleTag) */
+  function cadernoArmadilhas(courseId) {
+    return memo('ca:' + courseId, () => {
+      const rows = new Map(P.armadilhas.LIST.map((t) => [t[0], { id: t[0], label: t[1], antidoto: t[2], mapa: 0, treino: 0, simulado: 0, total: 0, mapas: new Map() }]));
+      const add = (id, campo, n, m) => { const r = id && rows.get(id); if (!r || !n) return; r[campo] += n; r.total += n; if (m) { const k = keyOf(m); r.mapas.set(k, (r.mapas.get(k) || 0) + n); } };
+      const maps = mapsForCourse(courseId, { includeLinked: false });
+      for (const m of maps) for (const [id, n] of Object.entries(masteryOf(m).traps)) add(id, 'mapa', n, m);
+      const byKey = new Map(maps.map((m) => [keyOf(m), m]));
+      for (const t of P.treinos.list()) if (String(t.courseId) === String(courseId)) for (const it of t.itens || []) if (!it.ok && it.trap) add(it.trap, 'treino', 1, byKey.get(it.mapKey));
+      for (const sm of sims().filter((x) => String(x.courseId) === String(courseId))) for (const a of attempts(sm)) for (const e of Array.isArray(a.mistakes) ? a.mistakes : []) { const id = e.styleTag ? P.armadilhas.id(e.styleTag) : null; if (id) add(id, 'simulado', 1, null); }
+      const list = [...rows.values()].filter((r) => r.total > 0).sort((a, b) => b.total - a.total);
+      list.forEach((r) => { r.mapas = [...r.mapas.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => ({ map: byKey.get(k), n })).filter((x) => x.map); });
+      return { list, total: list.reduce((s2, r) => s2 + r.total, 0) };
+    });
+  }
+  P.mastery.caderno = cadernoArmadilhas;
+  /* matriz pelo programa: itens do edital (importados do kit) × mapas que os cobrem; sem programa, por disciplina */
+  function matrizPrograma(courseId) {
+    return memo('mp:' + courseId, () => {
+      const ed = editalOf(courseId) || {}, maps = mapsForCourse(courseId, { includeLinked: false });
+      const byCode = new Map(maps.map((m) => [String(m.code || '').toUpperCase(), m]));
+      const prog0 = Array.isArray(ed.programa) ? ed.programa : [];
+      const cell = (ms) => { const q = agg(ms); const dom = ms.map((m) => masteryOf(m).dominio).filter((x) => x !== null); return { mapas: ms, cobertura: q.total ? Math.round((q.marked / q.total) * 100) : 0, dominio: dom.length ? Math.round(dom.reduce((a, b) => a + b, 0) / dom.length) : null }; };
+      if (prog0.length) {
+        const rows = prog0.map((it, i) => { const ms = (Array.isArray(it.mapas) ? it.mapas : []).map((c) => byCode.get(String(c).toUpperCase())).filter(Boolean); return { id: it.id || 'it' + (i + 1), item: String(it.item || it.titulo || ''), disciplina: String(it.disciplina || ''), ...cell(ms) }; });
+        return { fonte: 'programa', rows, semMapa: rows.filter((r) => !r.mapas.length).length };
+      }
+      const pe = pesoEsforco(courseId);
+      if (!pe) return null;
+      const rows = pe.rows.map((r) => ({ id: r.id, item: r.nome, disciplina: r.nome, ...cell(r.mapas) }));
+      return { fonte: 'disciplinas', rows, semMapa: rows.filter((r) => !r.mapas.length).length };
+    });
+  }
+  P.mastery.matriz = matrizPrograma;
+
+  /* planejamento do kit (meus-mapas/app-edital/v1): prova, fases e programa → edital do curso. Valida antes de gravar. */
+  function importKit(courseId, raw) {
+    let j = raw;
+    if (typeof j === 'string') { try { j = JSON.parse(j); } catch { throw new Error('O arquivo não é um JSON válido.'); } }
+    if (!j || typeof j !== 'object' || !/^meus-mapas\/app-edital\/v1$/.test(String(j.schema || ''))) throw new Error('Formato não reconhecido: esperado meus-mapas/app-edital/v1.');
+    const prova = normProva(j.prova);
+    const programa = (Array.isArray(j.programa) ? j.programa : []).slice(0, 400).map((it, i) => ({ id: String(it.id || 'it' + (i + 1)).slice(0, 40), item: String(it.item || it.titulo || '').slice(0, 300), disciplina: String(it.disciplina || '').slice(0, 120), mapas: (Array.isArray(it.mapas) ? it.mapas : []).map((c) => String(c).slice(0, 40)).slice(0, 20) })).filter((it) => it.item);
+    const ids = new Set(FASES.map((f) => f[0])), fases = { ...(editalOf(courseId)?.fases || {}) };
+    let nf = 0;
+    for (const f of Array.isArray(j.fases) ? j.fases : []) { const id = String(f?.id || '').toLowerCase(), d = String(f?.data || f?.date || ''); if (ids.has(id) && /^\d{4}-\d{2}-\d{2}$/.test(d)) { fases[id] = { date: d }; nf++; } }
+    if (!prova.length && !programa.length) throw new Error('O planejamento não traz prova nem programa.');
+    const prev = editalOf(courseId) || {};
+    const patch = { programa, fases, fonte: String(j.fonte || 'Kit Meus Mapas').slice(0, 200), importadoEm: new Date().toISOString() };
+    if (prova.length) { patch.prova = prova; patch.minimoGeral = j.minimoGeral ?? prev.minimoGeral ?? null; }
+    if (j.banca) patch.banca = String(j.banca).toUpperCase().slice(0, 40);
+    setEdital(courseId, patch);
+    return { disciplinas: prova.length, itens: programa.length, fases: nf };
+  }
+  P.editais.importKit = importKit;
   /* ---------- auditoria do acervo (V15.57) ----------
      Só leitura. Usa o índice de busca (gerado no build a partir dos HTML incluídos: marcadores, questões,
      template e fonte legal declarada), os cursos e as tentativas de simulado. Mapas que existem só na

@@ -89,6 +89,109 @@
     if (legacy && typeof bindSimulationCards === 'function') bindSimulationCards(legacy);
   }
 
+  /* ---------- V15.58 · ritmo de prova (linha do tempo enviada pelo simulado V08 atualizado) ---------- */
+  function ritmoCard(a, sim) {
+    const tl = (a.timeline || []).filter((x) => x.n > 0).sort((x, y) => x.first - y.first);
+    const total = Number(a.total) || 0;
+    if (tl.length < 5 || !total) return '';
+    const durS = Math.max(Number(sim.durationMinutes) || 0, 1) * 60, endS = Math.max(durS, ...tl.map((x) => x.last));
+    const W = 640, H = 220, L = 38, R = 14, T = 16, B = 28;
+    const x = (sec) => L + (sec / endS) * (W - L - R), y = (n) => T + (1 - n / total) * (H - T - B);
+    const secs = {};
+    tl.forEach((p) => { const s = secs[p.section] || (secs[p.section] = { a: p.first, b: p.first, n: 0 }); s.a = Math.min(s.a, p.first); s.b = Math.max(s.b, p.first); s.n++; });
+    let g = [0, Math.round(total / 2), total].map((v) => '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="var(--pr-linha-s)"/><text x="' + (L - 6) + '" y="' + (y(v) + 3) + '" text-anchor="end">' + v + '</text>').join('');
+    Object.entries(secs).forEach(([nome, s]) => { g += '<rect x="' + x(s.a) + '" y="' + T + '" width="' + Math.max(2, x(s.b) - x(s.a)) + '" height="' + (H - T - B) + '" fill="' + secColor(nome) + '" opacity=".08"/><text x="' + (x(s.a) + 4) + '" y="' + (T + 12) + '" style="fill:' + secColor(nome) + '">' + esc(nome.split(' ')[0].slice(0, 12)) + '</text>'; });
+    g += '<line x1="' + x(0) + '" y1="' + y(0) + '" x2="' + x(durS) + '" y2="' + y(total) + '" stroke="var(--pr-papel-3)" stroke-dasharray="4 4"/>';
+    g += '<path d="M' + x(0) + ' ' + y(0) + tl.map((p, i) => ' L' + x(p.first).toFixed(1) + ' ' + y(i + 1).toFixed(1)).join('') + '" fill="none" stroke="var(--pr-latao)" stroke-width="2"/>';
+    [0, 60, 120, 180, 240].filter((m) => m * 60 <= endS).forEach((m) => { g += '<text x="' + x(m * 60) + '" y="' + (H - 8) + '" text-anchor="middle">' + m + ' min</text>'; });
+    let slow = null;
+    tl.forEach((p, i) => { const dt = p.first - (i ? tl[i - 1].first : 0); if (!slow || dt > slow.dt) slow = { p, dt }; });
+    const wrongSet = new Set((a.mistakes || []).map((m) => Number(m.number)));
+    const per = Object.entries(secs).map(([nome, s]) => [nome, s.n ? (s.b - s.a) / 60 / Math.max(1, s.n - 1) : 0]);
+    const ideal = durS / 60 / total;
+    return ui.card(ui.head('Ritmo de prova', 'Questões respondidas ao longo do tempo · ideal ' + String(Math.round(ideal * 10) / 10).replace('.', ',') + ' min por questão') +
+      '<div class="pr-chart" tabindex="0" role="region" aria-label="Ritmo de prova (role para os lados)"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Questões respondidas ao longo do tempo">' + g + '</svg></div>' +
+      '<div class="pr-pe-cells">' + ui.cell('Mais lenta', 'Q' + slow.p.n + ' · ' + fmtMin(slow.dt / 60), wrongSet.has(slow.p.n) ? 'ox' : '', esc(slow.p.section || '') + (wrongSet.has(slow.p.n) ? ' · errada' : ' · certa')) + per.map(([nome, v]) => ui.cell(nome.split(' ')[0], String(Math.round(v * 10) / 10).replace('.', ',') + ' min/q', v > ideal * 1.25 ? 'ox' : '', esc(nome))).join('') + '</div>' +
+      '<p class="pr-mono">Tempo contado desde a abertura do simulado; a linha tracejada é o ritmo que fecha a prova no tempo.</p>');
+  }
+  /* ---------- V15.58 · acerto por dificuldade e estilo ---------- */
+  const DIFS = ['Fácil', 'Média', 'Difícil'];
+  function difCard(a) {
+    const b = a.breakdown;
+    if (!b || !Object.keys(b.porDificuldade || {}).length) return '';
+    const pc = (v) => (v && v[1] ? Math.round((v[0] / v[1]) * 100) : null);
+    const cellOf = (v, sec, d) => { const p = pc(v); if (p === null) return '<td class="pr-mono">—</td>'; return '<td><button type="button" class="pr-hc' + (p < 50 ? ' ox' : '') + '" style="--a:' + Math.round((p < 50 ? 100 - p : p) * 0.4) + '%" data-pr-act="treino" data-arg="' + esc(sec + '|' + d + '|') + '" aria-label="' + esc(sec + ', ' + d + ': ' + p + '%, treinar este recorte') + '"><b>' + p + '%</b><span>' + v[0] + '/' + v[1] + '</span></button></td>'; };
+    const rows = Object.entries(b.porDificuldade).map(([sec, row]) => { const t = DIFS.reduce((acc, d) => (row[d] ? [acc[0] + row[d][0], acc[1] + row[d][1]] : acc), [0, 0]); return '<tr><th scope="row" style="color:' + secColor(sec) + '">' + esc(sec) + '</th>' + DIFS.map((d) => cellOf(row[d], sec, d)).join('') + cellOf(t, sec, '') + '</tr>'; }).join('');
+    const est = Object.entries(b.porEstilo || {}).filter(([k, v]) => k !== '—' && v[1] >= 2).map(([k, v]) => ({ k, v, p: pc(v) })).sort((x, y) => x.p - y.p).slice(0, 3);
+    return ui.card(ui.head('Onde o erro acontece', 'Acerto por disciplina e dificuldade · toque numa célula para treinar o recorte') +
+      '<div class="pr-tbl"><table class="pr-heatt"><thead><tr><th>Disciplina</th>' + DIFS.map((d) => '<th>' + d + '</th>').join('') + '<th>Total</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      (est.length ? '<span class="pr-k">Estilos de questão com menor acerto</span><div class="pr-pe-cells">' + est.map((x) => ui.cell(x.k, x.p + '%', x.p < 50 ? 'ox' : '', x.v[0] + ' de ' + x.v[1] + ' questões')).join('') + '</div>' : ''));
+  }
+  /* ---------- V15.58 · treino dirigido: erradas do simulado + variantes dos mapas sobre os mesmos tópicos ---------- */
+  let tr = null;
+  const words = (t) => new Set(U.norm(t).split(' ').filter((w) => w.length > 4));
+  async function montarTreino(r, a, filtro = {}) {
+    const sim = r.sim, course = P.sims.course(sim), courseId = course?.id || sim.courseId;
+    const fSec = filtro.sec ? U.norm(filtro.sec) : '', fDif = filtro.dif || '';
+    let mistakes = (a.mistakes || []).filter((m) => Number(m.number) > 0);
+    if (fSec) mistakes = mistakes.filter((m) => U.norm(m.section) === fSec);
+    if (fDif) mistakes = mistakes.filter((m) => String(m.difficulty) === fDif);
+    const itens = [];
+    const simQ = await P.questoes.simulado(sim);
+    for (const m of mistakes.slice(0, 6)) {
+      const q = simQ.get(Number(m.number));
+      if (!q || !Array.isArray(q.alternatives) || !q.answer) continue;
+      const options = q.alternatives.map((alt, i) => { const mt = /^\s*([A-E])\)\s*([\s\S]*)$/.exec(String(alt)); return { label: mt ? mt[1] : String.fromCharCode(65 + i), text: String(mt ? mt[2] : alt).replace(/<[^>]+>/g, ' ').trim() }; });
+      itens.push({ origem: 'simulado', ref: 'Q' + m.number, titulo: m.topic || m.section || '', prompt: String(q.stem || q.body || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() + (q.after ? ' ' + q.after : ''), assertions: (q.assertions || []).map(String), options, correct: String(q.answer).toUpperCase(), explanation: String(q.explanation || ''), section: m.section || '' });
+    }
+    /* mapas: recomendados pelos erros e, no recorte de uma disciplina, os mapas dela */
+    const own = courseId ? P.data.mapsForCourse(courseId, { includeLinked: false }) : [];
+    let recs = []; try { recs = (window.StudyCoach?.recommendations?.(r.key) || []).map((x) => (typeof mapById === 'function' ? mapById(x.key) : null)).filter(Boolean); } catch {}
+    let cand = recs;
+    if (fSec) { const disc = P.editais.prova(courseId).find((d) => d.id === P.editais.secaoDisciplina(filtro.sec, P.editais.prova(courseId))?.id); cand = own.filter((m) => disc && P.editais.disciplinaDoMapa(m, courseId)?.id === disc.id).concat(recs); }
+    if (!cand.length) cand = own.slice().sort((x, y) => (P.editais.pptDoMapa(y) || 0) - (P.editais.pptDoMapa(x) || 0));
+    const seen = new Set(), maps = cand.filter((m) => { const k = P.data.keyOf(m); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 3);
+    const alvo = new Set(); mistakes.forEach((m) => words(m.topic).forEach((w) => alvo.add(w)));
+    const pool = [];
+    for (const m of maps) {
+      const topics = await P.questoes.mapa(m), st = (typeof readMapState === 'function' ? readMapState(m).topicStates : null) || {};
+      for (const t of topics) {
+        const rank = (st[t.topicId] === 'difficult' ? 3 : st[t.topicId] === 'review' ? 2 : 0) + [...words(t.titulo)].filter((w) => alvo.has(w)).length;
+        const v = t.variants.find((x) => x.difficulty === 'N2') || t.variants[0];
+        pool.push({ m, t, v, rank });
+      }
+    }
+    pool.sort((x, y) => y.rank - x.rank);
+    for (const x of pool) {
+      if (itens.length >= 15) break;
+      itens.push({ origem: 'mapa', ref: x.m.code || '', mapKey: P.data.keyOf(x.m), topicId: x.t.topicId, titulo: x.t.titulo, prompt: String(x.v.prompt), options: x.v.options.map((o) => ({ label: String(o.label), text: String(o.text || ''), rationale: String(o.rationale || ''), trapType: String(o.trapType || '') })), correct: String(x.v.correct).toUpperCase(), explanation: String(x.v.explanation || ''), nivel: x.v.difficulty || '', tipo: x.v.type || '' });
+    }
+    return { simKey: r.key, courseId, itens, i: 0, resp: [], filtro };
+  }
+  function treinoHtml(tabsHtml) {
+    if (!tr) return '';
+    if (tr.loading) return tabsHtml + ui.card(ui.head('Treino dirigido', 'Montando as questões…', '', 'l') + ui.skeleton(3));
+    if (!tr.itens.length) return tabsHtml + ui.card(ui.head('Treino dirigido', 'Nenhuma questão disponível', ui.btn('Voltar ao resultado', ui.act('treino-sair'), 'g sm'), 'l') + '<p class="pr-detail">Este recorte não tem questões erradas com enunciado no simulado nem variantes nos mapas ligados (os HTML podem estar fora do cache offline).</p>');
+    const it = tr.itens[tr.i], done = tr.i >= tr.itens.length;
+    if (done) {
+      const ok = tr.resp.filter((x) => x.ok).length, por = {};
+      tr.resp.filter((x) => !x.ok && x.trap).forEach((x) => { por[x.trap] = (por[x.trap] || 0) + 1; });
+      const traps = Object.entries(por).sort((a, b) => b[1] - a[1]);
+      return tabsHtml + ui.card(ui.head('Treino dirigido · resultado', ok + ' de ' + tr.itens.length + ' acertos', ui.btn('Voltar ao resultado', ui.act('treino-sair'), 'p sm'), 'l') +
+        ui.states([['certas', ok, 'var(--pr-musgo)'], ['erradas', tr.itens.length - ok, 'var(--pr-oxido)']], ok + ' de ' + tr.itens.length) +
+        (traps.length ? '<span class="pr-k">Armadilhas em que você caiu</span><div class="pr-list">' + traps.map(([id, n]) => '<div class="pr-li"><span class="pr-sig">' + n + '×</span><span><b>' + esc(P.armadilhas.label(id)) + '</b><br><span class="t">' + esc(P.armadilhas.antidoto(id)) + '</span></span><span></span></div>').join('') + '</div>' : ui.verdict('m', 'Nenhuma armadilha registrada nas erradas.', 'O registro vai para o Caderno de erros, em Progresso.')));
+    }
+    const r = tr.resp[tr.i];
+    const opts = it.options.map((o) => {
+      const cls = r ? (o.label === it.correct ? ' ok' : o.label === r.label ? ' er' : '') : '';
+      return '<button type="button" class="pr-opt' + cls + '" data-pr-act="treino-resp" data-arg="' + esc(o.label) + '"' + (r ? ' disabled' : '') + '><b>' + esc(o.label) + '</b><span>' + esc(o.text) + (r && o.rationale ? '<small>' + esc(o.rationale) + '</small>' : '') + '</span></button>';
+    }).join('');
+    const fb = r ? (r.ok ? ui.verdict('m', 'Certa.', esc(it.explanation || '')) : ui.verdict('', 'Errada · gabarito ' + esc(it.correct) + '.', (r.trap ? '<b>' + esc(P.armadilhas.label(r.trap)) + ':</b> ' + esc(P.armadilhas.antidoto(r.trap)) + ' ' : '') + esc(it.explanation || ''))) : '';
+    return tabsHtml + ui.card(ui.head('Treino dirigido · ' + (tr.i + 1) + ' de ' + tr.itens.length, esc(it.titulo || ''), '<span class="pr-row"><span class="pr-chip ' + (it.origem === 'simulado' ? 'ox' : 'l') + '">' + esc(it.origem === 'simulado' ? 'refazer ' + it.ref : it.ref + (it.nivel ? ' · ' + it.nivel : '')) + '</span>' + ui.btn('Sair', ui.act('treino-sair'), 'g sm') + '</span>', 'l') +
+      ui.states(tr.itens.map((x, j) => [String(j), 1, j < tr.i ? (tr.resp[j]?.ok ? 'var(--pr-musgo)' : 'var(--pr-oxido)') : j === tr.i ? 'var(--pr-latao)' : 'var(--pr-g3)'])) +
+      '<p class="pr-qtxt">' + esc(it.prompt) + '</p>' + (it.assertions?.length ? '<ol class="pr-assert">' + it.assertions.map((x) => '<li>' + esc(x.replace(/^[IVX]+\.\s*/, '')) + '</li>').join('') + '</ol>' : '') + '<div class="pr-opts">' + opts + '</div>' + fb +
+      (r ? '<div class="pr-row">' + ui.btn(tr.i + 1 < tr.itens.length ? 'Próxima' : 'Ver resultado', ui.act('treino-prox'), 'p') + (it.mapKey ? ui.btn('Abrir o tópico no mapa', ui.act('open-map', it.mapKey, { 'data-topic': it.topicId }), 'g') : '') + '</div>' : ''));
+  }
   function renderResultado(root, rows, tabsHtml) {
     const withA = rows.filter((r) => r.attempts.length);
     if (!withA.length) { root.innerHTML = tabsHtml + ui.card(ui.empty('Nenhum resultado ainda', 'Termine um simulado para ver a nota, o acerto por disciplina e o gabarito.', ui.btn('Ver lista', ui.act('screen', 'lista'), 'g'))); return; }
@@ -120,8 +223,8 @@
     const gab = grid ? '<div class="pr-qg">' + grid.map((cel) => '<button type="button" class="' + cel.state + (cel.n === qSel ? ' on' : '') + '" data-pr-act="q" data-arg="' + cel.n + '" aria-label="Questão ' + cel.n + ': ' + (cel.state === 'ok' ? 'certa' : cel.state === 'er' ? 'errada' : 'em branco') + '">' + cel.n + '</button>').join('') + '</div><p class="pr-detail" aria-live="polite">' + qDetail(grid, qSel) + '</p>' : ui.empty('Gabarito por questão indisponível', 'Esta tentativa registrou só os totais; o desenho por questão aparece quando o simulado grava cada erro com o número.');
     const trend = r.attempts.length > 1 ? ui.card(ui.head('Evolução', P.sims.code(sim) + ' · ' + r.attempts.length + ' tentativas') + trendSvg(r.attempts.slice().reverse(), cut)) : '';
     const mistakes = (a.mistakes || []).filter((m) => m.number);
-    const errList = recs.length || mistakes.length ? ui.card(ui.head('Depois do simulado', 'Erros que viraram revisões', window.StudyAutomation?.recoverSimulation ? ui.btn('Agendar revisões', ui.act('recover', r.key), 'p sm') : '') + (recs.length ? '<div class="pr-list">' + recs.map((x) => { const m = typeof mapById === 'function' ? mapById(x.key) : null; return '<div class="pr-li" style="--c:' + (m ? P.mapColor(m) : 'var(--pr-latao)') + '"><span class="pr-sig">' + esc(x.code || '') + '</span><span>' + esc(m?.title || '') + '<br><span class="t">' + esc(x.reason || '') + '</span></span>' + ui.btn('Revisar', ui.act('open-map', x.key), 'sm') + '</div>'; }).join('') + '</div>' : '') + (mistakes.length ? '<details class="pr-add"><summary>' + mistakes.length + ' ' + plural(mistakes.length, 'questão errada ou em branco', 'questões erradas ou em branco') + '</summary><div class="pr-list" style="padding:0 12px 12px">' + mistakes.slice(0, 80).map((m) => '<div class="pr-li"><span class="pr-sig" style="--c:' + secColor(m.section) + '">Q' + m.number + '</span><span>' + esc(m.topic || m.section || '') + '<br><span class="t">' + esc((m.userAnswer ? 'marcou ' + m.userAnswer + ' · ' : 'em branco · ') + 'gabarito ' + (m.answer || '—')) + '</span></span><span></span></div>').join('') + '</div></details>' : '')) : '';
-    root.innerHTML = tabsHtml + '<div class="pr-row">' + simSel + attemptSel + ui.btn('Histórico completo', ui.act('sim-history', r.key), 'g sm') + '</div>' + carimbo + '<div class="pr-two">' + ui.card(ui.head('Por disciplina', gp ? 'Pontos da banca contra o mínimo de cada disciplina' : 'Onde acertou e onde errou') + (gp ? ui.gabRows(gp) : cats)) + ui.card(ui.head('Gabarito', 'As ' + total + ' questões', ui.legend([['certa', '', 'var(--pr-musgo)'], ['errada', '', 'var(--pr-oxido)'], ['branco', '', 'var(--pr-g3)', true]])) + gab) + '</div>' + trend + errList;
+    const errList = recs.length || mistakes.length ? ui.card(ui.head('Depois do simulado', 'Erros que viraram revisões', window.StudyAutomation?.recoverSimulation ? '<span class="pr-row">' + ui.btn('Treino de 15 questões', ui.act('treino', '||'), 'sm') + ui.btn('Agendar revisões', ui.act('recover', r.key), 'p sm') + '</span>' : ui.btn('Treino de 15 questões', ui.act('treino', '||'), 'sm')) + (recs.length ? '<div class="pr-list">' + recs.map((x) => { const m = typeof mapById === 'function' ? mapById(x.key) : null; return '<div class="pr-li" style="--c:' + (m ? P.mapColor(m) : 'var(--pr-latao)') + '"><span class="pr-sig">' + esc(x.code || '') + '</span><span>' + esc(m?.title || '') + '<br><span class="t">' + esc(x.reason || '') + '</span></span>' + ui.btn('Revisar', ui.act('open-map', x.key), 'sm') + '</div>'; }).join('') + '</div>' : '') + (mistakes.length ? '<details class="pr-add"><summary>' + mistakes.length + ' ' + plural(mistakes.length, 'questão errada ou em branco', 'questões erradas ou em branco') + '</summary><div class="pr-list" style="padding:0 12px 12px">' + mistakes.slice(0, 80).map((m) => '<div class="pr-li"><span class="pr-sig" style="--c:' + secColor(m.section) + '">Q' + m.number + '</span><span>' + esc(m.topic || m.section || '') + '<br><span class="t">' + esc((m.userAnswer ? 'marcou ' + m.userAnswer + ' · ' : 'em branco · ') + 'gabarito ' + (m.answer || '—')) + '</span></span><span></span></div>').join('') + '</div></details>' : '')) : '';
+    root.innerHTML = tabsHtml + '<div class="pr-row">' + simSel + attemptSel + ui.btn('Histórico completo', ui.act('sim-history', r.key), 'g sm') + '</div>' + carimbo + '<div class="pr-two">' + ui.card(ui.head('Por disciplina', gp ? 'Pontos da banca contra o mínimo de cada disciplina' : 'Onde acertou e onde errou') + (gp ? ui.gabRows(gp) : cats)) + ui.card(ui.head('Gabarito', 'As ' + total + ' questões', ui.legend([['certa', '', 'var(--pr-musgo)'], ['errada', '', 'var(--pr-oxido)'], ['branco', '', 'var(--pr-g3)', true]])) + gab) + '</div>' + trend + ritmoCard(a, sim) + difCard(a) + (errList || ui.card(ui.head('Depois do simulado', 'Treino com as questões dos mapas', ui.btn('Treino de 15 questões', ui.act('treino', '||'), 'sm'))));
   }
   function qDetail(grid, n) {
     const c = grid?.find((x) => x.n === n);
@@ -146,6 +249,7 @@
     const rows = list.map((s) => { const a = P.sims.attempts(s); return { sim: s, key: P.sims.key(s), attempts: a, latest: a[0] || null, best: a.length ? Math.max(...a.map((x) => Math.round(Number(x.score) || 0))) : null }; });
     const anyRes = rows.some((r) => r.attempts.length);
     const tabsHtml = ui.top({ eyebrow: 'Treino de prova', title: 'Simulados', tabs: [{ id: 'lista', label: 'Lista' }, { id: 'res', label: 'Resultado', disabled: !anyRes }], active: screen === 'res' && anyRes ? 'res' : 'lista', label: 'Simulados', tabAct: 'screen' });
+    if (screen === 'treino' && tr) { root.innerHTML = treinoHtml(ui.top({ eyebrow: 'Treino de prova', title: 'Simulados', tabs: [{ id: 'lista', label: 'Lista' }, { id: 'res', label: 'Resultado', disabled: !anyRes }], active: 'res', label: 'Simulados', tabAct: 'screen' })); return; }
     if (screen === 'res' && anyRes) renderResultado(root, rows, tabsHtml);
     else renderLista(root, course || scopeCourse(), rows, tabsHtml);
   }
@@ -153,7 +257,29 @@
   P.pages.simulations = {
     render,
     actions: {
-      screen: (id) => { screen = id; P.schedule('simulations'); window.scrollTo({ top: 0 }); },
+      screen: (id) => { screen = id; tr = null; P.schedule('simulations'); window.scrollTo({ top: 0 }); },
+      treino: (arg) => {
+        const [sec, dif] = String(arg || '').split('|');
+        const r = P.sims.list().map((s) => ({ sim: s, key: P.sims.key(s), attempts: P.sims.attempts(s) })).find((x) => x.key === selKey);
+        const a = r ? r.attempts[Math.min(attemptIdx, r.attempts.length - 1)] : null;
+        if (!r || !a) return;
+        tr = { loading: true }; screen = 'treino'; P.schedule('simulations'); window.scrollTo({ top: 0 });
+        montarTreino(r, a, { sec, dif }).then((x) => { if (screen === 'treino') { tr = x; P.schedule('simulations'); } }).catch((e) => { console.warn(e); tr = { itens: [], i: 0, resp: [] }; P.schedule('simulations'); });
+      },
+      'treino-resp': (label) => {
+        if (!tr?.itens?.length || tr.resp[tr.i]) return;
+        const it = tr.itens[tr.i], ok = String(label) === it.correct, opt = it.options.find((o) => o.label === String(label));
+        const trap = ok ? null : it.origem === 'mapa' ? (P.armadilhas.id(opt?.trapType) || 'outra') : null;
+        tr.resp[tr.i] = { label: String(label), ok, trap };
+        P.schedule('simulations');
+      },
+      'treino-prox': () => {
+        if (!tr) return;
+        tr.i++;
+        if (tr.i >= tr.itens.length) P.treinos.save({ simKey: tr.simKey, courseId: tr.courseId, total: tr.itens.length, acertos: tr.resp.filter((x) => x?.ok).length, itens: tr.itens.map((x, j) => ({ origem: x.origem, mapKey: x.mapKey || '', topicId: x.topicId || '', titulo: x.titulo || '', ref: x.ref || '', trap: tr.resp[j]?.trap || null, ok: !!tr.resp[j]?.ok })) });
+        P.schedule('simulations'); window.scrollTo({ top: 0 });
+      },
+      'treino-sair': () => { tr = null; screen = 'res'; P.schedule('simulations'); window.scrollTo({ top: 0 }); },
       mode: (id) => { mode = id; P.schedule('simulations'); },
       result: (key) => { selKey = key; attemptIdx = 0; qSel = 0; screen = 'res'; P.schedule('simulations'); window.scrollTo({ top: 0 }); },
       'course-filter': (id) => { state.simulationCourseFilter = id; const sel = document.getElementById('simulationCourseFilter'); if (sel) sel.value = id; P.schedule('simulations'); },

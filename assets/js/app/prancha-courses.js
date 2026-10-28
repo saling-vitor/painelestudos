@@ -32,6 +32,18 @@
       ui.mini(s.maps) + '<div class="pr-row">' + ui.btn('Entrar', ui.act('open-course', c.id), primary ? 'p' : 'g') + courseMenu(c) + '</div></div>';
   }
 
+  /* V15.58 · linha do tempo: fases de cada concurso não arquivado numa faixa de 4 meses */
+  function timeline(S) {
+    const t0 = U.addDays(new Date(), -14), t1 = U.addDays(t0, 135), span = U.daysBetween(t0, t1);
+    const x = (d) => Math.max(0, Math.min(100, (U.daysBetween(t0, d) / span) * 100));
+    const lanes = S.filter((s) => !P.courses.isArchived(s.course)).map((s) => ({ s, ev: P.editais.fases(s.course).filter((f) => f.date && f.date >= t0 && f.date <= t1) })).filter((l) => l.ev.length);
+    if (!lanes.length) return '';
+    const prazo = new Set(['recursos', 'inscricoes']);
+    let months = '';
+    for (let d = new Date(t0.getFullYear(), t0.getMonth() + 1, 1); d < t1; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) months += '<span class="mo" style="left:' + x(d) + '%">' + U.MESES[d.getMonth()] + '</span>';
+    const rows = lanes.map(({ s, ev }) => '<div class="ln" style="--c:' + s.color + '"><button type="button" class="nm" data-pr-act="open-course" data-arg="' + esc(s.id) + '">' + esc(s.sigla) + '</button><div class="tr">' + (ev.length > 1 ? '<span class="run" style="left:' + x(ev[0].date) + '%;width:' + (x(ev[ev.length - 1].date) - x(ev[0].date)) + '%"></span>' : '') + ev.map((f, i) => '<span class="ev' + (f.status === 'passada' ? ' done' : '') + (prazo.has(f.id) ? ' pz' : '') + (i % 2 ? ' lo' : '') + '" style="left:' + x(f.date) + '%" title="' + esc(f.label + ' · ' + U.fmtDayYear(f.date)) + '"><i></i><span>' + esc(f.label.split(' ')[0] + ' ' + fmtDay(f.date)) + '</span></span>').join('') + '</div></div>').join('');
+    return ui.card(ui.head('Linha do tempo dos concursos', 'Fases de cada edital, de ' + esc(fmtDay(t0)) + ' a ' + esc(U.fmtDayYear(t1)), '<span class="pr-mono">datas da Régua do edital de cada curso</span>') + '<div class="pr-tlc" role="img" aria-label="Linha do tempo das fases dos concursos"><div class="hd">' + months + '<span class="hj" style="left:' + x(new Date()) + '%"><b>hoje</b></span></div>' + rows + '</div>');
+  }
   function renderList(root) {
     const all = P.courses.list(), S = all.map((c) => P.courses.summary(c)), active = S.filter((s) => !P.courses.isRetired(s.course)), archived = S.filter((s) => P.courses.isRetired(s.course));
     active.sort((a, b) => { const k = (x) => (x.exam.days === null ? 1e6 : x.exam.days < 0 ? 1e5 - x.exam.days : x.exam.days); return k(a) - k(b); });
@@ -52,7 +64,7 @@
       ui.cell('Hoje', fmtSec(P.time.today()), '', 'meta ' + fmtMin(goals.daily)) + '</div></section>';
     const list = active.map((s, i) => crRow(s, i === 0)).join('') || ui.empty('Nenhum concurso em estudo', 'Os concursos encerrados (arquivados ou com prova realizada) estão abaixo.');
     const arch = archived.length ? ui.card(ui.head('Encerrados', archived.length + ' ' + plural(archived.length, 'concurso'), ui.btn(showArchived ? 'Ocultar' : 'Mostrar', ui.act('toggle-archived'), 'g sm')) + (showArchived ? '<div style="display:grid;gap:10px">' + archived.map((s) => crRow(s, false)).join('') + '</div>' : '<p style="font-size:var(--fs-body-sm)">Arquivados ou com a prova já realizada: ficam fora do Início, do plano e das revisões. Mapas, progresso e histórico continuam guardados — reative pelo menu ⋯ ou informe uma nova data de prova em Gerenciar curso.</p>')) : '';
-    root.innerHTML = top + carimbo + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + arch;
+    root.innerHTML = top + carimbo + timeline(S) + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + arch;
   }
 
   /* ---------- curso ---------- */
@@ -141,6 +153,61 @@
       return '<tr style="--c:' + P.mapColor(m) + '" data-pr-act="pick-row" data-arg="' + esc(k) + '"><td class="fn">' + esc(fol.get(k) || '') + '</td><td><span class="pr-sig">' + esc(m.code || '') + '</span></td><td class="hide-m"><b>' + esc(m.title) + '</b>' + (origin ? ' <span class="pr-chip l">de ' + esc(P.courses.sigla(origin)) + '</span>' : '') + '</td><td class="hide-m"><span class="pr-chip c">' + esc(m.category || 'Outros') + '</span></td><td class="pr-num">' + p.marked + '/' + p.total + '</td><td style="min-width:110px">' + ui.stbar(p) + '<span class="pr-mono">' + ui.mapState(p) + '</span></td><td class="pr-mono hide-m">' + ui.lastLabel(p.lastActivity) + '</td><td><span class="pr-row" style="flex-wrap:nowrap">' + ui.btn(p.total > 0 && p.marked >= p.total ? 'Revisar' : p.marked ? 'Continuar' : 'Começar', ui.act('open-map', k), p.total > 0 && p.marked >= p.total ? 'g sm' : 'sm') + mapRowMenu(m) + '</span></td></tr>';
     }).join('') + '</tbody></table></div>';
   }
+  /* ---------- V15.58 · peso da prova no curso ---------- */
+  const PKEY = 'studyapp.prancha.plantaMedida';
+  const medida = () => { try { return localStorage.getItem(PKEY) === 'p' ? 'p' : 't'; } catch { return 't'; } };
+  let relampago = false;
+  function pesoCard(c) {
+    const pe = E.pesoEsforco(c.id);
+    if (!pe || !pe.totTopicos) return '';
+    const pc = (x) => Math.round(x * 100), fp = E.fmtPt;
+    const bar = (key, fatia, label) => '<div class="pr-pe"><span class="pr-k">' + esc(label) + '</span>' + ui.states(pe.rows.map((r) => [r.nome, r[key], r.cor]), label) + ui.legend(pe.rows.map((r) => [r.nome, pc(r[fatia]) + '%', r.cor])) + '</div>';
+    const cells = '<div class="pr-pe-cells">' + pe.rows.map((r) => '<div class="pr-cell"><span>' + esc(r.nome) + ' · ponto por tópico</span><b class="pr-num" style="color:' + r.cor + '">' + fp(r.ppt) + '</b><span>' + fp(r.pontos) + ' pts ÷ ' + r.topicos + ' ' + plural(r.topicos, 'tópico') + ' · ' + pc(r.cobertura) + '% marcados</span></div>').join('') + '</div>';
+    const on = P.prefs.get('planoPeso') !== false;
+    const v = pe.razao && pe.razao >= 2 ? ui.verdict('l', 'Um tópico de ' + esc(pe.max.nome) + ' vale cerca de ' + Math.round(pe.razao) + ' tópicos de ' + esc(pe.min.nome) + '.', esc(pe.max.nome) + ' vale ' + pc(pe.max.fatiaPontos) + '% da prova e ocupa ' + pc(pe.max.fatiaTopicos) + '% dos tópicos; ' + pc(pe.max.cobertura) + '% deles estão marcados. ' + (on ? 'O plano automático já usa esse peso.' : 'O uso do peso no plano está desligado em Configurações → Concursos e editais.')) : '';
+    return ui.card(ui.head('Peso × Esforço', 'O que a prova vale contra o que os mapas pedem', '', 'l') + bar('topicos', 'fatiaTopicos', 'Tópicos nos mapas · ' + pe.totTopicos) + bar('pontos', 'fatiaPontos', 'Pontos na prova · ' + fp(pe.totPontos)) + cells + v, 'pr-pe-card');
+  }
+  function placar(c) {
+    if (!E.prova(c.id).length) return '';
+    const rows = P.sims.summary(c.id).list.filter((r) => r.attempts.length).map((r) => ({ r, gp: E.pontuarTentativa(c.id, r.latest) })).filter((x) => x.gp)
+      .sort((a, b) => (Date.parse(b.r.latest.finishedAt || 0) || 0) - (Date.parse(a.r.latest.finishedAt || 0) || 0));
+    if (!rows.length) return '';
+    const last = rows[0], fp = ui.fmtPts;
+    const v = last.gp.aprovado ? ui.verdict('m', 'Aprovado no total e em todas as disciplinas.', last.gp.minimoGeral !== null ? fp(last.gp.pontos - last.gp.minimoGeral) + ' pontos acima do mínimo geral.' : '') : ui.verdict('', 'No ' + esc(P.sims.code(last.r.sim)) + ', ' + esc(ui.elimText(last.gp)) + '.', 'Passar no total e cair no mínimo de uma disciplina elimina; o plano dá prioridade a ela.');
+    const others = rows.slice(1).map((x) => '<div class="pr-li"><span class="pr-sig">' + esc(P.sims.code(x.r.sim)) + '</span><span>' + fp(x.gp.pontos) + ' de ' + fp(x.gp.max) + ' pontos<br><span class="t">' + esc(x.gp.aprovado ? 'aprovado em todas as disciplinas' : ui.elimText(x.gp)) + '</span></span>' + ui.btn('Resultado', ui.act('sim-result', x.r.key), 'g sm') + '</div>').join('');
+    return ui.card(ui.head('Placar de simulados', esc(P.sims.code(last.r.sim)) + ' · ' + fp(last.gp.pontos) + ' de ' + fp(last.gp.max) + ' pontos', ui.btn('Resultado', ui.act('sim-result', last.r.key), 'g sm'), 'l') + ui.gabRows(last.gp) + v + (others ? '<div class="pr-list">' + others + '</div>' : ''));
+  }
+  /* revisão relâmpago: tópicos ⭐ e 🔢 dos mapas do curso, na ordem do peso da disciplina e do estado */
+  function relampagoItems(c) {
+    const own = P.data.mapsForCourse(c.id, { includeLinked: false }), byKey = new Map(own.map((m) => [P.data.keyOf(m), m]));
+    const idx = ((typeof state !== 'undefined' && state.searchIndex?.items) || []).filter((it) => it.topicId && byKey.has(it.mapKey) && (it.markers || []).some((x) => x === 'star' || x === 'num'));
+    const st = new Map(), rank = { difficult: 0, review: 1 };
+    return idx.map((it) => {
+      const m = byKey.get(it.mapKey);
+      if (!st.has(it.mapKey)) st.set(it.mapKey, (typeof readMapState === 'function' ? readMapState(m).topicStates : null) || {});
+      const s = st.get(it.mapKey)[it.topicId] || '';
+      return { it, m, s, ppt: E.pptDoMapa(m, c.id) || 0 };
+    }).sort((a, b) => b.ppt - a.ppt || (rank[a.s] ?? 2) - (rank[b.s] ?? 2));
+  }
+  function relampagoCard(c, ex) {
+    const vesp = ex.phase === 'before' && ex.days <= 2 || ex.phase === 'today';
+    if (!vesp && !relampago) return '';
+    const list = relampagoItems(c);
+    if (!list.length) return ui.card(ui.head('Revisão relâmpago', 'Sem tópicos marcados com ⭐ ou 🔢', ui.btn('Fechar', ui.act('relampago'), 'g sm'), 'l') + '<p class="pr-detail">Os mapas deste curso não declaram marcadores; a Auditoria do acervo (Configurações) lista quais.</p>');
+    const shown = list.slice(0, 14), mins = Math.max(10, Math.round(list.length * 0.8));
+    const lab = { difficult: 'DIF', review: 'REV', done: 'OK' };
+    return ui.card(ui.head(vesp ? 'Véspera · revisão relâmpago' : 'Revisão relâmpago', list.length + ' ' + plural(list.length, 'tópico') + ' ⭐/🔢 · ~' + fmtMin(mins), '<span class="pr-row">' + ui.btn('Começar · ' + fmtMin(Math.min(mins, 40)), ui.act('relampago-start', c.id, { 'data-min': Math.min(mins, 40) }), 'p sm') + (vesp ? '' : ui.btn('Fechar', ui.act('relampago'), 'g sm')) + '</span>', 'l') +
+      '<p class="pr-detail">Ordem: disciplina que mais pesa na prova primeiro; dentro dela, DIF e REV antes.</p><div class="pr-list">' + shown.map((x) => '<div class="pr-li" style="--c:' + P.mapColor(x.m) + '"><span class="pr-sig">' + esc(x.m.code || '') + '</span><span><b style="font-size:var(--fs-body-sm)">' + ((x.it.markers || []).includes('star') ? '⭐ ' : '') + ((x.it.markers || []).includes('num') ? '🔢 ' : '') + esc(x.it.title) + '</b><br><span class="t">' + esc((lab[x.s] || 'aberto') + (x.ppt ? ' · ' + E.fmtPt(x.ppt) + ' pt por tópico' : '')) + '</span></span>' + ui.btn('Abrir', ui.act('open-map', P.data.keyOf(x.m), { 'data-topic': x.it.topicId }), 'g sm') + '</div>').join('') + '</div>' + (list.length > shown.length ? '<p class="pr-mono">+ ' + (list.length - shown.length) + ' ' + plural(list.length - shown.length, 'tópico') + ' na sequência da sessão</p>' : ''));
+  }
+  /* reaproveitar: mapas portáteis deste curso vinculados ao próximo concurso, sem copiar o HTML */
+  function reaproveitar(c, all) {
+    const port = all.filter((m) => !m._linkedFrom && E.alcance(m) !== 'local');
+    if (!port.length) return '';
+    const targets = P.courses.list().filter((x) => String(x.id) !== String(c.id) && !P.courses.isRetired(x));
+    if (!targets.length) return ui.card(ui.head('Reaproveitar mapas', port.length + ' ' + plural(port.length, 'mapa portátil', 'mapas portáteis'), '', 'l') + '<p class="pr-detail">Crie o próximo concurso para vincular estes mapas a ele. O progresso e as revisões continuam os mesmos.</p>' + ui.btn('+ Novo concurso', ui.act('new-course'), 'g sm'));
+    const t = port.reduce((n, m) => n + (P.data.prog(m).total || 0), 0);
+    return ui.card(ui.head('Reaproveitar mapas', port.length + ' ' + plural(port.length, 'mapa portátil', 'mapas portáteis') + ' · ' + t + ' tópicos', '', 'l') + '<form data-pr-submit="reuse-maps" data-n="' + port.length + '"><label class="pr-field"><span>Vincular ao concurso</span><select name="course">' + targets.map((x) => '<option value="' + esc(x.id) + '">' + esc(P.courses.sigla(x) + ' · ' + x.title) + '</option>').join('') + '</select></label><div class="pr-checks">' + port.map((m, i) => '<label><input type="checkbox" name="k' + i + '" value="' + esc(P.data.keyOf(m)) + '" checked> <span class="pr-sig" style="--c:' + P.mapColor(m) + '">' + esc(m.code || '') + '</span> ' + esc(m.shortTitle || m.title) + (E.alcance(m) === 'misto' ? ' <span class="pr-chip l">misto</span>' : '') + '</label>').join('') + '</div><p class="pr-mono">O mapa aparece no outro concurso sem duplicar o HTML; mistos têm partes locais.</p><button type="submit" class="pr-btn sm">Vincular selecionados</button></form>');
+  }
   function renderCourse(root) {
     const c = typeof courseById === 'function' ? courseById(state.courseId) : null;
     if (!c) { root.innerHTML = ui.card(ui.empty('Curso não encontrado', 'Ele pode ter sido removido ou ainda não sincronizou.', ui.btn('Meus Cursos', ui.act('nav', 'courses'), 'g'))); return; }
@@ -171,18 +238,23 @@
       ui.cell('Revisões', fmtNum(revCount), revCount ? 'l' : 'mu', 'tópicos REV e DIF') + ui.cell('Tempo no curso', fmtSec(timeCourse), '', p.lastActivity ? 'última atividade ' + ui.lastLabel(p.lastActivity) : 'sem atividade') +
       ui.cell('Simulados', sim.done + ' / ' + sim.total, '', sim.total ? (sim.best !== null ? 'melhor ' + sim.best + '%' : 'nenhum feito') : 'nenhum importado') + '</div></section>';
     const hasEdital = typeof courseHasEdital === 'function' && courseHasEdital(c);
-    const acts = '<div class="pr-acts" role="group" aria-label="Ações do curso"><button type="button" data-pr-act="course-edital" data-arg="' + esc(c.id) + '"' + (hasEdital ? '' : ' disabled title="Nenhum edital anexado"') + '>Edital</button><button type="button" data-pr-act="course-sims" data-arg="' + esc(c.id) + '">Simulados</button></div>' + ui.menu('course-' + c.id, [['Importar mapas', ui.act('import-maps')], ['Gerenciar curso', ui.act('manage-course', c.id)], [P.courses.isArchived(c) ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), P.courses.isArchived(c) ? '' : 'd']]);
+    const acts = '<div class="pr-acts" role="group" aria-label="Ações do curso"><button type="button" data-pr-act="course-edital" data-arg="' + esc(c.id) + '"' + (hasEdital ? '' : ' disabled title="Nenhum edital anexado"') + '>Edital</button><button type="button" data-pr-act="course-sims" data-arg="' + esc(c.id) + '">Simulados</button></div>' + ui.menu('course-' + c.id, [['Revisão relâmpago', ui.act('relampago')], ['Importar mapas', ui.act('import-maps')], ['Gerenciar curso', ui.act('manage-course', c.id)], [P.courses.isArchived(c) ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), P.courses.isArchived(c) ? '' : 'd']]);
     const chips = '<div class="pr-chips" role="group" aria-label="Situação">' + filters.map((x) => ui.chipf(x.id, x.label, all.filter((m) => match(m, x.id)).length, cur === x.id, 'filter')).join('') + '</div>';
     const catChips = '<div class="pr-chips" role="group" aria-label="Conteúdo">' + ui.chipf('Todos', 'Todo', undefined, cat === 'Todos', 'cat', undefined, 'Todo o conteúdo') + cats.map((x) => ui.chipf(x, (typeof categoryShortName === 'function' ? categoryShortName(x) : x), all.filter((m) => m.category === x).length, cat === x, 'cat', P.categoryPigment(x), x)).join('') + '</div>';
     const legendCats = ui.legend(cats.map((x) => [(typeof categoryShortName === 'function' ? categoryShortName(x) : x), '', P.categoryPigment(x)]));
-    const planta = ui.card(ui.head('Planta do edital', 'Cada mapa é um lote, do tamanho dos seus tópicos', legendCats) + ui.tiles(all, { sel: pickKey }).replace(/class="pr-tile( on)?"([^>]*data-arg="([^"]+)")/g, (mm, on, rest, key) => 'class="pr-tile' + (on || '') + (shown.some((m) => P.data.keyOf(m) === key) ? '' : ' dim') + '"' + rest));
+    const pe = E.pesoEsforco(c.id), med = pe ? medida() : 't';
+    const ordem = pe ? new Map(pe.rows.map((r, i) => [r.id, i])) : null;
+    const plantaList = med === 'p' ? all.slice().sort((a, b) => (ordem.get(E.disciplinaDoMapa(a, c.id)?.id) ?? 99) - (ordem.get(E.disciplinaDoMapa(b, c.id)?.id) ?? 99)) : all;
+    const tileOpts = med === 'p' ? { sel: pickKey, weight: (m) => (E.pontosDoMapa(m, c.id) || 0) * 4, note: (m) => E.fmtPt(E.pontosDoMapa(m, c.id) || 0) + ' pts' } : { sel: pickKey };
+    const plantaRight = (pe ? ui.seg([['t', 'Tópicos'], ['p', 'Pontos']], med, 'planta-medida', 'Medida da planta') : '') + legendCats;
+    const planta = ui.card(ui.head('Planta do edital', med === 'p' ? 'Cada mapa é um lote, do tamanho do que vale na prova' : 'Cada mapa é um lote, do tamanho dos seus tópicos', '<div class="pr-row">' + plantaRight + '</div>') + ui.tiles(plantaList, tileOpts).replace(/class="pr-tile( on)?"([^>]*data-arg="([^"]+)")/g, (mm, on, rest, key) => 'class="pr-tile' + (on || '') + (shown.some((m) => P.data.keyOf(m) === key) ? '' : ' dim') + '"' + rest));
     const mode = viewMode();
     let listing;
     if (mode === 'capas') {
       listing = shown.length && typeof mapCard === 'function' ? '<div class="map-grid pr-legacy-grid" data-pr-legacy>' + shown.filter((m) => !m._linkedFrom).map(mapCard).join('') + '</div>' + (shown.some((m) => m._linkedFrom) ? '<p class="pr-mono">' + shown.filter((m) => m._linkedFrom).length + ' mapa(s) vinculado(s) aparecem na lista.</p>' : '') : ui.empty('Nada neste filtro', 'Troque o filtro de situação ou de conteúdo.');
     } else listing = listTable(shown, fol, c);
     const mapsCard = ui.card('<div class="pr-vw"><div><span class="pr-k">Mapas do curso</span><h3>' + shown.length + ' de ' + all.length + ' mapas · ' + shown.reduce((n, m) => n + P.data.prog(m).marked, 0) + '/' + shown.reduce((n, m) => n + P.data.prog(m).total, 0) + ' tópicos</h3></div>' + ui.seg([['lista', 'Lista'], ['capas', 'Capas']], mode, 'view-mode', 'Visualização') + '</div>' + listing);
-    root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' + (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') + ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' + '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' + esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') + '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + regua(c) + carimbo + (ex.phase === 'after' ? fechamento(c, all) : '') + raioX(c, all) + '<div class="pr-vw">' + '<div class="pr-row">' + acts + '</div>' + chips + '</div>' + catChips + '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>' + mapsCard;
+    root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' + (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') + ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' + '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' + esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') + '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + regua(c) + carimbo + relampagoCard(c, ex) + (ex.phase === 'after' ? fechamento(c, all) + reaproveitar(c, all) : '') + raioX(c, all) + pesoCard(c) + placar(c) + '<div class="pr-vw">' + '<div class="pr-row">' + acts + '</div>' + chips + '</div>' + catChips + '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>' + mapsCard;
     const legacy = root.querySelector('[data-pr-legacy]');
     if (legacy && typeof bindMapCards === 'function') bindMapCards(legacy);
   }
@@ -196,6 +268,11 @@
     'pick-map': (key) => { pickKey = key; P.schedule('course'); },
     'pick-row': (key, el, root, e) => { if (e.target.closest('button,.pr-menu')) return; pickKey = key; P.renderNow('course'); root.querySelector('.pr-pick')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
     'fav-menu': (key) => { P.actions.fav(key); P.schedule(state.view); },
+    'planta-medida': (id) => { try { localStorage.setItem(PKEY, id === 'p' ? 'p' : 't'); } catch {} P.schedule('course'); },
+    relampago: () => { relampago = !relampago; P.schedule('course'); if (relampago) window.scrollTo({ top: 0 }); },
+    'relampago-start': async (id, el) => { const c = P.courses.byId(id), first = c ? relampagoItems(c)[0] : null; if (!window.StudyDashboard?.active?.()) window.StudyDashboard?.start?.({ map: first?.m, mode: 'planned', minutes: Number(el?.dataset.min) || 25, label: 'Revisão relâmpago' }); if (first && typeof openMap === 'function') await openMap(P.data.keyOf(first.m), { topicId: first.it.topicId }); },
+    'sim-result': (key) => { if (typeof nav === 'function') nav('simulations'); setTimeout(() => P.pages.simulations?.actions?.result?.(key), 30); },
+    'reuse-maps': (fd, form) => { const id = fd.get('course'); if (!id) return; let n = 0; for (let i = 0; i < Number(form.dataset.n || 0); i++) { const k = fd.get('k' + i); if (k) { P.links.link(k, id, true); n++; } } if (typeof toast === 'function') toast(n ? n + ' ' + plural(n, 'mapa vinculado', 'mapas vinculados') + ' ao ' + P.courses.sigla(P.courses.byId(id)) + '.' : 'Nenhum mapa selecionado.'); P.schedule(state.view); },
     'course-sims': (id) => { state.simulationCourseFilter = id; if (typeof nav === 'function') nav('simulations'); },
     'study-now': async (key, el) => { const map = typeof mapById === 'function' ? mapById(key) : null; if (!window.StudyDashboard?.active?.()) window.StudyDashboard?.start?.({ map, mode: 'planned', minutes: Number(el?.dataset.min) || 20, label: map?.code || 'Sessão' }); if (map && typeof openMap === 'function') await openMap(key); },
     replan: () => { try { window.StudyAutomation?.run?.(); if (typeof toast === 'function') toast('Plano atualizado.'); } catch (e) { console.warn(e); } P.schedule(state.view); },

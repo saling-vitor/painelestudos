@@ -10,8 +10,8 @@
   const H0 = 6, H1 = 23, HH = 44;
 
   const mapOf = (it) => (it?.mapKey && typeof mapById === 'function' ? mapById(it.mapKey) : null);
-  const colorOf = (it) => { const m = mapOf(it); return m ? P.mapColor(m) : it.kind === 'simulation' ? 'var(--pr-pg-argila)' : 'var(--pr-pg-pedra)'; };
-  const codeOf = (it) => mapOf(it)?.code || (it.kind === 'simulation' ? 'SIM' : 'LIVRE');
+  const colorOf = (it) => { const m = mapOf(it); return m ? P.mapColor(m) : it.kind === 'simulation' ? 'var(--pr-pg-argila)' : it.kind === 'review' ? 'var(--pr-latao)' : 'var(--pr-pg-pedra)'; };
+  const codeOf = (it) => mapOf(it)?.code || (it.kind === 'simulation' ? 'SIM' : it.kind === 'review' ? 'REV' : 'LIVRE');
   const titleOf = (it) => { const m = mapOf(it); return m ? m.shortTitle || m.title : String(it.title || 'Sessão').replace(/^Iniciar\s*·\s*/i, ''); };
   const examOn = (d) => P.courses.active().filter((s) => s.exam.date && U.dateKey(s.exam.date) === U.dateKey(d));
   const weekStart = (d) => U.addDays(d, -((U.startDay(d).getDay() + 6) % 7));
@@ -80,7 +80,7 @@
     else v = ui.verdict('n', planned ? fmtMin(planned) + ' planejadas no resto da semana.' : 'Nada planejado no resto da semana.', 'Toque num horário tracejado para transformá-lo em sessão.');
     const exWeek = ex && ex.date >= ws && ex.date <= we;
     return '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">' + esc('Agenda · semana de ' + ws.getDate() + ' a ' + fmtDay(we) + (pc ? ' · ' + pc.sigla : '')) + '</span><div class="pr-big"><span class="pr-pct pa pr-num">' + fmtSec(doneSec) + '</span><span class="pr-sub">feitas · ' + fmtMin(planned) + ' planejadas ' + (until ? 'até a prova' : 'no resto da semana') + '</span></div>' +
-      ui.states([['f', doneSec / 60, 'var(--pr-latao)'], ['p', planned, 'var(--pr-g3)']], 'Semana: ' + fmtSec(doneSec) + ' feitas') + ui.legend([['Feito', fmtSec(doneSec), 'var(--pr-latao)'], ['Planejado', fmtMin(planned) + ' · ' + plannedN + ' ' + plural(plannedN, 'sessão', 'sessões'), 'var(--pr-g3)', true]].concat(exWeek ? [['Prova', U.DSEM[ex.date.getDay()].toLowerCase() + ' ' + ex.date.getDate(), 'var(--pr-oxido)']] : [])) + v +
+      ui.states([['f', doneSec / 60, 'var(--pr-latao)'], ['p', planned, 'var(--pr-g3)']], 'Semana: ' + fmtSec(doneSec) + ' feitas') + ui.legend([['Feito', fmtSec(doneSec), 'var(--pr-latao)'], ['Planejado', fmtMin(planned) + ' · ' + plannedN + ' ' + plural(plannedN, 'sessão', 'sessões'), 'var(--pr-g3)', true]].concat(exWeek ? [['Prova', U.DSEM[ex.date.getDay()].toLowerCase() + ' ' + ex.date.getDate(), 'var(--pr-oxido)']] : [])) + v + pesoSemanaHtml(pc) +
       '<div class="pr-row">' + ui.btn('Replanejar' + (until ? ' até a prova' : ''), ui.act('replan'), 'p') + ui.btn('Exportar .ics', ui.act('ics'), 'g') + ui.btn('Importar .ics', ui.act('ics-pick'), 'g') + '<input type="file" accept=".ics,text/calendar" hidden data-pr-change="ics-file" data-pr-ics>' + '</div></div><div class="pr-c-b">' +
       ui.cell('Hoje', fmtSec(P.time.today()) + ' / ' + fmtMin(todayPlanned), '', todayN + ' ' + plural(todayN, 'sessão', 'sessões')) +
       ui.cell('Até a prova', daysLeft !== null ? daysLeft + ' ' + plural(daysLeft, 'dia') : ex?.days > 0 ? ex.days + ' dias' : '—', daysLeft !== null && daysLeft <= 7 ? 'ox' : '', daysLeft !== null ? Array.from({ length: daysLeft }, (_, i) => U.DSEM[U.addDays(today, i).getDay()].toLowerCase()).join(', ') : pc ? 'prova depois desta semana' : 'sem prova marcada') +
@@ -128,6 +128,94 @@
     return '<div class="pr-calh">' + ui.btn((typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹'), ui.act('prev', '', { 'aria-label': 'Mês anterior' }), 'g pr-ib') + '<b>' + esc(U.MESES_LONGOS[cur.getMonth()] + ' ' + cur.getFullYear()) + '</b>' + ui.btn((typeof uiIcon === 'function' ? uiIcon('chevron-right', 'ui-icon-sm') : '›'), ui.act('next', '', { 'aria-label': 'Próximo mês' }), 'g pr-ib') + '</div><div class="pr-mg">' + h + '</div>' + (post.length ? ui.verdict('l', 'Depois de ' + esc(fmtDay(post[0].exam.date)) + ', o ' + esc(post[0].sigla) + ' sai do plano.', 'A tela Pós-prova do Início sugere arquivar o curso e trazer o próximo concurso.') : '');
   }
 
+  /* ---------- V15.58 · semana pelo peso da prova ---------- */
+  function pesoSemana(pc) {
+    if (!pc) return null;
+    const pe = P.editais.pesoEsforco(pc.id);
+    if (!pe) return null;
+    const today = U.startDay(), ws = weekStart(today), plan = Object.fromEntries(pe.rows.map((r) => [r.id, 0])), blocos = [];
+    for (let i = 0; i < 7; i++) {
+      const d = U.addDays(ws, i);
+      if (d < today) continue;
+      for (const b of P.agenda.blocks(d)) {
+        const m = mapOf(b.item);
+        if (!m || b.item.completedAt || b.item.virtual) continue;
+        const disc = P.editais.disciplinaDoMapa(m, pc.id);
+        if (!disc || !(disc.id in plan)) continue;
+        plan[disc.id] += b.minutes; blocos.push({ b, disc: disc.id, date: d });
+      }
+    }
+    const total = Object.values(plan).reduce((s, x) => s + x, 0);
+    if (!total) return null;
+    let w = pe.rows.map((r) => ({ id: r.id, v: r.pontos * (1 - Math.min(0.9, r.cobertura)) }));
+    const sw = w.reduce((s, x) => s + x.v, 0) || 1;
+    w = w.map((x) => ({ id: x.id, f: Math.max(0.1, x.v / sw) }));
+    const sf = w.reduce((s, x) => s + x.f, 0);
+    const ideal = Object.fromEntries(w.map((x) => [x.id, Math.round((x.f / sf) * total)]));
+    const desvio = pe.rows.map((r) => ({ r, d: plan[r.id] - ideal[r.id] })).sort((a, b) => a.d - b.d);
+    return { pe, plan, ideal, total, blocos, falta: desvio[0], sobra: desvio[desvio.length - 1] };
+  }
+  function pesoSemanaHtml(pc) {
+    const x = pesoSemana(pc);
+    if (!x) return '';
+    const pcs = (v) => Math.round((v / x.total) * 100) + '%';
+    const bar = (src, label) => '<span class="pr-k">' + label + '</span>' + ui.states(x.pe.rows.map((r) => [r.nome, src[r.id], r.cor]), label) + ui.legend(x.pe.rows.map((r) => [r.nome, pcs(src[r.id]), r.cor]));
+    const fora = x.falta.d <= -60;
+    return '<div class="pr-pe">' + bar(x.plan, 'Planejado no resto da semana · ' + fmtMin(x.total)) + bar(x.ideal, 'Ideal pelo peso e pelo que falta') + '</div>' + (fora ? ui.verdict('', esc(x.falta.r.nome) + ' está ' + fmtMin(-x.falta.d) + ' abaixo do ideal nesta semana.', '“Seguir o peso” troca blocos de ' + esc(x.sobra.r.nome) + ' por mapas de ' + esc(x.falta.r.nome) + ', mantendo data e horário.') + '<div class="pr-row">' + ui.btn('Seguir o peso', ui.act('seguir-peso'), 'g sm') + '</div>' : '');
+  }
+  function trocasPeso(pc) {
+    const x = pesoSemana(pc);
+    if (!x) return [];
+    const plan = { ...x.plan }, out = [], used = new Set();
+    const rows = P.plan.priorities(40, pc.id);
+    for (let n = 0; n < 8; n++) {
+      const dev = x.pe.rows.map((r) => ({ id: r.id, d: plan[r.id] - x.ideal[r.id] })).sort((a, b) => a.d - b.d);
+      const under = dev[0], over = dev[dev.length - 1];
+      if (under.d > -45 || over.d < 30) break;
+      const cand = x.blocos.filter((b) => b.disc === over.id && !used.has(b.b.item.id) && b.b.minutes <= over.d + 20).sort((a, b) => b.date - a.date)[0];
+      if (!cand) break;
+      const mapRow = rows.find((r) => P.editais.disciplinaDoMapa(r.map, pc.id)?.id === under.id && !out.some((t) => t.to.key === r.key && U.dateKey(t.date) === U.dateKey(cand.date)));
+      if (!mapRow) break;
+      used.add(cand.b.item.id);
+      out.push({ id: cand.b.item.id, date: cand.date, from: mapOf(cand.b.item), to: mapRow, minutes: cand.b.minutes });
+      plan[over.id] -= cand.b.minutes; plan[under.id] += cand.b.minutes;
+    }
+    return out;
+  }
+  /* ---------- V15.58 · rotina: revisões com horário e semana-modelo ---------- */
+  const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  function modelo() { const r = P.store.read().modelo?.semana; return r && !r.removed && Array.isArray(r.blocos) ? r.blocos : []; }
+  function rotinaCard() {
+    const cfg = P.prefs.get('revHorario') || {}, pc = P.courses.priority(), prova = pc ? P.editais.prova(pc.id) : [];
+    const rev = '<details class="pr-add"' + (cfg.on ? '' : '') + '><summary>Revisões com horário · ' + (cfg.on ? 'ligado, ' + esc(cfg.start) : 'desligado') + '</summary><form data-pr-submit="rev-config"><p class="pr-mono">Um bloco “Revisões do dia” no horário escolhido, com a duração estimada pela fila; não aparece no dia de prova nem quando nada vence.</p><div class="pr-fgrid"><label class="pr-field"><span>Situação</span><select name="on"><option value="1"' + (cfg.on ? ' selected' : '') + '>Ligado</option><option value="0"' + (cfg.on ? '' : ' selected') + '>Desligado</option></select></label><label class="pr-field"><span>Horário</span><input type="time" name="start" step="60" value="' + esc(cfg.start || '18:00') + '"></label><label class="pr-field"><span>Duração máxima (min)</span><input type="number" name="max" min="10" max="120" step="5" inputmode="numeric" value="' + esc(cfg.max || 40) + '"></label></div><div class="pr-checks">' + [1, 2, 3, 4, 5, 6, 0].map((d) => '<label><input type="checkbox" name="d' + d + '"' + ((cfg.days || [1, 2, 3, 4, 5, 6]).includes(d) ? ' checked' : '') + '> ' + DIAS[d] + '</label>').join('') + '</div><button type="submit" class="pr-btn sm">Salvar</button></form></details>';
+    const blocos = modelo(), discs = prova.length ? prova : [];
+    const optTipo = '<option value="disc:">Estudo (mapa do plano)</option>' + discs.map((d) => '<option value="disc:' + esc(d.id) + '">Estudo · ' + esc(d.nome) + '</option>').join('') + '<option value="simulation:">Simulado</option>';
+    const lista = blocos.length ? '<div class="pr-list">' + blocos.map((b, i) => '<div class="pr-li"><span class="pr-sig">' + DIAS[b.dia] + '</span><span>' + esc(b.start + ' · ' + fmtMin(b.minutes)) + '<br><span class="t">' + esc(b.tipo === 'simulation' ? 'Simulado' : (discs.find((d) => d.id === b.disc)?.nome ? 'Estudo · ' + discs.find((d) => d.id === b.disc).nome : 'Estudo · mapa do plano')) + '</span></span>' + ui.btn('Remover', ui.act('modelo-del', String(i)), 'g sm') + '</div>').join('') + '</div>' : '<p class="pr-detail">Nenhum bloco no modelo ainda.</p>';
+    const horas = blocos.reduce((n, b) => n + b.minutes, 0);
+    const mod = '<details class="pr-add"><summary>Semana-modelo · ' + (blocos.length ? blocos.length + ' ' + plural(blocos.length, 'bloco') + ', ' + fmtMin(horas) + ' por semana' : 'vazia') + '</summary><p class="pr-mono">Horários fixos por dia; ao aplicar, cada bloco de estudo recebe o mapa que o plano indicar naquele dia. Itens já existentes não são tocados.</p>' + lista +
+      '<form data-pr-submit="modelo-add"><div class="pr-fgrid"><label class="pr-field"><span>Dia</span><select name="dia">' + [1, 2, 3, 4, 5, 6, 0].map((d) => '<option value="' + d + '">' + DIAS[d] + '</option>').join('') + '</select></label><label class="pr-field"><span>Início</span><input type="time" name="start" step="60" value="19:00" required></label><label class="pr-field"><span>Minutos</span><input type="number" name="minutes" min="10" max="300" step="5" value="60" inputmode="numeric"></label><label class="pr-field"><span>Tipo</span><select name="tipo">' + optTipo + '</select></label></div><button type="submit" class="pr-btn sm">Adicionar ao modelo</button></form>' +
+      (blocos.length ? '<div class="pr-row">' + ui.btn(pc ? 'Aplicar até a prova do ' + esc(pc.sigla) : 'Aplicar nas próximas 4 semanas', ui.act('modelo-aplicar'), 'p sm') + '</div>' : '') + '</details>';
+    return ui.card(ui.head('Rotina', 'Revisões com horário e semana-modelo', '', 'l') + rev + mod);
+  }
+  function aplicarModelo() {
+    const blocos = modelo(), pc = P.courses.priority();
+    if (!blocos.length || !window.StudyDashboard?.addAgenda) return { n: 0 };
+    const today = U.startDay(), end = pc?.exam?.date ? U.addDays(pc.exam.date, -1) : U.addDays(today, 27);
+    const rows = P.plan.priorities(40, pc ? pc.id : ''), plan = [];
+    for (let d = U.addDays(today, 1); d <= end; d = U.addDays(d, 1)) {
+      if (examOn(d).length) continue;
+      const exist = P.agenda.blocks(d), usados = new Set();
+      for (const b of blocos.filter((x) => x.dia === d.getDay())) {
+        const s = P.agenda.toMin(b.start);
+        if (s === null || exist.some((x) => s < x.end && x.start < s + b.minutes)) continue;
+        if (b.tipo === 'simulation') { plan.push({ date: U.dateKey(d), kind: 'simulation', title: 'Simulado', minutes: b.minutes, start: b.start }); continue; }
+        const r = rows.find((x) => !usados.has(x.key) && (!b.disc || P.editais.disciplinaDoMapa(x.map, x.map.courseId)?.id === b.disc)) || rows.find((x) => !usados.has(x.key));
+        if (r) usados.add(r.key);
+        plan.push({ date: U.dateKey(d), kind: 'study', title: r ? r.map.code || r.map.title : 'Sessão de estudo', minutes: b.minutes, mapKey: r?.key || '', start: b.start });
+      }
+    }
+    return { n: plan.length, plan, end };
+  }
   function itemMenu(it) {
     return ui.menu('ag-' + it.id, [[it.completedAt ? 'Marcar como não feita' : 'Marcar como feita', ui.act('toggle-done', it.id)], ['Definir horário', ui.act('set-start', it.id)], ['Mover para amanhã', ui.act('move-next', it.id)], ['Remover da agenda', ui.act('remove', it.id), 'd']]);
   }
@@ -136,7 +224,7 @@
     const tot = blocks.reduce((n, b) => n + b.minutes, 0);
     const pri = P.plan.priorities(5);
     const maps = P.data.maps().slice().sort((a, b) => String(a.code).localeCompare(String(b.code)));
-    const list = blocks.map((b) => { const it = b.item; return '<div class="pr-it' + (it.completedAt ? ' done' : '') + (b.conflict ? ' cf' : '') + '" style="--c:' + colorOf(it) + '" data-pr-item="' + esc(it.id) + '"><span class="bar"></span><span><b><span class="pr-sig" style="font-size:var(--fs-title);color:' + colorOf(it) + '">' + esc(codeOf(it)) + '</span> ' + esc(titleOf(it)) + '</b><span class="pr-mono">' + P.agenda.fromMin(b.start) + (b.explicit ? '' : ' (sem horário)') + ' · ' + fmtMin(b.minutes) + ' · ' + (it.kind === 'simulation' ? 'simulado' : 'estudo') + (b.conflict ? ' · conflito de horário' : '') + (it.completedAt ? ' · feita' : '') + '</span></span><span class="pr-row" style="flex-wrap:nowrap">' + (it.completedAt ? '' : ui.btn('Iniciar', ui.act('start-item', it.id), 'sm')) + itemMenu(it) + '</span></div>'; }).join('');
+    const list = blocks.map((b) => { const it = b.item; return '<div class="pr-it' + (it.completedAt ? ' done' : '') + (b.conflict ? ' cf' : '') + '" style="--c:' + colorOf(it) + '" data-pr-item="' + esc(it.id) + '"><span class="bar"></span><span><b><span class="pr-sig" style="font-size:var(--fs-title);color:' + colorOf(it) + '">' + esc(codeOf(it)) + '</span> ' + esc(titleOf(it)) + '</b><span class="pr-mono">' + P.agenda.fromMin(b.start) + (b.explicit ? '' : ' (sem horário)') + ' · ' + fmtMin(b.minutes) + ' · ' + (it.kind === 'simulation' ? 'simulado' : 'estudo') + (b.conflict ? ' · conflito de horário' : '') + (it.completedAt ? ' · feita' : '') + '</span></span><span class="pr-row" style="flex-wrap:nowrap">' + (it.virtual ? ui.btn('Revisar', ui.act('review-queue'), 'sm') : (it.completedAt ? '' : ui.btn('Iniciar', ui.act('start-item', it.id), 'sm')) + itemMenu(it)) + '</span></div>'; }).join('');
     const done = sessions.map((s) => { const m = s.mapKey && typeof mapById === 'function' ? mapById(s.mapKey) : null; return '<div class="pr-it done" style="--c:' + (m ? P.mapColor(m) : 'var(--pr-musgo)') + '"><span class="bar"></span><span><b>' + esc((m?.code ? m.code + ' · ' : '') + (s.label || 'Sessão')) + '</b><span class="pr-mono">' + new Date(s.startedAt).toTimeString().slice(0, 5) + ' · ' + fmtSec(s.durationSeconds) + ' · realizada</span></span>' + ui.btn('Remover', ui.act('remove-session', s.id), 'g sm') + '</div>'; }).join('');
     const start = blocks.length ? P.agenda.fromMin(Math.max(...blocks.map((b) => b.end))) : '19:00';
     const form = '<details class="pr-add"><summary>+ Adicionar sessão</summary><form data-pr-submit="add"><label class="pr-field"><span>Mapa</span><select name="mapKey"><option value="">Sessão geral</option>' + pri.map((r) => '<option value="' + esc(r.key) + '">★ ' + esc((r.map.code || '') + ' · ' + r.map.title) + '</option>').join('') + maps.map((m) => '<option value="' + esc(P.data.keyOf(m)) + '">' + esc((m.code || '') + ' · ' + m.title) + '</option>').join('') + '</select></label><div class="pr-row" style="flex-wrap:nowrap"><label class="pr-field" style="flex:1"><span>Data</span><input name="date" type="date" required value="' + U.dateKey(d) + '"></label><label class="pr-field" style="flex:1"><span>Início</span><input name="start" type="time" step="60" value="' + start + '"></label></div><div class="pr-row" style="flex-wrap:nowrap"><label class="pr-field" style="flex:1"><span>Minutos</span><input name="minutes" type="number" min="5" max="480" step="5" value="30" inputmode="numeric"></label><label class="pr-field" style="flex:1"><span>Tipo</span><select name="kind"><option value="study">Estudo</option><option value="simulation">Simulado</option></select></label></div><label class="pr-field"><span>Repetição</span><select name="recurrence"><option value="none">Não repetir</option><option value="daily">Diariamente (14 dias)</option><option value="weekdays">Dias úteis (20 dias)</option><option value="weekly">Semanalmente (8 semanas)</option></select></label><button type="submit" class="pr-btn p">Adicionar ao dia ' + d.getDate() + '</button></form></details>';
@@ -145,14 +233,14 @@
     return ui.card('<div><span class="pr-k l">' + esc(U.DSEM[d.getDay()] + ' · ' + d.getDate() + ' de ' + U.MESES_LONGOS[d.getMonth()]) + '</span><h3>' + (ex.length ? 'Prova ' + esc(ex.map((s) => s.sigla).join(', ')) : blocks.length ? fmtMin(tot) + ' planejadas' : 'Dia livre') + '</h3></div>' +
       mkHtml + (ex.length ? ui.verdict('', 'Dia da prova.', 'Nenhuma sessão é sugerida' + (revN ? '; ' + revN + ' ' + plural(revN, 'revisão vence', 'revisões vencem') + ' hoje e podem ser adiadas na tela Revisões do Início.' : '.')) : '') +
       (list || done ? '<div class="pr-list">' + list + done + '</div>' : ui.empty('Nada neste dia', ex.length ? 'Boa prova.' : 'Use uma sugestão ou adicione uma sessão.')) +
-      (revN && !ex.length ? '<div class="pr-li"><span class="pr-sig">REV</span><span>' + revN + ' ' + plural(revN, 'revisão vence', 'revisões vencem') + ' neste dia</span>' + ui.btn('Ver fila', ui.act('go-reviews'), 'g sm') + '</div>' : '') +
+      (revN && !ex.length && !P.agenda.reviewBlock(d) ? '<div class="pr-li"><span class="pr-sig">REV</span><span>' + revN + ' ' + plural(revN, 'revisão vence', 'revisões vencem') + ' neste dia</span>' + ui.btn('Ver fila', ui.act('go-reviews'), 'g sm') + '</div>' : '') +
       (sug.length ? '<span class="pr-k">Sugestões para este dia</span><div class="pr-row">' + sug.map((x) => ui.btn('+ ' + x.start + ' · ' + fmtMin(x.minutes), ui.act('use-slot', x.start + '|' + x.minutes), 'g sm')).join('') + '</div>' : '') + form, 'pr-panel');
   }
 
   function render(root) {
     const tabs = [{ id: 'dia', label: 'Dia' }, { id: 'semana', label: 'Semana' }, { id: 'mes', label: 'Mês' }];
     const body = mode === 'dia' ? dayView() : mode === 'mes' ? monthView() : weekView();
-    root.innerHTML = ui.top({ eyebrow: 'Planejamento', title: 'Agenda de estudos', tabs, active: mode, label: 'Agenda', tabAct: 'mode', right: ui.btn('Hoje', ui.act('today'), 'g sm') }) + carimbo() + icsCard() + '<div class="pr-side2">' + ui.card(body) + panel() + '</div>';
+    root.innerHTML = ui.top({ eyebrow: 'Planejamento', title: 'Agenda de estudos', tabs, active: mode, label: 'Agenda', tabAct: 'mode', right: ui.btn('Hoje', ui.act('today'), 'g sm') }) + carimbo() + icsCard() + '<div class="pr-side2">' + ui.card(body) + panel() + '</div>' + rotinaCard();
     clearInterval(nowTimer);
     if (mode === 'dia' && U.dateKey(cur) === U.dateKey(new Date())) nowTimer = setInterval(() => { if (state.view !== 'agenda') return clearInterval(nowTimer); const el = root.querySelector('[data-pr-now]'); if (!el) return; const n = new Date(), m = n.getHours() * 60 + n.getMinutes(); el.style.top = ((m / 60 - H0) * HH) + 'px'; el.querySelector('em').textContent = 'agora ' + n.toTimeString().slice(0, 5); }, 30000);
   }
@@ -164,6 +252,42 @@
     render,
     actions: {
       mode: (id) => { mode = id; try { localStorage.setItem(MKEY, id); } catch {} P.schedule('agenda'); },
+      'seguir-peso': () => {
+        const pc = P.courses.priority(), t = pc ? trocasPeso(pc) : [];
+        if (!t.length) { if (typeof toast === 'function') toast('Nenhuma troca melhora a divisão desta semana.'); return; }
+        P.confirm('Seguir o peso da prova?', t.map((x) => U.DSEM[x.date.getDay()] + ' ' + x.date.getDate() + ': ' + (x.from?.code || 'sessão') + ' → ' + (x.to.map.code || x.to.map.title) + ' (' + fmtMin(x.minutes) + ')').join('\n') + '\n\nData, horário e duração não mudam.', () => {
+          let n = 0;
+          for (const x of t) if (patchAgenda(x.id, (r) => { r.mapKey = x.to.key; r.title = x.to.map.code || x.to.map.title; })) n++;
+          if (typeof toast === 'function') toast(n + ' ' + plural(n, 'bloco trocado', 'blocos trocados') + ' pelo peso da prova.');
+          P.schedule('agenda');
+        }, 'Trocar');
+      },
+      'rev-config': (fd) => {
+        const days = [0, 1, 2, 3, 4, 5, 6].filter((d) => fd.get('d' + d));
+        P.prefs.set('revHorario', { on: fd.get('on') === '1', start: /^\d{2}:\d{2}$/.test(String(fd.get('start'))) ? String(fd.get('start')) : '18:00', max: Math.max(10, Math.min(120, Number(fd.get('max')) || 40)), days: days.length ? days : [1, 2, 3, 4, 5, 6] });
+        if (typeof toast === 'function') toast('Revisões com horário salvas.');
+        P.schedule('agenda');
+      },
+      'modelo-add': (fd) => {
+        const [tipo, disc] = String(fd.get('tipo') || 'disc:').split(':');
+        const start = String(fd.get('start') || '');
+        if (!/^\d{2}:\d{2}$/.test(start)) return;
+        const blocos = modelo().concat([{ dia: Number(fd.get('dia')) || 0, start, minutes: Math.max(10, Math.min(300, Number(fd.get('minutes')) || 60)), tipo: tipo === 'simulation' ? 'simulation' : 'disc', disc: disc || '' }]).sort((a, b) => ((a.dia + 6) % 7) - ((b.dia + 6) % 7) || a.start.localeCompare(b.start));
+        P.store.patch('modelo', 'semana', { blocos });
+        P.schedule('agenda');
+      },
+      'modelo-del': (i) => { const blocos = modelo().filter((_, j) => j !== Number(i)); P.store.patch('modelo', 'semana', { blocos }); P.schedule('agenda'); },
+      'modelo-aplicar': () => {
+        const r = aplicarModelo();
+        if (!r.n) { if (typeof toast === 'function') toast('Nenhum horário livre para os blocos do modelo.'); return; }
+        P.confirm('Aplicar a semana-modelo?', r.n + ' ' + plural(r.n, 'bloco', 'blocos') + ' de amanhã até ' + U.fmtDayYear(r.end) + ', ' + fmtMin(r.plan.reduce((n, x) => n + x.minutes, 0)) + ' no total. Itens já existentes não mudam.', async () => {
+          try { if (typeof createRestorePoint === 'function') await createRestorePoint('before-week-model', 'Antes de aplicar a semana-modelo'); } catch {}
+          let n = 0;
+          for (const x of r.plan) { const row = window.StudyDashboard.addAgenda({ date: x.date, kind: x.kind, title: x.title, minutes: x.minutes, mapKey: x.mapKey || '' }); if (row?.id) { P.agenda.setStart(row.id, x.start); n++; } }
+          if (typeof toast === 'function') toast(n + ' ' + plural(n, 'bloco adicionado', 'blocos adicionados') + ' pela semana-modelo.');
+          P.schedule('agenda');
+        }, 'Aplicar');
+      },
       today: () => { cur = U.startDay(); P.schedule('agenda'); },
       prev: () => step(-1), next: () => step(1),
       'pick-day': (k) => { cur = U.parseDate(k) || U.startDay(); P.schedule('agenda'); },

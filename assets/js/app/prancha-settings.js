@@ -81,7 +81,26 @@
     return '<p class="pr-detail">A estrutura de prova de cada banca é o ponto de partida ao criar um curso: no curso, “Usar estrutura” copia pesos e mínimos, que podem ser ajustados ao edital.</p><div class="pr-list">' + list + '</div>' +
       /* formulário aberto por estado (não por <details>): sobrevive aos redesenhos da prancha durante a sincronização */
       (editing ? '<span class="pr-k l">Editando ' + esc(editBanca) + '</span>' + padraoForm(editBanca, all[editBanca]) : editBanca === '__nova__' ? '<span class="pr-k l">Nova banca</span>' + padraoForm('', null) : ui.btn('+ Nova banca', ui.act('edit-padrao', '__nova__'), 'g sm')) +
-      '<form data-pr-submit="save-meta-entre" class="pr-row" style="align-items:flex-end"><label class="pr-field"><span>Meta diária entre concursos (min)</span><input name="meta" type="number" min="5" max="480" step="5" inputmode="numeric" value="' + esc(P.prefs.get('metaEntre')) + '" style="width:120px"></label><button type="submit" class="pr-btn sm">Salvar</button><span class="pr-mono">Usada no Início quando nenhum concurso tem prova marcada.</span></form>';
+      '<form data-pr-submit="save-meta-entre" class="pr-row" style="align-items:flex-end"><label class="pr-field"><span>Meta diária entre concursos (min)</span><input name="meta" type="number" min="5" max="480" step="5" inputmode="numeric" value="' + esc(P.prefs.get('metaEntre')) + '" style="width:120px"></label><button type="submit" class="pr-btn sm">Salvar</button><span class="pr-mono">Usada no Início quando nenhum concurso tem prova marcada.</span></form>' + v58Panel();
+  }
+  /* V15.58 · peso do edital no plano, planejamento do kit e exportação para o Notion */
+  function v58Panel() {
+    const on = P.prefs.get('planoPeso') !== false, cs = P.courses.active();
+    return '<div class="pr-li" style="grid-template-columns:minmax(0,1fr) auto"><span><b>Peso do edital no plano</b><br><span class="t">' + (on ? 'Ligado: as prioridades e a revisão usam os pontos por tópico de cada disciplina e o risco de mínimo dos simulados.' : 'Desligado: as prioridades usam só a fatia de cada categoria no curso.') + '</span></span><button type="button" class="pr-btn sm' + (on ? '' : ' g') + '" role="switch" aria-checked="' + on + '" data-pr-act="plano-peso">' + (on ? 'Ligado' : 'Desligado') + '</button></div>' +
+      (cs.length ? '<span class="pr-k l">Planejamento do kit</span><p class="pr-detail">O kit do Template exporta um JSON (meus-mapas/app-edital/v1) com a prova, as fases e o programa do edital. Importe no curso para ver a Matriz pelo programa no Progresso.</p><div class="pr-row">' + cs.map((c) => ui.btn('Importar em ' + esc(c.sigla), ui.act('import-kit', c.id), 'g sm')).join('') + '</div>' : '') +
+      '<span class="pr-k l">Levar para o Notion</span><p class="pr-detail">Dois CSV para importar como bancos de dados do Notion (Importar → CSV): cursos e mapas com progresso, domínio e pontos do edital. Só leitura; nada é enviado.</p><div class="pr-row">' + ui.btn('Cursos.csv', ui.act('csv', 'cursos'), 'g sm') + ui.btn('Mapas.csv', ui.act('csv', 'mapas'), 'g sm') + '</div>';
+  }
+  function csvOf(kind) {
+    const q = (v) => { const t = v === null || v === undefined ? '' : String(v); return /[",;\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+    const rows = [];
+    if (kind === 'cursos') {
+      rows.push(['Curso', 'Sigla', 'Banca', 'Prova', 'Tópicos', 'Marcados', 'Cobertura %', 'Nota projetada', 'Pontos máximos']);
+      for (const c of P.courses.active()) { const p = P.data.agg(c.maps), np = P.editais.notaProjetada?.(c.id); rows.push([P.courses.label(c.course), c.sigla, c.course?.board || '', c.exam?.date ? U.dateKey(c.exam.date) : '', p.total, p.marked, p.total ? Math.round((p.marked / p.total) * 100) : 0, np ? np.pontos : '', np ? np.max : '']); }
+    } else {
+      rows.push(['Mapa', 'Código', 'Curso', 'Categoria', 'Tópicos', 'Marcados', 'DIF', 'REV', 'Cobertura %', 'Domínio %', 'Questões respondidas', 'Pontos do edital']);
+      for (const c of P.courses.active()) for (const m of P.data.mapsForCourse(c.id, { includeLinked: false })) { const p = P.data.prog(m), ms = P.mastery.of(m); rows.push([m.title, m.code || '', c.sigla, m.category || '', p.total, p.marked, p.difficult, p.review, ms.cobertura, ms.dominio ?? '', ms.respondidas, P.editais.pontosDoMapa(m, c.id) ?? '']); }
+    }
+    return '\ufeff' + rows.map((r) => r.map(q).join(',')).join('\r\n');
   }
   function acervoPanel() {
     const r = P.audit.run(), F = window.StudyFlow || {};
@@ -165,6 +184,8 @@
       'reset-time': (scope, el) => P.armed(el, () => { const b = document.querySelector('[data-study-time-reset="' + scope + '"]'); if (b) b.click(); else if (typeof toast === 'function') toast('Abra a folha 02 e tente de novo.'); }, 'Toque de novo'),
       classic: (a, el) => P.armed(el, () => P.setClassic(true), 'Toque de novo para trocar'),
       'save-meta-entre': (fd) => { const v = Math.round(Number(fd.get('meta'))); if (!(v >= 5 && v <= 480)) { if (typeof toast === 'function') toast('Informe entre 5 e 480 minutos.'); return; } P.prefs.set('metaEntre', v); if (typeof toast === 'function') toast('Meta entre concursos: ' + v + ' min por dia.'); P.renderNow('settings'); },
+      'plano-peso': () => { P.prefs.set('planoPeso', P.prefs.get('planoPeso') === false); P.renderNow('settings'); },
+      csv: (kind) => { const blob = new Blob([csvOf(kind)], { type: 'text/csv;charset=utf-8' }), a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (kind === 'cursos' ? 'Cursos' : 'Mapas') + '_MeusMapas.csv'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); },
       'edit-padrao': (k) => { editBanca = k || ''; P.renderNow('settings'); document.getElementById('pr-f-editais')?.scrollIntoView({ block: 'start' }); },
       'remove-padrao': (k, el) => P.armed(el, () => { P.store.patch('padroes', k, null); editBanca = ''; P.renderNow('settings'); }, 'Toque de novo para remover'),
       'save-padrao': (fd, form) => {

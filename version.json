@@ -1,15 +1,15 @@
 {
-  "version": "15.57.0",
-  "label": "V15.57.0-G",
-  "notes": "Fase pós-prova: fechamento dentro do curso, próximo marco, Início entre concursos, simulado em pontos da banca, marcos e .ics na Agenda e auditoria do acervo.",
+  "version": "15.58.0",
+  "label": "V15.58.0-G",
+  "notes": "Peso do edital no plano e ponte com o Template: prioridades pelos pontos da prova, revisão relâmpago, treino dirigido, nota projetada, domínio das questões dos mapas e planejamento do kit.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Curso: depois da prova, gabarito em pontos, recursos ligados ao mapa da fundamentação e \"aguardando convocação\"",
-    "[G] Início: próximo marco do cronograma, com aviso de prazo de recurso",
-    "[G] Início: tela \"Entre concursos\" para manter os mapas portáteis quando nenhuma prova está marcada",
-    "[G] Simulados: resultado em pontos da banca, com mínimo eliminatório por disciplina e corte em pontos",
-    "[G] Agenda: marcos do cronograma nas visões e importação de .ics (Google Agenda)",
-    "[G] Configurações: folha 09 \"Auditoria do acervo\" (mapas sem marcadores, fonte legal, cursos incompletos)"
+    "[G] Curso: Peso × Esforço (pontos por tópico de cada disciplina), placar de simulados, revisão relâmpago e linha do tempo dos concursos",
+    "[G] Plano: prioridades e revisão ordenadas pelos pontos da prova e pelo risco de mínimo; desliga em Configurações",
+    "[G] Início e Agenda: bloco montado pelo tempo disponível, revisão com horário fixo e semana-modelo",
+    "[G] Simulados: ritmo por questão, acerto por dificuldade e treino dirigido com as variantes dos mapas",
+    "[G] Progresso: nota projetada, cobertura × domínio, matriz pelo programa e erros por armadilha",
+    "[G] Mapas: ordenar por pontos, ficha técnica do mapa e diferenças ao atualizar o HTML; planejamento do kit e CSV para o Notion"
   ],
   "automation": {
     "enabled": true,
@@ -17,5 +17,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-27T23:51:52-03:00"
+  "releasedAt": "2026-10-28T01:30:05-03:00"
 }

@@ -2393,7 +2393,21 @@
   }
 
   function clearSavedAnswers(){
-    try{ localStorage.removeItem(storageKey()); }catch(e){}
+    try{ localStorage.removeItem(storageKey()); localStorage.removeItem(stampKey()); }catch(e){}
+    state.t0=Date.now(); state.answeredAt={};
+  }
+
+  /* MEUS MAPAS V15.58 · ritmo de prova: segundos desde a abertura do simulado na primeira e na última resposta de cada questão */
+  function stampKey(){ return storageKey()+'_t'; }
+  function loadStamps(){
+    try{ const v=JSON.parse(localStorage.getItem(stampKey())||'{}')||{}; state.t0=Number(v.t0)||Date.now(); state.answeredAt=v.at&&typeof v.at==='object'?v.at:{}; }
+    catch(e){ state.t0=Date.now(); state.answeredAt={}; }
+  }
+  function stampAnswer(q){
+    if(!state.t0) loadStamps();
+    const s=Math.max(0,Math.round((Date.now()-state.t0)/1000)), cur=state.answeredAt[q];
+    state.answeredAt[q]=cur?{first:cur.first,last:s}:{first:s,last:s};
+    try{ localStorage.setItem(stampKey(), JSON.stringify({t0:state.t0,at:state.answeredAt})); }catch(e){}
   }
 
 
@@ -2423,10 +2437,19 @@
       (state.data.sections||[]).forEach(sec=>(sec.questions||[]).forEach(q=>{
         const userAnswer=(state.answers[q.number]||'').toUpperCase(),answer=(q.answer||'').toUpperCase();
         if(userAnswer===answer)return;
-        mistakes.push({number:q.number,section:sec.title||'',topic:q.topic||sec.title||'',stem:String(q.stem||q.body||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,420),userAnswer,answer,difficulty:q.difficulty||''});
+        mistakes.push({number:q.number,section:sec.title||'',topic:q.topic||sec.title||'',stem:String(q.stem||q.body||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,420),userAnswer,answer,difficulty:q.difficulty||'',styleTag:q.styleTag||''});
       }));
+      /* V15.58 · acerto por dificuldade (por disciplina) e por estilo, e a linha do tempo das respostas */
+      const porDificuldade={},porEstilo={},timeline=[];
+      (state.data.sections||[]).forEach(sec=>(sec.questions||[]).forEach(q=>{
+        const ok=(state.answers[q.number]||'')===(q.answer||'').toUpperCase(),tt=String(sec.title||'Disciplina'),d=String(q.difficulty||'—'),st=String(q.styleTag||'—');
+        porDificuldade[tt]=porDificuldade[tt]||{}; const pd=porDificuldade[tt][d]=porDificuldade[tt][d]||[0,0]; pd[1]++; if(ok)pd[0]++;
+        const pe=porEstilo[st]=porEstilo[st]||[0,0]; pe[1]++; if(ok)pe[0]++;
+        const a=state.answeredAt&&state.answeredAt[q.number]; if(a)timeline.push({n:q.number,first:a.first,last:a.last,section:tt});
+      }));
+      const durationSeconds=timeline.length?Math.max(...timeline.map(x=>x.last)):0;
       if(window.parent&&window.parent!==window){
-        window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{score,correct,wrong,blank,total,sections,mistakes,finishedAt:new Date().toISOString()}},location.origin);
+        window.parent.postMessage({type:'MEUS_MAPAS_SIM_RESULT',payload:{score,correct,wrong,blank,total,sections,mistakes,breakdown:{porDificuldade,porEstilo},timeline,durationSeconds,finishedAt:new Date().toISOString()}},location.origin);
       }
     }catch(_){}
   }
@@ -2436,6 +2459,7 @@
       input.addEventListener('change', e=>{
         const q = Number(e.target.name.replace('q',''));
         state.answers[q]=e.target.value;
+        stampAnswer(q);
         saveAnswers();
         updateProgress();
       }, {passive:true});
@@ -2481,6 +2505,7 @@
   });
 
   loadSavedAnswers();
+  loadStamps();
   render();
   </script>
 </body>
