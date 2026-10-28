@@ -215,6 +215,66 @@
     const t = port.reduce((n, m) => n + (P.data.prog(m).total || 0), 0);
     return ui.card(ui.head('Reaproveitar mapas', port.length + ' ' + plural(port.length, 'mapa portátil', 'mapas portáteis') + ' · ' + t + ' tópicos', '', 'l') + '<form data-pr-submit="reuse-maps" data-n="' + port.length + '"><label class="pr-field"><span>Vincular ao concurso</span><select name="course">' + targets.map((x) => '<option value="' + esc(x.id) + '">' + esc(P.courses.sigla(x) + ' · ' + x.title) + '</option>').join('') + '</select></label><div class="pr-checks">' + port.map((m, i) => '<label><input type="checkbox" name="k' + i + '" value="' + esc(P.data.keyOf(m)) + '" checked> <span class="pr-sig" style="--c:' + P.mapColor(m) + '">' + esc(m.code || '') + '</span> ' + esc(m.shortTitle || m.title) + (E.alcance(m) === 'misto' ? ' <span class="pr-chip l">misto</span>' : '') + '</label>').join('') + '</div><p class="pr-mono">O mapa aparece no outro concurso sem duplicar o HTML; mistos têm partes locais.</p><button type="submit" class="pr-btn sm">Vincular selecionados</button></form>');
   }
+
+  /* V15.61 · baixar todos os HTML do curso de uma vez, num .zip (gerador próprio, sem dependências; deflate nativo quando o navegador oferece) */
+  const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = (b) => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  async function deflateRaw(b) {
+    if (typeof CompressionStream !== 'function') return null;
+    try { return new Uint8Array(await new Response(new Blob([b]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()); } catch { return null; }
+  }
+  async function buildZip(files) {
+    const enc = new TextEncoder(), parts = [], central = [], d = new Date();
+    const dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dosDate = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    let offset = 0;
+    for (const f of files) {
+      const name = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data), z = await deflateRaw(data);
+      const packed = z && z.length < data.length ? z : data, method = packed === data ? 0 : 8;
+      const head = (sig, extra) => { const h = new DataView(new ArrayBuffer(extra)); h.setUint32(0, sig, true); return h; };
+      const lh = head(0x04034b50, 30);
+      lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, method, true); lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true);
+      lh.setUint32(14, crc, true); lh.setUint32(18, packed.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true);
+      parts.push(lh.buffer, name, packed);
+      const ch = head(0x02014b50, 46);
+      ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, method, true); ch.setUint16(12, dosTime, true); ch.setUint16(14, dosDate, true);
+      ch.setUint32(16, crc, true); ch.setUint32(20, packed.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+      central.push(ch.buffer, name);
+      offset += 30 + name.length + packed.length;
+    }
+    const cSize = central.reduce((n, x) => n + x.byteLength, 0), end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cSize, true); end.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, end.buffer], { type: 'application/zip' });
+  }
+  const safeName = (v) => String(v || '').normalize('NFC').replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90);
+  let zipBusy = false;
+  async function downloadCourseZip(id) {
+    const say = (t) => { if (typeof toast === 'function') toast(t); };
+    if (zipBusy) return say('O .zip deste curso ainda está sendo montado.');
+    const c = typeof courseById === 'function' ? courseById(id) : null, all = c ? P.data.mapsForCourse(c.id) : [];
+    if (!all.length || typeof mapHtml !== 'function') return say('Nenhum mapa para baixar neste curso.');
+    zipBusy = true;
+    const fol = P.data.folhas(all), used = new Set(), files = [], falhas = [];
+    try {
+      say('Juntando ' + all.length + ' ' + plural(all.length, 'mapa') + ' do ' + P.courses.sigla(c) + '…');
+      for (const m of all) {
+        let html = '';
+        try { html = await mapHtml(m); } catch (e) { console.warn('zip', m?.code, e); }
+        if (!html) { falhas.push(m.code || m.title || '?'); continue; }
+        let base = safeName([fol.get(P.data.keyOf(m)), m.code, m.title].filter(Boolean).join(' - ')) || 'mapa', name = base + '.html', n = 2;
+        while (used.has(name.toLowerCase())) name = base + ' (' + n++ + ').html';
+        used.add(name.toLowerCase());
+        files.push({ name, text: html });
+      }
+      if (!files.length) return say('Não consegui ler nenhum mapa agora. Confira a conexão e tente de novo.');
+      const blob = await buildZip(files), d = new Date(), stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      const url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = safeName('Meus Mapas - ' + (P.courses.sigla(c) || c.title) + ' - ' + stamp) + '.zip';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      say(files.length + ' ' + plural(files.length, 'mapa baixado', 'mapas baixados') + ' no .zip' + (falhas.length ? '; ' + falhas.length + ' não ' + plural(falhas.length, 'abriu', 'abriram') + ' (' + falhas.slice(0, 4).join(', ') + (falhas.length > 4 ? '…' : '') + ').' : '.'));
+    } catch (e) { console.warn(e); say('Não foi possível montar o .zip.'); }
+    finally { zipBusy = false; }
+  }
   function renderCourse(root) {
     const c = typeof courseById === 'function' ? courseById(state.courseId) : null;
     if (!c) { root.innerHTML = ui.card(ui.empty('Curso não encontrado', 'Ele pode ter sido removido ou ainda não sincronizou.', ui.btn('Meus Cursos', ui.act('nav', 'courses'), 'g'))); return; }
@@ -245,7 +305,7 @@
       ui.cell('Revisões', fmtNum(revCount), revCount ? 'l' : 'mu', 'tópicos REV e DIF') + ui.cell('Tempo no curso', fmtSec(timeCourse), '', p.lastActivity ? 'última atividade ' + ui.lastLabel(p.lastActivity) : 'sem atividade') +
       ui.cell('Simulados', sim.done + ' / ' + sim.total, '', sim.total ? (sim.best !== null ? 'melhor ' + sim.best + '%' : 'nenhum feito') : 'nenhum importado') + '</div></section>';
     const hasEdital = typeof courseHasEdital === 'function' && courseHasEdital(c);
-    const acts = '<div class="pr-acts" role="group" aria-label="Ações do curso"><button type="button" data-pr-act="course-edital" data-arg="' + esc(c.id) + '"' + (hasEdital ? '' : ' disabled title="Nenhum edital anexado"') + '>Edital</button><button type="button" data-pr-act="course-sims" data-arg="' + esc(c.id) + '">Simulados</button></div>' + ui.menu('course-' + c.id, [['Revisão relâmpago', ui.act('relampago')], ['Importar mapas', ui.act('import-maps')], ['Gerenciar curso', ui.act('manage-course', c.id)], [P.courses.isArchived(c) ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), P.courses.isArchived(c) ? '' : 'd']]);
+    const acts = '<div class="pr-acts" role="group" aria-label="Ações do curso"><button type="button" data-pr-act="course-edital" data-arg="' + esc(c.id) + '"' + (hasEdital ? '' : ' disabled title="Nenhum edital anexado"') + '>Edital</button><button type="button" data-pr-act="course-sims" data-arg="' + esc(c.id) + '">Simulados</button></div>' + ui.menu('course-' + c.id, [['Revisão relâmpago', ui.act('relampago')], ['Importar mapas', ui.act('import-maps')], all.length ? ['Baixar mapas (.zip)', ui.act('download-zip', c.id)] : null, ['Gerenciar curso', ui.act('manage-course', c.id)], [P.courses.isArchived(c) ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), P.courses.isArchived(c) ? '' : 'd']]);
     const chips = '<div class="pr-chips" role="group" aria-label="Situação">' + filters.map((x) => ui.chipf(x.id, x.label, all.filter((m) => match(m, x.id)).length, cur === x.id, 'filter')).join('') + '</div>';
     const catChips = '<div class="pr-chips" role="group" aria-label="Conteúdo">' + ui.chipf('Todos', 'Todo', undefined, cat === 'Todos', 'cat', undefined, 'Todo o conteúdo') + cats.map((x) => ui.chipf(x, (typeof categoryShortName === 'function' ? categoryShortName(x) : x), all.filter((m) => m.category === x).length, cat === x, 'cat', P.categoryPigment(x), x)).join('') + '</div>';
     const legendCats = ui.legend(cats.map((x) => [(typeof categoryShortName === 'function' ? categoryShortName(x) : x), '', P.categoryPigment(x)]));
@@ -268,6 +328,7 @@
 
   const shared = {
     archive: (id) => P.archiveCourse?.(id),
+    'download-zip': (id) => downloadCourseZip(id),
     'toggle-archived': () => { showArchived = !showArchived; P.schedule('courses'); },
     filter: (id) => { state.courseStudyFilter = id; P.schedule('course'); },
     cat: (id) => { state.category = id; P.schedule('course'); },
