@@ -7,8 +7,9 @@
     "audit:css": "node scripts/css-dead-code.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0",
     "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.63.0",
+    "pdfjs-dist": "3.11.174",
     "postcss": "8.4.47",
     "postcss-selector-parser": "6.1.2"
   }

@@ -1,12 +1,13 @@
 {
-  "version": "15.63.0",
-  "label": "V15.63.0-G",
-  "notes": "Desempenho do TEC Concursos vira nota projetada e pontos fracos.",
+  "version": "15.64.0",
+  "label": "V15.64.0-G",
+  "notes": "Simulado interativo a partir do caderno oficial em PDF e do gabarito.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Progresso: importe a planilha de Estatísticas › Desempenho do TEC (.xlsx ou .csv) e veja a nota projetada no formato da banca, disciplina por disciplina, contra os mínimos do edital",
-    "[G] Pontos fracos pelo TEC: assuntos abaixo de 70% ordenados pelo valor da disciplina na prova, com atalho para o mapa correspondente",
-    "[G] Evolução entre importações: questões novas e acerto só nelas; matérias do TEC ligadas sozinhas às disciplinas (✦), com troca manual"
+    "[G] Simulados › “Simulado de uma prova (PDF)”: escolha o caderno oficial e o gabarito (PDF ou digitado) e o app monta o simulado interativo",
+    "[G] Leitor de cadernos: disciplinas, textos de apoio, enunciados e alternativas em duas colunas (AOCP, Objetiva e itens Certo/Errado); questões com figura, tabela ou fórmula vão com o recorte do caderno",
+    "[G] Gabarito com vários cargos/tipos: o app escolhe o bloco do cargo da prova; anuladas ficam de fora; resultado conta no formato da banca do concurso",
+    "[G] TEC: importação de planilha mais estável quando a tela se redesenha"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +15,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T16:06:21-03:00"
+  "releasedAt": "2026-10-29T17:18:13-03:00"
 }
