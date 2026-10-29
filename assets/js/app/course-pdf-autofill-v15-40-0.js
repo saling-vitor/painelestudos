@@ -13,7 +13,7 @@ function editalPretty(value){const raw=String(value||'').replace(/\s+/g,' ').rep
 function editalField(value='',confidence='none',evidence='',meta={}){return{value:String(value||'').trim(),confidence,evidence:String(evidence||'').trim(),...meta}}
 function editalLines(text){return editalClean(text).split('\n').map(line=>line.trim()).filter(Boolean)}
 function cleanPlace(value){return editalPretty(String(value||'').replace(/\s+(?:[-–—]\s*)?(?:edital|concurso público|concurso publico|estado do|rev\.?).*$/i,'').replace(new RegExp('\\s*\\/\\s*(?:'+BRAZIL_UF+')\\b','i'),'').trim())}
-function inferStateUf(text){const ascii=editalAscii(text);for(const [state,uf] of Object.entries(STATE_UF))if(ascii.includes(state))return uf;if(/\bcatarinense\b/.test(ascii))return'SC';const m=String(text||'').match(new RegExp('\\b('+BRAZIL_UF+')\\b'));return m?m[1].toUpperCase():''}
+function inferStateUf(text){const ascii=editalAscii(text);if(/\bcatarinense\b/.test(ascii))return'SC';if(/\bgauch[ao]\b/.test(ascii))return'RS';if(/\bparanaense\b/.test(ascii))return'PR';/* V15.62 · nome do estado como palavra inteira; "para" (Pará) só com "estado do" antes, senão a preposição virava PA */for(const [state,uf] of Object.entries(STATE_UF)){const re=new RegExp((state==='para'||state==='amapa'?'estado d[oe] ':'\\b')+state.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b');if(re.test(ascii))return uf}const m=String(text||'').match(new RegExp('\\b('+BRAZIL_UF+')\\b'));return m?m[1].toUpperCase():''}
 
 function inferEditalBoard(text){
   const source=editalAscii(text);
@@ -91,13 +91,16 @@ function inferCargoLocality(text,profession,stateUf){
   const lines=editalLines(text),key=editalAscii(profession.rawProfession||profession.value);
   if(!key)return'';
   for(let i=0;i<lines.length;i++){
-    if(!editalAscii(lines[i]).includes(key))continue;
-    const ctx=lines.slice(i,Math.min(lines.length,i+8)).join(' '),ctxAscii=editalAscii(ctx),at=ctxAscii.indexOf(key);
+    /* V15.62 · nome do cargo quebrado em linhas de tabela ("Arquiteto e" / "406 Florianópolis CR" / "Urbanista"): aceita as palavras em ordem nas três linhas */
+    const win=editalAscii(lines.slice(i,i+3).join(' ')),words=key.split(' ').filter(w=>w.length>2);
+    const inLine=editalAscii(lines[i]).includes(key),split=!inLine&&words.length>1&&editalAscii(lines[i]).startsWith(words[0])&&words.every(w=>win.includes(w));
+    if(!inLine&&!split)continue;
+    const ctx=lines.slice(i,Math.min(lines.length,i+8)).join(' '),ctxAscii=editalAscii(ctx),at=split?ctxAscii.indexOf(words[0])-key.length+words[0].length:ctxAscii.indexOf(key);
     const after=ctx.slice(Math.max(0,at+key.length));
     const matches=[...after.matchAll(/\b([A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ][a-záàâãéêíóôõúüç]+(?:\s+(?:do|da|de|dos|das)?\s*[A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ][a-záàâãéêíóôõúüç]+){0,3})\b/g)];
     for(const m of matches){
       const value=m[1].replace(/\s+/g,' ').trim(),a=editalAscii(value);
-      if(/^(curso|ensino|superior|registro|conselho|arquitetura|urbanismo|vaga|salario|inicial|bruto|cadastro|reserva|ampla|concorrencia)$/.test(a))continue;
+      if(/^(curso|ensino|superior|registro|conselho|arquitetura|urbanismo|vaga|salario|inicial|bruto|cadastro|reserva|ampla|concorrencia|urbanista|requisito|requisitos|formacao|diploma|bacharel|bacharelado|categoria|descricao|atribuicoes|cargo|nivel|habilitacao|especialidade|conhecimentos)\b/.test(a))continue;
       if(value.length<4||value.length>45)continue;
       return editalPretty(value)+(stateUf?'/'+stateUf:'');
     }
@@ -283,7 +286,8 @@ async function handleCourseEditalAutofill(event){
     }
     if(token!==coursePdfAnalysisToken)return;
     if(editalAscii(text).replace(/\s/g,'').length<120)throw new Error('O PDF é digitalizado e o OCR automático não conseguiu ler conteúdo suficiente. Preencha os campos manualmente.');
-    const result=inferCourseFromEditalText(text),applied=applyCourseAutofill(result);
+    const layoutText=!usedOcr&&extracted.pages?.length?extracted.pages.map(p=>p.map(l=>l.text).join('\n')).join('\n\n'):'';
+    const result=inferCourseFromEditalText(layoutText&&layoutText.length>text.length*0.6?layoutText:text),applied=applyCourseAutofill(result);
     coursePendingEditalPlan=null;try{if(window.MeusMapasEditalReader&&extracted.pages?.length)coursePendingEditalPlan=window.MeusMapasEditalReader.lerEdital(extracted.pages,{cargo:result.subtitle?.value||'Arquiteto'});if(coursePendingEditalPlan&&result.board?.value)coursePendingEditalPlan.banca=result.board.value}catch(error){console.warn('Leitura do quadro de provas indisponível',error)}
     const note=usedOcr?'PDF digitalizado: os campos foram reconhecidos por OCR local. Confira antes de criar o concurso.':(applied?'Confira as sugestões preenchidas automaticamente antes de criar o concurso.':'O texto foi lido, mas os dados principais não puderam ser identificados com segurança.');
     renderCourseAutofillStatus(result,'done',note);if(!applied)toast('Edital lido · confira e preencha os dados do concurso.');

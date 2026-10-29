@@ -1,11 +1,13 @@
 {
-  "version": "15.60.6",
-  "label": "V15.60.6-G",
-  "notes": "Atalho de atualização na barra lateral e nas Configurações.",
+  "version": "15.62.0",
+  "label": "V15.62.0-G",
+  "notes": "Raio-X lido do PDF do edital e regras de todas as bancas.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Barra lateral: botão \"Atualizar app\" acima de \"Nuvem conectada\" — um toque procura a versão nova e já instala; fica em latão quando há atualização",
-    "[G] Configurações: botão \"Atualizar app\" na ficha técnica, ao lado de Sincronizar agora"
+    "[G] Raio-X: botão \"Ler o PDF do edital\" monta disciplinas, mínimos, blocos, etapas e cronograma; você confere antes de aplicar",
+    "[G] Novo curso: ao anexar o PDF do edital, o Raio-X e as datas já vêm montados",
+    "[G] Regras de banca: blocos com mínimo, mínimo em pontos/acertos/%, não zerar, certo/errado com desconto, escala da FCC, discursiva, títulos e nota final ponderada",
+    "[G] Formulários abertos não perdem o que você digitou quando a tela se atualiza"
   ],
   "automation": {
     "enabled": true,
@@ -13,5 +15,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-28T19:01:40-03:00"
+  "releasedAt": "2026-10-29T14:18:17-03:00"
 }

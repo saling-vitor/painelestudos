@@ -102,7 +102,7 @@
       for (const c of split) {
         const cx = (c.x + c.x2) / 2;
         let best = null, bd = Infinity;
-        for (const k of textCols) { const d = c.x >= k.x - 6 && c.x <= k.x2 + 6 ? 0 : Math.min(Math.abs(cx - k.cx), Math.abs(c.x - k.x)); if (d < bd) { bd = d; best = k; } }
+        for (const k of textCols) { const d = c.x >= k.x - 6 && c.x <= k.x2 + 6 ? Math.abs(c.x - k.x) / 1000 : Math.min(Math.abs(cx - k.cx), Math.abs(c.x - k.x)); if (d < bd) { bd = d; best = k; } }
         /* texto que começa na faixa das colunas numéricas é rótulo solto (ex.: "Avaliação de Títulos (C)* 20,00") */
         const tipo = c.x >= firstNumX - 10 && !/car/.test(best?.tipo || '') ? 'label' : best ? best.tipo : 'label';
         const bucket = tipo === 'cargo' ? rec.cargo : tipo === 'grupo' && best !== labelCol ? rec.grupo : tipo === 'car' ? rec.car : rec.label;
