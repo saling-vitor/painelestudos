@@ -231,7 +231,9 @@ test('Agenda [G] · Dia, Semana e Mês; sessão com horário sem duplicar', asyn
     await ag.locator('.pr-tab[data-arg="' + m + '"]').click();
     await expect(ag.locator(m === 'dia' ? '.pr-dg' : m === 'semana' ? '.pr-wkg' : '.pr-mg')).toBeVisible();
   }
-  await expect(ag.locator('.pr-mc.prova')).toHaveCount(1);
+  /* a prova do mock fica a 3 dias de hoje: no fim do mês ela cai no mês seguinte e não aparece no mês atual */
+  const mesmoMes = await page.evaluate(() => { const a = new Date(), b = new Date(); b.setDate(b.getDate() + 3); return a.getMonth() === b.getMonth(); });
+  await expect(ag.locator('.pr-mc.prova')).toHaveCount(mesmoMes ? 1 : 0);
   const before = await page.evaluate(() => StudyDashboard.exportData().agenda.filter((x) => !x.deleted).length);
   await ag.locator('details.pr-add summary').click();
   await ag.locator('form[data-pr-submit="add"] input[name="start"]').fill('07:30');

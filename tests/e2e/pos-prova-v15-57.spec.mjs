@@ -92,7 +92,8 @@ test('Pós-prova [G] · simulado em pontos da banca: mesma porcentagem, resultad
 
 test('Pós-prova [G] · agenda importa .ics como marcos da régua', async ({ page }) => {
   await setupPrancha(page, { courses: [{ ...DEMHAB, examOffset: -2 }] });
-  const d = (await day(page, 4)).replaceAll('-', '');
+  /* marco dentro da semana atual em qualquer dia em que o teste rodar (antes: hoje + 4, que no fim da semana caía na seguinte) */
+  const d = (await day(page, 0)).replaceAll('-', '');
   await go(page, 'agenda');
   const ag = page.locator('.pr[data-prancha="agenda"]');
   const ics = ['BEGIN:VCALENDAR', 'BEGIN:VEVENT', 'DTSTART;VALUE=DATE:' + d, 'SUMMARY:DEMHAB · Prazo de recursos do gabarito', 'END:VEVENT', 'BEGIN:VEVENT', 'DTSTART:' + d + 'T120000Z', 'SUMMARY:Aniversário', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
