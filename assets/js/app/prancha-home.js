@@ -320,7 +320,7 @@
     const gab = cl.gabarito ? pct(cl.gabarito.correct, cl.gabarito.total) : null;
     /* V15.56 · com a estrutura da prova, o gabarito é por disciplina: acertos × peso contra cada mínimo */
     const prova = P.editais.prova(c.id);
-    const gp = prova.length && cl.gabarito?.porDisciplina ? P.editais.pontuar(c.id, Object.fromEntries(Object.entries(cl.gabarito.porDisciplina).map(([k, v]) => [k, v.acertos]))) : null;
+    const gp = prova.length && cl.gabarito?.porDisciplina ? P.editais.pontuar(c.id, Object.fromEntries(Object.entries(cl.gabarito.porDisciplina).map(([k, v]) => [k, v.acertos])), { erros: cl.gabarito.erros, etapas: cl.gabarito.etapas }) : null;
     let pace = null;
     if (next) { const rest = Math.max(0, next.progress.total - next.progress.marked), days = Math.max(1, next.exam.days); pace = { perDay: rest / days, minutes: next.forecast?.secondsPerTopic ? (rest / days) * next.forecast.secondsPerTopic / 60 : null, rest, days }; }
     const common = P.links.common().filter((g) => g.some((m) => String(m.courseId) === String(c.id)) && next && g.some((m) => String(m.courseId) === String(next.id)));

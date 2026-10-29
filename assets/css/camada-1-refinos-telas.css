@@ -4139,3 +4139,11 @@ select option:checked{background:#242320;color:#d8c59e}
 @media(prefers-reduced-motion:reduce){
   .ui-select-chevron{transition:none}
 }
+/* V15.62 · prévia do Raio-X lido do edital no modal de novo curso */
+.course-pdf-raiox{grid-column:1/-1;display:flex;flex-direction:column;gap:4px;padding:9px 10px;border-radius:9px;border:1px dashed var(--nq-latao-escuro);background:rgba(195,170,132,.06)}
+.course-pdf-raiox b{font-size:var(--fs-caption);letter-spacing:.04em;text-transform:uppercase;color:var(--nq-latao)}
+.course-pdf-raiox small{font-size:var(--fs-caption);line-height:1.4;color:rgba(236,230,218,.82)}
+.course-pdf-raiox .course-pdf-raiox-list{color:rgba(236,230,218,.62)}
+.course-pdf-raiox .course-pdf-raiox-warn{color:var(--nq-oxido)}
+.course-pdf-raiox-check{display:flex;align-items:center;gap:8px;font-size:var(--fs-caption);margin-top:4px;cursor:pointer}
+.course-pdf-raiox-check input{width:auto;margin:0}

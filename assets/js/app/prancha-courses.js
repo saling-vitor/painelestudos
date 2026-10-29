@@ -103,58 +103,112 @@
       E.FASES.filter(([id]) => id !== 'prova').map(([id, label]) => '<label class="pr-field"><span>' + esc(label) + '</span><input type="date" name="' + id + '" value="' + esc(e.fases?.[id]?.date || '') + '"></label>').join('') + '</div><button type="submit" class="pr-btn sm">Salvar cronograma</button></form></details>';
     return ui.card(ui.head('Régua do edital', 'Fases do concurso', '', 'l') + '<ol class="pr-regua" aria-label="Fases do concurso">' + cells + '</ol><p class="pr-detail">' + note + '</p>' + form, 'pr-regua-card');
   }
-  /* V15.61 · Raio-X por edital: quantas disciplinas o edital tiver, pontos por questão com decimais (0,51 · 1,10),
-     mínimo em pontos ou em acertos, títulos fora da objetiva e aviso quando a estrutura veio de outra banca */
+  /* V15.62 · Raio-X por edital: disciplinas e blocos com mínimo em pontos, acertos ou %, certo/errado com desconto,
+     escalas da FCC, etapas (discursiva, prática, títulos) e a fórmula da nota final. Cada edital monta a prova do seu jeito. */
   const fpt = (n) => E.fmtPt(n);
-  function discRow(d, i) {
-    const em = d.minimoEm === 'acertos' ? 'acertos' : 'pontos';
-    return '<div class="pr-fgrid d" data-row="' + i + '"><label class="pr-field"><span>Disciplina' + (d.nova ? ' (nova)' : '') + '</span><input name="nome' + i + '" value="' + esc(d.nome || '') + '" maxlength="80"' + (d.nova ? ' placeholder="Opcional"' : '') + '></label><label class="pr-field"><span>Questões</span><input name="questoes' + i + '" type="number" min="0" inputmode="numeric" value="' + esc(d.questoes ?? '') + '"></label><label class="pr-field"><span>Pts/questão</span><input name="peso' + i + '" type="number" min="0" step="any" inputmode="decimal" value="' + esc(d.peso ?? 1) + '" title="Peso ou valor de cada questão, como no quadro do edital (ex.: 2 · 0,51 · 1,10)"></label><label class="pr-field"><span>Mínimo</span><input name="minimo' + i + '" type="number" min="0" step="any" inputmode="decimal" value="' + esc(d.minimo ?? '') + '"></label><label class="pr-field"><span>Mínimo em</span><select name="minimoEm' + i + '"><option value="pontos"' + (em === 'pontos' ? ' selected' : '') + '>pontos</option><option value="acertos"' + (em === 'acertos' ? ' selected' : '') + '>acertos</option></select></label><input type="hidden" name="id' + i + '" value="' + esc(d.id || '') + '"></div>';
+  const UN = [['pontos', 'pontos'], ['acertos', 'acertos'], ['pct', '%']];
+  const opt = (list, cur) => list.map(([v, l]) => '<option value="' + esc(v) + '"' + (String(cur) === String(v) ? ' selected' : '') + '>' + esc(l) + '</option>').join('');
+  const fld = (label, html, cls = '') => '<label class="pr-field' + (cls ? ' ' + cls : '') + '"><span>' + label + '</span>' + html + '</label>';
+  const numIn = (name, v, ph = '') => '<input name="' + name + '" type="number" min="0" step="any" inputmode="decimal" value="' + esc(v ?? '') + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '') + '>';
+  const unTxt = (v, em) => (em === 'acertos' ? fpt(v) + ' ac.' : em === 'pct' ? fpt(v) + '%' : fpt(v) + ' pts');
+  function discRow(d, i, grupos) {
+    return '<div class="pr-fgrid d" data-row="' + i + '">' + fld('Disciplina' + (d.nova ? ' (nova)' : ''), '<input name="nome' + i + '" value="' + esc(d.nome || '') + '" maxlength="80"' + (d.nova ? ' placeholder="Opcional"' : '') + '>') + fld('Bloco', '<input name="grupo' + i + '" value="' + esc(d.grupo || '') + '" maxlength="60" list="pr-grupos" placeholder="—">') + fld('Questões', '<input name="questoes' + i + '" type="number" min="0" inputmode="numeric" value="' + esc(d.questoes ?? '') + '">') + fld('Pts/questão', numIn('peso' + i, d.peso ?? 1)) + fld('Mínimo', numIn('minimo' + i, d.minimo)) + fld('Mínimo em', '<select name="minimoEm' + i + '">' + opt(UN, d.minimoEm || 'pontos') + '</select>') + '<input type="hidden" name="id' + i + '" value="' + esc(d.id || '') + '"></div>';
+  }
+  function etapaRow(x, i) {
+    return '<div class="pr-fgrid et">' + fld('Etapa', '<select name="et_tipo' + i + '"><option value="">—</option>' + opt(E.ETAPAS, x.tipo || '') + '</select>') + fld('Nome', '<input name="et_nome' + i + '" value="' + esc(x.nome || '') + '" maxlength="80" placeholder="Ex.: Estudo de caso">') + fld('Vale até', numIn('et_max' + i, x.max)) + fld('Mínimo', numIn('et_min' + i, x.minimo)) + fld('Mínimo em', '<select name="et_minEm' + i + '">' + opt([['pontos', 'pontos'], ['pct', '%']], x.minimoEm || 'pontos') + '</select>') + fld('Caráter', '<select name="et_car' + i + '">' + opt([['EC', 'elimin. e classif.'], ['E', 'eliminatório'], ['C', 'classificatório']], x.carater || 'EC') + '</select>') + fld('Peso na final', numIn('et_peso' + i, x.peso, '1')) + '</div>';
   }
   function provaForm(c, prova, e, cats) {
-    const blank = () => ({ id: '', nome: '', questoes: '', peso: 1, minimo: '', minimoEm: 'pontos', nova: true });
-    /* três linhas em branco: editais com 5 ou 6 disciplinas se preenchem de uma vez */
+    const rg = E.regrasDe(e, prova);
+    const blank = () => ({ id: '', nome: '', grupo: '', questoes: '', peso: 1, minimo: '', minimoEm: 'pontos', nova: true });
     const rows = (prova.length ? prova : []).concat([blank(), blank(), blank()]);
-    const disc = rows.map(discRow).join('');
-    const link = prova.length && cats.length ? '<span class="pr-k">Categoria dos mapas → disciplina</span><div class="pr-fgrid">' + cats.map((cat, j) => { const cur = E.disciplinaDoMapa({ category: cat }, c.id); return '<label class="pr-field"><span>' + esc(cat) + '</span><select name="cat' + j + '" data-cat="' + esc(cat) + '">' + prova.map((d) => '<option value="' + esc(d.id) + '"' + (cur?.id === d.id ? ' selected' : '') + '>' + esc(d.nome) + '</option>').join('') + '</select></label>'; }).join('') + '</div>' : '';
+    const nomesG = [...new Set(prova.map((d) => d.grupo).filter(Boolean))];
+    const disc = '<datalist id="pr-grupos">' + ['Conhecimentos Básicos', 'Conhecimentos Gerais', 'Conhecimentos Específicos', 'Módulo I', 'Módulo II', 'P1', 'P2'].concat(nomesG).map((g) => '<option value="' + esc(g) + '">').join('') + '</datalist>' + rows.map((d, i) => discRow(d, i, nomesG)).join('');
+    const blocos = rg.grupos.length ? '<span class="pr-k">Mínimo e peso de cada bloco</span>' + rg.grupos.map((g, j) => '<div class="pr-fgrid">' + fld(esc(g.nome), '<input type="hidden" name="g_nome' + j + '" value="' + esc(g.nome) + '">' + numIn('g_min' + j, g.minimo || '')) + fld('Mínimo em', '<select name="g_minEm' + j + '">' + opt(UN, g.minimoEm) + '</select>') + fld('Peso do bloco (FCC)', numIn('g_peso' + j, g.peso === 1 ? '' : g.peso, '1')) + '</div>').join('') : '<p class="pr-mono">Dica: preencha “Bloco” (ex.: Conhecimentos Básicos / Específicos, Módulo I / II, P1 / P2) quando o edital tiver mínimo por bloco; ao salvar, os campos de mínimo do bloco aparecem aqui.</p>';
+    const etapas = rg.etapas.concat([{}, {}]);
+    const regras = '<span class="pr-k">Regras da objetiva</span><div class="pr-fgrid">' + fld('Banca', '<input name="banca" value="' + esc(e.banca || '') + '" maxlength="40" placeholder="Ex.: AOCP">') + fld('Mínimo geral', numIn('minimoGeral', e.minimoGeral)) + fld('Mínimo geral em', '<select name="minimoGeralEm">' + opt(UN, rg.minimoGeralEm) + '</select>') + fld('Formato', '<select name="formato">' + opt([['multipla', 'múltipla escolha'], ['certo-errado', 'certo / errado']], rg.formato) + '</select>') + fld('Desconto por erro', numIn('penalidade', rg.penalidade || '', '0'), 'pr-pen') + fld('Escala da nota', '<select name="escala">' + opt(E.ESCALAS, rg.escala) + '</select>') + '<label class="pr-field pr-check"><input type="checkbox" name="naoZerar"' + (rg.naoZerar ? ' checked' : '') + '><span>Elimina quem zerar qualquer disciplina</span></label></div>' +
+      '<span class="pr-k">Outras etapas (discursiva, prática, títulos)</span>' + etapas.map(etapaRow).join('') +
+      '<div class="pr-fgrid">' + fld('Nota final', '<select name="notaFinal">' + opt(E.NOTAS_FINAIS, rg.notaFinal) + '</select>') + fld('Peso da objetiva na final', numIn('pesoObjetiva', rg.pesoObjetiva, '1')) + fld('Fonte', '<input name="fonte" value="' + esc(e.fonte || '') + '" maxlength="160" placeholder="Ex.: edital, Anexo III">') + '</div>';
+    const link = prova.length && cats.length ? '<span class="pr-k">Categoria dos mapas → disciplina</span><div class="pr-fgrid">' + cats.map((cat, j) => { const cur = E.disciplinaDoMapa({ category: cat }, c.id); return fld(esc(cat), '<select name="cat' + j + '" data-cat="' + esc(cat) + '">' + prova.map((d) => '<option value="' + esc(d.id) + '"' + (cur?.id === d.id ? ' selected' : '') + '>' + esc(d.nome) + '</option>').join('') + '</select>'); }).join('') + '</div>' : '';
     const cargo = e.cargo || {};
-    const ficha = '<span class="pr-k">Ficha do cargo (opcional)</span><div class="pr-fgrid">' + [['vagas', 'Vagas'], ['carga', 'Carga horária'], ['vencimento', 'Vencimento'], ['validade', 'Validade do concurso'], ['desempate', 'Desempate']].map(([k, l]) => '<label class="pr-field"><span>' + l + '</span><input name="cargo_' + k + '" value="' + esc(cargo[k] || '') + '" maxlength="80"></label>').join('') + '</div>';
-    return '<form data-pr-submit="save-prova" data-course="' + esc(c.id) + '" data-n="' + rows.length + '" data-cats="' + esc(JSON.stringify(cats)) + '"><p class="pr-mono">Copie o quadro de provas do edital: uma linha por componente, do jeito que a banca escreve (ex.: “Atualidades / Língua Portuguesa”). Linha sem nome é ignorada; para remover uma disciplina, apague o nome.</p>' + disc + '<div class="pr-fgrid"><label class="pr-field"><span>Banca</span><input name="banca" value="' + esc(e.banca || '') + '" maxlength="40" placeholder="Ex.: AOCP"></label><label class="pr-field"><span>Mínimo geral da objetiva (pontos)</span><input name="minimoGeral" type="number" min="0" step="any" inputmode="decimal" value="' + esc(e.minimoGeral ?? '') + '"></label><label class="pr-field"><span>Títulos (pontos máx.)</span><input name="titulos" type="number" min="0" step="any" inputmode="decimal" value="' + esc(e.titulos ?? '') + '" placeholder="Sem títulos"></label><label class="pr-field"><span>Fonte</span><input name="fonte" value="' + esc(e.fonte || '') + '" maxlength="120" placeholder="Ex.: edital, Anexo III"></label></div>' + link + ficha + '<div class="pr-row"><button type="submit" class="pr-btn sm">Salvar estrutura</button>' + ui.btn('Importar .json do edital', ui.act('import-kit', c.id), 'g sm') + (prova.length ? ui.btn('Remover estrutura', ui.act('clear-prova', c.id), 'g sm') : '') + '</div></form>';
+    const ficha = '<span class="pr-k">Ficha do cargo (opcional)</span><div class="pr-fgrid">' + [['vagas', 'Vagas'], ['carga', 'Carga horária'], ['vencimento', 'Vencimento'], ['validade', 'Validade do concurso'], ['desempate', 'Desempate']].map(([k, l]) => fld(l, '<input name="cargo_' + k + '" value="' + esc(cargo[k] || '') + '" maxlength="120">')).join('') + '</div>';
+    return '<form data-pr-submit="save-prova" data-course="' + esc(c.id) + '" data-n="' + rows.length + '" data-ng="' + rg.grupos.length + '" data-ne="' + etapas.length + '" data-cats="' + esc(JSON.stringify(cats)) + '"><p class="pr-mono">Copie o quadro de provas do edital: uma linha por componente, do jeito que a banca escreve. Linha sem nome é ignorada; para remover uma disciplina, apague o nome.</p>' + disc + blocos + regras + link + ficha + '<div class="pr-row"><button type="submit" class="pr-btn sm">Salvar estrutura</button>' + ui.btn('Ler o PDF do edital', ui.act('edital-pdf', c.id), 'g sm') + ui.btn('Importar .json', ui.act('import-kit', c.id), 'g sm') + (prova.length ? ui.btn('Remover estrutura', ui.act('clear-prova', c.id), 'g sm') : '') + '</div></form>';
   }
   /* estrutura gravada de uma banca, curso de outra: foi o que deixou a CASAN (AOCP) com a prova do DEMHAB (FUNDATEC) */
   function bancaDiverge(c, e) {
     const b = U.norm(c.board || ''), eb = U.norm(e.banca || '');
     if (b && eb) return !b.includes(eb) && !eb.includes(b) ? e.banca : '';
-    const m = /(FUNDATEC|AOCP|FGV|CEBRASPE|CESPE|VUNESP|FCC|OBJETIVA|FEPESE|IBAM|IBFC|QUADRIX|LEGALLE|LA ?SALLE)/i.exec(e.fonte || '');
+    const m = /(FUNDATEC|AOCP|FGV|CEBRASPE|CESPE|VUNESP|FCC|OBJETIVA|FEPESE|IBAM|IBFC|QUADRIX|LEGALLE|LA ?SALLE|FURB|FAU|IBADE|CONSULPLAN|CESGRANRIO)/i.exec(e.fonte || '');
     return b && m && !b.includes(U.norm(m[1])) ? m[1].toUpperCase() : '';
+  }
+  const ET_TXT = { E: 'eliminatória', C: 'classificatória', EC: 'eliminatória e classificatória' };
+  /* V15.62 · leitura do PDF do edital aguardando conferência (por curso, só nesta sessão) */
+  const leituras = new Map();
+  function leituraPanel(c) {
+    const st = leituras.get(String(c.id));
+    if (!st) return '';
+    if (st.lendo) return '<div class="pr-leitura"><span class="pr-k l">Lendo o edital</span><p class="pr-detail">' + esc(st.msg || 'Abrindo o PDF…') + '</p></div>';
+    if (st.erro) return '<div class="pr-leitura"><span class="pr-k">Leitura do edital</span>' + ui.verdict('', 'Não deu para ler o quadro de provas.', esc(st.erro)) + '<div class="pr-row">' + ui.btn('Fechar', ui.act('descartar-leitura', c.id), 'g sm') + '</div></div>';
+    const p = st.plan, R = window.MeusMapasEditalReader;
+    if (!p.prova.length) return '<div class="pr-leitura"><span class="pr-k">Leitura do edital</span>' + ui.verdict('', 'Quadro de provas não encontrado.', 'O PDF foi lido, mas nenhuma tabela de questões do cargo apareceu. ' + (p.fases.length ? p.fases.length + ' datas do cronograma foram encontradas.' : '')) + '<div class="pr-row">' + (p.fases.length ? ui.btn('Aplicar só o cronograma', ui.act('aplicar-leitura', c.id + '|fases'), 'g sm') : '') + ui.btn('Fechar', ui.act('descartar-leitura', c.id), 'g sm') + '</div></div>';
+    const rows = p.prova.map((d) => '<tr><td>' + esc(d.nome) + (d.grupo ? ' <span class="pr-mono">' + esc(d.grupo) + '</span>' : '') + '</td><td>' + d.questoes + '</td><td>' + fpt(d.peso) + '</td><td>' + (d.minimo ? unTxt(d.minimo, d.minimoEm) : '—') + '</td></tr>').join('');
+    const fases = p.fases.map((f) => (E.FASES.find(([id]) => id === f.id) || [, f.id])[1] + ' ' + U.fmtDay(U.parseDate(f.data))).join(' · ');
+    const av = p.leitura?.avisos || [];
+    return '<div class="pr-leitura"><span class="pr-k l">Lido do PDF · confiança ' + esc(p.leitura?.confianca || '—') + '</span><h3>' + esc(R ? R.resumo(p) : '') + '</h3>' + (av.length ? ui.verdict('l', 'Confira antes de aplicar.', esc(av.join('; ')) + '.') : '') + '<table class="pr-ltab"><thead><tr><th>Disciplina</th><th>Questões</th><th>Pts/q</th><th>Mínimo</th></tr></thead><tbody>' + rows + '</tbody></table>' + (p.grupos.filter((g) => g.minimo).length ? '<p class="pr-mono">Blocos: ' + p.grupos.filter((g) => g.minimo).map((g) => esc(g.nome) + ' mín. ' + unTxt(g.minimo, g.minimoEm)).join(' · ') + '</p>' : '') + (fases ? '<p class="pr-mono">Cronograma: ' + esc(fases) + '</p>' : '') + (p.cargo?.vencimento ? '<p class="pr-mono">Cargo: ' + esc([p.cargo.vagas && 'vagas ' + p.cargo.vagas, p.cargo.carga, p.cargo.vencimento].filter(Boolean).join(' · ')) + '</p>' : '') + (p.leitura?.quadro?.pagina ? '<p class="pr-mono">Quadro na página ' + p.leitura.quadro.pagina + ': “' + esc(p.leitura.quadro.contexto.slice(0, 120)) + '”</p>' : '') + '<div class="pr-row">' + ui.btn('Aplicar ao Raio-X', ui.act('aplicar-leitura', c.id), 'p sm') + ui.btn('Descartar', ui.act('descartar-leitura', c.id), 'g sm') + '</div></div>';
+  }
+  function pickPdf() {
+    return new Promise((resolve) => { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/pdf,.pdf'; inp.onchange = () => resolve(inp.files?.[0] || null); inp.addEventListener('cancel', () => resolve(null)); inp.click(); });
+  }
+  async function lerPdfDoCurso(id) {
+    const c = P.courses.byId(id), key = String(id);
+    if (!c || typeof window.lerEditalDoArquivo !== 'function') { if (typeof toast === 'function') toast('Leitor de edital indisponível nesta versão.'); return; }
+    let blob = null;
+    try { const doc = typeof currentCourseDoc === 'function' ? currentCourseDoc(id, 'edital') : null; if (doc?.storagePath && window.StudyCloud?.downloadBlobCached) blob = await StudyCloud.downloadBlobCached(doc.storagePath); else if (c.edital) blob = await (await fetch(c.edital)).blob(); } catch { blob = null; }
+    if (!blob) blob = await pickPdf();
+    if (!blob) return;
+    leituras.set(key, { lendo: true, msg: 'Abrindo o PDF…' }); P.schedule('course');
+    try {
+      const plan = await window.lerEditalDoArquivo(blob, { cargo: c.subtitle || 'Arquiteto', onPage: (n, max) => { if (n % 10 === 0) { leituras.set(key, { lendo: true, msg: 'Página ' + n + ' de ' + max + '…' }); P.schedule('course'); } } });
+      if (c.board) plan.banca = c.board;
+      leituras.set(key, { plan });
+    } catch (e) { leituras.set(key, { erro: String(e?.message || e) }); }
+    P.schedule('course');
   }
   function raioX(c, all) {
     const prova = E.prova(c.id), e = E.get(c.id) || {}, cats = [...new Set(all.map((m) => m.category).filter(Boolean))];
     if (!prova.length) {
       const pad = E.padraoDaBanca(c.board), list = Object.keys(E.padroes());
-      const use = pad ? ui.btn('Usar estrutura ' + esc(pad.banca), ui.act('apply-padrao', c.id + '|' + pad.banca), 'p sm') : list.length ? '<span class="pr-row"><span class="pr-mono">Padrões de outras bancas (confira com o edital):</span>' + list.map((b) => ui.btn('Usar ' + esc(b), ui.act('apply-padrao', c.id + '|' + b), 'g sm')).join('') + '</span>' : '';
-      return ui.card(ui.head('Raio-X da prova', 'Estrutura ainda não informada', '', 'l') + '<p class="pr-detail">Com questões, pontos e mínimos de cada disciplina, o curso passa a mostrar quanto cada mapa vale na prova e a nota no formato da banca.' + (pad ? ' A banca deste curso tem um padrão salvo em Configurações.' : '') + '</p>' + use + '<div class="pr-row">' + ui.btn('Importar .json do edital', ui.act('import-kit', c.id), 'g sm') + '</div><details class="pr-add"><summary>Informar manualmente</summary>' + provaForm(c, [], e, cats) + '</details>', 'pr-raiox-card');
+      const use = pad ? ui.btn('Usar estrutura ' + esc(pad.banca), ui.act('apply-padrao', c.id + '|' + pad.banca), 'g sm') : list.length ? '<span class="pr-row"><span class="pr-mono">Padrões de outras bancas (confira com o edital):</span>' + list.map((b) => ui.btn('Usar ' + esc(b), ui.act('apply-padrao', c.id + '|' + b), 'g sm')).join('') + '</span>' : '';
+      return ui.card(ui.head('Raio-X da prova', 'Estrutura ainda não informada', '', 'l') + leituraPanel(c) + '<p class="pr-detail">Leia o PDF do edital: o app encontra o quadro de provas do seu cargo, os mínimos, as etapas e o cronograma, e você confere antes de salvar.</p><div class="pr-row">' + ui.btn('Ler o PDF do edital', ui.act('edital-pdf', c.id), 'p sm') + use + ui.btn('Importar .json', ui.act('import-kit', c.id), 'g sm') + '</div><details class="pr-add"><summary>Informar manualmente</summary>' + provaForm(c, [], e, cats) + '</details>', 'pr-raiox-card');
     }
-    const max = E.pontosMax(prova), mg = E.minimoGeral(c.id), tit = E.titulos(c.id), nq = prova.reduce((n, d) => n + d.questoes, 0);
+    const rg = E.regras(c.id), maxPts = E.pontosMax(prova), maxObj = E.maxObjetiva(prova, rg), mg = E.minimoGeral(c.id), nq = prova.reduce((n, d) => n + d.questoes, 0);
     const disc = prova.map((d) => {
       const ms = all.filter((m) => E.disciplinaDoMapa(m, c.id)?.id === d.id), color = ms[0] ? P.mapColor(ms[0]) : 'var(--pr-latao)';
-      const pts = d.questoes * d.peso, share = max ? Math.round((pts / max) * 100) : 0;
-      const minTxt = !d.minimo ? '—' : d.minimoEm === 'acertos' ? fpt(d.minimo) + ' ac.<small>' + fpt(E.minPts(d)) + ' pts</small>' : fpt(d.minimo);
-      return '<div class="pr-dsc" style="--c:' + color + '"><span class="pr-k">' + esc(d.nome) + (d.padrao ? ' · demais conteúdos' : '') + '</span><b class="pr-sig">' + d.questoes + ' q<small>' + share + '% da objetiva</small></b><div class="pr-dcells"><span><i>' + (d.peso === 1 ? 'Peso' : 'Pts/q') + '</i>' + fpt(d.peso) + '</span><span><i>Pontos</i>' + fpt(pts) + '</span><span><i>Mínimo</i>' + minTxt + '</span></div><div class="pr-row">' + (ms.length ? ms.map((m) => '<span class="pr-chip c" style="--c:' + P.mapColor(m) + '">' + esc(m.code || m.title) + '</span>').join('') : '<span class="pr-mono">nenhum mapa ligado</span>') + '</div></div>';
+      const pts = d.questoes * d.peso, share = maxPts ? Math.round((pts / maxPts) * 100) : 0;
+      const minTxt = d.minimo ? (d.minimoEm === 'pontos' ? fpt(d.minimo) : unTxt(d.minimo, d.minimoEm) + '<small>' + fpt(E.minPts(d)) + ' pts</small>') : rg.naoZerar ? '1 ac.<small>não zerar</small>' : '—';
+      return '<div class="pr-dsc" style="--c:' + color + '"><span class="pr-k">' + esc(d.nome) + (d.padrao ? ' · demais conteúdos' : '') + '</span>' + (d.grupo ? '<span class="pr-chip">' + esc(d.grupo) + '</span>' : '') + '<b class="pr-sig">' + d.questoes + ' q<small>' + share + '% da objetiva</small></b><div class="pr-dcells"><span><i>' + (d.peso === 1 ? 'Peso' : 'Pts/q') + '</i>' + fpt(d.peso) + '</span><span><i>Pontos</i>' + fpt(pts) + '</span><span><i>Mínimo</i>' + minTxt + '</span></div><div class="pr-row">' + (ms.length ? ms.map((m) => '<span class="pr-chip c" style="--c:' + P.mapColor(m) + '">' + esc(m.code || m.title) + '</span>').join('') : '<span class="pr-mono">nenhum mapa ligado</span>') + '</div></div>';
     }).join('');
+    const blocos = rg.grupos.length ? '<div class="pr-ficha pr-blocos">' + rg.grupos.map((g) => '<span><i>' + esc(g.nome) + '</i>' + g.questoes + ' q · ' + fpt(g.max) + ' pts' + (g.minimo ? ' · mín. ' + unTxt(g.minimo, g.minimoEm) : '') + (rg.escala === 'media10' && g.peso !== 1 ? ' · peso ' + fpt(g.peso) : '') + '</span>').join('') + '</div>' : '';
+    const semMin = prova.every((d) => !d.minimo);
+    const fmtTxt = rg.formato === 'certo-errado' ? 'certo/errado' + (rg.penalidade ? ' · errada desconta ' + (rg.penalidade === 1 ? '1 certa' : fpt(rg.penalidade)) : '') : (rg.alternativas ? rg.alternativas + ' alternativas' : 'múltipla escolha') + (rg.penalidade ? ' · erro desconta ' + fpt(rg.penalidade) : '');
+    const mgTxt = rg.minimoGeral === null ? '—' : rg.minimoGeralEm === 'pontos' ? fpt(rg.minimoGeral) + ' pts' + (maxObj ? ' (' + Math.round((rg.minimoGeral / maxObj) * 100) + '%)' : '') : unTxt(rg.minimoGeral, rg.minimoGeralEm) + (mg !== null && rg.minimoGeralEm === 'pct' ? ' (' + fpt(mg) + ' pts)' : '');
+    const nfMax = rg.etapas.length && maxObj !== null ? E.pontuarCom(prova, rg, {}, { etapas: Object.fromEntries(rg.etapas.map((x) => [x.id, x.max])) }).notaFinal.max : null;
+    const cells = [['Objetiva', rg.escala === 'padronizada' ? 'escore padronizado' : fpt(maxObj) + ' pts' + (rg.escala === 'media10' ? ' (média 0–10)' : '')], ['Mínimo geral', mgTxt], ['Mínimo por disciplina', rg.naoZerar ? 'não zerar nenhuma' : semMin ? 'não há' : prova.filter((d) => d.minimo).length + ' de ' + prova.length], ['Formato', fmtTxt]].concat(rg.etapas.some((x) => x.tipo === 'titulos') ? [['Títulos', 'até ' + fpt(rg.etapas.find((x) => x.tipo === 'titulos').max) + ' pts']] : []).concat(nfMax !== null ? [['Nota final máx.', fpt(nfMax) + ' pts']] : []);
+    const regra = '<div class="pr-ficha pr-regra">' + cells.map(([l, v]) => '<span><i>' + l + '</i>' + v + '</span>').join('') + '</div>';
+    const etapas = rg.etapas.length ? '<div class="pr-ficha pr-etapas">' + rg.etapas.map((x) => '<span><i>' + esc(x.nome) + '</i>até ' + fpt(x.max) + ' pts' + (x.minimo ? ' · mín. ' + (x.minimoEm === 'pct' ? fpt(x.minimo) + '%' : fpt(x.minimo)) : '') + '<small>' + ET_TXT[x.carater] + (x.nota ? ' · ' + esc(x.nota) : '') + '</small></span>').join('') + '</div><p class="pr-mono pr-nf">' + esc(E.formulaNotaFinal(rg)) + '</p>' : '';
+    const padr = rg.escala === 'padronizada' ? ui.verdict('l', 'Nota padronizada.', 'A banca converte seus acertos pela média e pelo desvio do grupo; o app mostra acertos e pontos brutos, mas não consegue dizer sozinho se você passou.') : '';
     const cargo = e.cargo || {}, fichaCells = [['Vagas', cargo.vagas], ['Carga horária', cargo.carga], ['Vencimento', cargo.vencimento], ['Validade', cargo.validade], ['Desempate', cargo.desempate]].filter(([, v]) => v);
     const ficha = fichaCells.length ? '<div class="pr-ficha">' + fichaCells.map(([l, v]) => '<span><i>' + l + '</i>' + esc(v) + '</span>').join('') + '</div>' : '';
-    const semMin = prova.every((d) => !d.minimo);
-    const regra = '<div class="pr-ficha pr-regra">' + [['Objetiva', fpt(max) + ' pts'], ['Mínimo geral', mg !== null ? fpt(mg) + ' pts' + (max ? ' (' + Math.round((mg / max) * 100) + '%)' : '') : '—'], ['Mínimo por disciplina', semMin ? 'não há' : prova.filter((d) => d.minimo).length + ' de ' + prova.length], tit ? ['Títulos', 'até ' + fpt(tit) + ' pts'] : null, tit ? ['Nota final máx.', fpt(max + tit) + ' pts'] : null].filter(Boolean).map(([l, v]) => '<span><i>' + l + '</i>' + v + '</span>').join('') + '</div>';
     const outra = bancaDiverge(c, e);
-    const alerta = outra ? ui.verdict('', 'Esta estrutura veio de ' + esc(outra) + ', mas o curso é ' + esc(c.board) + '.', 'Cada edital monta a prova do seu jeito: confira o quadro de provas e ajuste em “Editar estrutura da prova”, ou importe o .json do edital.') : '';
-    const sub = prova.length + ' ' + plural(prova.length, 'disciplina') + ' · ' + nq + ' questões · ' + fpt(max) + ' pontos' + (mg !== null ? ' · mínimo geral ' + fpt(mg) : '') + (tit ? ' · + ' + fpt(tit) + ' de títulos' : '');
-    return ui.card(ui.head('Raio-X da prova', sub, e.fonte ? '<span class="pr-mono">' + esc(e.fonte) + '</span>' : '', 'l') + alerta + regra + '<div class="pr-dscs">' + disc + '</div>' + ficha + '<details class="pr-add"><summary>Editar estrutura da prova</summary>' + provaForm(c, prova, e, cats) + '</details>', 'pr-raiox-card');
+    const alerta = outra ? ui.verdict('', 'Esta estrutura veio de ' + esc(outra) + ', mas o curso é ' + esc(c.board) + '.', 'Cada edital monta a prova do seu jeito: leia o PDF do edital ou ajuste em “Editar estrutura da prova”.') : '';
+    const lido = e.leitura ? '<p class="pr-mono">Lido do PDF do edital em ' + esc(U.fmtDay(new Date(e.leitura.em))) + (e.leitura.confianca ? ' · confiança ' + esc(e.leitura.confianca) : '') + (e.leitura.avisos?.length ? ' · confira: ' + esc(e.leitura.avisos.join('; ')) : '') + '</p>' : '';
+    const sub = prova.length + ' ' + plural(prova.length, 'disciplina') + ' · ' + nq + ' questões · ' + (rg.escala === 'padronizada' ? 'nota padronizada' : fpt(maxObj) + ' pontos') + (rg.minimoGeral !== null ? ' · mínimo geral ' + (rg.minimoGeralEm === 'pontos' ? fpt(rg.minimoGeral) : unTxt(rg.minimoGeral, rg.minimoGeralEm)) : '') + rg.etapas.map((x) => ' · + ' + (x.tipo === 'titulos' ? fpt(x.max) + ' de títulos' : x.nome.toLowerCase() + ' ' + fpt(x.max))).join('');
+    return ui.card(ui.head('Raio-X da prova', sub, e.fonte ? '<span class="pr-mono">' + esc(e.fonte) + '</span>' : '', 'l') + leituraPanel(c) + alerta + padr + regra + blocos + '<div class="pr-dscs">' + disc + '</div>' + etapas + ficha + lido + '<details class="pr-add"><summary>Editar estrutura da prova</summary>' + provaForm(c, prova, e, cats) + '</details>', 'pr-raiox-card');
   }
   /* V15.57 · fechamento no curso: gabarito, recursos ligados aos mapas e aguardando convocação */
   const REC_ST = [['preparando', 'Preparando'], ['enviado', 'Enviado'], ['deferido', 'Deferido'], ['indeferido', 'Indeferido']];
   function fechamento(c, all) {
     const cl = P.courses.closure(c.id), prova = E.prova(c.id), sig = P.courses.sigla(c);
-    const gp = prova.length && cl.gabarito?.porDisciplina ? E.pontuar(c.id, Object.fromEntries(Object.entries(cl.gabarito.porDisciplina).map(([k, v]) => [k, v.acertos]))) : null;
+    const gp = prova.length && cl.gabarito?.porDisciplina ? E.pontuar(c.id, Object.fromEntries(Object.entries(cl.gabarito.porDisciplina).map(([k, v]) => [k, v.acertos])), { erros: cl.gabarito.erros, etapas: cl.gabarito.etapas }) : null;
     const gab = gp ? ui.gabCard(gp, sig) : ui.card(ui.head('Gabarito', cl.gabarito ? cl.gabarito.correct + ' de ' + cl.gabarito.total + ' acertos' : 'Ainda não registrado', '', 'l') + (prova.length ? '<p class="pr-detail">Seus acertos por disciplina contra o gabarito preliminar dão a nota no formato da banca.</p>' + ui.gabForm(c, prova) : '<p class="pr-detail">Informe a estrutura da prova no Raio-X para registrar o gabarito por disciplina.</p>'));
     const recs = (Array.isArray(cl.recursos) ? cl.recursos : []).filter((r) => r && !r.removed);
     const own = all.filter((m) => !m._linkedFrom);
@@ -409,23 +463,38 @@
       P.schedule('course');
     },
     'save-prova': (fd, form) => {
-      const id = form.dataset.course, n = Number(form.dataset.n) || 0, cats = U.safeJson(form.dataset.cats || '[]', []);
+      const id = form.dataset.course, n = Number(form.dataset.n) || 0, ng = Number(form.dataset.ng) || 0, ne = Number(form.dataset.ne) || 0, cats = U.safeJson(form.dataset.cats || '[]', []);
+      const s = (k) => String(fd.get(k) ?? '').trim(), nz = (k) => { const v = s(k); return v === '' ? null : Number(v.replace(',', '.')); };
       const prova = [];
-      for (let i = 0; i < n; i++) { const nome = String(fd.get('nome' + i) || '').trim(); if (!nome) continue; prova.push({ id: String(fd.get('id' + i) || ''), nome, questoes: fd.get('questoes' + i), peso: fd.get('peso' + i), minimo: fd.get('minimo' + i), minimoEm: String(fd.get('minimoEm' + i) || 'pontos'), categorias: [] }); }
+      for (let i = 0; i < n; i++) { const nome = s('nome' + i); if (!nome) continue; prova.push({ id: s('id' + i), nome, grupo: s('grupo' + i), questoes: fd.get('questoes' + i), peso: fd.get('peso' + i), minimo: fd.get('minimo' + i), minimoEm: s('minimoEm' + i) || 'pontos', categorias: [] }); }
       let list = E.normProva(prova);
       if (!list.length) { if (typeof toast === 'function') toast('Informe ao menos uma disciplina com número de questões.'); return; }
       const prev = E.prova(id);
-      list = list.map((d) => ({ ...d, categorias: prev.find((x) => x.id === d.id)?.categorias || (d.nome === 'Língua Portuguesa' ? ['Português'] : /legisla/i.test(d.nome) ? ['Legislação e Administração'] : []), padrao: prev.find((x) => x.id === d.id)?.padrao ?? d.padrao }));
-      cats.forEach((cat, j) => { const dest = String(fd.get('cat' + j) || ''); if (!dest) return; list.forEach((d) => { d.categorias = d.categorias.filter((x) => x !== cat); if (d.id === dest && !d.padrao) d.categorias.push(cat); }); });
+      list = list.map((d) => ({ ...d, categorias: prev.find((x) => x.id === d.id)?.categorias || (/portugu/i.test(d.nome) ? ['Português'] : /legisla/i.test(d.nome) ? ['Legislação e Administração'] : []), padrao: prev.find((x) => x.id === d.id)?.padrao ?? d.padrao }));
+      cats.forEach((cat, j) => { const dest = s('cat' + j); if (!dest) return; list.forEach((d) => { d.categorias = d.categorias.filter((x) => x !== cat); if (d.id === dest && !d.padrao) d.categorias.push(cat); }); });
       if (!list.some((d) => d.padrao)) list[list.length - 1].padrao = true;
-      const cargo = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) { const v = String(fd.get('cargo_' + k) || '').trim(); if (v) cargo[k] = v; }
-      const mg = String(fd.get('minimoGeral') || '').trim();
-      const tt = String(fd.get('titulos') || '').trim(), banca = String(fd.get('banca') || '').trim().toUpperCase().slice(0, 40);
-      E.set(id, { prova: list, minimoGeral: mg === '' ? null : Number(mg.replace(',', '.')), titulos: tt === '' ? null : Number(tt.replace(',', '.')), banca, fonte: String(fd.get('fonte') || '').trim(), cargo });
+      const grupos = []; for (let j = 0; j < ng; j++) { const nome = s('g_nome' + j); if (nome) grupos.push({ nome, minimo: nz('g_min' + j) ?? 0, minimoEm: s('g_minEm' + j) || 'pontos', peso: nz('g_peso' + j) ?? 1 }); }
+      const etapas = []; for (let j = 0; j < ne; j++) { const tipo = s('et_tipo' + j), max = nz('et_max' + j); if (!tipo || !max) continue; etapas.push({ tipo, nome: s('et_nome' + j), max, minimo: nz('et_min' + j) ?? 0, minimoEm: s('et_minEm' + j), carater: s('et_car' + j), peso: nz('et_peso' + j) }); }
+      const cargo = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) { const v = s('cargo_' + k); if (v) cargo[k] = v; }
+      E.set(id, { prova: list, grupos, etapas, titulos: null, minimoGeral: nz('minimoGeral'), minimoGeralEm: s('minimoGeralEm') || 'pontos', formato: s('formato') || 'multipla', penalidade: nz('penalidade') ?? 0, escala: s('escala') || 'soma', notaFinal: s('notaFinal') || 'soma', pesoObjetiva: nz('pesoObjetiva'), naoZerar: fd.get('naoZerar') === 'on', banca: s('banca').toUpperCase().slice(0, 40), fonte: s('fonte'), cargo });
       if (typeof toast === 'function') toast('Estrutura da prova salva.');
       P.schedule('course');
     },
-    'clear-prova': (id, el) => P.armed(el, () => { E.set(id, { prova: [], minimoGeral: null, titulos: null, banca: '', fonte: '' }); P.schedule('course'); }, 'Toque de novo para remover'),
+    'edital-pdf': (id) => { lerPdfDoCurso(id); },
+    'descartar-leitura': (id) => { leituras.delete(String(id)); P.schedule('course'); },
+    'aplicar-leitura': (arg) => {
+      const [id, modo] = String(arg).split('|'), st = leituras.get(String(id));
+      if (!st?.plan) return;
+      const plan = modo === 'fases' ? { schema: st.plan.schema, fases: st.plan.fases, programa: [], prova: [], leitura: st.plan.leitura } : st.plan;
+      try {
+        if (modo === 'fases') { const fases = { ...(E.get(id)?.fases || {}) }; for (const f of plan.fases) fases[f.id] = { date: f.data }; E.set(id, { fases }); }
+        else { const r = E.importKit(id, JSON.stringify(plan)); if (typeof toast === 'function') toast('Raio-X montado: ' + r.disciplinas + ' disciplinas · ' + r.fases + ' datas do cronograma. Ajuste o que precisar em “Editar estrutura da prova”.'); }
+        leituras.delete(String(id));
+      } catch (e) { if (typeof toast === 'function') toast(String(e?.message || e)); }
+      if (typeof touchPreferences === 'function') touchPreferences();
+      P.schedule('course');
+    },
+    'clear-prova': (id, el) => P.armed(el, () => { E.set(id, { prova: [], grupos: [], etapas: [], minimoGeral: null, titulos: null, banca: '', fonte: '', leitura: null }); P.schedule('course'); }, 'Toque de novo para remover'),
     'apply-padrao': (arg) => { const [id, banca] = String(arg).split('|'); if (E.aplicarPadrao(id, banca) && typeof toast === 'function') toast('Estrutura ' + banca + ' aplicada. Confira e ajuste se o edital for diferente.'); P.schedule('course'); },
     'recurso-add': (fd, form) => {
       const id = form.dataset.course, cl = P.courses.closure(id), q = Math.round(Number(fd.get('questao')));

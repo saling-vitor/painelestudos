@@ -209,25 +209,32 @@ function renderCourseAutofillStatus(result,stateName='done',message=''){
   const labels={title:'Curso',subtitle:'Cargo',board:'Banca',city:'Cidade',examDate:'Prova',institution:'Órgão'},entries=COURSE_AUTOFILL_FIELDS.map(key=>({key,...result[key]})),found=entries.filter(item=>item.value).length;
   title.textContent=found+' de '+entries.length+' campos identificados';
   text.textContent=message||'Confira as sugestões antes de criar o concurso. Nada será salvo sem sua confirmação.';
-  fields.innerHTML=entries.map(item=>'<span class="course-pdf-field '+(item.value?'is-found':'is-missing')+'"><b>'+ESC(labels[item.key])+'</b><small>'+(item.value?ESC(item.value):'Não localizado')+'</small></span>').join('');
+  fields.innerHTML=entries.map(item=>'<span class="course-pdf-field '+(item.value?'is-found':'is-missing')+'"><b>'+ESC(labels[item.key])+'</b><small>'+(item.value?ESC(item.value):'Não localizado')+'</small></span>').join('')+courseEditalPlanPreview(coursePendingEditalPlan);
 }
-function resetCoursePdfAutofill({resetForm=false}={}){coursePdfAnalysisToken++;if(resetForm)$('#courseForm')?.reset();else clearCourseAutofillFields();const box=$('#coursePdfAutofill');if(box){box.hidden=true;box.className='course-pdf-autofill';$('#coursePdfAutofillTitle').textContent='';$('#coursePdfAutofillText').textContent='';$('#coursePdfAutofillFields').innerHTML=''}}
+/* V15.62 · Raio-X lido do edital: prévia no modal e aplicação ao criar o curso */
+let coursePendingEditalPlan=null;
+function courseEditalPlanPreview(plan){if(!plan||!plan.prova?.length)return '';const R=window.MeusMapasEditalReader,av=plan.leitura?.avisos||[];return '<div class="course-pdf-raiox"><b>Raio-X da prova</b><small>'+ESC(R?R.resumo(plan):'')+'</small><small class="course-pdf-raiox-list">'+plan.prova.map(d=>ESC(d.nome)+' '+d.questoes+'q').join(' · ')+'</small>'+(av.length?'<small class="course-pdf-raiox-warn">Confira: '+ESC(av.join('; '))+'</small>':'')+'<label class="course-pdf-raiox-check"><input type="checkbox" id="courseApplyRaiox" checked> Montar o Raio-X e o cronograma ao criar o curso</label></div>'}
+function applyPendingEditalPlan(courseId){const plan=coursePendingEditalPlan;coursePendingEditalPlan=null;if(!plan||!plan.prova?.length||document.getElementById('courseApplyRaiox')?.checked===false||!window.Prancha?.editais?.importKit)return null;try{return window.Prancha.editais.importKit(courseId,JSON.stringify(plan))}catch(error){console.warn('Raio-X do edital não aplicado',error);return null}}
+/* leitura de um PDF qualquer (edital salvo do curso ou escolhido agora) para o Raio-X */
+async function lerEditalDoArquivo(file,opts={}){const pdfjs=await loadCoursePdfJs(),bytes=new Uint8Array(await file.arrayBuffer()),pdf=await pdfjs.getDocument({data:bytes}).promise,pages=[],max=Math.min(pdf.numPages,200);for(let n=1;n<=max;n++){const page=await pdf.getPage(n),content=await page.getTextContent();pages.push(window.MeusMapasEditalLayout.layoutLines(content.items));page.cleanup?.();opts.onPage?.(n,max)}if(pages.flat().length<20)throw new Error('O PDF parece digitalizado (sem texto); informe a prova manualmente.');return window.MeusMapasEditalReader.lerEdital(pages,{cargo:opts.cargo||'Arquiteto'})}
+window.lerEditalDoArquivo=lerEditalDoArquivo;window.applyPendingEditalPlan=applyPendingEditalPlan;
+function resetCoursePdfAutofill({resetForm=false}={}){coursePdfAnalysisToken++;coursePendingEditalPlan=null;if(resetForm)$('#courseForm')?.reset();else clearCourseAutofillFields();const box=$('#coursePdfAutofill');if(box){box.hidden=true;box.className='course-pdf-autofill';$('#coursePdfAutofillTitle').textContent='';$('#coursePdfAutofillText').textContent='';$('#coursePdfAutofillFields').innerHTML=''}}
 function openNewCourseModal(){resetCoursePdfAutofill({resetForm:true});openModal('courseModal')}
 function loadCoursePdfJs(){if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc=COURSE_PDFJS_WORKER;return Promise.resolve(window.pdfjsLib)}if(coursePdfJsPromise)return coursePdfJsPromise;coursePdfJsPromise=new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=COURSE_PDFJS_SRC;script.async=true;script.crossOrigin='anonymous';script.referrerPolicy='no-referrer';script.onload=()=>{if(!window.pdfjsLib)return reject(new Error('Leitor de PDF indisponível.'));window.pdfjsLib.GlobalWorkerOptions.workerSrc=COURSE_PDFJS_WORKER;resolve(window.pdfjsLib)};script.onerror=()=>reject(new Error('Não foi possível carregar o leitor de PDF. Verifique a internet e tente novamente.'));document.head.appendChild(script)}).catch(error=>{coursePdfJsPromise=null;throw error});return coursePdfJsPromise}
 function loadCourseTesseract(){if(window.Tesseract?.createWorker)return Promise.resolve(window.Tesseract);if(courseTesseractPromise)return courseTesseractPromise;courseTesseractPromise=new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=COURSE_TESSERACT_SRC;script.async=true;script.crossOrigin='anonymous';script.referrerPolicy='no-referrer';script.onload=()=>window.Tesseract?.createWorker?resolve(window.Tesseract):reject(new Error('OCR indisponível.'));script.onerror=()=>reject(new Error('Não foi possível carregar o OCR.'));document.head.appendChild(script)}).catch(error=>{courseTesseractPromise=null;throw error});return courseTesseractPromise}
 
 async function extractCoursePdfText(file,token){
-  const pdfjs=await loadCoursePdfJs(),bytes=new Uint8Array(await file.arrayBuffer()),pdf=await pdfjs.getDocument({data:bytes}).promise,maxPages=Math.min(pdf.numPages,160),chunks=[];let chars=0,likelyScan=false;
+  const pdfjs=await loadCoursePdfJs(),bytes=new Uint8Array(await file.arrayBuffer()),pdf=await pdfjs.getDocument({data:bytes}).promise,maxPages=Math.min(pdf.numPages,160),chunks=[],layoutPages=[];let chars=0,likelyScan=false;
   for(let pageNumber=1;pageNumber<=maxPages;pageNumber++){
     if(token!==coursePdfAnalysisToken)throw new DOMException('Análise cancelada','AbortError');
     if(pageNumber===1||pageNumber%10===0)renderCourseAutofillStatus({},'loading','Lendo página '+pageNumber+' de '+maxPages+'…');
-    const page=await pdf.getPage(pageNumber),content=await page.getTextContent(),parts=[];
+    const page=await pdf.getPage(pageNumber),content=await page.getTextContent(),parts=[];if(window.MeusMapasEditalLayout)try{layoutPages.push(window.MeusMapasEditalLayout.layoutLines(content.items))}catch(e){layoutPages.push([])}
     for(const item of content.items||[]){if(!item?.str)continue;parts.push(item.str);parts.push(item.hasEOL?'\n':' ')}
     const pageText=parts.join('').trim();if(pageText){chunks.push(pageText);chars+=pageText.length}page.cleanup?.();
     if(pageNumber===8&&chars<120){likelyScan=true;break}
     if(chars>520000&&pageNumber>=40)break;
   }
-  return{text:chunks.join('\n\n'),pdf,likelyScan};
+  return{text:chunks.join('\n\n'),pdf,likelyScan,pages:layoutPages};
 }
 async function renderCourseOcrCanvas(pdf,pageNumber){
   const page=await pdf.getPage(pageNumber),viewport=page.getViewport({scale:1.45}),canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
@@ -277,6 +284,7 @@ async function handleCourseEditalAutofill(event){
     if(token!==coursePdfAnalysisToken)return;
     if(editalAscii(text).replace(/\s/g,'').length<120)throw new Error('O PDF é digitalizado e o OCR automático não conseguiu ler conteúdo suficiente. Preencha os campos manualmente.');
     const result=inferCourseFromEditalText(text),applied=applyCourseAutofill(result);
+    coursePendingEditalPlan=null;try{if(window.MeusMapasEditalReader&&extracted.pages?.length)coursePendingEditalPlan=window.MeusMapasEditalReader.lerEdital(extracted.pages,{cargo:result.subtitle?.value||'Arquiteto'});if(coursePendingEditalPlan&&result.board?.value)coursePendingEditalPlan.banca=result.board.value}catch(error){console.warn('Leitura do quadro de provas indisponível',error)}
     const note=usedOcr?'PDF digitalizado: os campos foram reconhecidos por OCR local. Confira antes de criar o concurso.':(applied?'Confira as sugestões preenchidas automaticamente antes de criar o concurso.':'O texto foi lido, mas os dados principais não puderam ser identificados com segurança.');
     renderCourseAutofillStatus(result,'done',note);if(!applied)toast('Edital lido · confira e preencha os dados do concurso.');
   }catch(error){if(error?.name==='AbortError')return;renderCourseAutofillStatus({},'error',error?.message||'Preencha os campos manualmente.')}

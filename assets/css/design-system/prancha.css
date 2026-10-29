@@ -617,7 +617,13 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-regua li.atual .t{color:var(--pr-latao-c)}
 .pr-regua li .pr-chip{justify-self:start}
 .pr-fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.pr-fgrid.d{grid-template-columns:minmax(0,2.2fr) repeat(4,minmax(0,1fr));align-items:end}
+.pr-fgrid.d{grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) repeat(4,minmax(0,1fr));align-items:end}
+.pr-fgrid.et{grid-template-columns:minmax(0,1.3fr) minmax(0,1.6fr) repeat(5,minmax(0,1fr));align-items:end}
+.pr-field.pr-check{display:flex;align-items:center;gap:8px;grid-column:span 2}
+.pr-field.pr-check input{width:auto}
+.pr-etapas small{display:block;font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);font-weight:500;color:var(--pr-papel-3);margin-top:2px}
+.pr-blocos,.pr-etapas{margin:0 0 10px}
+.pr-nf{margin:0 0 10px}
 .pr-dsc>.pr-sig small,.pr-dcells small{display:block;font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);font-weight:500;letter-spacing:.04em;color:var(--pr-papel-3)}
 .pr-regra{margin:0 0 10px}
 .pr-dscs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
@@ -634,7 +640,7 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-gab .tr>em{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--pr-oxido)}
 .pr-gab .v{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-2);white-space:nowrap}
 .pr-gab .v.ox{color:var(--pr-oxido)}
-@media (max-width:700px){.pr-fgrid.d{grid-template-columns:repeat(4,minmax(0,1fr))}.pr-fgrid.d>.pr-field:first-child{grid-column:1/-1}.pr-gab .ln{grid-template-columns:minmax(0,1fr) auto}.pr-gab .ln .tr{grid-column:1/-1;grid-row:2}}
+@media (max-width:700px){.pr-fgrid.d,.pr-fgrid.et{grid-template-columns:repeat(2,minmax(0,1fr))}.pr-fgrid.et>.pr-field:nth-child(2){grid-column:1/-1}.pr-fgrid.d>.pr-field:nth-child(2){grid-column:auto}.pr-fgrid.d>.pr-field:first-child{grid-column:1/-1}.pr-gab .ln{grid-template-columns:minmax(0,1fr) auto}.pr-gab .ln .tr{grid-column:1/-1;grid-row:2}}
 /* V15.57 · marcos do cronograma na agenda e situação dos recursos */
 .pr-wd .mks{display:grid;gap:3px;justify-items:start}
 .pr-marco{font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);letter-spacing:.04em;line-height:1.25;padding:2px 6px;border-radius:5px;border:1px solid color-mix(in srgb,var(--pr-latao) 45%,transparent);color:var(--pr-latao-c);max-width:100%;overflow-wrap:anywhere;text-align:left}
@@ -714,3 +720,10 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-arm .bar>i{display:block;height:100%;border-radius:3px;background:var(--pr-oxido)}
 .pr-arm button.pr-sig{all:unset;cursor:pointer;font-family:var(--pr-f-capa);font-size:var(--fs-body-sm);color:var(--c)}
 @media (max-width:700px){.pr-quad{grid-template-columns:minmax(0,1fr)}.pr-nt{grid-template-columns:minmax(0,1fr) auto}.pr-nt .bar{grid-column:1/-1;grid-row:2}.pr-matriz .pr-li{grid-template-columns:minmax(0,1fr) auto}.pr-matriz .pr-li>.pr-row:first-child{grid-column:1/-1}}
+/* V15.62 · leitura do PDF do edital no Raio-X */
+.pr-leitura{display:grid;gap:8px;margin:0 0 12px;padding:12px 14px;border:1px dashed var(--pr-latao);border-radius:10px;background:var(--pr-g0)}
+.pr-leitura h3{margin:0;font-size:var(--fs-body)}
+.pr-ltab{width:100%;border-collapse:collapse;font-size:var(--fs-body-sm)}
+.pr-ltab th,.pr-ltab td{padding:5px 6px;border-bottom:1px solid var(--pr-linha);text-align:left;vertical-align:top}
+.pr-ltab th{font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);letter-spacing:.06em;text-transform:uppercase;color:var(--pr-papel-3);font-weight:500}
+.pr-ltab td:not(:first-child),.pr-ltab th:not(:first-child){text-align:right;white-space:nowrap}

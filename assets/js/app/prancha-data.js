@@ -627,18 +627,20 @@
   };
   const ALCANCES = [['local', 'Local'], ['estadual', 'Estadual'], ['portatil', 'Portátil'], ['misto', 'Misto']];
   const num = (v, d = 0) => { const n = Number(String(v ?? '').replace(',', '.')); return Number.isFinite(n) ? n : d; };
+  const r2 = (n) => Math.round(n * 100) / 100;
+  /* V15.62 · unidades de mínimo vistas nos editais: pontos (DEMHAB), acertos (Ijuí, Legalle, TJSC) e % (FGV, Cesgranrio, Legalle no total) */
+  const UNIDADES = ['pontos', 'acertos', 'pct'];
+  const unidade = (u) => (UNIDADES.includes(u) ? u : 'pontos');
   function normDisc(d, i) {
     if (!d || typeof d !== 'object') return null;
     const nome = String(d.nome || '').trim();
     if (!nome) return null;
     const id = String(d.id || norm(nome).replace(/\s+/g, '-') || 'd' + i).slice(0, 40);
-    /* V15.61 · o mínimo pode vir em pontos (DEMHAB) ou em número de acertos (Ijuí: "Nº mínimo de acertos p/ componente") */
-    const minimoEm = d.minimoEm === 'acertos' ? 'acertos' : 'pontos';
-    return { id, nome, questoes: Math.max(0, Math.round(num(d.questoes))), peso: Math.max(0, num(d.peso, 1)), minimo: Math.max(0, num(d.minimo)), minimoEm, categorias: Array.isArray(d.categorias) ? d.categorias.map(String) : [], padrao: !!d.padrao };
+    return { id, nome, questoes: Math.max(0, Math.round(num(d.questoes))), peso: Math.max(0, num(d.peso, 1)), minimo: Math.max(0, num(d.minimo)), minimoEm: unidade(d.minimoEm), grupo: String(d.grupo || '').trim().slice(0, 60), categorias: Array.isArray(d.categorias) ? d.categorias.map(String) : [], padrao: !!d.padrao };
   }
-  /* mínimo da disciplina sempre em pontos, para comparar com a nota */
-  const minPts = (d) => Math.round((d.minimoEm === 'acertos' ? d.minimo * d.peso : d.minimo) * 100) / 100;
-  function titulosOf(courseId) { const v = num(editalOf(courseId)?.titulos, NaN); return Number.isFinite(v) && v > 0 ? v : null; }
+  /* mínimo (de disciplina ou bloco) convertido em pontos, para comparar com a nota e desenhar a régua */
+  const minEmPts = (minimo, em, max, questoes) => r2(em === 'acertos' ? minimo * (questoes ? max / questoes : 1) : em === 'pct' ? (minimo / 100) * max : minimo);
+  const minPts = (d) => minEmPts(d.minimo, d.minimoEm, d.questoes * d.peso, d.questoes);
   function normProva(list) {
     const out = (Array.isArray(list) ? list : []).map(normDisc).filter((d) => d && d.questoes > 0);
     if (out.length && !out.some((d) => d.padrao)) out[out.length - 1].padrao = true;
@@ -648,7 +650,54 @@
   function provaOf(courseId) { return memo('ep:' + courseId, () => normProva(editalOf(courseId)?.prova)); }
   function setEdital(courseId, patch) { return patchStore('editais', courseId, patch); }
   const pontosMax = (prova) => prova.reduce((s, d) => s + d.questoes * d.peso, 0);
-  function minimoGeral(courseId) { const v = num(editalOf(courseId)?.minimoGeral, NaN); return Number.isFinite(v) ? v : null; }
+  /* ---------- V15.62 · regras da prova além das disciplinas ----------
+     grupos[]   blocos/módulos/partes com mínimo próprio e peso (FGV Módulo I/II, Cebraspe P1/P2, FCC Gerais × Específicos)
+     minimoGeralEm  pontos · acertos (TJSC: 48 questões) · pct (Legalle: 50% do total)
+     naoZerar   eliminado quem zerar qualquer disciplina (FGV AMAZUL, IBADE CAU-RO)
+     formato    multipla · certo-errado; penalidade = fração do valor da questão descontada por erro (Cebraspe: 1)
+     escala     soma (padrão) · media10 (FCC: cada prova de 0 a 10, média ponderada pelos pesos dos grupos) · padronizada (FCC: escore média 50, DP 10)
+     etapas[]   discursiva · redacao · estudo-caso · pratica · titulos · oral, com máximo, mínimo, caráter e peso na nota final
+     notaFinal  soma (padrão) · ponderada (FEPESE: 0,8 × objetiva + 0,2 × títulos) · media (FURB: (NPO + NPP) / 2) */
+  const ETAPAS = [['discursiva', 'Prova discursiva'], ['redacao', 'Redação'], ['estudo-caso', 'Estudo de caso'], ['pratica', 'Prova prática'], ['titulos', 'Títulos'], ['oral', 'Prova oral']];
+  const ESCALAS = [['soma', 'Soma dos pontos'], ['media10', 'Cada prova de 0 a 10, média ponderada'], ['padronizada', 'Escore padronizado (depende do grupo)']];
+  const NOTAS_FINAIS = [['soma', 'Soma das etapas'], ['ponderada', 'Média ponderada pelos pesos'], ['media', 'Média simples das etapas']];
+  function normEtapa(x, i) {
+    if (!x || typeof x !== 'object') return null;
+    const tipo = ETAPAS.some(([id]) => id === x.tipo) ? x.tipo : 'discursiva', max = Math.max(0, num(x.max));
+    if (!max) return null;
+    const carater = ['E', 'C', 'EC'].includes(x.carater) ? x.carater : tipo === 'titulos' ? 'C' : 'EC';
+    return { id: String(x.id || tipo + (i ? '-' + i : '')).slice(0, 40), tipo, nome: String(x.nome || ETAPAS.find(([id]) => id === tipo)[1]).trim().slice(0, 80), max, minimo: Math.max(0, num(x.minimo)), minimoEm: x.minimoEm === 'pct' ? 'pct' : 'pontos', carater, peso: x.peso === undefined || x.peso === '' || x.peso === null ? null : Math.max(0, num(x.peso)), nota: String(x.nota || '').slice(0, 200) };
+  }
+  function regrasDe(e, prova) {
+    e = e || {};
+    const usados = new Set(prova.map((d) => d.grupo).filter(Boolean));
+    const gIn = Array.isArray(e.grupos) ? e.grupos : [];
+    const grupos = [...usados].map((nome) => { const g = gIn.find((x) => String(x.nome || '').trim() === nome) || {}; const ds = prova.filter((d) => d.grupo === nome); return { id: norm(nome).replace(/\s+/g, '-').slice(0, 40) || 'g', nome, minimo: Math.max(0, num(g.minimo)), minimoEm: unidade(g.minimoEm), peso: Math.max(0, num(g.peso, 1)) || 1, questoes: ds.reduce((s, d) => s + d.questoes, 0), max: ds.reduce((s, d) => s + d.questoes * d.peso, 0), ids: ds.map((d) => d.id) }; });
+    let etapas = (Array.isArray(e.etapas) ? e.etapas : []).map(normEtapa).filter(Boolean);
+    const tit = num(e.titulos, NaN);
+    if (Number.isFinite(tit) && tit > 0 && !etapas.some((x) => x.tipo === 'titulos')) etapas.push(normEtapa({ tipo: 'titulos', max: tit, carater: 'C', peso: e.pesoTitulos }, etapas.length));
+    const formato = e.formato === 'certo-errado' ? 'certo-errado' : 'multipla';
+    const escala = ESCALAS.some(([id]) => id === e.escala) ? e.escala : 'soma';
+    const nfTipo = NOTAS_FINAIS.some(([id]) => id === e.notaFinal) ? e.notaFinal : 'soma';
+    const mgv = num(e.minimoGeral, NaN);
+    return {
+      grupos, etapas, formato, escala, notaFinal: nfTipo,
+      pesoObjetiva: e.pesoObjetiva === undefined || e.pesoObjetiva === null || e.pesoObjetiva === '' ? null : Math.max(0, num(e.pesoObjetiva)),
+      penalidade: Math.max(0, num(e.penalidade, 0)), alternativas: [2, 4, 5].includes(Number(e.alternativas)) ? Number(e.alternativas) : formato === 'certo-errado' ? 2 : null,
+      naoZerar: !!e.naoZerar, minimoGeral: Number.isFinite(mgv) ? mgv : null, minimoGeralEm: unidade(e.minimoGeralEm)
+    };
+  }
+  function regras(courseId) { return memo('er:' + courseId, () => regrasDe(editalOf(courseId), provaOf(courseId))); }
+  /* nota máxima da objetiva na escala do edital */
+  const maxObjetiva = (prova, rg) => (rg.escala === 'media10' ? 10 : rg.escala === 'padronizada' ? null : pontosMax(prova));
+  /* mínimo geral sempre na escala da nota objetiva (pontos), para as réguas e a nota projetada */
+  function minimoGeralDe(prova, rg) {
+    if (rg.minimoGeral === null) return null;
+    const max = maxObjetiva(prova, rg) ?? 0, q = prova.reduce((s, d) => s + d.questoes, 0);
+    return minEmPts(rg.minimoGeral, rg.minimoGeralEm, max, q);
+  }
+  function minimoGeral(courseId) { return minimoGeralDe(provaOf(courseId), regras(courseId)); }
+  function titulosOf(courseId) { return regras(courseId).etapas.find((x) => x.tipo === 'titulos')?.max ?? null; }
   /* disciplina da prova a que o mapa pertence: pela categoria; o que não casa vai para a disciplina padrão */
   function disciplinaDoMapa(map, courseId = map?.courseId) {
     const prova = provaOf(courseId);
@@ -659,22 +708,71 @@
     const cat = String(map.category || '');
     return prova.find((d) => d.categorias.includes(cat)) || prova.find((d) => d.padrao) || null;
   }
-  /* nota no formato da banca: acertos × peso, mínimo por disciplina e mínimo geral */
-  function pontuar(courseId, acertos = {}) {
-    const prova = provaOf(courseId);
+  const passa = (pts, ac, minimo, em, max, questoes) => (!minimo ? true : em === 'acertos' ? ac >= minimo : pts >= minEmPts(minimo, em, max, questoes) - 1e-9);
+  /* nota no formato da banca. opts.erros {disc:n} (certo/errado; sem ele, supõe tudo marcado) e opts.etapas {etapaId: nota} */
+  function pontuarCom(prova, rg, acertos = {}, opts = {}) {
     if (!prova.length) return null;
-    let pontos = 0, corretas = 0, questoes = 0;
+    const errosIn = opts.erros || {}, notasEt = opts.etapas || {};
+    let bruto = 0, corretas = 0, questoes = 0;
+    const desconto = rg.penalidade;
     const por = prova.map((d) => {
       const a = Math.max(0, Math.min(d.questoes, Math.round(num(acertos[d.id]))));
-      const pts = Math.round(a * d.peso * 100) / 100;
-      pontos += pts; corretas += a; questoes += d.questoes;
-      const mp = minPts(d);
-      return { id: d.id, nome: d.nome, acertos: a, questoes: d.questoes, peso: d.peso, pontos: pts, max: d.questoes * d.peso, minimo: mp, minimoAcertos: d.minimoEm === 'acertos' ? d.minimo : null, ok: d.minimoEm === 'acertos' ? a >= d.minimo : pts >= mp, falta: Math.max(0, Math.round((mp - pts) * 100) / 100) };
+      const e = desconto ? Math.max(0, Math.min(d.questoes - a, Math.round(num(errosIn[d.id], d.questoes - a)))) : 0;
+      const pts = r2(a * d.peso - e * d.peso * desconto), max = d.questoes * d.peso, mp = minPts(d);
+      bruto += pts; corretas += a; questoes += d.questoes;
+      const zerou = rg.naoZerar && a === 0;
+      const ok = passa(pts, a, d.minimo, d.minimoEm, max, d.questoes) && !zerou;
+      return { id: d.id, nome: d.nome, grupo: d.grupo, acertos: a, erros: e, questoes: d.questoes, peso: d.peso, pontos: pts, max, minimo: rg.naoZerar && !mp ? r2(d.peso) : mp, minimoAcertos: d.minimoEm === 'acertos' ? d.minimo : rg.naoZerar ? 1 : null, ok, zerou, falta: ok ? 0 : Math.max(zerou ? r2(d.peso) : 0, r2(mp - pts)) };
     });
-    pontos = Math.round(pontos * 100) / 100;
-    const mg = minimoGeral(courseId), falhas = por.filter((x) => !x.ok);
-    return { pontos, max: pontosMax(prova), corretas, questoes, por, minimoGeral: mg, geralOk: mg === null || pontos >= mg, aprovado: !falhas.length && (mg === null || pontos >= mg), falhas };
+    bruto = r2(bruto);
+    const grupos = rg.grupos.map((g) => {
+      const ds = por.filter((x) => x.grupo === g.nome), pts = r2(ds.reduce((s, x) => s + x.pontos, 0)), ac = ds.reduce((s, x) => s + x.acertos, 0), mp = minEmPts(g.minimo, g.minimoEm, g.max, g.questoes);
+      const ok = passa(pts, ac, g.minimo, g.minimoEm, g.max, g.questoes);
+      return { ...g, pontos: pts, acertos: ac, minimoPts: mp, ok, nota10: g.max ? r2((pts / g.max) * 10) : 0, falta: ok ? 0 : r2(mp - pts) };
+    });
+    /* nota da objetiva na escala do edital */
+    const maxPts = pontosMax(prova);
+    let nota = bruto, max = maxPts;
+    if (rg.escala === 'media10') {
+      const partes = grupos.length ? grupos.map((g) => [g.peso, g.nota10]) : [[1, maxPts ? (bruto / maxPts) * 10 : 0]];
+      const sp = partes.reduce((s, [p]) => s + p, 0) || 1;
+      nota = r2(partes.reduce((s, [p, n]) => s + p * n, 0) / sp); max = 10;
+    }
+    const indeterminado = rg.escala === 'padronizada';
+    const mg = minimoGeralDe(prova, rg);
+    const geralOk = indeterminado ? null : rg.minimoGeral === null ? true : rg.minimoGeralEm === 'acertos' ? corretas >= rg.minimoGeral : nota >= mg - 1e-9;
+    const falhas = [...por.filter((x) => !x.ok).map((x) => ({ id: x.id, nome: x.nome, falta: x.falta, zerou: x.zerou })), ...grupos.filter((g) => !g.ok).map((g) => ({ id: 'g:' + g.id, nome: g.nome, falta: g.falta, grupo: true }))];
+    /* etapas: notas informadas são checadas contra o mínimo; eliminatórias sem nota ficam pendentes */
+    const etapas = rg.etapas.map((x) => {
+      const v = notasEt[x.id], tem = v !== undefined && v !== null && v !== '' && Number.isFinite(num(v, NaN));
+      const n = tem ? Math.max(0, Math.min(x.max, num(v))) : null, mp = x.minimoEm === 'pct' ? r2((x.minimo / 100) * x.max) : x.minimo;
+      const elim = x.carater !== 'C' && x.minimo > 0;
+      return { ...x, nota: n, minimoPts: mp, ok: !elim || (tem ? n >= mp - 1e-9 : null), pendente: elim && !tem };
+    });
+    etapas.filter((x) => x.ok === false).forEach((x) => falhas.push({ id: 'e:' + x.id, nome: x.nome, falta: r2(x.minimoPts - x.nota), etapa: true }));
+    const nf = notaFinalDe(rg, nota, max, etapas);
+    return { pontos: nota, bruto, max, maxPontos: maxPts, corretas, questoes, por, grupos, etapas, minimoGeral: mg, minimoGeralRaw: rg.minimoGeral, minimoGeralEm: rg.minimoGeralEm, geralOk, indeterminado, aprovado: indeterminado ? null : !falhas.length && geralOk, pendente: etapas.some((x) => x.pendente), falhas, notaFinal: nf, regras: rg };
   }
+  /* nota final: soma, média ponderada ou média simples da objetiva com as etapas que entram na conta */
+  function notaFinalDe(rg, nota, max, etapas) {
+    const partes = [{ nome: 'Objetiva', nota, max, peso: rg.pesoObjetiva ?? 1 }].concat(etapas.filter((x) => x.peso !== 0).map((x) => ({ nome: x.nome, nota: x.nota, max: x.max, peso: x.peso ?? 1 })));
+    const conhecidas = partes.every((p) => p.nota !== null && p.nota !== undefined);
+    const calc = (k) => {
+      if (rg.notaFinal === 'ponderada') return r2(partes.reduce((s, p) => s + p.peso * (p[k] ?? 0), 0));
+      if (rg.notaFinal === 'media') return r2(partes.reduce((s, p) => s + (p[k] ?? 0), 0) / partes.length);
+      return r2(partes.reduce((s, p) => s + (p[k] ?? 0), 0));
+    };
+    return { tipo: rg.notaFinal, valor: max === null ? null : calc('nota'), max: max === null ? null : calc('max'), completa: conhecidas, partes };
+  }
+  /* fórmula legível da nota final, para o Raio-X */
+  function formulaNotaFinal(rg) {
+    const nomes = ['Objetiva'].concat(rg.etapas.filter((x) => x.peso !== 0).map((x) => x.nome));
+    if (nomes.length === 1) return 'Nota final = objetiva';
+    if (rg.notaFinal === 'ponderada') return 'Nota final = ' + [fmtPt(rg.pesoObjetiva ?? 1) + ' × Objetiva'].concat(rg.etapas.filter((x) => x.peso !== 0).map((x) => fmtPt(x.peso ?? 1) + ' × ' + x.nome)).join(' + ');
+    if (rg.notaFinal === 'media') return 'Nota final = (' + nomes.join(' + ') + ') ÷ ' + nomes.length;
+    return 'Nota final = ' + nomes.join(' + ');
+  }
+  function pontuar(courseId, acertos = {}, opts = {}) { return pontuarCom(provaOf(courseId), regras(courseId), acertos, opts); }
   /* V15.57 · tentativa de simulado em pontos da banca: cada seção ({nome:{correct,total}}) vai para a
      disciplina de nome equivalente (sem acento/caixa). Só pontua se todas as disciplinas forem encontradas. */
   function secaoDisciplina(nome, prova) {
@@ -714,10 +812,17 @@
     return k ? { banca: k, ...all[k] } : null;
   }
   function setPadrao(banca, value) { const k = String(banca || '').trim().toUpperCase().slice(0, 30); if (!k) return null; return patchStore('padroes', k, value); }
+  /* campos de regra que viajam junto com a prova (kit, padrões da banca, leitor do edital) */
+  const REGRA_KEYS = ['grupos', 'etapas', 'formato', 'penalidade', 'alternativas', 'escala', 'notaFinal', 'pesoObjetiva', 'naoZerar', 'minimoGeralEm', 'titulos', 'pesoTitulos'];
+  function regrasPatch(j) {
+    const out = {};
+    for (const k of REGRA_KEYS) if (j && j[k] !== undefined) out[k] = k === 'grupos' ? (Array.isArray(j.grupos) ? j.grupos.slice(0, 12).map((g) => ({ nome: String(g.nome || '').slice(0, 60), minimo: num(g.minimo), minimoEm: unidade(g.minimoEm), peso: num(g.peso, 1) })) : []) : k === 'etapas' ? (Array.isArray(j.etapas) ? j.etapas.slice(0, 8).map(normEtapa).filter(Boolean) : []) : j[k];
+    return out;
+  }
   function aplicarPadrao(courseId, banca) {
     const p = padroes()[String(banca || '').toUpperCase()];
     if (!p) return null;
-    return setEdital(courseId, { banca: String(banca).toUpperCase(), prova: p.prova, minimoGeral: p.minimoGeral ?? null, titulos: p.titulos ?? null, fonte: p.fonte || '' });
+    return setEdital(courseId, { grupos: [], etapas: [], formato: 'multipla', penalidade: 0, escala: 'soma', notaFinal: 'soma', pesoObjetiva: null, naoZerar: false, minimoGeralEm: 'pontos', ...regrasPatch(p), banca: String(banca).toUpperCase(), prova: p.prova, minimoGeral: p.minimoGeral ?? null, titulos: p.titulos ?? null, fonte: p.fonte || '' });
   }
   /* alcance do mapa: escolha do usuário > catálogo > categoria (Legislação tende a ser local) */
   function alcance(map) {
@@ -786,7 +891,7 @@
     });
   }
   const fmtPt = (n) => (Math.round(Number(n || 0) * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf };
+  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf, regras, regrasDe, pontuarCom, maxObjetiva, formulaNotaFinal, ETAPAS, ESCALAS, NOTAS_FINAIS, UNIDADES };
 
 
   /* ---------- V15.58 · taxonomia única de armadilhas (conceito 04 do Template de estudos) ----------
@@ -952,7 +1057,8 @@
     if (!prova.length && !programa.length) throw new Error('O planejamento não traz prova nem programa.');
     const prev = editalOf(courseId) || {};
     const patch = { ...(programa.length || !prov0(prev) ? { programa } : {}), fases, fonte: String(j.fonte || 'Kit Meus Mapas').slice(0, 200), importadoEm: new Date().toISOString() };
-    if (prova.length) { patch.prova = prova; patch.minimoGeral = j.minimoGeral ?? prev.minimoGeral ?? null; patch.titulos = j.titulos ?? prev.titulos ?? null; }
+    if (prova.length) { patch.prova = prova; patch.minimoGeral = j.minimoGeral ?? prev.minimoGeral ?? null; patch.titulos = j.titulos ?? prev.titulos ?? null; Object.assign(patch, j.leitura ? { grupos: [], etapas: [], formato: 'multipla', penalidade: 0, alternativas: null, escala: 'soma', notaFinal: 'soma', pesoObjetiva: null, naoZerar: false, minimoGeralEm: 'pontos', titulos: null } : {}, regrasPatch(j)); }
+    if (j.leitura && typeof j.leitura === 'object') patch.leitura = { em: String(j.leitura.em || new Date().toISOString()), confianca: String(j.leitura.confianca || ''), avisos: (Array.isArray(j.leitura.avisos) ? j.leitura.avisos : []).map(String).slice(0, 6), pagina: j.leitura.quadro?.pagina || null };
     if (j.cargo && typeof j.cargo === 'object') { const cg = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) if (j.cargo[k]) cg[k] = String(j.cargo[k]).slice(0, 80); if (Object.keys(cg).length) patch.cargo = cg; }
     if (j.banca) patch.banca = String(j.banca).toUpperCase().slice(0, 40);
     /* mapas da série: disciplina principal e alcance por sigla (gerar_edital_app.py do kit REV07) */
@@ -970,6 +1076,8 @@
     return { disciplinas: prova.length, itens: programa.length, fases: nf, mapas: Object.keys(md).length, alcances: alc };
   }
   P.editais.importKit = importKit;
+  P.editais.regrasPatch = regrasPatch;
+  P.editais.REGRA_KEYS = REGRA_KEYS;
 
   /* ---------- V15.59 · ponte com a Template V211 G27 (mesma origem, só o mapa aberto no leitor) ----------
      Mapa → app: MEUS_MAPAS_MAP_HELLO e MEUS_MAPAS_MAP_SUMMARY (meus-mapas/map-summary/v1). O resumo fica neste aparelho,

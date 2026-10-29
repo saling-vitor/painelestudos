@@ -75,14 +75,21 @@
 
   /* V15.56/57 · gabarito no formato da banca (Pós-prova do Início e fechamento no curso) */
   const fmtPts = (n) => String(Math.round(Number(n || 0) * 100) / 100).replace('.', ',');
-  const elimText = (gp) => gp.falhas.length ? 'eliminado em ' + gp.falhas.map((x) => x.nome + ' (faltou ' + fmtPts(x.falta) + ')').join(' e ') : 'abaixo do mínimo geral de ' + fmtPts(gp.minimoGeral);
+  const elimText = (gp) => gp.indeterminado ? 'nota padronizada: depende do desempenho do grupo' : gp.falhas.length ? 'eliminado em ' + gp.falhas.map((x) => x.nome + (x.zerou ? ' (zerou)' : ' (faltou ' + fmtPts(x.falta) + ')')).join(' e ') : 'abaixo do mínimo geral de ' + fmtPts(gp.minimoGeral);
   function gabForm(c, prova) {
-    return '<form data-pr-submit="save-gab-pond" data-course="' + esc(c.id) + '" data-ponderado="1" class="pr-gabf">' + prova.map((d) => '<label class="pr-field"><span>' + esc(({ lp: 'Português', leg: 'Legislação', esp: 'Específicos' })[d.id] || d.nome) + ' · de ' + d.questoes + '</span><input name="d_' + esc(d.id) + '" type="number" min="0" max="' + d.questoes + '" inputmode="numeric" required></label>').join('') + '<button type="submit" class="pr-btn sm">Registrar</button></form>';
+    /* V15.62 · certo/errado pede os erros (a errada desconta); etapas com nota (discursiva, prática) entram na nota final */
+    const rg = P.editais.regras(c.id), ce = rg.penalidade > 0;
+    const ds = prova.map((d) => '<label class="pr-field"><span>' + esc(({ lp: 'Português', leg: 'Legislação', esp: 'Específicos' })[d.id] || d.nome) + ' · de ' + d.questoes + (ce ? ' · acertos' : '') + '</span><input name="d_' + esc(d.id) + '" type="number" min="0" max="' + d.questoes + '" inputmode="numeric" required></label>' + (ce ? '<label class="pr-field"><span>' + esc(d.nome) + ' · erros</span><input name="e_' + esc(d.id) + '" type="number" min="0" max="' + d.questoes + '" inputmode="numeric" placeholder="em branco não desconta"></label>' : '')).join('');
+    const et = rg.etapas.filter((x) => x.tipo !== 'titulos').map((x) => '<label class="pr-field"><span>' + esc(x.nome) + ' · até ' + fmtPts(x.max) + ' (opcional)</span><input name="et_' + esc(x.id) + '" type="number" min="0" max="' + x.max + '" step="any" inputmode="decimal"></label>').join('');
+    return '<form data-pr-submit="save-gab-pond" data-course="' + esc(c.id) + '" data-ponderado="1" class="pr-gabf">' + ds + et + '<button type="submit" class="pr-btn sm">Registrar</button></form>';
   }
   function gabRows(gp) {
     const rows = gp.por.map((d) => '<div class="ln"><span><b>' + esc(d.nome) + '</b><br><span class="pr-mono">' + d.acertos + ' de ' + d.questoes + ' · peso ' + fmtPts(d.peso) + '</span></span><span class="tr" role="img" aria-label="' + esc(d.nome + ': ' + fmtPts(d.pontos) + ' de ' + fmtPts(d.max) + ', mínimo ' + fmtPts(d.minimo)) + '"><i style="width:' + (d.max ? (d.pontos / d.max) * 100 : 0) + '%"></i><em style="left:' + (d.max ? (d.minimo / d.max) * 100 : 0) + '%"></em></span><span class="v' + (d.ok ? '' : ' ox') + '">' + fmtPts(d.pontos) + ' / ' + fmtPts(d.max) + ' · mín. ' + fmtPts(d.minimo) + '</span></div>').join('');
     const geral = gp.minimoGeral !== null ? '<div class="ln"><span><b>Total</b><br><span class="pr-mono">' + gp.corretas + ' de ' + gp.questoes + ' acertos</span></span><span class="tr"><i style="width:' + (gp.pontos / Math.max(1, gp.max)) * 100 + '%"></i><em style="left:' + (gp.minimoGeral / Math.max(1, gp.max)) * 100 + '%"></em></span><span class="v' + (gp.geralOk ? '' : ' ox') + '">' + fmtPts(gp.pontos) + ' / ' + fmtPts(gp.max) + ' · mín. ' + fmtPts(gp.minimoGeral) + '</span></div>' : '';
-    return '<div class="pr-gab">' + rows + geral + '</div>';
+    const blocos = (gp.grupos || []).filter((g) => g.minimo).map((g) => '<div class="ln"><span><b>' + esc(g.nome) + '</b><br><span class="pr-mono">' + g.acertos + ' de ' + g.questoes + ' acertos · bloco</span></span><span class="tr"><i style="width:' + (g.max ? Math.max(0, g.pontos / g.max) * 100 : 0) + '%"></i><em style="left:' + (g.max ? (g.minimoPts / g.max) * 100 : 0) + '%"></em></span><span class="v' + (g.ok ? '' : ' ox') + '">' + fmtPts(g.pontos) + ' / ' + fmtPts(g.max) + ' · mín. ' + fmtPts(g.minimoPts) + '</span></div>').join('');
+    const etapas = (gp.etapas || []).filter((x) => x.nota !== null).map((x) => '<div class="ln"><span><b>' + esc(x.nome) + '</b></span><span class="tr"><i style="width:' + (x.nota / x.max) * 100 + '%"></i>' + (x.minimoPts ? '<em style="left:' + (x.minimoPts / x.max) * 100 + '%"></em>' : '') + '</span><span class="v' + (x.ok === false ? ' ox' : '') + '">' + fmtPts(x.nota) + ' / ' + fmtPts(x.max) + (x.minimoPts ? ' · mín. ' + fmtPts(x.minimoPts) : '') + '</span></div>').join('');
+    const nf = gp.notaFinal && gp.notaFinal.partes.length > 1 && gp.notaFinal.completa ? '<p class="pr-mono">Nota final ' + fmtPts(gp.notaFinal.valor) + ' de ' + fmtPts(gp.notaFinal.max) + '</p>' : '';
+    return '<div class="pr-gab">' + rows + blocos + geral + etapas + '</div>' + nf;
   }
   function gabCard(gp, sigla) {
     const v = gp.aprovado ? verdict('m', 'Aprovado no total e em todas as disciplinas.', gp.minimoGeral !== null ? fmtPts(gp.pontos - gp.minimoGeral) + ' pontos acima do mínimo geral.' : '') : verdict('', 'Pelo seu gabarito, ' + esc(elimText(gp)) + '.', 'Confira no gabarito definitivo; recursos deferidos podem mudar a nota.');
@@ -273,7 +280,11 @@
     const openMenu = root.querySelector('[data-pr-menu-panel]:not([hidden])')?.dataset.prMenuPanel || '';
     if (openMenu) menuGuard = Date.now() + 400;
     const openKeys = new Set([...root.querySelectorAll('details[open]>summary')].map((x) => x.textContent.trim()).filter(Boolean));
-    try { page.render(root); reuseImgs(root, keepImgs); if (openKeys.size) root.querySelectorAll('details:not([open])>summary').forEach((x) => { if (openKeys.has(x.textContent.trim())) x.parentElement.open = true; }); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
+    /* V15.62 · campos já alterados num formulário aberto voltam depois do redesenho (antes a sincronização apagava a edição) */
+    const dirty = [];
+    root.querySelectorAll('form[data-pr-submit]').forEach((f) => { const vals = []; for (const el of f.elements) { if (!el.name) continue; if (el.type === 'checkbox' || el.type === 'radio') { if (el.checked !== el.defaultChecked) vals.push([el.name, el.value, el.checked]); } else if (el.tagName === 'SELECT') { const def = [...el.options].find((o) => o.defaultSelected)?.value ?? el.options[0]?.value; if (el.value !== def) vals.push([el.name, el.value]); } else if (el.value !== el.defaultValue) vals.push([el.name, el.value]); } if (vals.length) dirty.push([f.dataset.prSubmit + '|' + (f.dataset.course || f.dataset.key || ''), vals]); });
+    try { page.render(root);
+      if (dirty.length) root.querySelectorAll('form[data-pr-submit]').forEach((f) => { const d = dirty.find(([k]) => k === f.dataset.prSubmit + '|' + (f.dataset.course || f.dataset.key || '')); if (!d) return; for (const [name, v, chk] of d[1]) { const el = f.elements.namedItem(name); if (!el || el instanceof RadioNodeList) continue; if (chk !== undefined) el.checked = chk; else el.value = v; } }); reuseImgs(root, keepImgs); if (openKeys.size) root.querySelectorAll('details:not([open])>summary').forEach((x) => { if (openKeys.has(x.textContent.trim())) x.parentElement.open = true; }); reapplyArmed(root); buildSecNav(view, root); root.dataset.rendered = String(Date.now()); }
     catch (e) { console.error('[Prancha] falha ao desenhar ' + view, e); root.innerHTML = '<div class="pr-empty"><b>Não foi possível desenhar esta prancha.</b><p>O conteúdo original continua disponível abaixo.</p></div>'; root.closest('.view')?.classList.remove('pr-on'); }
     finally { P.__frame = null; }
     if (Math.abs(window.scrollY - scrollY) > 2) window.scrollTo(0, scrollY);
@@ -421,9 +432,14 @@
     'review-queue': () => { if (typeof startReviewQueue === 'function') startReviewQueue(); },
     'save-gab-pond': (fd, form) => {
       const id = form.dataset.course, prova = P.editais.prova(id), acertos = {};
-      for (const d of prova) { const v = Math.round(Number(fd.get('d_' + d.id))); if (!(v >= 0) || v > d.questoes) { if (typeof toast === 'function') toast('Confira ' + d.nome + ': acertos entre 0 e ' + d.questoes + '.'); return; } acertos[d.id] = v; }
-      const r = P.editais.pontuar(id, acertos), cl = P.courses.closure(id);
-      P.store.patch('closures', id, { ...cl, gabarito: { correct: r.corretas, total: r.questoes, pontos: r.pontos, max: r.max, aprovado: r.aprovado, porDisciplina: Object.fromEntries(r.por.map((x) => [x.id, { acertos: x.acertos, pontos: x.pontos, minimo: x.minimo, ok: x.ok }])), at: new Date().toISOString() } });
+      const erros = {}, etapas = {};
+      for (const d of prova) {
+        const v = Math.round(Number(fd.get('d_' + d.id))); if (!(v >= 0) || v > d.questoes) { if (typeof toast === 'function') toast('Confira ' + d.nome + ': acertos entre 0 e ' + d.questoes + '.'); return; } acertos[d.id] = v;
+        const ev = String(fd.get('e_' + d.id) ?? '').trim(); if (ev !== '') { const n = Math.round(Number(ev)); if (!(n >= 0) || n + v > d.questoes) { if (typeof toast === 'function') toast('Confira ' + d.nome + ': acertos + erros passam de ' + d.questoes + '.'); return; } erros[d.id] = n; }
+      }
+      for (const x of P.editais.regras(id).etapas) { const ev = String(fd.get('et_' + x.id) ?? '').trim(); if (ev !== '') etapas[x.id] = Number(ev.replace(',', '.')); }
+      const r = P.editais.pontuar(id, acertos, { erros, etapas }), cl = P.courses.closure(id);
+      P.store.patch('closures', id, { ...cl, gabarito: { correct: r.corretas, total: r.questoes, pontos: r.pontos, max: r.max, aprovado: r.aprovado, erros, etapas, porDisciplina: Object.fromEntries(r.por.map((x) => [x.id, { acertos: x.acertos, pontos: x.pontos, minimo: x.minimo, ok: x.ok }])), at: new Date().toISOString() } });
       if (typeof toast === 'function') toast('Gabarito registrado: ' + fmtPts(r.pontos) + ' pontos' + (r.aprovado ? '.' : ' · ' + elimText(r) + '.'));
       schedule(state.view);
     },
