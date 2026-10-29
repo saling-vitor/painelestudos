@@ -100,7 +100,7 @@ check(blackSmokedCss.includes('prefers-reduced-transparency')&&blackSmokedCss.in
 check(cssIn(sw,`home-responsive-v15-48-162.css?v=${expected}`),'Home responsiva: estilos no cache PWA');
 check(cssIn(index,`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS editorial carregado');
 check(cssIn(sw,`empty-illustrations-v15-48-160.css?v=${expected}`),'19 estados vazios: CSS disponível offline no PWA');
-check(activeJsFiles.length===45,'auditoria: build ativo usa 45 scripts JS diretos (30 + 10 módulos das pranchas + fluxo de estudo V15.52 + categorias V15.53 + escopo de estudo V15.54 + leitor do edital V15.62: layout e leitor)');
+check(activeJsFiles.length===46,'auditoria: build ativo usa 46 scripts JS diretos (30 + 10 módulos das pranchas + fluxo de estudo V15.52 + categorias V15.53 + escopo de estudo V15.54 + leitor do edital V15.62: layout e leitor + desempenho do TEC V15.63)');
 check(cssIn(index,`nav-liquid-glass-v15-48-2.css?v=${expected}`),'Lista Mestra V2: módulo cromático e vidro ativo');
 check(cssIn(index,`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG carregados na interface');
 check(cssIn(sw,`lucide-png-v15-48-172.css?v=${expected}`),'Ícones Lucide PNG disponíveis no PWA offline');

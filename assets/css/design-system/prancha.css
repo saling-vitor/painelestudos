@@ -730,3 +730,17 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-ltab th,.pr-ltab td{padding:5px 6px;border-bottom:1px solid var(--pr-linha);text-align:left;vertical-align:top}
 .pr-ltab th{font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);letter-spacing:.06em;text-transform:uppercase;color:var(--pr-papel-3);font-weight:500}
 .pr-ltab td:not(:first-child),.pr-ltab th:not(:first-child){text-align:right;white-space:nowrap}
+/* V15.63 · desempenho do TEC */
+.pr-nt .nm .t{display:block;font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-3)}
+.pr-tec-sub,.pr-tec-ev{display:grid;gap:6px;margin-top:14px}
+.pr-tec-ev p{margin:0;font-size:var(--fs-body-sm)}
+.pr-tec-ev .pr-row{flex-wrap:wrap}
+.pr-tec-pc{color:var(--pr-oxido);min-width:4ch}
+.pr-tec-fr .pr-li{border-left:3px solid var(--c,var(--pr-latao))}
+.pr-tec-lg{margin-top:14px}
+.pr-tec-li{cursor:default}
+.pr-tec-li select{max-width:240px}
+@media (max-width:700px){.pr-tec-li{grid-template-columns:auto minmax(0,1fr)}.pr-tec-li select{grid-column:1/-1;max-width:none;width:100%}.pr-tec-ev .pr-chip{white-space:normal}}
+.pr-tec-fr .pr-li>span>.t,.pr-tec-li>span>.t{display:block}
+.pr-tec-fr button.pr-sig{all:unset;cursor:pointer;font-family:var(--pr-f-capa);font-size:var(--fs-body-sm);color:var(--c);padding:2px 4px;border-radius:4px}
+.pr-tec-fr button.pr-sig:focus-visible{outline:2px solid var(--pr-latao)}

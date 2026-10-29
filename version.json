@@ -1,12 +1,12 @@
 {
-  "version": "15.62.2",
-  "label": "V15.62.2-G",
-  "notes": "Mapas vão sozinhos para a disciplina certa do edital.",
+  "version": "15.63.0",
+  "label": "V15.63.0-G",
+  "notes": "Desempenho do TEC Concursos vira nota projetada e pontos fracos.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Raio-X: cada mapa vai para a disciplina cujo conteúdo programático no edital mais se parece com ele (ex.: Ética e Cidadania → Conhecimentos Gerais e Atualidades); marcados com ✦",
-    "[G] Editar estrutura da prova: lista \"Mapas → disciplina\" para fixar a disciplina de um mapa",
-    "[G] Leitor do edital guarda o conteúdo programático de cada disciplina; categorias Conhecimentos Gerais e Raciocínio Lógico e Matemática passam a casar"
+    "[G] Progresso: importe a planilha de Estatísticas › Desempenho do TEC (.xlsx ou .csv) e veja a nota projetada no formato da banca, disciplina por disciplina, contra os mínimos do edital",
+    "[G] Pontos fracos pelo TEC: assuntos abaixo de 70% ordenados pelo valor da disciplina na prova, com atalho para o mapa correspondente",
+    "[G] Evolução entre importações: questões novas e acerto só nelas; matérias do TEC ligadas sozinhas às disciplinas (✦), com troca manual"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T15:23:24-03:00"
+  "releasedAt": "2026-10-29T16:06:21-03:00"
 }

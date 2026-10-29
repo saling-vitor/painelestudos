@@ -98,6 +98,43 @@
     const max = ca.list[0].total || 1;
     return ui.card(ui.head('Erros por armadilha', ca.total + ' erros classificados · mapas, treinos e simulados', ui.btn('Caderno de erros', ui.act('nav', 'errors'), 'g sm')) + '<div class="pr-list">' + ca.list.slice(0, 6).map((r) => '<div class="pr-li pr-arm"><span class="pr-mono">' + r.total + '</span><span><b>' + esc(r.label) + '</b><span class="bar"><i style="width:' + Math.round((r.total / max) * 100) + '%"></i></span><span class="t">' + esc(r.antidoto) + ' · mapa ' + r.mapa + ' · treino ' + r.treino + ' · simulado ' + r.simulado + '</span></span><span class="pr-row" style="flex-wrap:nowrap">' + r.mapas.map((x) => '<button type="button" class="pr-sig" style="--c:' + P.mapColor(x.map) + '" data-pr-act="open-map" data-arg="' + esc(P.data.keyOf(x.map)) + '" title="' + esc(x.map.title) + ' · ' + x.n + '">' + esc(x.map.code || '') + '</button>').join('') + '</span></div>').join('') + '</div>');
   }
+
+  /* ---------- V15.63 · desempenho do TEC Concursos ---------- */
+  const pc = (x) => (x === null || x === undefined ? '—' : Math.round(x * 100) + '%');
+  const tecInput = '<input type="file" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden data-pr-change="tec-file" data-pr-tec>';
+  function tecCard(s) {
+    const R = P.tec?.resumo?.(s.id);
+    const imp = (l, cls) => ui.btn(l, ui.act('tec-pick'), cls || 'g sm');
+    if (!R) return ui.card(ui.head('Desempenho no TEC', 'Questões resolvidas no TEC Concursos') + ui.empty('Importe a planilha do TEC', 'No TEC: Estatísticas › Desempenho › exportar (.xlsx). O app projeta a sua nota no formato da banca, aponta os assuntos que mais custam pontos e mostra a evolução entre uma importação e outra.', imp('Importar planilha do TEC', 'p')) + tecInput);
+    const fp = P.editais.fmtPt, sn = R.snap, quando = fmtDay(new Date(sn.at));
+    const sub = fmtNum(sn.total.q) + ' questões · ' + pc(sn.total.a / sn.total.q) + ' de acerto · leitura de ' + quando;
+    const evol = R.evol ? '<div class="pr-tec-ev"><span class="pr-k l">Desde a leitura anterior</span><p><b>' + (R.evol.dq > 0 ? '+' + fmtNum(R.evol.dq) + ' questões · ' + pc(R.evol.recente) + ' de acerto nelas' : 'Nenhuma questão nova') + '</b> · média geral ' + pc(R.evol.antes) + ' → ' + pc(R.evol.agora) + '</p>' + (R.evol.materias.length ? '<div class="pr-row">' + R.evol.materias.slice(0, 5).map((m) => '<span class="pr-chip' + (m.recente !== null && m.antes !== null && m.recente < m.antes - 0.05 ? ' ox' : m.recente !== null && m.antes !== null && m.recente > m.antes + 0.05 ? ' ok' : '') + '" title="antes ' + pc(m.antes) + ' · nas novas ' + pc(m.recente) + '">' + esc(m.n) + ' +' + m.dq + ' · ' + pc(m.recente) + '</span>').join('') + '</div>' : '') + '</div>' : '';
+    const acoes = '<div class="pr-row">' + imp('Importar nova leitura') + ui.btn('Descartar esta leitura', ui.act('tec-remove', sn.id), 'g sm') + tecInput + '</div>';
+    if (R.semProva) return ui.card(ui.head('Desempenho no TEC', sub) + ui.empty('Cadastre a prova do edital', 'Com as disciplinas da prova, o acerto do TEC vira nota projetada no formato da banca.', ui.btn('Prova do edital', ui.act('course-edital', s.id), 'g sm')) + evol + acoes);
+    const res = R.res, ok = res.aprovado;
+    const barras = '<div class="pr-nota">' + R.por.map((r) => { const w = r.max ? Math.min(100, (r.pontos / r.max) * 100) : 0, mk = r.max ? Math.min(100, (r.minimo / r.max) * 100) : 0; const am = r.semDados ? 'sem questões no TEC · média geral' : pc(r.taxa) + ' em ' + fmtNum(r.q) + ' q' + (r.amostra === 'pequena' ? ' · amostra pequena' : ''); return '<div class="pr-nt' + (r.ok ? '' : ' x') + '" style="--c:' + r.cor + '"><span class="nm">' + esc(r.nome) + '<span class="t">' + esc(am) + '</span></span><span class="bar"><i style="width:' + w + '%"></i>' + (r.minimo ? '<b style="left:' + mk + '%" title="mínimo ' + fp(r.minimo) + '"></b>' : '') + '</span><span class="v">' + r.acertos + '/' + r.questoes + ' · ' + fp(r.pontos) + ' pts' + (r.minimo ? ' · mín ' + fp(r.minimo) : '') + '</span></div>'; }).join('') + '</div>';
+    const falhas = res.falhas.filter((f) => !f.etapa);
+    const veredito = '<p class="pr-mono">' + (res.indeterminado ? 'Nota padronizada: o corte depende da turma; veja o acerto por disciplina.' : ok === false || falhas.length || res.geralOk === false ? 'Com esse acerto, ficaria abaixo ' + (falhas.length ? 'do mínimo em ' + falhas.map((f) => esc(f.nome)).join(', ') : '') + (res.geralOk === false ? (falhas.length ? ' e ' : '') + 'do mínimo geral (' + fp(res.minimoGeral) + ')' : '') + '.' : 'Com esse acerto, passaria todos os mínimos' + (res.minimoGeral !== null ? ' e o geral (' + fp(res.minimoGeral) + ')' : '') + '.') + ' Conta: questões da prova × acerto no TEC em cada disciplina' + (res.regras?.penalidade ? ', descontando os erros' : '') + '.</p>';
+    const fr = R.fracos.length ? '<div class="pr-list pr-tec-fr">' + R.fracos.slice(0, 8).map((f) => '<div class="pr-li" style="--c:' + f.cor + '"><span class="pr-mono pr-tec-pc">' + pc(f.taxa) + '</span><span><b>' + esc(f.nome) + '</b><span class="t">' + esc((f.pai ? f.pai + ' · ' : '') + f.materia + ' · ' + f.q + ' questões · ' + f.discNome) + '</span></span><span class="pr-row" style="flex-wrap:nowrap">' + (f.mapa ? '<button type="button" class="pr-sig" style="--c:' + P.mapColor(f.mapa) + '" data-pr-act="open-map" data-arg="' + esc(P.data.keyOf(f.mapa)) + '" title="Abrir ' + esc(f.mapa.title) + '">' + esc(f.mapa.code || 'Mapa') + '</button>' : '<span class="t">sem mapa</span>') + '</span></div>').join('') + '</div>' : ui.empty('Nenhum ponto fraco claro', 'Todos os assuntos com 6 ou mais questões estão perto ou acima de 70% de acerto.');
+    const discs = P.editais.prova(s.id);
+    const lista = R.fora.length || R.snap.materias.length ? R.snap.materias.slice(0, 60) : [];
+    const lig = '<details class="pr-rot pr-tec-lg"><summary>Matérias do TEC → disciplinas da prova · ' + (R.snap.materias.length - R.fora.length) + ' ligadas' + (R.fora.length ? ', ' + R.fora.length + ' fora da prova (' + fmtNum(R.fora.reduce((t, m) => t + m.q, 0)) + ' q)' : '') + '</summary><form data-pr-submit="tec-map" data-n="' + lista.length + '"><div class="pr-list">' + lista.map((m, i) => { const k = P.tec.key(m.n), l = R.lig.get(k) || {}; return '<label class="pr-li pr-tec-li"><span class="pr-mono">' + fmtNum(m.q) + '</span><span><b>' + esc(m.n) + '</b><span class="t">' + pc(m.a / m.q) + ' de acerto' + (l.via === 'manual' ? ' · ligado por você' : l.via ? ' · ✦ automático' : '') + '</span></span><input type="hidden" name="k' + i + '" value="' + esc(k) + '"><input type="hidden" name="c' + i + '" value="' + esc(l.id || '-') + '"><select name="d' + i + '" aria-label="Disciplina de ' + esc(m.n) + '">' + discs.map((d) => '<option value="' + esc(d.id) + '"' + (l.id === d.id ? ' selected' : '') + '>' + esc(d.nome) + '</option>').join('') + '<option value="-"' + (!l.id ? ' selected' : '') + '>— fora da prova</option></select></label>'; }).join('') + '</div><div class="pr-row" style="margin-top:10px"><button type="submit" class="pr-btn p">Salvar ligações</button><span class="pr-mono">✦ ligado pelo nome e pelos assuntos; mude o que não fizer sentido para esta prova.</span></div></form></details>';
+    return ui.card(ui.head('Nota pelo TEC', sub, '<span class="pr-k ' + (ok ? 'ok' : 'o') + '">' + fp(res.pontos) + ' / ' + fp(res.max ?? res.maxPontos) + (res.max === 10 ? '' : ' pts') + '</span>') + barras + veredito +
+      '<div class="pr-tec-sub"><span class="pr-k l">Onde o TEC mostra que você perde mais pontos</span><p class="pr-mono">Assuntos abaixo de 70%, ordenados pelo valor da disciplina na prova e pelo número de questões.</p>' + fr + '</div>' + evol + lig + acoes);
+  }
+  async function tecFile(el) {
+    const f = el.files?.[0];
+    el.value = '';
+    if (!f) return;
+    try {
+      const snap = await window.MeusMapasTec.lerArquivo(f);
+      const r = P.tec.save(snap);
+      if (typeof toast === 'function') toast(r.igual ? 'Esta planilha é igual à última leitura do TEC.' : 'TEC importado: ' + fmtNum(snap.total.q) + ' questões em ' + snap.materias.length + ' matérias.');
+    } catch (err) { console.warn('[TEC]', err); if (typeof toast === 'function') toast(err?.message || 'Não foi possível ler a planilha do TEC.'); }
+    /* o campo de arquivo com foco impediria o redesenho (proteção de digitação) */
+    if (document.activeElement?.matches?.('input[type="file"]')) document.activeElement.blur();
+    P.schedule('progress');
+  }
   function render(root) {
     const S = P.courses.active();
     if (!sel || (sel !== 'todos' && !S.some((s) => String(s.id) === sel))) sel = P.courses.priority()?.id ? String(P.courses.priority().id) : S[0] ? String(S[0].id) : 'todos';
@@ -149,7 +186,7 @@
     const focus = ui.card(ui.head('Onde focar agora', 'Três prioridades, com o motivo', pri[0] ? ui.btn('Começar a primeira · ' + fmtMin(pri[0].minutes), ui.act('focus-start', pri[0].key, { 'data-min': pri[0].minutes }), 'p') : '') + (pri.length ? '<div class="pr-focus">' + pri.map((r) => { const m = r.map, q = r.progress; return '<div class="pr-fo" style="--c:' + P.mapColor(m) + '"><div class="top"><span class="pr-sig">' + esc(m.code || '') + '</span><span class="pr-mono">' + q.marked + '/' + q.total + ' · ' + ui.mapState(q) + '</span></div><b style="font-size:var(--fs-body-sm)">' + esc(m.title) + '</b><div class="pr-why">' + r.reasons.slice(0, 4).map((x) => '<span class="' + (/prova|atras/.test(x) ? 'o' : /DIF|REV|revis|peso/.test(x) ? 'l' : '') + '">' + esc(x) + '</span>').join('') + '</div>' + (window.StudyPlanner?.showPriorityExplanation ? '<button type="button" class="pr-link" style="all:unset;cursor:pointer;color:var(--pr-latao-c);font-size:var(--fs-caption)" data-pr-act="explain" data-arg="' + esc(r.key) + '">Por que este mapa?</button>' : '') + ui.btn('Abrir mapa', ui.act('open-map', r.key), 'sm') + '</div>'; }).join('') + '</div>' : ui.empty('Nada pendente', 'Todos os mapas deste recorte estão em dia.')));
     const ds = P.doubts.list({ open: false }).filter((d) => !s || String(d.courseId) === String(s.id) || (d.mapKey && typeof mapById === 'function' && mapById(d.mapKey)?.courseId === s.id)).slice(0, 12);
     const dv = ui.card(ui.head('Anotações', 'Dúvidas ' + (ds.filter((d) => !d.resolved).length ? 'abertas' : ''), '<span class="pr-mono">' + ds.filter((d) => !d.resolved).length + ' abertas</span>') + (ds.length ? '<div class="pr-list">' + ds.map((d) => { const m = d.mapKey && typeof mapById === 'function' ? mapById(d.mapKey) : null; return '<div class="pr-li" style="--c:' + (m ? P.mapColor(m) : 'var(--pr-papel-3)') + (d.resolved ? ';opacity:.6' : '') + '"><span class="pr-sig">' + esc(m?.code || '—') + '</span><span>' + esc(d.text) + '<br><span class="t">' + esc(ui.lastLabel(d.createdAt)) + (d.resolved ? ' · resolvida' : '') + '</span></span><span class="pr-row" style="flex-wrap:nowrap">' + (m ? ui.btn('Abrir', ui.act('open-map', d.mapKey), 'g sm') : '') + ui.btn(d.resolved ? 'Reabrir' : 'Resolver', ui.act('doubt', d.id), 'sm') + '</span></div>'; }).join('') + '</div>' : ui.empty('Nenhuma dúvida anotada', 'No leitor, use o botão de dúvida para guardar o que precisa conferir.')));
-    const v58 = s ? '<div class="pr-two">' + notaCard(s) + cdCard(maps) + '</div><div class="pr-two">' + matrizCard(s) + cadernoCard(s) + '</div>' : '';
+    const v58 = s ? '<div class="pr-two">' + notaCard(s) + cdCard(maps) + '</div>' + tecCard(s) + '<div class="pr-two">' + matrizCard(s) + cadernoCard(s) + '</div>' : '';
     root.innerHTML = top + carimbo + v58 + '<div class="pr-two">' + curveCard + ui.card(ui.head('Por categoria', 'Onde o edital está coberto') + cats) + '</div>' + planta + '<div class="pr-two">' + ritmo + simCard + '</div>' + focus + dv;
   }
   function detail(key) {
@@ -172,6 +209,16 @@
       'tile-filter': (id) => { tileFilter = id; P.schedule('progress'); },
       'pick-map': (key, el, root) => { hoverKey = key; root.querySelectorAll('.pr-tile').forEach((x) => x.classList.toggle('on', x.dataset.arg === key)); const d = root.querySelector('[data-pr-detail]'); if (d) d.innerHTML = detail(key); },
       doubt: (id) => { resolveDoubt(id); P.schedule('progress'); },
+      'tec-pick': (a, el, root) => root.querySelector('[data-pr-tec]')?.click(),
+      'tec-file': (v, el) => { tecFile(el); },
+      'tec-remove': (id) => { P.tec.remove(id); if (typeof toast === 'function') toast('Leitura do TEC descartada.'); P.schedule('progress'); },
+      'tec-map': (fd) => {
+        const id = sel, patch = {};
+        for (let i = 0; i < 200; i++) { const k = fd.get('k' + i); if (k === null) break; const v = String(fd.get('d' + i) || '-'), c = String(fd.get('c' + i) || '-'); if (v !== c) patch[k] = v; }
+        if (Object.keys(patch).length) P.tec.setMap(id, patch);
+        if (typeof toast === 'function') toast(Object.keys(patch).length ? 'Ligações do TEC salvas.' : 'Nada mudou nas ligações.');
+        P.schedule('progress');
+      },
       explain: (key, el) => { const row = P.plan.priorities(50).find((r) => r.key === key); if (row) window.StudyPlanner.showPriorityExplanation(row, el); },
       'focus-start': async (key, el) => { const map = typeof mapById === 'function' ? mapById(key) : null; if (!window.StudyDashboard?.active?.()) window.StudyDashboard?.start?.({ map, mode: 'planned', minutes: Number(el?.dataset.min) || 20, label: map?.code || 'Sessão' }); if (map && typeof openMap === 'function') await openMap(key); }
     }

@@ -72,7 +72,7 @@
   const STORE_KEY = 'studyapp.prancha.v1';
   /* V15.56: editais (estrutura da prova e cronograma por curso), padroes (estrutura típica por banca)
      e mapMeta (alcance de cada mapa) entram no mesmo armazenamento, sincronizado e no backup. */
-  const SECTIONS = ['closures', 'cutoffs', 'links', 'history', 'agendaStarts', 'editais', 'padroes', 'mapMeta', 'prefs', 'treinos', 'modelo'];
+  const SECTIONS = ['closures', 'cutoffs', 'links', 'history', 'agendaStarts', 'editais', 'padroes', 'mapMeta', 'prefs', 'treinos', 'modelo', 'tec'];
   const emptyStore = () => ({ version: 1, updatedAt: '', ...Object.fromEntries(SECTIONS.map((k) => [k, {}])) });
   function normalizeStore(v) {
     const s = v && typeof v === 'object' && !Array.isArray(v) ? v : {};
@@ -1083,6 +1083,133 @@
     });
   }
   P.mastery.caderno = cadernoArmadilhas;
+
+  /* ---------- V15.63 · desempenho do TEC Concursos ----------
+     tec[id] = { at, arquivo, total:{q,a,e}, materias:[{n,q,a,e,s:[{h,n,q,a,e}]}] }  — a leitura mais nova inteira;
+     as anteriores ficam só com matérias e assuntos de 1º nível, o bastante para a evolução (o armazenamento é sincronizado).
+     editais[courseId].tecMap = { <matéria normalizada>: discId | '-' }  — ligação manual matéria do TEC → disciplina. */
+  const TEC = () => window.MeusMapasTec || null;
+  function tecList() { return memo('tecL', () => Object.entries(readStore().tec).filter(([, v]) => v && !v.removed && Array.isArray(v.materias) && v.total).map(([id, v]) => ({ id, ...v })).sort((a, b) => (Date.parse(b.at || 0) || 0) - (Date.parse(a.at || 0) || 0))); }
+  function tecSave(snap) {
+    const T = TEC(), data = readStore(), now = new Date().toISOString();
+    const live = Object.entries(data.tec).filter(([, v]) => v && !v.removed && v.total).sort((a, b) => (Date.parse(b[1].at || 0) || 0) - (Date.parse(a[1].at || 0) || 0));
+    const last = live[0]?.[1];
+    if (last && last.total.q === snap.total.q && last.total.a === snap.total.a) return { id: live[0][0], igual: true };
+    live.forEach(([k, v], i) => {
+      if (i >= 7) { data.tec[k] = { removed: true, at: v.at, updatedAt: now }; return; }
+      if (v.materias?.some((m) => (m.s || []).some((x) => T.nivel(x.h) > 1))) data.tec[k] = { ...v, materias: v.materias.map((m) => ({ ...m, s: (m.s || []).filter((x) => T.nivel(x.h) === 1) })), updatedAt: now };
+    });
+    const id = 'tec-' + Date.now().toString(36);
+    data.tec[id] = { at: now, arquivo: String(snap.arquivo || '').slice(0, 120), total: snap.total, materias: snap.materias, updatedAt: now };
+    writeStore(data);
+    return { id };
+  }
+  function tecRemove(id) { const d = readStore(); if (d.tec[id]) { d.tec[id] = { removed: true, at: d.tec[id].at, updatedAt: new Date().toISOString() }; writeStore(d); } }
+  const TEC_REGRAS = [
+    [/portugu|gramatic|redacao|interpretacao de texto/, /portugu|lingua|redacao/],
+    [/informatica|^ti |tecnologia da informacao|seguranca da informacao/, /informat|tecnologia/],
+    [/raciocinio|matematica|estatistica/, /raciocin|matemat|logic|estatist/],
+    [/atualidades|conhecimentos gerais|historia|geografia|realidade/, /atualid|conhecimentos gerais|realidade|historia|geografia/],
+    [/direito|legislacao|etica|estatuto|regime juridico/, /legisla|direito|etica|estatuto|regime juridico/]
+  ];
+  const TEC_GERAL = /portugu|informat|^ti |raciocin|matemat|estatist|atualid|conhecimentos gerais|direito|legisla|etica|administra|contab|economi|ingles|espanhol|historia|geografia|arquivolog|seguranca da informacao|gestao publica|politicas publicas/;
+  const tecKey = (n) => norm(n);
+  const geralDisc = (d) => TEC_REGRAS.some(([, dre]) => dre.test(norm(d.nome)));
+  /* matéria do TEC → disciplina da prova: manual; senão pelo vocabulário (nome, conteúdo do edital, mapas ligados à
+     disciplina e assuntos da matéria); senão pela regra do nome; matérias de área específica caem na disciplina padrão. */
+  function tecLigacoes(courseId, snap) {
+    return memo('tecLg:' + courseId + ':' + (snap?.id || ''), () => {
+      const prova = provaOf(courseId);
+      if (!prova.length || !snap) return new Map();
+      const ed = editalOf(courseId) || {}, man = ed.tecMap || {}, cont = ed.conteudos || {}, pe = pesoEsforco(courseId);
+      const sets = prova.map((d) => {
+        const extra = DICAS.filter(([re]) => re.test(norm(d.nome))).map(([, w]) => w).join(' ');
+        const mapas = (pe?.rows.find((r) => r.id === d.id)?.mapas || []).map((m) => [m.title, m.shortTitle, m.category].join(' ')).join(' ');
+        return new Set(toks(d.nome + ' ' + (cont[d.id] || '') + ' ' + extra + ' ' + mapas));
+      });
+      const df = new Map(); for (const st of sets) for (const w of st) df.set(w, (df.get(w) || 0) + 1);
+      const idf = (w) => Math.log(1 + prova.length / (df.get(w) || prova.length));
+      const padrao = prova.find((d) => d.padrao) || null, out = new Map();
+      for (const m of snap.materias) {
+        const k = tecKey(m.n), nn = norm(m.n);
+        if (Object.prototype.hasOwnProperty.call(man, k)) { const id = man[k] === '-' ? null : prova.some((d) => d.id === man[k]) ? man[k] : null; out.set(k, { id, via: 'manual' }); continue; }
+        const ws = [...new Set(toks(m.n + ' ' + m.n + ' ' + (m.s || []).map((x) => x.n).join(' ')))];
+        const sc = sets.map((set) => (ws.length ? ws.reduce((s, w) => s + (set.has(w) ? idf(w) : 0), 0) / Math.sqrt(ws.length) : 0));
+        let regra = null, area = false;
+        for (const [re, dre] of TEC_REGRAS) if (re.test(nn)) { area = true; const i = prova.findIndex((d) => dre.test(norm(d.nome))); if (i >= 0) { sc[i] += 0.6; regra = regra ?? i; } }
+        /* matéria de área específica (Arquitetura, Engenharia…) só cai numa disciplina geral com semelhança forte;
+           matéria geral sem disciplina equivalente na prova (Informática sem Informática) fica fora, salvo semelhança forte */
+        if (!area) prova.forEach((d, i) => { if (geralDisc(d) && sc[i] < 0.9) sc[i] = 0; });
+        const ord = sc.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]);
+        let id = null, via = '';
+        if (area && regra === null && ord[0][0] < 0.9) { out.set(k, { id: null, via: 'auto' }); continue; }
+        if (ord[0][0] >= 0.35 && ord[0][0] > (ord[1]?.[0] || 0) * 1.15) { id = prova[ord[0][1]].id; via = 'auto'; }
+        else if (regra !== null) { id = prova[regra].id; via = 'auto'; }
+        else if (padrao && !TEC_GERAL.test(nn)) { id = padrao.id; via = 'padrao'; }
+        out.set(k, { id, via });
+      }
+      return out;
+    });
+  }
+  function setTecMap(courseId, patch) { const ed = editalOf(courseId) || {}; return setEdital(courseId, { tecMap: { ...(ed.tecMap || {}), ...patch } }); }
+  /* mapa do curso que mais se parece com o assunto (título e categoria pesam 1, tópicos 0,35) */
+  function tecMapaDoAssunto(courseId, nome, mapas) {
+    const ws = [...new Set(toks(nome))];
+    if (!ws.length) return null;
+    const idx = (typeof state !== 'undefined' && state.searchIndex?.items) || [];
+    let best = null;
+    for (const m of mapas) {
+      const t = new Set(toks([m.title, m.shortTitle, m.short_title, m.category].join(' '))), k = keyOf(m);
+      const tp = memo('tecTp:' + k, () => new Set(toks(idx.filter((it) => it.mapKey === k).map((it) => it.title).join(' '))));
+      const sc = ws.reduce((s, w) => s + (t.has(w) ? 1 : tp.has(w) ? 0.35 : 0), 0) / Math.sqrt(ws.length);
+      if (sc >= 0.5 && (!best || sc > best.sc)) best = { m, sc };
+    }
+    return best?.m || null;
+  }
+  /* nota real projetada pelo acerto no TEC, pontos fracos ponderados pelo edital e evolução entre leituras */
+  function tecResumo(courseId) {
+    return memo('tecR:' + courseId, () => {
+      const T = TEC(), list = tecList(), snap = list[0];
+      if (!T || !snap) return null;
+      const prova = provaOf(courseId), evol = list[1] ? T.delta(snap, list[1]) : null;
+      if (!prova.length) return { snap, evol, semProva: true, n: list.length };
+      const lig = tecLigacoes(courseId, snap), rg = regras(courseId), pe = pesoEsforco(courseId), cores = coresDisciplinas(courseId);
+      const rows = new Map(prova.map((d) => [d.id, { id: d.id, nome: d.nome, q: 0, a: 0, e: 0, materias: [] }]));
+      const fora = [];
+      for (const m of snap.materias) { const l = lig.get(tecKey(m.n)), r = l?.id && rows.get(l.id); if (!r) { fora.push(m); continue; } r.q += m.q; r.a += m.a; r.e += m.e; r.materias.push(m.n); }
+      const ligadas = [...rows.values()], qL = ligadas.reduce((s, r) => s + r.q, 0), aL = ligadas.reduce((s, r) => s + r.a, 0);
+      const geral = qL ? aL / qL : snap.total.a / snap.total.q;
+      const acertos = {}, erros = {};
+      for (const d of prova) {
+        const r = rows.get(d.id), tx = r.q ? r.a / r.q : geral, te = r.q ? r.e / r.q : 1 - geral;
+        r.taxa = tx; r.semDados = !r.q; r.amostra = r.q >= 60 ? 'boa' : r.q >= 20 ? 'media' : 'pequena';
+        acertos[d.id] = d.questoes * tx; erros[d.id] = d.questoes * te;
+      }
+      const res = pontuarCom(prova, rg, acertos, { erros });
+      const por = res.por.map((p) => ({ ...p, ...rows.get(p.id), cor: cores[p.id] || pe?.rows.find((r) => r.id === p.id)?.cor || 'var(--pr-latao)' }));
+      /* pontos fracos: assuntos com amostra mínima, sem repetir pai e filho, abaixo do alvo, pesados pelo valor da disciplina */
+      const totQ = prova.reduce((s, d) => s + d.questoes, 0) || 1, fracos = [];
+      for (const m of snap.materias) {
+        const l = lig.get(tecKey(m.n)), d = l?.id && prova.find((x) => x.id === l.id);
+        if (!d) continue;
+        const subs = m.s || [], mapas = pe?.rows.find((r) => r.id === d.id)?.mapas || [];
+        for (const x of subs) {
+          if (x.q < 6) continue;
+          const filhos = x.h !== 'sc' ? subs.filter((y) => y.h.startsWith(x.h + '.') && y.q >= 6) : [];
+          if (filhos.length) continue;
+          const tx = x.a / x.q, alvo = 0.7, gap = alvo - tx;
+          if (gap <= 0.05) continue;
+          const pai = x.h.includes('.') ? subs.find((y) => y.h === x.h.split('.').slice(0, -1).join('.')) : null;
+          const nome = x.h === 'sc' ? m.n + ' (sem classificação)' : x.n;
+          const mapa = tecMapaDoAssunto(courseId, x.n + ' ' + (pai?.n || ''), mapas) || tecMapaDoAssunto(courseId, x.n, mapsForCourse(courseId, { includeLinked: false }));
+          fracos.push({ nome, materia: m.n, pai: pai?.n || '', q: x.q, a: x.a, taxa: tx, disc: d.id, discNome: d.nome, cor: cores[d.id] || 'var(--pr-latao)', mapa, prioridade: gap * d.peso * Math.sqrt(d.questoes / totQ) * Math.log2(1 + x.q) });
+        }
+      }
+      fracos.sort((a, b) => b.prioridade - a.prioridade);
+      return { snap, evol, n: list.length, lig, por, res, geral, fora: fora.sort((a, b) => b.q - a.q), fracos: fracos.slice(0, 12), qLigadas: qL };
+    });
+  }
+  P.tec = { list: tecList, save: tecSave, remove: tecRemove, ligacoes: tecLigacoes, setMap: setTecMap, resumo: tecResumo, key: tecKey };
   /* matriz pelo programa: itens do edital (importados do kit) × mapas que os cobrem; sem programa, por disciplina */
   function matrizPrograma(courseId) {
     return memo('mp:' + courseId, () => {
