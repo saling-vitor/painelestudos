@@ -103,30 +103,52 @@
       E.FASES.filter(([id]) => id !== 'prova').map(([id, label]) => '<label class="pr-field"><span>' + esc(label) + '</span><input type="date" name="' + id + '" value="' + esc(e.fases?.[id]?.date || '') + '"></label>').join('') + '</div><button type="submit" class="pr-btn sm">Salvar cronograma</button></form></details>';
     return ui.card(ui.head('Régua do edital', 'Fases do concurso', '', 'l') + '<ol class="pr-regua" aria-label="Fases do concurso">' + cells + '</ol><p class="pr-detail">' + note + '</p>' + form, 'pr-regua-card');
   }
+  /* V15.61 · Raio-X por edital: quantas disciplinas o edital tiver, pontos por questão com decimais (0,51 · 1,10),
+     mínimo em pontos ou em acertos, títulos fora da objetiva e aviso quando a estrutura veio de outra banca */
+  const fpt = (n) => E.fmtPt(n);
+  function discRow(d, i) {
+    const em = d.minimoEm === 'acertos' ? 'acertos' : 'pontos';
+    return '<div class="pr-fgrid d" data-row="' + i + '"><label class="pr-field"><span>Disciplina' + (d.nova ? ' (nova)' : '') + '</span><input name="nome' + i + '" value="' + esc(d.nome || '') + '" maxlength="80"' + (d.nova ? ' placeholder="Opcional"' : '') + '></label><label class="pr-field"><span>Questões</span><input name="questoes' + i + '" type="number" min="0" inputmode="numeric" value="' + esc(d.questoes ?? '') + '"></label><label class="pr-field"><span>Pts/questão</span><input name="peso' + i + '" type="number" min="0" step="any" inputmode="decimal" value="' + esc(d.peso ?? 1) + '" title="Peso ou valor de cada questão, como no quadro do edital (ex.: 2 · 0,51 · 1,10)"></label><label class="pr-field"><span>Mínimo</span><input name="minimo' + i + '" type="number" min="0" step="any" inputmode="decimal" value="' + esc(d.minimo ?? '') + '"></label><label class="pr-field"><span>Mínimo em</span><select name="minimoEm' + i + '"><option value="pontos"' + (em === 'pontos' ? ' selected' : '') + '>pontos</option><option value="acertos"' + (em === 'acertos' ? ' selected' : '') + '>acertos</option></select></label><input type="hidden" name="id' + i + '" value="' + esc(d.id || '') + '"></div>';
+  }
   function provaForm(c, prova, e, cats) {
-    const rows = (prova.length ? prova : [{ id: '', nome: '', questoes: '', peso: 1, minimo: '' }]).concat([{ id: '', nome: '', questoes: '', peso: 1, minimo: '', nova: true }]);
-    const disc = rows.map((d, i) => '<div class="pr-fgrid d" data-row="' + i + '"><label class="pr-field"><span>Disciplina' + (d.nova ? ' (nova)' : '') + '</span><input name="nome' + i + '" value="' + esc(d.nome || '') + '" maxlength="60"' + (d.nova ? ' placeholder="Opcional"' : '') + '></label><label class="pr-field"><span>Questões</span><input name="questoes' + i + '" type="number" min="0" inputmode="numeric" value="' + esc(d.questoes ?? '') + '"></label><label class="pr-field"><span>Peso</span><input name="peso' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.peso ?? 1) + '"></label><label class="pr-field"><span>Mínimo</span><input name="minimo' + i + '" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(d.minimo ?? '') + '"></label><input type="hidden" name="id' + i + '" value="' + esc(d.id || '') + '"></div>').join('');
+    const blank = () => ({ id: '', nome: '', questoes: '', peso: 1, minimo: '', minimoEm: 'pontos', nova: true });
+    /* três linhas em branco: editais com 5 ou 6 disciplinas se preenchem de uma vez */
+    const rows = (prova.length ? prova : []).concat([blank(), blank(), blank()]);
+    const disc = rows.map(discRow).join('');
     const link = prova.length && cats.length ? '<span class="pr-k">Categoria dos mapas → disciplina</span><div class="pr-fgrid">' + cats.map((cat, j) => { const cur = E.disciplinaDoMapa({ category: cat }, c.id); return '<label class="pr-field"><span>' + esc(cat) + '</span><select name="cat' + j + '" data-cat="' + esc(cat) + '">' + prova.map((d) => '<option value="' + esc(d.id) + '"' + (cur?.id === d.id ? ' selected' : '') + '>' + esc(d.nome) + '</option>').join('') + '</select></label>'; }).join('') + '</div>' : '';
     const cargo = e.cargo || {};
     const ficha = '<span class="pr-k">Ficha do cargo (opcional)</span><div class="pr-fgrid">' + [['vagas', 'Vagas'], ['carga', 'Carga horária'], ['vencimento', 'Vencimento'], ['validade', 'Validade do concurso'], ['desempate', 'Desempate']].map(([k, l]) => '<label class="pr-field"><span>' + l + '</span><input name="cargo_' + k + '" value="' + esc(cargo[k] || '') + '" maxlength="80"></label>').join('') + '</div>';
-    return '<form data-pr-submit="save-prova" data-course="' + esc(c.id) + '" data-n="' + rows.length + '" data-cats="' + esc(JSON.stringify(cats)) + '">' + disc + '<div class="pr-fgrid"><label class="pr-field"><span>Mínimo geral (pontos)</span><input name="minimoGeral" type="number" min="0" step="0.5" inputmode="decimal" value="' + esc(e.minimoGeral ?? '') + '"></label><label class="pr-field"><span>Fonte</span><input name="fonte" value="' + esc(e.fonte || '') + '" maxlength="120" placeholder="Ex.: edital, item 13.1.2"></label></div>' + link + ficha + '<div class="pr-row"><button type="submit" class="pr-btn sm">Salvar estrutura</button>' + (prova.length ? ui.btn('Remover estrutura', ui.act('clear-prova', c.id), 'g sm') : '') + '</div></form>';
+    return '<form data-pr-submit="save-prova" data-course="' + esc(c.id) + '" data-n="' + rows.length + '" data-cats="' + esc(JSON.stringify(cats)) + '"><p class="pr-mono">Copie o quadro de provas do edital: uma linha por componente, do jeito que a banca escreve (ex.: “Atualidades / Língua Portuguesa”). Linha sem nome é ignorada; para remover uma disciplina, apague o nome.</p>' + disc + '<div class="pr-fgrid"><label class="pr-field"><span>Banca</span><input name="banca" value="' + esc(e.banca || '') + '" maxlength="40" placeholder="Ex.: AOCP"></label><label class="pr-field"><span>Mínimo geral da objetiva (pontos)</span><input name="minimoGeral" type="number" min="0" step="any" inputmode="decimal" value="' + esc(e.minimoGeral ?? '') + '"></label><label class="pr-field"><span>Títulos (pontos máx.)</span><input name="titulos" type="number" min="0" step="any" inputmode="decimal" value="' + esc(e.titulos ?? '') + '" placeholder="Sem títulos"></label><label class="pr-field"><span>Fonte</span><input name="fonte" value="' + esc(e.fonte || '') + '" maxlength="120" placeholder="Ex.: edital, Anexo III"></label></div>' + link + ficha + '<div class="pr-row"><button type="submit" class="pr-btn sm">Salvar estrutura</button>' + ui.btn('Importar .json do edital', ui.act('import-kit', c.id), 'g sm') + (prova.length ? ui.btn('Remover estrutura', ui.act('clear-prova', c.id), 'g sm') : '') + '</div></form>';
+  }
+  /* estrutura gravada de uma banca, curso de outra: foi o que deixou a CASAN (AOCP) com a prova do DEMHAB (FUNDATEC) */
+  function bancaDiverge(c, e) {
+    const b = U.norm(c.board || ''), eb = U.norm(e.banca || '');
+    if (b && eb) return !b.includes(eb) && !eb.includes(b) ? e.banca : '';
+    const m = /(FUNDATEC|AOCP|FGV|CEBRASPE|CESPE|VUNESP|FCC|OBJETIVA|FEPESE|IBAM|IBFC|QUADRIX|LEGALLE|LA ?SALLE)/i.exec(e.fonte || '');
+    return b && m && !b.includes(U.norm(m[1])) ? m[1].toUpperCase() : '';
   }
   function raioX(c, all) {
     const prova = E.prova(c.id), e = E.get(c.id) || {}, cats = [...new Set(all.map((m) => m.category).filter(Boolean))];
     if (!prova.length) {
       const pad = E.padraoDaBanca(c.board), list = Object.keys(E.padroes());
-      const use = pad ? ui.btn('Usar estrutura ' + esc(pad.banca), ui.act('apply-padrao', c.id + '|' + pad.banca), 'p sm') : list.length ? '<span class="pr-row">' + list.map((b) => ui.btn('Usar ' + esc(b), ui.act('apply-padrao', c.id + '|' + b), 'g sm')).join('') + '</span>' : '';
-      return ui.card(ui.head('Raio-X da prova', 'Estrutura ainda não informada', '', 'l') + '<p class="pr-detail">Com questões, pesos e mínimos de cada disciplina, o curso passa a mostrar quanto cada mapa vale na prova e a nota no formato da banca.' + (pad ? ' A banca deste curso tem um padrão salvo em Configurações.' : '') + '</p>' + use + '<details class="pr-add"><summary>Informar manualmente</summary>' + provaForm(c, [], e, cats) + '</details>', 'pr-raiox-card');
+      const use = pad ? ui.btn('Usar estrutura ' + esc(pad.banca), ui.act('apply-padrao', c.id + '|' + pad.banca), 'p sm') : list.length ? '<span class="pr-row"><span class="pr-mono">Padrões de outras bancas (confira com o edital):</span>' + list.map((b) => ui.btn('Usar ' + esc(b), ui.act('apply-padrao', c.id + '|' + b), 'g sm')).join('') + '</span>' : '';
+      return ui.card(ui.head('Raio-X da prova', 'Estrutura ainda não informada', '', 'l') + '<p class="pr-detail">Com questões, pontos e mínimos de cada disciplina, o curso passa a mostrar quanto cada mapa vale na prova e a nota no formato da banca.' + (pad ? ' A banca deste curso tem um padrão salvo em Configurações.' : '') + '</p>' + use + '<div class="pr-row">' + ui.btn('Importar .json do edital', ui.act('import-kit', c.id), 'g sm') + '</div><details class="pr-add"><summary>Informar manualmente</summary>' + provaForm(c, [], e, cats) + '</details>', 'pr-raiox-card');
     }
-    const max = E.pontosMax(prova), mg = E.minimoGeral(c.id);
+    const max = E.pontosMax(prova), mg = E.minimoGeral(c.id), tit = E.titulos(c.id), nq = prova.reduce((n, d) => n + d.questoes, 0);
     const disc = prova.map((d) => {
       const ms = all.filter((m) => E.disciplinaDoMapa(m, c.id)?.id === d.id), color = ms[0] ? P.mapColor(ms[0]) : 'var(--pr-latao)';
-      return '<div class="pr-dsc" style="--c:' + color + '"><span class="pr-k">' + esc(d.nome) + (d.padrao ? ' · demais conteúdos' : '') + '</span><b class="pr-sig">' + d.questoes + ' q</b><div class="pr-dcells"><span><i>Peso</i>' + String(d.peso).replace('.', ',') + '</span><span><i>Pontos</i>' + String(d.questoes * d.peso).replace('.', ',') + '</span><span><i>Mínimo</i>' + String(d.minimo).replace('.', ',') + '</span></div><div class="pr-row">' + (ms.length ? ms.map((m) => '<span class="pr-chip c" style="--c:' + P.mapColor(m) + '">' + esc(m.code || m.title) + '</span>').join('') : '<span class="pr-mono">nenhum mapa ligado</span>') + '</div></div>';
+      const pts = d.questoes * d.peso, share = max ? Math.round((pts / max) * 100) : 0;
+      const minTxt = !d.minimo ? '—' : d.minimoEm === 'acertos' ? fpt(d.minimo) + ' ac.<small>' + fpt(E.minPts(d)) + ' pts</small>' : fpt(d.minimo);
+      return '<div class="pr-dsc" style="--c:' + color + '"><span class="pr-k">' + esc(d.nome) + (d.padrao ? ' · demais conteúdos' : '') + '</span><b class="pr-sig">' + d.questoes + ' q<small>' + share + '% da objetiva</small></b><div class="pr-dcells"><span><i>' + (d.peso === 1 ? 'Peso' : 'Pts/q') + '</i>' + fpt(d.peso) + '</span><span><i>Pontos</i>' + fpt(pts) + '</span><span><i>Mínimo</i>' + minTxt + '</span></div><div class="pr-row">' + (ms.length ? ms.map((m) => '<span class="pr-chip c" style="--c:' + P.mapColor(m) + '">' + esc(m.code || m.title) + '</span>').join('') : '<span class="pr-mono">nenhum mapa ligado</span>') + '</div></div>';
     }).join('');
     const cargo = e.cargo || {}, fichaCells = [['Vagas', cargo.vagas], ['Carga horária', cargo.carga], ['Vencimento', cargo.vencimento], ['Validade', cargo.validade], ['Desempate', cargo.desempate]].filter(([, v]) => v);
     const ficha = fichaCells.length ? '<div class="pr-ficha">' + fichaCells.map(([l, v]) => '<span><i>' + l + '</i>' + esc(v) + '</span>').join('') + '</div>' : '';
-    const sub = prova.reduce((n, d) => n + d.questoes, 0) + ' questões · ' + String(max).replace('.', ',') + ' pontos' + (mg !== null ? ' · mínimo geral ' + String(mg).replace('.', ',') : '');
-    return ui.card(ui.head('Raio-X da prova', sub, e.fonte ? '<span class="pr-mono">' + esc(e.fonte) + '</span>' : '', 'l') + '<div class="pr-dscs">' + disc + '</div>' + ficha + '<details class="pr-add"><summary>Editar estrutura da prova</summary>' + provaForm(c, prova, e, cats) + '</details>', 'pr-raiox-card');
+    const semMin = prova.every((d) => !d.minimo);
+    const regra = '<div class="pr-ficha pr-regra">' + [['Objetiva', fpt(max) + ' pts'], ['Mínimo geral', mg !== null ? fpt(mg) + ' pts' + (max ? ' (' + Math.round((mg / max) * 100) + '%)' : '') : '—'], ['Mínimo por disciplina', semMin ? 'não há' : prova.filter((d) => d.minimo).length + ' de ' + prova.length], tit ? ['Títulos', 'até ' + fpt(tit) + ' pts'] : null, tit ? ['Nota final máx.', fpt(max + tit) + ' pts'] : null].filter(Boolean).map(([l, v]) => '<span><i>' + l + '</i>' + v + '</span>').join('') + '</div>';
+    const outra = bancaDiverge(c, e);
+    const alerta = outra ? ui.verdict('', 'Esta estrutura veio de ' + esc(outra) + ', mas o curso é ' + esc(c.board) + '.', 'Cada edital monta a prova do seu jeito: confira o quadro de provas e ajuste em “Editar estrutura da prova”, ou importe o .json do edital.') : '';
+    const sub = prova.length + ' ' + plural(prova.length, 'disciplina') + ' · ' + nq + ' questões · ' + fpt(max) + ' pontos' + (mg !== null ? ' · mínimo geral ' + fpt(mg) : '') + (tit ? ' · + ' + fpt(tit) + ' de títulos' : '');
+    return ui.card(ui.head('Raio-X da prova', sub, e.fonte ? '<span class="pr-mono">' + esc(e.fonte) + '</span>' : '', 'l') + alerta + regra + '<div class="pr-dscs">' + disc + '</div>' + ficha + '<details class="pr-add"><summary>Editar estrutura da prova</summary>' + provaForm(c, prova, e, cats) + '</details>', 'pr-raiox-card');
   }
   /* V15.57 · fechamento no curso: gabarito, recursos ligados aos mapas e aguardando convocação */
   const REC_ST = [['preparando', 'Preparando'], ['enviado', 'Enviado'], ['deferido', 'Deferido'], ['indeferido', 'Indeferido']];
@@ -389,7 +411,7 @@
     'save-prova': (fd, form) => {
       const id = form.dataset.course, n = Number(form.dataset.n) || 0, cats = U.safeJson(form.dataset.cats || '[]', []);
       const prova = [];
-      for (let i = 0; i < n; i++) { const nome = String(fd.get('nome' + i) || '').trim(); if (!nome) continue; prova.push({ id: String(fd.get('id' + i) || ''), nome, questoes: fd.get('questoes' + i), peso: fd.get('peso' + i), minimo: fd.get('minimo' + i), categorias: [] }); }
+      for (let i = 0; i < n; i++) { const nome = String(fd.get('nome' + i) || '').trim(); if (!nome) continue; prova.push({ id: String(fd.get('id' + i) || ''), nome, questoes: fd.get('questoes' + i), peso: fd.get('peso' + i), minimo: fd.get('minimo' + i), minimoEm: String(fd.get('minimoEm' + i) || 'pontos'), categorias: [] }); }
       let list = E.normProva(prova);
       if (!list.length) { if (typeof toast === 'function') toast('Informe ao menos uma disciplina com número de questões.'); return; }
       const prev = E.prova(id);
@@ -398,11 +420,12 @@
       if (!list.some((d) => d.padrao)) list[list.length - 1].padrao = true;
       const cargo = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) { const v = String(fd.get('cargo_' + k) || '').trim(); if (v) cargo[k] = v; }
       const mg = String(fd.get('minimoGeral') || '').trim();
-      E.set(id, { prova: list, minimoGeral: mg === '' ? null : Number(mg.replace(',', '.')), fonte: String(fd.get('fonte') || '').trim(), cargo });
+      const tt = String(fd.get('titulos') || '').trim(), banca = String(fd.get('banca') || '').trim().toUpperCase().slice(0, 40);
+      E.set(id, { prova: list, minimoGeral: mg === '' ? null : Number(mg.replace(',', '.')), titulos: tt === '' ? null : Number(tt.replace(',', '.')), banca, fonte: String(fd.get('fonte') || '').trim(), cargo });
       if (typeof toast === 'function') toast('Estrutura da prova salva.');
       P.schedule('course');
     },
-    'clear-prova': (id, el) => P.armed(el, () => { E.set(id, { prova: [], minimoGeral: null }); P.schedule('course'); }, 'Toque de novo para remover'),
+    'clear-prova': (id, el) => P.armed(el, () => { E.set(id, { prova: [], minimoGeral: null, titulos: null, banca: '', fonte: '' }); P.schedule('course'); }, 'Toque de novo para remover'),
     'apply-padrao': (arg) => { const [id, banca] = String(arg).split('|'); if (E.aplicarPadrao(id, banca) && typeof toast === 'function') toast('Estrutura ' + banca + ' aplicada. Confira e ajuste se o edital for diferente.'); P.schedule('course'); },
     'recurso-add': (fd, form) => {
       const id = form.dataset.course, cl = P.courses.closure(id), q = Math.round(Number(fd.get('questao')));

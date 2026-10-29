@@ -610,6 +610,19 @@
       ],
       minimoGeral: 50,
       fonte: 'Edital DEMHAB 001/2026, item 13.1.2 (60 questões, nível superior)'
+    },
+    /* V15.61 · AOCP (CASAN 003/2026, Tabela 9.1): 50 questões de 1 ponto, sem mínimo por área, 50% no total, títulos até 10 */
+    AOCP: {
+      prova: [
+        { id: 'lp', nome: 'Língua Portuguesa', questoes: 10, peso: 1, minimo: 0, categorias: ['Português'] },
+        { id: 'rlm', nome: 'Raciocínio Lógico-Matemático', questoes: 7, peso: 1, minimo: 0, categorias: [] },
+        { id: 'atu', nome: 'Conhecimentos Gerais - Atualidades', questoes: 3, peso: 1, minimo: 0, categorias: [] },
+        { id: 'leg', nome: 'Legislação', questoes: 5, peso: 1, minimo: 0, categorias: ['Legislação e Administração'] },
+        { id: 'esp', nome: 'Conhecimentos Específicos', questoes: 25, peso: 1, minimo: 0, categorias: [], padrao: true }
+      ],
+      minimoGeral: 25,
+      titulos: 10,
+      fonte: 'Edital CASAN 003/2026, Tabela 9.1 (50 questões, todos os cargos)'
     }
   };
   const ALCANCES = [['local', 'Local'], ['estadual', 'Estadual'], ['portatil', 'Portátil'], ['misto', 'Misto']];
@@ -619,8 +632,13 @@
     const nome = String(d.nome || '').trim();
     if (!nome) return null;
     const id = String(d.id || norm(nome).replace(/\s+/g, '-') || 'd' + i).slice(0, 40);
-    return { id, nome, questoes: Math.max(0, Math.round(num(d.questoes))), peso: Math.max(0, num(d.peso, 1)), minimo: Math.max(0, num(d.minimo)), categorias: Array.isArray(d.categorias) ? d.categorias.map(String) : [], padrao: !!d.padrao };
+    /* V15.61 · o mínimo pode vir em pontos (DEMHAB) ou em número de acertos (Ijuí: "Nº mínimo de acertos p/ componente") */
+    const minimoEm = d.minimoEm === 'acertos' ? 'acertos' : 'pontos';
+    return { id, nome, questoes: Math.max(0, Math.round(num(d.questoes))), peso: Math.max(0, num(d.peso, 1)), minimo: Math.max(0, num(d.minimo)), minimoEm, categorias: Array.isArray(d.categorias) ? d.categorias.map(String) : [], padrao: !!d.padrao };
   }
+  /* mínimo da disciplina sempre em pontos, para comparar com a nota */
+  const minPts = (d) => Math.round((d.minimoEm === 'acertos' ? d.minimo * d.peso : d.minimo) * 100) / 100;
+  function titulosOf(courseId) { const v = num(editalOf(courseId)?.titulos, NaN); return Number.isFinite(v) && v > 0 ? v : null; }
   function normProva(list) {
     const out = (Array.isArray(list) ? list : []).map(normDisc).filter((d) => d && d.questoes > 0);
     if (out.length && !out.some((d) => d.padrao)) out[out.length - 1].padrao = true;
@@ -650,7 +668,8 @@
       const a = Math.max(0, Math.min(d.questoes, Math.round(num(acertos[d.id]))));
       const pts = Math.round(a * d.peso * 100) / 100;
       pontos += pts; corretas += a; questoes += d.questoes;
-      return { id: d.id, nome: d.nome, acertos: a, questoes: d.questoes, peso: d.peso, pontos: pts, max: d.questoes * d.peso, minimo: d.minimo, ok: pts >= d.minimo, falta: Math.max(0, Math.round((d.minimo - pts) * 100) / 100) };
+      const mp = minPts(d);
+      return { id: d.id, nome: d.nome, acertos: a, questoes: d.questoes, peso: d.peso, pontos: pts, max: d.questoes * d.peso, minimo: mp, minimoAcertos: d.minimoEm === 'acertos' ? d.minimo : null, ok: d.minimoEm === 'acertos' ? a >= d.minimo : pts >= mp, falta: Math.max(0, Math.round((mp - pts) * 100) / 100) };
     });
     pontos = Math.round(pontos * 100) / 100;
     const mg = minimoGeral(courseId), falhas = por.filter((x) => !x.ok);
@@ -698,7 +717,7 @@
   function aplicarPadrao(courseId, banca) {
     const p = padroes()[String(banca || '').toUpperCase()];
     if (!p) return null;
-    return setEdital(courseId, { banca: String(banca).toUpperCase(), prova: p.prova, minimoGeral: p.minimoGeral ?? null, fonte: p.fonte || '' });
+    return setEdital(courseId, { banca: String(banca).toUpperCase(), prova: p.prova, minimoGeral: p.minimoGeral ?? null, titulos: p.titulos ?? null, fonte: p.fonte || '' });
   }
   /* alcance do mapa: escolha do usuário > catálogo > categoria (Legislação tende a ser local) */
   function alcance(map) {
@@ -767,7 +786,7 @@
     });
   }
   const fmtPt = (n) => (Math.round(Number(n || 0) * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt };
+  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf };
 
 
   /* ---------- V15.58 · taxonomia única de armadilhas (conceito 04 do Template de estudos) ----------
@@ -876,7 +895,7 @@
         const dom = peso ? acc / peso / 100 : 0, pts = Math.round(r.pontos * dom * 10) / 10;
         if (est) estimativa = true;
         total += pts;
-        return { id: r.id, nome: r.nome, pontos: pts, max: r.pontos, minimo: r.disc.minimo, dominio: Math.round(dom * 100), estimativa: est, cor: r.cor, ok: pts >= r.disc.minimo };
+        return { id: r.id, nome: r.nome, pontos: pts, max: r.pontos, minimo: minPts(r.disc), dominio: Math.round(dom * 100), estimativa: est, cor: r.cor, ok: pts >= minPts(r.disc) };
       });
       const mg = minimoGeral(courseId);
       return { por, pontos: Math.round(total * 10) / 10, max: pe.totPontos, minimoGeral: mg, estimativa, aprovado: por.every((x) => x.ok) && (mg === null || total >= mg) };
@@ -920,6 +939,7 @@
   P.mastery.matriz = matrizPrograma;
 
   /* planejamento do kit (meus-mapas/app-edital/v1): prova, fases e programa → edital do curso. Valida antes de gravar. */
+  const prov0 = (e) => Array.isArray(e?.programa) && e.programa.length;
   function importKit(courseId, raw) {
     let j = raw;
     if (typeof j === 'string') { try { j = JSON.parse(j); } catch { throw new Error('O arquivo não é um JSON válido.'); } }
@@ -931,8 +951,9 @@
     for (const f of Array.isArray(j.fases) ? j.fases : []) { const id = String(f?.id || '').toLowerCase(), d = String(f?.data || f?.date || ''); if (ids.has(id) && /^\d{4}-\d{2}-\d{2}$/.test(d)) { fases[id] = { date: d }; nf++; } }
     if (!prova.length && !programa.length) throw new Error('O planejamento não traz prova nem programa.');
     const prev = editalOf(courseId) || {};
-    const patch = { programa, fases, fonte: String(j.fonte || 'Kit Meus Mapas').slice(0, 200), importadoEm: new Date().toISOString() };
-    if (prova.length) { patch.prova = prova; patch.minimoGeral = j.minimoGeral ?? prev.minimoGeral ?? null; }
+    const patch = { ...(programa.length || !prov0(prev) ? { programa } : {}), fases, fonte: String(j.fonte || 'Kit Meus Mapas').slice(0, 200), importadoEm: new Date().toISOString() };
+    if (prova.length) { patch.prova = prova; patch.minimoGeral = j.minimoGeral ?? prev.minimoGeral ?? null; patch.titulos = j.titulos ?? prev.titulos ?? null; }
+    if (j.cargo && typeof j.cargo === 'object') { const cg = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) if (j.cargo[k]) cg[k] = String(j.cargo[k]).slice(0, 80); if (Object.keys(cg).length) patch.cargo = cg; }
     if (j.banca) patch.banca = String(j.banca).toUpperCase().slice(0, 40);
     /* mapas da série: disciplina principal e alcance por sigla (gerar_edital_app.py do kit REV07) */
     const ms = (Array.isArray(j.mapas) ? j.mapas : []).slice(0, 200), dids = new Set((prova.length ? prova : normProva(editalOf(courseId)?.prova)).map((d) => d.id));

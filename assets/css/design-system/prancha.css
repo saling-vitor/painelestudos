@@ -617,7 +617,9 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-regua li.atual .t{color:var(--pr-latao-c)}
 .pr-regua li .pr-chip{justify-self:start}
 .pr-fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.pr-fgrid.d{grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));align-items:end}
+.pr-fgrid.d{grid-template-columns:minmax(0,2.2fr) repeat(4,minmax(0,1fr));align-items:end}
+.pr-dsc>.pr-sig small,.pr-dcells small{display:block;font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);font-weight:500;letter-spacing:.04em;color:var(--pr-papel-3)}
+.pr-regra{margin:0 0 10px}
 .pr-dscs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 .pr-dsc{display:grid;gap:8px;align-content:start;padding:12px 14px;border:1px solid var(--pr-linha);border-top:3px solid var(--c);border-radius:10px;background:var(--pr-g0);min-width:0}
 .pr-dsc>.pr-sig{font-size:var(--fs-h1);color:var(--c)}
@@ -632,7 +634,7 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-gab .tr>em{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--pr-oxido)}
 .pr-gab .v{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-2);white-space:nowrap}
 .pr-gab .v.ox{color:var(--pr-oxido)}
-@media (max-width:700px){.pr-fgrid.d{grid-template-columns:repeat(3,minmax(0,1fr))}.pr-fgrid.d>.pr-field:first-child{grid-column:1/-1}.pr-gab .ln{grid-template-columns:minmax(0,1fr) auto}.pr-gab .ln .tr{grid-column:1/-1;grid-row:2}}
+@media (max-width:700px){.pr-fgrid.d{grid-template-columns:repeat(4,minmax(0,1fr))}.pr-fgrid.d>.pr-field:first-child{grid-column:1/-1}.pr-gab .ln{grid-template-columns:minmax(0,1fr) auto}.pr-gab .ln .tr{grid-column:1/-1;grid-row:2}}
 /* V15.57 · marcos do cronograma na agenda e situação dos recursos */
 .pr-wd .mks{display:grid;gap:3px;justify-items:start}
 .pr-marco{font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);letter-spacing:.04em;line-height:1.25;padding:2px 6px;border-radius:5px;border:1px solid color-mix(in srgb,var(--pr-latao) 45%,transparent);color:var(--pr-latao-c);max-width:100%;overflow-wrap:anywhere;text-align:left}
