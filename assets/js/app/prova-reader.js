@@ -185,7 +185,7 @@
     const t0 = texto.slice(0, 2).join('\n'), linhas = (texto[0].trim().length > 80 ? texto[0] : t0).split('\n').map((s) => s.trim()).filter((l) => l && !/^\(/.test(l));
     const tudo = texto.join(' '), banca = /fundatec/i.test(tudo) ? 'FUNDATEC' : /instituto aocp|\bT\d{7}N\b|\bM\d{7}N\b/i.test(texto.join(' ')) ? 'Instituto AOCP' : /objetiva concursos|objetivas? concursos|objetivas\.com\.br/i.test(tudo) ? 'Objetiva' : /cebraspe|cespe/i.test(t0) ? 'Cebraspe' : /\bfgv\b|getulio vargas/i.test(t0) ? 'FGV' : /\bfcc\b|carlos chagas/i.test(t0) ? 'FCC' : /fepese/i.test(t0) ? 'FEPESE' : /legalle/i.test(t0) ? 'Legalle' : '';
     const edital = (t0.match(/edital[^\n]{0,80}?n[º°o.]?\s*[\d./-]+(?:\s*[-–]\s*[A-Z]+)?/i) || [''])[0].replace(/\s+/g, ' ').trim();
-    const ent = [...new Set(linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9 .,–\-/()]{8,}$/.test(l) && !/edital|n[íi]vel|tipo|turno|inscri|nome|caderno|instituto aocp|fundatec|objetiva|^T\d+N$|^M\d+N$/i.test(l)))].slice(0, 3);
+    const ent = [...new Set(linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9 .,–\-/()]{8,}$/.test(l) && !/edital|n[íi]vel|tipo|turno|inscri|nome|caderno|instituto aocp|fundatec|objetiva|^concurso|^T\d+N$|^M\d+N$/i.test(l)))].slice(0, 3);
     const CARGO = /arquitet|engenh|analista|t[eé]cnico|profissional|especialista|agente|professor|assistente|auditor|fiscal|perito|urbanista/i;
     const cands = linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => l.length >= 6 && l.length <= 90 && CARGO.test(l) && l === l.toUpperCase() && !/minist[eé]rio|prefeitura|secretaria|companhia|instituto|funda[cç][aã]o|universidade|munic[ií]pio/i.test(l));
     /* Objetiva e outras escrevem cargo e órgão em caixa normal: “Arquiteto (20h e 40h)”, “Município de Rio Negro/PR” */
@@ -197,7 +197,7 @@
     const meio = cargo.length / 2;
     if (cargo.length > 10 && cargo.length % 2 === 0 && cargo.slice(0, meio) === cargo.slice(meio)) cargo = cargo.slice(0, meio);
     const tipo = (texto.join('\n').match(/tipo\s*0*(\d)\b/i) || [])[1] || '';
-    let entidade = ent.filter((l) => l !== cargo).slice(0, 2).join(' — ');
+    let entidade = ent.filter((l) => l !== cargo).slice(0, 2).reduce((a, l) => (!a ? l : /^(do|da|de|dos|das|e)\b/i.test(l) ? a + ' ' + l : a + ' — ' + l), '');
     if (!entidade) entidade = (linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).find((l) => /^(m+unic[ií]pio|prefeitura|c[aâ]mara|minist[eé]rio|tribunal|governo|estado|universidade|companhia|funda[cç][aã]o|departamento|secretaria)\b/i.test(l) && l.length < 90) || '').replace(/^MM/, 'M');
     return { banca, edital, entidade, cargo: cargo.replace(/\s+/g, ' ').trim(), tipo };
   }

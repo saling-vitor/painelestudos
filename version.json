@@ -1,14 +1,14 @@
 {
-  "version": "15.65.1",
-  "label": "V15.65.1-G",
-  "notes": "Simulado da prova: .zip, gabaritos com dezenas de cargos, Objetiva e FEPESE, pareamento por concurso.",
+  "version": "15.65.2",
+  "label": "V15.65.2-G",
+  "notes": "Importar simulado com a capa Padrão não falha mais.",
   "showWhatsNew": true,
   "highlights": [
+    "[G] Importar simulados: a capa “Padrão MEUS MAPAS” não trava mais a importação (a nuvem só aceitava as capas antigas); a escolha fica guardada no aparelho",
+    "[G] Simulado de prova: nome do órgão completo (ex.: Ministério Público do Estado do Espírito Santo) no título e no código",
     "[G] Lote aceita .zip com cadernos e gabaritos; cada caderno é pareado com o gabarito do mesmo concurso (cidade, órgão, sigla, edital) e dá para trocar à mão",
     "[G] Gabaritos com dezenas de cargos (FUNDATEC Tapera, Flores da Cunha, MPES…) lidos bloco a bloco pelo código do cargo",
-    "[G] Cadernos da Objetiva (“6)” e “a)”) e da FEPESE (“a.”) lidos; caderno já respondido pode virar gabarito",
-    "[G] TEC no plano de estudo; meta por disciplina, curva, mapa por assunto, aviso de planilha antiga (V15.65.0)",
-    "[G] Simulado da prova: FUNDATEC, gabarito em foto (OCR), revisão questão a questão e banco de questões (V15.65.0)"
+    "[G] Cadernos da Objetiva (“6)” e “a)”) e da FEPESE (“a.”) lidos; caderno já respondido pode virar gabarito"
   ],
   "automation": {
     "enabled": true,
@@ -16,5 +16,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T19:44:11-03:00"
+  "releasedAt": "2026-10-29T19:55:14-03:00"
 }

@@ -169,3 +169,24 @@ test('Prova [G] · Objetiva (“6)” e “a)”) e FEPESE (“a. SQUARE”, res
   expect(r.b1).toBe('alternativa b.');
   expect(r.marc).toBe('BCDEA');
 });
+
+test('Simulados [G] · capa “Padrão” recusada pela nuvem (cover_key_check) vira “auto” e a escolha fica no aparelho', async ({ page }) => {
+  await setupPrancha(page, { courses: [CASAN] });
+  const bodies = [];
+  await page.route('**/rest/v1/simulations**', async (route) => {
+    const r = route.request(), cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' };
+    if (r.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
+    if (r.method() === 'GET') return route.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: '[]' });
+    const b = JSON.parse(r.postData() || '{}'), row = Array.isArray(b) ? b[0] : b; bodies.push(row.cover_key);
+    if (row.cover_key === 'padrao') return route.fulfill({ status: 400, headers: cors, contentType: 'application/json', body: JSON.stringify({ code: '23514', message: 'new row for relation "simulations" violates check constraint "simulations_cover_key_check"' }) });
+    return route.fulfill({ status: 201, headers: cors, contentType: 'application/json', body: '[]' });
+  });
+  const r = await page.evaluate(async () => {
+    await simulationUpsertComCapa({ user_id: 'e2e-user', course_id: 'casan', code: 'PROVA_TESTE', title: 'Prova teste', board: 'FGV', cover_key: 'padrao' });
+    return { mapa: simulationCapaLocal(), key: simulationCoverKey({ courseId: 'casan', code: 'PROVA_TESTE', coverKey: 'auto', board: 'FGV' }), semBanca: simulationCoverKey({ courseId: 'x', code: 'y', coverKey: 'auto', board: 'FGV' }) };
+  });
+  expect(bodies).toEqual(['padrao', 'auto']);
+  expect(r.mapa['casan|prova_teste']).toBe('padrao');
+  expect(r.key).toBe('padrao');
+  expect(r.semBanca).toBe('padrao');
+});
