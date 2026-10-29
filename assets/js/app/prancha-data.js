@@ -772,6 +772,26 @@
     if (rg.notaFinal === 'media') return 'Nota final = (' + nomes.join(' + ') + ') ÷ ' + nomes.length;
     return 'Nota final = ' + nomes.join(' + ');
   }
+  /* V15.62 · cor de cada disciplina: a escolhida no Raio-X; senão a do mapa ligado; senão a da categoria; senão o próximo
+     pigmento livre. Sem repetir cor entre disciplinas, para o Raio-X e o Peso × Esforço lerem de relance. */
+  const PIG_FILA = ['latao', 'terracota', 'salvia', 'ardosia', 'ametista', 'ocre', 'patina', 'argila', 'cobalto', 'rosa', 'folha', 'canela', 'ceu', 'malva', 'palha', 'petroleo', 'coral', 'indigo', 'pedra'];
+  function coresDisciplinas(courseId) {
+    return memo('ec:' + courseId, () => {
+      const prova = provaOf(courseId), escolha = editalOf(courseId)?.cores || {}, out = {}, usadas = new Set();
+      if (!prova.length) return out;
+      const maps = mapsForCourse(courseId, { includeLinked: true });
+      const livre = () => { const k = PIG_FILA.find((n) => PIG[n] && !usadas.has(PIG[n])); return k ? PIG[k] : '#c3aa84'; };
+      for (const d of prova) if (escolha[d.id] && PIG[escolha[d.id]]) { out[d.id] = PIG[escolha[d.id]]; usadas.add(out[d.id]); }
+      for (const d of prova) {
+        if (out[d.id]) continue;
+        const m = maps.find((x) => disciplinaDoMapa(x, courseId)?.id === d.id);
+        let c = m ? mapColor(m) : d.categorias[0] ? categoryPigment(d.categorias[0]) : null;
+        if (!c || usadas.has(c)) c = livre();
+        out[d.id] = c; usadas.add(c);
+      }
+      return out;
+    });
+  }
   function pontuar(courseId, acertos = {}, opts = {}) { return pontuarCom(provaOf(courseId), regras(courseId), acertos, opts); }
   /* V15.57 · tentativa de simulado em pontos da banca: cada seção ({nome:{correct,total}}) vai para a
      disciplina de nome equivalente (sem acento/caixa). Só pontua se todas as disciplinas forem encontradas. */
@@ -860,7 +880,7 @@
         r.fatiaTopicos = totT ? r.topicos / totT : 0;
         r.fatiaPontos = totP ? r.pontos / totP : 0;
         r.cobertura = r.topicos ? r.marcados / r.topicos : 0;
-        r.cor = r.mapas[0] ? mapColor(r.mapas[0]) : 'var(--pr-latao)';
+        r.cor = coresDisciplinas(courseId)[r.id] || (r.mapas[0] ? mapColor(r.mapas[0]) : 'var(--pr-latao)');
       });
       const comPeso = rows.filter((r) => r.ppt > 0);
       const maxR = comPeso.slice().sort((a, b) => b.ppt - a.ppt)[0] || null, minR = comPeso.slice().sort((a, b) => a.ppt - b.ppt)[0] || null;
@@ -891,7 +911,7 @@
     });
   }
   const fmtPt = (n) => (Math.round(Number(n || 0) * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf, regras, regrasDe, pontuarCom, maxObjetiva, formulaNotaFinal, ETAPAS, ESCALAS, NOTAS_FINAIS, UNIDADES };
+  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf, regras, regrasDe, pontuarCom, maxObjetiva, formulaNotaFinal, ETAPAS, ESCALAS, NOTAS_FINAIS, UNIDADES, cores: coresDisciplinas, PIG_FILA };
 
 
   /* ---------- V15.58 · taxonomia única de armadilhas (conceito 04 do Template de estudos) ----------

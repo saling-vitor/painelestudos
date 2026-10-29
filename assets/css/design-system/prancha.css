@@ -617,7 +617,10 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-regua li.atual .t{color:var(--pr-latao-c)}
 .pr-regua li .pr-chip{justify-self:start}
 .pr-fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.pr-fgrid.d{grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) repeat(4,minmax(0,1fr));align-items:end}
+.pr-fgrid.d{grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) repeat(5,minmax(0,1fr));align-items:end}
+.pr-cor-sel{border-left:6px solid var(--c,var(--pr-linha))}
+.pr-raiox-card .pr-dsc{background:color-mix(in srgb,var(--c) 8%,var(--pr-g0));border-color:color-mix(in srgb,var(--c) 28%,var(--pr-linha))}
+.pr-raiox-card .pr-dsc>.pr-k{color:var(--c)}
 .pr-fgrid.et{grid-template-columns:minmax(0,1.3fr) minmax(0,1.6fr) repeat(5,minmax(0,1fr));align-items:end}
 .pr-field.pr-check{display:flex;align-items:center;gap:8px;grid-column:span 2}
 .pr-field.pr-check input{width:auto}
