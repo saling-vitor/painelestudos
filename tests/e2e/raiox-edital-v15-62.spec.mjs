@@ -97,6 +97,7 @@ test('Raio-X [G] · “Ler o PDF do edital” mostra a conferência e monta o Ra
 });
 
 test('Raio-X [G] · cartão mostra blocos, etapas e fórmula; formulário salva bloco e etapa', async ({ page }) => {
+  test.setTimeout(60000); // formulário longo: no Desktop do CI passa de 30 s
   await setupPrancha(page, { courses: [{ ...C, board: 'FGV', title: 'TJSC', examOffset: 30 }] });
   await page.evaluate(async () => {
     const pages = await (await fetch('tests/fixtures/edital-tjsc-paginas.json')).json();
