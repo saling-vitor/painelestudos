@@ -1,12 +1,12 @@
 {
-  "version": "15.62.1",
-  "label": "V15.62.1-G",
-  "notes": "Cada disciplina do Raio-X com cor própria.",
+  "version": "15.62.2",
+  "label": "V15.62.2-G",
+  "notes": "Mapas vão sozinhos para a disciplina certa do edital.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Raio-X: cada disciplina ganha cor própria (do mapa ligado, da categoria ou da paleta, sem repetir), com fundo e título na cor",
-    "[G] Editar estrutura da prova: campo \"Cor\" em cada disciplina para escolher o pigmento",
-    "[G] Peso × Esforço usa as mesmas cores das disciplinas"
+    "[G] Raio-X: cada mapa vai para a disciplina cujo conteúdo programático no edital mais se parece com ele (ex.: Ética e Cidadania → Conhecimentos Gerais e Atualidades); marcados com ✦",
+    "[G] Editar estrutura da prova: lista \"Mapas → disciplina\" para fixar a disciplina de um mapa",
+    "[G] Leitor do edital guarda o conteúdo programático de cada disciplina; categorias Conhecimentos Gerais e Raciocínio Lógico e Matemática passam a casar"
   ],
   "automation": {
     "enabled": true,
@@ -14,5 +14,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T14:48:12-03:00"
+  "releasedAt": "2026-10-29T15:23:24-03:00"
 }

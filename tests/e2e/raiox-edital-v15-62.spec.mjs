@@ -62,7 +62,8 @@ test('Raio-X [G] · leitor do edital: quadro FUNDATEC de Ijuí e módulos do TJS
   expect(r.ijTit).toEqual([['titulos', 20]]);
   expect(r.ijFases).toContain('prova:2026-12-19');
   expect(r.ijFases).toContain('inscricoes:2026-10-23');
-  expect(r.ijCat).toEqual(['Português', 'Legislação e Administração', 'Informática/Raciocínio lógico', '']);
+  /* disciplina combinada recebe as duas categorias (Atualidades / Língua Portuguesa) */
+  expect(r.ijCat).toEqual(['Português/Conhecimentos Gerais e Atualidades', 'Legislação e Administração', 'Informática/Raciocínio Lógico e Matemática/Raciocínio lógico', '']);
   expect(r.resumo).toBe('4 disciplinas · 75 questões · 80 pontos · mínimo 60 pts · títulos 20');
   expect([r.tj, r.tjQ, r.tjArq]).toEqual([11, 80, true]);
   expect(r.tjG).toEqual([['Módulo de Conhecimentos Específicos', 30, 'acertos']]);
@@ -130,4 +131,32 @@ test('Raio-X [G] · celular: leitura e blocos cabem na tela', async ({ page }) =
   });
   await expect(page.locator('.pr-raiox-card .pr-dsc')).toHaveCount(11);
   expect(await noHorizontalOverflow(page)).toEqual([]);
+});
+
+test('Raio-X [G] · mapas vão para a disciplina certa pelo conteúdo do edital; escolha manual fixa', async ({ page }) => {
+  const extra = [
+    ['ETICACID', 'Ética e Cidadania', 'Outros', 'cidadania-direitos-e-deveres'],
+    ['HISTGEOSC', 'História e Geografia de Santa Catarina', 'Outros', 'colonizacao-acoriana'],
+    ['PROJARQ', 'Projeto Arquitetônico e Representação', 'Outros', 'estudo-preliminar-e-anteprojeto']
+  ].map(([code, title, category], i) => ({ id: 'x' + i, user_id: 'e2e-user', course_id: 'casan', code, title, short_title: '', topics: 5, branches: 1, category, accent: 'auto', filename: code + '.html', storage_path: 'e2e-user/casan/' + code, storage_id: '', created_at: '2026-09-01T00:00:00.000Z', updated_at: '2026-10-01T00:00:00.000Z' }));
+  await setupPrancha(page, { courses: [{ id: 'casan', title: 'CASAN', subtitle: 'Arquiteto e Urbanista', board: 'Instituto AOCP', examOffset: 24 }], extraMaps: extra });
+  await page.evaluate(async () => {
+    const pages = await (await fetch('tests/fixtures/edital-casan-paginas.json')).json();
+    window.Prancha.editais.importKit('casan', JSON.stringify(window.MeusMapasEditalReader.lerEdital(pages, { cargo: 'Arquiteto' })));
+    openCourse('casan');
+  });
+  const r = await page.evaluate(() => { const E = window.Prancha.editais, ms = combinedMaps().filter((m) => m.courseId === 'casan'); const by = (c) => E.disciplinaDoMapa(ms.find((m) => m.code === c), 'casan')?.id; return { et: by('ETICACID'), hg: by('HISTGEOSC'), pa: by('PROJARQ'), lp: by('LP') }; });
+  expect(r).toEqual({ et: 'conhecimentos-gerais-atualidades', hg: 'conhecimentos-gerais-atualidades', pa: 'conhecimentos-especificos', lp: 'lingua-portuguesa' });
+  const rx = page.locator('.pr[data-prancha="course"] .pr-raiox-card');
+  await expect(rx.locator('.pr-dsc').nth(2)).toContainText('ETICACID');
+  await expect(rx.locator('.pr-dsc').nth(2).locator('.pr-chip.auto')).toHaveCount(2);
+  /* escolha manual: ETICACID fixado em Legislação */
+  await rx.locator('summary', { hasText: 'Editar estrutura da prova' }).click();
+  const j = await rx.locator('input[name^="mm_code"]').evaluateAll((els) => els.find((e) => e.value === 'ETICACID').name.replace('mm_code', ''));
+  const sel = rx.locator('select[name="mm' + j + '"]');
+  await expect(sel.locator('option').first()).toContainText('automático → Conhecimentos Gerais - Atualidades');
+  await sel.selectOption('legislacao');
+  await rx.getByRole('button', { name: 'Salvar estrutura' }).click();
+  await expect(rx.locator('.pr-dsc').nth(3)).toContainText('ETICACID');
+  expect(await page.evaluate(() => window.Prancha.editais.get('casan').mapaDisciplina.ETICACID)).toBe('legislacao');
 });

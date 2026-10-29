@@ -487,8 +487,44 @@
     return plan;
   };
 
+  /* ---------- conteúdo programático de cada disciplina ----------
+     Títulos do anexo no formato "Conhecimentos Gerais e Atualidades: 1. História…" casam com a disciplina pelas
+     palavras do nome; o de Específicos é o que vem depois do cargo ("CARGO: Arquiteto e Urbanista"). */
+  const STOP = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'em', 'no', 'na', 'para', 'por', 'com', 'ou', 'as', 'os', 'ao', 'aos', 'noções', 'nocoes', 'conhecimentos', 'prova', 'cargo']);
+  const palavras = (s) => ascii(s).replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter((w) => w.length > 2 && !STOP.has(w));
+  function conteudos(T, prova, cargo) {
+    const lines = T.split('\n'), heads = [], re = cargoRe(cargo);
+    for (let i = 0; i < lines.length; i++) {
+      const m = /^\s*([A-ZÀ-Úa-zà-ú][^:]{2,90}?):\s*(.*)$/.exec(lines[i]);
+      if (!m || !/^\s*(\d{1,2}\s*[.)-]|[A-ZÀ-Ú])/.test(m[2] || lines[i + 1] || '')) continue;
+      if (/^(cargo|requisito|obs|nota|fonte|art|item|anexo|tabela)/i.test(m[1].trim()) && !/^cargo/i.test(m[1].trim())) continue;
+      heads.push({ i, nome: m[1].trim(), resto: m[2] || '' });
+    }
+    let cargoIdx = -1;
+    lines.forEach((l, k) => { if (cargoIdx < 0 && /^\s*cargo\b[^:]*:?\s*/i.test(l) && re.test(l) && /conhecimentos|programa/i.test(lines.slice(k, k + 3).join(' '))) cargoIdx = k; });
+    const out = {};
+    for (const d of prova) {
+      const alvo = palavras(d.nome.replace(/\(.*?\)/g, ''));
+      if (!alvo.length) continue;
+      let best = null, bs = 0;
+      for (const h of heads) {
+        const hw = palavras(h.nome);
+        if (!hw.length || hw.length > 9) continue;
+        const inter = alvo.filter((w) => hw.some((x) => x === w || x.startsWith(w.slice(0, 6)) || w.startsWith(x.slice(0, 6)))).length;
+        let sc = inter / Math.max(alvo.length, hw.length);
+        if (/espec[ií]fic/i.test(d.nome)) sc += cargoIdx >= 0 && h.i > cargoIdx && h.i - cargoIdx < 6 ? 1 : 0;
+        if (sc > bs + 1e-9 || (sc === bs && best && cargoIdx >= 0 && h.i > cargoIdx && best.i < cargoIdx)) { bs = sc; best = h; }
+      }
+      if (!best || bs < 0.5) continue;
+      const fim = heads.find((h) => h.i > best.i && h.i - best.i >= 1 && /^\s*(\d{1,2}\s*[.)-]|[A-ZÀ-Ú])/.test(h.resto + ' '));
+      const txt = [best.resto].concat(lines.slice(best.i + 1, fim ? fim.i : best.i + 60)).join(' ').replace(/\s+/g, ' ').trim();
+      if (txt.length > 20) out[d.id] = txt.slice(0, 6000);
+    }
+    return out;
+  }
   /* categorias dos mapas do app que cada disciplina recebe (o resto cai na disciplina padrão, a de Específicos) */
-  const CATS = [['Português', /portugu|l[ií]ngua portuguesa/i], ['Informática', /inform[áa]tica/i], ['Raciocínio lógico', /racioc[ií]nio|matem[áa]tica/i], ['Legislação e Administração', /legisla|direito|administra[çc][ãa]o p[úu]blica|[ée]tica|estatuto|lei org[âa]nica|normativos/i]];
+  /* nomes do catálogo de categorias do app (maps.js MAP_CATEGORY_CATALOG) */
+  const CATS = [['Português', /portugu|l[ií]ngua portuguesa/i], ['Informática', /inform[áa]tica/i], ['Raciocínio Lógico e Matemática', /racioc[ií]nio|matem[áa]tica/i], ['Raciocínio lógico', /racioc[ií]nio|matem[áa]tica/i], ['Conhecimentos Gerais e Atualidades', /atualidades|conhecimentos gerais|realidade|hist[óo]ria|geografia/i], ['Legislação e Administração', /legisla|direito|administra[çc][ãa]o p[úu]blica|[ée]tica|estatuto|lei org[âa]nica|normativos/i]];
   function categorizar(prova) {
     const usadas = new Set();
     for (const d of prova) {
@@ -507,8 +543,8 @@
     return plan.prova.length + ' disciplinas · ' + nq + ' questões · ' + fmt(pts) + ' pontos' + mg + et + (plan.formato === 'certo-errado' ? ' · certo/errado' : '');
   }
   const _ler = lerEdital;
-  lerEdital = function (pages, opts) { const p = _ler(pages, opts); categorizar(p.prova); return p; };
-  const api = { lerEdital: (pages, opts) => lerEdital(pages, opts), regrasTexto, fasesTexto, colTipo, resumo, categorizar };
+  lerEdital = function (pages, opts) { const p = _ler(pages, opts); categorizar(p.prova); try { p.conteudos = conteudos(flat(pages), p.prova, (opts && opts.cargo) || 'Arquiteto'); } catch (e) { p.conteudos = {}; } return p; };
+  const api = { conteudos, palavras, lerEdital: (pages, opts) => lerEdital(pages, opts), regrasTexto, fasesTexto, colTipo, resumo, categorizar };
   root.MeusMapasEditalReader = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -706,8 +706,47 @@
     const md = editalOf(courseId)?.mapaDisciplina, viaKit = md && map.code ? md[String(map.code).toUpperCase()] : null;
     if (viaKit) { const d = prova.find((x) => x.id === viaKit); if (d) return d; }
     const cat = String(map.category || '');
-    return prova.find((d) => d.categorias.includes(cat)) || prova.find((d) => d.padrao) || null;
+    const porCat = prova.find((d) => d.categorias.includes(cat));
+    if (porCat) return porCat;
+    /* V15.62 · sem categoria ligada: a disciplina cujo conteúdo (edital + palavras-chave) mais se parece com o mapa */
+    const auto = autoDisciplina(map, courseId);
+    if (auto) { const d = prova.find((x) => x.id === auto.id); if (d) return d; }
+    return prova.find((d) => d.padrao) || null;
   }
+  /* ---------- V15.62 · ligação automática mapa → disciplina pelo conteúdo ----------
+     Palavras do mapa (título, sigla, categoria, tópicos) contra as de cada disciplina (nome, conteúdo programático
+     lido do edital e um dicionário por área). Palavras que aparecem em todas as disciplinas pesam menos. */
+  const STOPW = new Set('de da do das dos e a o em no na para por com ou as os ao aos um uma que se sua seu suas seus sobre entre como mais pela pelo pelas pelos nocoes conhecimentos prova cargo lei leis federal municipal estadual nacional geral gerais especificos especifico especificas basicos aplicada aplicadas mapa mental tema temas parte modulo'.split(' '));
+  const toks = (s) => norm(String(s || '')).replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter((w) => w.length > 3 && !STOPW.has(w) && !/^\d+$/.test(w)).map((w) => w.slice(0, 7));
+  const DICAS = [
+    [/atualidad|conhecimentos gerais|realidade|historia|geografia/, 'atualidades historia geografia etica cidadania sociedade economia politica cultura meio ambiente globalizacao urbanizacao seguranca saude educacao tecnologia relacoes internacionais desenvolvimento sustentavel estado municipio brasil mundo regiao populacao turismo simbolos'],
+    [/portugu/, 'portugues gramatica interpretacao texto textual ortografia acentuacao crase concordancia regencia pontuacao sintaxe morfologia semantica coesao coerencia redacao oficial figuras linguagem colocacao pronominal'],
+    [/informat/, 'informatica computador windows linux word excel planilha internet navegador email seguranca virus backup nuvem rede arquivo sistema operacional'],
+    [/raciocin|matemat/, 'raciocinio logico matematica proposicoes tabela verdade conjuntos porcentagem juros razao proporcao regra tres equacao funcao probabilidade estatistica geometria sequencias'],
+    [/legisla|direito|estatuto/, 'legislacao lei organica estatuto servidor constituicao administrativo administracao publica improbidade licitacao contratos etica regime juridico codigo decreto normas igualdade racial']
+  ];
+  function autoMapas(courseId) {
+    return memo('am:' + courseId, () => {
+      const prova = provaOf(courseId), ed = editalOf(courseId) || {}, cont = ed.conteudos || {};
+      if (prova.length < 2) return {};
+      const sets = prova.map((d) => { const extra = DICAS.filter(([re]) => re.test(norm(d.nome))).map(([, w]) => w).join(' '); return new Set(toks(d.nome + ' ' + (cont[d.id] || '') + ' ' + extra)); });
+      const df = new Map(); for (const st of sets) for (const w of st) df.set(w, (df.get(w) || 0) + 1);
+      const idf = (w) => Math.log(1 + prova.length / (df.get(w) || prova.length));
+      const idx = (typeof state !== 'undefined' && state.searchIndex?.items) || [];
+      const out = {};
+      for (const m of mapsForCourse(courseId, { includeLinked: true })) {
+        const k = keyOf(m), st = (typeof readMapState === 'function' ? readMapState(m).topicStates : null) || {};
+        const tops = idx.filter((it) => it.mapKey === k).map((it) => it.title).join(' ') + ' ' + Object.keys(st).join(' ').replace(/-/g, ' ');
+        const ws = [...new Set(toks([m.title, m.shortTitle, m.short_title, m.category, tops].join(' ')))];
+        if (!ws.length) continue;
+        const sc = sets.map((set) => ws.reduce((s, w) => s + (set.has(w) ? idf(w) : 0), 0) / Math.sqrt(ws.length));
+        const ord = sc.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]);
+        if (ord[0][0] >= 0.35 && ord[0][0] > (ord[1]?.[0] || 0) * 1.25) out[k] = { id: prova[ord[0][1]].id, score: Math.round(ord[0][0] * 100) / 100 };
+      }
+      return out;
+    });
+  }
+  function autoDisciplina(map, courseId) { return autoMapas(courseId)[keyOf(map)] || null; }
   const passa = (pts, ac, minimo, em, max, questoes) => (!minimo ? true : em === 'acertos' ? ac >= minimo : pts >= minEmPts(minimo, em, max, questoes) - 1e-9);
   /* nota no formato da banca. opts.erros {disc:n} (certo/errado; sem ele, supõe tudo marcado) e opts.etapas {etapaId: nota} */
   function pontuarCom(prova, rg, acertos = {}, opts = {}) {
@@ -911,7 +950,7 @@
     });
   }
   const fmtPt = (n) => (Math.round(Number(n || 0) * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf, regras, regrasDe, pontuarCom, maxObjetiva, formulaNotaFinal, ETAPAS, ESCALAS, NOTAS_FINAIS, UNIDADES, cores: coresDisciplinas, PIG_FILA };
+  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf, regras, regrasDe, pontuarCom, maxObjetiva, formulaNotaFinal, ETAPAS, ESCALAS, NOTAS_FINAIS, UNIDADES, cores: coresDisciplinas, PIG_FILA, autoMapas };
 
 
   /* ---------- V15.58 · taxonomia única de armadilhas (conceito 04 do Template de estudos) ----------
@@ -1078,6 +1117,7 @@
     const prev = editalOf(courseId) || {};
     const patch = { ...(programa.length || !prov0(prev) ? { programa } : {}), fases, fonte: String(j.fonte || 'Kit Meus Mapas').slice(0, 200), importadoEm: new Date().toISOString() };
     if (prova.length) { patch.prova = prova; patch.minimoGeral = j.minimoGeral ?? prev.minimoGeral ?? null; patch.titulos = j.titulos ?? prev.titulos ?? null; Object.assign(patch, j.leitura ? { grupos: [], etapas: [], formato: 'multipla', penalidade: 0, alternativas: null, escala: 'soma', notaFinal: 'soma', pesoObjetiva: null, naoZerar: false, minimoGeralEm: 'pontos', titulos: null } : {}, regrasPatch(j)); }
+    if (j.conteudos && typeof j.conteudos === 'object') patch.conteudos = Object.fromEntries(Object.entries(j.conteudos).slice(0, 20).map(([k, v]) => [String(k).slice(0, 40), String(v).slice(0, 6000)]));
     if (j.leitura && typeof j.leitura === 'object') patch.leitura = { em: String(j.leitura.em || new Date().toISOString()), confianca: String(j.leitura.confianca || ''), avisos: (Array.isArray(j.leitura.avisos) ? j.leitura.avisos : []).map(String).slice(0, 6), pagina: j.leitura.quadro?.pagina || null };
     if (j.cargo && typeof j.cargo === 'object') { const cg = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) if (j.cargo[k]) cg[k] = String(j.cargo[k]).slice(0, 80); if (Object.keys(cg).length) patch.cargo = cg; }
     if (j.banca) patch.banca = String(j.banca).toUpperCase().slice(0, 40);
