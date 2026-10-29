@@ -65,3 +65,33 @@ for k, (tit, ans) in enumerate([('TÉCNICO EM EDIFICAÇÕES - PROVA 1', 'ABCDEAB
     y = 730 - k * 90; g.setFont('Helvetica-Bold', 10); g.drawString(60, y, tit); g.setFont('Helvetica', 10)
     for i, a in enumerate(ans): g.drawString(60 + i * 40, y - 18, str(i + 1)); g.drawString(60 + i * 40, y - 32, a)
 g.save()
+
+# ---------- caderno no formato FUNDATEC: uma coluna, “QUESTÃO 01 –”, texto com linhas numeradas, alternativas “A)” ----------
+f = canvas.Canvas(os.path.join(D, 'prova-sintetica-fundatec.pdf'), pagesize=A4)
+f.setFont('Helvetica-Bold', 14); f.drawString(60, 760, 'PREFEITURA MUNICIPAL DE VILA SERENA – RS'); f.setFont('Helvetica', 11)
+f.drawString(60, 735, 'CONCURSO PÚBLICO 02/2026 – FUNDATEC'); f.drawString(60, 715, 'ARQUITETO'); f.drawString(60, 690, 'Instruções: confira o caderno de questões e a grade de respostas.')
+f.showPage()
+y = [790]
+def ln(t, x=42, size=10, font='Helvetica'):
+    f.setFont(font, size); f.drawString(x, y[0], t); y[0] -= size + 3
+    if y[0] < 60: f.showPage(); y[0] = 790
+ln('LÍNGUA PORTUGUESA', 240, 10, 'Helvetica-Bold'); ln('O bairro que respira', 230)
+for i, t in enumerate(['Árvores nas calçadas mudam a temperatura da rua e o humor de quem passa por ela.', 'Quando a sombra chega, as pessoas ficam, conversam e o comércio local agradece.', 'Planejar o verde é planejar o encontro, e não apenas embelezar a paisagem urbana.'], 1):
+    ln('%02d %s' % (i, t))
+y[0] -= 10
+QF = [('Segundo o texto, a sombra das árvores', ['afasta os pedestres.', 'favorece a permanência das pessoas.', 'prejudica o comércio.', 'não altera a temperatura.', 'serve apenas à estética.']),
+      ('Na linha 03, a palavra “encontro” é', ['verbo.', 'adjetivo.', 'substantivo.', 'advérbio.', 'conjunção.'])]
+n = 0
+for s, a in QF:
+    n += 1; ln('QUESTÃO %02d – %s' % (n, s))
+    for i, t in enumerate(a): ln('%s) %s' % ('ABCDE'[i], t), 43)
+    y[0] -= 12
+ln('CONHECIMENTOS ESPECÍFICOS', 220, 10, 'Helvetica-Bold'); y[0] -= 6
+QE = [('Analise as assertivas sobre acessibilidade e assinale a alternativa correta.', ['Apenas I.', 'Apenas II.', 'Apenas I e II.', 'Apenas II e III.', 'I, II e III.']),
+      ('O índice de aproveitamento relaciona a área construída com a área do', ['pavimento térreo.', 'lote.', 'quarteirão.', 'bairro.', 'recuo.']),
+      ('Em um projeto de habitação de interesse social, a prioridade é', ['o custo de manutenção alto.', 'a ausência de ventilação.', 'a eficiência do uso do espaço.', 'o uso de materiais importados.', 'a implantação isolada.'])]
+for s, a in QE:
+    n += 1; ln('QUESTÃO %02d – %s' % (n, s))
+    for i, t in enumerate(a): ln('%s) %s' % ('ABCDE'[i], t), 43)
+    y[0] -= 12
+f.showPage(); f.save()

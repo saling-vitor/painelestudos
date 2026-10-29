@@ -376,13 +376,23 @@
   }
 
   /* ---------- render ---------- */
+  /* V15.65 · planilha do TEC com mais de 15 dias: lembrete para exportar de novo (o plano usa o acerto dela) */
+  function tecAviso() {
+    try {
+      const L = P.tec?.list?.() || [];
+      if (!L.length) return '';
+      const dias = Math.floor((Date.now() - (Date.parse(L[0].at) || Date.now())) / 86400000);
+      if (dias <= 15) return '';
+      return '<div class="pr-tec-av pr-tec-home"><span><b>TEC desatualizado:</b> a última planilha tem ' + dias + ' dias. Exporte em Estatísticas › Desempenho e importe no Progresso para o plano usar o seu acerto atual.</span>' + ui.btn('Ir ao Progresso', ui.act('nav', 'progress'), 'g sm') + '</div>';
+    } catch { return ''; }
+  }
   function render(root) {
     const screen = currentScreen();
     root.dataset.screen = screen;
     const q = P.reviews.queue(), qCount = q.reduce((s, x) => s + x.count, 0), sess = P.session.read(), post = P.courses.postExam();
     const entreOn = !!entreMaps().length;
     const tabs = SCREENS.filter(([id]) => id !== 'entre' || entreOn).map(([id, label]) => ({ id, label, badge: id === 'rev' && qCount ? qCount : id === 'sessao' && sess ? '●' : '', disabled: id === 'pos' && !post }));
-    const body = screen === 'entre' ? screenEntre() : screen === 'todos' ? screenTodos() : screen === 'rev' ? screenRev() : screen === 'sessao' ? screenSessao() : screen === 'pos' ? screenPos() : screenHoje();
+    const body = screen === 'entre' ? screenEntre() : screen === 'todos' ? screenTodos() : screen === 'rev' ? screenRev() : screen === 'sessao' ? screenSessao() : screen === 'pos' ? screenPos() : tecAviso() + screenHoje();
     root.innerHTML = ui.top({ eyebrow: 'Início · ' + U.fmtLong(new Date()), tabs, active: screen, label: 'Início', tabAct: 'screen' }) + body;
     clearInterval(tick);
     if (screen === 'sessao' && sess) tick = setInterval(() => updateClock(root), 1000);

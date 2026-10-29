@@ -49,7 +49,7 @@ test('Prova [G] · Simulados: caderno + gabarito viram simulado interativo com f
   await expect(card).toContainText('conta como Língua Portuguesa');
   await expect(card.getByRole('button', { name: 'Criar simulado interativo' })).toBeDisabled();
   await arquivo(card, '[data-pr-prova="gab"]', 'tests/fixtures/prova-sintetica/gabarito-sintetico.pdf', 'Qual gabarito do arquivo');
-  await expect(card.locator('select')).toHaveValue('1');
+  await expect(card.locator('select[data-pr-change="prova-bloco"]')).toHaveValue('1');
   await expect(card).toContainText('8 de 8 questões com resposta');
   /* gabarito digitado substitui o do PDF; X = anulada fica de fora */
   await card.locator('textarea').fill('BCDCCBAX');
@@ -84,4 +84,56 @@ test('Prova [M] · celular: painel do simulado da prova cabe na tela', async ({ 
   const card = root.locator('.pr-card', { hasText: 'Simulado a partir da prova' });
   await arquivo(card, '[data-pr-prova="prova"]', 'tests/fixtures/prova-sintetica/prova-sintetica.pdf', '8 questões');
   expect(await noHorizontalOverflow(page)).toEqual([]);
+});
+
+test('Prova [G] · FUNDATEC: “QUESTÃO 01 –”, texto com linhas numeradas e alternativas “A)”', async ({ page }) => {
+  await preparar(page);
+  const r = await page.evaluate(async () => {
+    const lib = await loadCoursePdfJs(), doc = await lib.getDocument({ data: new Uint8Array(await (await fetch('tests/fixtures/prova-sintetica/prova-sintetica-fundatec.pdf')).arrayBuffer()) }).promise, pages = [];
+    for (let i = 1; i <= doc.numPages; i++) { const pg = await doc.getPage(i), vp = pg.getViewport({ scale: 1 }); pages.push({ w: vp.width, h: vp.height, lines: MeusMapasEditalLayout.layoutLines((await pg.getTextContent()).items) }); }
+    const L = window.MeusMapasProvaReader.lerProva(pages);
+    return { banca: L.meta.banca, secoes: L.secoes.map((s) => [s.titulo, s.questoes.length]), intro: L.secoes[0].intro, q2: L.secoes[0].questoes[1].alternativas[2] };
+  });
+  expect(r.banca).toBe('FUNDATEC');
+  expect(r.secoes).toEqual([['LÍNGUA PORTUGUESA', 2], ['CONHECIMENTOS ESPECÍFICOS', 3]]);
+  expect(r.intro.titulo).toBe('O bairro que respira');
+  expect(r.intro.linhas[0]).toMatch(/^Árvores nas calçadas/);
+  expect(r.q2).toBe('substantivo.');
+});
+
+test('Prova [G] · revisão, gabarito em foto (OCR), lote e banco de questões para simulado misturado', async ({ page }) => {
+  test.setTimeout(90000);
+  await preparar(page);
+  const root = page.locator('[data-prancha="simulations"]');
+  await root.getByRole('button', { name: 'Simulado de uma prova (PDF)' }).click();
+  const card = root.locator('.pr-card', { hasText: 'Simulado a partir da prova' });
+  await arquivo(card, '[data-pr-prova="prova"]', 'tests/fixtures/prova-sintetica/prova-sintetica.pdf', '8 questões');
+  /* gabarito em foto: o OCR (aqui simulado) devolve palavras com posição; duas leituras iguais → sem dúvidas */
+  await page.evaluate(() => {
+    const ans = 'BCDCCBAB';
+    window.Prancha.provaSim.ocr = async () => ({ lines: [...ans].map((l, i) => ({ bbox: { y0: 100 + i * 40, y1: 130 + i * 40 }, words: [{ text: String(i + 1), bbox: { x0: 100, y0: 100 + i * 40, x1: 130, y1: 130 + i * 40 } }, { text: l, bbox: { x0: 300, y0: 100 + i * 40, x1: 330, y1: 130 + i * 40 } }] })) });
+  });
+  await arquivo(card, '[data-pr-prova="gab"]', { name: 'gabarito.png', mimeType: 'image/png', buffer: fs.readFileSync('tests/fixtures/prova-sintetica/gabarito-foto.png') }, 'lido da imagem');
+  await expect(card).toContainText('8 de 8 questões com resposta');
+  /* revisão: troca a resposta da 3 e tira a 8 do simulado */
+  await card.locator('summary', { hasText: 'Revisar questão a questão' }).click();
+  await card.locator('select[data-n="3"][data-campo="resp"]').selectOption('A');
+  await card.locator('input[data-n="8"][data-campo="incluir"]').uncheck();
+  await expect(card).toContainText('7 de 7 questões com resposta');
+  await card.getByRole('button', { name: 'Criar simulado interativo' }).click();
+  await expect(page.locator('#simulationImportModal')).toBeVisible({ timeout: 15000 });
+  const r = await page.evaluate(async () => { const u = window.Prancha.provaSim.ultimo; return { total: u.total, q3: u.exam.sections[0].questions[2].answer, banco: (await window.Prancha.provaSim.banco.tudo()).length, ligadas: u.ligadas }; });
+  expect(r).toMatchObject({ total: 7, q3: 'A', banco: 7 });
+  await page.keyboard.press('Escape');
+  await page.evaluate(() => { if (typeof closeModal === 'function') closeModal('simulationImportModal'); });
+  /* simulado misturado no formato da CASAN a partir do banco */
+  const m = await page.evaluate(async () => { const x = await window.Prancha.provaSim.misturado(window.Prancha.courses.byId('casan'), ''); return { total: x.total, secs: x.exam.sections.map((s) => s.title), faltas: x.faltas.length }; });
+  expect(m.total).toBe(7);
+  expect(m.secs).toContain('LÍNGUA PORTUGUESA');
+  expect(m.faltas).toBeGreaterThan(0);
+  /* lote: dois cadernos e um gabarito de uma vez */
+  await expect.poll(async () => { if (!(await card.textContent()).includes('Lote · 3 arquivos')) await card.locator('[data-pr-prova="lote"]').setInputFiles(['tests/fixtures/prova-sintetica/prova-sintetica.pdf', 'tests/fixtures/prova-sintetica/gabarito-sintetico.pdf', 'tests/fixtures/prova-sintetica/prova-sintetica-fundatec.pdf']); await page.waitForTimeout(800); return (await card.textContent()).includes('Lote · 3 arquivos'); }, { timeout: 30000, intervals: [1000, 2000, 3000] }).toBe(true);
+  await expect(card.locator('.pr-pv').filter({ has: page.locator('b', { hasText: /^prova-sintetica\.pdf$/ }) })).toContainText('100% no gabarito', { timeout: 20000 });
+  await expect(card.locator('.pr-pv').filter({ has: page.locator('b', { hasText: /^gabarito-sintetico\.pdf$/ }) })).toContainText('2 bloco(s)');
+  noRuntimeErrors(page);
 });

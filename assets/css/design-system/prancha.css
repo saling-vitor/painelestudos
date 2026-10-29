@@ -751,3 +751,23 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-ps textarea{width:100%;font-family:var(--pr-f-mono);font-size:var(--fs-body-sm)}
 .pr-pv>span>.t{display:block}
 @media (max-width:700px){.pr-pgrid{grid-template-columns:minmax(0,1fr)}.pr-pv{grid-template-columns:auto minmax(0,1fr)}.pr-pv>.pr-chip{grid-column:1/-1;justify-self:start}}
+/* V15.65 · TEC: meta, aviso de planilha antiga, mapa por assunto */
+.pr-nt .bar>em{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--pr-papel-2);opacity:.7}
+.pr-tec-av{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;padding:8px 10px;border:1px solid color-mix(in srgb,var(--pr-oxido) 45%,transparent);border-radius:8px;font-size:var(--fs-body-sm);color:var(--pr-papel-2)}
+.pr-tec-ms{max-width:150px;font-size:var(--fs-caption)}
+.pr-tec-sm{margin-top:6px}
+.pr-tec-cx{grid-template-columns:auto minmax(0,1fr)}
+.pr-tec-cx>span>.t{display:block}
+@media (max-width:700px){.pr-tec-fr .pr-li{grid-template-columns:auto minmax(0,1fr)}.pr-tec-fr .pr-li>.pr-row{grid-column:1/-1;justify-content:flex-start;flex-wrap:wrap}.pr-tec-ms{max-width:none;flex:1}}
+/* V15.65 · revisão questão a questão, lote e banco */
+.pr-rvd .pr-list{max-height:520px;overflow:auto}
+.pr-rv{grid-template-columns:auto minmax(0,1fr) auto}
+.pr-rv>span>.t{display:block}
+.pr-rv.x{opacity:.55}
+.pr-rv-c{flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.pr-rv-c select{font-size:var(--fs-caption)}
+.pr-rv-c .pr-check{display:inline-flex;align-items:center;gap:4px;font-size:var(--fs-caption)}
+.pr-banco{border-top:1px solid var(--pr-linha);padding-top:10px}
+.pr-tec-home{margin:0 0 12px}
+@media (max-width:700px){.pr-rv{grid-template-columns:auto minmax(0,1fr)}.pr-rv-c{grid-column:1/-1;justify-content:flex-start}}
+.pr-tec-cv{max-height:240px}.pr-tec-cv text{font-family:var(--pr-f-mono);font-size:var(--fs-caption);fill:var(--pr-papel-3)}

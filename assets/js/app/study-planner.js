@@ -239,6 +239,9 @@
       else if(due&&due<today+86400000)score+=20;
       let dom=null;try{const ms=window.Prancha?.mastery?.of?.(map);if(ms&&ms.dominio!==null&&ms.respondidas>=5)dom=ms.dominio}catch{}
       if(dom!==null&&dom<50)score+=Math.round((50-dom)/4);
+      /* V15.65 · pontos fracos do TEC Concursos ligados ao mapa (Prancha.tec); desligável em Configurações */
+      let tec=null;try{tec=window.Prancha?.tec?.pesoMapa?.(map)||null}catch{}
+      if(tec)score+=Math.round(tec.rel*18);
       if(p.marked>0&&p.pending>0)score+=8;
       if(p.marked===0)score+=4;
       score+=Math.min(14,Math.max(0,ageDays));
@@ -251,12 +254,13 @@
       if(p.difficult)reasons.push(p.difficult+' DIF');
       if(p.review)reasons.push(p.review+' REV');
       if(dom!==null&&dom<50)reasons.push('domínio '+dom+'% nas questões');
+      if(tec)reasons.push(tec.motivo);
       if(overdueDays)reasons.push('revisão atrasada '+overdueDays+'d');
       if(weak.score)reasons.push('erros em simulados');
       if(days!==null&&days>=0&&days<=30)reasons.push('prova em '+days+'d');
       if(peso){if(peso.risco)reasons.push(peso.disc.nome+' abaixo do mínimo no último simulado');if(peso.rel>=.5)reasons.push('vale '+(Math.round(peso.ppt*100)/100).toLocaleString('pt-BR')+' pt por tópico')}else if(categoryShare>=.28)reasons.push('peso alto no conteúdo');if(!reasons.length&&p.pending)reasons.push('conteúdo pendente');
       const minutes=topicCounts[key]?Math.min(25,10+topicCounts[key]*3):p.difficult?25:p.review?20:p.pending?20:15;
-      return{map,key,progress:p,score,reasons,minutes,dueTopics:topicCounts[key]||0,weakness:weak,daysUntilExam:days,peso};
+      return{map,key,progress:p,score,reasons,minutes,dueTopics:topicCounts[key]||0,weakness:weak,daysUntilExam:days,peso,tec};
     }).sort((a,b)=>b.score-a.score||b.progress.difficult-a.progress.difficult||b.progress.review-a.progress.review);
   }
   function nextPriority(excludeKey=''){return priorityRows().find(row=>row.key!==excludeKey)||null}

@@ -65,3 +65,28 @@ test('TEC [M] · celular: cartão do TEC cabe na tela', async ({ page }) => {
   await importar(card(page), 'tests/fixtures/tec-desempenho-1.xlsx', 'Nota pelo TEC');
   await noHorizontalOverflow(page);
 });
+
+test('TEC [G] · meta por disciplina, plano de estudo, mapa por assunto, curva e lembrete', async ({ page }) => {
+  test.setTimeout(60000);
+  await casan(page);
+  const c = card(page);
+  await importar(c, 'tests/fixtures/tec-desempenho-1.xlsx', 'Nota pelo TEC');
+  await expect(c).toContainText('Meta de acerto');
+  await expect(c.locator('.pr-nt').first()).toContainText('meta ');
+  /* o assunto fraco sobe a prioridade do mapa ligado a ele no plano */
+  const p = await page.evaluate(() => { const R = window.Prancha.tec.resumo('casan'), f = R.fracos.find((x) => x.mapa); const row = window.StudyPlanner.priorityRows([f.mapa])[0]; return { key: f.key, motivo: row.reasons.find((x) => x.startsWith('TEC:')) || '', rel: window.Prancha.tec.pesoMapa(f.mapa)?.rel || 0 }; });
+  expect(p.motivo).toMatch(/^TEC: .+ \d+%/);
+  expect(p.rel).toBeGreaterThan(0);
+  /* escolha manual do mapa de um assunto */
+  const sel = c.locator('select[data-pr-change="tec-mapa"][data-key="' + p.key + '"]');
+  await sel.selectOption('-');
+  await expect.poll(() => page.evaluate((k) => window.Prancha.editais.get('casan').tecMapaAssunto?.[k], p.key)).toBe('-');
+  /* curva de acerto a partir da segunda leitura */
+  await importar(c, 'tests/fixtures/tec-desempenho-2.xlsx', 'Acerto por disciplina a cada leitura');
+  await expect(c.locator('svg[aria-label="Curva de acerto por disciplina"] path')).not.toHaveCount(0);
+  /* planilha com mais de 15 dias: aviso no Progresso e no Início */
+  await page.evaluate(() => { const d = window.Prancha.store.read(); for (const v of Object.values(d.tec)) if (v && !v.removed) v.at = new Date(Date.now() - 20 * 86400000).toISOString(); window.Prancha.store.write(d); });
+  await go(page, 'home');
+  await expect(page.locator('[data-prancha="home"] .pr-tec-home')).toContainText('TEC desatualizado');
+  noRuntimeErrors(page);
+});

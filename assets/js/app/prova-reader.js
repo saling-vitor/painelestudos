@@ -80,6 +80,8 @@
       stream.push(e);
     }
     const bodyH = median(stream.filter((e) => !e.quebra).map((e) => e.h)) || 10;
+    /* FUNDATEC e outras numeram “QUESTÃO 01 –”: aí só esse rótulo abre questão (as linhas numeradas do texto não) */
+    const soQuestao = stream.filter((e) => !e.quebra && /^QUEST[ÃA]O\s*(N[ºo°.]\s*)?\d{1,3}/i.test(e.text)).length >= 3;
     const secoes = [];
     let sec = null, q = null, alt = -1, lastN = 0, pend = [], prev = null, colStart = new Map();
     const novaSecao = (titulo) => { sec = { titulo, intro: null, questoes: [] }; secoes.push(sec); };
@@ -106,7 +108,7 @@
       }
       /* início de questão: o próximo número, rente à margem da coluna */
       const m = QNUM.exec(t);
-      if (m && atLeft) {
+      if (m && atLeft && (!soQuestao || /^QUEST/i.test(t))) {
         const n = +m[1], sep = (m[2] || '').trim(), resto = m[3] || '';
         const ok = (n === lastN + 1 || (lastN === 0 && n <= 3)) && !(resto && /^\d/.test(resto) && !/[.)\-–—:]/.test(sep)) && (resto === '' || !ALT.test(resto));
         if (ok) {
@@ -121,7 +123,7 @@
         const a = ALT.exec(t), want = String.fromCharCode(65 + alt + 1);
         if (a && a[1].toUpperCase() === want && (alt >= 0 || q.stem.length)) { alt++; q.alts.push({ x: e.x, ind: e.x - left, ck, s: [a[2]] }); reg(q, e); q.linhas++; if (e.gap > e.h * 3) q.celulas++; prev = e; continue; }
         const gap = prev && !primeiroDaColuna ? prev.y - e.y : 0;
-        if (gap > Math.max(e.h, prev?.h || 0) * 2.3) q.gaps++;
+        if (gap > Math.max(e.h, prev?.h || 0) * 3.6) q.gaps++;
         if (alt < 0) { q.stem.push(t); reg(q, e); q.linhas++; if (e.gap > e.h * 3) q.celulas++; if (MATH.test(t)) q.math = true; prev = e; continue; }
         const A = q.alts[alt], continua = e.x - left > A.ind + 3 || (!primeiroDaColuna && gap <= e.h * 1.9 && !atLeft);
         if (continua) { A.s.push(t); reg(q, e); q.linhas++; if (MATH.test(t)) q.math = true; prev = e; continue; }
@@ -168,16 +170,20 @@
     const ls = es.map((e) => e.text);
     let titulo = '';
     if (ls.length > 2 && ls[0].length < 90 && !/[.;:]$/.test(ls[0]) && !/^instru/i.test(ls[0])) titulo = ls[0];
-    return { titulo, linhas: titulo ? ls.slice(1) : ls };
+    let linhas = titulo ? ls.slice(1) : ls;
+    /* texto com linhas numeradas no caderno (01, 02…): o motor numera de novo, então o número sai do texto */
+    if (linhas.filter((l) => /^\d{1,3}\s+\S/.test(l)).length >= linhas.length * 0.6) linhas = linhas.map((l) => l.replace(/^\d{1,3}\s+/, ''));
+    return { titulo, linhas };
   }
   function metaDe(texto) {
     const t0 = texto.slice(0, 2).join('\n'), linhas = (texto[0].trim().length > 80 ? texto[0] : t0).split('\n').map((s) => s.trim()).filter((l) => l && !/^\(/.test(l));
-    const banca = /fundatec/i.test(t0) ? 'FUNDATEC' : /instituto aocp|\bT\d{7}N\b|\bM\d{7}N\b/i.test(texto.join(' ')) ? 'Instituto AOCP' : /objetiva/i.test(t0) ? 'Objetiva' : /cebraspe|cespe/i.test(t0) ? 'Cebraspe' : /\bfgv\b|getulio vargas/i.test(t0) ? 'FGV' : /\bfcc\b|carlos chagas/i.test(t0) ? 'FCC' : /fepese/i.test(t0) ? 'FEPESE' : /legalle/i.test(t0) ? 'Legalle' : '';
+    const tudo = texto.join(' '), banca = /fundatec/i.test(tudo) ? 'FUNDATEC' : /instituto aocp|\bT\d{7}N\b|\bM\d{7}N\b/i.test(texto.join(' ')) ? 'Instituto AOCP' : /objetiva concursos|objetivas? concursos/i.test(tudo) ? 'Objetiva' : /cebraspe|cespe/i.test(t0) ? 'Cebraspe' : /\bfgv\b|getulio vargas/i.test(t0) ? 'FGV' : /\bfcc\b|carlos chagas/i.test(t0) ? 'FCC' : /fepese/i.test(t0) ? 'FEPESE' : /legalle/i.test(t0) ? 'Legalle' : '';
     const edital = (t0.match(/edital[^\n]{0,80}?n[º°o.]?\s*[\d./-]+(?:\s*[-–]\s*[A-Z]+)?/i) || [''])[0].replace(/\s+/g, ' ').trim();
     const ent = [...new Set(linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9 .,–\-/()]{8,}$/.test(l) && !/edital|n[íi]vel|tipo|turno|inscri|nome|caderno|instituto aocp|fundatec|objetiva|^T\d+N$|^M\d+N$/i.test(l)))].slice(0, 3);
     const CARGO = /arquitet|engenh|analista|t[eé]cnico|profissional|especialista|agente|professor|assistente|auditor|fiscal|perito|urbanista/i;
     const cands = linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => l.length >= 6 && l.length <= 90 && CARGO.test(l) && l === l.toUpperCase() && !/minist[eé]rio|prefeitura|secretaria|companhia|instituto|funda[cç][aã]o|universidade|munic[ií]pio/i.test(l));
     let cargo = cands[0] || (texto[0].match(/(?:cargo|emprego)\s*:\s*([^\n]{4,80})/i) || [])[1] || '';
+    cargo = cargo.replace(/^\d{1,3}\s*[—–-]\s*/, '');
     const meio = cargo.length / 2;
     if (cargo.length > 10 && cargo.length % 2 === 0 && cargo.slice(0, meio) === cargo.slice(meio)) cargo = cargo.slice(0, meio);
     const tipo = (texto.join('\n').match(/tipo\s*0*(\d)\b/i) || [])[1] || '';
@@ -208,7 +214,8 @@
           }
         }
         /* pares na mesma linha: "1 C 2 E" ou "01-C" ou "Questão 1 Gabarito C" */
-        const toks = l.text.replace(/(\d)\s*[-–:.)]\s*([A-Ea-eX*])\b/g, '$1 $2').split(/\s+/);
+        /* OCR costuma dobrar a letra (“Cc”) ou colar número e letra (“1A”) */
+        const toks = l.text.replace(/(\d)\s*[-–:.)]\s*([A-Ea-eX*])\b/g, '$1 $2').replace(/\b(\d{1,3})([A-Ea-e])\b/g, '$1 $2').split(/\s+/).map((t) => (/^([A-Ea-e])\1$/i.test(t) ? t[0] : t));
         let pares = 0;
         for (let j = 0; j + 1 < toks.length; j++) if (/^\d{1,3}$/.test(toks[j]) && LETRA.test(toks[j + 1])) pares++;
         if (pares >= 1 && pares * 2 >= toks.length - 1) {

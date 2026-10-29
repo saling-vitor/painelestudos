@@ -1,13 +1,14 @@
 {
-  "version": "15.64.0",
-  "label": "V15.64.0-G",
-  "notes": "Simulado interativo a partir do caderno oficial em PDF e do gabarito.",
+  "version": "15.65.0",
+  "label": "V15.65.0-G",
+  "notes": "TEC no plano de estudo; simulados de provas com FUNDATEC, gabarito em foto, revisão, lote e banco de questões.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Simulados › “Simulado de uma prova (PDF)”: escolha o caderno oficial e o gabarito (PDF ou digitado) e o app monta o simulado interativo",
-    "[G] Leitor de cadernos: disciplinas, textos de apoio, enunciados e alternativas em duas colunas (AOCP, Objetiva e itens Certo/Errado); questões com figura, tabela ou fórmula vão com o recorte do caderno",
-    "[G] Gabarito com vários cargos/tipos: o app escolhe o bloco do cargo da prova; anuladas ficam de fora; resultado conta no formato da banca do concurso",
-    "[G] TEC: importação de planilha mais estável quando a tela se redesenha"
+    "[G] TEC no plano: assuntos fracos sobem a prioridade dos mapas ligados (Onde focar agora, Início, agenda); liga e desliga em Configurações",
+    "[G] TEC: meta de acerto por disciplina para a nota de corte, curva de acerto entre leituras, mapa escolhido por assunto, assuntos sem mapa, TEC × questões dos mapas e aviso quando a planilha passa de 15 dias",
+    "[G] Simulado da prova: leitor validado em cadernos FUNDATEC (QUESTÃO 01 –, texto com linhas numeradas); gabarito escaneado ou foto lido por OCR com respostas a conferir",
+    "[G] Revisão questão a questão antes de criar, vários PDFs de uma vez (caderno e gabarito pareados sozinhos) e cada questão ligada ao mapa do assunto (erros entram no plano)",
+    "[G] Banco de questões oficiais neste aparelho: simulado misturado na estrutura da prova do seu concurso"
   ],
   "automation": {
     "enabled": true,
@@ -15,5 +16,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T17:18:13-03:00"
+  "releasedAt": "2026-10-29T18:06:49-03:00"
 }
