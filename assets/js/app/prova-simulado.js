@@ -298,7 +298,7 @@
     for (const [n, aj] of Object.entries(st.ajustes || {})) if (aj.resp) rs[n] = aj.resp;
     const nums = L ? L.secoes.flatMap((s) => s.questoes.map((q) => q.n)).filter((n) => !st.ajustes?.[n]?.fora) : [];
     const cobertas = nums.filter((n) => rs[n]).length, prova = course ? P.editais.prova(course.id) : [];
-    const head = ui.head('Simulado a partir da prova', 'Caderno oficial em PDF + gabarito → simulado interativo', ui.btn('Vários PDFs de uma vez', ui.act('prova-pick', 'lote'), 'g sm') + '<input type="file" accept="application/pdf,.pdf,image/*" multiple hidden data-pr-change="prova-lote" data-pr-prova="lote">' + ui.btn('Fechar', ui.act('prova-fechar'), 'g sm'));
+    const head = ui.head('Simulado a partir da prova', 'Caderno oficial em PDF + gabarito → simulado interativo', ui.btn('Vários PDFs ou .zip', ui.act('prova-pick', 'lote'), 'g sm') + '<input type="file" accept="application/pdf,.pdf,image/*,.zip,application/zip" multiple hidden data-pr-change="prova-lote" data-pr-prova="lote">' + ui.btn('Fechar', ui.act('prova-fechar'), 'g sm'));
     const passo1 = '<div class="pr-ps"><span class="pr-k l">1 · Caderno de questões</span>' + (st.lendo === 'prova' ? '<p class="pr-mono">Lendo o caderno…</p>' : L ? '<p><b>' + esc(st.prova.arquivo) + '</b> · ' + L.questoes + ' questões' + (L.meta.banca ? ' · ' + esc(L.meta.banca) : '') + (L.meta.entidade ? ' · ' + esc(L.meta.entidade) : '') + '</p>' : '<p class="pr-mono">PDF com texto selecionável (não escaneado).</p>') +
       '<div class="pr-row">' + ui.btn(L ? 'Trocar caderno' : 'Escolher o PDF da prova', ui.act('prova-pick', 'prova'), L ? 'g sm' : 'p') + '<input type="file" accept="application/pdf,.pdf" hidden data-pr-change="prova-file" data-pr-prova="prova"></div></div>';
     const blocos = st.gab?.blocos || [];
@@ -352,8 +352,24 @@
       p.status = p.leitura.questoes + ' questões' + (p.leitura.meta.banca ? ' · ' + p.leitura.meta.banca : '') + (best ? ' · gabarito: ' + best.g.arquivo + ' › ' + best.g.blocos[best.i].titulo.slice(0, 60) : ' · sem gabarito no lote');
     }
   }
-  async function lerLote(files) {
+  /* .zip com cadernos e gabaritos: os PDFs e imagens de dentro entram no lote (pastas e outros arquivos são ignorados) */
+  async function expandirZips(files) {
+    const out = [];
+    for (const f of files) {
+      if (!/\.zip$/i.test(f.name || '') && f.type !== 'application/zip' && f.type !== 'application/x-zip-compressed') { out.push(f); continue; }
+      const z = await window.MeusMapasTec.unzip(new Uint8Array(await f.arrayBuffer()));
+      for (const n of z.names) {
+        if (/\/$|__MACOSX|(^|\/)\./.test(n) || !/\.(pdf|png|jpe?g|webp)$/i.test(n)) continue;
+        const b = await z.bytes(n), nome = n.split('/').pop(), tipo = /\.pdf$/i.test(nome) ? 'application/pdf' : /\.png$/i.test(nome) ? 'image/png' : /\.webp$/i.test(nome) ? 'image/webp' : 'image/jpeg';
+        out.push(new File([b], nome, { type: tipo }));
+      }
+    }
+    return out;
+  }
+  async function lerLote(files0) {
     st.lote = st.lote || []; st.lendo = 'lote'; P.schedule('simulations');
+    let files = files0;
+    try { files = await expandirZips(files0); } catch (e) { console.warn('[prova] zip', e); if (typeof toast === 'function') toast('Não consegui abrir o .zip: ' + (e?.message || e)); }
     for (const f of files) {
       const row = { arquivo: f.name, tipo: '', status: 'lendo…' };
       st.lote.push(row); P.schedule('simulations');

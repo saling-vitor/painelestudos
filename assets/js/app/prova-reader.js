@@ -224,7 +224,10 @@
           continue;
         }
         /* título de bloco: cargo/prova/tipo entre tabelas */
-        if (l.text.length > 6 && l.text.length < 140 && /[a-z]{4}/i.test(l.text) && !/^p[aá]gina/i.test(l.text) && /(prova|tipo|cargo|analista|arquitet|engenh|t[eé]cnico|profissional|agente|especialista|gabarito)/i.test(l.text)) {
+        /* “2 - Arquiteto” (código do cargo) é título de bloco; cabeçalhos repetidos (Anexo, Edital, Prefeitura) não */
+        const codigoCargo = /^\d{1,3}\s*[-–—]\s*[A-ZÀ-Úa-zà-ú]/.test(l.text) && !/^\d{1,3}\s*[-–—]\s*[A-Ea-eX*]\b/.test(l.text);
+        const generico = /anexo|edital|gabaritos? (preliminar|definitiv|oficial)|prefeitura|concurso p|assinatura|executora|p[aá]gina/i.test(l.text);
+        if (l.text.length > 6 && l.text.length < 140 && /[a-z]{4}/i.test(l.text) && (codigoCargo || (!generico && /(prova|tipo|cargo|analista|arquitet|engenh|t[eé]cnico|profissional|agente|especialista)/i.test(l.text)))) {
           if (!cur || Object.keys(cur.respostas).length) novo(l.text.trim()); else cur.titulo = l.text.trim();
         }
       }

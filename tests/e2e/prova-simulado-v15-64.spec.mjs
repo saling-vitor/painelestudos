@@ -131,9 +131,21 @@ test('Prova [G] · revisão, gabarito em foto (OCR), lote e banco de questões p
   expect(m.total).toBe(7);
   expect(m.secs).toContain('LÍNGUA PORTUGUESA');
   expect(m.faltas).toBeGreaterThan(0);
-  /* lote: dois cadernos e um gabarito de uma vez */
-  await expect.poll(async () => { if (!(await card.textContent()).includes('Lote · 3 arquivos')) await card.locator('[data-pr-prova="lote"]').setInputFiles(['tests/fixtures/prova-sintetica/prova-sintetica.pdf', 'tests/fixtures/prova-sintetica/gabarito-sintetico.pdf', 'tests/fixtures/prova-sintetica/prova-sintetica-fundatec.pdf']); await page.waitForTimeout(800); return (await card.textContent()).includes('Lote · 3 arquivos'); }, { timeout: 30000, intervals: [1000, 2000, 3000] }).toBe(true);
+  /* lote: um .zip (caderno + gabarito) e mais um caderno de uma vez */
+  await expect.poll(async () => { if (!(await card.textContent()).includes('Lote · 3 arquivos')) await card.locator('[data-pr-prova="lote"]').setInputFiles(['tests/fixtures/prova-sintetica/lote.zip', 'tests/fixtures/prova-sintetica/prova-sintetica-fundatec.pdf']); await page.waitForTimeout(800); return (await card.textContent()).includes('Lote · 3 arquivos'); }, { timeout: 30000, intervals: [1000, 2000, 3000] }).toBe(true);
   await expect(card.locator('.pr-pv').filter({ has: page.locator('b', { hasText: /^prova-sintetica\.pdf$/ }) })).toContainText('100% no gabarito', { timeout: 20000 });
   await expect(card.locator('.pr-pv').filter({ has: page.locator('b', { hasText: /^gabarito-sintetico\.pdf$/ }) })).toContainText('2 bloco(s)');
   noRuntimeErrors(page);
+});
+
+test('Prova [G] · gabarito FUNDATEC com 47 cargos (Tapera 2026): bloco certo pelo código do cargo', async ({ page }) => {
+  await setupPrancha(page, { courses: [CASAN] });
+  const r = await page.evaluate(async () => {
+    const R = window.MeusMapasProvaReader, b = R.lerGabarito(await (await fetch('tests/fixtures/gabarito-tapera-fundatec-paginas.json')).json());
+    const i = R.escolherBloco(b, { cargo: 'ARQUITETO', tipo: '' }, 45);
+    return { n: b.length, titulo: b[i].titulo, resp: Object.values(b[i].respostas).join('') };
+  });
+  expect(r.n).toBe(47); // o anexo não traz o cargo 39
+  expect(r.titulo).toBe('2 - Arquiteto');
+  expect(r.resp).toBe('CCACBDBDDAACDABCBABDBDDACBCABADDCCBBAACBDBACD');
 });

@@ -32,14 +32,15 @@
     }
     return {
       names: Object.keys(files),
-      async text(name) {
+      async bytes(name) {
         const f = files[name];
         if (!f) return null;
         const start = f.lo + 30 + dv.getUint16(f.lo + 26, true) + dv.getUint16(f.lo + 28, true), raw = u8.subarray(start, start + f.csize);
-        const data = f.method === 0 ? raw : f.method === 8 ? await inflate(raw) : null;
-        if (!data) throw new Error('Compressão da planilha não suportada.');
-        return new TextDecoder().decode(data);
-      }
+        const data = f.method === 0 ? raw.slice() : f.method === 8 ? await inflate(raw) : null;
+        if (!data) throw new Error('Compressão do arquivo não suportada.');
+        return data;
+      },
+      async text(name) { const b = await this.bytes(name); return b ? new TextDecoder().decode(b) : null; }
     };
   }
   const unxml = (s) => String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&#(\d+);/g, (m, d) => String.fromCodePoint(+d)).replace(/&#x([0-9a-f]+);/gi, (m, h) => String.fromCodePoint(parseInt(h, 16))).replace(/&amp;/g, '&');
