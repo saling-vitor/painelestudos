@@ -771,3 +771,4 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-tec-home{margin:0 0 12px}
 @media (max-width:700px){.pr-rv{grid-template-columns:auto minmax(0,1fr)}.pr-rv-c{grid-column:1/-1;justify-content:flex-start}}
 .pr-tec-cv{max-height:240px}.pr-tec-cv text{font-family:var(--pr-f-mono);font-size:var(--fs-caption);fill:var(--pr-papel-3)}
+.pr-pv select{display:block;margin-top:6px;max-width:100%;font-size:var(--fs-caption)}

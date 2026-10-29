@@ -132,7 +132,8 @@ test('Prova [G] · revisão, gabarito em foto (OCR), lote e banco de questões p
   expect(m.secs).toContain('LÍNGUA PORTUGUESA');
   expect(m.faltas).toBeGreaterThan(0);
   /* lote: um .zip (caderno + gabarito) e mais um caderno de uma vez */
-  await expect.poll(async () => { if (!(await card.textContent()).includes('Lote · 3 arquivos')) await card.locator('[data-pr-prova="lote"]').setInputFiles(['tests/fixtures/prova-sintetica/lote.zip', 'tests/fixtures/prova-sintetica/prova-sintetica-fundatec.pdf']); await page.waitForTimeout(800); return (await card.textContent()).includes('Lote · 3 arquivos'); }, { timeout: 30000, intervals: [1000, 2000, 3000] }).toBe(true);
+  await expect.poll(async () => { if (!(await card.textContent()).includes('Lote · ')) await card.locator('[data-pr-prova="lote"]').setInputFiles(['tests/fixtures/prova-sintetica/lote.zip', 'tests/fixtures/prova-sintetica/prova-sintetica-fundatec.pdf']); await page.waitForTimeout(800); return (await card.textContent()).includes('Lote · '); }, { timeout: 30000, intervals: [1000, 2000, 3000] }).toBe(true);
+  await expect(card).toContainText('Lote · 3 arquivos', { timeout: 20000 });
   await expect(card.locator('.pr-pv').filter({ has: page.locator('b', { hasText: /^prova-sintetica\.pdf$/ }) })).toContainText('100% no gabarito', { timeout: 20000 });
   await expect(card.locator('.pr-pv').filter({ has: page.locator('b', { hasText: /^gabarito-sintetico\.pdf$/ }) })).toContainText('2 bloco(s)');
   noRuntimeErrors(page);
@@ -148,4 +149,23 @@ test('Prova [G] · gabarito FUNDATEC com 47 cargos (Tapera 2026): bloco certo pe
   expect(r.n).toBe(47); // o anexo não traz o cargo 39
   expect(r.titulo).toBe('2 - Arquiteto');
   expect(r.resp).toBe('CCACBDBDDAACDABCBABDBDDACBCABADDCCBBAACBDBACD');
+});
+
+test('Prova [G] · Objetiva (“6)” e “a)”) e FEPESE (“a. SQUARE”, resposta marcada no caderno)', async ({ page }) => {
+  await setupPrancha(page, { courses: [CASAN] });
+  const r = await page.evaluate(() => {
+    const R = window.MeusMapasProvaReader;
+    const pagina = (linhas) => ({ w: 595, h: 842, lines: linhas.map((t, i) => ({ y: 780 - i * 13, h: 10, cells: [{ x: /^[a-e][.)] /.test(t) ? 43 : 43, x2: 280, s: t }], text: t })) });
+    const capa = { w: 595, h: 842, lines: [{ y: 700, h: 12, cells: [{ x: 60, x2: 400, s: 'CADERNO DE PROVA · Instruções ao candidato' }], text: 'CADERNO DE PROVA · Instruções ao candidato' }] };
+    const obj = ['LÍNGUA PORTUGUESA | 10 QUESTÕES'];
+    for (let n = 1; n <= 6; n++) { if (n === 4) obj.push('CONHECIMENTOS ESPECÍFICOS | 20 QUESTÕES'); obj.push(n + ') Enunciado da questão ' + n + ' sobre o tema.', 'a) primeira.', 'b) segunda.', 'c) terceira.', 'd) quarta.'); }
+    const fep = [];
+    for (let n = 1; n <= 5; n++) fep.push(n + '. Analise o enunciado ' + n + '.', ...['a', 'b', 'c', 'd', 'e'].map((l, i) => l + '. ' + (i === n % 5 ? 'Check-square' : 'SQUARE') + ' alternativa ' + l + '.'));
+    const A = R.lerProva([capa, pagina(obj.slice(0, 26)), pagina(obj.slice(26))]), B = R.lerProva([capa, pagina(fep.slice(0, 30)), pagina(fep.slice(30))]);
+    return { secs: A.secoes.map((s) => s.titulo + ':' + s.questoes.length), alts: A.alternativas, b1: B.secoes[0].questoes[0].alternativas[1], marc: B.marcadas && Object.values(B.marcadas).join('') };
+  });
+  expect(r.secs).toEqual(['LÍNGUA PORTUGUESA:3', 'CONHECIMENTOS ESPECÍFICOS:3']);
+  expect(r.alts).toBe(4);
+  expect(r.b1).toBe('alternativa b.');
+  expect(r.marc).toBe('BCDEA');
 });

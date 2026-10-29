@@ -1,14 +1,14 @@
 {
-  "version": "15.65.0",
-  "label": "V15.65.0-G",
-  "notes": "TEC no plano de estudo; simulados de provas com FUNDATEC, gabarito em foto, revisão, lote e banco de questões.",
+  "version": "15.65.1",
+  "label": "V15.65.1-G",
+  "notes": "Simulado da prova: .zip, gabaritos com dezenas de cargos, Objetiva e FEPESE, pareamento por concurso.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] TEC no plano: assuntos fracos sobem a prioridade dos mapas ligados (Onde focar agora, Início, agenda); liga e desliga em Configurações",
-    "[G] TEC: meta de acerto por disciplina para a nota de corte, curva de acerto entre leituras, mapa escolhido por assunto, assuntos sem mapa, TEC × questões dos mapas e aviso quando a planilha passa de 15 dias",
-    "[G] Simulado da prova: leitor validado em cadernos FUNDATEC (QUESTÃO 01 –, texto com linhas numeradas); gabarito escaneado ou foto lido por OCR com respostas a conferir",
-    "[G] Revisão questão a questão antes de criar, vários PDFs de uma vez (caderno e gabarito pareados sozinhos) e cada questão ligada ao mapa do assunto (erros entram no plano)",
-    "[G] Banco de questões oficiais neste aparelho: simulado misturado na estrutura da prova do seu concurso"
+    "[G] Lote aceita .zip com cadernos e gabaritos; cada caderno é pareado com o gabarito do mesmo concurso (cidade, órgão, sigla, edital) e dá para trocar à mão",
+    "[G] Gabaritos com dezenas de cargos (FUNDATEC Tapera, Flores da Cunha, MPES…) lidos bloco a bloco pelo código do cargo",
+    "[G] Cadernos da Objetiva (“6)” e “a)”) e da FEPESE (“a.”) lidos; caderno já respondido pode virar gabarito",
+    "[G] TEC no plano de estudo; meta por disciplina, curva, mapa por assunto, aviso de planilha antiga (V15.65.0)",
+    "[G] Simulado da prova: FUNDATEC, gabarito em foto (OCR), revisão questão a questão e banco de questões (V15.65.0)"
   ],
   "automation": {
     "enabled": true,
@@ -16,5 +16,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T18:06:49-03:00"
+  "releasedAt": "2026-10-29T19:44:11-03:00"
 }

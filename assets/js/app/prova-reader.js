@@ -8,7 +8,9 @@
   const norm = (v) => String(v ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
   const median = (a) => { const s = a.slice().sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : 0; };
   const DISC = /^(l[ií]ngua portuguesa|portugu[eê]s|matem[aá]tica|racioc[ií]nio|inform[aá]tica|no[cç][oõ]es de inform|legisla[cç][aã]o|conhecimentos (gerais|espec[ií]ficos|b[aá]sicos|pedag)|atualidades|realidade|hist[oó]ria|geografia|direito|[eé]tica|estatuto|l[ií]ngua (inglesa|espanhola)|ingl[eê]s|espanhol|administra[cç][aã]o p|parte (i|ii|iii|1|2|3)\b|m[oó]dulo|bloco)/i;
-  const ALT = /^\(?([A-Ea-e])\)\s*(.*)$/;
+  /* alternativas: “(A) …”, “A) …”, “a) …” e “a. …” (FEPESE, que ainda traz o nome do ícone da caixinha: “SQUARE”, “Check-square”) */
+  const ALT = /^\(?([A-Ea-e])(?:\)|\.(?=\s))\s*(.*)$/;
+  const ICONE = /^(check-square-o|check-square|square-o|square|check|circle-o|circle|dot-circle-o)\s+/i, MARCADA = /^check/i;
   const QNUM = /^(?:QUEST[ÃA]O\s*(?:N[ºo°.]\s*)?)?0*(\d{1,3})(\s*[.)\-–—:]\s*|\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ“"(])|$)(.*)$/i;
   const MATH = /[\u{1D400}-\u{1D7FF}∑√∫≤≥≠±×÷πΔ]/u;
   const FIG = /\b(figura|imagem|ilustra|tabela|quadro|gr[aá]fico|esquema|desenho|planta (baixa|de)|corte|fachada|observe|a seguir representad|abaixo representad|croqui|perspectiva)\b/i;
@@ -69,7 +71,7 @@
     if (texto.join('').replace(/\s/g, '').length < 400) return { secoes: [], questoes: 0, avisos: ['O PDF parece ser imagem (escaneado): não há texto para ler. Use um caderno com texto selecionável.'] };
     const meta = metaDe(texto);
     /* começa na primeira página com alternativas; a capa fica de fora */
-    const temAlt = (t) => /^\s*\(?[A]\)\s+\S/m.test(t), capa = (t) => /caderno|inscri[cç][aã]o|instru[cç][oõ]es|candidato/i.test(t) && !temAlt(t);
+    const temAlt = (t) => /^\s*\(?[Aa](\)|\.\s)\s*\S/m.test(t), capa = (t) => /caderno|inscri[cç][aã]o|instru[cç][oõ]es|candidato/i.test(t) && !temAlt(t);
     const primAlt = Math.max(0, texto.findIndex(temAlt));
     const ini = primAlt > 1 && !capa(texto[primAlt - 1]) ? primAlt - 1 : primAlt;
     const stream0 = fluxo(pages).filter((e) => e.p >= ini), stream = [];
@@ -98,13 +100,15 @@
       const grande = e.h >= bodyH * 1.18, palavras = tt.split(/\s+/), fimSolto = /^(de|da|do|das|dos|a|o|e|em|no|na|que|para|com|ou|se|ao|à|um|uma|por|as|os)$/i.test(palavras[palavras.length - 1] || '');
       const curto = tt.length <= 70 && palavras.length <= 9 && !fimSolto && !/[.;:?,]$/.test(tt) && /[a-zà-ú]{3}/i.test(tt) && /^[A-ZÀ-Ú]/.test(tt);
       const ehDisc = DISC.test(tt);
-      const titulo = grande && e.h >= bodyH * 1.25 && tt.length <= 70 && !QNUM.test(t) && !ALT.test(t) && /[a-zà-ú]{3}/i.test(tt) && !/[.;:?,!]$/.test(tt) && !/,/.test(tt) &&
+      const titulo = grande && e.h >= bodyH * 1.25 && tt.length <= 70 && !/caderno|instru[cç]|folha de resp|gabarito/i.test(tt) && !QNUM.test(t) && !ALT.test(t) && /[a-zà-ú]{3}/i.test(tt) && !/[.;:?,!]$/.test(tt) && !/,/.test(tt) &&
         (ehDisc || (prev?.titulo && /^[A-ZÀ-Úa-zà-ú]/.test(tt)) || (/^[A-ZÀ-Ú]/.test(tt) && palavras.length <= 6 && !fimSolto));
       const continuacao = q && alt >= 0 && !grande && e.x - left > q.alts[alt].ind + 3 && e.x - left < q.alts[alt].ind + 45 && (q.alts[alt].ck === ck || !(e.n === 1 && tt.length < 45));
       /* título em várias linhas (“História e Aspectos / Geoeconômicos do Estado…”): junta ao cabeçalho recém-aberto */
       if (titulo && prev && prev.titulo && sec && !sec.questoes.length && prev.p === e.p && prev.y - e.y <= e.h * 2) { sec.titulo += ' ' + tt; e.titulo = true; prev = e; continue; }
-      if (titulo || (curto && (!continuacao || /[.?!)”"]$/.test(prev?.text || '')) && !ALT.test(t) && ehDisc && (!q || alt >= 1) && (e.n === 1 || grande))) {
-        if (q && alt < 1 && !grande) { /* parte do enunciado */ } else { fechar(); if (pend.length && sec && !sec.questoes.length) { sec.intro = sec.intro || mkIntro(pend); } pend = []; novaSecao(tt.replace(/\s+/g, ' ')); e.titulo = true; prev = e; continue; }
+      /* cabeçalho inconfundível: disciplina em caixa alta ou com “| 10 QUESTÕES” */
+      const forte = ehDisc && (/quest(õ|o)es\s*$/i.test(tt) || (tt === tt.toUpperCase() && /[A-ZÀ-Ú]{8}/.test(tt)));
+      if (titulo || (curto && (!continuacao || forte || /[.?!)”"]$/.test(prev?.text || '')) && !ALT.test(t) && ehDisc && (!q || alt >= 1) && (e.n === 1 || grande))) {
+        if (q && alt < 1 && !grande) { /* parte do enunciado */ } else { fechar(); if (pend.length && sec && !sec.questoes.length) { sec.intro = sec.intro || mkIntro(pend); } pend = []; novaSecao(tt.replace(/\s*[|–—-]\s*\d+\s*quest(õ|o)es?\s*$/i, '').replace(/\s+/g, ' ')); e.titulo = true; prev = e; continue; }
       }
       /* início de questão: o próximo número, rente à margem da coluna */
       const m = QNUM.exec(t);
@@ -121,7 +125,7 @@
       }
       if (q) {
         const a = ALT.exec(t), want = String.fromCharCode(65 + alt + 1);
-        if (a && a[1].toUpperCase() === want && (alt >= 0 || q.stem.length)) { alt++; q.alts.push({ x: e.x, ind: e.x - left, ck, s: [a[2]] }); reg(q, e); q.linhas++; if (e.gap > e.h * 3) q.celulas++; prev = e; continue; }
+        if (a && a[1].toUpperCase() === want && (alt >= 0 || q.stem.length)) { alt++; const ic = ICONE.exec(a[2]); if (ic && MARCADA.test(ic[1])) q.marcada = want; q.alts.push({ x: e.x, ind: e.x - left, ck, s: [ic ? a[2].slice(ic[0].length) : a[2]] }); reg(q, e); q.linhas++; if (e.gap > e.h * 3) q.celulas++; prev = e; continue; }
         const gap = prev && !primeiroDaColuna ? prev.y - e.y : 0;
         if (gap > Math.max(e.h, prev?.h || 0) * 3.6) q.gaps++;
         if (alt < 0) { q.stem.push(t); reg(q, e); q.linhas++; if (e.gap > e.h * 3) q.celulas++; if (MATH.test(t)) q.math = true; prev = e; continue; }
@@ -152,7 +156,9 @@
     }));
     const nums = out.flatMap((s) => s.questoes.map((x) => x.n));
     for (let i = 1; i < nums.length; i++) if (nums[i] !== nums[i - 1] + 1) avisos.push('Numeração salta de ' + nums[i - 1] + ' para ' + nums[i] + '.');
-    return { meta, secoes: out, questoes: nums.length, alternativas: nAlt, formato: ce ? 'certo-errado' : 'multipla', avisos };
+    /* caderno já respondido (ícone marcado na alternativa): vale como gabarito quando cobre quase todas as questões */
+    const marcadas = Object.fromEntries(todas.filter((x) => x.marcada).map((x) => [x.n, x.marcada]));
+    return { meta, secoes: out, questoes: nums.length, alternativas: nAlt, formato: ce ? 'certo-errado' : 'multipla', avisos, marcadas: Object.keys(marcadas).length >= nums.length * 0.8 ? marcadas : null };
   }
   /* título com letras espaçadas (“L Í N G U A  P O R T U G U E S A”): separa as palavras por um dicionário curto */
   const PAL = 'lingua portuguesa raciocinio logico logica quantitativo matematico matematica informatica conhecimentos conhecimento especificos especifico gerais basicos basica legislacao atualidades nocoes direito administrativo constitucional etica e de da do das dos administracao publica historia geografia estatistica ingles inglesa espanhol'.split(' ').sort((a, b) => b.length - a.length);
@@ -177,17 +183,22 @@
   }
   function metaDe(texto) {
     const t0 = texto.slice(0, 2).join('\n'), linhas = (texto[0].trim().length > 80 ? texto[0] : t0).split('\n').map((s) => s.trim()).filter((l) => l && !/^\(/.test(l));
-    const tudo = texto.join(' '), banca = /fundatec/i.test(tudo) ? 'FUNDATEC' : /instituto aocp|\bT\d{7}N\b|\bM\d{7}N\b/i.test(texto.join(' ')) ? 'Instituto AOCP' : /objetiva concursos|objetivas? concursos/i.test(tudo) ? 'Objetiva' : /cebraspe|cespe/i.test(t0) ? 'Cebraspe' : /\bfgv\b|getulio vargas/i.test(t0) ? 'FGV' : /\bfcc\b|carlos chagas/i.test(t0) ? 'FCC' : /fepese/i.test(t0) ? 'FEPESE' : /legalle/i.test(t0) ? 'Legalle' : '';
+    const tudo = texto.join(' '), banca = /fundatec/i.test(tudo) ? 'FUNDATEC' : /instituto aocp|\bT\d{7}N\b|\bM\d{7}N\b/i.test(texto.join(' ')) ? 'Instituto AOCP' : /objetiva concursos|objetivas? concursos|objetivas\.com\.br/i.test(tudo) ? 'Objetiva' : /cebraspe|cespe/i.test(t0) ? 'Cebraspe' : /\bfgv\b|getulio vargas/i.test(t0) ? 'FGV' : /\bfcc\b|carlos chagas/i.test(t0) ? 'FCC' : /fepese/i.test(t0) ? 'FEPESE' : /legalle/i.test(t0) ? 'Legalle' : '';
     const edital = (t0.match(/edital[^\n]{0,80}?n[º°o.]?\s*[\d./-]+(?:\s*[-–]\s*[A-Z]+)?/i) || [''])[0].replace(/\s+/g, ' ').trim();
     const ent = [...new Set(linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9 .,–\-/()]{8,}$/.test(l) && !/edital|n[íi]vel|tipo|turno|inscri|nome|caderno|instituto aocp|fundatec|objetiva|^T\d+N$|^M\d+N$/i.test(l)))].slice(0, 3);
     const CARGO = /arquitet|engenh|analista|t[eé]cnico|profissional|especialista|agente|professor|assistente|auditor|fiscal|perito|urbanista/i;
     const cands = linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => l.length >= 6 && l.length <= 90 && CARGO.test(l) && l === l.toUpperCase() && !/minist[eé]rio|prefeitura|secretaria|companhia|instituto|funda[cç][aã]o|universidade|munic[ií]pio/i.test(l));
-    let cargo = cands[0] || (texto[0].match(/(?:cargo|emprego)\s*:\s*([^\n]{4,80})/i) || [])[1] || '';
+    /* Objetiva e outras escrevem cargo e órgão em caixa normal: “Arquiteto (20h e 40h)”, “Município de Rio Negro/PR” */
+    const cands2 = linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).filter((l) => l.length >= 6 && l.length <= 60 && /^[A-ZÀ-Ý]/.test(l) && CARGO.test(l) && !/[.:;]$/.test(l) && l.split(/\s+/).length <= 8 && !/minist[eé]rio|prefeitura|secretaria|companhia|instituto|funda[cç][aã]o|universidade|munic[ií]pio|confira|cart[aã]o|caderno|inscri/i.test(l));
+    let cargo = cands[0] || cands2[0] || (texto[0].match(/(?:cargo|emprego)\s*:\s*([^\n]{4,80})/i) || [])[1] || '';
     cargo = cargo.replace(/^\d{1,3}\s*[—–-]\s*/, '');
+    /* cargo quebrado em duas linhas (“ANALISTA DE GESTÃO GOVERNAMENTAL -” / “ARQUITETURA”) */
+    if (/[-–—]\s*$/.test(cargo)) { const i = linhas.findIndex((l) => l.startsWith(cargo.trim())); const nx = i >= 0 ? linhas[i + 1] : ''; if (nx && nx === nx.toUpperCase() && nx.length < 60) cargo = cargo.trim() + ' ' + nx.trim(); }
     const meio = cargo.length / 2;
     if (cargo.length > 10 && cargo.length % 2 === 0 && cargo.slice(0, meio) === cargo.slice(meio)) cargo = cargo.slice(0, meio);
     const tipo = (texto.join('\n').match(/tipo\s*0*(\d)\b/i) || [])[1] || '';
-    const entidade = ent.filter((l) => l !== cargo).slice(0, 2).join(' — ');
+    let entidade = ent.filter((l) => l !== cargo).slice(0, 2).join(' — ');
+    if (!entidade) entidade = (linhas.map((l) => l.replace(/\s{2,}.*$/, '').trim()).find((l) => /^(m+unic[ií]pio|prefeitura|c[aâ]mara|minist[eé]rio|tribunal|governo|estado|universidade|companhia|funda[cç][aã]o|departamento|secretaria)\b/i.test(l) && l.length < 90) || '').replace(/^MM/, 'M');
     return { banca, edital, entidade, cargo: cargo.replace(/\s+/g, ' ').trim(), tipo };
   }
 
@@ -250,7 +261,29 @@
     const sc = blocos.map((b) => { const t = norm(b.titulo); let s = ws.filter((w) => t.includes(w)).length * 2; if (tipo && new RegExp('(tipo|prova)\\s*0*' + tipo + '\\b').test(t)) s += 3; const n = Object.keys(b.respostas).length; if (total && n === total) s += 1; return s; });
     return sc.indexOf(Math.max(...sc));
   }
-  const api = { lerProva, lerGabarito, gabaritoDoTexto, escolherBloco, fluxo, divisa, juntar };
+  /* cabeçalho do arquivo (primeiras linhas) e afinidade entre dois cabeçalhos: nomes próprios em comum (cidade, órgão, edital) */
+  const GENERICO = new Set('prefeitura municipal municipio estado concurso publico edital abertura gabarito gabaritos preliminar preliminares definitivo definitivos oficial oficiais prova provas objetiva objetivas teorico teorica caderno questoes cargo cargos nivel superior medio tipo turno manha tarde anexo unico secretaria governo fundacao instituto rio grande sul santa catarina parana publica publicos para candidato candidata instrucoes arquiteto arquiteta arquitetura urbanista urbanismo engenheiro engenharia civil analista agente tecnico tecnica profissional especialista assistente auxiliar fundatec objetiva objetivas aocp fepese legalle fgv cebraspe cespe banca lingua portuguesa conhecimentos especificos gerais basicos legislacao matematica raciocinio logico informatica nocoes discursiva redacao informacoes gerais leia atente avisos questao questoes pagina'.split(' '));
+  function cabecalho(pages, n = 25) { return (pages || []).slice(0, 2).flatMap((p) => p.lines.slice(0, n).map((l) => l.text)).join(' '); }
+  /* só nomes próprios (palavras com inicial maiúscula) e números de edital (01/2026): o texto corrido não identifica concurso */
+  const tokensCab = (x) => {
+    const out = new Set(), s = String(x || '').normalize('NFC');
+    for (const m of s.matchAll(/\b\d{1,4}\/\d{4}\b/g)) out.add(m[0]);
+    for (const w of s.split(/[^A-Za-zÀ-ÿ]+/)) if (w.length > 3 && /^[A-ZÀ-Ý]/.test(w)) { const n = norm(w); if (!GENERICO.has(n)) out.add(n); }
+    /* siglas: “Ministério Público do Espírito Santo” → mpes (casa com “MPES” do outro arquivo) */
+    for (const m of s.matchAll(/(?:[A-ZÀ-Ý][a-zà-ÿ]+(?:\s+(?:de|do|da|dos|das|e)\s+|\s+)){2,5}[A-ZÀ-Ý][a-zà-ÿ]+|(?:[A-ZÀ-Ý]{2,}(?:\s+(?:DE|DO|DA|DOS|DAS|E)\s+|\s+)){2,5}[A-ZÀ-Ý]{2,}/g)) {
+      const ini = m[0].split(/\s+/).filter((w) => /^[A-ZÀ-Ý]/.test(w)).map((w) => norm(w)[0]).join('');
+      if (ini.length >= 4) out.add(ini);
+    }
+    for (const m of s.matchAll(/\b[A-Z]{4,6}\b/g)) { const n = m[0].toLowerCase(); if (!GENERICO.has(n)) out.add(n); }
+    return out;
+  };
+  /* df: em quantos arquivos do lote cada palavra aparece — palavra presente em todos (arquiteto, fundatec) não identifica concurso */
+  function afinidade(a, b, df = null, total = 0) {
+    const A = tokensCab(a), B = tokensCab(b);
+    let n = 0; for (const w of A) if (B.has(w) && (!df || (df.get(w) || 0) <= Math.max(2, total * 0.25))) n++;
+    return n;
+  }
+  const api = { lerProva, lerGabarito, cabecalho, afinidade, tokensCab, gabaritoDoTexto, escolherBloco, fluxo, divisa, juntar };
   root.MeusMapasProvaReader = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

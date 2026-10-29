@@ -289,7 +289,10 @@
   function loteHtml() {
     if (!st.lote?.length) return '';
     const provas = st.lote.filter((x) => x.tipo === 'prova');
-    return '<div class="pr-ps"><span class="pr-k l">Lote · ' + st.lote.length + ' arquivos</span><div class="pr-list">' + st.lote.map((x) => '<div class="pr-li pr-pv"><span class="pr-mono">' + (x.tipo === 'prova' ? 'PROVA' : x.tipo === 'gab' ? 'GAB.' : '?') + '</span><span><b>' + esc(x.arquivo) + '</b><span class="t">' + esc(x.status || '') + '</span></span><span class="pr-chip ' + (x.tipo === 'prova' && x.cobertura >= 0.8 ? 'ok' : x.tipo === 'gab' ? '' : 'ox') + '">' + (x.tipo === 'prova' ? Math.round((x.cobertura || 0) * 100) + '% no gabarito' : x.tipo === 'gab' ? (x.blocos?.length || 0) + ' bloco(s)' : 'não lido') + '</span></div>').join('') + '</div>' +
+    /* cada caderno pode trocar o gabarito pareado: lista todos os blocos de todos os gabaritos do lote */
+    const opcoes = st.lote.flatMap((g, gi) => (g.tipo === 'gab' ? g.blocos.map((b, bi) => [gi + ':' + bi, g.arquivo.slice(0, 30) + ' › ' + b.titulo.slice(0, 50) + ' (' + Object.keys(b.respostas).length + ')']) : []));
+    const selGab = (x, i) => x.tipo !== 'prova' ? '' : '<select data-pr-change="prova-lote-gab" data-i="' + i + '" aria-label="Gabarito de ' + esc(x.arquivo) + '"><option value="">' + (x.gab ? 'pareado: ' + esc(x.gab.arquivo.slice(0, 30)) : '— sem gabarito') + '</option>' + opcoes.map(([v, l]) => '<option value="' + v + '"' + (x.gabSel === v ? ' selected' : '') + '>' + esc(l) + '</option>').join('') + '<option value="-">— não criar este</option></select>';
+    return '<div class="pr-ps"><span class="pr-k l">Lote · ' + st.lote.length + ' arquivos</span><div class="pr-list">' + st.lote.map((x, i) => '<div class="pr-li pr-pv"><span class="pr-mono">' + (x.tipo === 'prova' ? 'PROVA' : x.tipo === 'gab' ? 'GAB.' : '?') + '</span><span><b>' + esc(x.arquivo) + '</b><span class="t">' + esc(x.status || '') + '</span>' + selGab(x, i) + '</span><span class="pr-chip ' + (x.tipo === 'prova' && x.cobertura >= 0.8 ? 'ok' : x.tipo === 'gab' ? '' : 'ox') + '">' + (x.tipo === 'prova' ? Math.round((x.cobertura || 0) * 100) + '% no gabarito' : x.tipo === 'gab' ? (x.blocos?.length || 0) + ' bloco(s)' : 'não lido') + '</span></div>').join('') + '</div>' +
       '<div class="pr-row" style="margin-top:8px">' + ui.btn(st.criando === 'lote' ? 'Montando…' : 'Criar ' + provas.filter((x) => x.cobertura >= 0.5).length + ' simulado(s)', { ...ui.act('prova-lote-criar'), disabled: !!st.criando || !provas.some((x) => x.cobertura >= 0.5) }, 'p') + ui.btn('Limpar lote', ui.act('prova-lote-limpar'), 'g sm') + '</div></div>';
   }
   function panel(course) {
@@ -304,6 +307,7 @@
     const blocos = st.gab?.blocos || [];
     const passo2 = '<div class="pr-ps"><span class="pr-k l">2 · Gabarito</span>' + (st.lendo === 'gab' ? '<p class="pr-mono">Lendo o gabarito…' + (st.lendoOcr ? ' (imagem: reconhecendo letras, pode levar alguns segundos)' : '') + '</p>' : '') +
       (blocos.length > 1 ? '<label class="pr-field"><span>Qual gabarito do arquivo</span><select data-pr-change="prova-bloco">' + blocos.map((b, i) => '<option value="' + i + '"' + (i === st.gab.bloco ? ' selected' : '') + '>' + esc(b.titulo.slice(0, 90)) + ' · ' + Object.keys(b.respostas).length + '</option>').join('') + '</select></label>' : blocos.length === 1 ? '<p><b>' + esc(st.gab.arquivo || '') + '</b> · ' + Object.keys(blocos[0].respostas).length + ' respostas' + (st.gab.ocr ? ' · lido da imagem' + (blocos[0].duvidas?.length ? ': ' + blocos[0].duvidas.length + ' para conferir na revisão (' + blocos[0].duvidas.slice(0, 12).join(', ') + (blocos[0].duvidas.length > 12 ? '…' : '') + ')' : ', confira na revisão') : '') + '</p>' : '') +
+      (L?.marcadas && !blocos.length && !st.gab?.texto ? '<p class="pr-tec-av">Este caderno já vem com uma alternativa marcada em cada questão (' + Object.keys(L.marcadas).length + '). Se forem as respostas oficiais, use como gabarito. ' + ui.btn('Usar as marcadas', ui.act('prova-marcadas'), 'g sm') + '</p>' : '') +
       '<div class="pr-row">' + ui.btn(blocos.length ? 'Trocar gabarito' : 'Gabarito (PDF ou foto)', ui.act('prova-pick', 'gab'), 'g sm') + '<input type="file" accept="application/pdf,.pdf,image/*" hidden data-pr-change="prova-file" data-pr-prova="gab"></div>' +
       '<label class="pr-field"><span>Ou digite o gabarito (ex.: CEADB… ou 1-C 2-E; X = anulada)</span><textarea rows="2" data-pr-change="prova-gabtxt" placeholder="CEADBCADEA…">' + esc(st.gab?.texto || '') + '</textarea></label></div>';
     let resumo = '';
@@ -338,16 +342,22 @@
      bloco de gabarito que mais combina (cargo, tipo, número de questões e nome do arquivo) */
   const nomeToks = (s) => new Set(norm(s).replace(/\.[a-z]+$/, '').split(/[^a-z0-9]+/).filter((w) => w.length > 3 && !/^(prova|gabarito|caderno|preliminar|definitivo|questoes|tipo)$/.test(w)));
   function parearLote() {
-    const gabs = st.lote.filter((x) => x.tipo === 'gab');
-    for (const p of st.lote.filter((x) => x.tipo === 'prova')) {
+    const gabs = st.lote.filter((x) => x.tipo === 'gab'), df = new Map(), lidos = st.lote.filter((x) => x.cab);
+    for (const x of lidos) for (const w of R().tokensCab(x.cab)) df.set(w, (df.get(w) || 0) + 1);
+    for (const p of st.lote.filter((x) => x.tipo === 'prova' && !x.gabSel)) {
       let best = null;
       for (const g of gabs) {
         const nt = nomeToks(g.arquivo), pt = nomeToks(p.arquivo), comum = [...pt].filter((w) => nt.has(w)).length;
         const i = R().escolherBloco(g.blocos, p.leitura.meta, p.leitura.questoes), b = g.blocos[i];
         const nums = p.leitura.secoes.flatMap((s) => s.questoes.map((q) => q.n)), cob = nums.filter((n) => b.respostas[n]).length / Math.max(1, nums.length);
-        const sc = comum * 2 + cob * 3 + (norm(b.titulo).includes(norm(p.leitura.meta.cargo).split(' ')[0] || '#') ? 2 : 0);
+        /* o que mais pesa: o mesmo concurso (cidade/órgão/edital em comum nos cabeçalhos); depois cargo, nome do arquivo e cobertura */
+        const af = Math.min(6, R().afinidade(p.cab || '', g.cab || '', df, lidos.length)), exato = Object.keys(b.respostas).length === nums.length ? 1 : 0;
+        /* com vários gabaritos no lote, sem nada em comum (órgão, cidade, edital, nome do arquivo) não pareia */
+        if (gabs.length > 1 && !af && !comum) continue;
+        const sc = af * 3 + comum * 2 + cob * 3 + exato + (norm(b.titulo).includes(norm(p.leitura.meta.cargo).split(' ').filter((w) => w.length > 4).pop() || '#') ? 2 : 0);
         if (!best || sc > best.sc) best = { sc, g, i, cob };
       }
+      if ((!best || best.cob < 0.5) && p.leitura.marcadas) best = { g: { arquivo: 'respostas marcadas no caderno', blocos: [{ titulo: 'marcadas no caderno', respostas: p.leitura.marcadas }] }, i: 0, cob: 1 };
       p.gab = best ? { arquivo: best.g.arquivo, blocos: best.g.blocos, bloco: best.i } : null; p.cobertura = best?.cob || 0;
       p.status = p.leitura.questoes + ' questões' + (p.leitura.meta.banca ? ' · ' + p.leitura.meta.banca : '') + (best ? ' · gabarito: ' + best.g.arquivo + ' › ' + best.g.blocos[best.i].titulo.slice(0, 60) : ' · sem gabarito no lote');
     }
@@ -377,9 +387,10 @@
         const ehImg = /^image\//.test(f.type);
         if (!ehImg) {
           const { doc, pages } = await pdfPaginas(f), L = R().lerProva(pages);
-          if (L.questoes >= 5) { Object.assign(row, { tipo: 'prova', doc, leitura: L }); continue; }
           const bl = R().lerGabarito(pages);
-          if (bl.length) { Object.assign(row, { tipo: 'gab', blocos: bl, status: bl.map((b) => b.titulo).slice(0, 3).join(' · ') }); continue; }
+          /* caderno de verdade: muitas questões com alternativas; arquivo de gabaritos de vários cargos pode “parecer” ter algumas */
+          if (L.questoes >= 5 && !(bl.length >= 3 && L.questoes < 20)) { Object.assign(row, { tipo: 'prova', doc, leitura: L, cab: R().cabecalho(pages) }); continue; }
+          if (bl.length) { Object.assign(row, { tipo: 'gab', blocos: bl, cab: R().cabecalho(pages), status: bl.map((b) => b.titulo).slice(0, 3).join(' · ') }); continue; }
         }
         const { blocos, ocr } = await lerGabaritoArquivo(f);
         if (blocos.length) Object.assign(row, { tipo: 'gab', blocos, status: (ocr ? 'lido da imagem · ' : '') + blocos.map((b) => b.titulo).slice(0, 3).join(' · ') });
@@ -454,10 +465,20 @@
     'prova-file': (v, el) => { const f = el.files?.[0]; if (f) lerArquivo(el.dataset.prProva, f); el.value = ''; },
     'prova-lote': (v, el) => { const fs = [...(el.files || [])]; el.value = ''; if (fs.length) lerLote(fs); },
     'prova-lote-limpar': () => { st.lote = []; P.schedule('simulations'); },
+    'prova-lote-gab': (v, el) => {
+      const p = st.lote[Number(el.dataset.i)];
+      if (!p) return;
+      p.gabSel = v;
+      if (v === '-') { p.gab = null; p.cobertura = 0; }
+      else if (v) { const [gi, bi] = v.split(':').map(Number), g = st.lote[gi], b = g?.blocos?.[bi]; if (b) { const nums = p.leitura.secoes.flatMap((s) => s.questoes.map((q) => q.n)); p.gab = { arquivo: g.arquivo, blocos: g.blocos, bloco: bi }; p.cobertura = nums.filter((n) => b.respostas[n]).length / Math.max(1, nums.length); p.status = p.leitura.questoes + ' questões · gabarito escolhido: ' + g.arquivo + ' › ' + b.titulo.slice(0, 60); } }
+      else parearLote();
+      el.blur?.(); P.schedule('simulations');
+    },
     'prova-lote-criar': () => { criarLote(state.simulationCourseFilter || ''); },
     'prova-bloco': (v, el) => { if (st?.gab) { st.gab.bloco = Number(v) || 0; st.gab.texto = ''; } el?.blur?.(); P.schedule('simulations'); },
     'prova-gabtxt': (v) => { st.gab = { ...(st.gab || { blocos: [], bloco: 0 }), texto: String(v || '').trim() }; P.schedule('simulations'); },
     'prova-ajuste': (v, el) => { const aj = ajusteDe(Number(el.dataset.n)), c = el.dataset.campo; if (c === 'resp') { if (v) aj.resp = v; else delete aj.resp; } else if (c === 'figura') aj.figura = !!el.checked; else if (c === 'incluir') aj.fora = !el.checked; st.revAberta = true; el.blur?.(); P.schedule('simulations'); },
+    'prova-marcadas': () => { const m = st?.prova?.leitura?.marcadas; if (m) st.gab = { arquivo: 'respostas marcadas no caderno', blocos: [{ titulo: 'marcadas no caderno', respostas: m }], bloco: 0, texto: '' }; P.schedule('simulations'); },
     'prova-criar': (courseId) => { criar(courseId); },
     'prova-misto': (courseId) => { criarMisto(courseId); },
     'prova-banca': (v) => { st.bancaSel = v; },
