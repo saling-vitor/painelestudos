@@ -179,7 +179,7 @@
 
   /* 4 · cards de mapa muito menores */
   html.is-phone-layout .map-card.has-cover .map-code{
-    height:30px!important;
+    height:auto!important;
     min-width:40px!important;
     margin-top:0!important;
     padding:0 7px!important;
@@ -1805,6 +1805,7 @@
     margin-top:8px!important;
   }
   html.is-phone-layout .map-card-status-row .map-code,
+  html.is-phone-layout .map-card-status-row .map-version,
   html.is-phone-layout .map-card-status-row .map-study-status{
     min-height:22px!important;
     padding:3px 7px!important;
