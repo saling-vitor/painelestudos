@@ -83,6 +83,7 @@
   function writeStore(value, { touch = true } = {}) {
     const data = normalizeStore(value);
     if (touch) data.updatedAt = new Date().toISOString();
+    P.__amClear?.();
     try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) { console.warn('[Prancha] armazenamento indisponível', e); return null; }
     if (touch && typeof touchPreferences === 'function') { try { touchPreferences(); } catch {} }
     return data;
@@ -801,7 +802,18 @@
     const next = { ...cur }; if (t) next[c] = t; else delete next[c];
     patchStore('prefs', 'discAprendida', { value: next });
   }
+  /* V15.67 · fora de um quadro de desenho o memo não guarda nada; o planejador e a agenda perguntam a disciplina de
+     cada mapa e recalculavam tudo a cada chamada. Guarda por alguns segundos e zera quando o armazenamento muda. */
+  const AM_CACHE = new Map();
+  P.__amClear = () => AM_CACHE.clear();
   function autoMapas(courseId) {
+    const hit = AM_CACHE.get(courseId);
+    if (hit && Date.now() - hit.t < 4000) return hit.v;
+    const v = autoMapasRaw(courseId);
+    AM_CACHE.set(courseId, { t: Date.now(), v });
+    return v;
+  }
+  function autoMapasRaw(courseId) {
     return memo('am:' + courseId, () => {
       const prova = provaOf(courseId), ed = editalOf(courseId) || {}, cont = ed.conteudos || {};
       if (prova.length < 2) return {};
