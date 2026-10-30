@@ -1,14 +1,16 @@
 {
-  "version": "15.65.2",
-  "label": "V15.65.2-G",
-  "notes": "Importar simulado com a capa Padrão não falha mais.",
+  "version": "15.66.0",
+  "label": "V15.66.0-G",
+  "notes": "Sem simulados embutidos, botão de atualizar no iPad e no celular, capas sincronizadas entre aparelhos e cursos mais legíveis.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Importar simulados: a capa “Padrão MEUS MAPAS” não trava mais a importação (a nuvem só aceitava as capas antigas); a escolha fica guardada no aparelho",
-    "[G] Simulado de prova: nome do órgão completo (ex.: Ministério Público do Estado do Espírito Santo) no título e no código",
-    "[G] Lote aceita .zip com cadernos e gabaritos; cada caderno é pareado com o gabarito do mesmo concurso (cidade, órgão, sigla, edital) e dá para trocar à mão",
-    "[G] Gabaritos com dezenas de cargos (FUNDATEC Tapera, Flores da Cunha, MPES…) lidos bloco a bloco pelo código do cargo",
-    "[G] Cadernos da Objetiva (“6)” e “a)”) e da FEPESE (“a.”) lidos; caderno já respondido pode virar gabarito"
+    "[G] Simulados de exemplo (DEMHAB SIM 01–03) removidos: contas novas e a sua começam sem provas, só com o que você importar",
+    "[G] Capas trocadas no PC chegam ao iPad e ao celular (e o inverso) ao voltar para o app, sem recarregar; a capa de banca escolhida para um simulado também sincroniza",
+    "[T] iPad: ícone de atualizar ao lado da barra de busca na vertical; na horizontal só o ícone na barra lateral",
+    "[M] Celular: “Atualizar app” no menu Mais, com a versão atual",
+    "[G] Meus Cursos: linha do tempo sem rótulos sobrepostos (fases do mesmo dia juntas, rótulos em níveis)",
+    "[G] Raio-X do curso reorganizado em seções (regras, disciplinas, etapas, cargo) com cartões de disciplina mais claros",
+    "[G] Cartão do mapa: versão depois do estado e sem a linha repetida do subtítulo"
   ],
   "automation": {
     "enabled": true,
@@ -16,5 +18,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T19:55:14-03:00"
+  "releasedAt": "2026-10-29T20:33:38-03:00"
 }

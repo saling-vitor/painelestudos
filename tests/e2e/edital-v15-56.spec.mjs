@@ -38,7 +38,7 @@ test('Edital [G] · curso: raio-x da prova a partir do padrão da banca e régua
   const rx = c.locator('.pr-raiox-card');
   await expect(rx).toContainText('60 questões · 100 pontos · mínimo geral 50');
   await expect(rx.locator('.pr-dsc')).toHaveCount(3);
-  await expect(rx.locator('.pr-dsc').nth(2)).toContainText('40 q');
+  await expect(rx.locator('.pr-dsc').nth(2)).toContainText(/40\s*q/);
   await expect(rx.locator('.pr-dsc').nth(2)).toContainText('LIU');
   await expect(rx.locator('.pr-dsc').nth(1)).toContainText('CF88');
   /* cronograma: a fase com data mais recente até hoje vira a atual */

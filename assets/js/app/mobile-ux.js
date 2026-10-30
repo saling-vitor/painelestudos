@@ -430,10 +430,11 @@
       layer.id='mobileMenuLayer';
       layer.className='mobile-menu-layer';
       layer.hidden=true;
-      layer.innerHTML='<button type="button" class="mobile-menu-backdrop" aria-label="Fechar menu"></button><section class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle"><div class="mobile-menu-handle" aria-hidden="true"></div><div class="mobile-menu-head"><b id="mobileMenuTitle">Mais</b><button type="button" class="mobile-menu-close" aria-label="Fechar">×</button></div><nav class="mobile-menu-options"><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="agenda"><span class="ui-icon icon-calendar" aria-hidden="true"></span><span><b>Agenda</b><small>Hoje, semana e planejamento</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="simulations"><span class="ui-icon icon-simulations" aria-hidden="true"></span><span><b>Simulados</b><small>Provas, tentativas e desempenho</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="settings"><span class="ui-icon icon-settings" aria-hidden="true"></span><span><b>Configurações</b><small>Metas, nuvem, backup e aplicativo</small></span><i aria-hidden="true">›</i></button></nav></section>';
+      layer.innerHTML='<button type="button" class="mobile-menu-backdrop" aria-label="Fechar menu"></button><section class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle"><div class="mobile-menu-handle" aria-hidden="true"></div><div class="mobile-menu-head"><b id="mobileMenuTitle">Mais</b><button type="button" class="mobile-menu-close" aria-label="Fechar">×</button></div><nav class="mobile-menu-options"><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="agenda"><span class="ui-icon icon-calendar" aria-hidden="true"></span><span><b>Agenda</b><small>Hoje, semana e planejamento</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="simulations"><span class="ui-icon icon-simulations" aria-hidden="true"></span><span><b>Simulados</b><small>Provas, tentativas e desempenho</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option" data-mobile-sheet-nav="settings"><span class="ui-icon icon-settings" aria-hidden="true"></span><span><b>Configurações</b><small>Metas, nuvem, backup e aplicativo</small></span><i aria-hidden="true">›</i></button><button type="button" class="mobile-menu-option mobile-menu-update" data-mobile-sheet-update><span class="mm-upd-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></span><span><b>Atualizar app</b><small>Procurar e instalar a versão mais recente</small></span><i aria-hidden="true">›</i></button></nav></section>';
       document.body.appendChild(layer);
       q('.mobile-menu-backdrop',layer)?.addEventListener('click',()=>closeMobileMenu({restoreFocus:true}));
       q('.mobile-menu-close',layer)?.addEventListener('click',()=>closeMobileMenu({restoreFocus:true}));
+      q('[data-mobile-sheet-update]',layer)?.addEventListener('click',()=>{closeMobileMenu();window.MeusMapasUpdate?.run?.()});
       qa('[data-mobile-sheet-nav]',layer).forEach(button=>button.addEventListener('click',()=>{
         const target=button.dataset.mobileSheetNav;
         closeMobileMenu();
@@ -451,6 +452,7 @@
     document.documentElement.classList.add('mobile-menu-open');
     trigger.setAttribute('aria-expanded','true');
     qa('[data-mobile-sheet-nav]',layer).forEach(button=>button.classList.toggle('is-current',button.dataset.mobileSheetNav===state?.view));
+    try{window.MeusMapasUpdate?.paint?.()}catch{}
     requestAnimationFrame(()=>q('[data-mobile-sheet-nav]',layer)?.focus({preventScroll:true}));
   }
 

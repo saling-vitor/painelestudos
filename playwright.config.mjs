@@ -10,7 +10,7 @@ export default defineConfig({
     // que limpa este estado.
     storageState:{cookies:[],origins:[{origin:'http://127.0.0.1:4173',localStorage:[{name:'studyapp.prancha.off',value:'1'}]}]},
     trace:'retain-on-failure',screenshot:'only-on-failure',video:'retain-on-failure'},
-  webServer:{command:'python3 -m http.server 4173 --bind 127.0.0.1',port:4173,reuseExistingServer:false},
+  webServer:{command:'node tests/e2e-server.mjs',port:4173,reuseExistingServer:false},
   projects:[
     // V15.51: auditoria multiplataforma da interface ATUAL (pranchas) e da clássica — 16 viewports D/T/M,
     // estados vazios, XSS e PWA offline. Roda só neste projeto (as demais suítes a ignoram).

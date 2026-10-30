@@ -1411,10 +1411,19 @@
   P.data = { keyOf, prog, agg, maps, allMaps, libraryMaps, folhas, mapsForCourse };
 
   /* ---------- integração com sincronização e backup ---------- */
+  /* V15.66 · a capa da banca escolhida para um simulado (quando o banco não aceita a chave) viaja junto com as preferências */
+  function simCapas(next) {
+    const K = 'studyapp.simulationCoverLocal';
+    try {
+      if (next) { localStorage.setItem(K, JSON.stringify({ ...(JSON.parse(localStorage.getItem(K) || '{}') || {}), ...next })); return next; }
+      const v = JSON.parse(localStorage.getItem(K) || '{}') || {};
+      return Object.keys(v).length ? v : undefined;
+    } catch { return undefined; }
+  }
   function installSync() {
     if (typeof localPreferences === 'function' && !localPreferences.__prancha) {
       const base = localPreferences;
-      const wrapped = function () { const out = base.apply(this, arguments) || {}; out.prancha = readStore(); return out; };
+      const wrapped = function () { const out = base.apply(this, arguments) || {}; out.prancha = readStore(); out.simCapas = simCapas(); return out; };
       wrapped.__prancha = true;
       try { localPreferences = wrapped; } catch {} // eslint-disable-line no-global-assign
       window.localPreferences = wrapped;
@@ -1424,6 +1433,7 @@
       const wrapped = function (local = {}, cloud = {}, lt = 0, ct = 0) {
         const out = base.apply(this, arguments) || {};
         if (local.prancha || cloud.prancha) out.prancha = mergeStore(local.prancha || {}, cloud.prancha || {});
+        if (local.simCapas || cloud.simCapas) out.simCapas = lt >= ct ? { ...(cloud.simCapas || {}), ...(local.simCapas || {}) } : { ...(local.simCapas || {}), ...(cloud.simCapas || {}) };
         return out;
       };
       wrapped.__prancha = true;
@@ -1431,7 +1441,7 @@
     }
     if (typeof applyPreferences === 'function' && !applyPreferences.__prancha) {
       const base = applyPreferences;
-      const wrapped = function (payload = {}) { const r = base.apply(this, arguments); if (payload && payload.prancha && typeof payload.prancha === 'object') importStore(payload.prancha, { merge: true }); return r; };
+      const wrapped = function (payload = {}) { const r = base.apply(this, arguments); if (payload && payload.prancha && typeof payload.prancha === 'object') importStore(payload.prancha, { merge: true }); if (payload && payload.simCapas && typeof payload.simCapas === 'object') simCapas(payload.simCapas); return r; };
       wrapped.__prancha = true;
       try { applyPreferences = wrapped; } catch {} // eslint-disable-line no-global-assign
       window.applyPreferences = wrapped;

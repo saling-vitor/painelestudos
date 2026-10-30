@@ -46,9 +46,30 @@
     const lanes = S.filter((s) => !P.courses.isArchived(s.course)).map((s) => ({ s, ev: P.editais.fases(s.course).filter((f) => f.date && f.date >= t0 && f.date <= t1) })).filter((l) => l.ev.length);
     if (!lanes.length) return '';
     const prazo = new Set(['recursos', 'inscricoes']);
+    /* V15.66 · rótulos sem sobreposição: cada fase vai para a primeira faixa livre (acima, abaixo, mais acima, mais abaixo);
+       perto das bordas o rótulo encosta para dentro; mês colado no “hoje” some */
+    const hoje = x(new Date());
     let months = '';
-    for (let d = new Date(t0.getFullYear(), t0.getMonth() + 1, 1); d < t1; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) months += '<span class="mo" style="left:' + x(d) + '%">' + U.MESES[d.getMonth()] + '</span>';
-    const rows = lanes.map(({ s, ev }) => '<div class="ln" style="--c:' + s.color + '"><button type="button" class="nm" data-pr-act="open-course" data-arg="' + esc(s.id) + '">' + esc(s.sigla) + '</button><div class="tr">' + (ev.length > 1 ? '<span class="run" style="left:' + x(ev[0].date) + '%;width:' + (x(ev[ev.length - 1].date) - x(ev[0].date)) + '%"></span>' : '') + ev.map((f, i) => '<span class="ev' + (f.status === 'passada' ? ' done' : '') + (prazo.has(f.id) ? ' pz' : '') + (i % 2 ? ' lo' : '') + '" style="left:' + x(f.date) + '%" title="' + esc(f.label + ' · ' + U.fmtDayYear(f.date)) + '"><i></i><span>' + esc(f.label.split(' ')[0] + ' ' + fmtDay(f.date)) + '</span></span>').join('') + '</div></div>').join('');
+    for (let d = new Date(t0.getFullYear(), t0.getMonth() + 1, 1); d < t1; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) { const px = x(d); if (Math.abs(px - hoje) < 6) continue; months += '<span class="mo" style="left:' + px + '%">' + U.MESES[d.getMonth()] + '</span>'; }
+    const PCT = 1.75; /* % da faixa por caractere, folgado para a fonte do iPad */
+    const evHtml = (ev0) => {
+      const tiers = [[], [], [], []];
+      /* fases no mesmo dia (ou quase) viram um rótulo só: “Recursos · Resultado 17 dez” */
+      const ev = [];
+      for (const f of ev0) { const o = ev[ev.length - 1], nome = f.label.split(' ')[0]; if (o && Math.abs(x(o.date) - x(f.date)) < 1.2) { o.partes.push([nome, f.date]); o.ids.push(f.id); o.date = f.date; } else ev.push({ ...f, partes: [[nome, f.date]], ids: [f.id] }); }
+      const rot = (f) => { const ps = f.partes, mesmoDia = ps.every(([, d]) => U.dateKey(d) === U.dateKey(ps[0][1])); return mesmoDia ? ps.map(([n]) => n).join(' · ') + ' ' + fmtDay(ps[0][1]) : ps.map(([n, d], i) => n + ' ' + (i < ps.length - 1 ? d.getDate() : fmtDay(d))).join(' · '); };
+      return ev.map((f) => {
+        f.nomes = f.partes.map(([n]) => n);
+        const lab = rot(f), px = x(f.date), w = lab.length * PCT + 1.5;
+        const anc = px - w / 2 < 0 ? 'st' : px + w / 2 > 100 ? 'en' : '';
+        const a = anc === 'st' ? px - 1 : anc === 'en' ? px - w + 1 : px - w / 2, b = a + w;
+        let t = tiers.findIndex((tr) => tr.every(([l, r]) => b < l || a > r));
+        if (t < 0) t = 3;
+        tiers[t].push([a, b]);
+        return '<span class="ev t' + t + (anc ? ' ' + anc : '') + (f.status === 'passada' ? ' done' : '') + (f.ids.some((id) => prazo.has(id)) ? ' pz' : '') + '" style="left:' + px + '%" title="' + esc(f.nomes.join(', ') + ' · ' + U.fmtDayYear(f.date)) + '"><i></i><span>' + esc(lab) + '</span></span>';
+      }).join('');
+    };
+    const rows = lanes.map(({ s, ev }) => '<div class="ln" style="--c:' + s.color + '"><button type="button" class="nm" data-pr-act="open-course" data-arg="' + esc(s.id) + '" title="' + esc(P.courses.label(s.course)) + '">' + esc(s.sigla) + '</button><div class="tr">' + (ev.length > 1 ? '<span class="run" style="left:' + x(ev[0].date) + '%;width:' + (x(ev[ev.length - 1].date) - x(ev[0].date)) + '%"></span>' : '') + evHtml(ev) + '</div></div>').join('');
     return ui.card(ui.head('Linha do tempo dos concursos', 'Fases de cada edital, de ' + esc(fmtDay(t0)) + ' a ' + esc(U.fmtDayYear(t1)), '<span class="pr-mono">datas da Régua do edital de cada curso</span>') + '<div class="pr-tlc" role="group" aria-label="Linha do tempo das fases dos concursos"><div class="hd">' + months + '<span class="hj" style="left:' + x(new Date()) + '%"><b>hoje</b></span></div>' + rows + '</div>');
   }
   function renderList(root) {
@@ -192,7 +213,12 @@
       const ms = all.filter((m) => E.disciplinaDoMapa(m, c.id)?.id === d.id), color = cores[d.id] || (ms[0] ? P.mapColor(ms[0]) : 'var(--pr-latao)');
       const pts = d.questoes * d.peso, share = maxPts ? Math.round((pts / maxPts) * 100) : 0;
       const minTxt = d.minimo ? (d.minimoEm === 'pontos' ? fpt(d.minimo) : unTxt(d.minimo, d.minimoEm) + '<small>' + fpt(E.minPts(d)) + ' pts</small>') : rg.naoZerar ? '1 ac.<small>não zerar</small>' : '—';
-      return '<div class="pr-dsc" style="--c:' + color + '"><span class="pr-k">' + esc(d.nome) + (d.padrao ? ' · demais conteúdos' : '') + '</span>' + (d.grupo ? '<span class="pr-chip">' + esc(d.grupo) + '</span>' : '') + '<b class="pr-sig">' + d.questoes + ' q<small>' + share + '% da objetiva</small></b><div class="pr-dcells"><span><i>' + (d.peso === 1 ? 'Peso' : 'Pts/q') + '</i>' + fpt(d.peso) + '</span><span><i>Pontos</i>' + fpt(pts) + '</span><span><i>Mínimo</i>' + minTxt + '</span></div><div class="pr-row">' + (ms.length ? ms.map((m) => { const au = autoMap[P.data.keyOf(m)] && !(e.mapaDisciplina || {})[String(m.code || '').toUpperCase()] && !d.categorias.includes(String(m.category || '')); return '<span class="pr-chip c' + (au ? ' auto' : '') + '" style="--c:' + P.mapColor(m) + '"' + (au ? ' title="Ligado pelo conteúdo do mapa e do edital"' : '') + '>' + esc(m.code || m.title) + (au ? ' ✦' : '') + '</span>'; }).join('') : '<span class="pr-mono">nenhum mapa ligado</span>') + '</div></div>';
+      /* V15.66 · card em faixas fixas (nome, número, barra da fatia, pontos, mapas) para todos alinharem lado a lado */
+      const chips = ms.map((m) => { const au = autoMap[P.data.keyOf(m)] && !(e.mapaDisciplina || {})[String(m.code || '').toUpperCase()] && !d.categorias.includes(String(m.category || '')); return '<span class="pr-chip c' + (au ? ' auto' : '') + '" style="--c:' + P.mapColor(m) + '"' + (au ? ' title="Ligado pelo conteúdo do mapa e do edital"' : ' title="' + esc(m.title) + '"') + '>' + esc(m.code || m.title) + (au ? ' ✦' : '') + '</span>'; });
+      return '<div class="pr-dsc" style="--c:' + color + '"><div class="pr-dsc-h"><span class="pr-k">' + esc(d.nome) + '</span>' + (d.padrao || d.grupo ? '<small>' + [d.grupo ? esc(d.grupo) : '', d.padrao ? 'recebe os demais conteúdos' : ''].filter(Boolean).join(' · ') + '</small>' : '') + '</div>' +
+        '<div class="pr-dsc-n"><b class="pr-sig">' + d.questoes + '<small>q</small></b><span>' + share + '% da objetiva</span></div><span class="pr-dsc-bar" aria-hidden="true"><i style="width:' + share + '%"></i></span>' +
+        '<div class="pr-dcells"><span><i>' + (d.peso === 1 ? 'Peso' : 'Pts/q') + '</i>' + fpt(d.peso) + '</span><span><i>Pontos</i>' + fpt(pts) + '</span><span><i>Mínimo</i>' + minTxt + '</span></div>' +
+        '<div class="pr-dsc-m"><span class="pr-k">' + (ms.length ? ms.length + ' ' + plural(ms.length, 'mapa') : 'Mapas') + '</span>' + (ms.length ? '<div class="pr-row">' + chips.join('') + '</div>' : '<span class="pr-dsc-vazio">nenhum mapa ligado ainda</span>') + '</div></div>';
     }).join('');
     const blocos = rg.grupos.length ? '<div class="pr-ficha pr-blocos">' + rg.grupos.map((g) => '<span><i>' + esc(g.nome) + '</i>' + g.questoes + ' q · ' + fpt(g.max) + ' pts' + (g.minimo ? ' · mín. ' + unTxt(g.minimo, g.minimoEm) : '') + (rg.escala === 'media10' && g.peso !== 1 ? ' · peso ' + fpt(g.peso) : '') + '</span>').join('') + '</div>' : '';
     const semMin = prova.every((d) => !d.minimo);
@@ -209,7 +235,8 @@
     const alerta = outra ? ui.verdict('', 'Esta estrutura veio de ' + esc(outra) + ', mas o curso é ' + esc(c.board) + '.', 'Cada edital monta a prova do seu jeito: leia o PDF do edital ou ajuste em “Editar estrutura da prova”.') : '';
     const lido = e.leitura ? '<p class="pr-mono">Lido do PDF do edital em ' + esc(U.fmtDay(new Date(e.leitura.em))) + (e.leitura.confianca ? ' · confiança ' + esc(e.leitura.confianca) : '') + (e.leitura.avisos?.length ? ' · confira: ' + esc(e.leitura.avisos.join('; ')) : '') + '</p>' : '';
     const sub = prova.length + ' ' + plural(prova.length, 'disciplina') + ' · ' + nq + ' questões · ' + (rg.escala === 'padronizada' ? 'nota padronizada' : fpt(maxObj) + ' pontos') + (rg.minimoGeral !== null ? ' · mínimo geral ' + (rg.minimoGeralEm === 'pontos' ? fpt(rg.minimoGeral) : unTxt(rg.minimoGeral, rg.minimoGeralEm)) : '') + rg.etapas.map((x) => ' · + ' + (x.tipo === 'titulos' ? fpt(x.max) + ' de títulos' : x.nome.toLowerCase() + ' ' + fpt(x.max))).join('');
-    return ui.card(ui.head('Raio-X da prova', sub, e.fonte ? '<span class="pr-mono">' + esc(e.fonte) + '</span>' : '', 'l') + leituraPanel(c) + alerta + padr + regra + blocos + '<div class="pr-dscs">' + disc + '</div>' + etapas + ficha + lido + '<details class="pr-add"><summary>Editar estrutura da prova</summary>' + provaForm(c, prova, e, cats, all) + '</details>', 'pr-raiox-card');
+    const sec = (t, h) => (h ? '<section class="pr-rx-sec"><span class="pr-k l">' + t + '</span>' + h + '</section>' : '');
+    return ui.card(ui.head('Raio-X da prova', sub, e.fonte ? '<span class="pr-mono">' + esc(e.fonte) + '</span>' : '', 'l') + leituraPanel(c) + alerta + padr + sec('Regras da prova', regra + blocos) + sec('Disciplinas', '<div class="pr-dscs">' + disc + '</div>') + sec('Etapas e nota final', etapas) + sec('Cargo', ficha) + lido + '<details class="pr-add"><summary>Editar estrutura da prova</summary>' + provaForm(c, prova, e, cats, all) + '</details>', 'pr-raiox-card');
   }
   /* V15.57 · fechamento no curso: gabarito, recursos ligados aos mapas e aguardando convocação */
   const REC_ST = [['preparando', 'Preparando'], ['enviado', 'Enviado'], ['deferido', 'Deferido'], ['indeferido', 'Indeferido']];

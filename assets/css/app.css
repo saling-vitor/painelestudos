@@ -3909,3 +3909,7 @@ html.is-ipad:not(.is-phone-layout) #reader .reader-more-wrap>#readerMoreBtn{
 .batch-category-alt:hover{text-decoration-color:currentColor}
 .batch-category-alt:focus-visible{outline:2px solid #d8c59e;outline-offset:2px;border-radius:2px}
 #manageMapCategoryHint{display:flex;align-items:center}
+/* V15.66 · cartão do mapa: versão depois do estado, sem a linha repetida do subtítulo */
+.map-status-end{display:inline-flex;align-items:center;gap:6px;min-width:0;margin-left:auto}
+.map-status-end .map-study-status{margin:0}
+.map-list .map-status-end{display:flex;margin:0 0 5px}
