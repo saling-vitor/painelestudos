@@ -13,6 +13,9 @@ test('Retomar [G] · o tópico informado pelo leitor aparece na Home e abre dire
   await page.evaluate(() => document.getElementById('readerFrame').contentWindow.eval("parent.postMessage({source:'meus-mapas-reader',type:'topic',topicId:'t-retomar',title:'Tópico de teste'},'*')"));
   await expect.poll(() => page.evaluate((k) => StudyFlow.resume.get(k)?.topicId, key)).toBe('t-retomar');
   await page.evaluate(() => { state.readerMapKey = ''; });
+  // O mock já começa na Home: go('home') não navega quando ela está visível.
+  // Solicitar a renderização como ocorreria ao voltar do leitor real.
+  await page.evaluate(() => Prancha.schedule('home'));
   await go(page, 'home');
   const card = page.locator('[data-prancha="home"] .pr-retomar');
   await expect(card).toContainText('Tópico de teste');
