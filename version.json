@@ -1,9 +1,10 @@
 {
-  "version": "15.67.0",
-  "label": "V15.67.0-G",
-  "notes": "Mapas vão para a disciplina certa do Raio-X: leis citadas só pelo número no edital, aprendizado entre cursos e sigla com menu para mover.",
+  "version": "15.67.1",
+  "label": "V15.67.1-G",
+  "notes": "Afastamento de 16 px entre as capas dos mapas e a faixa de sigla, estado e versão, preservando a visualização em lista.",
   "showWhatsNew": true,
   "highlights": [
+    "[D] Capas dos mapas com 16 px de respiro antes das etiquetas de sigla, estado e versão na visualização em capas do desktop",
     "[G] Raio-X: leis que o edital cita só pelo número (ex.: Lei 9.984/2000 = Agência Nacional de Águas) agora contam como conteúdo da disciplina; ANAREG vai para Legislação na CASAN",
     "[G] Mapa que cita uma lei pedida em uma só disciplina vai direto para ela",
     "[G] Cada sigla do Raio-X diz por que está ali (fixada, categoria, lei, conteúdo ou “?” palpite) e abre um menu: Mover para… / Fixar aqui / Voltar ao automático",

@@ -3862,7 +3862,7 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover{
     padding-bottom:46px!important;
   }
-  html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card-status-row{margin-top:8px!important}
+  html:not(.is-ipad):not(.is-phone-layout) :is(#courseMaps,#allMaps) .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{margin-top:16px!important}
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
     min-height:36px!important;
     margin-top:8px!important;
