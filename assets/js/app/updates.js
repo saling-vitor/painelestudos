@@ -50,7 +50,7 @@
     const bottom=document.querySelector('.side .side-bottom');if(!bottom)return;
     let b=document.getElementById('mmUpdBtn');
     if(!b){b=document.createElement('button');b.type='button';b.id='mmUpdBtn';b.className='mm-upd';b.innerHTML='<span class="mm-upd-i">'+ICON+'</span><span class="mm-upd-t"><b></b><span></span></span>';b.addEventListener('click',run);const cloud=bottom.querySelector('.cloud-card');bottom.insertBefore(b,cloud||null)}
-    const s=state();b.className='mm-upd '+s.k;b.querySelector('b').textContent=s.t;b.querySelector('.mm-upd-t span').textContent=s.s;b.title=s.k==='new'?'Instalar '+(label()||'a nova versão'):'Procurar e instalar a versão mais recente';b.setAttribute('aria-label',s.t+' · '+s.s);b.disabled=s.k==='busy';
+    const s=state();b.className='mm-upd '+s.k;b.querySelector('b').textContent=s.t;b.querySelector('.mm-upd-t span').textContent=s.s;b.title=s.k==='new'?'Instalar '+(label()||'a nova versão'):'Procurar e instalar a versão mais recente';b.removeAttribute('aria-label');b.disabled=s.k==='busy';
     document.querySelectorAll('[data-pr-act="app-update"]').forEach(x=>{x.textContent=s.k==='new'?'Atualizar para '+(label()||'nova versão'):s.k==='busy'?s.t:'Atualizar app';x.disabled=s.k==='busy'});
   }
   async function run(){
