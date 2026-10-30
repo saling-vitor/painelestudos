@@ -629,8 +629,8 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-nf{margin:0 0 10px}
 .pr-dsc>.pr-sig small,.pr-dcells small{display:block;font-family:var(--pr-f-mono);font-size:var(--fs-eyebrow);font-weight:500;letter-spacing:.04em;color:var(--pr-papel-3)}
 .pr-regra{margin:0 0 10px}
-.pr-dscs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.pr-dsc{display:grid;gap:8px;align-content:start;padding:12px 14px;border:1px solid var(--pr-linha);border-top:3px solid var(--c);border-radius:10px;background:var(--pr-g0);min-width:0}
+.pr-dscs{display:grid;gap:10px}
+.pr-dsc{display:grid;align-content:start;border:1px solid var(--pr-linha);border-top:3px solid var(--c);border-radius:10px;background:var(--pr-g0);min-width:0}
 .pr-dsc>.pr-sig{font-size:var(--fs-h1);color:var(--c)}
 .pr-dcells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .pr-dcells span,.pr-ficha span{display:grid;gap:2px;padding:7px 8px;border-radius:8px;background:var(--pr-g2);font-weight:700;font-size:var(--fs-body-sm);min-width:0;overflow-wrap:anywhere}
@@ -661,7 +661,7 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-checks label{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--pr-linha);border-radius:9px;background:var(--pr-g0);font-size:var(--fs-body-sm);min-width:0}
 .pr-checks input{accent-color:var(--pr-latao);width:18px;height:18px;flex:none}
 .pr-tlc{position:relative;display:grid;gap:4px;overflow-x:auto;overflow-y:hidden;padding-bottom:4px}
-.pr-tlc .hd{position:relative;height:22px;margin-left:96px;min-width:560px;border-bottom:1px solid var(--pr-linha)}
+.pr-tlc .hd{position:relative;height:22px;border-bottom:1px solid var(--pr-linha)}
 .pr-tlc .mo{position:absolute;top:2px;font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-3);text-transform:uppercase;letter-spacing:.08em}
 .pr-tlc .hj{position:absolute;top:0;bottom:-999px;width:2px;background:var(--pr-latao);z-index:1}
 .pr-tlc .hj b{position:absolute;left:6px;top:2px;font-family:var(--pr-f-mono);font-size:var(--fs-caption);font-weight:500;color:var(--pr-latao-c);white-space:nowrap}
