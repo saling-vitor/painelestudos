@@ -705,11 +705,14 @@
     /* V15.59 · o planejamento do kit diz a disciplina de cada mapa pela sigla; vale antes da categoria */
     const md = editalOf(courseId)?.mapaDisciplina, viaKit = md && map.code ? md[String(map.code).toUpperCase()] : null;
     if (viaKit) { const d = prova.find((x) => x.id === viaKit); if (d) return d; }
+    /* V15.67 · a escolha que você fez para esta sigla em outro curso vale antes da categoria */
+    const auto0 = autoDisciplina(map, courseId);
+    if (auto0?.via === 'aprendido') { const d = prova.find((x) => x.id === auto0.id); if (d) return d; }
     const cat = String(map.category || '');
     const porCat = prova.find((d) => d.categorias.includes(cat));
     if (porCat) return porCat;
     /* V15.62 · sem categoria ligada: a disciplina cujo conteúdo (edital + palavras-chave) mais se parece com o mapa */
-    const auto = autoDisciplina(map, courseId);
+    const auto = auto0;
     if (auto) { const d = prova.find((x) => x.id === auto.id); if (d) return d; }
     return prova.find((d) => d.padrao) || null;
   }
@@ -723,25 +726,111 @@
     [/portugu/, 'portugues gramatica interpretacao texto textual ortografia acentuacao crase concordancia regencia pontuacao sintaxe morfologia semantica coesao coerencia redacao oficial figuras linguagem colocacao pronominal'],
     [/informat/, 'informatica computador windows linux word excel planilha internet navegador email seguranca virus backup nuvem rede arquivo sistema operacional'],
     [/raciocin|matemat/, 'raciocinio logico matematica proposicoes tabela verdade conjuntos porcentagem juros razao proporcao regra tres equacao funcao probabilidade estatistica geometria sequencias'],
-    [/legisla|direito|estatuto/, 'legislacao lei organica estatuto servidor constituicao administrativo administracao publica improbidade licitacao contratos etica regime juridico codigo decreto normas igualdade racial']
+    [/legisla|direito|estatuto/, 'legislacao lei organica estatuto servidor constituicao administrativo administracao publica improbidade licitacao contratos etica regime juridico codigo decreto normas igualdade racial agencia reguladora regulacao resolucao competencias atribuicoes']
   ];
+  /* V15.67 · leis que os editais citam só pelo número: o assunto de cada uma entra no conteúdo da disciplina
+     (ex.: "Lei nº 9.984/2000" na Legislação da CASAN = Agência Nacional de Águas e Saneamento Básico) */
+  const LEIS = {
+    9984: 'agencia nacional aguas saneamento basico regulacao recursos hidricos normas referencia ana',
+    14026: 'marco legal saneamento basico regulacao agencia nacional aguas universalizacao concessao',
+    11445: 'saneamento basico politica nacional diretrizes abastecimento agua esgotamento sanitario residuos drenagem',
+    9433: 'politica nacional recursos hidricos aguas bacia hidrografica outorga comites',
+    12288: 'estatuto igualdade racial discriminacao populacao negra',
+    10257: 'estatuto cidade politica urbana plano diretor funcao social propriedade',
+    13089: 'estatuto metropole regiao metropolitana governanca interfederativa',
+    6766: 'parcelamento solo urbano loteamento desmembramento',
+    13465: 'regularizacao fundiaria reurb urbana rural',
+    12587: 'politica nacional mobilidade urbana transporte',
+    12651: 'codigo florestal vegetacao nativa preservacao permanente reserva legal',
+    9605: 'crimes ambientais sancoes penais administrativas meio ambiente',
+    6938: 'politica nacional meio ambiente sisnama licenciamento',
+    12305: 'politica nacional residuos solidos',
+    14133: 'licitacoes contratos administrativos',
+    8666: 'licitacoes contratos administrativos',
+    10520: 'pregao licitacao modalidade',
+    13303: 'estatuto empresas estatais sociedades economia mista licitacoes',
+    8429: 'improbidade administrativa',
+    12527: 'acesso informacao transparencia',
+    13709: 'protecao dados pessoais lgpd',
+    9784: 'processo administrativo federal',
+    8112: 'regime juridico servidores publicos civis uniao',
+    13146: 'estatuto pessoa deficiencia inclusao acessibilidade',
+    10098: 'acessibilidade pessoas deficiencia mobilidade reduzida',
+    12378: 'arquitetura urbanismo conselho cau exercicio profissional',
+    11888: 'assistencia tecnica habitacao interesse social athis',
+    11124: 'sistema nacional habitacao interesse social fundo',
+    11977: 'minha casa minha vida habitacao',
+    14620: 'minha casa minha vida habitacao',
+    8987: 'concessao permissao servicos publicos',
+    11079: 'parceria publico privada ppp',
+    12846: 'anticorrupcao empresa responsabilizacao',
+    101: 'responsabilidade fiscal financas publicas',
+    10406: 'codigo civil',
+    8078: 'codigo defesa consumidor',
+    9795: 'educacao ambiental politica nacional',
+    11428: 'mata atlantica vegetacao',
+    9985: 'unidades conservacao snuc natureza',
+    11284: 'gestao florestas publicas',
+    12187: 'seguranca barragens',
+    13105: 'codigo processo civil',
+    12016: 'estatuto pessoa idosa',
+    10741: 'estatuto pessoa idosa',
+    8069: 'estatuto crianca adolescente'
+  };
+  /* números de lei citados num texto ("Lei nº 9.984/2000", "Lei 14.026", "LC 101/2000"), sem os pontos */
+  function leisDe(texto) {
+    const out = new Set(), t = String(texto || '');
+    const re = /(?:\b(?:lei|leis|decreto|decreto-lei|lc|lei complementar|lei federal|lei estadual|lei municipal|lei org[aâ]nica)\b[^0-9]{0,16})?(\d{1,2}\.\d{3}|\d{3,5})(?:\s*\/\s*(\d{2,4}))?/gi;
+    let m;
+    while ((m = re.exec(t))) {
+      const temPrefixo = /^\D*(lei|decreto|lc)/i.test(m[0]), n = m[1].replace(/\./g, '');
+      if (!temPrefixo && !(m[1].includes('.') && m[2])) continue;
+      if (/^(19|20)\d\d$/.test(n) && !m[2]) continue;
+      out.add(Number(n));
+    }
+    return out;
+  }
+  /* V15.67 · aprendizado: quando você fixa um mapa numa disciplina, o "tipo" dela (Português, Legislação, Atualidades…)
+     fica guardado pela sigla e vale para os outros cursos, presentes e futuros */
+  const TIPOS = [['lp', /portugu|lingua patria|interpreta[cç]ao de texto/], ['rlm', /raciocin|matemat|logic/], ['inf', /informat|tecnologia da informa/], ['atu', /atualidad|conhecimentos gerais|realidade|historia|geografia/], ['leg', /legisla|direito|estatuto|etica no servi|nocoes de administra/], ['esp', /especific|tecnic|profission/]];
+  const tipoDe = (nome) => { const n = norm(nome); return (TIPOS.find(([, re]) => re.test(n)) || [null])[0]; };
+  function aprendidos() { const r = readStore().prefs.discAprendida; return (r && !r.removed && r.value && typeof r.value === 'object') ? r.value : {}; }
+  function aprender(code, discNome) {
+    const c = String(code || '').toUpperCase(), t = discNome ? tipoDe(discNome) : null, cur = aprendidos();
+    if (!c || (t ? cur[c] === t : !cur[c])) return;
+    const next = { ...cur }; if (t) next[c] = t; else delete next[c];
+    patchStore('prefs', 'discAprendida', { value: next });
+  }
   function autoMapas(courseId) {
     return memo('am:' + courseId, () => {
       const prova = provaOf(courseId), ed = editalOf(courseId) || {}, cont = ed.conteudos || {};
       if (prova.length < 2) return {};
-      const sets = prova.map((d) => { const extra = DICAS.filter(([re]) => re.test(norm(d.nome))).map(([, w]) => w).join(' '); return new Set(toks(d.nome + ' ' + (cont[d.id] || '') + ' ' + extra)); });
+      const leisDisc = prova.map((d) => leisDe((cont[d.id] || '') + ' ' + d.nome));
+      const sets = prova.map((d, i) => { const extra = DICAS.filter(([re]) => re.test(norm(d.nome))).map(([, w]) => w).join(' '); const dasLeis = [...leisDisc[i]].map((n) => LEIS[n] || '').join(' '); return new Set(toks(d.nome + ' ' + (cont[d.id] || '') + ' ' + extra + ' ' + dasLeis)); });
+      const leiW = leisDisc.map((ls) => new Set(toks([...ls].map((n) => LEIS[n] || '').join(' '))));
       const df = new Map(); for (const st of sets) for (const w of st) df.set(w, (df.get(w) || 0) + 1);
       const idf = (w) => Math.log(1 + prova.length / (df.get(w) || prova.length));
       const idx = (typeof state !== 'undefined' && state.searchIndex?.items) || [];
+      const apr = aprendidos(), tipos = prova.map((d) => tipoDe(d.nome));
       const out = {};
       for (const m of mapsForCourse(courseId, { includeLinked: true })) {
         const k = keyOf(m), st = (typeof readMapState === 'function' ? readMapState(m).topicStates : null) || {};
         const tops = idx.filter((it) => it.mapKey === k).map((it) => it.title).join(' ') + ' ' + Object.keys(st).join(' ').replace(/-/g, ' ');
-        const ws = [...new Set(toks([m.title, m.shortTitle, m.short_title, m.category, tops].join(' ')))];
+        const texto = [m.title, m.shortTitle, m.short_title, m.subtitle, tops].join(' ');
+        /* 1 · aprendido em outro curso: a disciplina do mesmo tipo (só quando há uma única desse tipo) */
+        const t = apr[String(m.code || '').toUpperCase()];
+        if (t) { const alvo = tipos.map((x, i) => (x === t ? i : -1)).filter((i) => i >= 0); if (alvo.length === 1) { out[k] = { id: prova[alvo[0]].id, score: 9, via: 'aprendido' }; continue; } }
+        /* 2 · o mapa cita uma lei que só uma disciplina pede */
+        const leisMapa = leisDe(texto), comLei = prova.map((d, i) => [...leisMapa].filter((n) => leisDisc[i].has(n)).length);
+        const maxLei = Math.max(...comLei);
+        if (maxLei > 0 && comLei.filter((x) => x === maxLei).length === 1) { out[k] = { id: prova[comLei.indexOf(maxLei)].id, score: 9, via: 'lei' }; continue; }
+        /* 3 · palavras do mapa (título, subtítulo, categoria, tópicos) contra o conteúdo de cada disciplina;
+           palavras que vêm do assunto de uma lei pedida no edital valem em dobro */
+        const ws = [...new Set(toks(texto + ' ' + m.category + ' ' + [...leisMapa].map((n) => LEIS[n] || '').join(' ')))];
         if (!ws.length) continue;
-        const sc = sets.map((set) => ws.reduce((s, w) => s + (set.has(w) ? idf(w) : 0), 0) / Math.sqrt(ws.length));
+        const sc = sets.map((set, i) => ws.reduce((s, w) => s + (set.has(w) ? idf(w) * (leiW[i].has(w) ? 2 : 1) : 0), 0) / Math.sqrt(ws.length));
         const ord = sc.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]);
-        if (ord[0][0] >= 0.35 && ord[0][0] > (ord[1]?.[0] || 0) * 1.25) out[k] = { id: prova[ord[0][1]].id, score: Math.round(ord[0][0] * 100) / 100 };
+        if (ord[0][0] >= 0.35 && ord[0][0] > (ord[1]?.[0] || 0) * 1.25) out[k] = { id: prova[ord[0][1]].id, score: Math.round(ord[0][0] * 100) / 100, via: 'conteudo' };
       }
       return out;
     });
@@ -950,7 +1039,7 @@
     });
   }
   const fmtPt = (n) => (Math.round(Number(n || 0) * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  P.editais = { FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf, regras, regrasDe, pontuarCom, maxObjetiva, formulaNotaFinal, ETAPAS, ESCALAS, NOTAS_FINAIS, UNIDADES, cores: coresDisciplinas, PIG_FILA, autoMapas };
+  P.editais = { aprender, aprendidos, leisDe, tipoDe, FASES, ALCANCES, get: editalOf, set: setEdital, prova: provaOf, minimoGeral, pontosMax, disciplinaDoMapa, pontuar, pontuarTentativa, secaoDisciplina, fases: fasesOf, proximoMarco, padroes, padraoDaBanca, setPadrao, aplicarPadrao, alcance, setAlcance, normProva, pesoEsforco, pontosDoMapa, pptDoMapa, riscoMinimo, fmtPt, minPts, titulos: titulosOf, regras, regrasDe, pontuarCom, maxObjetiva, formulaNotaFinal, ETAPAS, ESCALAS, NOTAS_FINAIS, UNIDADES, cores: coresDisciplinas, PIG_FILA, autoMapas };
 
 
   /* ---------- V15.58 · taxonomia única de armadilhas (conceito 04 do Template de estudos) ----------

@@ -1,16 +1,14 @@
 {
-  "version": "15.66.1",
-  "label": "V15.66.1-G",
-  "notes": "Sem simulados embutidos, botão de atualizar no iPad e no celular, capas sincronizadas entre aparelhos e cursos mais legíveis.",
+  "version": "15.67.0",
+  "label": "V15.67.0-G",
+  "notes": "Mapas vão para a disciplina certa do Raio-X: leis citadas só pelo número no edital, aprendizado entre cursos e sigla com menu para mover.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Simulados de exemplo (DEMHAB SIM 01–03) removidos: contas novas e a sua começam sem provas, só com o que você importar",
-    "[G] Capas trocadas no PC chegam ao iPad e ao celular (e o inverso) ao voltar para o app, sem recarregar; a capa de banca escolhida para um simulado também sincroniza",
-    "[T] iPad: ícone de atualizar ao lado da barra de busca na vertical; na horizontal só o ícone na barra lateral",
-    "[M] Celular: “Atualizar app” no menu Mais, com a versão atual",
-    "[G] Meus Cursos: linha do tempo sem rótulos sobrepostos (fases do mesmo dia juntas, rótulos em níveis)",
-    "[G] Raio-X do curso reorganizado em seções (regras, disciplinas, etapas, cargo) com cartões de disciplina mais claros",
-    "[G] Cartão do mapa: sigla, estado e versão do mesmo tamanho, com a versão depois do estado e sem a linha repetida do subtítulo"
+    "[G] Raio-X: leis que o edital cita só pelo número (ex.: Lei 9.984/2000 = Agência Nacional de Águas) agora contam como conteúdo da disciplina; ANAREG vai para Legislação na CASAN",
+    "[G] Mapa que cita uma lei pedida em uma só disciplina vai direto para ela",
+    "[G] Cada sigla do Raio-X diz por que está ali (fixada, categoria, lei, conteúdo ou “?” palpite) e abre um menu: Mover para… / Fixar aqui / Voltar ao automático",
+    "[G] Aprendizado: a disciplina que você escolhe para uma sigla vale para os outros cursos, presentes e futuros, que tenham uma disciplina do mesmo tipo",
+    "[G] V15.66 · sem simulados embutidos, capas sincronizadas entre aparelhos, botão de atualizar no iPad e no celular, linha do tempo sem sobreposição, Raio-X reorganizado e cartão do mapa uniforme"
   ],
   "automation": {
     "enabled": true,
@@ -18,5 +16,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T21:40:19-03:00"
+  "releasedAt": "2026-10-29T21:42:06-03:00"
 }

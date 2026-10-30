@@ -214,7 +214,17 @@
       const pts = d.questoes * d.peso, share = maxPts ? Math.round((pts / maxPts) * 100) : 0;
       const minTxt = d.minimo ? (d.minimoEm === 'pontos' ? fpt(d.minimo) : unTxt(d.minimo, d.minimoEm) + '<small>' + fpt(E.minPts(d)) + ' pts</small>') : rg.naoZerar ? '1 ac.<small>não zerar</small>' : '—';
       /* V15.66 · card em faixas fixas (nome, número, barra da fatia, pontos, mapas) para todos alinharem lado a lado */
-      const chips = ms.map((m) => { const au = autoMap[P.data.keyOf(m)] && !(e.mapaDisciplina || {})[String(m.code || '').toUpperCase()] && !d.categorias.includes(String(m.category || '')); return '<span class="pr-chip c' + (au ? ' auto' : '') + '" style="--c:' + P.mapColor(m) + '"' + (au ? ' title="Ligado pelo conteúdo do mapa e do edital"' : ' title="' + esc(m.title) + '"') + '>' + esc(m.code || m.title) + (au ? ' ✦' : '') + '</span>'; });
+      /* V15.67 · cada sigla diz por que está aqui (fixada, categoria, lei citada, aprendido, conteúdo ou palpite) e abre um menu para mover */
+      const chips = ms.map((m) => {
+        const code = String(m.code || '').toUpperCase(), fixo = (e.mapaDisciplina || {})[code], a = autoMap[P.data.keyOf(m)], porCat = d.categorias.includes(String(m.category || ''));
+        const via = fixo ? 'fixo' : a?.via === 'aprendido' ? 'aprendido' : porCat ? 'cat' : a ? a.via : 'palpite';
+        const VIA = { fixo: 'Fixado por você', aprendido: 'Você ligou esta sigla a uma disciplina deste tipo em outro curso', cat: 'Pela categoria do mapa (' + (m.category || '') + ')', lei: 'O mapa trata de uma lei que o edital pede nesta disciplina', conteudo: 'Pelo conteúdo do mapa comparado ao programa do edital', palpite: 'Sem pista no conteúdo: veio para a disciplina que recebe os demais. Confira' };
+        const mark = via === 'palpite' ? ' ?' : via === 'lei' || via === 'conteudo' || via === 'aprendido' ? ' ✦' : '';
+        if (!code) return '<span class="pr-chip c" style="--c:' + P.mapColor(m) + '" title="' + esc(m.title) + '">' + esc(m.title) + '</span>';
+        const opts = prova.filter((x) => x.id !== d.id).map((x) => '<button type="button" role="menuitem"' + ui.attrs(ui.act('map-disc', c.id + '|' + code + '|' + x.id)) + '>Mover para ' + esc(x.nome) + '</button>').join('') + (fixo ? '<button type="button" role="menuitem"' + ui.attrs(ui.act('map-disc', c.id + '|' + code + '|')) + '>Voltar ao automático</button>' : '<button type="button" role="menuitem"' + ui.attrs(ui.act('map-disc', c.id + '|' + code + '|' + d.id)) + '>Fixar aqui</button>');
+        const id = 'md-' + c.id + '-' + code;
+        return '<div class="pr-menu pr-chipm"><button type="button" class="pr-chip c via-' + via + (mark === ' ✦' ? ' auto' : '') + '" style="--c:' + P.mapColor(m) + '" data-pr-menu="' + esc(id) + '" aria-haspopup="menu" aria-expanded="false" title="' + esc(m.title + ' · ' + VIA[via]) + '">' + esc(code) + mark + '</button><div role="menu" data-pr-menu-panel="' + esc(id) + '" popover="manual" hidden><p class="pr-mono">' + esc(VIA[via]) + '</p>' + opts + '</div></div>';
+      });
       return '<div class="pr-dsc" style="--c:' + color + '"><div class="pr-dsc-h"><span class="pr-k">' + esc(d.nome) + '</span>' + (d.padrao || d.grupo ? '<small>' + [d.grupo ? esc(d.grupo) : '', d.padrao ? 'recebe os demais conteúdos' : ''].filter(Boolean).join(' · ') + '</small>' : '') + '</div>' +
         '<div class="pr-dsc-n"><b class="pr-sig">' + d.questoes + '<small>q</small></b><span>' + share + '% da objetiva</span></div><span class="pr-dsc-bar" aria-hidden="true"><i style="width:' + share + '%"></i></span>' +
         '<div class="pr-dcells"><span><i>' + (d.peso === 1 ? 'Peso' : 'Pts/q') + '</i>' + fpt(d.peso) + '</span><span><i>Pontos</i>' + fpt(pts) + '</span><span><i>Mínimo</i>' + minTxt + '</span></div>' +
@@ -511,13 +521,27 @@
       const etapas = []; for (let j = 0; j < ne; j++) { const tipo = s('et_tipo' + j), max = nz('et_max' + j); if (!tipo || !max) continue; etapas.push({ tipo, nome: s('et_nome' + j), max, minimo: nz('et_min' + j) ?? 0, minimoEm: s('et_minEm' + j), carater: s('et_car' + j), peso: nz('et_peso' + j) }); }
       const cargo = {}; for (const k of ['vagas', 'carga', 'vencimento', 'validade', 'desempate']) { const v = s('cargo_' + k); if (v) cargo[k] = v; }
       const nm = Number(form.dataset.nm) || 0, mapaDisciplina = { ...(E.get(id)?.mapaDisciplina || {}) };
+      const mdAntes = { ...mapaDisciplina };
       for (let j = 0; j < nm; j++) { const code = s('mm_code' + j); if (!code) continue; const v = s('mm' + j); if (v && list.some((d) => d.id === v)) mapaDisciplina[code] = v; else delete mapaDisciplina[code]; }
+      /* V15.67 · o que você fixou aqui vira aprendizado para os outros cursos */
+      for (const code of new Set([...Object.keys(mdAntes), ...Object.keys(mapaDisciplina)])) if (mdAntes[code] !== mapaDisciplina[code]) E.aprender(code, list.find((d) => d.id === mapaDisciplina[code])?.nome || null);
       const cores = {}; for (const [cid, nome, cor] of coresIn) { if (!cor) continue; const d = list.find((x) => (cid && x.id === cid) || x.nome === nome); if (d) cores[d.id] = cor; }
       E.set(id, { mapaDisciplina, cores, prova: list, grupos, etapas, titulos: null, minimoGeral: nz('minimoGeral'), minimoGeralEm: s('minimoGeralEm') || 'pontos', formato: s('formato') || 'multipla', penalidade: nz('penalidade') ?? 0, escala: s('escala') || 'soma', notaFinal: s('notaFinal') || 'soma', pesoObjetiva: nz('pesoObjetiva'), naoZerar: fd.get('naoZerar') === 'on', banca: s('banca').toUpperCase().slice(0, 40), fonte: s('fonte'), cargo });
       if (typeof toast === 'function') toast('Estrutura da prova salva.');
       P.schedule('course');
     },
     'edital-pdf': (id) => { lerPdfDoCurso(id); },
+    /* V15.67 · mover um mapa de disciplina direto no Raio-X; a escolha também vale para outros cursos */
+    'map-disc': (arg) => {
+      const [id, code, disc] = String(arg || '').split('|'), E = P.editais;
+      if (!id || !code) return;
+      const md = { ...(E.get(id)?.mapaDisciplina || {}) };
+      if (disc) md[code] = disc; else delete md[code];
+      E.set(id, { mapaDisciplina: md });
+      E.aprender(code, disc ? E.prova(id).find((x) => x.id === disc)?.nome : null);
+      if (typeof toast === 'function') toast(disc ? code + ' → ' + (E.prova(id).find((x) => x.id === disc)?.nome || '') : code + ' volta ao automático');
+      P.schedule('course');
+    },
     'descartar-leitura': (id) => { leituras.delete(String(id)); P.schedule('course'); },
     'aplicar-leitura': (arg) => {
       const [id, modo] = String(arg).split('|'), st = leituras.get(String(id));

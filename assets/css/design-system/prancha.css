@@ -798,3 +798,7 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-dsc-m>.pr-k{font-size:var(--fs-eyebrow);color:var(--pr-papel-3)}
 .pr-dsc-m .pr-row{gap:6px}
 .pr-dsc-vazio{font-family:var(--pr-f-mono);font-size:var(--fs-caption);color:var(--pr-papel-3)}
+/* V15.67 · siglas do Raio-X abrem um menu para mover de disciplina; "?" = palpite sem pista */
+.pr-menu.pr-chipm>button.pr-chip{min-width:0;cursor:pointer;font:inherit;font-family:var(--pr-f-mono);font-size:var(--fs-label)}
+.pr-chip.via-palpite{border-style:dashed}
+.pr-chipm [role="menu"] p{margin:4px 12px 6px;max-width:260px;font-size:var(--fs-caption);color:var(--pr-papel-2);white-space:normal}
