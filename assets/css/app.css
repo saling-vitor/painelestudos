@@ -3913,3 +3913,5 @@ html.is-ipad:not(.is-phone-layout) #reader .reader-more-wrap>#readerMoreBtn{
 .map-status-end{display:inline-flex;align-items:center;gap:6px;min-width:0;margin-left:auto}
 .map-status-end .map-study-status{margin:0}
 .map-list .map-status-end{display:flex;margin:0 0 5px}
+/* V15.66 · sigla, estado e versão do cartão com a mesma altura e o mesmo corpo de letra */
+.map-card:not(.map-list .map-card) .map-card-status-row :is(.map-code,.map-version,.map-study-status){display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;height:26px!important;min-height:26px!important;min-width:0;margin:0;padding:0 8px!important;border-radius:7px;font-family:var(--mono);font-size:11px!important;font-weight:750;letter-spacing:.06em;line-height:1!important;white-space:nowrap}

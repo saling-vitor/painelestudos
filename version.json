@@ -1,6 +1,6 @@
 {
-  "version": "15.66.0",
-  "label": "V15.66.0-G",
+  "version": "15.66.1",
+  "label": "V15.66.1-G",
   "notes": "Sem simulados embutidos, botão de atualizar no iPad e no celular, capas sincronizadas entre aparelhos e cursos mais legíveis.",
   "showWhatsNew": true,
   "highlights": [
@@ -10,7 +10,7 @@
     "[M] Celular: “Atualizar app” no menu Mais, com a versão atual",
     "[G] Meus Cursos: linha do tempo sem rótulos sobrepostos (fases do mesmo dia juntas, rótulos em níveis)",
     "[G] Raio-X do curso reorganizado em seções (regras, disciplinas, etapas, cargo) com cartões de disciplina mais claros",
-    "[G] Cartão do mapa: versão depois do estado e sem a linha repetida do subtítulo"
+    "[G] Cartão do mapa: sigla, estado e versão do mesmo tamanho, com a versão depois do estado e sem a linha repetida do subtítulo"
   ],
   "automation": {
     "enabled": true,
@@ -18,5 +18,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T21:37:39-03:00"
+  "releasedAt": "2026-10-29T21:38:26-03:00"
 }
