@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081113"><title>HISTGEOSC V02 — pacote completo · MEUS MAPAS</title>
+<style>body{background:#081113;color:#ece6da;font:16px/1.6 system-ui,-apple-system,sans-serif;margin:0;padding:32px 16px}main{max-width:660px;margin:8vh auto;padding:28px;border:1px solid #4b4842;border-radius:15px;background:#101719}h1{font-size:1.45rem}small,.muted{color:#b3ada2}button{background:#c9be96;color:#081113;border:0;padding:14px 20px;border-radius:9px;font-weight:750;font-size:1rem;cursor:pointer}button:disabled{opacity:.55;cursor:progress}a{color:#e3c99b}#status{min-height:3em;white-space:pre-wrap;word-break:break-word}progress{width:100%;height:14px}code{overflow-wrap:anywhere}details{margin-top:22px}li{margin-bottom:4px}</style></head>
+<body><main><p class="muted">MEUS MAPAS · CASAN · REV11.7</p><h1>HISTGEOSC V02 — pacote completo</h1>
+<p>Pacote auditado: 51 arquivos; 4.668.707 bytes. A transferência é dividida em 12 segmentos, reunidos localmente no navegador e verificados antes do download.</p>
+<button id="download" type="button">Baixar pacote HISTGEOSC V02 (.zip)</button>
+<p role="status" aria-live="polite" id="status">Pronto para iniciar.</p><progress id="progress" max="12" value="0" aria-label="Progresso do download"></progress>
+<p><small>SHA-256 esperado: <code>d7940ccb6d79f72ac2a65980229e840ac6eb6ccd1463ebd7b2f9cfa21ee41ceb</code></small></p>
+<p><a href="../mapas/HISTGEOSC_V02.html">Abrir mapa HTML</a></p>
+<details><summary>Baixar partes manualmente</summary><ol id="parts"></ol><p>Na transferência manual, é necessário concatenar os 12 arquivos em ordem binária. Use o botão acima para montagem automática.</p></details>
+<p class="muted"><small>Versão tecnicamente auditada. Homologação editorial pendente (Regra 36).</small></p></main>
+<script>(()=>{'use strict';
+const total=12, size=4668707, expected='d7940ccb6d79f72ac2a65980229e840ac6eb6ccd1463ebd7b2f9cfa21ee41ceb';
+const name=i=>'PACOTE_HISTGEOSC_V02.zip.part'+String(i).padStart(2,'0');
+const btn=document.getElementById('download'),status=document.getElementById('status'),progress=document.getElementById('progress'),parts=document.getElementById('parts');
+for(let i=1;i<=total;i++){let li=document.createElement('li'),a=document.createElement('a');a.href=name(i);a.textContent=name(i);a.download=name(i);li.append(a);parts.append(li)}
+const show=s=>status.textContent=s;
+btn.addEventListener('click',async()=>{btn.disabled=true;progress.value=0;let objectURL=null;
+try{const pieces=[];let received=0;for(let i=1;i<=total;i++){show('Baixando segmento '+i+' de '+total+'…');const resp=await fetch(name(i),{cache:'no-store'});if(!resp.ok)throw new Error('Segmento '+i+' retornou HTTP '+resp.status);const bytes=new Uint8Array(await resp.arrayBuffer());if(i<total&&bytes.length!==400000)throw new Error('Tamanho incorreto no segmento '+i);pieces.push(bytes);received+=bytes.length;progress.value=i}
+if(received!==size)throw new Error('Tamanho total inesperado: '+received+' bytes');
+show('Conferindo integridade SHA-256…');const bytes=new Uint8Array(received);let offset=0;for(const part of pieces){bytes.set(part,offset);offset+=part.length}
+if(!crypto?.subtle)throw new Error('Este navegador não permite a verificação criptográfica. Abra a página por HTTPS em navegador atualizado.');
+const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(v=>v.toString(16).padStart(2,'0')).join('');
+if(hash!==expected)throw new Error('SHA-256 divergente: '+hash+' — download cancelado por segurança.');
+objectURL=URL.createObjectURL(new Blob([bytes],{type:'application/zip'}));
+const a=document.createElement('a');a.href=objectURL;a.download='PACOTE_HISTGEOSC_V02.zip';document.body.append(a);a.click();a.remove();
+show('Integridade confirmada. Download iniciado.');setTimeout(()=>URL.revokeObjectURL(objectURL),120000);
+}catch(err){if(objectURL)URL.revokeObjectURL(objectURL);show('Não foi possível concluir: '+(err?.message||err))}finally{btn.disabled=false}
+});
+})();</script></body></html>
