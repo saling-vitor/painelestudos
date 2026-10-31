@@ -3860,10 +3860,10 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card
 /* MAP-INFO-GAP-FIX-2026-10-31: início */
 /* Apenas os mapas em grade dentro de Meus Cursos; mantém a capa 16:9. */
 html:not(.is-phone-layout) #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-cover {
-  margin-bottom: 0 !important;
+  margin-bottom: 0;
 }
 html:not(.is-phone-layout) #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row {
-  padding-top: 16px !important;
+  padding-top: 16px;
 }
 /* MAP-INFO-GAP-FIX-2026-10-31: fim */
 
@@ -3873,7 +3873,7 @@ html:not(.is-phone-layout) #courseMaps .map-card.has-cover:not(.map-list .map-ca
     padding-bottom:46px!important;
   }
   /* Respiro abaixo da imagem (não depende das margens das etiquetas). */
-  html:not(.is-ipad):not(.is-phone-layout) :is(#courseMaps,#allMaps) .map-card.has-cover > .map-cover{margin-bottom:18px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #allMaps .map-card.has-cover > .map-cover{margin-bottom:18px!important}
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
     min-height:36px!important;
     margin-top:8px!important;
