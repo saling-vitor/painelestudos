@@ -3748,7 +3748,7 @@ html.is-phone-layout .map-card{
     padding:0 16px 50px!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover .map-cover{
-    margin:0 -16px 16px!important;
+    margin:0 -16px 18px!important;
     aspect-ratio:16/9!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
@@ -3863,7 +3863,7 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card
     padding-bottom:46px!important;
   }
   /* Respiro abaixo da imagem (não depende das margens das etiquetas). */
-  html:not(.is-ipad):not(.is-phone-layout) :is(#courseMaps,#allMaps) .map-card.has-cover > .map-cover{margin-bottom:16px!important}
+  html:not(.is-ipad):not(.is-phone-layout) :is(#courseMaps,#allMaps) .map-card.has-cover > .map-cover{margin-bottom:18px!important}
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
     min-height:36px!important;
     margin-top:8px!important;
