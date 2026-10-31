@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="HISTBR — História do Brasil, mapa de estudos REV11.7.">
+  <title>HISTBR — História do Brasil | MEUS MAPAS</title>
+  <style>html,body{background:#081113;color:#ece6da;font:16px system-ui,sans-serif;margin:0;min-height:100%}main{max-width:40rem;margin:12vh auto;padding:1.2rem}a{color:#c9be96}</style>
+</head>
+<body>
+<main id="histbr-loader" role="status" aria-live="polite">
+  <h1>HISTBR · História do Brasil</h1><p>Carregando o mapa completo…</p>
+  <p>Se necessário, <a href="HISTBR_V01.html.gz" download="HISTBR_V01.html.gz">baixe o arquivo compactado</a>.</p>
+</main>
+<script>
+(async()=>{
+  'use strict';
+  const r=await fetch('./HISTBR_V01.html.gz',{cache:'no-store'});
+  if(!r.ok)throw Error('Falha ao obter mapa: HTTP '+r.status);
+  if(typeof DecompressionStream!=='function')throw Error('Este navegador não suporta descompactação em fluxo (gzip).');
+  const stream=r.body.pipeThrough(new DecompressionStream('gzip'));
+  const html=await new Response(stream).text();
+  if(!html.includes('<!DOCTYPE html>')&&!html.includes('<!doctype html>'))throw Error('Documento recebido inválido');
+  if(!html.includes('HISTBR'))throw Error('Documento não corresponde ao HISTBR');
+  document.open();document.write(html);document.close();
+})().catch(err=>{
+  console.error('HISTBR:',err);
+  document.getElementById('histbr-loader').innerHTML='<h1>HISTBR</h1><p>Não foi possível abrir o mapa neste navegador.</p><p>Use o pacote original ou um navegador atualizado.</p><p>Detalhe: '+String(err.message||err).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[c])+'</p>';
+});
+</script>
+</body></html>

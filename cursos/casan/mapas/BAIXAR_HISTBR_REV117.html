@@ -1,0 +1,32 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HISTBR · Pacote completo REV11.7</title><style>html,body{background:#081113;color:#ece6da;margin:0;font:16px/1.5 system-ui,sans-serif}main{max-width:46rem;margin:10vh auto;padding:1.5rem}button{background:#c9be96;color:#071113;padding:.8rem 1.2rem;font-size:1rem;font-weight:750;border:0;border-radius:6px;cursor:pointer}a{color:#c9be96}progress{width:100%;height:1rem}small{opacity:.85}</style></head><body><main><h1>HISTBR · História do Brasil</h1><p>Pacote final REV11.7 — HTML original integral, pacote de trabalho, auditoria e logs. <strong>Não homologado pedagogicamente</strong>; pendências no relatório.</p><button type="button" id="baixar">Baixar pacote completo (.zip)</button><p id="status" role="status" aria-live="polite">Pronto para download · tamanho aproximado: 5,4 MB.</p><progress id="progresso" value="0" max="100" hidden></progress><p><a href="./HISTBR_V01.html">Abrir mapa no navegador</a> · <a href="../relatorios/HISTBR_AUDITORIA_FINAL_REV117.md">Ver relatório de auditoria</a></p><small>Os fragmentos são recombinados no navegador e verificados por SHA-256 antes do download. Nenhum dado é enviado a terceiros.</small></main><script>
+'use strict';
+const PARTS=["ENTREGA_HISTBR_FINAL_REV117.zip.part01", "ENTREGA_HISTBR_FINAL_REV117.zip.part02", "ENTREGA_HISTBR_FINAL_REV117.zip.part03", "ENTREGA_HISTBR_FINAL_REV117.zip.part04", "ENTREGA_HISTBR_FINAL_REV117.zip.part05", "ENTREGA_HISTBR_FINAL_REV117.zip.part06", "ENTREGA_HISTBR_FINAL_REV117.zip.part07", "ENTREGA_HISTBR_FINAL_REV117.zip.part08"];
+const WANT='4288b76b70790ed319905af024c867f2dae96f5cbedd490fd4a8a0b3295ba985';
+const btn=document.getElementById('baixar'),status=document.getElementById('status'),bar=document.getElementById('progresso');
+btn.onclick=async()=>{
+  btn.disabled=true;bar.hidden=false;bar.value=0;
+  try{
+    const pieces=[];let size=0;
+    for(let i=0;i<PARTS.length;i++){
+      const url='../pacotes/'+PARTS[i];
+      const r=await fetch(url,{cache:'no-store'});
+      if(!r.ok)throw Error('Parte '+(i+1)+' não disponível: HTTP '+r.status);
+      const bytes=new Uint8Array(await r.arrayBuffer());
+      pieces.push(bytes);size+=bytes.length;bar.value=Math.round(75*(i+1)/PARTS.length);
+      status.textContent='Recebendo '+(i+1)+'/'+PARTS.length+' partes…';
+    }
+    const joined=new Uint8Array(size);let cursor=0;
+    for(const part of pieces){joined.set(part,cursor);cursor+=part.length}
+    if(!globalThis.crypto?.subtle)throw Error('O navegador não oferece verificação de integridade (Web Crypto).');
+    status.textContent='Verificando integridade…';
+    const dig=await crypto.subtle.digest('SHA-256',joined.buffer);
+    const got=[...new Uint8Array(dig)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    if(got!==WANT)throw Error('Hash SHA-256 divergente. Arquivo não será baixado.');
+    bar.value=100;
+    const url=URL.createObjectURL(new Blob([joined],{type:'application/zip'}));
+    const a=document.createElement('a');a.href=url;a.download='ENTREGA_HISTBR_FINAL_REV117.zip';document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    status.textContent='Pacote verificado com sucesso · SHA-256 '+got.slice(0,12)+'…';
+  }catch(e){status.textContent='Falha: '+(e?.message||e);console.error(e)}finally{btn.disabled=false}
+};
+</script></body></html>
