@@ -1,0 +1,980 @@
+{
+  "schema": "meus-mapas/relatorio-editorial-mapa/v1",
+  "serieId": "CGA_CASAN_003_2026",
+  "sigla": "HISTGEOSC",
+  "responsavel": "ChatGPT — auditoria técnica assistida, sem revisão humana independente",
+  "dataISO": "2026-10-31",
+  "evidenciaGeral": "PORTAO_RECIBO_COMPLETO.txt (22 partes, código 421CC5BC); fontes no inventário JSON e 4 PDFs; logs VALIDAR10.log, QUALIDADE5.log, DOM5.json; matriz 04_MATRIZ_COBERTURA.json.; auditoria adicional: IBGE pedologia e InvestSC Turismo; revisão de enunciados, distratores e explicações.",
+  "retificacoesConferidas": true,
+  "normasObrigatoriasConferidas": true,
+  "categoriaConferida": true,
+  "aprovacaoCurricularPreservada": true,
+  "estado": "PENDENTE_DE_HOMOLOGACAO_HUMANA",
+  "pendenciasAbertas": [
+    {
+      "id": "HUMREV",
+      "descricao": "Falta revisão independente e homologação humana dos 30 subassuntos, 77 fatos e 77 questões autorais no mesmo hash do HTML."
+    },
+    {
+      "id": "QREAL",
+      "descricao": "Não há questões reais da AOCP homologadas com caderno/gabarito; as 75 questões são autorais."
+    },
+    {
+      "id": "BROWSER",
+      "descricao": "Os layouts Chromium em conteúdo injetado a 390/820/1280 foram aprovados sem rolagem lateral e sem erro JS. Persistência após recarga, origem offline e Safari físico NÃO concluídos."
+    }
+  ],
+  "documentosRelevantes": [
+    {
+      "titulo": "Edital de Abertura CASAN 003/2026, Anexo III",
+      "urlOuArquivo": "FONTES/PDFS/EDITAL_CASAN_003_2026.pdf",
+      "localizador": "Arquivo PDF, página 55/90, página impressa 28 do Anexo III: CGA item 1",
+      "textoConferido": true,
+      "limite": "Recorte programático e partes administrativas pertinentes examinados; NÃO foi lido e atestado integralmente o PDF de 90 páginas."
+    },
+    {
+      "titulo": "Primeiro Termo de Retificação",
+      "urlOuArquivo": "FONTES/PDFS/RETIFICACAO_01_CASAN_003_2026.pdf",
+      "localizador": "Página 1/1, art. 1º, subitem 4.7.1",
+      "textoConferido": true
+    },
+    {
+      "titulo": "Segundo Termo de Retificação",
+      "urlOuArquivo": "FONTES/PDFS/RETIFICACAO_02_CASAN_003_2026.pdf",
+      "localizador": "Páginas 1–2/2, arts. 1º–4º (requisitos de alguns cargos e conteúdo de Serviço Social)",
+      "textoConferido": true
+    },
+    {
+      "titulo": "Terceiro Termo de Retificação",
+      "urlOuArquivo": "FONTES/PDFS/RETIFICACAO_03_CASAN_003_2026.pdf",
+      "localizador": "Página 1/1, alteração referente ao cargo 403",
+      "textoConferido": true
+    }
+  ],
+  "subassuntosConferidos": [
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T01-01",
+      "titulo": "Povos Guarani, Kaingang e Laklãnõ/Xokleng e territorialidades",
+      "topicIds": [
+        "povos-originarios-de-santa-catarina"
+      ],
+      "factIds": [
+        "F-HG-01-01",
+        "F-HG-01-02",
+        "F-HG-01-03",
+        "F-HG-01-04",
+        "F-HG-01-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "POVOS"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Histórico, parágrafos “Povos Indígenas em Santa Catarina”",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T01-02",
+      "titulo": "Persistências culturais, conflitos fundiários e resistências",
+      "topicIds": [
+        "povos-originarios-de-santa-catarina"
+      ],
+      "factIds": [
+        "F-HG-01-01",
+        "F-HG-01-02",
+        "F-HG-01-03",
+        "F-HG-01-04",
+        "F-HG-01-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "POVOS"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Histórico, parágrafos “Povos Indígenas em Santa Catarina”",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T02-01",
+      "titulo": "Núcleos costeiros, administração e rotas marítimas",
+      "topicIds": [
+        "ocupacao-litoranea-e-povoamento-colonial"
+      ],
+      "factIds": [
+        "F-HG-02-01",
+        "F-HG-02-02",
+        "F-HG-02-03",
+        "F-HG-02-04",
+        "F-HG-02-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "ACOR"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Inventário dos Ofícios das Câmaras 1776–1829: Desterro, Laguna, São Francisco e fortificação dos portos",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T02-02",
+      "titulo": "Presença açoriana e transformações do litoral",
+      "topicIds": [
+        "ocupacao-litoranea-e-povoamento-colonial"
+      ],
+      "factIds": [
+        "F-HG-02-01",
+        "F-HG-02-02",
+        "F-HG-02-03",
+        "F-HG-02-04",
+        "F-HG-02-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "ACOR2"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Seção Imigração Açoriana: objetivo de povoamento e defesa, século XVIII",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T03-01",
+      "titulo": "Rotas dos tropeiros e articulação entre planalto e litoral",
+      "topicIds": [
+        "caminhos-tropeirismo-e-ocupacao-interiorana"
+      ],
+      "factIds": [
+        "F-HG-03-01",
+        "F-HG-03-02",
+        "F-HG-03-03",
+        "F-HG-03-04",
+        "F-HG-03-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "TROPE"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Resumo do artigo, ocupação do Planalto Sul, tropeirismo, pecuária",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T03-02",
+      "titulo": "Economia pecuária e formação de cidades do interior",
+      "topicIds": [
+        "caminhos-tropeirismo-e-ocupacao-interiorana"
+      ],
+      "factIds": [
+        "F-HG-03-01",
+        "F-HG-03-02",
+        "F-HG-03-03",
+        "F-HG-03-04",
+        "F-HG-03-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "TROPE"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Resumo do artigo, ocupação do Planalto Sul, tropeirismo, pecuária",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T04-01",
+      "titulo": "Imigração europeia e outros fluxos migratórios",
+      "topicIds": [
+        "imigracao-e-diversidade-sociocultural"
+      ],
+      "factIds": [
+        "F-HG-04-01",
+        "F-HG-04-02",
+        "F-HG-04-03",
+        "F-HG-04-04",
+        "F-HG-04-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "ITAL"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Introdução da reportagem, fluxos migratórios e distribuição regional",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T04-02",
+      "titulo": "Diversidade étnica e formação de atividades produtivas",
+      "topicIds": [
+        "imigracao-e-diversidade-sociocultural"
+      ],
+      "factIds": [
+        "F-HG-04-01",
+        "F-HG-04-02",
+        "F-HG-04-03",
+        "F-HG-04-04",
+        "F-HG-04-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "BLUM"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: História do Município: pré-ocupação indígena e colônia de 1850",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T05-01",
+      "titulo": "Conflitos de terra e ferrovia no planalto contestado",
+      "topicIds": [
+        "guerra-do-contestado"
+      ],
+      "factIds": [
+        "F-HG-05-01",
+        "F-HG-05-02",
+        "F-HG-05-03",
+        "F-HG-05-04",
+        "F-HG-05-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "CONTES"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Artigo de Paulo Pinheiro Machado: 1912–1916, terras, ferrovia e repressão",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T05-02",
+      "titulo": "Movimento sertanejo, repressão e consequências políticas",
+      "topicIds": [
+        "guerra-do-contestado"
+      ],
+      "factIds": [
+        "F-HG-05-01",
+        "F-HG-05-02",
+        "F-HG-05-03",
+        "F-HG-05-04",
+        "F-HG-05-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "CONTES"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Artigo de Paulo Pinheiro Machado: 1912–1916, terras, ferrovia e repressão",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T06-01",
+      "titulo": "Industrialização têxtil, alimentar e metalmecânica regional",
+      "topicIds": [
+        "modernizacao-economica-e-historia-politica"
+      ],
+      "factIds": [
+        "F-HG-06-01",
+        "F-HG-06-02",
+        "F-HG-06-03",
+        "F-HG-06-04",
+        "F-HG-06-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "FIESC"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Estudo: indústrias têxteis, Vale do Itajaí, Norte catarinense e imigração",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R1-T06-02",
+      "titulo": "Transformações políticas estaduais e desenvolvimento no século XX",
+      "topicIds": [
+        "modernizacao-economica-e-historia-politica"
+      ],
+      "factIds": [
+        "F-HG-06-01",
+        "F-HG-06-02",
+        "F-HG-06-03",
+        "F-HG-06-04",
+        "F-HG-06-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "POLIT"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Primeira República, Federalismo, Desterro/Florianópolis",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T01-01",
+      "titulo": "Fronteiras estaduais e municípios",
+      "topicIds": [
+        "localizacao-e-regionalizacao-catarinense"
+      ],
+      "factIds": [
+        "F-HG-07-01",
+        "F-HG-07-02",
+        "F-HG-07-03",
+        "F-HG-07-04",
+        "F-HG-07-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "IBGE"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Quadro Santa Catarina: código 42, capital, Censo 2022, estimativa 2026, área",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T01-02",
+      "titulo": "Litoral, vales, planaltos e recortes regionais",
+      "topicIds": [
+        "localizacao-e-regionalizacao-catarinense"
+      ],
+      "factIds": [
+        "F-HG-07-01",
+        "F-HG-07-02",
+        "F-HG-07-03",
+        "F-HG-07-04",
+        "F-HG-07-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "IBGER"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Quadro: SC 42, regiões intermediárias e imediatas",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T02-01",
+      "titulo": "Serra do Mar, Serra Geral e planaltos",
+      "topicIds": [
+        "relevo-solos-e-paisagens"
+      ],
+      "factIds": [
+        "F-HG-08-01",
+        "F-HG-08-02",
+        "F-HG-08-03",
+        "F-HG-08-04",
+        "F-HG-08-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "RELEVO"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Item 5.1.2 Geomorfologia: Serra do Mar/Geral, litoral e planalto",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T02-02",
+      "titulo": "Ocupação das encostas, erosão e suscetibilidade a deslizamentos",
+      "topicIds": [
+        "relevo-solos-e-paisagens"
+      ],
+      "factIds": [
+        "F-HG-08-01",
+        "F-HG-08-02",
+        "F-HG-08-03",
+        "F-HG-08-04",
+        "F-HG-08-05",
+        "F-HG-08-06"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "RISC",
+        "IBGESOLOS"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Seções Deslizamentos de Terra; Temporais e enchentes; monitoramento de encostas; IBGE · Solos (seção O que é)",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T03-01",
+      "titulo": "Clima subtropical e variações altimétricas",
+      "topicIds": [
+        "climas-e-eventos-extremos"
+      ],
+      "factIds": [
+        "F-HG-09-01",
+        "F-HG-09-02",
+        "F-HG-09-03",
+        "F-HG-09-04",
+        "F-HG-09-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "CLIMA"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Clima Cfa/Cfb e vegetação, dados de atlas Epagri",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T03-02",
+      "titulo": "Chuvas intensas, estiagens, enchentes e riscos locais",
+      "topicIds": [
+        "climas-e-eventos-extremos"
+      ],
+      "factIds": [
+        "F-HG-09-01",
+        "F-HG-09-02",
+        "F-HG-09-03",
+        "F-HG-09-04",
+        "F-HG-09-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "RISC"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Seções Deslizamentos de Terra; Temporais e enchentes; monitoramento de encostas",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T04-01",
+      "titulo": "Vertente do Atlântico e bacias costeiras",
+      "topicIds": [
+        "hidrografia-catarinense"
+      ],
+      "factIds": [
+        "F-HG-10-01",
+        "F-HG-10-02",
+        "F-HG-10-03",
+        "F-HG-10-04",
+        "F-HG-10-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "AGUAS"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Região Hidrográfica: vertente interior e vertente atlântica",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T04-02",
+      "titulo": "Vertente interior e bacias da região do Uruguai",
+      "topicIds": [
+        "hidrografia-catarinense"
+      ],
+      "factIds": [
+        "F-HG-10-01",
+        "F-HG-10-02",
+        "F-HG-10-03",
+        "F-HG-10-04",
+        "F-HG-10-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "LEIRH"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Art. 3º: dez regiões hidrográficas estaduais, RH1 a RH10",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T05-01",
+      "titulo": "Mata Atlântica, Floresta Ombrófila e campos",
+      "topicIds": [
+        "biomas-e-recursos-naturais"
+      ],
+      "factIds": [
+        "F-HG-11-01",
+        "F-HG-11-02",
+        "F-HG-11-03",
+        "F-HG-11-04",
+        "F-HG-11-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "FLORE"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: SC integralmente no bioma Mata Atlântica, principais formações",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R2-T05-02",
+      "titulo": "Mosaicos de vegetação, conservação e uso sustentável",
+      "topicIds": [
+        "biomas-e-recursos-naturais"
+      ],
+      "factIds": [
+        "F-HG-11-01",
+        "F-HG-11-02",
+        "F-HG-11-03",
+        "F-HG-11-04",
+        "F-HG-11-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "FLORE"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: SC integralmente no bioma Mata Atlântica, principais formações",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T01-01",
+      "titulo": "Crescimento populacional e migrações",
+      "topicIds": [
+        "demografia-e-urbanizacao-de-sc"
+      ],
+      "factIds": [
+        "F-HG-12-01",
+        "F-HG-12-02",
+        "F-HG-12-03",
+        "F-HG-12-04",
+        "F-HG-12-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "IBGE"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Quadro Santa Catarina: código 42, capital, Censo 2022, estimativa 2026, área",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T01-02",
+      "titulo": "Polos urbanos, redes regionais e distribuição da população",
+      "topicIds": [
+        "demografia-e-urbanizacao-de-sc"
+      ],
+      "factIds": [
+        "F-HG-12-01",
+        "F-HG-12-02",
+        "F-HG-12-03",
+        "F-HG-12-04",
+        "F-HG-12-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "IBGER"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Quadro: SC 42, regiões intermediárias e imediatas",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T02-01",
+      "titulo": "Complexos industriais regionais e cadeias de valor",
+      "topicIds": [
+        "industria-e-especializacoes-territoriais"
+      ],
+      "factIds": [
+        "F-HG-13-01",
+        "F-HG-13-02",
+        "F-HG-13-03",
+        "F-HG-13-04",
+        "F-HG-13-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "FIESC"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Estudo: indústrias têxteis, Vale do Itajaí, Norte catarinense e imigração",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T02-02",
+      "titulo": "Distribuição industrial no Vale do Itajaí, Norte, Oeste e Sul",
+      "topicIds": [
+        "industria-e-especializacoes-territoriais"
+      ],
+      "factIds": [
+        "F-HG-13-01",
+        "F-HG-13-02",
+        "F-HG-13-03",
+        "F-HG-13-04",
+        "F-HG-13-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "ECO"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Artigo sobre estruturação das cadeias de suínos e frangos no Oeste",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T03-01",
+      "titulo": "Agroindústria e agricultura familiar no Oeste",
+      "topicIds": [
+        "agropecuaria-logistica-e-turismo"
+      ],
+      "factIds": [
+        "F-HG-14-01",
+        "F-HG-14-02",
+        "F-HG-14-03",
+        "F-HG-14-04",
+        "F-HG-14-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "ECO"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Artigo sobre estruturação das cadeias de suínos e frangos no Oeste",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T03-02",
+      "titulo": "Portos, aeroportos, corredores logísticos e turismo",
+      "topicIds": [
+        "agropecuaria-logistica-e-turismo"
+      ],
+      "factIds": [
+        "F-HG-14-01",
+        "F-HG-14-02",
+        "F-HG-14-03",
+        "F-HG-14-04",
+        "F-HG-14-05",
+        "F-HG-14-06"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "PORT",
+        "TURISC"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Movimentação portuária: São Francisco do Sul, Itapoá, Portonave, Imbituba, Itajaí; InvestSC · Turismo (modalidades)",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T04-01",
+      "titulo": "Saneamento, habitação e serviços por região",
+      "topicIds": [
+        "contrastes-regionais-e-infraestrutura"
+      ],
+      "factIds": [
+        "F-HG-15-01",
+        "F-HG-15-02",
+        "F-HG-15-03",
+        "F-HG-15-04",
+        "F-HG-15-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "SANE"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Características dos domicílios, tabela 12, Censo 2022: esgotamento sanitário",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    },
+    {
+      "subassuntoId": "SA-HISTGEOSC-R3-T04-02",
+      "titulo": "Impactos das enchentes e planejamento territorial",
+      "topicIds": [
+        "contrastes-regionais-e-infraestrutura"
+      ],
+      "factIds": [
+        "F-HG-15-01",
+        "F-HG-15-02",
+        "F-HG-15-03",
+        "F-HG-15-04",
+        "F-HG-15-05"
+      ],
+      "sourceIds": [
+        "ED2026",
+        "RISC"
+      ],
+      "estadoFonteInventario": "CONFERIDA",
+      "evidencia": "Texto/trecho consultado no portal oficial: Seções Deslizamentos de Terra; Temporais e enchentes; monitoramento de encostas",
+      "conferidoSemanticamente": false,
+      "observacao": "Correspondência de estrutura e fontes registradas; cotejo humano independente item a item das afirmações e alternativas ainda não realizado."
+    }
+  ],
+  "topicosConferidos": [
+    {
+      "topicId": "povos-originarios-de-santa-catarina",
+      "factIds": [
+        "F-HG-01-01",
+        "F-HG-01-02",
+        "F-HG-01-03",
+        "F-HG-01-04",
+        "F-HG-01-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R1-T01-01",
+        "SA-HISTGEOSC-R1-T01-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "ocupacao-litoranea-e-povoamento-colonial",
+      "factIds": [
+        "F-HG-02-01",
+        "F-HG-02-02",
+        "F-HG-02-03",
+        "F-HG-02-04",
+        "F-HG-02-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R1-T02-01",
+        "SA-HISTGEOSC-R1-T02-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "caminhos-tropeirismo-e-ocupacao-interiorana",
+      "factIds": [
+        "F-HG-03-01",
+        "F-HG-03-02",
+        "F-HG-03-03",
+        "F-HG-03-04",
+        "F-HG-03-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R1-T03-01",
+        "SA-HISTGEOSC-R1-T03-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "imigracao-e-diversidade-sociocultural",
+      "factIds": [
+        "F-HG-04-01",
+        "F-HG-04-02",
+        "F-HG-04-03",
+        "F-HG-04-04",
+        "F-HG-04-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R1-T04-01",
+        "SA-HISTGEOSC-R1-T04-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "guerra-do-contestado",
+      "factIds": [
+        "F-HG-05-01",
+        "F-HG-05-02",
+        "F-HG-05-03",
+        "F-HG-05-04",
+        "F-HG-05-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R1-T05-01",
+        "SA-HISTGEOSC-R1-T05-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "modernizacao-economica-e-historia-politica",
+      "factIds": [
+        "F-HG-06-01",
+        "F-HG-06-02",
+        "F-HG-06-03",
+        "F-HG-06-04",
+        "F-HG-06-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R1-T06-01",
+        "SA-HISTGEOSC-R1-T06-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "localizacao-e-regionalizacao-catarinense",
+      "factIds": [
+        "F-HG-07-01",
+        "F-HG-07-02",
+        "F-HG-07-03",
+        "F-HG-07-04",
+        "F-HG-07-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R2-T01-01",
+        "SA-HISTGEOSC-R2-T01-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "relevo-solos-e-paisagens",
+      "factIds": [
+        "F-HG-08-01",
+        "F-HG-08-02",
+        "F-HG-08-03",
+        "F-HG-08-04",
+        "F-HG-08-05",
+        "F-HG-08-06"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R2-T02-01",
+        "SA-HISTGEOSC-R2-T02-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.; complemento de cobertura em 31/10/2026.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "climas-e-eventos-extremos",
+      "factIds": [
+        "F-HG-09-01",
+        "F-HG-09-02",
+        "F-HG-09-03",
+        "F-HG-09-04",
+        "F-HG-09-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R2-T03-01",
+        "SA-HISTGEOSC-R2-T03-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "hidrografia-catarinense",
+      "factIds": [
+        "F-HG-10-01",
+        "F-HG-10-02",
+        "F-HG-10-03",
+        "F-HG-10-04",
+        "F-HG-10-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R2-T04-01",
+        "SA-HISTGEOSC-R2-T04-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "biomas-e-recursos-naturais",
+      "factIds": [
+        "F-HG-11-01",
+        "F-HG-11-02",
+        "F-HG-11-03",
+        "F-HG-11-04",
+        "F-HG-11-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R2-T05-01",
+        "SA-HISTGEOSC-R2-T05-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "demografia-e-urbanizacao-de-sc",
+      "factIds": [
+        "F-HG-12-01",
+        "F-HG-12-02",
+        "F-HG-12-03",
+        "F-HG-12-04",
+        "F-HG-12-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R3-T01-01",
+        "SA-HISTGEOSC-R3-T01-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "industria-e-especializacoes-territoriais",
+      "factIds": [
+        "F-HG-13-01",
+        "F-HG-13-02",
+        "F-HG-13-03",
+        "F-HG-13-04",
+        "F-HG-13-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R3-T02-01",
+        "SA-HISTGEOSC-R3-T02-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "agropecuaria-logistica-e-turismo",
+      "factIds": [
+        "F-HG-14-01",
+        "F-HG-14-02",
+        "F-HG-14-03",
+        "F-HG-14-04",
+        "F-HG-14-05",
+        "F-HG-14-06"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R3-T03-01",
+        "SA-HISTGEOSC-R3-T03-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.; complemento de cobertura em 31/10/2026.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    },
+    {
+      "topicId": "contrastes-regionais-e-infraestrutura",
+      "factIds": [
+        "F-HG-15-01",
+        "F-HG-15-02",
+        "F-HG-15-03",
+        "F-HG-15-04",
+        "F-HG-15-05"
+      ],
+      "subassuntoIds": [
+        "SA-HISTGEOSC-R3-T04-01",
+        "SA-HISTGEOSC-R3-T04-02"
+      ],
+      "evidencia": "ENTENDA, FIXE, COMO CAI, microficha, 5 fatos, 5 questões autorais; ver JSONs 02–04 e auditoria DOM no relatório técnico.",
+      "conteudoConferido": false,
+      "observacao": "Sem revisão humana independente do conteúdo pedagógico, fatos e distratores."
+    }
+  ],
+  "notaMetodologica": "O validador de homologação exige evidência de avaliação humana independente; este relatório recusa alegá-la e preserva todos os itens de cobertura do único mapa. Nova verificação técnica não equivale a parecer humano independente."
+}
