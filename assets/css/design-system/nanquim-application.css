@@ -302,19 +302,3 @@ html.mm-reduced-transparency:not(.is-phone-layout) .app .side{
  html:is(:root,#nq#nq) :is(#reader .readerbar,#studyReaderRail.study-reader-rail){background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-color:#2b2824!important}
 }
 html:is(:root,#nq#nq).mm-reduced-transparency :is(#reader .readerbar,#studyReaderRail.study-reader-rail){background:#0b0a09!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-
-/* Meus Mapas · respiro entre a capa e a linha de sigla/status/versão.
-   Restrito à grade de mapas com capa; a visualização em lista não muda. */
-html .app .content :is(#courseMaps,#allMaps) .map-card.has-cover:not(.map-list .map-card) > .map-cover{
-  margin-bottom:0!important;
-}
-html .app .content :is(#courseMaps,#allMaps) .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
-  margin-top:0!important;
-  padding-top:16px!important;
-}
-html.is-ipad:not(.is-phone-layout) .app .content :is(#courseMaps,#allMaps) .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
-  padding-top:14px!important;
-}
-html.is-phone-layout .app .content :is(#courseMaps,#allMaps) .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
-  padding-top:10px!important;
-}

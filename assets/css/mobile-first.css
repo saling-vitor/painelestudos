@@ -1802,7 +1802,7 @@
 
   html.is-phone-layout .map-card-status-row{
     gap:6px!important;
-    margin-top:8px!important;
+    margin-top:10px!important;
   }
   html.is-phone-layout .map-card-status-row .map-code,
   html.is-phone-layout .map-card-status-row .map-version,
