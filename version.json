@@ -1,10 +1,10 @@
 {
   "version": "15.67.2",
   "label": "V15.67.2-G",
-  "notes": "Espaçamento físico de 18 px após a capa de cada mapa em modo Capas no desktop, validado pela geometria dos cards.",
+  "notes": "Espaçamento da capa aos indicadores: 16 px no desktop, 14 px no iPad e 10 px no celular.",
   "showWhatsNew": true,
   "highlights": [
-    "[D] Respiro real de 18 px entre a borda inferior das capas e a faixa de sigla, estado e versão; teste E2E de medição",
+    "[D] Respiro entre a borda inferior das capas e a faixa de sigla, estado e versão: desktop 16 px, iPad 14 px, celular 10 px",
     "[G] Raio-X: leis que o edital cita só pelo número (ex.: Lei 9.984/2000 = Agência Nacional de Águas) agora contam como conteúdo da disciplina; ANAREG vai para Legislação na CASAN",
     "[G] Mapa que cita uma lei pedida em uma só disciplina vai direto para ela",
     "[G] Cada sigla do Raio-X diz por que está ali (fixada, categoria, lei, conteúdo ou “?” palpite) e abre um menu: Mover para… / Fixar aqui / Voltar ao automático",
