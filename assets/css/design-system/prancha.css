@@ -898,3 +898,17 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr-course-v4-top .pr-carimbo{grid-column:auto}
 .pr-course-progress-details .pr-c-b{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* Central de Limpeza · V15.70 · dados históricos e cache por dispositivo */
+.pr-cleanup-subtitle{margin:24px 0 12px}
+.pr-cleanup-subtitle h3{margin:5px 0 0;font:700 var(--fs-title)/1.3 var(--pr-f-sans);color:var(--pr-papel)}
+.pr-cleanup-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:10px 0}
+.pr-cleanup-grid .pr-cell{min-width:0;border:1px solid var(--pr-linha);border-radius:9px;padding:12px;background:var(--pr-g1)}
+.pr-cleanup-device{margin-top:14px;padding:14px;border:1px solid var(--pr-linha);border-radius:9px;background:var(--pr-g1)}
+.pr-cleanup-device>b{display:block;margin-bottom:7px;color:var(--pr-papel);font-size:var(--fs-body-sm)}
+.pr-cleanup-device .pr-row{margin-top:10px}
+.pr[data-prancha="settings"] [data-pr-host="limpeza"] .pr-disc{margin:12px 0}
+.pr[data-prancha="settings"] [data-pr-host="limpeza"] .pr-li .pr-mono{overflow-wrap:anywhere;word-break:break-word}
+@media(max-width:980px){.pr-cleanup-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:570px){.pr-cleanup-grid{grid-template-columns:minmax(0,1fr)}}
