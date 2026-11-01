@@ -27,6 +27,7 @@ test('Planta [G] · lotes proporcionais com siglas e indicadores visiveis', asyn
   await setupPrancha(page, { extraMaps });
   await page.evaluate(() => window.Prancha.editais.aplicarPadrao('porto-alegre', 'FUNDATEC'));
   await page.evaluate(() => openCourse('porto-alegre'));
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="estudo"]').click();
   const course = page.locator('.pr[data-prancha="course"]');
   const total = mapRows().length + extraMaps.length;
   await expect(course.locator('.pr-tile')).toHaveCount(total);
