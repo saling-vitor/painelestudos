@@ -4155,3 +4155,17 @@ html.is-ipad:not(.is-phone-layout) #courseMaps .map-card.has-cover:not(.map-list
 html.is-phone-layout #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
   padding-top:2px;
 }
+
+/* V15.67.4 · CAPAS da Prancha: o cartão real usa .pr-legacy-grid,
+   não #courseMaps. Respiro medido entre imagem e etiquetas na interface atual.
+   Sem aumentar o orçamento de prioridades CSS ou alterar capas de cursos. */
+html:not(.is-ipad):not(.is-phone-layout) .pr-legacy-grid .map-card.has-cover > .map-cover{
+  margin-bottom:18px;
+}
+html.is-ipad:not(.is-phone-layout) .pr-legacy-grid .map-card.has-cover > .map-cover{
+  margin-bottom:14px;
+}
+html.is-ipad:not(.is-phone-layout) .pr-legacy-grid .map-card.has-cover > .map-card-status-row,
+html.is-phone-layout .pr-legacy-grid .map-card.has-cover > .map-card-status-row{
+  padding-top:2px;
+}
