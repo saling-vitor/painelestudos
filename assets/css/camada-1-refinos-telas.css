@@ -3748,7 +3748,7 @@ html.is-phone-layout .map-card{
     padding:0 16px 50px!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover .map-cover{
-    margin:0 -16px 0!important;
+    margin:0 -16px 18px!important;
     aspect-ratio:16/9!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
@@ -4149,12 +4149,8 @@ select option:checked{background:#242320;color:#d8c59e}
 .course-pdf-raiox-check{display:flex;align-items:center;gap:8px;font-size:var(--fs-caption);margin-top:4px;cursor:pointer}
 .course-pdf-raiox-check input{width:auto;margin:0}
 
-/* V15.67.3 · Meus Cursos: respiro real entre capa e informações, sem novos overrides prioritários.
-   Desktop: margem 0 + padding 16; iPad: margem 14 + padding 2;
-   celular: margem 10 + padding 2. Não altera a visualização em lista. */
-#courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
-  padding-top:16px;
-}
+/* V15.67.3 · Meus Cursos: margem física de 18px no desktop (teste de capas),
+   14px + 2px no iPad e 10px + 2px no celular. Sem overrides prioritários extras. */
 html.is-ipad:not(.is-phone-layout) #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row,
 html.is-phone-layout #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
   padding-top:2px;
