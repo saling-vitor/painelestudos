@@ -94,7 +94,7 @@
       ui.cell('Hoje', fmtSec(P.time.today()), '', 'meta ' + fmtMin(goals.daily)) + '</div></section>';
     const list = active.map((s, i) => crRow(s, i === 0)).join('') || ui.empty('Nenhum concurso em estudo', 'Os concursos encerrados (arquivados ou com prova realizada) estão abaixo.');
     const arch = archived.length ? ui.card(ui.head('Encerrados', archived.length + ' ' + plural(archived.length, 'concurso'), ui.btn(showArchived ? 'Ocultar' : 'Mostrar', ui.act('toggle-archived'), 'g sm')) + (showArchived ? '<div style="display:grid;gap:10px">' + archived.map((s) => crRow(s, false)).join('') + '</div>' : '<p style="font-size:var(--fs-body-sm)">Arquivados ou com a prova já realizada: ficam fora do Início, do plano e das revisões. Mapas, progresso e histórico continuam guardados — reative pelo menu ⋯ ou informe uma nova data de prova em Gerenciar curso.</p>')) : '';
-    root.innerHTML = top + carimbo + timeline(S) + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + arch;
+    root.innerHTML = top + carimbo + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + timeline(S) + arch;
   }
 
   /* ---------- curso ---------- */
