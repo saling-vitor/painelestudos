@@ -26,6 +26,10 @@ header,.toolbar-dock,main{padding:0 18px;max-width:100%}
 .tool-btn,.study-mode-indicator{height:40px;min-width:42px;background:#171717;color:white}
 .view-switch.study-only{display:flex}
 .search-toggle{display:none}
+.mm35-content-divider{display:flex;justify-content:center;width:100%;max-width:100%;overflow:visible}
+.mm37-content-strip{display:flex;align-items:center;gap:8px;white-space:nowrap;font:700 15px monospace;letter-spacing:.18em}
+.mm37-content-strip>.mm37-rule{display:block;width:65px;height:1px;flex:0 0 65px;background:#999}
+.notice.study-overview{width:calc(100% + 38px);max-width:none;margin-right:-38px;box-sizing:border-box}
 @media (min-width:700px) and (max-width:1400px){
  html.tablet-toolbar-ui body.mindmap-app>.toolbar-dock>.toolbar{
  display:grid!important;grid-template-columns:minmax(280px,1fr) auto auto auto auto auto!important;
@@ -52,7 +56,10 @@ header,.toolbar-dock,main{padding:0 18px;max-width:100%}
 <div class="view-switch study-only"><button class="study-mode-indicator">Estudo</button></div>
 <div class="tool-group actions"><button class="tool-btn" id="highBtn">☆<span class="label-long">Destaques</span></button><button class="tool-btn" id="reviewBtn">◎<span class="label-long">Revisão</span></button><button class="tool-btn" id="v133HubBtn">▤<span class="label-long">Caderno</span></button><button class="tool-btn" id="clearBtn">☰<span class="label-long">Mais</span></button></div>
 </div></div>
-<main style="min-height:1700px"><h2>Tópicos de teste</h2><p>Texto de validação sem conteúdo de concurso.</p></main>
+<main style="min-height:1700px">
+<div class="mm35-content-divider"><span aria-hidden="true" class="mm37-content-strip"><span class="mm37-rule"></span><span>CONSTITUIÇÃO ESTADUAL DE SC — MEIO AMBIENTE E SANEAMENTO · LEITURA / REVISÃO / QUESTÕES</span><span class="mm37-rule"></span></span></div>
+<div class="notice study-overview"><strong>VISÃO DE ESTUDO</strong><span>6 ramos · 22 tópicos · revisão e progresso integrados.</span></div>
+<h2>Tópicos de teste</h2><p>Texto de validação sem conteúdo de concurso.</p></main>
 <script>document.documentElement.classList.add('tablet-toolbar-ui','mm49-ipad-natural-flow','mm-ipad-adaptive');</script>
 </body></html>`;
 
@@ -78,6 +85,9 @@ test('Mapa importado: iframe real mantém título e TODOS os controles dentro do
       }).map(e=>({id:e.id||e.className,box:e.getBoundingClientRect().toJSON()}));
       return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
         toolbarHeight:toolbar.height,titleRight:title.right, toolbarRight:toolbar.right,out,
+        bodyWidth:document.body.scrollWidth,
+        strip:document.querySelector('.mm37-content-strip').getBoundingClientRect().toJSON(),
+        overview:document.querySelector('.notice.study-overview').getBoundingClientRect().toJSON(),
         addon:!!document.getElementById('mm-ipad-toolbar-row-v4'),
         canonicalCount:document.querySelectorAll('#mm-ipad-toolbar-row-v4').length,
         staleRule:!!document.querySelector('#mm-ipad-toolbar-row-v4')?.textContent.includes('.mm-legacy-breakage')};
@@ -87,6 +97,10 @@ test('Mapa importado: iframe real mantém título e TODOS os controles dentro do
     expect(result.canonicalCount,JSON.stringify(result)).toBe(1);
     expect(result.staleRule,JSON.stringify(result)).toBe(false);
     expect(result.documentWidth,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
+    expect(result.bodyWidth,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
+    expect(result.strip.left,JSON.stringify(result)).toBeGreaterThanOrEqual(-2);
+    expect(result.strip.right,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
+    expect(result.overview.right,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
     expect(result.titleRight,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
     expect(result.toolbarRight,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
     expect(result.out,JSON.stringify(result)).toEqual([]);
