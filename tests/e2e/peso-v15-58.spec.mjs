@@ -32,6 +32,7 @@ test('Peso [G] · curso mostra Peso × Esforço e as prioridades citam o peso da
   await page.evaluate(() => window.Prancha.editais.aplicarPadrao('porto-alegre', 'FUNDATEC'));
   await seedProgress(page);
   await page.evaluate(() => openCourse('porto-alegre'));
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const c = page.locator('.pr[data-prancha="course"]');
   await expect(c.locator('.pr-card').filter({ hasText: 'Peso × Esforço' })).toBeVisible();
   const pe = await page.evaluate(() => window.Prancha.editais.pesoEsforco('porto-alegre'));
