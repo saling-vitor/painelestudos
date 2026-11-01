@@ -1,14 +1,14 @@
 {
-  "version": "15.70.4",
-  "label": "V15.70.4-G",
-  "notes": "Complemento da correção iPad: faixa longa de identificação do conteúdo CESCAMB e painel de resumo deixam de ultrapassar a largura do mapa. Testes reais Chromium e regressão WebKit.",
+  "version": "15.70.5",
+  "label": "V15.70.5-G",
+  "notes": "Responsividade universal ao abrir quaisquer mapas de estudos HTML, independente de concurso, sigla, template ou versão, com proteção contra corte lateral no iPad e celular.",
   "showWhatsNew": true,
   "highlights": [
-    "[T] Texto da faixa de conteúdo quebra de linha sem ser escondido",
-    "[T] Filetes decorativos reduzem para caber no espaço disponível",
-    "[T] Painel de resumo não expande a largura do mapa",
-    "[G] Regressão verifica também body.scrollWidth, bordas da faixa e do resumo",
-    "[G] Preservados HTML armazenado, progresso, questões e sincronização"
+    "[G] Camada responsiva global aplicada a TODOS os mapas HTML do leitor, inclusive templates antigos",
+    "[T/M] Títulos, faixas, painéis e elementos largos limitados à tela, sem esconder conteúdo",
+    "[T/M] Layout de toolbar adaptável em iPad e celular",
+    "[G] Testes multi-template e seis tamanhos de tela",
+    "[G] Preservados dados, progresso, HTML original e contexto do curso"
   ],
   "automation": {
     "enabled": true,
