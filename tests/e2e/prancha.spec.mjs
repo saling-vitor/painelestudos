@@ -143,7 +143,7 @@ test('Todos os Mapas [G] · filtros com contagem, ordenação, três leituras e 
   const lib = page.locator('.pr[data-prancha="maps"]');
   await expect(lib.locator('.pr-chipf[data-arg="feito"] .pr-mono')).toHaveText('4');
   await lib.locator('.pr-chipf[data-arg="nao"]').click();
-  await expect(lib.locator('.pr-gm')).toHaveCount(10);
+  await expect(lib.locator('.pr-gm')).toHaveCount(9);
   await lib.locator('.pr-chipf[data-arg="todos"]').first().click();
   await lib.locator('select[data-pr-input="sort"]').selectOption('tam');
   await expect(lib.locator('.pr-gm').first()).toContainText(/Constituição/);
@@ -251,7 +251,7 @@ test('Configurações [G] · dez folhas com os painéis reais e zona de risco co
   await setupPrancha(page);
   await go(page, 'settings');
   const st = page.locator('.pr[data-prancha="settings"]');
-  await expect(st.locator('.pr-folha')).toHaveCount(9);
+  await expect(st.locator('.pr-folha')).toHaveCount(10);
   await expect(st.locator('[data-pr-host="editais"]')).toContainText('FUNDATEC');
   await expect(st.locator('[data-pr-host="conta"] .sync-panel')).toBeAttached();
   await expect(st.locator('[data-pr-host="dados"] #downloadBackupBtn')).toBeAttached();
