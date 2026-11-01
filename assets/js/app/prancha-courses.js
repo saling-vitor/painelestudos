@@ -428,6 +428,64 @@
     } catch (e) { console.warn(e); bar?.done('Não foi possível montar o .zip.', 'err'); say('Não foi possível montar o .zip.'); }
     finally { zipBusy = false; }
   }
+
+  /* V4 · Resumo editorial do curso: dados derivados, sem duplicar estado nem persistência. */
+  function courseHub(c, s, ex) {
+    const fases = E.fases(c);
+    const futuras = fases.filter((f) => f.date && f.days >= 0).sort((a, b) => a.date - b.date);
+    const proxima = futuras[0] || null;
+    const administrativa = futuras.find((f) => f.id !== 'prova') || null;
+    const dateLabel = (f) => f ? esc(U.fmtDayYear(f.date)) + ' · ' + (f.days === 0 ? 'hoje' : 'em ' + f.days + ' ' + plural(f.days, 'dia')) : 'Sem data futura';
+    const bloco = (rotulo, f, fallback) => '<div class="pr-course-milestone"><span class="pr-k l">' + rotulo + '</span><b>' + esc(f ? f.label : fallback) + '</b><span class="pr-mono">' + dateLabel(f) + '</span></div>';
+    const tools = [
+      ['Edital', 'course-edital', c.id],
+      ['Simulados', 'course-sims', c.id],
+      ['Raio-X da prova', 'course-jump', 'raiox'],
+      ['Peso × Esforço', 'course-jump', 'peso'],
+      ['Agenda', 'nav', 'agenda'],
+      ['Revisão relâmpago', 'relampago', '']
+    ];
+    const hasEdital = typeof courseHasEdital === 'function' && courseHasEdital(c);
+    const toolHtml = tools.map(([label, action, arg]) =>
+      '<button type="button" class="pr-course-tool" data-pr-act="' + action + '"' + (arg ? ' data-arg="' + esc(arg) + '"' : '') +
+      (action === 'course-edital' && !hasEdital ? ' disabled title="Nenhum edital anexado"' : '') + '>' + esc(label) + '</button>').join('');
+    const prova = E.prova(c.id), pontos = prova.reduce((n, d) => n + d.questoes * d.peso, 0), minimo = E.minimoGeral(c.id);
+    const titulos = E.titulos(c.id), peso = E.pesoEsforco(c.id);
+    const recorteFases = fases.filter((f) => f.date).sort((a, b) => a.date - b.date).slice(0, 5);
+    const timeline = recorteFases.length ? recorteFases.map((f) =>
+      '<span class="pr-course-phase' + (f.status === 'atual' ? ' current' : '') + '"><i></i><b>' +
+      esc(f.label) + '</b><small>' + esc(fmtDay(f.date)) + '</small></span>').join('') :
+      '<span class="pr-mono">Cadastre as datas do edital para visualizar as fases.</span>';
+    const pctPontos = peso && peso.totPontos ? peso.rows.filter((r) => r.pontos > 0).map((r) =>
+      '<i style="width:' + (100 * r.pontos / peso.totPontos) + '%;background:' + r.cor + '" title="' +
+      esc(r.nome + ': ' + E.fmtPt(r.pontos) + ' pontos') + '"></i>').join('') : '';
+    const porDisciplina = peso && peso.totPontos ? peso.rows.filter((r) => r.pontos > 0).map((r) =>
+      '<span><i style="background:' + r.cor + '"></i>' + esc(r.nome) + ' <b>' +
+      Math.round(100 * r.pontos / peso.totPontos) + '%</b></span>').join('') :
+      '<span class="pr-mono">Cadastre a estrutura da prova para comparar pesos.</span>';
+    return '<div class="pr-course-fast">' +
+      bloco('Próximo evento', proxima, 'Nenhum evento futuro') +
+      bloco('Próximo marco administrativo', administrativa, 'Nenhum marco futuro') +
+      '<div class="pr-course-milestone pr-course-quick"><span class="pr-k l">Ações rápidas</span><div class="pr-row">' +
+      ui.btn('Simulados', ui.act('course-sims', c.id), 'g sm') +
+      (window.StudyAutomation?.run ? ui.btn('Atualizar plano', ui.act('replan'), 'g sm') : '') +
+      ui.btn('Abrir mapas', ui.act('course-jump', 'estudo'), 'p sm') + '</div></div></div>' +
+      '<div class="pr-course-tools"><span class="pr-k l">Ferramentas do curso</span><div class="pr-course-tools-list">' + toolHtml + '</div></div>' +
+      '<div class="pr-course-briefs" aria-label="Resumo do edital e da prova">' +
+      '<div class="pr-course-brief"><div class="pr-course-brief-head"><span class="pr-k l">Régua do edital</span>' +
+      ui.btn('Ver cronograma', ui.act('course-jump', 'regua'), 'g sm') + '</div><div class="pr-course-phases">' + timeline + '</div></div>' +
+      '<div class="pr-course-brief"><div class="pr-course-brief-head"><span class="pr-k l">Estrutura da prova</span>' +
+      ui.btn('Ver Raio-X', ui.act('course-jump', 'raiox'), 'g sm') + '</div><b>' +
+      (prova.length ? prova.length + ' disciplinas · ' + prova.reduce((n, d) => n + d.questoes, 0) +
+       ' questões · ' + E.fmtPt(pontos) + ' pontos' : 'Estrutura ainda não cadastrada') + '</b><div class="pr-course-metrics">' +
+      '<span>Objetiva <b>' + (prova.length ? E.fmtPt(pontos) + ' pts' : '—') + '</b></span>' +
+      '<span>Mínimo geral <b>' + (minimo !== null && minimo !== undefined && prova.length ? E.fmtPt(minimo) + ' pts' : '—') + '</b></span>' +
+      '<span>Títulos <b>' + (titulos ? 'até ' + E.fmtPt(titulos) + ' pts' : '—') + '</b></span></div></div>' +
+      '<div class="pr-course-brief"><div class="pr-course-brief-head"><span class="pr-k l">Distribuição de pontos</span>' +
+      ui.btn('Ver comparação', ui.act('course-jump', 'peso'), 'g sm') +
+      '</div><div class="pr-course-weight-bar">' + pctPontos + '</div><div class="pr-course-weight-legend">' + porDisciplina + '</div></div>' +
+      '</div>';
+  }
   function renderCourse(root) {
     const c = typeof courseById === 'function' ? courseById(state.courseId) : null;
     if (!c) { root.innerHTML = ui.card(ui.empty('Curso não encontrado', 'Ele pode ter sido removido ou ainda não sincronizou.', ui.btn('Meus Cursos', ui.act('nav', 'courses'), 'g'))); return; }
@@ -474,7 +532,27 @@
       listing = shown.length && typeof mapCard === 'function' ? '<div class="map-grid pr-legacy-grid" data-pr-legacy>' + shown.filter((m) => !m._linkedFrom).map(mapCard).join('') + '</div>' + (shown.some((m) => m._linkedFrom) ? '<p class="pr-mono">' + shown.filter((m) => m._linkedFrom).length + ' mapa(s) vinculado(s) aparecem na lista.</p>' : '') : ui.empty('Nada neste filtro', 'Troque o filtro de situação ou de conteúdo.');
     } else listing = listTable(shown, fol, c);
     const mapsCard = ui.card('<div class="pr-vw"><div><span class="pr-k">Mapas do curso</span><h3>' + shown.length + ' de ' + all.length + ' mapas · ' + shown.reduce((n, m) => n + P.data.prog(m).marked, 0) + '/' + shown.reduce((n, m) => n + P.data.prog(m).total, 0) + ' tópicos</h3></div>' + ui.seg([['lista', 'Lista'], ['capas', 'Capas']], mode, 'view-mode', 'Visualização') + '</div>' + listing);
-    root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' + (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') + ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' + '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' + esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') + '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + regua(c) + carimbo + relampagoCard(c, ex) + (ex.phase === 'after' ? fechamento(c, all) + reaproveitar(c, all) : '') + raioX(c, all) + pesoCard(c) + placar(c) + '<div class="pr-vw">' + '<div class="pr-row">' + acts + '</div>' + chips + '</div>' + catChips + '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>' + mapsCard;
+    const navCurso = '<nav class="pr-course-nav" aria-label="Seções do curso">' +
+      [['overview', 'Visão geral'], ['edital', 'Edital e prova'], ['estudo', 'Estudo'], ['biblioteca', 'Biblioteca']].map(([id, title]) =>
+        '<button type="button" class="pr-course-nav-item" data-pr-act="course-jump" data-arg="' + id + '"' +
+        (id === 'overview' ? ' aria-current="location"' : '') + '>' + title + '</button>').join('') + '</nav>';
+    root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' +
+      (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') +
+      ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' +
+      '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' +
+      esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') +
+      '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + navCurso +
+      '<section class="pr-course-section" data-pr-section="overview">' + carimbo + courseHub(c, s, ex) + '</section>' +
+      relampagoCard(c, ex) + (ex.phase === 'after' ? fechamento(c, all) + reaproveitar(c, all) : '') +
+      '<section class="pr-course-section" data-pr-section="estudo">' +
+      '<div class="pr-course-study-toolbar"><div class="pr-row">' + acts + '</div>' +
+      '<div class="pr-course-filter-row"><span class="pr-k">Situação</span>' + chips + '</div>' +
+      '<div class="pr-course-filter-row"><span class="pr-k">Categorias</span>' + catChips + '</div></div>' +
+      '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div></section>' +
+      '<section class="pr-course-section" data-pr-section="biblioteca">' + mapsCard + '</section>' +
+      '<section class="pr-course-section pr-course-edital-full" data-pr-section="edital">' +
+      ui.head('Edital e prova', 'Cronograma, regras, disciplinas, pesos e resultados completos') +
+      regua(c) + raioX(c, all) + pesoCard(c) + placar(c) + '</section>';
     const legacy = root.querySelector('[data-pr-legacy]');
     if (legacy && typeof bindMapCards === 'function') bindMapCards(legacy);
   }
@@ -485,6 +563,18 @@
     'toggle-archived': () => { showArchived = !showArchived; P.schedule('courses'); },
     filter: (id) => { state.courseStudyFilter = id; P.schedule('course'); },
     cat: (id) => { state.category = id; P.schedule('course'); },
+    'course-jump': (id, el, root) => {
+      const host = root?.matches?.('[data-prancha="course"]') ? root : document.querySelector('.pr[data-prancha="course"]');
+      const sel = { regua: '.pr-regua-card', raiox: '.pr-raiox-card', peso: '.pr-pe-card' }[id];
+      const target = host?.querySelector(sel || '[data-pr-section="' + String(id).replace(/[^a-z]/g, '') + '"]');
+      if (!target) return;
+      host.querySelectorAll('.pr-course-nav-item').forEach((b) => {
+        if (el?.classList?.contains('pr-course-nav-item')) {
+          if (b === el) b.setAttribute('aria-current', 'location'); else b.removeAttribute('aria-current');
+        }
+      });
+      target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    },
     'view-mode': (id) => { try { localStorage.setItem(VKEY, id); } catch {} P.schedule('course'); },
     'pick-map': (key) => { pickKey = key; P.schedule('course'); },
     'pick-row': (key, el, root, e) => { if (e.target.closest('button,.pr-menu')) return; pickKey = key; P.renderNow('course'); root.querySelector('.pr-pick')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); },
