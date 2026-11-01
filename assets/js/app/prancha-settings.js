@@ -133,9 +133,9 @@
       (report.snapshots.length > 30 ? '<p class="pr-detail">Outros ' + (report.snapshots.length - 30) + ' registros não exibidos.</p>' : '') + '</div></details>' : '';
     const known = report && (report.snapshots.length || report.files.length);
     const controls = '<div class="pr-row">' +
-      ui.btn(cleanupBusy ? 'Analisando…' : 'Analisar dados residuais', ui.act('cleanup-analyze'), 'p', cleanupBusy ? { disabled: true } : {}) +
-      (report ? ui.btn('Limpeza segura · cache (' + report.files.length + ')', ui.act('cleanup-cache'), 'g', {disabled: cleanupBusy || !report.files.length}) : '') +
-      (report ? ui.btn('Limpeza definitiva · dados (' + report.snapshots.length + ')', ui.act('cleanup-permanent'), 'd', {disabled: cleanupBusy || !report.snapshots.length}) : '') +
+      ui.btn(cleanupBusy ? 'Analisando…' : 'Analisar dados residuais', ui.act('cleanup-analyze', undefined, {disabled: cleanupBusy}), 'p') +
+      (report ? ui.btn('Limpeza segura · cache (' + report.files.length + ')', ui.act('cleanup-cache', undefined, {disabled: cleanupBusy || !report.files.length}), 'g') : '') +
+      (report ? ui.btn('Limpeza definitiva · dados (' + report.snapshots.length + ')', ui.act('cleanup-permanent', undefined, {disabled: cleanupBusy || !report.snapshots.length}), 'd') : '') +
       '</div>';
     return header + summary + candidates +
       '<div class="pr-verdict l"><i></i><p><b>Proteções:</b> mapas com identificador em uso, conteúdos compartilhados e registros sem origem comprovada não entram na limpeza. A análise exige sessão conectada e sincronização sem pendências. Esta ferramenta não apaga backups ou o cache geral do aplicativo.</p></div>' +
@@ -169,7 +169,7 @@
       const result = mode === 'cache' ? await window.StudyCleanup.cleanCache(report) : await window.StudyCleanup.cleanPermanent(report);
       cleanupMessage = mode === 'cache'
         ? 'Cache local removido: ' + result.cache + ' entrada(s).'
-        : 'Limpeza concluída: ' + result.snapshots + ' registro(s) de estudo e ' + result.cache + ' entrada(s) de cache.';
+        : 'Limpeza concluída: ' + result.snapshots + ' registro(s) de estudo e ' + result.cache + ' entrada(s) de cache.' + (result.protected ? ' ' + result.protected + ' registro(s) preservados por vínculo ativo.' : '');
       if (result.failures?.length) cleanupMessage += ' ' + result.failures.length + ' arquivo(s) não puderam ser limpos.';
       cleanupReport = null;
       if (typeof toast === 'function') toast(cleanupMessage);
