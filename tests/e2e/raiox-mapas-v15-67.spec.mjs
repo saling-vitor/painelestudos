@@ -41,6 +41,7 @@ test('Raio-X [G] · lei citada pelo número leva o mapa à Legislação; a escol
   expect(r.ijuiAntes).toBe('esp');
   /* Raio-X: a sigla mostra por que está ali e abre um menu para mover */
   await page.evaluate(() => openCourse('casan'));
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const rx = page.locator('.pr[data-prancha="course"] .pr-raiox-card');
   const leg = rx.locator('.pr-dsc', { hasText: 'Legislação' });
   const chip = leg.locator('button.pr-chip', { hasText: 'ANAREG' });
