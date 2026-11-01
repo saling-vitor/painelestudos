@@ -1,11 +1,11 @@
 {
-  "version": "15.67.3",
-  "label": "V15.67.3-G",
-  "notes": "Espaçamento entre a capa e as informações dos mapas em Meus Cursos: 16 px no desktop/iPad e 12 px no celular.",
+  "version": "15.67.4",
+  "label": "V15.67.4-G",
+  "notes": "Correção da separação entre capas e informações na interface Prancha de Meus Cursos: 18 px desktop, 16 px iPad e 12 px celular.",
   "showWhatsNew": false,
   "highlights": [
-    "[D/T] Separação de 16 px entre as capas dos mapas e a faixa de sigla, estado e versão em Meus Cursos",
-    "[M] Separação de 12 px no celular, mantendo a lista e as demais telas sem alterações"
+    "[D] Prancha: 18 px de separação efetiva entre capa e sigla/estado/versão",
+    "[T/M] Prancha: espaçamento responsivo no iPad e celular, preservadas as listas"
   ],
   "automation": {
     "enabled": true,
