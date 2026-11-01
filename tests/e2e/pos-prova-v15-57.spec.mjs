@@ -118,7 +118,7 @@ test('Pós-prova [G] · Configurações: auditoria do acervo aponta mapas sem ma
   await expect(host).toContainText('DEMHAB, PDGV, IERA sem nenhum data-markers');
   await expect(host).toContainText('1.843 variantes de questão em 14 mapas');
   await expect(host).toContainText('sem estrutura da prova');
-  await expect(page.locator('.pr[data-prancha="settings"] .pr-folha')).toHaveCount(9);
+  await expect(page.locator('.pr[data-prancha="settings"] .pr-folha')).toHaveCount(10);
 });
 
 test('Pós-prova [M] · fechamento no curso sem rolagem lateral', async ({ page }) => {
