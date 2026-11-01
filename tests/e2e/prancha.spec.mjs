@@ -143,7 +143,7 @@ test('Todos os Mapas [G] · filtros com contagem, ordenação, três leituras e 
   const lib = page.locator('.pr[data-prancha="maps"]');
   await expect(lib.locator('.pr-chipf[data-arg="feito"] .pr-mono')).toHaveText('4');
   await lib.locator('.pr-chipf[data-arg="nao"]').click();
-  await expect(lib.locator('.pr-gm')).toHaveCount(9);
+  await expect(lib.locator('.pr-gm')).toHaveCount(10);
   await lib.locator('.pr-chipf[data-arg="todos"]').first().click();
   await lib.locator('select[data-pr-input="sort"]').selectOption('tam');
   await expect(lib.locator('.pr-gm').first()).toContainText(/Constituição/);
@@ -247,7 +247,7 @@ test('Agenda [G] · Dia, Semana e Mês; sessão com horário sem duplicar', asyn
   await expect(ag.locator('.pr-blk').filter({ hasText: '07:30' })).toBeVisible();
 });
 
-test('Configurações [G] · nove folhas com os painéis reais e zona de risco com confirmação', async ({ page }) => {
+test('Configurações [G] · dez folhas com os painéis reais e zona de risco com confirmação', async ({ page }) => {
   await setupPrancha(page);
   await go(page, 'settings');
   const st = page.locator('.pr[data-prancha="settings"]');
@@ -257,9 +257,10 @@ test('Configurações [G] · nove folhas com os painéis reais e zona de risco c
   await expect(st.locator('[data-pr-host="dados"] #downloadBackupBtn')).toBeAttached();
   await expect(st.locator('[data-pr-host="app"] #checkAppUpdateBtn')).toBeAttached();
   await expect(st.locator('[data-pr-host="adm"] .admin-panel')).toBeAttached();
+  await expect(st.locator('[data-pr-host="limpeza"]')).toContainText('Central de Limpeza Inteligente');
   await expect.poll(() => st.locator('[data-pr-host="rotina"] #studyGoalsForm').count()).toBe(1);
   await expect.poll(() => st.locator('[data-pr-host="auto"] #studyAutomationPanel').count()).toBe(1);
-  await expect(st.locator('.pr-toc a')).toHaveCount(10);
+  await expect(st.locator('.pr-toc a')).toHaveCount(11);
   const zr = st.locator('.pr-zr').getByRole('button', { name: 'Zerar hoje' });
   await zr.click();
   await expect(st.locator('.pr-zr .pr-btn.armed')).toHaveCount(1);
