@@ -78,6 +78,7 @@ test('Raio-X [G] · “Ler o PDF do edital” mostra a conferência e monta o Ra
     window.lerEditalDoArquivo = async () => window.MeusMapasEditalReader.lerEdital(pages, { cargo: 'Arquiteto' });
     openCourse('porto-alegre');
   });
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const rx = page.locator('.pr[data-prancha="course"] .pr-raiox-card');
   await expect(rx).toContainText('Estrutura ainda não informada');
   /* sem edital salvo no curso, o app pede o arquivo; com edital salvo, lê direto */
@@ -106,6 +107,7 @@ test('Raio-X [G] · cartão mostra blocos, etapas e fórmula; formulário salva 
     window.Prancha.editais.importKit('porto-alegre', JSON.stringify(plan));
     openCourse('porto-alegre');
   });
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const rx = page.locator('.pr[data-prancha="course"] .pr-raiox-card');
   await expect(rx.locator('.pr-blocos')).toContainText('Módulo de Conhecimentos Específicos');
   await expect(rx.locator('.pr-blocos')).toContainText('mín. 30 ac.');
@@ -148,6 +150,7 @@ test('Raio-X [G] · mapas vão para a disciplina certa pelo conteúdo do edital;
   });
   const r = await page.evaluate(() => { const E = window.Prancha.editais, ms = combinedMaps().filter((m) => m.courseId === 'casan'); const by = (c) => E.disciplinaDoMapa(ms.find((m) => m.code === c), 'casan')?.id; return { et: by('ETICACID'), hg: by('HISTGEOSC'), pa: by('PROJARQ'), lp: by('LP') }; });
   expect(r).toEqual({ et: 'conhecimentos-gerais-atualidades', hg: 'conhecimentos-gerais-atualidades', pa: 'conhecimentos-especificos', lp: 'lingua-portuguesa' });
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const rx = page.locator('.pr[data-prancha="course"] .pr-raiox-card');
   await expect(rx.locator('.pr-dsc').nth(2)).toContainText('ETICACID');
   await expect(rx.locator('.pr-dsc').nth(2).locator('.pr-chip.auto')).toHaveCount(2);
