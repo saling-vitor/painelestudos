@@ -1,16 +1,16 @@
 {
-  "version": "15.70.0",
-  "label": "V15.70.0-G",
-  "notes": "Limpeza histórica de cursos e mapas antigos com análise dos registros legados da nuvem, dados sem vínculo neste aparelho e cache offline do MEUS MAPAS. Exclusão manual com prévia, backup e revalidação de mapas ativos, inclusive quando a exclusão ocorreu antes da Central. Mantém as correções de atualização PWA e reimportação da V15.69.1.",
+  "version": "15.70.1",
+  "label": "V15.70.1-G",
+  "notes": "Botão de atualizar da barra de pesquisa visível apenas no iPad vertical; oculto no desktop, notebooks e celulares. O botão Sincronizar, atualização pela barra lateral e menu Mais continuam disponíveis. Mantida a Central de Limpeza da V15.70.",
   "showWhatsNew": true,
   "highlights": [
+    "[D] Barra de pesquisa · ocultar botão de atualizar em todos os tamanhos de desktop",
+    "[M] Barra de pesquisa · ocultar botão de atualizar no celular",
+    "[T] iPad vertical · manter botão de atualizar ao lado de Sincronizar",
+    "[G] Botão Sincronizar, Atualizar app da barra lateral e menu Mais preservados",
     "[G] Limpeza · localizar progresso e notas órfãos de exclusões anteriores à V15.69",
     "[D/T/M] Limpeza · separar histórico na nuvem e dados locais sem vínculo, sem apagar mapas ativos",
-    "[D/T/M] Cache · botão para limpar cópias offline apenas neste dispositivo (Safari/iPad/Windows)",
-    "[G] Segurança · análise de leitura, confirmação e verificação remota antes da exclusão, com ponto de restauração",
-    "PWA: atualização detectada corretamente pelo número de versão publicado",
-    "Mapas no iPad: barra de pesquisa e ações na mesma linha",
-    "Mapas excluídos: limpeza do HTML em cache e isolamento de novas importações"
+    "[D/T/M] Cache · botão para limpar cópias offline apenas neste dispositivo (Safari/iPad/Windows)"
   ],
   "automation": {
     "enabled": true,
