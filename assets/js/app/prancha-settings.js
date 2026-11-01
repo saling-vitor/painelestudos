@@ -138,7 +138,7 @@
       (report ? ui.btn('Limpeza definitiva · dados (' + report.snapshots.length + ')', ui.act('cleanup-permanent', undefined, {disabled: cleanupBusy || !report.snapshots.length}), 'd') : '') +
       '</div>';
     return header + summary + candidates +
-      '<div class="pr-verdict l"><i></i><p><b>Proteções:</b> mapas com identificador em uso, conteúdos compartilhados e registros sem origem comprovada não entram na limpeza. A análise exige sessão conectada e sincronização sem pendências. Esta ferramenta não apaga backups ou o cache geral do aplicativo.</p></div>' +
+      '<div class="pr-verdict l"><i></i><p><b>Proteções:</b> mapas com identificador em uso, conteúdos compartilhados e registros sem origem comprovada não entram na limpeza. A análise é apenas leitura; a exclusão exige sincronização sem pendências. Esta ferramenta não apaga backups ou o cache geral do aplicativo.</p></div>' +
       (cleanupMessage ? '<p role="status" class="pr-detail">' + esc(cleanupMessage) + '</p>' : '') + controls +
       (report && !known ? '<p class="pr-detail">Nenhum resíduo comprovado encontrado. Isso não significa que todos os caches e dados antigos foram analisados.</p>' : '');
   }
