@@ -1,13 +1,14 @@
 {
-  "version": "15.68.0",
-  "label": "V15.68.0-G",
-  "notes": "Prancha V4 implementada de verdade: abas funcionais, quadro de progresso e eventos, ferramentas organizadas, Planta e Biblioteca em primeiro plano, cronograma completo na aba própria. Atualização de cache PWA para garantir a entrega visual.",
-  "showWhatsNew": false,
+  "version": "15.69.0",
+  "label": "V15.69.0-G",
+  "notes": "Central de Limpeza Inteligente nas Configurações: auditoria de resíduos comprovados de cursos, mapas, editais e simulados excluídos, limpeza seletiva do cache privado, remoção opt-in de progresso órfão com marcadores de exclusão na nuvem e proteção de mapas ainda vinculados.",
+  "showWhatsNew": true,
   "highlights": [
-    "[D/T/M] Cursos · Visão geral com progresso, prova, próximo marco e ações rápidas em cards compactos",
-    "[D/T/M] Cursos · Abas reais: Visão geral, Edital e prova, Estudo e Biblioteca; todos os controles antigos preservados",
-    "[D/T/M] Cursos · Raio-X, Régua do edital e Peso × Esforço resumidos no topo, completos em aba própria",
-    "[G] Cache da instalação PWA renovado para a versão 15.68.0"
+    "[G] Configurações · nova folha Armazenamento e limpeza com análise prévia e relatório",
+    "[G] Exclusões de cursos, mapas, editais e simulados passam a registrar resíduos rastreáveis para manutenção",
+    "[G] Limpeza segura de cache com confirmação e sem excluir dados de estudo",
+    "[G] Limpeza definitiva opt-in de progresso e notas órfãos com verificação remota e marcador anti-ressurgimento",
+    "[G] Dados com vínculo ativo ou origem desconhecida permanecem preservados"
   ],
   "automation": {
     "enabled": true,

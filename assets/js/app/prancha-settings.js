@@ -6,6 +6,7 @@
   if (!P || P.pages.settings) return;
   const U = P.util, ui = P.ui, { esc, fmtMin } = U;
   let offlineInfo = null, restoreCount = null, probing = false;
+  let cleanupReport = null, cleanupBusy = false, cleanupMessage = '';
 
   const FOLHAS = [
     /* [número, id, título da folha, painéis, rótulo curto do índice] — V15.53.1: índice com rótulo curto para caber inteiro */
@@ -19,7 +20,8 @@
     /* V15.56 · padrões de edital por banca; painel próprio das pranchas (sem painel legado) */
     ['08', 'editais', 'Concursos e editais', [], 'Editais'],
     /* V15.57 · auditoria do acervo (só leitura) */
-    ['09', 'acervo', 'Auditoria do acervo', [], 'Acervo']
+    ['09', 'acervo', 'Auditoria do acervo', [], 'Acervo'],
+    ['10', 'limpeza', 'Armazenamento e limpeza', [], 'Limpeza']
   ];
   /* V15.55 · painéis técnicos que entram recolhidos na folha */
   const COLLAPSED = { '#appDiagnosticPanel': ['Diagnóstico técnico', 'Versão, nuvem, offline e ambiente desta instalação'] };
@@ -111,6 +113,72 @@
     const order = { aviso: 0, info: 1, ok: 2 };
     return head + '<div class="pr-list">' + r.items.slice().sort((a, b) => order[a.sev] - order[b.sev]).map((x) => '<div class="pr-li"><span class="pr-chip ' + (x.sev === 'aviso' ? 'ox' : x.sev === 'ok' ? 'ok' : 'l') + '">' + esc(x.tipo) + '</span><span><b>' + esc(x.titulo) + '</b><br><span class="t">' + esc(x.detalhe || '') + '</span></span>' + (x.course ? ui.btn('Abrir curso', ui.act('open-course', x.course), 'g sm') : x.keys?.length ? ui.btn('Ver mapas', ui.act('nav', 'maps'), 'g sm') : '<span></span>') + '</div>').join('') + '</div>';
   }
+
+  /* Limpeza de resíduos: análise por exclusões registradas, nunca varredura cega. */
+  function cleanupPanel() {
+    const ready = !!window.StudyCleanup, report = cleanupReport;
+    const header = '<div class="pr-list"><div class="pr-li"><span class="pr-chip l">Auditoria</span><span><b>Central de Limpeza Inteligente</b><br><span class="t">Primeiro identificar, depois decidir. Nunca apaga automaticamente progresso, notas ou arquivos sem confirmação.</span></span></div></div>';
+    if (!ready) return header + ui.verdict('', 'Módulo de limpeza indisponível.', 'Atualize o aplicativo para esta versão.');
+    const summary = report
+      ? '<div class="pr-metrics">' +
+          ui.cell('Progresso/notas', String(report.snapshots.length), '', 'registros rastreados após exclusões') +
+          ui.cell('Cache offline', String(report.files.length), '', 'arquivos descartados ou versões antigas') +
+          ui.cell('Na nuvem', String(report.remote.length), '', 'registros ainda presentes') +
+          ui.cell('Preservados', String(report.blocked + report.unknown.length), '', 'vínculo ativo ou origem não comprovada') +
+        '</div>'
+      : '<p class="pr-detail">Nenhuma análise executada nesta sessão. A ferramenta só identifica resíduos de exclusões registradas a partir desta versão; dados antigos sem origem comprovada são preservados.</p>';
+    const candidates = report && report.snapshots.length ?
+      '<details class="pr-disc"><summary><b>Ver registros candidatos</b><span>' + report.snapshots.length + ' chaves de progresso e anotações</span></summary><div class="pr-list">' +
+      report.snapshots.slice(0, 30).map((key) => '<div class="pr-li"><span class="pr-chip l">Candidato</span><span class="pr-mono">' + esc(key) + '</span></div>').join('') +
+      (report.snapshots.length > 30 ? '<p class="pr-detail">Outros ' + (report.snapshots.length - 30) + ' registros não exibidos.</p>' : '') + '</div></details>' : '';
+    const known = report && (report.snapshots.length || report.files.length);
+    const controls = '<div class="pr-row">' +
+      ui.btn(cleanupBusy ? 'Analisando…' : 'Analisar dados residuais', ui.act('cleanup-analyze', undefined, {disabled: cleanupBusy}), 'p') +
+      (report ? ui.btn('Limpeza segura · cache (' + report.files.length + ')', ui.act('cleanup-cache', undefined, {disabled: cleanupBusy || !report.files.length}), 'g') : '') +
+      (report ? ui.btn('Limpeza definitiva · dados (' + report.snapshots.length + ')', ui.act('cleanup-permanent', undefined, {disabled: cleanupBusy || !report.snapshots.length}), 'd') : '') +
+      '</div>';
+    return header + summary + candidates +
+      '<div class="pr-verdict l"><i></i><p><b>Proteções:</b> mapas com identificador em uso, conteúdos compartilhados e registros sem origem comprovada não entram na limpeza. A análise é apenas leitura; a exclusão exige sincronização sem pendências. Esta ferramenta não apaga backups ou o cache geral do aplicativo.</p></div>' +
+      (cleanupMessage ? '<p role="status" class="pr-detail">' + esc(cleanupMessage) + '</p>' : '') + controls +
+      (report && !known ? '<p class="pr-detail">Nenhum resíduo comprovado encontrado. Isso não significa que todos os caches e dados antigos foram analisados.</p>' : '');
+  }
+  function cleanupGuard() {
+    if (!window.StudyCleanup) throw Error('Central de limpeza indisponível. Atualize o aplicativo.');
+    if (cleanupBusy) throw Error('Já existe uma operação em andamento.');
+  }
+  async function cleanupAnalyze() {
+    try {
+      cleanupGuard(); cleanupBusy = true; cleanupReport = null;
+      cleanupMessage = 'Conferindo as referências do aparelho e da nuvem…';
+      P.renderNow('settings');
+      const report = await window.StudyCleanup.analyze();
+      cleanupReport = report;
+      cleanupMessage = 'Análise concluída: ' + report.snapshots.length + ' registros de estudo e ' +
+        report.files.length + ' entradas de cache para avaliar. Nenhum dado foi excluído.';
+    } catch (e) {
+      cleanupReport = null; cleanupMessage = e.message || String(e);
+      if (typeof toast === 'function') toast(cleanupMessage);
+    } finally { cleanupBusy = false; P.renderNow('settings'); }
+  }
+  async function cleanupApply(mode) {
+    try {
+      cleanupGuard();
+      if (!cleanupReport || cleanupReport.owner !== window.StudyCloud?.session?.()?.user?.id) throw Error('Atualize a análise.');
+      cleanupBusy = true;
+      const report = cleanupReport;
+      const result = mode === 'cache' ? await window.StudyCleanup.cleanCache(report) : await window.StudyCleanup.cleanPermanent(report);
+      cleanupMessage = mode === 'cache'
+        ? 'Cache local removido: ' + result.cache + ' entrada(s).'
+        : 'Limpeza concluída: ' + result.snapshots + ' registro(s) de estudo e ' + result.cache + ' entrada(s) de cache.' + (result.protected ? ' ' + result.protected + ' registro(s) preservados por vínculo ativo.' : '');
+      if (result.failures?.length) cleanupMessage += ' ' + result.failures.length + ' arquivo(s) não puderam ser limpos.';
+      cleanupReport = null;
+      if (typeof toast === 'function') toast(cleanupMessage);
+    } catch(e) {
+      cleanupMessage = 'Limpeza interrompida: ' + (e?.message || String(e)) + '. Confira a análise e a sincronização.';
+      cleanupReport = null;
+      if (typeof toast === 'function') toast(cleanupMessage);
+    } finally { cleanupBusy = false; P.renderNow('settings'); }
+  }
   function folhaState(id, st) {
     if (id === 'acervo') return P.audit.run().avisos ? 'l' : ''; const i = st.issues.filter((x) => x[0] === id); return i.some((x) => x[1] === 'o') ? 'o' : i.length ? 'l' : ''; }
 
@@ -155,6 +223,7 @@
       }
       if (id === 'editais') { host.innerHTML = editaisPanel(); continue; }
       if (id === 'acervo') { host.innerHTML = acervoPanel(); continue; }
+      if (id === 'limpeza') { host.innerHTML = cleanupPanel(); continue; }
       if (!host.children.length) host.innerHTML = '<div class="pr-mono" data-pr-wait>' + ui.skeleton(2) + '</div>';
     }
   }
@@ -181,6 +250,16 @@
     render,
     renderWhileTyping: false,
     actions: {
+      'cleanup-analyze': () => { void cleanupAnalyze(); },
+      'cleanup-cache': () => {
+        if (!cleanupReport?.files?.length) return;
+        askConfirm('Limpar apenas cache residual?', 'Serão removidas somente entradas de cache privado associadas a arquivos já excluídos. O progresso, as anotações e os conteúdos ativos permanecem preservados.', () => cleanupApply('cache'), 'Limpar cache');
+      },
+      'cleanup-permanent': () => {
+        if (!cleanupReport?.snapshots?.length) return;
+        askConfirm('Excluir definitivamente dados residuais?', 'Serão substituídos por marcadores de exclusão ' + cleanupReport.snapshots.length +
+          ' registros de estudo pertencentes a mapas excluídos. A limpeza será sincronizada e não poderá ser desfeita por este botão. Faça um backup antes de confirmar.', () => cleanupApply('permanent'), 'Excluir dados residuais');
+      },
       goto: (id) => { const el = document.getElementById('pr-f-' + id); el?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); },
       backup: () => { if (typeof downloadStudyBackup === 'function') downloadStudyBackup(); setTimeout(() => P.schedule('settings'), 300); },
       'reset-time': (scope, el) => P.armed(el, () => { const b = document.querySelector('[data-study-time-reset="' + scope + '"]'); if (b) b.click(); else if (typeof toast === 'function') toast('Abra a folha 02 e tente de novo.'); }, 'Toque de novo'),
