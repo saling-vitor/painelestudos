@@ -22,9 +22,9 @@
       '.mm-upd.busy{cursor:progress;opacity:.8}.mm-upd.busy svg{animation:mmUpdSpin 1s linear infinite}'+
       '@keyframes mmUpdSpin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.mm-upd.busy svg,.mm-upd-top.busy svg{animation:none}}'+
       /* Ícone no topo EXCLUSIVO do iPad vertical; desktop e smartphone usam seus próprios controles. */
-      '.mm-upd-top{display:none;position:relative;width:44px;min-width:44px;height:44px;padding:0;place-items:center;color:var(--pr-latao,#c9a46b)}.mm-upd-top svg{width:18px;height:18px}.mm-upd-top.busy svg{animation:mmUpdSpin 1s linear infinite}'+
+      '#mmUpdTop{display:none;position:relative;width:44px;min-width:44px;height:44px;padding:0;place-items:center;color:var(--pr-latao,#c9a46b)}.mm-upd-top svg{width:18px;height:18px}.mm-upd-top.busy svg{animation:mmUpdSpin 1s linear infinite}'+
       '.mm-upd-dot{display:none;position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--pr-latao,#c9a46b);box-shadow:0 0 0 2px #0a0a09}.mm-upd-top.new .mm-upd-dot{display:block}'+
-      '@media (orientation:portrait){html.is-ipad:not(.is-phone-layout) .mm-upd-top{display:inline-grid}}'+
+      '@media (orientation:portrait){html.is-ipad:not(.is-phone-layout) .topbar .actions #mmUpdTop{display:inline-grid}}'+
 
       /* iPad deitado: a lateral vira trilho de ícones, então o botão grande vira só o ícone */
       '@media (orientation:landscape){html.is-ipad:not(.is-phone-layout) .side-bottom{flex-direction:column;gap:10px}html.is-ipad:not(.is-phone-layout) .mm-upd{width:44px;height:44px;min-width:44px;margin:0;padding:0;justify-content:center;pointer-events:auto;border-radius:12px}html.is-ipad:not(.is-phone-layout) .mm-upd-t{display:none}html.is-ipad:not(.is-phone-layout) .mm-upd-i{width:30px;height:30px}}'+
