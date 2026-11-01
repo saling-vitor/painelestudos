@@ -21,11 +21,11 @@
       '.mm-upd.new{border-color:var(--pr-latao,#c9a46b);background:color-mix(in srgb,var(--pr-latao,#c9a46b) 14%,#0a0a09)}.mm-upd.new .mm-upd-i{background:var(--pr-latao,#c9a46b);color:#0a0a09}'+
       '.mm-upd.busy{cursor:progress;opacity:.8}.mm-upd.busy svg{animation:mmUpdSpin 1s linear infinite}'+
       '@keyframes mmUpdSpin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.mm-upd.busy svg,.mm-upd-top.busy svg{animation:none}}'+
-      /* ícone no topo: só onde a lateral não aparece com texto (iPad em pé, telas médias) */
+      /* Ícone no topo EXCLUSIVO do iPad vertical; desktop e smartphone usam seus próprios controles. */
       '.mm-upd-top{display:none;position:relative;width:44px;min-width:44px;height:44px;padding:0;place-items:center;color:var(--pr-latao,#c9a46b)}.mm-upd-top svg{width:18px;height:18px}.mm-upd-top.busy svg{animation:mmUpdSpin 1s linear infinite}'+
       '.mm-upd-dot{display:none;position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--pr-latao,#c9a46b);box-shadow:0 0 0 2px #0a0a09}.mm-upd-top.new .mm-upd-dot{display:block}'+
       '@media (orientation:portrait){html.is-ipad:not(.is-phone-layout) .mm-upd-top{display:inline-grid}}'+
-      '@media (min-width:701px) and (max-width:1100px){html:not(.is-ipad):not(.is-phone-layout) .mm-upd-top{display:inline-grid}}'+
+
       /* iPad deitado: a lateral vira trilho de ícones, então o botão grande vira só o ícone */
       '@media (orientation:landscape){html.is-ipad:not(.is-phone-layout) .side-bottom{flex-direction:column;gap:10px}html.is-ipad:not(.is-phone-layout) .mm-upd{width:44px;height:44px;min-width:44px;margin:0;padding:0;justify-content:center;pointer-events:auto;border-radius:12px}html.is-ipad:not(.is-phone-layout) .mm-upd-t{display:none}html.is-ipad:not(.is-phone-layout) .mm-upd-i{width:30px;height:30px}}'+
       /* item do menu Mais */
@@ -33,7 +33,7 @@
     document.head.appendChild(st);
   }
   const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
-  /* V15.66 · ícone de atualizar na barra do topo (iPad em pé e telas médias, sem a lateral) e item no menu Mais do celular */
+  /* Atualização na topbar exclusiva do iPad vertical; item de atualização no menu Mais permanece no celular. */
   function paintExtras(s){
     const sync=document.getElementById('syncTop');
     if(sync&&sync.parentNode){
