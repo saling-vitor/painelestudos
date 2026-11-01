@@ -66,21 +66,23 @@ async function pranchaCoverGeometry(page) {
   });
 }
 
-test('Prancha [D] · capas do curso têm 18 px reais até as etiquetas', async ({ page }, testInfo) => {
+test('Prancha [D] · capas do curso têm respiro compacto de 10 px até as etiquetas', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Verificação específica do desktop.');
   await page.setViewportSize({ width: 1440, height: 900 });
   const r = await pranchaCoverGeometry(page);
   expect(r).not.toBeNull();
   expect(r.isList).toBe(false);
-  expect(r.marginBottom).toBeGreaterThanOrEqual(18);
-  expect(r.visualGap).toBeGreaterThanOrEqual(18);
+  expect(r.marginBottom).toBeGreaterThanOrEqual(10);
+  expect(r.marginBottom).toBeLessThanOrEqual(11);
+  expect(r.visualGap).toBeGreaterThanOrEqual(10);
+  expect(r.visualGap).toBeLessThanOrEqual(12);
 });
 
 test('Prancha [T+M] · capas não colam nas etiquetas no tablet e celular', async ({ page }, testInfo) => {
   test.skip(!/ipad|iphone/.test(testInfo.project.name), 'Verificação específica de tablet e celular.');
   const r = await pranchaCoverGeometry(page);
-  const minGap = testInfo.project.name.includes('iphone') ? 12 : 16;
   expect(r).not.toBeNull();
   expect(r.isList).toBe(false);
-  expect(r.visualGap).toBeGreaterThanOrEqual(minGap);
+  expect(r.visualGap).toBeGreaterThanOrEqual(8);
+  expect(r.visualGap).toBeLessThanOrEqual(12);
 });

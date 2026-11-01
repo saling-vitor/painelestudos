@@ -1,11 +1,10 @@
 {
-  "version": "15.67.4",
-  "label": "V15.67.4-G",
-  "notes": "Correção da separação entre capas e informações na interface Prancha de Meus Cursos: 18 px desktop, 16 px iPad e 12 px celular.",
+  "version": "15.67.5",
+  "label": "V15.67.5-G",
+  "notes": "Respiro mais compacto entre capa e etiquetas dos mapas na Prancha de Meus Cursos: aproximadamente 10 px.",
   "showWhatsNew": false,
   "highlights": [
-    "[D] Prancha: 18 px de separação efetiva entre capa e sigla/estado/versão",
-    "[T/M] Prancha: espaçamento responsivo no iPad e celular, preservadas as listas"
+    "[D/T/M] Meus Cursos · Capas: reduzir o respiro entre imagem e sigla/estado/versão para cerca de 10 px, preservando o layout dos mapas"
   ],
   "automation": {
     "enabled": true,
