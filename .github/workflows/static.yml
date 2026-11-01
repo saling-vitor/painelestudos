@@ -264,7 +264,7 @@ jobs:
           expected="$(node -p "require('./version.json').version")"
           base="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
           # Arquivos conferidos por SHA-256 contra o build desta execução (mesmo prepare-release).
-          files="index.html sw.js reader.html offline.html version.json assets/css/design-system/prancha.css assets/css/camada-5-acabamento-final.css assets/js/app/prancha-ui.js assets/js/app/prancha-courses.js assets/js/app/prancha-data.js assets/js/app/state.js assets/js/app/updates.js data/catalog.json"
+          files="index.html sw.js reader.html offline.html version.json assets/css/design-system/prancha.css assets/css/camada-5-acabamento-final.css assets/js/app/prancha-ui.js assets/js/app/prancha-courses.js assets/js/app/prancha-data.js assets/js/app/cleanup-center.js assets/js/app/cleanup-history.js assets/js/cloud-core.js assets/js/app/prancha-settings.js assets/js/app/state.js assets/js/app/updates.js data/catalog.json"
           for attempt in {1..18}; do
             stamp="$(date +%s%N)"; ok=1; report=""
             for f in $files; do

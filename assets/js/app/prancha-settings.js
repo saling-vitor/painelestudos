@@ -7,6 +7,7 @@
   const U = P.util, ui = P.ui, { esc, fmtMin } = U;
   let offlineInfo = null, restoreCount = null, probing = false;
   let cleanupReport = null, cleanupBusy = false, cleanupMessage = '';
+  let historyReport = null, deviceReport = null, historyBusy = false, historyMessage = '';
 
   const FOLHAS = [
     /* [número, id, título da folha, painéis, rótulo curto do índice] — V15.53.1: índice com rótulo curto para caber inteiro */
@@ -115,6 +116,85 @@
   }
 
   /* Limpeza de resíduos: análise por exclusões registradas, nunca varredura cega. */
+
+  function historyPanel() {
+    if (!window.StudyCleanupHistory) return '';
+    const h = historyReport, d = deviceReport || (h && {stamp:h.stamp,device:h.device});
+    const asList = (items, name) => '<details class="pr-disc"><summary><b>' + name +
+      '</b><span>' + items.length + ' registros</span></summary><div class="pr-list">' +
+      items.slice(0,80).map(key => '<div class="pr-li"><span class="pr-mono">' + esc(key) + '</span></div>').join('') +
+      (items.length>80?'<p class="pr-detail">E mais '+(items.length-80)+' registros.</p>':'') +
+      '</div></details>';
+    const summary = h ? '<div class="pr-cleanup-grid">' +
+      ui.cell('Histórico na nuvem', String(h.historicRemote.length),'','dados sem mapa ativo na conta') +
+      ui.cell('Somente neste aparelho', String(h.localOrphans.length),'','dados locais sem vínculo confirmado') +
+      ui.cell('Mapas protegidos', String(h.activeLocal),'','dados associados a mapas ativos') +
+      ui.cell('Registros da nuvem', String(h.cloudSnapshots),'','total consultado, incluindo ativos') +
+      '</div>' : '<p class="pr-detail">Para encontrar exclusões anteriores à Central, confira os registros antigos contra os mapas que continuam vinculados à conta.</p>';
+    const cacheInfo = d ? String(d.device.names.length) + ' grupo(s) e ' + d.device.entries + ' arquivo(s) offline do MEUS MAPAS neste dispositivo' :
+      'Ainda não verificado neste dispositivo';
+    const cacheActions = '<div class="pr-row">' +
+      ui.btn('Verificar cache deste aparelho', ui.act('cleanup-device-scan',undefined,{disabled:historyBusy}),'g') +
+      (d ? ui.btn('Limpar cache offline ('+d.device.names.length+')',
+         ui.act('cleanup-device-clear',undefined,{disabled:historyBusy||!d.device.names.length}),'g'):'') +
+      '</div>';
+    return '<div class="pr-divider"></div><div class="pr-cleanup-subtitle"><span class="pr-k l">Exclusões anteriores e armazenamento local</span>' +
+      '<h3>Limpeza histórica e por dispositivo</h3></div>' + summary +
+      (h && h.historicRemote.length ? asList(h.historicRemote,'Ver dados antigos na nuvem') : '') +
+      (h && h.localOrphans.length ? asList(h.localOrphans,'Ver dados locais sem vínculo') : '') +
+      (h ? '<p class="pr-detail">Nenhum dos itens acima foi apagado pela análise. Os dados locais podem pertencer a uma instalação ou conta antiga; revise a lista e faça backup antes de remover.</p>':'') +
+      '<div class="pr-row">' +
+      ui.btn(historyBusy?'Conferindo…':'Analisar exclusões antigas',ui.act('cleanup-history-analyze',undefined,{disabled:historyBusy}),'p') +
+      (h && h.historicRemote.length ? ui.btn('Exportar dados antigos (.json)',
+        ui.act('cleanup-history-export',undefined,{disabled:historyBusy}),'g') : '') +
+      (h?ui.btn('Limpar histórico na nuvem ('+h.historicRemote.length+')',
+        ui.act('cleanup-history-cloud',undefined,{disabled:historyBusy||!h.historicRemote.length}),'d'):'') +
+      (h?ui.btn('Limpar dados locais sem vínculo ('+h.localOrphans.length+')',
+        ui.act('cleanup-history-local',undefined,{disabled:historyBusy||!h.localOrphans.length}),'d'):'') +
+      '</div>' +
+      '<div class="pr-cleanup-device"><b>Cache deste navegador ou app instalado</b><p class="pr-detail">' + esc(cacheInfo) +
+      '. A limpeza remove as cópias offline do MEUS MAPAS, não apaga sua conta, o progresso sincronizado ou os mapas da nuvem. É necessário ter internet para baixar novamente os arquivos.</p>' +
+      cacheActions + '</div>' +
+      '<details class="pr-disc"><summary><b>Safari, iPad, Windows e outros aparelhos</b><span>O que cada limpeza alcança</span></summary>' +
+      '<p class="pr-detail">A limpeza desta tela funciona apenas no navegador ou app instalado em que foi acionada. Repita em cada aparelho. Ela limpa CacheStorage do MEUS MAPAS; o cache HTTP e os dados de outros sites só podem ser removidos nas configurações do navegador.</p>' +
+      '<p class="pr-detail"><b>Safari no iPad:</b> Ajustes › Apps › Safari › Avançado › Dados dos Sites (o caminho pode variar com o iPadOS). Apagar dados do site pode desconectar sua conta e eliminar dados locais não sincronizados. No app instalado, abra a Central por dentro do app.</p>' +
+      '<p class="pr-detail"><b>Windows (Chrome/Edge):</b> abra o MEUS MAPAS no mesmo navegador ou aplicativo instalado. Para limpar o cache geral do navegador, use Ctrl+Shift+Delete, mas confira primeiro a sincronização.</p>' +
+      '</details>' +
+      (historyMessage?'<p role="status" class="pr-detail">'+esc(historyMessage)+'</p>':'');
+  }
+  async function historyRun(kind) {
+    try {
+      if (!window.StudyCleanupHistory || historyBusy) return;
+      historyBusy=true;
+      historyMessage=kind==='scan'?'Conferindo mapas e registros históricos na nuvem…':'Processando…';
+      P.renderNow('settings');
+      if (kind==='scan') {
+        historyReport=await StudyCleanupHistory.analyze();
+        deviceReport={stamp:historyReport.stamp,device:historyReport.device};
+        historyMessage='Análise histórica concluída: '+historyReport.historicRemote.length+' registro(s) na nuvem, '+
+          historyReport.localOrphans.length+' neste aparelho e '+historyReport.activeLocal+' registro(s) ativos protegidos.';
+      } else if(kind==='device-scan') {
+        deviceReport={stamp:Date.now(),device:await StudyCleanupHistory.scanDevice()};
+        historyMessage='Cache deste aparelho analisado. Nenhum arquivo foi apagado.';
+      } else if(kind==='export') {
+        const count=StudyCleanupHistory.exportHistoric(historyReport);
+        historyMessage='Exportação iniciada: '+count+' registro(s) históricos. Guarde o JSON com segurança; a restauração não é automática.';
+      } else {
+        const report=kind==='device'?deviceReport:historyReport;
+        if (!report) throw Error('Faça uma nova análise antes da limpeza.');
+        const result=kind==='device'?await StudyCleanupHistory.clearDevice(report):
+          kind==='local'?await StudyCleanupHistory.clearLocalOrphans(report):
+          await StudyCleanupHistory.clearHistoricRemote(report);
+        historyMessage='Limpeza concluída ('+(kind==='device'?'cache deste aparelho':kind==='local'?'dados locais':'registros históricos na nuvem')+
+          '): '+result.removed+' removido(s).'+(result.protected?' '+result.protected+' preservado(s) após revalidação.':'');
+        historyReport=null;deviceReport=null;
+        if(typeof toast==='function')toast(historyMessage);
+      }
+    } catch (e) {
+      historyMessage='Operação não concluída: '+(e?.message||String(e));
+      if (kind!=='device-scan') historyReport=null;
+    } finally {historyBusy=false;P.renderNow('settings');}
+  }
   function cleanupPanel() {
     const ready = !!window.StudyCleanup, report = cleanupReport;
     const header = '<div class="pr-list"><div class="pr-li"><span class="pr-chip l">Auditoria</span><span><b>Central de Limpeza Inteligente</b><br><span class="t">Primeiro identificar, depois decidir. Nunca apaga automaticamente progresso, notas ou arquivos sem confirmação.</span></span></div></div>';
@@ -140,7 +220,7 @@
     return header + summary + candidates +
       '<div class="pr-verdict l"><i></i><p><b>Proteções:</b> mapas com identificador em uso, conteúdos compartilhados e registros sem origem comprovada não entram na limpeza. A análise é apenas leitura; a exclusão exige sincronização sem pendências. Esta ferramenta não apaga backups ou o cache geral do aplicativo.</p></div>' +
       (cleanupMessage ? '<p role="status" class="pr-detail">' + esc(cleanupMessage) + '</p>' : '') + controls +
-      (report && !known ? '<p class="pr-detail">Nenhum resíduo comprovado encontrado. Isso não significa que todos os caches e dados antigos foram analisados.</p>' : '');
+      (report && !known ? '<p class="pr-detail">Nenhum resíduo de exclusões recentes encontrado. Para pesquisar itens antigos, use a análise histórica abaixo.</p>' : '') + historyPanel();
   }
   function cleanupGuard() {
     if (!window.StudyCleanup) throw Error('Central de limpeza indisponível. Atualize o aplicativo.');
@@ -250,6 +330,29 @@
     render,
     renderWhileTyping: false,
     actions: {
+      'cleanup-history-analyze': () => { void historyRun('scan'); },
+      'cleanup-device-scan': () => { void historyRun('device-scan'); },
+      'cleanup-device-clear': () => {
+        if (!deviceReport?.device?.names?.length) return;
+        askConfirm('Limpar cache offline deste aparelho?',
+          'Serão apagadas as cópias offline do MEUS MAPAS deste navegador ou aplicativo. Os dados sincronizados permanecem. Você precisará de internet para baixar arquivos novamente.',
+          () => historyRun('device'), 'Limpar cache deste aparelho');
+      },
+      'cleanup-history-local': () => {
+        if (!historyReport?.localOrphans?.length) return;
+        askConfirm('Excluir dados locais antigos sem vínculo?',
+          'Revise a lista acima e faça backup. Serão removidos '+historyReport.localOrphans.length+
+          ' registros deste navegador, sem apagar os mesmos dados de outros dispositivos. A ação não pode ser desfeita diretamente.',
+          () => historyRun('local'), 'Excluir dados locais');
+      },
+      'cleanup-history-export': () => { void historyRun('export'); },
+      'cleanup-history-cloud': () => {
+        if (!historyReport?.historicRemote?.length) return;
+        askConfirm('Excluir progresso e notas históricos da nuvem?',
+          'Atenção: serão substituídos por marcadores de exclusão até '+historyReport.historicRemote.length+
+          ' registros sem mapa ativo, após nova verificação da nuvem. Afeta dispositivos sincronizados. Faça backup antes de confirmar.',
+          () => historyRun('cloud'), 'Excluir históricos da nuvem');
+      },
       'cleanup-analyze': () => { void cleanupAnalyze(); },
       'cleanup-cache': () => {
         if (!cleanupReport?.files?.length) return;
