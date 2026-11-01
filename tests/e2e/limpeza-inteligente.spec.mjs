@@ -18,6 +18,7 @@ async function seedRemoved(page, { active = false } = {}) {
     localStorage.setItem('mindmap_notes::' + ns, JSON.stringify({ '1': 'anotacao importante' }));
     localStorage.setItem('studyapp.modified::mindmap_state::' + ns, new Date().toISOString());
     localStorage.setItem('mindmap_state::old-unknown-origin', JSON.stringify({ keep: 'untracked' }));
+    localStorage.removeItem('studyapp.preferences.pending');
     StudyCloud.pendingCount = () => 0;
     StudyCleanup.recordRemoved([map], ['e2e-user/deleted-content.html'], 'mapa');
   }, { active });
