@@ -64,7 +64,7 @@ test('Leitor universal mantém todos os mapas dentro da largura útil [T+M]', as
         return {width:innerWidth,scroll:document.documentElement.scrollWidth,body:document.body.scrollWidth,
           globalStyles:document.querySelectorAll('#mm-reader-fluid-global').length,
           boxes:Object.fromEntries(selectors.map(s=>[s,box(s)])),
-          codeScrollable:!!document.querySelector('pre')&&document.querySelector('pre').scrollWidth>document.querySelector('pre').clientWidth};
+          codeScrollable:!!document.querySelector('pre')&&getComputedStyle(document.querySelector('pre')).overflowX==='auto'&&document.querySelector('pre').getBoundingClientRect().right<=innerWidth+2};
       });
       expect(result.globalStyles,JSON.stringify(result)).toBe(1);
       expect(result.scroll,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
