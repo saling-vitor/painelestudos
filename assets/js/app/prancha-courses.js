@@ -6,6 +6,8 @@
   const U = P.util, ui = P.ui, { esc, fmtMin, fmtSec, fmtDay, fmtNum, plural, pct } = U;
   const VKEY = 'studyapp.prancha.courseView';
   let pickKey = '', showArchived = false;
+  let coursePane = 'overview', activePaneCourseId = '';
+
   const viewMode = () => { try { return localStorage.getItem(VKEY) || 'lista'; } catch { return 'lista'; } };
 
   function statusChip(s) {
@@ -430,7 +432,7 @@
   }
 
   /* V4 · Resumo editorial do curso: dados derivados, sem duplicar estado nem persistência. */
-  function courseHub(c, s, ex) {
+  function courseHub(c, s, ex, carimbo) {
     const fases = E.fases(c);
     const futuras = fases.filter((f) => f.date && f.days >= 0).sort((a, b) => a.date - b.date);
     const proxima = futuras[0] || null;
@@ -463,7 +465,7 @@
       '<span><i style="background:' + r.cor + '"></i>' + esc(r.nome) + ' <b>' +
       Math.round(100 * r.pontos / peso.totPontos) + '%</b></span>').join('') :
       '<span class="pr-mono">Cadastre a estrutura da prova para comparar pesos.</span>';
-    return '<div class="pr-course-fast">' +
+    return '<div class="pr-course-v4-top">' + carimbo +
       bloco('Próximo evento', proxima, 'Nenhum evento futuro') +
       bloco('Próximo marco administrativo', administrativa, 'Nenhum marco futuro') +
       '<div class="pr-course-milestone pr-course-quick"><span class="pr-k l">Ações rápidas</span><div class="pr-row">' +
@@ -489,6 +491,7 @@
   function renderCourse(root) {
     const c = typeof courseById === 'function' ? courseById(state.courseId) : null;
     if (!c) { root.innerHTML = ui.card(ui.empty('Curso não encontrado', 'Ele pode ter sido removido ou ainda não sincronizou.', ui.btn('Meus Cursos', ui.act('nav', 'courses'), 'g'))); return; }
+    if (activePaneCourseId !== String(c.id)) { activePaneCourseId = String(c.id); coursePane = 'overview'; }
     const s = P.courses.summary(c), p = s.progress, ex = s.exam, h = s.health, f = s.forecast;
     const all = P.data.mapsForCourse(c.id), own = s.maps, linkedN = all.length - own.length;
     const fol = P.data.folhas(all);
@@ -532,27 +535,29 @@
       listing = shown.length && typeof mapCard === 'function' ? '<div class="map-grid pr-legacy-grid" data-pr-legacy>' + shown.filter((m) => !m._linkedFrom).map(mapCard).join('') + '</div>' + (shown.some((m) => m._linkedFrom) ? '<p class="pr-mono">' + shown.filter((m) => m._linkedFrom).length + ' mapa(s) vinculado(s) aparecem na lista.</p>' : '') : ui.empty('Nada neste filtro', 'Troque o filtro de situação ou de conteúdo.');
     } else listing = listTable(shown, fol, c);
     const mapsCard = ui.card('<div class="pr-vw"><div><span class="pr-k">Mapas do curso</span><h3>' + shown.length + ' de ' + all.length + ' mapas · ' + shown.reduce((n, m) => n + P.data.prog(m).marked, 0) + '/' + shown.reduce((n, m) => n + P.data.prog(m).total, 0) + ' tópicos</h3></div>' + ui.seg([['lista', 'Lista'], ['capas', 'Capas']], mode, 'view-mode', 'Visualização') + '</div>' + listing);
-    const navCurso = '<nav class="pr-course-nav" aria-label="Seções do curso">' +
-      [['overview', 'Visão geral'], ['edital', 'Edital e prova'], ['estudo', 'Estudo'], ['biblioteca', 'Biblioteca']].map(([id, title]) =>
-        '<button type="button" class="pr-course-nav-item" data-pr-act="course-jump" data-arg="' + id + '"' +
-        (id === 'overview' ? ' aria-current="location"' : '') + '>' + title + '</button>').join('') + '</nav>';
+    const panes = [['overview', 'Visão geral'], ['edital', 'Edital e prova'], ['estudo', 'Estudo'], ['biblioteca', 'Biblioteca']];
+    const visible = (id) => coursePane === 'overview' ? id !== 'edital' : coursePane === id;
+    const paneTag = (id, cls, body) => '<section id="pr-course-' + id + '" data-pr-section="' + id + '" data-pr-pane="' + id +
+      '" class="pr-course-section' + (cls ? ' ' + cls : '') + '"' + (visible(id) ? '' : ' hidden') + '>' + body + '</section>';
+    const navCurso = '<nav class="pr-course-nav" role="tablist" aria-label="Seções do curso">' +
+      panes.map(([id, title]) => '<button type="button" role="tab" class="pr-course-nav-item" data-pr-act="course-tab" data-arg="' + id +
+      '" aria-controls="pr-course-' + id + '" aria-selected="' + (coursePane === id ? 'true' : 'false') + '">' + title + '</button>').join('') + '</nav>';
     root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' +
       (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') +
       ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' +
       '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' +
       esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') +
       '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + navCurso +
-      '<section class="pr-course-section" data-pr-section="overview">' + carimbo + courseHub(c, s, ex) + '</section>' +
-      relampagoCard(c, ex) + (ex.phase === 'after' ? fechamento(c, all) + reaproveitar(c, all) : '') +
-      '<section class="pr-course-section" data-pr-section="estudo">' +
-      '<div class="pr-course-study-toolbar"><div class="pr-row">' + acts + '</div>' +
-      '<div class="pr-course-filter-row"><span class="pr-k">Situação</span>' + chips + '</div>' +
-      '<div class="pr-course-filter-row"><span class="pr-k">Categorias</span>' + catChips + '</div></div>' +
-      '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div></section>' +
-      '<section class="pr-course-section" data-pr-section="biblioteca">' + mapsCard + '</section>' +
-      '<section class="pr-course-section pr-course-edital-full" data-pr-section="edital">' +
-      ui.head('Edital e prova', 'Cronograma, regras, disciplinas, pesos e resultados completos') +
-      regua(c) + raioX(c, all) + pesoCard(c) + placar(c) + '</section>';
+      paneTag('overview', '', courseHub(c, s, ex, carimbo) + relampagoCard(c, ex) +
+        (ex.phase === 'after' ? fechamento(c, all) + reaproveitar(c, all) : '')) +
+      paneTag('estudo', '', '<div class="pr-course-study-toolbar"><div class="pr-row">' + acts + '</div>' +
+        '<div class="pr-course-filter-row"><span class="pr-k">Situação</span>' + chips + '</div>' +
+        '<div class="pr-course-filter-row"><span class="pr-k">Categorias</span>' + catChips + '</div></div>' +
+        '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>') +
+      paneTag('biblioteca', '', mapsCard) +
+      paneTag('edital', 'pr-course-edital-full',
+        ui.head('Edital e prova', 'Cronograma, regras, disciplinas, pesos e resultados completos') +
+        regua(c) + raioX(c, all) + pesoCard(c) + placar(c) + '');
     const legacy = root.querySelector('[data-pr-legacy]');
     if (legacy && typeof bindMapCards === 'function') bindMapCards(legacy);
   }
@@ -563,17 +568,27 @@
     'toggle-archived': () => { showArchived = !showArchived; P.schedule('courses'); },
     filter: (id) => { state.courseStudyFilter = id; P.schedule('course'); },
     cat: (id) => { state.category = id; P.schedule('course'); },
+    'course-tab': (tab, el, root) => {
+      if (!['overview', 'edital', 'estudo', 'biblioteca'].includes(tab)) return;
+      coursePane = tab;
+      const host = root?.matches?.('[data-prancha="course"]') ? root : document.querySelector('.pr[data-prancha="course"]');
+      if (!host) return;
+      host.querySelectorAll('[data-pr-pane]').forEach((section) => {
+        section.hidden = tab === 'overview' ? section.dataset.prPane === 'edital' : section.dataset.prPane !== tab;
+      });
+      host.querySelectorAll('.pr-course-nav-item').forEach((button) =>
+        button.setAttribute('aria-selected', String(button.dataset.arg === tab)));
+      host.querySelector('.pr-course-nav')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+    },
     'course-jump': (id, el, root) => {
       const host = root?.matches?.('[data-prancha="course"]') ? root : document.querySelector('.pr[data-prancha="course"]');
-      const sel = { regua: '.pr-regua-card', raiox: '.pr-raiox-card', peso: '.pr-pe-card' }[id];
-      const target = host?.querySelector(sel || '[data-pr-section="' + String(id).replace(/[^a-z]/g, '') + '"]');
-      if (!target) return;
-      host.querySelectorAll('.pr-course-nav-item').forEach((b) => {
-        if (el?.classList?.contains('pr-course-nav-item')) {
-          if (b === el) b.setAttribute('aria-current', 'location'); else b.removeAttribute('aria-current');
-        }
-      });
-      target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      if (!host) return;
+      const targetTab = { regua: 'edital', raiox: 'edital', peso: 'edital' }[id] || id;
+      if (!['overview', 'edital', 'estudo', 'biblioteca'].includes(targetTab)) return;
+      shared['course-tab'](targetTab, el, host);
+      const targetSel = { regua: '.pr-regua-card', raiox: '.pr-raiox-card', peso: '.pr-pe-card' }[id];
+      const target = host.querySelector(targetSel || '[data-pr-pane="' + targetTab + '"]');
+      if (target) target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     },
     'view-mode': (id) => { try { localStorage.setItem(VKEY, id); } catch {} P.schedule('course'); },
     'pick-map': (key) => { pickKey = key; P.schedule('course'); },
