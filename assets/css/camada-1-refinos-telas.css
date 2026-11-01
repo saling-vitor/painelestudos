@@ -3748,7 +3748,7 @@ html.is-phone-layout .map-card{
     padding:0 16px 50px!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover .map-cover{
-    margin:0 -16px 18px!important;
+    margin:0 -16px 0!important;
     aspect-ratio:16/9!important;
   }
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
@@ -3863,7 +3863,7 @@ html.is-ipad:not(.is-phone-layout) #coursesGrid .course-card.course-library-card
     padding-bottom:46px!important;
   }
   /* Respiro abaixo da imagem (não depende das margens das etiquetas). */
-  html:not(.is-ipad):not(.is-phone-layout) :is(#courseMaps,#allMaps) .map-card.has-cover > .map-cover{margin-bottom:18px!important}
+  html:not(.is-ipad):not(.is-phone-layout) #allMaps .map-card.has-cover > .map-cover{margin-bottom:18px!important}
   html:not(.is-ipad):not(.is-phone-layout) #courseMaps .map-card.has-cover h3{
     min-height:36px!important;
     margin-top:8px!important;
@@ -4149,15 +4149,13 @@ select option:checked{background:#242320;color:#d8c59e}
 .course-pdf-raiox-check{display:flex;align-items:center;gap:8px;font-size:var(--fs-caption);margin-top:4px;cursor:pointer}
 .course-pdf-raiox-check input{width:auto;margin:0}
 
-/* V15.67 · Meus Cursos: respiro real entre a capa do mapa e suas informações.
-   Atua apenas na grade de mapas do curso; não afeta a visualização em lista. */
-#courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-cover{
-  margin-bottom:0!important;
-}
+/* V15.67.3 · Meus Cursos: respiro real entre capa e informações, sem novos overrides prioritários.
+   Desktop: margem 0 + padding 16; iPad: margem 14 + padding 2;
+   celular: margem 10 + padding 2. Não altera a visualização em lista. */
 #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
-  margin-top:0!important;
-  padding-top:16px!important;
+  padding-top:16px;
 }
+html.is-ipad:not(.is-phone-layout) #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row,
 html.is-phone-layout #courseMaps .map-card.has-cover:not(.map-list .map-card) > .map-card-status-row{
-  padding-top:12px!important;
+  padding-top:2px;
 }
