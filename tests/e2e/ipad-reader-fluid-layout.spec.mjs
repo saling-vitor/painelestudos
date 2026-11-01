@@ -35,8 +35,12 @@ header,.toolbar-dock,main{padding:0 18px;max-width:100%}
  grid-column:6!important;grid-row:2!important;width:260px!important;justify-self:end!important;margin-top:30px!important
  }
 }
-</style></head>
+</style>
+<style id="mm-ipad-context-v1110">html.mm-ipad-adaptive body.mindmap-app>.toolbar-dock>.toolbar{display:grid!important;grid-template-columns:minmax(280px,1fr) auto auto auto!important}</style>
+<style id="mm-ipad-toolbar-row-v4">html.mm-ipad-adaptive body.mindmap-app>.toolbar-dock>.toolbar{height:54px!important;max-height:54px!important;flex-flow:row nowrap!important}.mm-legacy-breakage{position:absolute;left:1700px}</style>
+</head>
 <body class="mindmap-app">
+<script id="mm-ipad-context-v1110-js">document.documentElement.classList.add('mm-ipad-adaptive')</script>
 <header><section class="hero reader-header"><div class="hero-copy">
 <h1 class="hero-title">Título de demonstração comprido para testar quebra e largura disponível do iPad no leitor do aplicativo</h1>
 <div class="reader-meta" hidden><span hidden></span><span hidden></span><span hidden></span></div>
@@ -74,10 +78,14 @@ test('Mapa importado: iframe real mantém título e TODOS os controles dentro do
       }).map(e=>({id:e.id||e.className,box:e.getBoundingClientRect().toJSON()}));
       return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
         toolbarHeight:toolbar.height,titleRight:title.right, toolbarRight:toolbar.right,out,
-        addon:!!document.getElementById('mm-ipad-toolbar-row-v4')};
+        addon:!!document.getElementById('mm-ipad-toolbar-row-v4'),
+        canonicalCount:document.querySelectorAll('#mm-ipad-toolbar-row-v4').length,
+        staleRule:!!document.querySelector('#mm-ipad-toolbar-row-v4')?.textContent.includes('.mm-legacy-breakage')};
     });
     const outer=await page.locator('#readerQaFrame').evaluate(e=>({right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}));
     expect(result.addon,JSON.stringify(result)).toBe(true);
+    expect(result.canonicalCount,JSON.stringify(result)).toBe(1);
+    expect(result.staleRule,JSON.stringify(result)).toBe(false);
     expect(result.documentWidth,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
     expect(result.titleRight,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
     expect(result.toolbarRight,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
