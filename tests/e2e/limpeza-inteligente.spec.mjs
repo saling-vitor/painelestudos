@@ -20,6 +20,7 @@ async function seedRemoved(page, { active = false } = {}) {
     localStorage.setItem('mindmap_state::old-unknown-origin', JSON.stringify({ keep: 'untracked' }));
     localStorage.removeItem('studyapp.preferences.pending');
     StudyCloud.pendingCount = () => 0;
+    window.preferencesPending = () => false;
     StudyCleanup.recordRemoved([map], ['e2e-user/deleted-content.html'], 'mapa');
   }, { active });
 }
