@@ -957,7 +957,7 @@
     list.forEach((f, i) => { if (f.date && f.date <= t0) atual = i; });
     return list.map((f, i) => ({ ...f, status: i === atual ? 'atual' : f.date && f.date < t0 ? 'passada' : i < atual ? 'passada' : 'futura', days: f.date ? daysBetween(t0, f.date) : null }));
   }
-  function proximoMarco(course, today = new Date()) { return fasesOf(course, today).find((f) => f.date && f.days >= 0 && f.id !== 'prova') || null; }
+  function proximoMarco(course, today = new Date()) { return fasesOf(course, today).filter((f) => f.date && f.days >= 0 && f.id !== 'prova').sort((a, b) => a.date - b.date)[0] || null; }
   function padroes() {
     const out = {};
     for (const [k, v] of Object.entries(PADROES_BASE)) out[k] = { ...v, prova: normProva(v.prova), base: true };
