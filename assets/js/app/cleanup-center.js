@@ -22,11 +22,11 @@
   const mapKey = m => String(m.courseId || m.course_id || '') + '::' + code(m);
   const ns = m => String(m.storageId || m.storage_id || '').trim().toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const ownerValid = () => {
+  const ownerValid = (readOnly = false) => {
     const owner = meId();
     if (!owner || !window.StudyCloud?.configured?.()) throw Error('Entre na conta sincronizada para analisar a limpeza.');
     if (navigator.onLine === false || state.cloudLoading || state.cloudSyncError) throw Error('A nuvem deve estar conectada e carregada para uma limpeza segura.');
-    if ((window.StudyCloud?.pendingCount?.() || 0) || (typeof preferencesPending === 'function' && preferencesPending())) throw Error('Sincronize as alterações pendentes antes de limpar.');
+    if (!readOnly && ((window.StudyCloud?.pendingCount?.() || 0) || (typeof preferencesPending === 'function' && preferencesPending()))) throw Error('Sincronize as alterações pendentes antes de limpar.');
     return owner;
   };
   const liveMaps = () => Array.isArray(state.cloudMaps) ? state.cloudMaps : [];
@@ -92,7 +92,7 @@
       active: liveNs.size };
   }
   async function analyze() {
-    const owner = ownerValid(), a = classify();
+    const owner = ownerValid(true), a = classify();
     if (owner !== a.owner) throw Error('Sessão alterada: execute a análise novamente.');
     const remote = [];
     // Uma consulta por chave precisa; não se apoia no limite de paginação da listagem global.
