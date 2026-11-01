@@ -90,11 +90,15 @@ test('Mapa importado: iframe real mantém título e TODOS os controles dentro do
         overview:document.querySelector('.notice.study-overview').getBoundingClientRect().toJSON(),
         addon:!!document.getElementById('mm-ipad-toolbar-row-v4'),
         canonicalCount:document.querySelectorAll('#mm-ipad-toolbar-row-v4').length,
+        universal:document.querySelectorAll('#mm-reader-fluid-global').length,
+        universalEnabled:document.documentElement.classList.contains('mm-reader-fluid'),
         staleRule:!!document.querySelector('#mm-ipad-toolbar-row-v4')?.textContent.includes('.mm-legacy-breakage')};
     });
     const outer=await page.locator('#readerQaFrame').evaluate(e=>({right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}));
     expect(result.addon,JSON.stringify(result)).toBe(true);
     expect(result.canonicalCount,JSON.stringify(result)).toBe(1);
+    expect(result.universal,JSON.stringify(result)).toBe(1);
+    expect(result.universalEnabled,JSON.stringify(result)).toBe(true);
     expect(result.staleRule,JSON.stringify(result)).toBe(false);
     expect(result.documentWidth,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
     expect(result.bodyWidth,JSON.stringify(result)).toBeLessThanOrEqual(width+2);
