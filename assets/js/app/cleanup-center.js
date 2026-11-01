@@ -41,6 +41,7 @@
   };
   // Registro criado APENAS após a confirmação da exclusão na API.
   function recordRemoved(maps, paths = [], kind = 'mapas') {
+    try {
     const owner = meId();
     if (!owner) return false;
     const items = (maps || []).map(m => ({ ns: ns(m), key: mapKey(m), courseId: String(m.courseId || m.course_id || '') }))
@@ -53,6 +54,7 @@
       done: [], cacheDone: [] });
     save(list, owner);
     return true;
+    } catch (err) { console.warn('[Limpeza] Registro de exclusão indisponível', err); return false; }
   }
   function scanLocal() {
     const out = [];
@@ -102,7 +104,8 @@
     return { ...a, remote, stamp: Date.now() };
   }
   async function cleanCache(report) {
-    ownerValid();
+    const owner = ownerValid();
+    if (!report || report.owner !== owner || Date.now() - report.stamp > 120000) throw Error('Atualize a análise antes da limpeza de cache.');
     const current = classify();
     const allowed = new Set(current.files);
     let count = 0;
@@ -126,9 +129,20 @@
     const current = classify();
     const allowed = new Set(current.snapshots);
     const keys = (report.snapshots || []).filter(k => allowed.has(k));
+    // Conferência ATUAL no servidor, não apenas na lista que estava nesta tela.
+    // Falhas e paginação impedem a operação, em vez de criar falsos órfãos.
+    const liveRows = await StudyCloud.rows('maps',
+      'user_id=eq.' + encodeURIComponent(owner) + '&select=storage_id,course_id,code&limit=1000');
+    if (!Array.isArray(liveRows) || liveRows.length >= 1000) throw Error('A lista remota de mapas não pôde ser conferida integralmente.');
+    const serverNs = new Set(liveRows.map(m => ns(m)).filter(Boolean));
+    const serverKeys = new Set(liveRows.map(mapKey));
+    const registry = current.entries.flatMap(e => e.maps);
+    const protectedNs = new Set(registry.filter(m => serverNs.has(m.ns) || serverKeys.has(m.key)).map(m => m.ns));
+    const safeKeys = keys.filter(k => ![...protectedNs].some(n => n && k.endsWith('::' + n)));
+    if (typeof createRestorePoint === 'function' && safeKeys.length) await createRestorePoint('before-cleanup', 'Antes da limpeza de dados residuais');
     const stamp = new Date().toISOString();
     let removed = 0;
-    for (const key of keys) {
+    for (const key of safeKeys) {
       ownerValid();
       if (!classify().snapshots.includes(key)) continue;
       // Lápide mínima na nuvem impede que outro aparelho com dados velhos os
@@ -148,8 +162,10 @@
       save(current.entries, owner);
       removed++;
     }
+    // Reanalisar o cache depois da remoção. Arquivos ativos em outros mapas
+    // continuam protegidos por livePaths() e não são removidos do Storage.
     const cacheResult = await cleanCache(report);
-    return { snapshots: removed, ...cacheResult };
+    return { snapshots: removed, protected: keys.length - safeKeys.length, ...cacheResult };
   }
   window.StudyCleanup = Object.freeze({ analyze, cleanCache, cleanPermanent, recordRemoved });
 })();
