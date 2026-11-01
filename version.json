@@ -1,14 +1,14 @@
 {
-  "version": "15.70.2",
-  "label": "V15.70.2-G",
-  "notes": "Hotfix: o botão Atualizar da barra de busca é oculto por prioridade correta no desktop e celular, e exibido exclusivamente no iPad vertical. Preserva sincronização e os atalhos de atualização da barra lateral e menu Mais.",
+  "version": "15.70.3",
+  "label": "V15.70.3-G",
+  "notes": "Corrige largura e controles de mapas HTML importados no iPad: leitor de largura fluida, barra responsiva sem corte e regressão WebKit. Preserva progresso e sincronização.",
   "showWhatsNew": true,
   "highlights": [
-    "[D/M] Ocultar realmente o ícone Atualizar na busca, prevalecendo sobre CSS global da topbar",
-    "[T] Manter o ícone Atualizar somente em iPad vertical",
-    "[G] Sincronização e demais opções de atualização mantidas",
-    "[D] Barra de pesquisa · ocultar botão de atualizar em todos os tamanhos de desktop",
-    "[M] Barra de pesquisa · ocultar botão de atualizar no celular"
+    "[T] Mapas importados limitados à largura útil do iPad, sem colunas forçadas além da tela",
+    "[T] Barra de busca, modos e ações agora quebram de linha sem recortes",
+    "[G] Iframe do leitor com coluna minmax(0,1fr), evitando expansão por conteúdo",
+    "[G] Testes de regressão cobrindo cinco larguras de iPad e abertura via reader.html",
+    "[G] Sem mudanças nos dados, armazenamento e ponte app→mapa"
   ],
   "automation": {
     "enabled": true,
