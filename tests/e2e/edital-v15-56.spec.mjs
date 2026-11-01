@@ -51,6 +51,8 @@ test('Edital [G] · curso: raio-x da prova a partir do padrão da banca e régua
   await expect(c.locator('.pr-regua li.atual')).toContainText('Homologação');
   await expect(c.locator('.pr-regua li.atual')).toContainText('agora');
   /* alcance do mapa no painel do lote */
+  // O gerenciamento do alcance fica na aba Estudo, não mais no Raio-X.
+  await c.locator('.pr-course-nav-item[data-arg="estudo"]').click();
   const sel = c.locator('.pr-pick select[data-pr-change="set-alcance"]');
   const key = await sel.getAttribute('data-key');
   await sel.selectOption('misto');
