@@ -15,6 +15,7 @@ test('Cursos V4 · resumo, ferramentas e biblioteca antecedem o edital completo'
   await expect(curso.locator('.pr-course-milestone')).toHaveCount(3);
   await expect(curso.locator('.pr-course-brief')).toHaveCount(3);
   await expect(curso.locator('.pr-course-tool')).toHaveCount(6);
+  await expect(curso.locator('[data-pr-pane="edital"]')).toBeHidden();
   await expect(curso.locator('.pr-regua li')).toHaveCount(7);
   await expect(curso.locator('.pr-raiox-card')).toBeAttached();
   await expect(curso.locator('.pr-tile')).toHaveCount(14);
@@ -25,10 +26,42 @@ test('Cursos V4 · resumo, ferramentas e biblioteca antecedem o edital completo'
   expect(ordem).toEqual([...ordem].sort((a, b) => a - b));
   await curso.locator('.pr-course-nav-item[data-arg="biblioteca"]').click();
   await expect(curso.locator('[data-pr-section="biblioteca"] .pr-tbl')).toBeVisible();
+  await curso.locator('.pr-course-nav-item[data-arg="overview"]').click();
   await curso.locator('.pr-course-tool[data-arg="raiox"]').click();
   await expect(curso.locator('.pr-raiox-card')).toBeVisible();
+  await curso.locator('.pr-course-nav-item[data-arg="estudo"]').click();
   await curso.locator('.pr-chipf[data-arg="completed"]').click();
   await expect(curso.locator('.pr-tbl tbody tr')).toHaveCount(0);
+  expect(await noHorizontalOverflow(page)).toEqual([]);
+});
+
+test('Cursos V4 · abas funcionais: não manter o edital grande aberto na Visão geral', async ({ page }) => {
+  await setupPrancha(page);
+  await page.evaluate(() => openCourse('porto-alegre'));
+  const curso = page.locator('.pr[data-prancha="course"]');
+  await expect(curso.locator('.pr-course-v4-top')).toBeVisible();
+  await expect(curso.locator('.pr-course-v4-top > *')).toHaveCount(4);
+  await expect(curso.locator('.pr-course-progress-details')).not.toHaveAttribute('open', '');
+  await expect(curso.locator('[data-pr-pane="edital"]')).toBeHidden();
+  await expect(curso.locator('[data-pr-pane="estudo"]')).toBeVisible();
+  await expect(curso.locator('[data-pr-pane="biblioteca"]')).toBeVisible();
+
+  await curso.locator('.pr-course-nav-item[data-arg="edital"]').click();
+  await expect(curso.locator('[data-pr-pane="edital"]')).toBeVisible();
+  await expect(curso.locator('.pr-raiox-card')).toBeVisible();
+  await expect(curso.locator('[data-pr-pane="overview"]')).toBeHidden();
+  await expect(curso.locator('[data-pr-pane="estudo"]')).toBeHidden();
+
+  await curso.locator('.pr-course-nav-item[data-arg="estudo"]').click();
+  await expect(curso.locator('.pr-tile').first()).toBeVisible();
+  await expect(curso.locator('[data-pr-pane="biblioteca"]')).toBeHidden();
+  await curso.locator('.pr-course-nav-item[data-arg="biblioteca"]').click();
+  await expect(curso.locator('[data-pr-pane="biblioteca"]')).toBeVisible();
+  await expect(curso.locator('[data-pr-pane="estudo"]')).toBeHidden();
+  await curso.locator('.pr-course-nav-item[data-arg="overview"]').click();
+  await expect(curso.locator('[data-pr-pane="overview"]')).toBeVisible();
+  await expect(curso.locator('[data-pr-pane="estudo"]')).toBeVisible();
+  await expect(curso.locator('[data-pr-pane="edital"]')).toBeHidden();
   expect(await noHorizontalOverflow(page)).toEqual([]);
 });
 

@@ -22,6 +22,7 @@ const IJUI = {
 test('Raio-X [G] · estrutura FUNDATEC num curso AOCP é sinalizada e o padrão AOCP tem 5 áreas', async ({ page }) => {
   await setupPrancha(page, { courses: [{ ...CASAN, examOffset: 24 }] });
   await page.evaluate(() => { window.Prancha.editais.aplicarPadrao('porto-alegre', 'FUNDATEC'); openCourse('porto-alegre'); });
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const rx = page.locator('.pr[data-prancha="course"] .pr-raiox-card');
   await expect(rx).toContainText('Esta estrutura veio de FUNDATEC');
   await page.evaluate(() => { window.Prancha.editais.aplicarPadrao('porto-alegre', 'AOCP'); window.Prancha.schedule('course'); });
@@ -49,6 +50,7 @@ test('Raio-X [G] · Ijuí: pontos fracionados, mínimo em acertos e títulos pel
   /* gabaritou as outras três e fez 12 em Específicos: eliminado pelos 13 acertos mínimos */
   expect(r.cai).toEqual([57.5, false, ['leg-esp']]);
   await page.evaluate(() => openCourse('porto-alegre'));
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const rx = page.locator('.pr[data-prancha="course"] .pr-raiox-card');
   await expect(rx).toContainText('4 disciplinas · 75 questões · 80 pontos · mínimo geral 60 · + 20 de títulos');
   await expect(rx.locator('.pr-dsc').nth(3)).toContainText('13 ac.');
@@ -68,6 +70,7 @@ test('Raio-X [G] · cartão com 5 disciplinas cabe no celular', async ({ page })
   await page.setViewportSize({ width: 390, height: 844 });
   await setupPrancha(page, { courses: [{ ...CASAN, examOffset: 24 }] });
   await page.evaluate(() => { window.Prancha.editais.aplicarPadrao('porto-alegre', 'AOCP'); openCourse('porto-alegre'); });
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   await expect(page.locator('.pr-raiox-card .pr-dsc')).toHaveCount(5);
   expect(await noHorizontalOverflow(page)).toEqual([]);
 });

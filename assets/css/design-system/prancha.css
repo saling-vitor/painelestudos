@@ -864,3 +864,37 @@ body.pr-session-home #studyTimerFloat{display:none!important}
   .pr-course-nav-item{padding-inline:12px}
 }
 @media (pointer:coarse){.pr-course-nav-item,.pr-course-tool{min-height:44px}}
+
+
+/* V15.68 · Curso Prancha V4: quatro indicadores reais e abas funcionais */
+.pr-course-section[hidden]{display:none}
+.pr-course-nav-item[aria-selected="true"]{background:var(--pr-latao);color:var(--pr-g0);border-color:var(--pr-latao)}
+.pr-course-nav-item[aria-selected="false"]{background:transparent;color:var(--pr-papel-2)}
+.pr-course-nav-item:focus-visible,.pr-course-tool:focus-visible{outline:2px solid var(--pr-latao);outline-offset:2px}
+.pr-course-v4-top{display:grid;grid-template-columns:minmax(260px,1.6fr) repeat(2,minmax(145px,.85fr)) minmax(210px,1.25fr);align-items:stretch;gap:10px;min-width:0}
+.pr-course-v4-top>.pr-card,.pr-course-v4-top>.pr-course-milestone{min-width:0;border:1px solid var(--pr-linha);border-radius:var(--pr-r-s)}
+.pr-course-v4-top .pr-carimbo{grid-template-columns:minmax(0,1fr);overflow:visible}
+.pr-course-v4-top .pr-c-a{padding:14px;gap:7px;border:0}
+.pr-course-v4-top .pr-big{gap:8px}
+.pr-course-v4-top .pr-pct{font-size:clamp(36px,4vw,56px)}
+.pr-course-v4-top .pr-sub{overflow-wrap:anywhere}
+.pr-course-v4-top .pr-c-a>.pr-row{flex-wrap:wrap}
+.pr-course-v4-top .pr-c-a>.pr-row .pr-btn{min-height:34px}
+.pr-course-progress-details{border-top:1px dashed var(--pr-linha);margin-top:3px;padding-top:8px;min-width:0}
+.pr-course-progress-details>summary{cursor:pointer;color:var(--pr-latao);font-size:var(--fs-caption);font-weight:600;list-style:revert}
+.pr-course-progress-details .pr-verdict{margin-top:10px}
+.pr-course-progress-details .pr-c-b{margin-top:8px;border:1px solid var(--pr-linha);border-radius:8px;overflow:hidden}
+.pr-course-progress-details .pr-cell{padding:9px}
+.pr-course-progress-details .pr-cell>b{font-size:var(--fs-body-sm)}
+.pr-course-briefs{margin-top:2px}
+.pr-course-brief .pr-course-brief-head{gap:5px}
+.pr-course-brief .pr-course-brief-head .pr-btn{min-height:30px;padding:5px 8px}
+.pr-course-edital-full{scroll-margin-top:110px}
+@media(max-width:1250px){
+.pr-course-v4-top{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+.pr-course-v4-top{grid-template-columns:minmax(0,1fr)}
+.pr-course-v4-top .pr-carimbo{grid-column:auto}
+.pr-course-progress-details .pr-c-b{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

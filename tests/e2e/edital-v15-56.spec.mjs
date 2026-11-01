@@ -31,6 +31,7 @@ test('Edital [G] · nota no formato da banca: peso e mínimo por disciplina', as
 test('Edital [G] · curso: raio-x da prova a partir do padrão da banca e régua do edital', async ({ page }) => {
   await setupPrancha(page, { courses: [{ ...DEMHAB, examOffset: 10 }] });
   await page.evaluate(() => openCourse('porto-alegre'));
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   const c = page.locator('.pr[data-prancha="course"]');
   await expect(c.locator('.pr-regua li')).toHaveCount(7);
   await expect(c.locator('.pr-raiox-card')).toContainText('Estrutura ainda não informada');
@@ -50,6 +51,8 @@ test('Edital [G] · curso: raio-x da prova a partir do padrão da banca e régua
   await expect(c.locator('.pr-regua li.atual')).toContainText('Homologação');
   await expect(c.locator('.pr-regua li.atual')).toContainText('agora');
   /* alcance do mapa no painel do lote */
+  // O gerenciamento do alcance fica na aba Estudo, não mais no Raio-X.
+  await c.locator('.pr-course-nav-item[data-arg="estudo"]').click();
   const sel = c.locator('.pr-pick select[data-pr-change="set-alcance"]');
   const key = await sel.getAttribute('data-key');
   await sel.selectOption('misto');
@@ -118,6 +121,7 @@ test('Edital [M] · régua e raio-x sem rolagem lateral no celular', async ({ pa
   await setupPrancha(page, { courses: [{ ...DEMHAB, examOffset: 10 }] });
   await page.evaluate(() => window.Prancha.editais.aplicarPadrao('porto-alegre', 'FUNDATEC'));
   await page.evaluate(() => openCourse('porto-alegre'));
+  await page.locator('.pr[data-prancha="course"] .pr-course-nav-item[data-arg="edital"]').click();
   await expect(page.locator('.pr[data-prancha="course"] .pr-dsc')).toHaveCount(3);
   expect(await noHorizontalOverflow(page)).toEqual([]);
 });

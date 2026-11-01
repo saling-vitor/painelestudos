@@ -6,6 +6,8 @@
   const U = P.util, ui = P.ui, { esc, fmtMin, fmtSec, fmtDay, fmtNum, plural, pct } = U;
   const VKEY = 'studyapp.prancha.courseView';
   let pickKey = '', showArchived = false;
+  let coursePane = 'overview', activePaneCourseId = '';
+
   const viewMode = () => { try { return localStorage.getItem(VKEY) || 'lista'; } catch { return 'lista'; } };
 
   function statusChip(s) {
@@ -92,7 +94,7 @@
       ui.cell('Hoje', fmtSec(P.time.today()), '', 'meta ' + fmtMin(goals.daily)) + '</div></section>';
     const list = active.map((s, i) => crRow(s, i === 0)).join('') || ui.empty('Nenhum concurso em estudo', 'Os concursos encerrados (arquivados ou com prova realizada) estão abaixo.');
     const arch = archived.length ? ui.card(ui.head('Encerrados', archived.length + ' ' + plural(archived.length, 'concurso'), ui.btn(showArchived ? 'Ocultar' : 'Mostrar', ui.act('toggle-archived'), 'g sm')) + (showArchived ? '<div style="display:grid;gap:10px">' + archived.map((s) => crRow(s, false)).join('') + '</div>' : '<p style="font-size:var(--fs-body-sm)">Arquivados ou com a prova já realizada: ficam fora do Início, do plano e das revisões. Mapas, progresso e histórico continuam guardados — reative pelo menu ⋯ ou informe uma nova data de prova em Gerenciar curso.</p>')) : '';
-    root.innerHTML = top + carimbo + timeline(S) + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + arch;
+    root.innerHTML = top + carimbo + ui.head('Concursos pela data da prova', 'Cada concurso numa linha, com a sua planta') + '<div style="display:grid;gap:10px">' + list + '</div>' + timeline(S) + arch;
   }
 
   /* ---------- curso ---------- */
@@ -430,7 +432,7 @@
   }
 
   /* V4 · Resumo editorial do curso: dados derivados, sem duplicar estado nem persistência. */
-  function courseHub(c, s, ex) {
+  function courseHub(c, s, ex, carimbo) {
     const fases = E.fases(c);
     const futuras = fases.filter((f) => f.date && f.days >= 0).sort((a, b) => a.date - b.date);
     const proxima = futuras[0] || null;
@@ -463,7 +465,7 @@
       '<span><i style="background:' + r.cor + '"></i>' + esc(r.nome) + ' <b>' +
       Math.round(100 * r.pontos / peso.totPontos) + '%</b></span>').join('') :
       '<span class="pr-mono">Cadastre a estrutura da prova para comparar pesos.</span>';
-    return '<div class="pr-course-fast">' +
+    return '<div class="pr-course-v4-top">' + carimbo +
       bloco('Próximo evento', proxima, 'Nenhum evento futuro') +
       bloco('Próximo marco administrativo', administrativa, 'Nenhum marco futuro') +
       '<div class="pr-course-milestone pr-course-quick"><span class="pr-k l">Ações rápidas</span><div class="pr-row">' +
@@ -489,6 +491,7 @@
   function renderCourse(root) {
     const c = typeof courseById === 'function' ? courseById(state.courseId) : null;
     if (!c) { root.innerHTML = ui.card(ui.empty('Curso não encontrado', 'Ele pode ter sido removido ou ainda não sincronizou.', ui.btn('Meus Cursos', ui.act('nav', 'courses'), 'g'))); return; }
+    if (activePaneCourseId !== String(c.id)) { activePaneCourseId = String(c.id); coursePane = 'overview'; }
     const s = P.courses.summary(c), p = s.progress, ex = s.exam, h = s.health, f = s.forecast;
     const all = P.data.mapsForCourse(c.id), own = s.maps, linkedN = all.length - own.length;
     const fol = P.data.folhas(all);
@@ -509,12 +512,12 @@
     else if (ex.phase === 'after') v = ui.verdict('l', 'A prova já passou.', 'Os mapas deste curso saíram do Início, do plano e das revisões (nada foi apagado); os portáteis continuam na biblioteca. Gabarito, recursos e o destino do curso estão logo abaixo; para estudar uma próxima fase, informe a nova data em Gerenciar curso.');
     else if (ex.phase === 'nodate') v = ui.verdict('n', 'Sem data de prova.', 'Defina a data em Gerenciar curso para calcular o ritmo.');
     else v = ui.verdict(h?.status === 'risk' ? '' : h?.status === 'healthy' ? 'm' : 'l', (ex.days === 0 ? 'Prova hoje' : 'Prova em ' + ex.days + ' ' + plural(ex.days, 'dia')) + ', ' + fmtNum(rest) + ' ' + plural(rest, 'tópico aberto', 'tópicos abertos') + '.', (f?.remainingSeconds ? 'O plano estima ' + fmtSec(f.remainingSeconds) + ' de leitura para o restante. ' : '') + (top1 ? 'Próximo agora: ' + esc(top1.map.code || top1.map.title) + ', ' + fmtMin(top1.minutes) + '.' : ''));
-    const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">' + esc(s.sigla + ' · ' + P.courses.label(c)) + '</span><div class="pr-big"><span class="pr-pct pr-num">' + pct(p.marked, p.total) + '<small>%</small></span><span class="pr-sub">' + fmtNum(p.marked) + ' de ' + fmtNum(p.total) + ' tópicos · ' + own.length + ' mapas' + (linkedN ? ' · +' + linkedN + ' ' + plural(linkedN, 'vinculado') : '') + '</span></div>' + ui.stateBar(p) + ui.stateLegend(p) + v +
-      '<div class="pr-row">' + (top1 ? ui.btn('Estudar agora · ' + esc(top1.map.code || ''), ui.act('study-now', top1.key, { 'data-min': top1.minutes }), 'p') : '') + (window.StudyAutomation?.run ? ui.btn('Atualizar plano', ui.act('replan'), 'g') : '') + '</div></div><div class="pr-c-b">' +
+    const carimbo = '<section class="pr-card pr-carimbo"><div class="pr-c-a"><span class="pr-k l">' + esc(s.sigla + ' · ' + P.courses.label(c)) + '</span><div class="pr-big"><span class="pr-pct pr-num">' + pct(p.marked, p.total) + '<small>%</small></span><span class="pr-sub">' + fmtNum(p.marked) + ' de ' + fmtNum(p.total) + ' tópicos · ' + own.length + ' mapas' + (linkedN ? ' · +' + linkedN + ' ' + plural(linkedN, 'vinculado') : '') + '</span></div>' + ui.stateBar(p) + ui.stateLegend(p) +
+      '<div class="pr-row">' + (top1 ? ui.btn('Estudar agora · ' + esc(top1.map.code || ''), ui.act('study-now', top1.key, { 'data-min': top1.minutes }), 'p') : '') + (window.StudyAutomation?.run ? ui.btn('Atualizar plano', ui.act('replan'), 'g') : '') + '</div><details class="pr-course-progress-details"><summary>Detalhes do progresso e indicadores</summary>' + v + '<div class="pr-c-b">' +
       ui.cell('Prova', ex.date ? esc(fmtDay(ex.date)) : '—', ex.days !== null && ex.days >= 0 && ex.days <= 7 ? 'ox' : '', ex.date ? (ex.days > 0 ? 'em ' + ex.days + ' ' + plural(ex.days, 'dia') : ex.days === 0 ? 'hoje' : 'realizada') : 'sem data') +
       ui.cell('Restam', fmtNum(rest), '', 'tópicos') + ui.cell('Mapas', s.mapsDone + ' / ' + own.length, s.mapsDone === own.length && own.length ? 'ok' : '', 'concluídos') +
       ui.cell('Revisões', fmtNum(revCount), revCount ? 'l' : 'mu', 'tópicos REV e DIF') + ui.cell('Tempo no curso', fmtSec(timeCourse), '', p.lastActivity ? 'última atividade ' + ui.lastLabel(p.lastActivity) : 'sem atividade') +
-      ui.cell('Simulados', sim.done + ' / ' + sim.total, '', sim.total ? (sim.best !== null ? 'melhor ' + sim.best + '%' : 'nenhum feito') : 'nenhum importado') + '</div></section>';
+      ui.cell('Simulados', sim.done + ' / ' + sim.total, '', sim.total ? (sim.best !== null ? 'melhor ' + sim.best + '%' : 'nenhum feito') : 'nenhum importado') + '</div></details></div></section>';
     const hasEdital = typeof courseHasEdital === 'function' && courseHasEdital(c);
     const acts = '<div class="pr-acts" role="group" aria-label="Ações do curso"><button type="button" data-pr-act="course-edital" data-arg="' + esc(c.id) + '"' + (hasEdital ? '' : ' disabled title="Nenhum edital anexado"') + '>Edital</button><button type="button" data-pr-act="course-sims" data-arg="' + esc(c.id) + '">Simulados</button></div>' + ui.menu('course-' + c.id, [['Revisão relâmpago', ui.act('relampago')], ['Importar mapas', ui.act('import-maps')], all.length ? ['Baixar mapas (.zip)', ui.act('download-zip', c.id)] : null, ['Gerenciar curso', ui.act('manage-course', c.id)], [P.courses.isArchived(c) ? 'Reativar curso' : 'Arquivar curso', ui.act('archive', c.id), P.courses.isArchived(c) ? '' : 'd']]);
     const chips = '<div class="pr-chips" role="group" aria-label="Situação">' + filters.map((x) => ui.chipf(x.id, x.label, all.filter((m) => match(m, x.id)).length, cur === x.id, 'filter')).join('') + '</div>';
@@ -532,27 +535,29 @@
       listing = shown.length && typeof mapCard === 'function' ? '<div class="map-grid pr-legacy-grid" data-pr-legacy>' + shown.filter((m) => !m._linkedFrom).map(mapCard).join('') + '</div>' + (shown.some((m) => m._linkedFrom) ? '<p class="pr-mono">' + shown.filter((m) => m._linkedFrom).length + ' mapa(s) vinculado(s) aparecem na lista.</p>' : '') : ui.empty('Nada neste filtro', 'Troque o filtro de situação ou de conteúdo.');
     } else listing = listTable(shown, fol, c);
     const mapsCard = ui.card('<div class="pr-vw"><div><span class="pr-k">Mapas do curso</span><h3>' + shown.length + ' de ' + all.length + ' mapas · ' + shown.reduce((n, m) => n + P.data.prog(m).marked, 0) + '/' + shown.reduce((n, m) => n + P.data.prog(m).total, 0) + ' tópicos</h3></div>' + ui.seg([['lista', 'Lista'], ['capas', 'Capas']], mode, 'view-mode', 'Visualização') + '</div>' + listing);
-    const navCurso = '<nav class="pr-course-nav" aria-label="Seções do curso">' +
-      [['overview', 'Visão geral'], ['edital', 'Edital e prova'], ['estudo', 'Estudo'], ['biblioteca', 'Biblioteca']].map(([id, title]) =>
-        '<button type="button" class="pr-course-nav-item" data-pr-act="course-jump" data-arg="' + id + '"' +
-        (id === 'overview' ? ' aria-current="location"' : '') + '>' + title + '</button>').join('') + '</nav>';
+    const panes = [['overview', 'Visão geral'], ['edital', 'Edital e prova'], ['estudo', 'Estudo'], ['biblioteca', 'Biblioteca']];
+    const visible = (id) => coursePane === 'overview' ? id !== 'edital' : coursePane === id;
+    const paneTag = (id, cls, body) => '<section id="pr-course-' + id + '" data-pr-section="' + id + '" data-pr-pane="' + id +
+      '" class="pr-course-section' + (cls ? ' ' + cls : '') + '"' + (visible(id) ? '' : ' hidden') + '>' + body + '</section>';
+    const navCurso = '<nav class="pr-course-nav" role="tablist" aria-label="Seções do curso">' +
+      panes.map(([id, title]) => '<button type="button" role="tab" class="pr-course-nav-item" data-pr-act="course-tab" data-arg="' + id +
+      '" aria-controls="pr-course-' + id + '" aria-selected="' + (coursePane === id ? 'true' : 'false') + '">' + title + '</button>').join('') + '</nav>';
     root.innerHTML = '<div class="pr-crumb"><button type="button" data-pr-act="nav" data-arg="courses">' +
       (typeof uiIcon === 'function' ? uiIcon('chevron-left', 'ui-icon-sm') : '‹') +
       ' Meus Cursos</button><span>›</span><span>' + esc(s.sigla) + '</span></div>' +
       '<header class="pr-top"><div class="pr-head"><div><div class="pr-eyebrow">' +
       esc([c.institution, c.city].filter(Boolean).join(' · ') || 'Curso') +
       '</div><h1>' + esc(c.title) + '</h1></div></div></header>' + navCurso +
-      '<section class="pr-course-section" data-pr-section="overview">' + carimbo + courseHub(c, s, ex) + '</section>' +
-      relampagoCard(c, ex) + (ex.phase === 'after' ? fechamento(c, all) + reaproveitar(c, all) : '') +
-      '<section class="pr-course-section" data-pr-section="estudo">' +
-      '<div class="pr-course-study-toolbar"><div class="pr-row">' + acts + '</div>' +
-      '<div class="pr-course-filter-row"><span class="pr-k">Situação</span>' + chips + '</div>' +
-      '<div class="pr-course-filter-row"><span class="pr-k">Categorias</span>' + catChips + '</div></div>' +
-      '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div></section>' +
-      '<section class="pr-course-section" data-pr-section="biblioteca">' + mapsCard + '</section>' +
-      '<section class="pr-course-section pr-course-edital-full" data-pr-section="edital">' +
-      ui.head('Edital e prova', 'Cronograma, regras, disciplinas, pesos e resultados completos') +
-      regua(c) + raioX(c, all) + pesoCard(c) + placar(c) + '</section>';
+      paneTag('overview', '', courseHub(c, s, ex, carimbo) + relampagoCard(c, ex) +
+        (ex.phase === 'after' ? fechamento(c, all) + reaproveitar(c, all) : '')) +
+      paneTag('estudo', '', '<div class="pr-course-study-toolbar"><div class="pr-row">' + acts + '</div>' +
+        '<div class="pr-course-filter-row"><span class="pr-k">Situação</span>' + chips + '</div>' +
+        '<div class="pr-course-filter-row"><span class="pr-k">Categorias</span>' + catChips + '</div></div>' +
+        '<div class="pr-side2">' + planta + pickPanel(pickMap, c, fol.get(pickKey)) + '</div>') +
+      paneTag('biblioteca', '', mapsCard) +
+      paneTag('edital', 'pr-course-edital-full',
+        ui.head('Edital e prova', 'Cronograma, regras, disciplinas, pesos e resultados completos') +
+        regua(c) + raioX(c, all) + pesoCard(c) + placar(c) + '');
     const legacy = root.querySelector('[data-pr-legacy]');
     if (legacy && typeof bindMapCards === 'function') bindMapCards(legacy);
   }
@@ -563,17 +568,27 @@
     'toggle-archived': () => { showArchived = !showArchived; P.schedule('courses'); },
     filter: (id) => { state.courseStudyFilter = id; P.schedule('course'); },
     cat: (id) => { state.category = id; P.schedule('course'); },
+    'course-tab': (tab, el, root) => {
+      if (!['overview', 'edital', 'estudo', 'biblioteca'].includes(tab)) return;
+      coursePane = tab;
+      const host = root?.matches?.('[data-prancha="course"]') ? root : document.querySelector('.pr[data-prancha="course"]');
+      if (!host) return;
+      host.querySelectorAll('[data-pr-pane]').forEach((section) => {
+        section.hidden = tab === 'overview' ? section.dataset.prPane === 'edital' : section.dataset.prPane !== tab;
+      });
+      host.querySelectorAll('.pr-course-nav-item').forEach((button) =>
+        button.setAttribute('aria-selected', String(button.dataset.arg === tab)));
+      host.querySelector('.pr-course-nav')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+    },
     'course-jump': (id, el, root) => {
       const host = root?.matches?.('[data-prancha="course"]') ? root : document.querySelector('.pr[data-prancha="course"]');
-      const sel = { regua: '.pr-regua-card', raiox: '.pr-raiox-card', peso: '.pr-pe-card' }[id];
-      const target = host?.querySelector(sel || '[data-pr-section="' + String(id).replace(/[^a-z]/g, '') + '"]');
-      if (!target) return;
-      host.querySelectorAll('.pr-course-nav-item').forEach((b) => {
-        if (el?.classList?.contains('pr-course-nav-item')) {
-          if (b === el) b.setAttribute('aria-current', 'location'); else b.removeAttribute('aria-current');
-        }
-      });
-      target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      if (!host) return;
+      const targetTab = { regua: 'edital', raiox: 'edital', peso: 'edital' }[id] || id;
+      if (!['overview', 'edital', 'estudo', 'biblioteca'].includes(targetTab)) return;
+      shared['course-tab'](targetTab, el, host);
+      const targetSel = { regua: '.pr-regua-card', raiox: '.pr-raiox-card', peso: '.pr-pe-card' }[id];
+      const target = host.querySelector(targetSel || '[data-pr-pane="' + targetTab + '"]');
+      if (target) target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     },
     'view-mode': (id) => { try { localStorage.setItem(VKEY, id); } catch {} P.schedule('course'); },
     'pick-map': (key) => { pickKey = key; P.schedule('course'); },
