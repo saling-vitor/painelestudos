@@ -1,14 +1,13 @@
 {
-  "version": "15.69.0",
-  "label": "V15.69.0-G",
-  "notes": "Central de Limpeza Inteligente nas Configurações: auditoria de resíduos comprovados de cursos, mapas, editais e simulados excluídos, limpeza seletiva do cache privado, remoção opt-in de progresso órfão com marcadores de exclusão na nuvem e proteção de mapas ainda vinculados.",
+  "version": "15.69.1",
+  "label": "V15.69.1-G",
+  "notes": "Correção do reconhecimento de atualizações no iPad/PWA; sincronização da versão do app com o service worker, nova barra de mapas do iPad e proteção de mapas reimportados.",
   "showWhatsNew": true,
   "highlights": [
-    "[G] Configurações · nova folha Armazenamento e limpeza com análise prévia e relatório",
-    "[G] Exclusões de cursos, mapas, editais e simulados passam a registrar resíduos rastreáveis para manutenção",
-    "[G] Limpeza segura de cache com confirmação e sem excluir dados de estudo",
-    "[G] Limpeza definitiva opt-in de progresso e notas órfãos com verificação remota e marcador anti-ressurgimento",
-    "[G] Dados com vínculo ativo ou origem desconhecida permanecem preservados"
+    "PWA: atualização detectada corretamente pelo número de versão publicado",
+    "Mapas no iPad: barra de pesquisa e ações na mesma linha",
+    "Mapas excluídos: limpeza do HTML em cache e isolamento de novas importações",
+    "Atualizações de mapas existentes continuam preservando o progresso"
   ],
   "automation": {
     "enabled": true,
@@ -16,5 +15,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-11-01T10:09:00-03:00"
+  "releasedAt": "2026-11-01T14:06:00-03:00"
 }
