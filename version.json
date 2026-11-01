@@ -1,10 +1,13 @@
 {
-  "version": "15.67.5",
-  "label": "V15.67.5-G",
-  "notes": "Respiro mais compacto entre capa e etiquetas dos mapas na Prancha de Meus Cursos: aproximadamente 10 px.",
+  "version": "15.68.0",
+  "label": "V15.68.0-G",
+  "notes": "Prancha V4 implementada de verdade: abas funcionais, quadro de progresso e eventos, ferramentas organizadas, Planta e Biblioteca em primeiro plano, cronograma completo na aba própria. Atualização de cache PWA para garantir a entrega visual.",
   "showWhatsNew": false,
   "highlights": [
-    "[D/T/M] Meus Cursos · Capas: reduzir o respiro entre imagem e sigla/estado/versão para cerca de 10 px, preservando o layout dos mapas"
+    "[D/T/M] Cursos · Visão geral com progresso, prova, próximo marco e ações rápidas em cards compactos",
+    "[D/T/M] Cursos · Abas reais: Visão geral, Edital e prova, Estudo e Biblioteca; todos os controles antigos preservados",
+    "[D/T/M] Cursos · Raio-X, Régua do edital e Peso × Esforço resumidos no topo, completos em aba própria",
+    "[G] Cache da instalação PWA renovado para a versão 15.68.0"
   ],
   "automation": {
     "enabled": true,
@@ -12,5 +15,5 @@
     "channel": "G",
     "runBase": 711
   },
-  "releasedAt": "2026-10-29T22:13:09-03:00"
+  "releasedAt": "2026-11-01T10:09:00-03:00"
 }
