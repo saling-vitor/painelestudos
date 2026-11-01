@@ -1,16 +1,14 @@
 {
-  "version": "15.70.1",
-  "label": "V15.70.1-G",
-  "notes": "Botão de atualizar da barra de pesquisa visível apenas no iPad vertical; oculto no desktop, notebooks e celulares. O botão Sincronizar, atualização pela barra lateral e menu Mais continuam disponíveis. Mantida a Central de Limpeza da V15.70.",
+  "version": "15.70.2",
+  "label": "V15.70.2-G",
+  "notes": "Hotfix: o botão Atualizar da barra de busca é oculto por prioridade correta no desktop e celular, e exibido exclusivamente no iPad vertical. Preserva sincronização e os atalhos de atualização da barra lateral e menu Mais.",
   "showWhatsNew": true,
   "highlights": [
+    "[D/M] Ocultar realmente o ícone Atualizar na busca, prevalecendo sobre CSS global da topbar",
+    "[T] Manter o ícone Atualizar somente em iPad vertical",
+    "[G] Sincronização e demais opções de atualização mantidas",
     "[D] Barra de pesquisa · ocultar botão de atualizar em todos os tamanhos de desktop",
-    "[M] Barra de pesquisa · ocultar botão de atualizar no celular",
-    "[T] iPad vertical · manter botão de atualizar ao lado de Sincronizar",
-    "[G] Botão Sincronizar, Atualizar app da barra lateral e menu Mais preservados",
-    "[G] Limpeza · localizar progresso e notas órfãos de exclusões anteriores à V15.69",
-    "[D/T/M] Limpeza · separar histórico na nuvem e dados locais sem vínculo, sem apagar mapas ativos",
-    "[D/T/M] Cache · botão para limpar cópias offline apenas neste dispositivo (Safari/iPad/Windows)"
+    "[M] Barra de pesquisa · ocultar botão de atualizar no celular"
   ],
   "automation": {
     "enabled": true,
