@@ -4606,27 +4606,27 @@ html.is-ipad:not(.is-phone-layout) .progress-insight-card>.secondary{
    A coluna única do tablet não deve ampliar a capa à largura inteira. */
 @media (min-width: 700px) and (max-width: 1366px) and (pointer: coarse) {
   html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 {
-    grid-template-columns: minmax(0, 1fr)!important;
-    min-width: 0!important;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
   }
   html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick {
-    box-sizing: border-box!important;
-    width: 100%!important;
-    min-width: 0!important;
-    max-width: 100%!important;
-    position: static!important;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    position: static;
   }
   html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick > .pr-cov {
-    width: 100%!important;
-    max-width: 100%!important;
-    height: min(52vw, 300px)!important;
-    max-height: 300px!important;
-    aspect-ratio: auto!important;
-    overflow: hidden!important;
+    width: 100%;
+    max-width: 100%;
+    height: min(52vw, 300px);
+    max-height: 300px;
+    aspect-ratio: auto;
+    overflow: hidden;
   }
   html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick > .pr-cov img {
-    width: 100%!important;
-    height: 100%!important;
-    object-fit: cover!important;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
