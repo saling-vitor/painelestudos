@@ -4602,22 +4602,30 @@ html.is-ipad:not(.is-phone-layout) .progress-insight-card>.secondary{
   }
 }
 
-/* iPad · cartões dos mapas dentro do curso: capa contida sem afetar desktop/telefone. */
+/* iPad · painel do mapa selecionado na planta do edital.
+   A coluna única do tablet não deve ampliar a capa à largura inteira. */
 @media (min-width: 700px) and (max-width: 1366px) and (pointer: coarse) {
-  html.is-ipad:not(.is-phone-layout) :is(.course-map-card,.course-detail-map-card,.course-maps-list .map-card,.course-maps-grid .map-card) {
+  html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 {
+    grid-template-columns: minmax(0, 1fr)!important;
+    min-width: 0!important;
+  }
+  html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick {
+    box-sizing: border-box!important;
+    width: 100%!important;
     min-width: 0!important;
     max-width: 100%!important;
+    position: static!important;
   }
-  html.is-ipad:not(.is-phone-layout) :is(.course-map-card,.course-detail-map-card,.course-maps-list .map-card,.course-maps-grid .map-card) :is(.map-cover,.map-card-cover,.course-card-cover) {
+  html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick > .pr-cov {
     width: 100%!important;
+    max-width: 100%!important;
     max-height: 300px!important;
     aspect-ratio: 16 / 9!important;
     overflow: hidden!important;
   }
-  html.is-ipad:not(.is-phone-layout) :is(.course-map-card,.course-detail-map-card,.course-maps-list .map-card,.course-maps-grid .map-card) :is(.map-cover,.map-card-cover,.course-card-cover) img {
-    display:block!important;
-    width:100%!important;
-    height:100%!important;
-    object-fit:cover!important;
+  html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick > .pr-cov img {
+    width: 100%!important;
+    height: 100%!important;
+    object-fit: cover!important;
   }
 }
