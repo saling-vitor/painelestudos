@@ -4619,8 +4619,9 @@ html.is-ipad:not(.is-phone-layout) .progress-insight-card>.secondary{
   html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick > .pr-cov {
     width: 100%!important;
     max-width: 100%!important;
+    height: min(52vw, 300px)!important;
     max-height: 300px!important;
-    aspect-ratio: 16 / 9!important;
+    aspect-ratio: auto!important;
     overflow: hidden!important;
   }
   html.is-ipad:not(.is-phone-layout) [data-prancha="course"] .pr-side2 > .pr-pick > .pr-cov img {
