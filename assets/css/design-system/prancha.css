@@ -912,3 +912,11 @@ body.pr-session-home #studyTimerFloat{display:none!important}
 .pr[data-prancha="settings"] [data-pr-host="limpeza"] .pr-li .pr-mono{overflow-wrap:anywhere;word-break:break-word}
 @media(max-width:980px){.pr-cleanup-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:570px){.pr-cleanup-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* iPad instalado e Safari: mapa selecionado compacto, independentemente da ordem das folhas. */
+@media (min-width:700px) and (max-width:1366px) and (pointer:coarse){
+ html.is-ipad .pr[data-prancha="course"] .pr-side2{grid-template-columns:minmax(0,1fr);min-width:0}
+ html.is-ipad .pr[data-prancha="course"] .pr-side2>.pr-pick{position:static;min-width:0;max-width:100%;box-sizing:border-box}
+ html.is-ipad .pr[data-prancha="course"] .pr-side2>.pr-pick>.pr-cov{height:min(52vw,300px);max-height:300px;aspect-ratio:auto;overflow:hidden}
+ html.is-ipad .pr[data-prancha="course"] .pr-side2>.pr-pick>.pr-cov img{width:100%;height:100%;object-fit:cover}
+}
